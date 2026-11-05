@@ -1,0 +1,507 @@
+{
+  "id": "airtable",
+  "displayName": "Airtable",
+  "description": "Spreadsheet-database hybrid for organizing records, workflows, and collaborative project data.",
+  "npmPackageName": "@corsair-dev/airtable",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 1,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "base_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "airtable.api.bases.getMany",
+      "shortPath": "bases.getMany",
+      "description": "List all accessible bases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bases",
+            "optional": false,
+            "type": "{ id: string, name: string, permissionLevel: string }[]"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "airtable.api.bases.getSchema",
+      "shortPath": "bases.getSchema",
+      "description": "Get the schema (tables, fields, views) of a base",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "baseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "visibleFieldIds | fieldIdsInSynced[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ id: string, name: string, primaryFieldId: string, description?: string, fields: { id: string, type: string, name: string, description?: string, options?: {} }[], views: { id: string, type: string, name: string, personalForCreator?: boolean }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "airtable.api.records.create",
+      "shortPath": "records.create",
+      "description": "Create a record in a table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "baseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableIdOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "typecast",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: string, createdTime: string, fields: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "airtable.api.records.createOrUpdate",
+      "shortPath": "records.createOrUpdate",
+      "description": "Create or update a record using upsert",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "baseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableIdOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "fieldsToMergeOn",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "typecast",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: string, createdTime: string, fields: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "airtable.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Delete a record from a table",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "baseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableIdOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "airtable.api.records.get",
+      "shortPath": "records.get",
+      "description": "Get a single record by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "baseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableIdOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "returnFieldsByFieldId",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "airtable.api.records.search",
+      "shortPath": "records.search",
+      "description": "Search and list records with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "baseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableIdOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filterByFormula",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxRecords",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ field: string, direction?: asc | desc }[]"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellFormat",
+            "optional": true,
+            "type": "json | string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userLocale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "returnFieldsByFieldId",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: string, createdTime: string, fields: {} }[]"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "airtable.api.records.update",
+      "shortPath": "records.update",
+      "description": "Update fields on an existing record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "baseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableIdOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "typecast",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: string, createdTime: string, fields: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "airtable.api.webhooks.getPayloads",
+      "shortPath": "webhooks.getPayloads",
+      "description": "Get webhook payloads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "airtable.webhooks.events.event",
+      "shortPath": "events.event",
+      "description": "On new Airtable event — fires when records or tables change",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "actionMetadata",
+            "optional": true,
+            "type": "{ source?: string, sourceMetadata?: { user?: { id: string, email?: string, name?: string } } }"
+          }
+        ]
+      },
+      "responseType": "{ base: { id: string }, webhook: { id: string }, timestamp: string, actionMetadata?: { source?: string, sourceMetadata?: { user?: { id: string, email?: string, name?: string } } } }",
+      "usageExample": "airtable({\n    webhookHooks: {\n        events: {\n            event: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "airtable.db.bases.search",
+      "entityName": "bases",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "permissionLevel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "airtable.db.records.search",
+      "entityName": "records",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "baseId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tableId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

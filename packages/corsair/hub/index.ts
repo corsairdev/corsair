@@ -24,6 +24,17 @@
  */
 export { formatProviderDisplayName } from '../core/constants';
 export {
+	type AgentMessageRole,
+	type AgentReply,
+	type ChatMessage,
+	type ChatSummary,
+	type CreateChatResult,
+	createChat,
+	listChatMessages,
+	listChats,
+	postChatMessage,
+} from './chats';
+export {
 	buildClientBridgeBrowserDeliveryUrl,
 	type ClientBridgeDeliverySpec,
 	type ClientBridgeTransportResult,
@@ -33,12 +44,15 @@ export {
 export {
 	DEFAULT_HUB_API_URL,
 	getHubConfig,
+	HubCredentialsMissingError,
 	HubNotConfiguredError,
 	inferHubEnvironmentSlug,
 	normalizeHubConfig,
+	resolveHubConfigInput,
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
+export { startConnectLoop } from './connect/loop';
 export type {
 	ConnectCreateLinkDeliveryPayload,
 	ConnectCreateLinkDeliveryResult,
@@ -71,6 +85,11 @@ export {
 	usesBrowserDelivery,
 	validateProductionDeliveryUrl,
 } from './contracts/environment';
+export type {
+	HubManagedPricingCredentialsRequest,
+	HubManagedPricingCredentialsResponse,
+} from './contracts/managed-pricing-api';
+export { parseManagedPricingCredentialsResponse } from './contracts/managed-pricing-api';
 export {
 	type BrowserDeliveryMode,
 	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
@@ -101,6 +120,17 @@ export {
 	type ProcessManagedOAuthDeliveryResult,
 	processManagedOAuthDelivery,
 } from './managed-oauth';
+export {
+	createManagedPricingCredentialCache,
+	type GetManagedPricingApiKeyOptions,
+	getManagedPricingApiKey,
+	type ManagedPricingApiKeyResult,
+	type ManagedPricingAuthContext,
+	type ManagedPricingKeyBuilderContext,
+	managedPricingHubScope,
+	requireHubForManagedPricing,
+	resolveManagedPricingApiKey,
+} from './managed-pricing-auth';
 export {
 	createHubPermissionSession,
 	formatHubApprovalMessage,
@@ -173,17 +203,6 @@ export {
 	encryptSyncManifest,
 	parseSyncDeliveryBody,
 } from './sync-payload';
-export {
-	type AgentMessageRole,
-	type AgentReply,
-	type CreateThreadResult,
-	createThread,
-	listThreadMessages,
-	listThreads,
-	postThreadMessage,
-	type ThreadMessage,
-	type ThreadSummary,
-} from './threads';
 export type {
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,

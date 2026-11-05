@@ -12,20 +12,20 @@ import {
 	ZodString,
 	ZodType,
 } from 'zod';
-import type {
-	AuthTypes,
-	BaseKeyManager,
-	CorsairInternalConfig,
-	CorsairPlugin,
-	CorsairSingleTenantClient,
-	CorsairTenantWrapper,
-} from '../core';
+import type { AuthTypes, BaseKeyManager, CorsairInternalConfig } from '../core';
 import {
 	BASE_AUTH_FIELDS,
 	createAccountKeyManager,
 	createCorsair,
 	createIntegrationKeyManager,
 } from '../core';
+// Direct source-module imports (not the ./core barrel) to avoid a circular
+// chunk dependency between setup and core/index.
+import type {
+	CorsairSingleTenantClient,
+	CorsairTenantWrapper,
+} from '../core/client';
+import type { CorsairPlugin } from '../core/plugins';
 import {
 	getCallableProperty,
 	isMultiTenantInstance,
@@ -37,6 +37,7 @@ import type {
 	CorsairDatabase,
 	CorsairKyselyDatabase,
 } from '../db/kysely/database';
+import { resolveCorsairDbTables } from '../db/kysely/table-names';
 import { TABLE_SCHEMAS } from '../db/orm';
 
 import backfillConfig from './backfill.config';
@@ -185,7 +186,7 @@ export async function setupCorsair<
 	const db = setupInternal.database.db;
 
 	// 1. Verify schema
-	await checkTables(db, warn);
+	await checkTables(setupInternal.database, warn);
 
 	// 2. Create integration + account rows and issue DEKs for every plugin.
 	const pluginAuth = await ensurePluginRowsAndDeks(
@@ -223,6 +224,7 @@ export async function setupCorsair<
 			database: db,
 			kek: internal.kek,
 			multiTenancy: true,
+			...(internal.encryptDataAtRest ? { encryptDataAtRest: true } : {}),
 		}).withTenant(tenantScope.tenantId);
 		await runBackfill(instance, internal.plugins, authReadyPlugins, log, warn);
 		log('[corsair:setup] Backfill complete.');
@@ -313,9 +315,7 @@ function isBackfillYaml(value: unknown): value is BackfillYaml {
 // Table check
 // ─────────────────────────────────────────────────────────────────────────────
 
-const REQUIRED_TABLES = {
-	...TABLE_SCHEMAS,
-};
+const REQUIRED_TABLES = TABLE_SCHEMAS;
 
 function describeZodSchema(schema: ZodTypeAny): unknown {
 	if (schema instanceof ZodObject) {
@@ -339,16 +339,23 @@ function describeZodSchema(schema: ZodTypeAny): unknown {
 }
 
 async function checkTables(
-	db: Kysely<CorsairKyselyDatabase>,
+	database: CorsairDatabase,
 	warn: SetupWarn,
 ): Promise<void> {
-	const existing = await db.introspection.getTables();
+	const existing = await database.db.introspection.getTables();
 	const existingNames = new Set(existing.map((t) => t.name));
 
-	for (const [table, schema] of Object.entries(REQUIRED_TABLES)) {
-		if (!existingNames.has(table)) {
+	const tableNames = database.tableNames ?? resolveCorsairDbTables();
+
+	for (const [logicalTable, schema] of Object.entries(REQUIRED_TABLES)) {
+		const physicalTable = tableNames[logicalTable as keyof typeof tableNames];
+		if (!existingNames.has(physicalTable)) {
+			const mapped =
+				physicalTable !== logicalTable
+					? ` (dbTables.${logicalTable} → "${physicalTable}")`
+					: '';
 			warn(
-				`[corsair:setup] Table "${table}" does not exist. ` +
+				`[corsair:setup] Table "${physicalTable}" does not exist${mapped}. ` +
 					'Run your database migrations before calling setupCorsair.\n' +
 					`Schema: ${JSON.stringify(describeZodSchema(schema), null, 2)}`,
 			);
@@ -674,7 +681,11 @@ async function checkAuthStatus(
 	const isReady =
 		missingIntegration.length === 0 && missingAccount.length === 0;
 
-	if (isReady) {
+	if (authType === 'managed_pricing') {
+		log(
+			`[corsair:setup] '${pluginId}' (managed_pricing) uses Corsair metered credentials via Hub — nothing to store in your database. Pass hub: { ... } to createCorsair().`,
+		);
+	} else if (isReady) {
 		log(`[corsair:setup] '${pluginId}' (${authType}) is configured ✓`);
 	} else if (authType === 'managed') {
 		log(

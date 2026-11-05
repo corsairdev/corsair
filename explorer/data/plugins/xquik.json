@@ -1,0 +1,1740 @@
+{
+  "id": "xquik",
+  "displayName": "Xquik",
+  "description": "X/Twitter automation API for searching tweets, managing webhooks, and social account actions.",
+  "npmPackageName": "@corsair-dev/xquik",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 2,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "xquik.api.media.download",
+      "shortPath": "media.download",
+      "description": "Download images and videos from one or more tweets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tweetIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tweetInput",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tweetUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cacheHit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "galleryUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalMedia",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalTweets",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tweetId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.media.uploadFromUrl",
+      "shortPath": "media.uploadFromUrl",
+      "description": "Upload public media URLs for use in Xquik tweet creation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mediaUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.trends.get",
+      "shortPath": "trends.get",
+      "description": "Get trending X topics by WOEID region",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "woeid",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "trends",
+            "optional": false,
+            "type": "{ description?: string, name: string, query?: string, rank?: number }[]"
+          },
+          {
+            "key": "woeid",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.tweets.batch",
+      "shortPath": "tweets.batch",
+      "description": "Fetch up to 100 tweets by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "has_next_page",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tweets",
+            "optional": false,
+            "type": "{ author?: { coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }, bookmarkCount?: number, conversationId?: string, createdAt?: string, entities?: {}, id: string, inReplyToId?: string, inReplyToUserId?: string, inReplyToUsername?: string, isLimitedReply?: boolean, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, lang?: string, likeCount?: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount?: number, replyCount?: number, retweetCount?: number, source?: string, text: string, type?: string, url?: string, viewCount?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.tweets.create",
+      "shortPath": "tweets.create",
+      "description": "Create a tweet or reply from a connected X account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachment_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "community_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_note_tweet",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "reply_to_tweet_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: true, tweetId: string } | { charged: boolean, error: x_write_unconfirmed, message?: string, retryable: false, status: pending_confirmation, writeActionId: string }"
+      }
+    },
+    {
+      "path": "xquik.api.tweets.delete",
+      "shortPath": "tweets.delete",
+      "description": "Delete a tweet from a connected X account",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.tweets.get",
+      "shortPath": "tweets.get",
+      "description": "Get a tweet with full text, author, metrics, and media",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ followers: number, id: string, profilePicture?: string, username: string, verified: boolean }"
+          },
+          {
+            "key": "tweet",
+            "optional": false,
+            "type": "{ bookmarkCount: number, conversationId?: string, createdAt?: string, entities?: {}, id: string, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, likeCount: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount: number, replyCount: number, retweetCount: number, source?: string, text: string, viewCount: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.tweets.like",
+      "shortPath": "tweets.like",
+      "description": "Like a tweet from a connected X account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.tweets.retweet",
+      "shortPath": "tweets.retweet",
+      "description": "Retweet a tweet from a connected X account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.tweets.search",
+      "shortPath": "tweets.search",
+      "description": "Search tweets with X query operators and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "anyWords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cashtags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exactPhrase",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeWords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromUser",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hashtags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inReplyToTweetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mediaType",
+            "optional": true,
+            "type": "gifs | images | links | media | none | videos"
+          },
+          {
+            "key": "mentioning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minFaves",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minQuotes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minReplies",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minRetweets",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quotes",
+            "optional": true,
+            "type": "exclude | include | only"
+          },
+          {
+            "key": "quotesOfTweetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "exclude | include | only"
+          },
+          {
+            "key": "retweets",
+            "optional": true,
+            "type": "exclude | include | only"
+          },
+          {
+            "key": "retweetsOfTweetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sinceDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toUser",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "untilDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verifiedOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "queryType",
+            "optional": true,
+            "type": "Latest | Top"
+          },
+          {
+            "key": "sinceTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "untilTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "has_next_page",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tweets",
+            "optional": false,
+            "type": "{ author?: { coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }, bookmarkCount?: number, conversationId?: string, createdAt?: string, entities?: {}, id: string, inReplyToId?: string, inReplyToUserId?: string, inReplyToUsername?: string, isLimitedReply?: boolean, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, lang?: string, likeCount?: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount?: number, replyCount?: number, retweetCount?: number, source?: string, text: string, type?: string, url?: string, viewCount?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.tweets.unlike",
+      "shortPath": "tweets.unlike",
+      "description": "Remove a like from a connected X account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.users.batch",
+      "shortPath": "users.batch",
+      "description": "Look up up to 100 X users by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "has_next_page",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.users.follow",
+      "shortPath": "users.follow",
+      "description": "Follow an X user from a connected account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.users.followers",
+      "shortPath": "users.followers",
+      "description": "List followers of an X user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "has_next_page",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.users.following",
+      "shortPath": "users.following",
+      "description": "List accounts an X user follows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "has_next_page",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get an X user profile by username or user ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coverPicture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "following",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profilePicture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statusesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.users.search",
+      "shortPath": "users.search",
+      "description": "Search X users by name or username",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "has_next_page",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.users.tweets",
+      "shortPath": "users.tweets",
+      "description": "List recent tweets posted by an X user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "anyWords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cashtags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exactPhrase",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeWords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromUser",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hashtags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inReplyToTweetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mediaType",
+            "optional": true,
+            "type": "gifs | images | links | media | none | videos"
+          },
+          {
+            "key": "mentioning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minFaves",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minQuotes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minReplies",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minRetweets",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quotes",
+            "optional": true,
+            "type": "exclude | include | only"
+          },
+          {
+            "key": "quotesOfTweetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "exclude | include | only"
+          },
+          {
+            "key": "retweets",
+            "optional": true,
+            "type": "exclude | include | only"
+          },
+          {
+            "key": "retweetsOfTweetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sinceDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toUser",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "untilDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verifiedOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeParentTweet",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeReplies",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "has_next_page",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tweets",
+            "optional": false,
+            "type": "{ author?: { coverPicture?: string, createdAt?: string, description?: string, followers?: number, following?: number, id: string, location?: string, name: string, profilePicture?: string, statusesCount?: number, username: string, verified?: boolean }, bookmarkCount?: number, conversationId?: string, createdAt?: string, entities?: {}, id: string, inReplyToId?: string, inReplyToUserId?: string, inReplyToUsername?: string, isLimitedReply?: boolean, isNoteTweet?: boolean, isQuoteStatus?: boolean, isReply?: boolean, lang?: string, likeCount?: number, media?: { mediaUrl?: string, type?: animated_gif | photo | video, url?: string }[], quoteCount?: number, replyCount?: number, retweetCount?: number, source?: string, text: string, type?: string, url?: string, viewCount?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.users.unfollow",
+      "shortPath": "users.unfollow",
+      "description": "Unfollow an X user from a connected account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create an Xquik webhook endpoint subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventTypes",
+            "optional": false,
+            "type": "tweet.new | tweet.quote | tweet.reply | tweet.retweet[]"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventTypes",
+            "optional": false,
+            "type": "tweet.new | tweet.quote | tweet.reply | tweet.retweet[]"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isActive",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.webhooks.deactivate",
+      "shortPath": "webhooks.deactivate",
+      "description": "Deactivate an Xquik webhook endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.webhooks.deliveries",
+      "shortPath": "webhooks.deliveries",
+      "description": "List delivery attempts for an Xquik webhook endpoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deliveries",
+            "optional": false,
+            "type": "{ attempts: number, createdAt: string, deliveredAt?: string, id: string, lastError?: string, lastStatusCode?: number, status: string, streamEventId: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List configured Xquik webhook endpoints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ createdAt: string, eventTypes: tweet.new | tweet.quote | tweet.reply | tweet.retweet[], id: string, isActive: boolean, url: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.webhooks.test",
+      "shortPath": "webhooks.test",
+      "description": "Send a test delivery to an Xquik webhook endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statusCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a Xquik webhook URL, event types, or active state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "tweet.new | tweet.quote | tweet.reply | tweet.retweet[]"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventTypes",
+            "optional": false,
+            "type": "tweet.new | tweet.quote | tweet.reply | tweet.retweet[]"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isActive",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "xquik.api.writeActions.get",
+      "shortPath": "writeActions.get",
+      "description": "Check the status of a pending Xquik write action",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "charged",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "confirmationAttempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "confirmationCheckedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confirmationSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confirmedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "retryable",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "sendDispatched",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "sendDispatchedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "failed | pending_confirmation | success"
+          },
+          {
+            "key": "targetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tweetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "writeActionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "xquik.webhooks.events.monitor",
+      "shortPath": "events.monitor",
+      "description": "Handle a signed Xquik monitor event delivery",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "deliveryId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "tweet.new | tweet.quote | tweet.reply | tweet.retweet | webhook.test"
+          },
+          {
+            "key": "occurredAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schemaVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streamEventId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ data: {}, deliveryId?: string, eventType: tweet.new | tweet.quote | tweet.reply | tweet.retweet | webhook.test, occurredAt?: string, query?: string, schemaVersion?: string, streamEventId?: string, timestamp?: string, username?: string }",
+      "usageExample": "xquik({\n    webhookHooks: {\n        events: {\n            monitor: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "xquik.webhooks.events.test",
+      "shortPath": "events.test",
+      "description": "Handle a signed Xquik test webhook delivery",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "deliveryId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "tweet.new | tweet.quote | tweet.reply | tweet.retweet | webhook.test"
+          },
+          {
+            "key": "occurredAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schemaVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streamEventId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ data: {}, deliveryId?: string, eventType: tweet.new | tweet.quote | tweet.reply | tweet.retweet | webhook.test, occurredAt?: string, query?: string, schemaVersion?: string, streamEventId?: string, timestamp?: string, username?: string }",
+      "usageExample": "xquik({\n    webhookHooks: {\n        events: {\n            test: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "xquik.db.deliveries.search",
+      "entityName": "deliveries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attempts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deliveredAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastError",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastStatusCode",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "streamEventId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xquik.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deliveryId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "occurredAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "schemaVersion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "streamEventId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xquik.db.tweets.search",
+      "entityName": "tweets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "xquik.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "coverPicture",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "followers",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "following",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profilePicture",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "statusesCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "verified",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "xquik.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isActive",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

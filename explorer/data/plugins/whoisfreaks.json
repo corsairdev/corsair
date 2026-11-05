@@ -1,0 +1,1012 @@
+{
+  "id": "whoisfreaks",
+  "displayName": "Whoisfreaks",
+  "description": "Whoisfreaks plugin for Corsair",
+  "npmPackageName": "@corsair-dev/whoisfreaks",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "whoisfreaks.api.asnWhois.lookup",
+      "shortPath": "asnWhois.lookup",
+      "description": "Fetch WHOIS data for an autonomous system number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asn",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asn",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.availability.bulkCheck",
+      "shortPath": "availability.bulkCheck",
+      "description": "Check availability for up to 100 domains or TLDs at once",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domainNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tld",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_domain_availability_response",
+            "optional": true,
+            "type": "{ domain?: string, availability?: string, message?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.availability.check",
+      "shortPath": "availability.check",
+      "description": "Check whether a domain is available for registration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sug",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "availability",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_available_response",
+            "optional": true,
+            "type": "{ domain?: string, availability?: string, message?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.bulkWhois.lookup",
+      "shortPath": "bulkWhois.lookup",
+      "description": "Fetch WHOIS records for up to 100 domains at once",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainNames",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_whois_response",
+            "optional": true,
+            "type": "{ status?: boolean, domain_name?: string, query_time?: string, whois_server?: string, domain_registered?: string, secure_dns?: boolean, domain_handle?: string, create_date?: string, update_date?: string, expiry_date?: string, name_servers?: string[], domain_status?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.dns.bulk",
+      "shortPath": "dns.bulk",
+      "description": "Fetch DNS records for up to 100 domains and IPs at once",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "ipAddresses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_dns_info",
+            "optional": true,
+            "type": "{ domainName?: string, ipAddress?: string, queryTime?: string, status?: boolean, dnsTypes?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.dns.historical",
+      "shortPath": "dns.historical",
+      "description": "Fetch historical DNS records for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currenPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "historicalDns",
+            "optional": true,
+            "type": "{ domainName?: string, ipAddress?: string, queryTime?: string, status?: boolean, dnsTypes?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.dns.live",
+      "shortPath": "dns.live",
+      "description": "Fetch live DNS records for a domain or IP",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queryTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dnsTypes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.dns.reverse",
+      "shortPath": "dns.reverse",
+      "description": "Find domains pointing at an IP or record value",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "a | mx | cname | ns | aaaa | txt | soa"
+          },
+          {
+            "key": "exact",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reverseDnsRecords",
+            "optional": true,
+            "type": "{ domainName?: string, ipAddress?: string, queryTime?: string, status?: boolean, dnsTypes?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.domainer.filesStatus",
+      "shortPath": "domainer.filesStatus",
+      "description": "Check availability and update status of domain data files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "newly",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "expired",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "cleaned_expired",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "dropped",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "dropped_with_backlinks",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "database_updates",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.domainReputation.lookup",
+      "shortPath": "domainReputation.lookup",
+      "description": "Assess threat reputation and trust score of a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assessed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "processing_time_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "risk_category",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "dga_score",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.geolocation.bulkLookup",
+      "shortPath": "geolocation.bulkLookup",
+      "description": "Look up geolocation data for up to 100 IPs at once",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ips",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ ip?: string, location?: {}, country_metadata?: {}, network?: {}, currency?: {} }[]"
+      }
+    },
+    {
+      "path": "whoisfreaks.api.geolocation.lookup",
+      "shortPath": "geolocation.lookup",
+      "description": "Look up geolocation data for an IP address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "country_metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.ipReputation.bulkLookup",
+      "shortPath": "ipReputation.bulkLookup",
+      "description": "Fetch threat reputation for up to 100 IPs at once",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ips",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ ip?: string, location?: {}, network?: {}, asn?: {}, security?: {} }[]"
+      }
+    },
+    {
+      "path": "whoisfreaks.api.ipReputation.lookup",
+      "shortPath": "ipReputation.lookup",
+      "description": "Fetch threat reputation for an IP address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "asn",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "security",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.ipWhois.lookup",
+      "shortPath": "ipWhois.lookup",
+      "description": "Fetch WHOIS data for an IP address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whois_server",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whois_raw_response",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.ssl.lookup",
+      "shortPath": "ssl.lookup",
+      "description": "Fetch the live SSL certificate for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chain",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "sslRaw",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queryTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sslCertificates",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "sslRaw",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.subdomains.lookup",
+      "shortPath": "subdomains.lookup",
+      "description": "Enumerate subdomains of a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | inactive"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subdomains",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.typosquatting.lookup",
+      "shortPath": "typosquatting.lookup",
+      "description": "Find typo-squat domain variants of a brand keyword",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pattern",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.whoisHistory.lookup",
+      "shortPath": "whoisHistory.lookup",
+      "description": "Fetch historical WHOIS records for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "whois",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "total_Result",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_Pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_Page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "whois_domains_historical",
+            "optional": true,
+            "type": "{ status?: boolean, domain_name?: string, query_time?: string, whois_server?: string, domain_registered?: string, secure_dns?: boolean, domain_handle?: string, create_date?: string, update_date?: string, expiry_date?: string, name_servers?: string[], domain_status?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.whoisLive.lookupV2",
+      "shortPath": "whoisLive.lookupV2",
+      "description": "Fetch real-time WHOIS information for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "domain_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whois_server",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_registered",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secure_dns",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "domain_handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "create_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "update_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiry_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name_servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "domain_status",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whoisfreaks.api.whoisReverse.lookup",
+      "shortPath": "whoisReverse.lookup",
+      "description": "Search WHOIS records by keyword across domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Total_Result",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Total_Pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Current_Page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "whois_domains_historical",
+            "optional": true,
+            "type": "{ status?: boolean, domain_name?: string, query_time?: string, whois_server?: string, domain_registered?: string, secure_dns?: boolean, domain_handle?: string, create_date?: string, update_date?: string, expiry_date?: string, name_servers?: string[], domain_status?: string[] }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

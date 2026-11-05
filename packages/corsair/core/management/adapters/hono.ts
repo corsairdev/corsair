@@ -23,6 +23,10 @@ type HonoLikeContext = {
 
 export type HonoHandler = (c: HonoLikeContext) => Response | Promise<Response>;
 
+/**
+ * Creates a Hono handler that forwards `c.req.raw` — the native Web Request,
+ * body untouched — to the shared management handler.
+ */
 export function toHonoHandler(
 	// `unknown` matches the managementHandler signature — see the justification
 	// there. The handler only reads the CORSAIR_INTERNAL symbol, so the public

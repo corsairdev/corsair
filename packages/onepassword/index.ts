@@ -153,7 +153,7 @@ const onePasswordEndpointMeta = {
 	},
 	'items.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an item from a vault [DESTRUCTIVE]',
+		description: 'Delete an item from a vault',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof onePasswordEndpointsNested

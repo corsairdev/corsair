@@ -1,0 +1,568 @@
+{
+  "id": "cincopa",
+  "displayName": "Cincopa",
+  "description": "Cincopa plugin for Corsair",
+  "npmPackageName": "@corsair-dev/cincopa",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "cincopa.api.asset.abortUploadFromUrl",
+      "shortPath": "asset.abortUploadFromUrl",
+      "description": "Abort an ongoing asset upload-in-progress",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusId",
+            "optional": false,
+            "type": "string",
+            "description": "Status tracking identifier of the upload to abort"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "runtime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cincopa.api.asset.getUploadFromUrlStatus",
+      "shortPath": "asset.getUploadFromUrlStatus",
+      "description": "Check the status of an asset upload initiated via URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusId",
+            "optional": false,
+            "type": "string",
+            "description": "Status tracking identifier from uploadFromUrl"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "runtime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "progress_bytes",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "file_size_bytes",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "resid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "more",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "debug",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cincopa.api.asset.uploadFromUrl",
+      "shortPath": "asset.uploadFromUrl",
+      "description": "Upload a new asset directly from a provided external URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "External URL of the media asset to upload"
+          },
+          {
+            "key": "fid",
+            "optional": true,
+            "type": "string",
+            "description": "Optional gallery folder identifier (FID) target"
+          },
+          {
+            "key": "rid",
+            "optional": true,
+            "type": "string",
+            "description": "Optional existing resource identifier (RID) to replace"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Optional media asset type specification"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "runtime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cincopa.api.gallery.list",
+      "shortPath": "gallery.list",
+      "description": "List galleries with pagination, search, and tag filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search term to filter galleries"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number for pagination (starts at 1)"
+          },
+          {
+            "key": "itemsPerPage",
+            "optional": true,
+            "type": "number",
+            "description": "Number of items per page (1-100)"
+          },
+          {
+            "key": "filterTags",
+            "optional": true,
+            "type": "string",
+            "description": "Filter galleries by tag"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "runtime",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "galleries",
+            "optional": false,
+            "type": "{ fid: string, name: string, description: string, upload_url: string, tags: string, modified: string, syncstatus: string }[]"
+          },
+          {
+            "key": "tag_cloud",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "items_data",
+            "optional": false,
+            "type": "{ page: number, items_per_page: number, items_count: number, pages_count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cincopa.api.general.getUploadIframe",
+      "shortPath": "general.getUploadIframe",
+      "description": "Get an embeddable upload iframe URL for a gallery",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fid",
+            "optional": true,
+            "type": "string",
+            "description": "Optional gallery folder identifier (FID) target"
+          },
+          {
+            "key": "rrid",
+            "optional": true,
+            "type": "string",
+            "description": "Optional replace resource identifier (RRID) target"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public upload iframe URL stripped of credentials"
+          },
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "Safe iframe HTML markup with credentials redacted"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cincopa.api.general.ping",
+      "shortPath": "general.ping",
+      "description": "Validate API connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "ping",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "runtime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "accemail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accid_num",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "useremail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userid_num",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revertid",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "cincopa.db.account.search",
+      "entityName": "account",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accemail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "useremail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "permissions",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cincopa.db.assets.search",
+      "entityName": "assets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filename",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "caption",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "long_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filesize",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tags",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uploaded_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uploaded",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "syncstatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "storage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cincopa.db.galleries.search",
+      "entityName": "galleries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "upload_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tags",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "syncstatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cincopa.db.uploadStatus.search",
+      "entityName": "uploadStatus",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "more",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "debug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

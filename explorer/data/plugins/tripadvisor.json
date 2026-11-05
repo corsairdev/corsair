@@ -1,0 +1,575 @@
+{
+  "id": "tripadvisor",
+  "displayName": "Tripadvisor",
+  "description": "Search the Tripadvisor Terra catalog, read full location details, photos, reviews, nearby locations, and geo details.",
+  "npmPackageName": "@corsair-dev/tripadvisor",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tripadvisor.api.catalog.locationsNearby",
+      "shortPath": "catalog.locationsNearby",
+      "description": "Search nearby Tripadvisor catalog locations by coordinates or location ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "MI | KM"
+          },
+          {
+            "key": "sw_lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sw_lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ne_lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ne_lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "RESTAURANT | ATTRACTION | HOTEL"
+          },
+          {
+            "key": "min_rating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ bearing?: number, distance_kilometers?: number, distance_miles?: number, location: { addresses?: { city?: string, country_code?: string, country_name?: string, formatted?: string, language?: string, postal_code?: string, state?: string, street_address?: string, street_address2?: string }[], coordinates?: { latitude: number, longitude: number }, descriptions: { language: string, value: string }[], geo: string, geo_id: number, id: number, names: { language: string, value: string, primary?: boolean }[], overall_rating?: { count?: number, icon_url?: string, rating?: number }, urls?: { android_intent?: string, menu?: string, official?: string, tripadvisor?: { main?: string, photos?: string, questions_answers?: string, write_review?: string } } } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page?: number, size?: number, total_elements?: number, total_pages?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tripadvisor.api.geo.details",
+      "shortPath": "geo.details",
+      "description": "Get factual and hierarchy details for a Tripadvisor geo",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "abbreviation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "awards",
+            "optional": true,
+            "type": "{ category?: string, geo?: string, image?: { key?: string, url?: string }, name?: string, type?: Certificate of Excellence | Travelers' Choice, year?: number }[]"
+          },
+          {
+            "key": "collections",
+            "optional": true,
+            "type": "{ id?: string, title?: string, url?: string }[]"
+          },
+          {
+            "key": "coordinates",
+            "optional": true,
+            "type": "{ latitude: number, longitude: number }"
+          },
+          {
+            "key": "descriptions",
+            "optional": false,
+            "type": "{ language: string, value: string }[]"
+          },
+          {
+            "key": "forum_faqs",
+            "optional": true,
+            "type": "{ answers?: { text?: string, title?: string }[], language?: string, question?: string }[]"
+          },
+          {
+            "key": "hierarchy",
+            "optional": true,
+            "type": "{ ancestors?: { geo_id?: number, name?: string, rank?: number }[] }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "names",
+            "optional": false,
+            "type": "{ language: string, value: string, primary?: boolean }[]"
+          },
+          {
+            "key": "suggested_itineraries",
+            "optional": true,
+            "type": "{ itinerary?: { day?: number, description?: string, location_ids?: { id?: number, rank?: number }[] }[], trip_creation_method?: string, trip_id?: number, trip_interest_tags?: string[], trip_title?: string, trip_url?: string }[]"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "{ id: number, name: string }"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ flights?: string, geo_page?: string, hotels?: string, restaurants?: string, things_to_do?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tripadvisor.api.location.details",
+      "shortPath": "location.details",
+      "description": "Get full details, ratings, rankings and awards for a Tripadvisor location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accommodation",
+            "optional": true,
+            "type": "{ brand?: string, chain?: string, prices?: { currency?: string, max_rate?: number, min_rate?: number }[], room_count?: number, star_rating?: number }"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ city?: string, country_code?: string, country_name?: string, formatted?: string, language?: string, postal_code?: string, state?: string, street_address?: string, street_address2?: string }[]"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ id?: string, name?: string, type?: string, type_id?: string }[]"
+          },
+          {
+            "key": "awards",
+            "optional": true,
+            "type": "{ category?: string, geo?: string, image?: { key?: string, url?: string }, name?: string, type?: Certificate of Excellence | Travelers' Choice, year?: number }[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ display_name?: string, hierarchy?: string, id: string, parent_category?: { display_name?: string, id?: string, parent_category?: {} }, top_level_category?: Accommodation | Experience | Attraction | Eat & Drink }[]"
+          },
+          {
+            "key": "coordinates",
+            "optional": true,
+            "type": "{ latitude: number, longitude: number }"
+          },
+          {
+            "key": "descriptions",
+            "optional": false,
+            "type": "{ language: string, value: string }[]"
+          },
+          {
+            "key": "geo",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "geo_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "names",
+            "optional": false,
+            "type": "{ language: string, value: string, primary?: boolean }[]"
+          },
+          {
+            "key": "neighborhoods",
+            "optional": true,
+            "type": "{ geo_id?: string, name?: string }[]"
+          },
+          {
+            "key": "official_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opening_hours",
+            "optional": true,
+            "type": "{ formatted?: string[], periods?: { closes?: string, day_of_week?: Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday, opens?: string }[], timezone?: string }"
+          },
+          {
+            "key": "phone_numbers",
+            "optional": true,
+            "type": "{ type: string, value: string }[]"
+          },
+          {
+            "key": "photos",
+            "optional": false,
+            "type": "{ total_count?: number }"
+          },
+          {
+            "key": "price_level",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rankings",
+            "optional": true,
+            "type": "{ category?: string, category_id?: string, display_text?: string, geo?: string, geo_id?: number, rank?: number, total?: number }[]"
+          },
+          {
+            "key": "recommended_visit_length",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ closed_date?: string, reopen_date?: string, value: OPEN | CLOSED | TEMPORARILY_CLOSED }"
+          },
+          {
+            "key": "traveler_ratings",
+            "optional": true,
+            "type": "{ breakdowns?: { count?: number, rating?: number, rating_name?: string }[], language_counts?: { count?: number, language?: string }[], overall?: { count?: number, icon_url?: string, rating?: number }, subratings?: { count?: number, icon_url?: string, rating?: number, type?: string, type_name?: string }[] }"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ android_intent?: string, menu?: string, official?: string, tripadvisor?: { main?: string, photos?: string, questions_answers?: string, write_review?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tripadvisor.api.location.photos",
+      "shortPath": "location.photos",
+      "description": "Get photos for a Tripadvisor location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ caption?: string, cv_metadata?: { attractiveness_score?: number, scene?: string }, id: number, location_id: number, photo: { key?: string, media_type?: string, original_height?: number, original_size_url?: string, original_width?: number }, publish_ts: string, source: { name: Management | Traveler }, user?: { avatar_url?: { key?: string, url?: string }, geo?: string, geo_id?: number, username?: string } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page?: number, size?: number, total_elements?: number, total_pages?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tripadvisor.api.location.reviews",
+      "shortPath": "location.reviews",
+      "description": "Get traveler reviews for a Tripadvisor location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rating_min",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "trip_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "published_after_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "MOST_RECENT | HIGHEST_RATED"
+          },
+          {
+            "key": "published_after_review_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, owner_response?: { author_connection?: string, avatar_url?: { key?: string, url?: string }, geo_id?: number, id?: number, publish_date?: string, text?: { language: string, value: string, primary?: boolean }[], username?: string }, photos?: { key?: string, media_type?: string, original_height?: number, original_size_url?: string, original_width?: number }[], publish_ts: string, rating: number, rating_icon_url?: { key?: string, url?: string }, subratings: { icon_url: { key?: string, url?: string }, rating: number, type: string, type_name: string }[], text: { language: string, value: string, primary?: boolean }[], title: { language: string, value: string, primary?: boolean }[], travel_date: string, trip_type: BUSINESS | COUPLES | FAMILY | FRIENDS | SOLO | NONE, url?: string, user?: { avatar_url?: { key?: string, url?: string }, geo?: string, geo_id?: number, username?: string } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page?: number, size?: number, total_elements?: number, total_pages?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tripadvisor.api.locations.nearby",
+      "shortPath": "locations.nearby",
+      "description": "Find full location representations near an area; filter category HOTEL to list nearby hotels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "MI | KM"
+          },
+          {
+            "key": "sw_lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sw_lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ne_lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ne_lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "RESTAURANT | ATTRACTION | HOTEL"
+          },
+          {
+            "key": "min_rating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_photo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ bearing?: number, distance_kilometers?: number, distance_miles?: number, location: { accommodation?: { brand?: string, chain?: string, prices?: { currency?: string, max_rate?: number, min_rate?: number }[], room_count?: number, star_rating?: number }, addresses?: { city?: string, country_code?: string, country_name?: string, formatted?: string, language?: string, postal_code?: string, state?: string, street_address?: string, street_address2?: string }[], attributes?: { id?: string, name?: string, type?: string, type_id?: string }[], awards?: { category?: string, geo?: string, image?: { key?: string, url?: string }, name?: string, type?: Certificate of Excellence | Travelers' Choice, year?: number }[], categories?: { display_name?: string, hierarchy?: string, id: string, parent_category?: { display_name?: string, id?: string, parent_category?: {} }, top_level_category?: Accommodation | Experience | Attraction | Eat & Drink }[], coordinates?: { latitude: number, longitude: number }, descriptions: { language: string, value: string }[], geo: string, geo_id: number, id: number, names: { language: string, value: string, primary?: boolean }[], neighborhoods?: { geo_id?: string, name?: string }[], official_email?: string, opening_hours?: { formatted?: string[], periods?: { closes?: string, day_of_week?: Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday, opens?: string }[], timezone?: string }, phone_numbers?: { type: string, value: string }[], photos: { total_count?: number }, price_level?: string, rankings?: { category?: string, category_id?: string, display_text?: string, geo?: string, geo_id?: number, rank?: number, total?: number }[], recommended_visit_length?: number, status: { closed_date?: string, reopen_date?: string, value: OPEN | CLOSED | TEMPORARILY_CLOSED }, traveler_ratings?: { breakdowns?: { count?: number, rating?: number, rating_name?: string }[], language_counts?: { count?: number, language?: string }[], overall?: { count?: number, icon_url?: string, rating?: number }, subratings?: { count?: number, icon_url?: string, rating?: number, type?: string, type_name?: string }[] }, urls?: { android_intent?: string, menu?: string, official?: string, tripadvisor?: { main?: string, photos?: string, questions_answers?: string, write_review?: string } } }, photo?: { caption?: string, cv_metadata?: { attractiveness_score?: number, scene?: string }, id: number, location_id: number, photo: { key?: string, media_type?: string, original_height?: number, original_size_url?: string, original_width?: number }, publish_ts: string, source: { name: Management | Traveler }, user?: { avatar_url?: { key?: string, url?: string }, geo?: string, geo_id?: number, username?: string } } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page?: number, size?: number, total_elements?: number, total_pages?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

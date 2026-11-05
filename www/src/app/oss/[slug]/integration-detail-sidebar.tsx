@@ -107,7 +107,9 @@ export function IntegrationDetailSidebar({
 						</div>
 					) : null}
 
-					{session && integration.claimedByCurrentUser ? (
+					{session &&
+					integration.claimedByCurrentUser &&
+					!integration.urls.prUrl ? (
 						<div className="flex flex-wrap items-center gap-2 pt-1">
 							<UnclaimIntegrationButton integrationId={integration.id} />
 						</div>

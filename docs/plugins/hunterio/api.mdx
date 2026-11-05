@@ -1,0 +1,11216 @@
+---
+title: API
+description: "API reference for Hunter.io: every `hunterio.api.*` operation with input and output types."
+---
+
+Every `hunterio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get the Hunter.io account profile
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string,
+  plan_name?: string,
+  plan_level?: number,
+  reset_date?: string,
+  team_id?: number,
+  requests?: {
+    credits?: {
+      used?: number,
+      available?: number,
+      remaining?: number,
+      over_quota?: number
+    },
+    searches?: {
+      used?: number,
+      available?: number,
+      remaining?: number,
+      over_quota?: number
+    },
+    verifications?: {
+      used?: number,
+      available?: number,
+      remaining?: number,
+      over_quota?: number
+    }
+  },
+  calls?: {
+    _deprecation_notice?: string,
+    used?: number,
+    available?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`account.update`
+
+Update the Hunter.io account profile
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.account.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Account Stats
+
+### get
+
+`accountStats.get`
+
+Get global account statistics and credit usage
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.accountStats.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `any` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Api Keys
+
+### create
+
+`apiKeys.create`
+
+Create a new API key
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.apiKeys.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string | null,
+  token?: string,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`apiKeys.delete`
+
+Delete an API key permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.apiKeys.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`apiKeys.list`
+
+List the API keys on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.apiKeys.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string | null,
+  token?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`apiKeys.replace`
+
+Replace an API key definition
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.apiKeys.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string | null,
+  token?: string,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`apiKeys.update`
+
+Update an API key
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.apiKeys.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string | null,
+  token?: string,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Companies
+
+### bulkCopy
+
+`companies.bulkCopy`
+
+Copy companies to another company list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companies.bulkCopy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_company_list_id` | `number \| string` | Yes | — |
+| `company_ids` | `number[]` | No | — |
+| `company_list_id` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  target_company_list_id?: number,
+  companies_count?: number,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDelete
+
+`companies.bulkDelete`
+
+Delete companies in bulk permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.companies.bulkDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_ids` | `number[]` | No | — |
+| `company_list_id` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  requested_count?: number,
+  deleted_count?: number,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkMove
+
+`companies.bulkMove`
+
+Move companies to another company list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companies.bulkMove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_list_id` | `number \| string` | Yes | — |
+| `target_company_list_id` | `number \| string` | Yes | — |
+| `company_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  source_company_list_id?: number,
+  target_company_list_id?: number,
+  companies_count?: number,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkTag
+
+`companies.bulkTag`
+
+Assign a tag to companies in bulk
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companies.bulkTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_ids` | `number[]` | No | — |
+| `company_list_id` | `number \| string` | No | — |
+| `tag_id` | `number \| string` | No | — |
+| `tag_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tag?: {
+    id?: number,
+    name?: string,
+    color?: string | null,
+    created_at?: string
+  },
+  companies_count?: number,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`companies.create`
+
+Add a company to the account from a domain
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  domain?: string | null,
+  leads_count?: number,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`companies.delete`
+
+Delete a company permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.companies.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`companies.get`
+
+Get a company
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.companies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  domain?: string | null,
+  leads_count?: number,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companies.list`
+
+List companies with filters
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.companies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `company_name \| website \| company_size \| company_type \| leads_count \| created_at \| updated_at \| last_exported_at \| last_funding_date` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `query` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `website` | `string` | No | — |
+| `company_size` | `string` | No | — |
+| `company_type` | `string` | No | — |
+| `industry` | `string` | No | — |
+| `technology` | `string` | No | — |
+| `keywords` | `string` | No | — |
+| `source` | `string` | No | — |
+| `tags` | `string` | No | — |
+| `company_list_ids` | `string` | No | — |
+| `leads_count` | `string` | No | — |
+| `location` | `string` | No | — |
+| `country` | `string` | No | — |
+| `founded_year` | `string` | No | — |
+| `funding_series` | `string` | No | — |
+| `funding_amount` | `string` | No | — |
+| `last_funding_date` | `string` | No | — |
+| `location_country_included` | `string` | No | — |
+| `location_country_excluded` | `string` | No | — |
+| `location_state_included` | `string` | No | — |
+| `location_state_excluded` | `string` | No | — |
+| `location_city_included` | `string` | No | — |
+| `location_city_excluded` | `string` | No | — |
+| `location_continent_included` | `string` | No | — |
+| `location_continent_excluded` | `string` | No | — |
+| `location_business_region_included` | `string` | No | — |
+| `location_business_region_excluded` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  companies: {
+    id?: number,
+    domain?: string | null,
+    leads_count?: number,
+    created_at?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tag
+
+`companies.tag`
+
+Assign a tag to a company
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companies.tag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `tag_id` | `number \| string` | No | — |
+| `tag_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### untag
+
+`companies.untag`
+
+Remove a tag from a company [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hunterio.api.companies.untag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `tag_id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Company List Folders
+
+### create
+
+`companyListFolders.create`
+
+Create a company list folder
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyListFolders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  company_lists_count?: number,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`companyListFolders.delete`
+
+Delete a company list folder permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.companyListFolders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`companyListFolders.get`
+
+Get a company list folder
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.companyListFolders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  company_lists_count?: number,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companyListFolders.list`
+
+List the company list folders
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.companyListFolders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  folders: {
+    id?: number,
+    name?: string,
+    color?: string | null,
+    company_lists_count?: number,
+    created_at?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`companyListFolders.replace`
+
+Replace a company list folder
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyListFolders.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`companyListFolders.update`
+
+Update a company list folder
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyListFolders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Company Lists
+
+### addCompany
+
+`companyLists.addCompany`
+
+Add a company to a company list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyLists.addCompany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_list_id` | `number \| string` | Yes | — |
+| `company_id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  domain?: string | null,
+  leads_count?: number,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`companyLists.create`
+
+Create a company list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyLists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `static \| dynamic` | No | — |
+| `filters` | `any` | No | — |
+| `company_list_folder_id` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  type?: string,
+  companies_count?: number,
+  company_list_folder_id?: number | null,
+  created_at?: string,
+  filters?: any
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`companyLists.delete`
+
+Delete a company list permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.companyLists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status?: string,
+  data?: any,
+  meta?: {
+    total?: number,
+    limit?: number,
+    offset?: number,
+    results?: number,
+    params?: any
+  }
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### favorite
+
+`companyLists.favorite`
+
+Mark a company list as favorite
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyLists.favorite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  favorited?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`companyLists.get`
+
+Get a company list and its companies
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.companyLists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  type?: string,
+  companies_count?: number,
+  company_list_folder_id?: number | null,
+  created_at?: string,
+  filters?: any,
+  companies?: {
+    id?: number,
+    domain?: string | null,
+    leads_count?: number,
+    created_at?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companyLists.list`
+
+List the company lists on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.companyLists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  company_lists: {
+    id?: number,
+    name?: string,
+    type?: string,
+    companies_count?: number,
+    company_list_folder_id?: number | null,
+    created_at?: string,
+    filters?: any
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeCompany
+
+`companyLists.removeCompany`
+
+Remove a company from a company list [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hunterio.api.companyLists.removeCompany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_list_id` | `number \| string` | Yes | — |
+| `company_id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### replace
+
+`companyLists.replace`
+
+Replace a company list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyLists.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `static \| dynamic` | No | — |
+| `filters` | `any` | No | — |
+| `company_list_folder_id` | `number \| string` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### unfavorite
+
+`companyLists.unfavorite`
+
+Remove the favorite mark from a company list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyLists.unfavorite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  favorited?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`companyLists.update`
+
+Update a company list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyLists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `static \| dynamic` | No | — |
+| `filters` | `any` | No | — |
+| `company_list_folder_id` | `number \| string` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Company Tags
+
+### create
+
+`companyTags.create`
+
+Create a company tag
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyTags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`companyTags.delete`
+
+Delete a company tag permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.companyTags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`companyTags.get`
+
+Get a company tag
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.companyTags.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companyTags.list`
+
+List the company tags on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.companyTags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tags: {
+    id?: number,
+    name?: string,
+    color?: string | null,
+    created_at?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`companyTags.replace`
+
+Replace a company tag
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyTags.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`companyTags.update`
+
+Update a company tag
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.companyTags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Connected Apps
+
+### get
+
+`connectedApps.get`
+
+Get a connected app
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.connectedApps.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  provider?: string,
+  name?: string,
+  category?: string,
+  provider_email?: string | null,
+  connected_at?: string,
+  updated_at?: string,
+  attribute_mappings?: {
+    target_field?: string,
+    source_field?: string,
+    direction?: string,
+    conflict_policy?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`connectedApps.list`
+
+List the connected apps on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.connectedApps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  provider?: string,
+  name?: string,
+  category?: string,
+  provider_email?: string | null,
+  connected_at?: string,
+  updated_at?: string,
+  attribute_mappings?: {
+    target_field?: string,
+    source_field?: string,
+    direction?: string,
+    conflict_policy?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### push
+
+`connectedApps.push`
+
+Push leads to a connected app
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.connectedApps.push({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `lead_ids` | `number[]` | No | — |
+| `leads_list_id` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  connected_app_id?: number,
+  provider?: string,
+  leads_count?: number,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Attributes
+
+### create
+
+`customAttributes.create`
+
+Create a custom attribute
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.customAttributes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  label?: string,
+  slug?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customAttributes.delete`
+
+Delete a custom attribute permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.customAttributes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`customAttributes.get`
+
+Get a custom attribute
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.customAttributes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  label?: string,
+  slug?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customAttributes.list`
+
+List the custom attributes on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.customAttributes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  leads_custom_attributes: {
+    id?: number,
+    label?: string,
+    slug?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`customAttributes.replace`
+
+Replace a custom attribute
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.customAttributes.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `label` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`customAttributes.update`
+
+Update a custom attribute
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.customAttributes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `label` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Discover
+
+### companies
+
+`discover.companies`
+
+Discover companies matching the given filters
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.discover.companies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `organization` | `object` | No | — |
+| `headquarters_location` | `object` | No | — |
+| `industry` | `object` | No | — |
+| `headcount` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+[]` | No | — |
+| `company_type` | `object` | No | — |
+| `keywords` | `object` | No | — |
+| `year_founded` | `object` | No | — |
+| `technology` | `object` | No | — |
+| `funding` | `object` | No | — |
+| `job_openings` | `object` | No | — |
+| `similar_to` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  domain?: string[],
+  name?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="headquarters_location full type">
+
+```ts
+{
+  include?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[],
+  exclude?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="industry full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="company_type full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="keywords full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[],
+  match?: all | any
+}
+```
+</Accordion>
+
+<Accordion title="year_founded full type">
+
+```ts
+{
+  include?: number[],
+  exclude?: number[],
+  from?: number,
+  to?: number
+}
+```
+</Accordion>
+
+<Accordion title="technology full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[],
+  match?: all | any
+}
+```
+</Accordion>
+
+<Accordion title="funding full type">
+
+```ts
+{
+  series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[],
+  amount?: {
+    from?: number,
+    to?: number
+  },
+  date?: {
+    from?: string,
+    to?: string
+  },
+  received?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="job_openings full type">
+
+```ts
+{
+  hiring?: boolean,
+  department?: string[],
+  job_title?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  posted_date?: last7d | last30d | last90d,
+  open_roles?: {
+    from?: number,
+    to?: number
+  },
+  include_closed_roles?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="similar_to full type">
+
+```ts
+{
+  domain?: string,
+  organization?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string,
+  organization?: string,
+  emails_count?: {
+    personal?: number,
+    generic?: number,
+    total?: number
+  },
+  already_saved?: boolean,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  company_type?: string | null,
+  headcount?: string | null,
+  industry?: string | null,
+  keywords?: string[],
+  description?: string | null,
+  year_founded?: number | null,
+  socials?: {
+    facebook?: string | null,
+    instagram?: string | null,
+    twitter?: string | null,
+    youtube?: string | null
+  },
+  technologies?: string[],
+  technology_details?: {
+    category?: string,
+    category_label?: string,
+    name?: string,
+    slug?: string,
+    website?: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any,
+  filters?: any,
+  permalink?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### people
+
+`discover.people`
+
+Discover people matching the given filters
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.discover.people({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `organization` | `object` | No | — |
+| `headquarters_location` | `object` | No | — |
+| `industry` | `object` | No | — |
+| `headcount` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+[]` | No | — |
+| `company_type` | `object` | No | — |
+| `keywords` | `object` | No | — |
+| `year_founded` | `object` | No | — |
+| `technology` | `object` | No | — |
+| `funding` | `object` | No | — |
+| `job_openings` | `object` | No | — |
+| `similar_to` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  domain?: string[],
+  name?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="headquarters_location full type">
+
+```ts
+{
+  include?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[],
+  exclude?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="industry full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="company_type full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="keywords full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[],
+  match?: all | any
+}
+```
+</Accordion>
+
+<Accordion title="year_founded full type">
+
+```ts
+{
+  include?: number[],
+  exclude?: number[],
+  from?: number,
+  to?: number
+}
+```
+</Accordion>
+
+<Accordion title="technology full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[],
+  match?: all | any
+}
+```
+</Accordion>
+
+<Accordion title="funding full type">
+
+```ts
+{
+  series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[],
+  amount?: {
+    from?: number,
+    to?: number
+  },
+  date?: {
+    from?: string,
+    to?: string
+  },
+  received?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="job_openings full type">
+
+```ts
+{
+  hiring?: boolean,
+  department?: string[],
+  job_title?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  posted_date?: last7d | last30d | last90d,
+  open_roles?: {
+    from?: number,
+    to?: number
+  },
+  include_closed_roles?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="similar_to full type">
+
+```ts
+{
+  domain?: string,
+  organization?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string,
+  organization?: string,
+  emails_count?: {
+    personal?: number,
+    generic?: number,
+    total?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any,
+  filters?: any,
+  permalink?: string,
+  total_emails?: {
+    personal?: number,
+    generic?: number,
+    total?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### peoplePost
+
+`discover.peoplePost`
+
+Discover people with nested filters (POST form)
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.discover.peoplePost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `organization` | `object` | No | — |
+| `headquarters_location` | `object` | No | — |
+| `industry` | `object` | No | — |
+| `headcount` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+[]` | No | — |
+| `company_type` | `object` | No | — |
+| `keywords` | `object` | No | — |
+| `year_founded` | `object` | No | — |
+| `technology` | `object` | No | — |
+| `funding` | `object` | No | — |
+| `job_openings` | `object` | No | — |
+| `similar_to` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  domain?: string[],
+  name?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="headquarters_location full type">
+
+```ts
+{
+  include?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[],
+  exclude?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="industry full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="company_type full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="keywords full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[],
+  match?: all | any
+}
+```
+</Accordion>
+
+<Accordion title="year_founded full type">
+
+```ts
+{
+  include?: number[],
+  exclude?: number[],
+  from?: number,
+  to?: number
+}
+```
+</Accordion>
+
+<Accordion title="technology full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[],
+  match?: all | any
+}
+```
+</Accordion>
+
+<Accordion title="funding full type">
+
+```ts
+{
+  series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[],
+  amount?: {
+    from?: number,
+    to?: number
+  },
+  date?: {
+    from?: string,
+    to?: string
+  },
+  received?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="job_openings full type">
+
+```ts
+{
+  hiring?: boolean,
+  department?: string[],
+  job_title?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  posted_date?: last7d | last30d | last90d,
+  open_roles?: {
+    from?: number,
+    to?: number
+  },
+  include_closed_roles?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="similar_to full type">
+
+```ts
+{
+  domain?: string,
+  organization?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string,
+  organization?: string,
+  emails_count?: {
+    personal?: number,
+    generic?: number,
+    total?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any,
+  filters?: any,
+  permalink?: string,
+  total_emails?: {
+    personal?: number,
+    generic?: number,
+    total?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Discover Views
+
+### create
+
+`discoverViews.create`
+
+Save the current discover filters as a view
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.discoverViews.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  filters?: {
+  },
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`discoverViews.delete`
+
+Delete a saved discover view permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.discoverViews.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`discoverViews.get`
+
+Get a saved discover view
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.discoverViews.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  filters?: {
+  },
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`discoverViews.list`
+
+List saved discover views
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.discoverViews.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  filters?: {
+  },
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domain Count
+
+### get
+
+`domainCount.get`
+
+Count the email addresses available for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.domainCount.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `organization` | `object` | No | — |
+| `headquarters_location` | `object` | No | — |
+| `industry` | `object` | No | — |
+| `headcount` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+[]` | No | — |
+| `company_type` | `object` | No | — |
+| `keywords` | `object` | No | — |
+| `year_founded` | `object` | No | — |
+| `technology` | `object` | No | — |
+| `funding` | `object` | No | — |
+| `job_openings` | `object` | No | — |
+| `similar_to` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  domain?: string[],
+  name?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="headquarters_location full type">
+
+```ts
+{
+  include?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[],
+  exclude?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="industry full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="company_type full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="keywords full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[],
+  match?: all | any
+}
+```
+</Accordion>
+
+<Accordion title="year_founded full type">
+
+```ts
+{
+  include?: number[],
+  exclude?: number[],
+  from?: number,
+  to?: number
+}
+```
+</Accordion>
+
+<Accordion title="technology full type">
+
+```ts
+{
+  include?: string[],
+  exclude?: string[],
+  match?: all | any
+}
+```
+</Accordion>
+
+<Accordion title="funding full type">
+
+```ts
+{
+  series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[],
+  amount?: {
+    from?: number,
+    to?: number
+  },
+  date?: {
+    from?: string,
+    to?: string
+  },
+  received?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="job_openings full type">
+
+```ts
+{
+  hiring?: boolean,
+  department?: string[],
+  job_title?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  posted_date?: last7d | last30d | last90d,
+  open_roles?: {
+    from?: number,
+    to?: number
+  },
+  include_closed_roles?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="similar_to full type">
+
+```ts
+{
+  domain?: string,
+  organization?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  total?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domain Finder
+
+### find
+
+`domainFinder.find`
+
+Find the domain of a company by name
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.domainFinder.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `perfect_match` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string,
+  company_name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findPost
+
+`domainFinder.findPost`
+
+Find the domain of a company by name (POST form)
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.domainFinder.findPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `perfect_match` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string,
+  company_name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domain Search
+
+### search
+
+`domainSearch.search`
+
+List the email addresses found for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.domainSearch.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `company` | `string` | No | — |
+| `type` | `personal \| generic` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `department` | `string` | No | — |
+| `seniority` | `string` | No | — |
+| `job_titles` | `string` | No | — |
+| `decision_maker` | `boolean` | No | — |
+| `required_field` | `string` | No | — |
+| `verification_status` | `string` | No | — |
+| `source_type` | `found \| generated` | No | — |
+| `saved_leads` | `boolean` | No | — |
+| `aggregations` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string,
+  disposable?: boolean,
+  webmail?: boolean,
+  accept_all?: boolean,
+  pattern?: string | null,
+  organization?: string | null,
+  linked_domains?: string[],
+  emails?: {
+    value?: string,
+    type?: string,
+    confidence?: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    position?: string | null,
+    position_raw?: string | null,
+    seniority?: string | null,
+    department?: string | null,
+    decision_maker?: boolean,
+    linkedin?: string | null,
+    twitter?: string | null,
+    phone_number?: string | null,
+    source_type?: string,
+    verification?: {
+      date?: string | null,
+      status?: string | null
+    } | null,
+    sources?: {
+      domain?: string,
+      uri?: string,
+      extracted_on?: string | null,
+      last_seen_on?: string | null,
+      still_on_page?: boolean
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any,
+  results_approximate?: boolean,
+  aggregations?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchPost
+
+`domainSearch.searchPost`
+
+List the email addresses found for a domain (POST form)
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.domainSearch.searchPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `company` | `string` | No | — |
+| `type` | `personal \| generic` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `department` | `string` | No | — |
+| `seniority` | `string` | No | — |
+| `job_titles` | `string` | No | — |
+| `decision_maker` | `boolean` | No | — |
+| `required_field` | `string` | No | — |
+| `verification_status` | `string` | No | — |
+| `source_type` | `found \| generated` | No | — |
+| `saved_leads` | `boolean` | No | — |
+| `aggregations` | `boolean` | No | — |
+| `location` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  include?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[],
+  exclude?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string,
+  disposable?: boolean,
+  webmail?: boolean,
+  accept_all?: boolean,
+  pattern?: string | null,
+  organization?: string | null,
+  linked_domains?: string[],
+  emails?: {
+    value?: string,
+    type?: string,
+    confidence?: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    position?: string | null,
+    position_raw?: string | null,
+    seniority?: string | null,
+    department?: string | null,
+    decision_maker?: boolean,
+    linkedin?: string | null,
+    twitter?: string | null,
+    phone_number?: string | null,
+    source_type?: string,
+    verification?: {
+      date?: string | null,
+      status?: string | null
+    } | null,
+    sources?: {
+      domain?: string,
+      uri?: string,
+      extracted_on?: string | null,
+      last_seen_on?: string | null,
+      still_on_page?: boolean
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any,
+  results_approximate?: boolean,
+  aggregations?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domains Suggestion
+
+### get
+
+`domainsSuggestion.get`
+
+Suggest similar company domains
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.domainsSuggestion.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `any` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Accounts
+
+### capacities
+
+`emailAccounts.capacities`
+
+Get the sending capacities of all email accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailAccounts.capacities({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string | null,
+  sent?: number,
+  daily_limit?: number,
+  scheduled?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`emailAccounts.get`
+
+Get a connected email account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailAccounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  sending_status?: string,
+  daily_limit?: number,
+  provider?: string,
+  sender_name?: string | null,
+  default_account?: boolean,
+  signature?: string | null,
+  profile_picture_url?: string | null,
+  custom_tracking_domain?: string | null,
+  sending_schedule?: {
+    days?: number[],
+    start_time?: string,
+    end_time?: string,
+    time_zone?: string
+  },
+  warmup?: {
+    enabled?: boolean,
+    status?: string | null,
+    end_date?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### healthReport
+
+`emailAccounts.healthReport`
+
+Get the deliverability health report of an email account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailAccounts.healthReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  score?: number | null,
+  status?: string | null,
+  domain?: string | null,
+  domain_score?: number | null,
+  checked_at?: string | null,
+  issues?: {
+    disconnected?: boolean,
+    no_recent_sending_activity?: boolean,
+    no_inbox_protection?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`emailAccounts.list`
+
+List the connected email accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailAccounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  sending_status?: string,
+  daily_limit?: number,
+  provider?: string,
+  sender_name?: string | null,
+  default_account?: boolean,
+  signature?: string | null,
+  profile_picture_url?: string | null,
+  custom_tracking_domain?: string | null,
+  sending_schedule?: {
+    days?: number[],
+    start_time?: string,
+    end_time?: string,
+    time_zone?: string
+  },
+  warmup?: {
+    enabled?: boolean,
+    status?: string | null,
+    end_date?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`emailAccounts.replace`
+
+Replace email account settings
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.emailAccounts.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `daily_limit` | `number` | No | — |
+| `sender_name` | `string` | No | — |
+| `signature` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `default_account` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  sending_status?: string,
+  daily_limit?: number,
+  provider?: string,
+  sender_name?: string | null,
+  default_account?: boolean,
+  signature?: string | null,
+  profile_picture_url?: string | null,
+  custom_tracking_domain?: string | null,
+  sending_schedule?: {
+    days?: number[],
+    start_time?: string,
+    end_time?: string,
+    time_zone?: string
+  },
+  warmup?: {
+    enabled?: boolean,
+    status?: string | null,
+    end_date?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sequences
+
+`emailAccounts.sequences`
+
+List the sequences using an email account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailAccounts.sequences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_account_id` | `number \| string` | Yes | — |
+| `include_archived` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  status?: string,
+  recipients_allocated?: number,
+  emails_scheduled?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`emailAccounts.update`
+
+Update email account settings
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.emailAccounts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `daily_limit` | `number` | No | — |
+| `sender_name` | `string` | No | — |
+| `signature` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `default_account` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  sending_status?: string,
+  daily_limit?: number,
+  provider?: string,
+  sender_name?: string | null,
+  default_account?: boolean,
+  signature?: string | null,
+  profile_picture_url?: string | null,
+  custom_tracking_domain?: string | null,
+  sending_schedule?: {
+    days?: number[],
+    start_time?: string,
+    end_time?: string,
+    time_zone?: string
+  },
+  warmup?: {
+    enabled?: boolean,
+    status?: string | null,
+    end_date?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usage
+
+`emailAccounts.usage`
+
+Get sending usage and limits of an email account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailAccounts.usage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sent_today?: number,
+  sent_last_7_days?: {
+    date?: string,
+    count?: number,
+    capacity?: number
+  }[],
+  daily_limit?: number,
+  scheduled?: number,
+  available?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### warmupReport
+
+`emailAccounts.warmupReport`
+
+Get the warmup report of an email account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailAccounts.warmupReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  state?: string,
+  progress?: {
+    percent?: number,
+    end_date?: string,
+    current_limit?: number,
+    target_limit?: number
+  },
+  metrics?: {
+    emails_sent?: number,
+    interactions?: number,
+    in_spam?: number
+  } | null,
+  chart_data?: {
+    date?: string,
+    sent?: number,
+    scheduled?: number
+  }[],
+  billing_cycle?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Count
+
+### get
+
+`emailCount.get`
+
+Count the email addresses found for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailCount.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `company` | `string` | No | — |
+| `type` | `personal \| generic` | No | — |
+| `include_job_titles` | `boolean \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  total?: number,
+  personal_emails?: number,
+  generic_emails?: number,
+  department?: {
+  },
+  seniority?: {
+  },
+  job_titles?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Finder
+
+### find
+
+`emailFinder.find`
+
+Find the most likely email of a person
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailFinder.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `company` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `linkedin_handle` | `string` | No | — |
+| `max_duration` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email?: string | null,
+  score?: number | null,
+  domain?: string,
+  company?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  position?: string | null,
+  linkedin_url?: string | null,
+  twitter?: string | null,
+  phone_number?: string | null,
+  accept_all?: boolean,
+  source_type?: string,
+  sources?: {
+    domain?: string,
+    uri?: string,
+    extracted_on?: string | null,
+    last_seen_on?: string | null,
+    still_on_page?: boolean
+  }[],
+  verification?: {
+    date?: string | null,
+    status?: string | null,
+    id?: number | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findFound
+
+`emailFinder.findFound`
+
+Check whether an email was already found for a person
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailFinder.findFound({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `company` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `linkedin_handle` | `string` | No | — |
+| `max_duration` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email?: string | null,
+  score?: number | null,
+  domain?: string,
+  company?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  position?: string | null,
+  linkedin_url?: string | null,
+  twitter?: string | null,
+  phone_number?: string | null,
+  accept_all?: boolean,
+  source_type?: string,
+  sources?: {
+    domain?: string,
+    uri?: string,
+    extracted_on?: string | null,
+    last_seen_on?: string | null,
+    still_on_page?: boolean
+  }[],
+  verification?: {
+    date?: string | null,
+    status?: string | null,
+    id?: number | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findFoundPost
+
+`emailFinder.findFoundPost`
+
+Check whether an email was already found (POST form)
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailFinder.findFoundPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `company` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `linkedin_handle` | `string` | No | — |
+| `max_duration` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email?: string | null,
+  score?: number | null,
+  domain?: string,
+  company?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  position?: string | null,
+  linkedin_url?: string | null,
+  twitter?: string | null,
+  phone_number?: string | null,
+  accept_all?: boolean,
+  source_type?: string,
+  sources?: {
+    domain?: string,
+    uri?: string,
+    extracted_on?: string | null,
+    last_seen_on?: string | null,
+    still_on_page?: boolean
+  }[],
+  verification?: {
+    date?: string | null,
+    status?: string | null,
+    id?: number | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Insight
+
+### get
+
+`emailInsight.get`
+
+Get insight data for an email address
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailInsight.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email?: string,
+  gibberish?: boolean,
+  pattern?: boolean,
+  mx_records?: boolean,
+  disposable?: boolean,
+  webmail?: boolean,
+  webmail_allowed?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Verifier
+
+### verify
+
+`emailVerifier.verify`
+
+Verify the deliverability of an email address
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.emailVerifier.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `domain_metadata` | `boolean \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status?: string,
+  result?: string,
+  score?: number | null,
+  email?: string,
+  regexp?: boolean,
+  gibberish?: boolean,
+  disposable?: boolean,
+  webmail?: boolean,
+  mx_records?: boolean,
+  smtp_server?: string | null,
+  smtp_check?: boolean,
+  accept_all?: boolean,
+  block?: boolean,
+  verification?: {
+    date?: string | null,
+    status?: string | null,
+    id?: number | null
+  } | null,
+  sources?: {
+    domain?: string,
+    uri?: string,
+    extracted_on?: string | null,
+    last_seen_on?: string | null,
+    still_on_page?: boolean
+  }[],
+  _deprecation_notice?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any,
+  company_name?: string | null,
+  domain?: string | null,
+  following_domain?: boolean,
+  webmail?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Enrichment
+
+### combined
+
+`enrichment.combined`
+
+Enrich a person and their company together
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.enrichment.combined({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `linkedin_handle` | `string` | No | — |
+| `clearbit_format` | `boolean \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status?: string,
+  data: {
+    person?: {
+      id?: string | null,
+      name?: {
+        fullName?: string | null,
+        givenName?: string | null,
+        familyName?: string | null
+      } | null,
+      email?: string | null,
+      location?: string | null,
+      timeZone?: string | null,
+      utcOffset?: number | null,
+      geo?: {
+        city?: string | null,
+        country?: string | null,
+        countryCode?: string | null,
+        lat?: number | null,
+        lng?: number | null,
+        state?: string | null,
+        stateCode?: string | null
+      } | null,
+      bio?: string | null,
+      site?: string | null,
+      avatar?: string | null,
+      employment?: {
+        domain?: string | null,
+        name?: string | null,
+        role?: string | null,
+        seniority?: string | null,
+        subRole?: string | null,
+        title?: string | null
+      } | null,
+      facebook?: {
+        handle?: string | null
+      } | null,
+      linkedin?: {
+        handle?: string | null
+      } | null,
+      googleplus?: {
+        handle?: string | null
+      } | null,
+      twitter?: {
+        handle?: string | null,
+        avatar?: string | null,
+        bio?: string | null,
+        followers?: number | null,
+        following?: number | null,
+        location?: string | null,
+        site?: string | null,
+        statuses?: number | null,
+        favorites?: number | null,
+        id?: number | null
+      } | null,
+      github?: {
+        handle?: string | null,
+        avatar?: string | null,
+        blog?: string | null,
+        company?: string | null,
+        followers?: number | null,
+        following?: number | null,
+        id?: number | null
+      } | null,
+      gravatar?: {
+        handle?: string | null,
+        avatar?: string | null,
+        avatars?: any[],
+        urls?: any[]
+      } | null,
+      fuzzy?: boolean,
+      emailProvider?: boolean,
+      phone?: string | null,
+      indexedAt?: string | null,
+      activeAt?: string | null,
+      inactiveAt?: string | null
+    },
+    company?: {
+      id?: string | null,
+      name?: string | null,
+      legalName?: string | null,
+      domain?: string | null,
+      domainAliases?: string[],
+      site?: {
+        emailAddresses?: string[],
+        phoneNumbers?: string[]
+      } | null,
+      category?: {
+        sector?: string | null,
+        industryGroup?: string | null,
+        industry?: string | null,
+        subIndustry?: string | null,
+        sicCode?: string | null,
+        sic4Codes?: string[],
+        naicsCode?: string | null,
+        naics6Codes?: string[],
+        naics6Codes2022?: string[],
+        gicsCode?: string | null
+      } | null,
+      tags?: string[],
+      description?: string | null,
+      foundedYear?: number | null,
+      location?: string | null,
+      timeZone?: string | null,
+      utcOffset?: number | null,
+      geo?: {
+      } | null,
+      logo?: string | null,
+      facebook?: {
+        handle?: string | null,
+        likes?: number | null
+      } | null,
+      linkedin?: {
+        handle?: string | null
+      } | null,
+      twitter?: {
+        handle?: string | null
+      } | null,
+      crunchbase?: {
+        handle?: string | null
+      } | null,
+      youtube?: {
+        handle?: string | null
+      } | null,
+      instagram?: {
+        handle?: string | null
+      } | null,
+      emailProvider?: boolean,
+      type?: string | null,
+      companyType?: string | null,
+      ticker?: string | null,
+      identifiers?: {
+        usEIN?: string | null
+      } | null,
+      phone?: string | null,
+      metrics?: {
+        employees?: number | null,
+        employeesCount?: number | null,
+        alexaGlobalRank?: number | null,
+        alexaUsRank?: number | null,
+        annualRevenue?: number | null,
+        estimatedAnnualRevenue?: string | null,
+        marketCap?: string | null,
+        raised?: number | null,
+        fiscalYearEnd?: number | null,
+        trafficRank?: string | null
+      } | null,
+      indexedAt?: string | null,
+      tech?: string[],
+      techCategories?: string[],
+      fundingRounds?: {
+        amount?: number | null,
+        date?: string | null,
+        investors?: string[],
+        type?: string | null
+      }[],
+      parent?: {
+        domain?: string | null
+      } | null,
+      ultimateParent?: {
+        domain?: string | null
+      } | null,
+      alreadySaved?: boolean,
+      emailsCount?: number
+    }
+  },
+  meta?: {
+    total?: number,
+    limit?: number,
+    offset?: number,
+    results?: number,
+    params?: any
+  }
+} | {
+  person?: {
+    id?: string | null,
+    name?: {
+      fullName?: string | null,
+      givenName?: string | null,
+      familyName?: string | null
+    } | null,
+    email?: string | null,
+    location?: string | null,
+    timeZone?: string | null,
+    utcOffset?: number | null,
+    geo?: {
+      city?: string | null,
+      country?: string | null,
+      countryCode?: string | null,
+      lat?: number | null,
+      lng?: number | null,
+      state?: string | null,
+      stateCode?: string | null
+    } | null,
+    bio?: string | null,
+    site?: string | null,
+    avatar?: string | null,
+    employment?: {
+      domain?: string | null,
+      name?: string | null,
+      role?: string | null,
+      seniority?: string | null,
+      subRole?: string | null,
+      title?: string | null
+    } | null,
+    facebook?: {
+      handle?: string | null
+    } | null,
+    linkedin?: {
+      handle?: string | null
+    } | null,
+    googleplus?: {
+      handle?: string | null
+    } | null,
+    twitter?: {
+      handle?: string | null,
+      avatar?: string | null,
+      bio?: string | null,
+      followers?: number | null,
+      following?: number | null,
+      location?: string | null,
+      site?: string | null,
+      statuses?: number | null,
+      favorites?: number | null,
+      id?: number | null
+    } | null,
+    github?: {
+      handle?: string | null,
+      avatar?: string | null,
+      blog?: string | null,
+      company?: string | null,
+      followers?: number | null,
+      following?: number | null,
+      id?: number | null
+    } | null,
+    gravatar?: {
+      handle?: string | null,
+      avatar?: string | null,
+      avatars?: any[],
+      urls?: any[]
+    } | null,
+    fuzzy?: boolean,
+    emailProvider?: boolean,
+    phone?: string | null,
+    indexedAt?: string | null,
+    activeAt?: string | null,
+    inactiveAt?: string | null
+  },
+  company?: {
+    id?: string | null,
+    name?: string | null,
+    legalName?: string | null,
+    domain?: string | null,
+    domainAliases?: string[],
+    site?: {
+      emailAddresses?: string[],
+      phoneNumbers?: string[]
+    } | null,
+    category?: {
+      sector?: string | null,
+      industryGroup?: string | null,
+      industry?: string | null,
+      subIndustry?: string | null,
+      sicCode?: string | null,
+      sic4Codes?: string[],
+      naicsCode?: string | null,
+      naics6Codes?: string[],
+      naics6Codes2022?: string[],
+      gicsCode?: string | null
+    } | null,
+    tags?: string[],
+    description?: string | null,
+    foundedYear?: number | null,
+    location?: string | null,
+    timeZone?: string | null,
+    utcOffset?: number | null,
+    geo?: {
+    } | null,
+    logo?: string | null,
+    facebook?: {
+      handle?: string | null,
+      likes?: number | null
+    } | null,
+    linkedin?: {
+      handle?: string | null
+    } | null,
+    twitter?: {
+      handle?: string | null
+    } | null,
+    crunchbase?: {
+      handle?: string | null
+    } | null,
+    youtube?: {
+      handle?: string | null
+    } | null,
+    instagram?: {
+      handle?: string | null
+    } | null,
+    emailProvider?: boolean,
+    type?: string | null,
+    companyType?: string | null,
+    ticker?: string | null,
+    identifiers?: {
+      usEIN?: string | null
+    } | null,
+    phone?: string | null,
+    metrics?: {
+      employees?: number | null,
+      employeesCount?: number | null,
+      alexaGlobalRank?: number | null,
+      alexaUsRank?: number | null,
+      annualRevenue?: number | null,
+      estimatedAnnualRevenue?: string | null,
+      marketCap?: string | null,
+      raised?: number | null,
+      fiscalYearEnd?: number | null,
+      trafficRank?: string | null
+    } | null,
+    indexedAt?: string | null,
+    tech?: string[],
+    techCategories?: string[],
+    fundingRounds?: {
+      amount?: number | null,
+      date?: string | null,
+      investors?: string[],
+      type?: string | null
+    }[],
+    parent?: {
+      domain?: string | null
+    } | null,
+    ultimateParent?: {
+      domain?: string | null
+    } | null,
+    alreadySaved?: boolean,
+    emailsCount?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### company
+
+`enrichment.company`
+
+Enrich a company profile from a domain or name
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.enrichment.company({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `clearbit_format` | `boolean \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status?: string,
+  data: {
+    id?: string | null,
+    name?: string | null,
+    legalName?: string | null,
+    domain?: string | null,
+    domainAliases?: string[],
+    site?: {
+      emailAddresses?: string[],
+      phoneNumbers?: string[]
+    } | null,
+    category?: {
+      sector?: string | null,
+      industryGroup?: string | null,
+      industry?: string | null,
+      subIndustry?: string | null,
+      sicCode?: string | null,
+      sic4Codes?: string[],
+      naicsCode?: string | null,
+      naics6Codes?: string[],
+      naics6Codes2022?: string[],
+      gicsCode?: string | null
+    } | null,
+    tags?: string[],
+    description?: string | null,
+    foundedYear?: number | null,
+    location?: string | null,
+    timeZone?: string | null,
+    utcOffset?: number | null,
+    geo?: {
+    } | null,
+    logo?: string | null,
+    facebook?: {
+      handle?: string | null,
+      likes?: number | null
+    } | null,
+    linkedin?: {
+      handle?: string | null
+    } | null,
+    twitter?: {
+      handle?: string | null
+    } | null,
+    crunchbase?: {
+      handle?: string | null
+    } | null,
+    youtube?: {
+      handle?: string | null
+    } | null,
+    instagram?: {
+      handle?: string | null
+    } | null,
+    emailProvider?: boolean,
+    type?: string | null,
+    companyType?: string | null,
+    ticker?: string | null,
+    identifiers?: {
+      usEIN?: string | null
+    } | null,
+    phone?: string | null,
+    metrics?: {
+      employees?: number | null,
+      employeesCount?: number | null,
+      alexaGlobalRank?: number | null,
+      alexaUsRank?: number | null,
+      annualRevenue?: number | null,
+      estimatedAnnualRevenue?: string | null,
+      marketCap?: string | null,
+      raised?: number | null,
+      fiscalYearEnd?: number | null,
+      trafficRank?: string | null
+    } | null,
+    indexedAt?: string | null,
+    tech?: string[],
+    techCategories?: string[],
+    fundingRounds?: {
+      amount?: number | null,
+      date?: string | null,
+      investors?: string[],
+      type?: string | null
+    }[],
+    parent?: {
+      domain?: string | null
+    } | null,
+    ultimateParent?: {
+      domain?: string | null
+    } | null,
+    alreadySaved?: boolean,
+    emailsCount?: number
+  },
+  meta?: {
+    total?: number,
+    limit?: number,
+    offset?: number,
+    results?: number,
+    params?: any
+  }
+} | {
+  id?: string | null,
+  name?: string | null,
+  legalName?: string | null,
+  domain?: string | null,
+  domainAliases?: string[],
+  site?: {
+    emailAddresses?: string[],
+    phoneNumbers?: string[]
+  } | null,
+  category?: {
+    sector?: string | null,
+    industryGroup?: string | null,
+    industry?: string | null,
+    subIndustry?: string | null,
+    sicCode?: string | null,
+    sic4Codes?: string[],
+    naicsCode?: string | null,
+    naics6Codes?: string[],
+    naics6Codes2022?: string[],
+    gicsCode?: string | null
+  } | null,
+  tags?: string[],
+  description?: string | null,
+  foundedYear?: number | null,
+  location?: string | null,
+  timeZone?: string | null,
+  utcOffset?: number | null,
+  geo?: {
+  } | null,
+  logo?: string | null,
+  facebook?: {
+    handle?: string | null,
+    likes?: number | null
+  } | null,
+  linkedin?: {
+    handle?: string | null
+  } | null,
+  twitter?: {
+    handle?: string | null
+  } | null,
+  crunchbase?: {
+    handle?: string | null
+  } | null,
+  youtube?: {
+    handle?: string | null
+  } | null,
+  instagram?: {
+    handle?: string | null
+  } | null,
+  emailProvider?: boolean,
+  type?: string | null,
+  companyType?: string | null,
+  ticker?: string | null,
+  identifiers?: {
+    usEIN?: string | null
+  } | null,
+  phone?: string | null,
+  metrics?: {
+    employees?: number | null,
+    employeesCount?: number | null,
+    alexaGlobalRank?: number | null,
+    alexaUsRank?: number | null,
+    annualRevenue?: number | null,
+    estimatedAnnualRevenue?: string | null,
+    marketCap?: string | null,
+    raised?: number | null,
+    fiscalYearEnd?: number | null,
+    trafficRank?: string | null
+  } | null,
+  indexedAt?: string | null,
+  tech?: string[],
+  techCategories?: string[],
+  fundingRounds?: {
+    amount?: number | null,
+    date?: string | null,
+    investors?: string[],
+    type?: string | null
+  }[],
+  parent?: {
+    domain?: string | null
+  } | null,
+  ultimateParent?: {
+    domain?: string | null
+  } | null,
+  alreadySaved?: boolean,
+  emailsCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### person
+
+`enrichment.person`
+
+Enrich a person profile from an email or name
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.enrichment.person({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `linkedin_handle` | `string` | No | — |
+| `clearbit_format` | `boolean \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status?: string,
+  data: {
+    id?: string | null,
+    name?: {
+      fullName?: string | null,
+      givenName?: string | null,
+      familyName?: string | null
+    } | null,
+    email?: string | null,
+    location?: string | null,
+    timeZone?: string | null,
+    utcOffset?: number | null,
+    geo?: {
+      city?: string | null,
+      country?: string | null,
+      countryCode?: string | null,
+      lat?: number | null,
+      lng?: number | null,
+      state?: string | null,
+      stateCode?: string | null
+    } | null,
+    bio?: string | null,
+    site?: string | null,
+    avatar?: string | null,
+    employment?: {
+      domain?: string | null,
+      name?: string | null,
+      role?: string | null,
+      seniority?: string | null,
+      subRole?: string | null,
+      title?: string | null
+    } | null,
+    facebook?: {
+      handle?: string | null
+    } | null,
+    linkedin?: {
+      handle?: string | null
+    } | null,
+    googleplus?: {
+      handle?: string | null
+    } | null,
+    twitter?: {
+      handle?: string | null,
+      avatar?: string | null,
+      bio?: string | null,
+      followers?: number | null,
+      following?: number | null,
+      location?: string | null,
+      site?: string | null,
+      statuses?: number | null,
+      favorites?: number | null,
+      id?: number | null
+    } | null,
+    github?: {
+      handle?: string | null,
+      avatar?: string | null,
+      blog?: string | null,
+      company?: string | null,
+      followers?: number | null,
+      following?: number | null,
+      id?: number | null
+    } | null,
+    gravatar?: {
+      handle?: string | null,
+      avatar?: string | null,
+      avatars?: any[],
+      urls?: any[]
+    } | null,
+    fuzzy?: boolean,
+    emailProvider?: boolean,
+    phone?: string | null,
+    indexedAt?: string | null,
+    activeAt?: string | null,
+    inactiveAt?: string | null
+  },
+  meta?: {
+    total?: number,
+    limit?: number,
+    offset?: number,
+    results?: number,
+    params?: any
+  }
+} | {
+  id?: string | null,
+  name?: {
+    fullName?: string | null,
+    givenName?: string | null,
+    familyName?: string | null
+  } | null,
+  email?: string | null,
+  location?: string | null,
+  timeZone?: string | null,
+  utcOffset?: number | null,
+  geo?: {
+    city?: string | null,
+    country?: string | null,
+    countryCode?: string | null,
+    lat?: number | null,
+    lng?: number | null,
+    state?: string | null,
+    stateCode?: string | null
+  } | null,
+  bio?: string | null,
+  site?: string | null,
+  avatar?: string | null,
+  employment?: {
+    domain?: string | null,
+    name?: string | null,
+    role?: string | null,
+    seniority?: string | null,
+    subRole?: string | null,
+    title?: string | null
+  } | null,
+  facebook?: {
+    handle?: string | null
+  } | null,
+  linkedin?: {
+    handle?: string | null
+  } | null,
+  googleplus?: {
+    handle?: string | null
+  } | null,
+  twitter?: {
+    handle?: string | null,
+    avatar?: string | null,
+    bio?: string | null,
+    followers?: number | null,
+    following?: number | null,
+    location?: string | null,
+    site?: string | null,
+    statuses?: number | null,
+    favorites?: number | null,
+    id?: number | null
+  } | null,
+  github?: {
+    handle?: string | null,
+    avatar?: string | null,
+    blog?: string | null,
+    company?: string | null,
+    followers?: number | null,
+    following?: number | null,
+    id?: number | null
+  } | null,
+  gravatar?: {
+    handle?: string | null,
+    avatar?: string | null,
+    avatars?: any[],
+    urls?: any[]
+  } | null,
+  fuzzy?: boolean,
+  emailProvider?: boolean,
+  phone?: string | null,
+  indexedAt?: string | null,
+  activeAt?: string | null,
+  inactiveAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Feedback
+
+### create
+
+`feedback.create`
+
+Send product feedback to Hunter
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.feedback.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feedback_type` | `missing_endpoint \| incorrect_documentation \| unexpected_response \| bug \| data_quality \| confusing_behavior \| feature_request \| other` | Yes | — |
+| `summary` | `string` | Yes | — |
+| `details` | `string` | Yes | — |
+| `endpoint` | `string` | No | — |
+| `expected` | `string` | No | — |
+| `actual` | `string` | No | — |
+| `request_example` | `string` | No | — |
+| `response_example` | `string` | No | — |
+| `severity` | `low \| medium \| high \| blocking` | No | — |
+| `agent` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  status?: string,
+  feedback_type?: string,
+  severity?: string,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Leads
+
+### bulkDelete
+
+`leads.bulkDelete`
+
+Delete leads in bulk permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.leads.bulkDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_ids` | `number[]` | No | — |
+| `leads_list_id` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `any` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkExist
+
+`leads.bulkExist`
+
+Check which of the given emails exist as leads
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.leads.bulkExist({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email: string,
+  id?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkMove
+
+`leads.bulkMove`
+
+Move leads to another leads list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leads.bulkMove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leads_list_id` | `number \| string` | Yes | — |
+| `target_leads_list_id` | `number \| string` | Yes | — |
+| `lead_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  source_leads_list_id?: number,
+  target_leads_list_id?: number,
+  leads_count?: number,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpsert
+
+`leads.bulkUpsert`
+
+Create or update up to 100 leads in a single call
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leads.bulkUpsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leads_list_id` | `number \| string` | No | — |
+| `leads_list_name` | `string` | No | — |
+| `leads` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="leads full type">
+
+```ts
+{
+  email?: string,
+  first_name?: string,
+  last_name?: string,
+  position?: string,
+  company?: string,
+  company_industry?: string,
+  company_size?: string,
+  confidence_score?: number,
+  website?: string,
+  country_code?: string,
+  department?: string,
+  linkedin_url?: string,
+  phone_number?: string,
+  twitter?: string,
+  notes?: string,
+  source?: string,
+  leads_list_id?: number | string,
+  leads_list_ids?: (
+    number | string
+  )[],
+  leads_list_name?: string,
+  custom_attributes?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  index?: number,
+  email?: string | null,
+  status?: string,
+  lead?: {
+    id?: number,
+    email?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    position?: string | null,
+    company?: string | null,
+    company_industry?: string | null,
+    company_size?: string | null,
+    confidence_score?: number | null,
+    website?: string | null,
+    country_code?: string | null,
+    source?: string | null,
+    department?: string | null,
+    linkedin_url?: string | null,
+    phone_number?: string | null,
+    twitter?: string | null,
+    sync_status?: string | null,
+    notes?: string | null,
+    sending_status?: string | null,
+    last_activity_at?: string | null,
+    last_contacted_at?: string | null,
+    verification?: {
+      date?: string | null,
+      status?: string | null
+    } | null,
+    leads_list?: {
+      id?: number,
+      name?: string,
+      leads_count?: number
+    } | null,
+    leads_lists?: {
+      id?: number,
+      name?: string,
+      leads_count?: number
+    }[],
+    custom_attributes?: {
+    },
+    created_at?: string | null,
+    created_by?: number | null
+  } | null,
+  errors?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any,
+  created?: number,
+  updated?: number,
+  failed?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`leads.create`
+
+Create a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `position` | `string` | No | — |
+| `company` | `string` | No | — |
+| `company_industry` | `string` | No | — |
+| `company_size` | `string` | No | — |
+| `confidence_score` | `number` | No | — |
+| `website` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `department` | `string` | No | — |
+| `linkedin_url` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `source` | `string` | No | — |
+| `leads_list_id` | `number \| string` | No | — |
+| `leads_list_ids` | `(number \| string)[]` | No | — |
+| `leads_list_name` | `string` | No | — |
+| `custom_attributes` | `object` | No | — |
+| `company_type` | `string` | No | — |
+| `lead_country_code` | `string` | No | — |
+| `lead_city` | `string` | No | — |
+| `lead_state` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  position?: string | null,
+  company?: string | null,
+  company_industry?: string | null,
+  company_size?: string | null,
+  confidence_score?: number | null,
+  website?: string | null,
+  country_code?: string | null,
+  source?: string | null,
+  department?: string | null,
+  linkedin_url?: string | null,
+  phone_number?: string | null,
+  twitter?: string | null,
+  sync_status?: string | null,
+  notes?: string | null,
+  sending_status?: string | null,
+  last_activity_at?: string | null,
+  last_contacted_at?: string | null,
+  verification?: {
+    date?: string | null,
+    status?: string | null
+  } | null,
+  leads_list?: {
+    id?: number,
+    name?: string,
+    leads_count?: number
+  } | null,
+  leads_lists?: {
+    id?: number,
+    name?: string,
+    leads_count?: number
+  }[],
+  custom_attributes?: {
+  },
+  created_at?: string | null,
+  created_by?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`leads.delete`
+
+Delete a lead permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.leads.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### enrich
+
+`leads.enrich`
+
+Enrich a lead with data found by Hunter
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leads.enrich({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  position?: string | null,
+  company?: string | null,
+  company_industry?: string | null,
+  company_size?: string | null,
+  confidence_score?: number | null,
+  website?: string | null,
+  country_code?: string | null,
+  source?: string | null,
+  department?: string | null,
+  linkedin_url?: string | null,
+  phone_number?: string | null,
+  twitter?: string | null,
+  sync_status?: string | null,
+  notes?: string | null,
+  sending_status?: string | null,
+  last_activity_at?: string | null,
+  last_contacted_at?: string | null,
+  verification?: {
+    date?: string | null,
+    status?: string | null
+  } | null,
+  leads_list?: {
+    id?: number,
+    name?: string,
+    leads_count?: number
+  } | null,
+  leads_lists?: {
+    id?: number,
+    name?: string,
+    leads_count?: number
+  }[],
+  custom_attributes?: {
+  },
+  created_at?: string | null,
+  created_by?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### exist
+
+`leads.exist`
+
+Check whether an email exists as a lead
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.leads.exist({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  leads_list_id?: number | null,
+  leads_list_name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`leads.get`
+
+Get a lead
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.leads.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  position?: string | null,
+  company?: string | null,
+  company_industry?: string | null,
+  company_size?: string | null,
+  confidence_score?: number | null,
+  website?: string | null,
+  country_code?: string | null,
+  source?: string | null,
+  department?: string | null,
+  linkedin_url?: string | null,
+  phone_number?: string | null,
+  twitter?: string | null,
+  sync_status?: string | null,
+  notes?: string | null,
+  sending_status?: string | null,
+  last_activity_at?: string | null,
+  last_contacted_at?: string | null,
+  verification?: {
+    date?: string | null,
+    status?: string | null
+  } | null,
+  leads_list?: {
+    id?: number,
+    name?: string,
+    leads_count?: number
+  } | null,
+  leads_lists?: {
+    id?: number,
+    name?: string,
+    leads_count?: number
+  }[],
+  custom_attributes?: {
+  },
+  created_at?: string | null,
+  created_by?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importCsv
+
+`leads.importCsv`
+
+Create a CSV import job for leads
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leads.importCsv({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `csv_data` | `string` | Yes | — |
+| `leads_list_id` | `number \| string` | No | — |
+| `file_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `any` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`leads.list`
+
+List leads with filters
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.leads.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leads_list_id` | `number \| string` | No | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `position` | `string \| string[]` | No | — |
+| `company` | `string` | No | — |
+| `industry` | `string` | No | — |
+| `website` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `company_size` | `string` | No | — |
+| `source` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `linkedin_url` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `sync_status` | `pending \| error \| success` | No | — |
+| `sending_status` | `clicked \| opened \| sent \| pending \| error \| bounced \| unsubscribed \| replied \| ~[]` | No | — |
+| `verification_status` | `accept_all \| disposable \| invalid \| unknown \| valid \| webmail \| pending[]` | No | — |
+| `last_activity_at` | `object` | No | — |
+| `last_contacted_at` | `object` | No | — |
+| `last_exported_at` | `object` | No | — |
+| `created_at` | `object` | No | — |
+| `updated_at` | `object` | No | — |
+| `verification_date` | `object` | No | — |
+| `department` | `executive \| it \| finance \| management \| sales \| legal \| support \| hr \| marketing \| communication \| education \| design \| health \| operations[]` | No | — |
+| `tags` | `number[]` | No | — |
+| `sequence_ids` | `number[] \| * \| ~` | No | — |
+| `campaign_ids` | `number[] \| * \| ~` | No | — |
+| `user_id` | `number[]` | No | — |
+| `confidence_score` | `object` | No | — |
+| `custom_attributes` | `object` | No | — |
+| `query` | `string` | No | — |
+| `location` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="last_activity_at full type">
+
+```ts
+* | ~ | last1h | today | this_week | last7d | last30d | current_year | {
+  from?: string,
+  to?: string
+}
+```
+</Accordion>
+
+<Accordion title="last_contacted_at full type">
+
+```ts
+* | ~ | last1h | today | this_week | last7d | last30d | current_year | {
+  from?: string,
+  to?: string
+}
+```
+</Accordion>
+
+<Accordion title="last_exported_at full type">
+
+```ts
+* | ~ | last1h | today | this_week | last7d | last30d | current_year | {
+  from?: string,
+  to?: string
+}
+```
+</Accordion>
+
+<Accordion title="created_at full type">
+
+```ts
+* | ~ | last1h | today | this_week | last7d | last30d | current_year | {
+  from?: string,
+  to?: string
+}
+```
+</Accordion>
+
+<Accordion title="updated_at full type">
+
+```ts
+* | ~ | last1h | today | this_week | last7d | last30d | current_year | {
+  from?: string,
+  to?: string
+}
+```
+</Accordion>
+
+<Accordion title="verification_date full type">
+
+```ts
+* | ~ | last1h | today | this_week | last7d | last30d | current_year | {
+  from?: string,
+  to?: string
+}
+```
+</Accordion>
+
+<Accordion title="confidence_score full type">
+
+```ts
+* | ~ | {
+  from?: number,
+  to?: number
+}
+```
+</Accordion>
+
+<Accordion title="custom_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  country?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  state?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  city?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  continent?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  business_region?: {
+    include?: string[],
+    exclude?: string[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  leads: {
+    id?: number,
+    email?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    position?: string | null,
+    company?: string | null,
+    company_industry?: string | null,
+    company_size?: string | null,
+    confidence_score?: number | null,
+    website?: string | null,
+    country_code?: string | null,
+    source?: string | null,
+    department?: string | null,
+    linkedin_url?: string | null,
+    phone_number?: string | null,
+    twitter?: string | null,
+    sync_status?: string | null,
+    notes?: string | null,
+    sending_status?: string | null,
+    last_activity_at?: string | null,
+    last_contacted_at?: string | null,
+    verification?: {
+      date?: string | null,
+      status?: string | null
+    } | null,
+    leads_list?: {
+      id?: number,
+      name?: string,
+      leads_count?: number
+    } | null,
+    leads_lists?: {
+      id?: number,
+      name?: string,
+      leads_count?: number
+    }[],
+    custom_attributes?: {
+    },
+    created_at?: string | null,
+    created_by?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`leads.replace`
+
+Replace a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leads.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `position` | `string` | No | — |
+| `company` | `string` | No | — |
+| `company_industry` | `string` | No | — |
+| `company_size` | `string` | No | — |
+| `confidence_score` | `number` | No | — |
+| `website` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `department` | `string` | No | — |
+| `linkedin_url` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `source` | `string` | No | — |
+| `leads_list_id` | `number \| string` | No | — |
+| `leads_list_ids` | `(number \| string)[]` | No | — |
+| `leads_list_name` | `string` | No | — |
+| `custom_attributes` | `object` | No | — |
+| `company_type` | `string` | No | — |
+| `lead_country_code` | `string` | No | — |
+| `lead_city` | `string` | No | — |
+| `lead_state` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`leads.update`
+
+Update a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leads.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `position` | `string` | No | — |
+| `company` | `string` | No | — |
+| `company_industry` | `string` | No | — |
+| `company_size` | `string` | No | — |
+| `confidence_score` | `number` | No | — |
+| `website` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `department` | `string` | No | — |
+| `linkedin_url` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `source` | `string` | No | — |
+| `leads_list_id` | `number \| string` | No | — |
+| `leads_list_ids` | `(number \| string)[]` | No | — |
+| `leads_list_name` | `string` | No | — |
+| `custom_attributes` | `object` | No | — |
+| `company_type` | `string` | No | — |
+| `lead_country_code` | `string` | No | — |
+| `lead_city` | `string` | No | — |
+| `lead_state` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### upsert
+
+`leads.upsert`
+
+Create or update a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leads.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `position` | `string` | No | — |
+| `company` | `string` | No | — |
+| `company_industry` | `string` | No | — |
+| `company_size` | `string` | No | — |
+| `confidence_score` | `number` | No | — |
+| `website` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `department` | `string` | No | — |
+| `linkedin_url` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `source` | `string` | No | — |
+| `leads_list_id` | `number \| string` | No | — |
+| `leads_list_ids` | `(number \| string)[]` | No | — |
+| `leads_list_name` | `string` | No | — |
+| `custom_attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  position?: string | null,
+  company?: string | null,
+  company_industry?: string | null,
+  company_size?: string | null,
+  confidence_score?: number | null,
+  website?: string | null,
+  country_code?: string | null,
+  source?: string | null,
+  department?: string | null,
+  linkedin_url?: string | null,
+  phone_number?: string | null,
+  twitter?: string | null,
+  sync_status?: string | null,
+  notes?: string | null,
+  sending_status?: string | null,
+  last_activity_at?: string | null,
+  last_contacted_at?: string | null,
+  verification?: {
+    date?: string | null,
+    status?: string | null
+  } | null,
+  leads_list?: {
+    id?: number,
+    name?: string,
+    leads_count?: number
+  } | null,
+  leads_lists?: {
+    id?: number,
+    name?: string,
+    leads_count?: number
+  }[],
+  custom_attributes?: {
+  },
+  created_at?: string | null,
+  created_by?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Leads List Folders
+
+### create
+
+`leadsListFolders.create`
+
+Create a leads list folder
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leadsListFolders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `374151 \| 3489F9 \| 10B981 \| F5BA0B \| EF4444 \| 7C3AED \| F97316 \| E5E7EB \| B4D9F7 \| BAE6B0 \| FDE68A \| FBD0D0 \| D4C4F8 \| FFD79B` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string,
+  leads_lists_count?: number,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`leadsListFolders.delete`
+
+Delete a leads list folder permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.leadsListFolders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`leadsListFolders.get`
+
+Get a leads list folder
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.leadsListFolders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string,
+  leads_lists_count?: number,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`leadsListFolders.list`
+
+List the leads list folders
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.leadsListFolders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  folders: {
+    id?: number,
+    name?: string,
+    color?: string,
+    leads_lists_count?: number,
+    created_at?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`leadsListFolders.replace`
+
+Replace a leads list folder
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leadsListFolders.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `374151 \| 3489F9 \| 10B981 \| F5BA0B \| EF4444 \| 7C3AED \| F97316 \| E5E7EB \| B4D9F7 \| BAE6B0 \| FDE68A \| FBD0D0 \| D4C4F8 \| FFD79B` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`leadsListFolders.update`
+
+Update a leads list folder
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leadsListFolders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `374151 \| 3489F9 \| 10B981 \| F5BA0B \| EF4444 \| 7C3AED \| F97316 \| E5E7EB \| B4D9F7 \| BAE6B0 \| FDE68A \| FBD0D0 \| D4C4F8 \| FFD79B` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Leads Lists
+
+### create
+
+`leadsLists.create`
+
+Create a leads list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leadsLists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `leads_list_folder_id` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  leads_count?: number,
+  type?: string,
+  created_at?: string,
+  leads_list_folder_id?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`leadsLists.delete`
+
+Delete a leads list permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.leadsLists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status?: string,
+  data?: any,
+  meta?: {
+    total?: number,
+    limit?: number,
+    offset?: number,
+    results?: number,
+    params?: any
+  }
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### favorite
+
+`leadsLists.favorite`
+
+Mark a leads list as favorite
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leadsLists.favorite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  favorited?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`leadsLists.get`
+
+Get a leads list and its leads
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.leadsLists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  leads_count?: number,
+  type?: string,
+  created_at?: string,
+  leads_list_folder_id?: number | null,
+  leads?: {
+    id?: number,
+    email?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    position?: string | null,
+    company?: string | null,
+    company_industry?: string | null,
+    company_size?: string | null,
+    confidence_score?: number | null,
+    website?: string | null,
+    country_code?: string | null,
+    source?: string | null,
+    department?: string | null,
+    linkedin_url?: string | null,
+    phone_number?: string | null,
+    twitter?: string | null,
+    sync_status?: string | null,
+    notes?: string | null,
+    sending_status?: string | null,
+    last_activity_at?: string | null,
+    last_contacted_at?: string | null,
+    verification?: {
+      date?: string | null,
+      status?: string | null
+    } | null,
+    leads_list?: {
+      id?: number,
+      name?: string,
+      leads_count?: number
+    } | null,
+    leads_lists?: {
+      id?: number,
+      name?: string,
+      leads_count?: number
+    }[],
+    custom_attributes?: {
+    },
+    created_at?: string | null,
+    created_by?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`leadsLists.list`
+
+List the leads lists on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.leadsLists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  leads_lists: {
+    id?: number,
+    name?: string,
+    leads_count?: number,
+    type?: string,
+    created_at?: string,
+    leads_list_folder_id?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`leadsLists.merge`
+
+Merge a leads list into another list [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hunterio.api.leadsLists.merge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### replace
+
+`leadsLists.replace`
+
+Replace a leads list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leadsLists.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `leads_list_folder_id` | `number \| string` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### unfavorite
+
+`leadsLists.unfavorite`
+
+Remove the favorite mark from a leads list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leadsLists.unfavorite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  favorited?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`leadsLists.update`
+
+Update a leads list
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leadsLists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `leads_list_folder_id` | `number \| string` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Lead Tags
+
+### attach
+
+`leadTags.attach`
+
+Attach a tag to a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.leadTags.attach({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `tag_id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tags: {
+    id?: number,
+    name?: string,
+    color?: string | null,
+    created_at?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### detach
+
+`leadTags.detach`
+
+Detach a tag from a lead [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hunterio.api.leadTags.detach({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `tag_id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Lookalikes
+
+### list
+
+`lookalikes.list`
+
+Find companies similar to a seed company
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.lookalikes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_list_id` | `number \| string` | No | — |
+| `domain` | `string` | No | — |
+| `country` | `string` | No | — |
+| `size` | `string[]` | No | — |
+| `industry` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  company_name?: string | null,
+  domain?: string,
+  industry?: string | null,
+  size?: string | null,
+  country?: string | null,
+  similarity_score?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### list
+
+`messages.list`
+
+List messages sent or received
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| string[]` | No | — |
+| `direction` | `outgoing \| incoming` | No | — |
+| `read` | `boolean` | No | — |
+| `replied` | `boolean` | No | — |
+| `bounced` | `boolean` | No | — |
+| `unsubscribed` | `boolean` | No | — |
+| `out_of_office` | `boolean` | No | — |
+| `lead_id` | `number \| string` | No | — |
+| `sequence_id` | `number \| string` | No | — |
+| `campaign_id` | `number \| string` | No | — |
+| `email_account_id` | `number \| string` | No | — |
+| `sent_after` | `string` | No | — |
+| `sent_before` | `string` | No | — |
+| `received_after` | `string` | No | — |
+| `received_before` | `string` | No | — |
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  messages: {
+    id?: number,
+    status?: string,
+    message_id?: string | null,
+    thread_id?: string | null,
+    to?: string | null,
+    subject?: string | null,
+    body?: string | null,
+    manually_edited?: boolean,
+    opens?: number,
+    clicks?: number,
+    bounced?: boolean,
+    replied?: boolean,
+    last_activity_at?: string | null,
+    sent_at?: string | null,
+    lead?: {
+      id?: number,
+      email?: string | null,
+      first_name?: string | null,
+      last_name?: string | null
+    } | null,
+    campaign?: {
+      id?: number,
+      name?: string,
+      recipients_count?: number,
+      started?: boolean,
+      archived?: boolean,
+      paused?: boolean,
+      last_email_sent_at?: string | null
+    } | null,
+    owner?: {
+      id?: number,
+      email?: string
+    } | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a message from a connected email account
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_account_id` | `number \| string` | Yes | — |
+| `lead_id` | `number \| string` | No | — |
+| `to` | `string` | No | — |
+| `subject` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `message_format` | `text \| html` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  status?: string,
+  message_id?: string | null,
+  thread_id?: string | null,
+  to?: string | null,
+  subject?: string | null,
+  body?: string | null,
+  manually_edited?: boolean,
+  opens?: number,
+  clicks?: number,
+  bounced?: boolean,
+  replied?: boolean,
+  last_activity_at?: string | null,
+  sent_at?: string | null,
+  lead?: {
+    id?: number,
+    email?: string | null,
+    first_name?: string | null,
+    last_name?: string | null
+  } | null,
+  campaign?: {
+    id?: number,
+    name?: string,
+    recipients_count?: number,
+    started?: boolean,
+    archived?: boolean,
+    paused?: boolean,
+    last_email_sent_at?: string | null
+  } | null,
+  owner?: {
+    id?: number,
+    email?: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Message Templates
+
+### create
+
+`messageTemplates.create`
+
+Create a message template
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.messageTemplates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | Yes | — |
+| `message_format` | `text \| html` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  subject?: string | null,
+  body?: string | null,
+  message_format?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`messageTemplates.delete`
+
+Delete a message template permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.messageTemplates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`messageTemplates.get`
+
+Get a message template
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.messageTemplates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  subject?: string | null,
+  body?: string | null,
+  message_format?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messageTemplates.list`
+
+List message templates
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.messageTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message_templates: {
+    id?: number,
+    name?: string,
+    subject?: string | null,
+    body?: string | null,
+    message_format?: string | null,
+    created_at?: string,
+    updated_at?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`messageTemplates.replace`
+
+Replace a message template
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.messageTemplates.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `message_format` | `text \| html` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  subject?: string | null,
+  body?: string | null,
+  message_format?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`messageTemplates.update`
+
+Update a message template
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.messageTemplates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `message_format` | `text \| html` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  subject?: string | null,
+  body?: string | null,
+  message_format?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Multi Domain Search
+
+### reveal
+
+`multiDomainSearch.reveal`
+
+Reveal the verified email addresses of a multi-domain search
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.multiDomainSearch.reveal({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handles` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `any` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`multiDomainSearch.search`
+
+Find email addresses across multiple domains
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.multiDomainSearch.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `company_type` | `string` | No | — |
+| `industry` | `string` | No | — |
+| `headcount` | `string` | No | — |
+| `founded_year` | `string` | No | — |
+| `location` | `string` | No | — |
+| `technology` | `string` | No | — |
+| `department` | `string` | No | — |
+| `seniority` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `type` | `string` | No | — |
+| `verification_status` | `string` | No | — |
+| `provenance` | `string` | No | — |
+| `min_confidence` | `number` | No | — |
+| `required_field` | `string` | No | — |
+| `decision_maker` | `boolean` | No | — |
+| `exclude_already_saved` | `boolean` | No | — |
+| `per_domain` | `boolean` | No | — |
+| `search_after` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string | null,
+  position?: string | null,
+  department?: string | null,
+  seniority?: string | null,
+  type?: string,
+  decision_maker?: boolean,
+  domain?: string,
+  company_name?: string | null,
+  full_name_exists?: boolean,
+  phone_number_exists?: boolean,
+  linkedin_exists?: boolean,
+  verification?: {
+    date?: string | null,
+    status?: string | null
+  },
+  reveal_handle?: string,
+  provenance?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any,
+  next_search_after?: string | null,
+  per_domain?: {
+    domain?: string,
+    emails?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sequence Follow Ups
+
+### create
+
+`sequenceFollowUps.create`
+
+Add a follow-up step to a sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequenceFollowUps.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequence_id` | `number \| string` | Yes | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `wait_days` | `number` | No | — |
+| `step` | `number` | No | — |
+| `variant` | `B` | No | — |
+| `message_format` | `text \| html` | No | — |
+| `message_template_id` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  follow_up: {
+    id?: number,
+    campaign_id?: number,
+    step?: number,
+    wait_days?: number,
+    message_format?: string | null,
+    messages_sent?: number,
+    subject?: string | null,
+    body?: string | null,
+    variant?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sequenceFollowUps.delete`
+
+Delete the last follow-up step permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.sequenceFollowUps.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequence_id` | `number \| string` | Yes | — |
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`sequenceFollowUps.get`
+
+Get a follow-up step
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.sequenceFollowUps.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequence_id` | `number \| string` | Yes | — |
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  campaign_id?: number,
+  step?: number,
+  wait_days?: number,
+  message_format?: string | null,
+  messages_sent?: number,
+  subject?: string | null,
+  body?: string | null,
+  variant?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sequenceFollowUps.list`
+
+List the follow-up steps of a sequence
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.sequenceFollowUps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequence_id` | `number \| string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  follow_ups: {
+    id?: number,
+    campaign_id?: number,
+    step?: number,
+    wait_days?: number,
+    message_format?: string | null,
+    messages_sent?: number,
+    subject?: string | null,
+    body?: string | null,
+    variant?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`sequenceFollowUps.replace`
+
+Replace a follow-up step
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequenceFollowUps.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequence_id` | `number \| string` | Yes | — |
+| `id` | `number \| string` | Yes | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `wait_days` | `number` | No | — |
+| `message_format` | `text \| html` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  campaign_id?: number,
+  step?: number,
+  wait_days?: number,
+  message_format?: string | null,
+  messages_sent?: number,
+  subject?: string | null,
+  body?: string | null,
+  variant?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sequenceFollowUps.update`
+
+Update a follow-up step
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequenceFollowUps.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequence_id` | `number \| string` | Yes | — |
+| `id` | `number \| string` | Yes | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `wait_days` | `number` | No | — |
+| `message_format` | `text \| html` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  campaign_id?: number,
+  step?: number,
+  wait_days?: number,
+  message_format?: string | null,
+  messages_sent?: number,
+  subject?: string | null,
+  body?: string | null,
+  variant?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sequence Recipients
+
+### add
+
+`sequenceRecipients.add`
+
+Add recipients to a sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequenceRecipients.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `emails` | `string \| string[]` | No | — |
+| `lead_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  recipients_added?: number,
+  skipped_recipients?: {
+    email?: string,
+    reason?: string
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sequenceRecipients.list`
+
+List the recipients of a sequence
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.sequenceRecipients.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  recipients: {
+    email?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    position?: string | null,
+    company?: string | null,
+    website?: string | null,
+    sending_status?: string,
+    sending_status_comment?: string | null,
+    lead_id?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`sequenceRecipients.remove`
+
+Remove recipients from a sequence and cancel their messages [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hunterio.api.sequenceRecipients.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `emails` | `string \| string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  recipients_removed?: string[],
+  recipients_canceled?: string[],
+  messages_canceled?: number,
+  skipped_recipients?: {
+    email?: string,
+    reason?: string
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sequences
+
+### archive
+
+`sequences.archive`
+
+Archive a sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequences.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message?: string,
+  recipients_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`sequences.create`
+
+Create a sequence draft
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequences.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email_account_ids` | `number[]` | No | — |
+| `schedule_time_start` | `string` | No | — |
+| `schedule_time_end` | `string` | No | — |
+| `schedule_days` | `number[]` | No | — |
+| `add_unsubscribe_link` | `boolean` | No | — |
+| `tracked` | `boolean` | No | — |
+| `tracked_links` | `boolean` | No | — |
+| `ai_assistant_enabled` | `boolean` | No | — |
+| `bcc_recipient` | `string` | No | — |
+| `start_at` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  status?: draft | planned | active | paused | completed | archived | preparing | error,
+  recipients_count?: number,
+  editable?: boolean,
+  started?: boolean,
+  paused?: boolean,
+  archived?: boolean,
+  schedule?: {
+    start_at?: string | null,
+    time_start?: string,
+    time_end?: string,
+    days?: number[]
+  },
+  settings?: {
+    tracked?: boolean,
+    tracked_links?: boolean,
+    add_unsubscribe_link?: boolean,
+    ai_assistant_enabled?: boolean,
+    bcc_recipient?: string | null
+  },
+  ab_testing?: {
+    enabled?: boolean,
+    variant_a_percentage?: number | null,
+    variant_b_percentage?: number | null,
+    winner_variant?: string | null,
+    winner_selected_at?: string | null
+  },
+  email_account_ids?: number[],
+  follow_ups?: {
+    unique_steps_count?: number,
+    steps?: number[]
+  },
+  owner?: {
+    id?: number,
+    email?: string
+  } | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sequences.delete`
+
+Delete a sequence draft permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.sequences.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`sequences.get`
+
+Get a sequence
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.sequences.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  status?: draft | planned | active | paused | completed | archived | preparing | error,
+  recipients_count?: number,
+  editable?: boolean,
+  started?: boolean,
+  paused?: boolean,
+  archived?: boolean,
+  schedule?: {
+    start_at?: string | null,
+    time_start?: string,
+    time_end?: string,
+    days?: number[]
+  },
+  settings?: {
+    tracked?: boolean,
+    tracked_links?: boolean,
+    add_unsubscribe_link?: boolean,
+    ai_assistant_enabled?: boolean,
+    bcc_recipient?: string | null
+  },
+  ab_testing?: {
+    enabled?: boolean,
+    variant_a_percentage?: number | null,
+    variant_b_percentage?: number | null,
+    winner_variant?: string | null,
+    winner_selected_at?: string | null
+  },
+  email_account_ids?: number[],
+  follow_ups?: {
+    unique_steps_count?: number,
+    steps?: number[]
+  },
+  owner?: {
+    id?: number,
+    email?: string
+  } | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sequences.list`
+
+List sequences
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.sequences.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `started` | `boolean` | No | — |
+| `archived` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sequences: {
+    id?: number,
+    name?: string,
+    status?: draft | planned | active | paused | completed | archived | preparing | error,
+    recipients_count?: number,
+    editable?: boolean,
+    started?: boolean,
+    paused?: boolean,
+    archived?: boolean,
+    schedule?: {
+      start_at?: string | null,
+      time_start?: string,
+      time_end?: string,
+      days?: number[]
+    },
+    settings?: {
+      tracked?: boolean,
+      tracked_links?: boolean,
+      add_unsubscribe_link?: boolean,
+      ai_assistant_enabled?: boolean,
+      bcc_recipient?: string | null
+    },
+    ab_testing?: {
+      enabled?: boolean,
+      variant_a_percentage?: number | null,
+      variant_b_percentage?: number | null,
+      winner_variant?: string | null,
+      winner_selected_at?: string | null
+    },
+    email_account_ids?: number[],
+    follow_ups?: {
+      unique_steps_count?: number,
+      steps?: number[]
+    },
+    owner?: {
+      id?: number,
+      email?: string
+    } | null,
+    created_at?: string,
+    updated_at?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`sequences.pause`
+
+Pause an active sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequences.pause({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message?: string,
+  recipients_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`sequences.replace`
+
+Replace a sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequences.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `email_account_ids` | `number[]` | No | — |
+| `schedule_time_start` | `string` | No | — |
+| `schedule_time_end` | `string` | No | — |
+| `schedule_days` | `number[]` | No | — |
+| `add_unsubscribe_link` | `boolean` | No | — |
+| `tracked` | `boolean` | No | — |
+| `tracked_links` | `boolean` | No | — |
+| `ai_assistant_enabled` | `boolean` | No | — |
+| `bcc_recipient` | `string` | No | — |
+| `start_at` | `string` | No | — |
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  status?: draft | planned | active | paused | completed | archived | preparing | error,
+  recipients_count?: number,
+  editable?: boolean,
+  started?: boolean,
+  paused?: boolean,
+  archived?: boolean,
+  schedule?: {
+    start_at?: string | null,
+    time_start?: string,
+    time_end?: string,
+    days?: number[]
+  },
+  settings?: {
+    tracked?: boolean,
+    tracked_links?: boolean,
+    add_unsubscribe_link?: boolean,
+    ai_assistant_enabled?: boolean,
+    bcc_recipient?: string | null
+  },
+  ab_testing?: {
+    enabled?: boolean,
+    variant_a_percentage?: number | null,
+    variant_b_percentage?: number | null,
+    winner_variant?: string | null,
+    winner_selected_at?: string | null
+  },
+  email_account_ids?: number[],
+  follow_ups?: {
+    unique_steps_count?: number,
+    steps?: number[]
+  },
+  owner?: {
+    id?: number,
+    email?: string
+  } | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resume
+
+`sequences.resume`
+
+Resume a paused sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequences.resume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message?: string,
+  recipients_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`sequences.start`
+
+Start a sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequences.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message?: string,
+  recipients_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### test
+
+`sequences.test`
+
+Send test emails for every step of a sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequences.test({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `any` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sequences.update`
+
+Update a sequence
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.sequences.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `email_account_ids` | `number[]` | No | — |
+| `schedule_time_start` | `string` | No | — |
+| `schedule_time_end` | `string` | No | — |
+| `schedule_days` | `number[]` | No | — |
+| `add_unsubscribe_link` | `boolean` | No | — |
+| `tracked` | `boolean` | No | — |
+| `tracked_links` | `boolean` | No | — |
+| `ai_assistant_enabled` | `boolean` | No | — |
+| `bcc_recipient` | `string` | No | — |
+| `start_at` | `string` | No | — |
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  status?: draft | planned | active | paused | completed | archived | preparing | error,
+  recipients_count?: number,
+  editable?: boolean,
+  started?: boolean,
+  paused?: boolean,
+  archived?: boolean,
+  schedule?: {
+    start_at?: string | null,
+    time_start?: string,
+    time_end?: string,
+    days?: number[]
+  },
+  settings?: {
+    tracked?: boolean,
+    tracked_links?: boolean,
+    add_unsubscribe_link?: boolean,
+    ai_assistant_enabled?: boolean,
+    bcc_recipient?: string | null
+  },
+  ab_testing?: {
+    enabled?: boolean,
+    variant_a_percentage?: number | null,
+    variant_b_percentage?: number | null,
+    winner_variant?: string | null,
+    winner_selected_at?: string | null
+  },
+  email_account_ids?: number[],
+  follow_ups?: {
+    unique_steps_count?: number,
+    steps?: number[]
+  },
+  owner?: {
+    id?: number,
+    email?: string
+  } | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sequence Stats
+
+### get
+
+`sequenceStats.get`
+
+Get performance statistics for a sequence
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.sequenceStats.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  recipients_count?: number,
+  sent?: number,
+  delivered?: number,
+  opened?: number,
+  clicked?: number,
+  replied?: number,
+  bounced?: number,
+  unsubscribed_recipients?: number,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  reply_rate?: number | null,
+  bounce_rate?: number | null,
+  unsubscribed_recipients_rate?: number | null,
+  follow_ups?: {
+    id?: number,
+    step?: number,
+    variant?: string | null,
+    messages_sent?: number,
+    delivered?: number,
+    opened?: number,
+    clicked?: number,
+    replied?: number,
+    bounced?: number,
+    unsubscribed?: number,
+    open_rate?: number | null,
+    click_rate?: number | null,
+    reply_rate?: number | null,
+    bounce_rate?: number | null,
+    unsubscribe_rate?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a lead tag
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.tags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete a lead tag permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`tags.get`
+
+Get a lead tag
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.tags.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List the lead tags on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tags: {
+    id?: number,
+    name?: string,
+    color?: string | null,
+    created_at?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`tags.replace`
+
+Replace a lead tag
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.tags.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Update a lead tag
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.tags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Team Members
+
+### list
+
+`teamMembers.list`
+
+List the team members on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.teamMembers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  email?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Usage
+
+### get
+
+`usage.get`
+
+Get account usage and plan limits
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.usage.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `show_overage_requests` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  reset_date?: string,
+  requests?: {
+    credits?: {
+      used?: number,
+      available?: number,
+      remaining?: number,
+      over_quota?: number
+    },
+    searches?: {
+      used?: number,
+      available?: number,
+      remaining?: number,
+      over_quota?: number
+    },
+    verifications?: {
+      used?: number,
+      available?: number,
+      remaining?: number,
+      over_quota?: number
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`usage.history`
+
+Get the daily API usage history for this billing period
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.usage.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `user_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  type?: string,
+  product?: string,
+  source?: string,
+  credits?: number,
+  free?: boolean,
+  made_at?: string,
+  made_by?: {
+    id?: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    api_key_name?: string | null
+  },
+  request?: {
+    url?: string,
+    ip?: string | null,
+    user_agent?: string | null,
+    filters?: any,
+    bulk_search_id?: number | null,
+    bulk_finder_id?: number | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_url` | `string` | Yes | — |
+| `event` | `lead.created \| message.sent \| message.read \| message.clicked \| message.replied \| export.completed \| import.completed \| sequence.paused \| sequence.resumed` | Yes | — |
+| `filter_on` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  target_url?: string,
+  event?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### deleteLegacy
+
+`webhooks.deleteLegacy`
+
+Delete a webhook permanently via the legacy endpoint [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hunterio.api.webhooks.deleteLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  target_url?: string,
+  event?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the configured webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  target_url?: string,
+  event?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`webhooks.replace`
+
+Replace a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.webhooks.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `target_url` | `string` | No | — |
+| `event` | `lead.created \| message.sent \| message.read \| message.clicked \| message.replied \| export.completed \| import.completed \| sequence.paused \| sequence.resumed` | No | — |
+| `filter_on` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  target_url?: string,
+  event?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.hunterio.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `target_url` | `string` | No | — |
+| `event` | `lead.created \| message.sent \| message.read \| message.clicked \| message.replied \| export.completed \| import.completed \| sequence.paused \| sequence.resumed` | No | — |
+| `filter_on` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  target_url?: string,
+  event?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

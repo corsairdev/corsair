@@ -1,0 +1,1322 @@
+---
+title: API
+description: "API reference for Bannerbear: every `bannerbear.api.*` operation with input and output types."
+---
+
+Every `bannerbear.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getAccountInfo
+
+`account.getAccountInfo`
+
+Get account info including plan and quota
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.account.getAccountInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at` | `string` | No | — |
+| `uid` | `string` | Yes | — |
+| `plan` | `string` | No | — |
+| `quota` | `object` | No | — |
+| `workspace` | `string` | No | — |
+| `api_key` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="quota full type">
+
+```ts
+{
+  max: number,
+  current: number,
+  remaining: number
+}
+```
+</Accordion>
+
+<Accordion title="api_key full type">
+
+```ts
+{
+  name?: string | null,
+  scopes?: string[],
+  allowed_origins?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAuth
+
+`account.getAuth`
+
+Verify API authentication against the current account
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.account.getAuth({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at` | `string` | No | — |
+| `uid` | `string` | Yes | — |
+| `plan` | `string` | No | — |
+| `quota` | `object` | No | — |
+| `workspace` | `string` | No | — |
+| `api_key` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="quota full type">
+
+```ts
+{
+  max: number,
+  current: number,
+  remaining: number
+}
+```
+</Accordion>
+
+<Accordion title="api_key full type">
+
+```ts
+{
+  name?: string | null,
+  scopes?: string[],
+  allowed_origins?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Animations
+
+### create
+
+`animations.create`
+
+Generate an animation from a template
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.animations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | Yes | — |
+| `modifications` | `object` | Yes | — |
+| `formats` | `mp4 \| mov[]` | No | — |
+| `metadata` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="modifications full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `template` | `string` | No | — |
+| `files` | `object` | No | — |
+| `progress` | `number` | No | — |
+| `metadata` | `string` | No | — |
+| `error` | `string` | No | — |
+| `self` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`animations.get`
+
+Get an animation by UID
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.animations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `template` | `string` | No | — |
+| `files` | `object` | No | — |
+| `progress` | `number` | No | — |
+| `metadata` | `string` | No | — |
+| `error` | `string` | No | — |
+| `self` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`animations.list`
+
+List generated animations
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.animations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uid: string,
+  status: string,
+  template?: string | null,
+  files?: {
+  } | null,
+  progress?: number | null,
+  metadata?: string | null,
+  error?: string | null,
+  self?: string | null,
+  created_at?: string | null,
+  completed_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Animation Templates
+
+### create
+
+`animationTemplates.create`
+
+Create an animation template
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.animationTemplates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `frame_rate` | `24 \| 30 \| 60` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `frame_rate` | `number` | No | — |
+| `duration_seconds` | `number` | No | — |
+| `preview` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `self` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`animationTemplates.get`
+
+Get an animation template by UID
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.animationTemplates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `frame_rate` | `number` | No | — |
+| `duration_seconds` | `number` | No | — |
+| `preview` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `self` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`animationTemplates.list`
+
+List animation templates
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.animationTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uid: string,
+  name: string,
+  description?: string | null,
+  width?: number | null,
+  height?: number | null,
+  frame_rate?: number | null,
+  duration_seconds?: number | null,
+  preview?: string | null,
+  tags?: string[],
+  created_at?: string | null,
+  self?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Images
+
+### create
+
+`images.create`
+
+Generate an image from a template
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.images.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | Yes | — |
+| `modifications` | `object` | Yes | — |
+| `metadata` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="modifications full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `template` | `string` | No | — |
+| `files` | `object` | No | — |
+| `metadata` | `string` | No | — |
+| `error` | `string` | No | — |
+| `self` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`images.get`
+
+Get an image by UID
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.images.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `template` | `string` | No | — |
+| `files` | `object` | No | — |
+| `metadata` | `string` | No | — |
+| `error` | `string` | No | — |
+| `self` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`images.list`
+
+List generated images
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.images.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uid: string,
+  status: string,
+  template?: string | null,
+  files?: {
+  } | null,
+  metadata?: string | null,
+  error?: string | null,
+  self?: string | null,
+  created_at?: string | null,
+  completed_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Instant Urls
+
+### create
+
+`instantUrls.create`
+
+Create an Instant URL for an image template
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.instantUrls.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `template` | `string` | Yes | — |
+| `mode` | `encoded \| named_params` | No | — |
+| `security` | `signed \| open` | No | — |
+| `status` | `active \| disabled` | No | — |
+| `scale` | `1 \| 2 \| 3 \| 4` | No | — |
+| `rate_limit` | `boolean` | No | — |
+| `template_version` | `number` | No | — |
+| `max_renders` | `number` | No | — |
+| `expires_at` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `template` | `string` | No | — |
+| `base_url` | `string` | No | — |
+| `sample_url` | `string` | No | — |
+| `mode` | `string` | No | — |
+| `security` | `string` | No | — |
+| `status` | `string` | No | — |
+| `signing_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`instantUrls.list`
+
+List Instant URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.instantUrls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uid: string,
+  name?: string,
+  template?: string | null,
+  base_url?: string,
+  sample_url?: string | null,
+  mode?: string | null,
+  security?: string | null,
+  status?: string | null,
+  signing_key?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Misc
+
+### joinPdfs
+
+`misc.joinPdfs`
+
+Merge image or PDF URLs into one PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.misc.joinPdfs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | — |
+| `metadata` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `joined_pdf_url` | `string` | No | — |
+| `self` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `metadata` | `string` | No | — |
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create an image template
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.templates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `preview` | `string` | No | — |
+| `preview_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `self` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete an image template by UID
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Get an image template by UID
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `preview` | `string` | No | — |
+| `preview_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `self` | `string` | No | — |
+
+
+
+---
+
+### import
+
+`templates.import`
+
+Install a publication as an image template
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.templates.import({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publication_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `preview` | `string` | No | — |
+| `preview_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `self` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List image templates
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uid: string,
+  name: string,
+  description?: string | null,
+  width?: number | null,
+  height?: number | null,
+  preview?: string | null,
+  preview_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  tags?: string[],
+  self?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks Api
+
+### create
+
+`webhooksApi.create`
+
+Create a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.webhooksApi.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `resource` | `image \| batch \| tool_job \| workflow_run \| animation` | No | — |
+| `event` | `all_events \| completed \| failed` | No | — |
+| `status` | `active \| disabled` | No | — |
+| `scope` | `all_templates \| specific_templates` | No | — |
+| `templates` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | Yes | — |
+| `resource` | `string` | No | — |
+| `event` | `string` | No | — |
+| `status` | `string` | No | — |
+| `signing_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooksApi.delete`
+
+Delete a webhook by UID
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.webhooksApi.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhooksApi.get`
+
+Get a webhook by UID
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.webhooksApi.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | Yes | — |
+| `resource` | `string` | No | — |
+| `event` | `string` | No | — |
+| `status` | `string` | No | — |
+| `signing_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+## Workflows
+
+### createWorkflowRun
+
+`workflows.createWorkflowRun`
+
+Run a workflow with inputs
+
+**Risk:** `write`
+
+```ts
+await corsair.bannerbear.api.workflows.createWorkflowRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflow` | `string` | Yes | — |
+| `inputs` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="inputs full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `workflow` | `string` | No | — |
+| `progress` | `number` | No | — |
+| `inputs` | `object` | No | — |
+| `outputs` | `object` | No | — |
+| `steps` | `object[]` | No | — |
+| `error` | `string` | No | — |
+| `self` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="inputs full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="outputs full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWorkflow
+
+`workflows.getWorkflow`
+
+Get a workflow by UID
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.workflows.getWorkflow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `inputs` | `object` | No | — |
+| `steps` | `object[]` | No | — |
+| `ui_write_access` | `string` | No | — |
+| `api_write_access` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="inputs full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWorkflowRun
+
+`workflows.getWorkflowRun`
+
+Get a workflow run by UID
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.workflows.getWorkflowRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `workflow` | `string` | No | — |
+| `progress` | `number` | No | — |
+| `inputs` | `object` | No | — |
+| `outputs` | `object` | No | — |
+| `steps` | `object[]` | No | — |
+| `error` | `string` | No | — |
+| `self` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="inputs full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="outputs full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listWorkflowRuns
+
+`workflows.listWorkflowRuns`
+
+List workflow runs
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.workflows.listWorkflowRuns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uid: string,
+  status: string,
+  workflow?: string | null,
+  progress?: number | null,
+  inputs?: {
+  } | null,
+  outputs?: {
+  } | null,
+  steps?: {
+  }[] | null,
+  error?: string | null,
+  self?: string | null,
+  created_at?: string | null,
+  completed_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listWorkflows
+
+`workflows.listWorkflows`
+
+List workflows in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.bannerbear.api.workflows.listWorkflows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uid: string,
+  name: string,
+  description?: string | null,
+  tags?: string[],
+  inputs?: {
+  } | null,
+  steps?: {
+  }[] | null,
+  ui_write_access?: string | null,
+  api_write_access?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

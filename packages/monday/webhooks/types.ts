@@ -1,9 +1,9 @@
+import * as crypto from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
-import { verifyHmacSignature } from 'corsair/http';
 import { z } from 'zod';
 
 // ── Shared Sub-Schemas ────────────────────────────────────────────────────────
@@ -122,20 +122,91 @@ export function createMondayMatch(eventType: string): CorsairWebhookMatcher {
 
 // ── Signature Verification ────────────────────────────────────────────────────
 
+// Monday board / integration webhooks put an HS256 JWT in Authorization,
+// signed with the app Signing Secret (or Client Secret for lifecycle events).
+// See https://developer.monday.com/apps/docs/authorization-header
+// This is NOT a body HMAC — treating the JWT as an HMAC digest 401s real traffic.
+
+function base64UrlEncode(buf: Buffer): string {
+	return buf
+		.toString('base64')
+		.replace(/=+$/g, '')
+		.replace(/\+/g, '-')
+		.replace(/\//g, '_');
+}
+
+function base64UrlDecode(input: string): Buffer {
+	const normalized = input.replace(/-/g, '+').replace(/_/g, '/');
+	const padded = normalized.padEnd(
+		normalized.length + ((4 - (normalized.length % 4)) % 4),
+		'=',
+	);
+	return Buffer.from(padded, 'base64');
+}
+
+function timingSafeEqualString(a: string, b: string): boolean {
+	const aBuf = Buffer.from(a);
+	const bBuf = Buffer.from(b);
+	if (aBuf.length !== bBuf.length) return false;
+	return crypto.timingSafeEqual(aBuf, bBuf);
+}
+
+function verifyMondayJwt(
+	token: string,
+	secret: string,
+): { valid: boolean; error?: string } {
+	const parts = token.split('.');
+	if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) {
+		return { valid: false, error: 'Invalid Authorization JWT' };
+	}
+
+	const [headerB64, payloadB64, signatureB64] = parts;
+
+	try {
+		const header = JSON.parse(base64UrlDecode(headerB64).toString('utf8')) as {
+			alg?: string;
+		};
+		if (header.alg !== 'HS256') {
+			return { valid: false, error: 'Unsupported JWT algorithm' };
+		}
+	} catch {
+		return { valid: false, error: 'Invalid Authorization JWT' };
+	}
+
+	const expectedSig = base64UrlEncode(
+		crypto
+			.createHmac('sha256', secret)
+			.update(`${headerB64}.${payloadB64}`)
+			.digest(),
+	);
+
+	if (!timingSafeEqualString(expectedSig, signatureB64)) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
+	try {
+		const payload = JSON.parse(
+			base64UrlDecode(payloadB64).toString('utf8'),
+		) as { exp?: number };
+		if (
+			typeof payload.exp === 'number' &&
+			Math.floor(Date.now() / 1000) >= payload.exp
+		) {
+			return { valid: false, error: 'Token expired' };
+		}
+	} catch {
+		return { valid: false, error: 'Invalid Authorization JWT' };
+	}
+
+	return { valid: true };
+}
+
 export function verifyMondayWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
-		return { valid: true };
-	}
-
-	const rawBody = request.rawBody;
-	if (!rawBody) {
-		return {
-			valid: false,
-			error: 'Missing raw body for signature verification',
-		};
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
 	const headers = request.headers;
@@ -147,8 +218,8 @@ export function verifyMondayWebhookSignature(
 		return { valid: false, error: 'Missing Authorization header' };
 	}
 
-	const isValid = verifyHmacSignature(rawBody, secret, authHeader, 'sha256');
-	return isValid
-		? { valid: true }
-		: { valid: false, error: 'Invalid signature' };
+	// RFC 9110: auth scheme token is case-insensitive ("Bearer" / "bearer" / …).
+	const token = authHeader.replace(/^Bearer\s+/i, '');
+
+	return verifyMondayJwt(token, secret);
 }

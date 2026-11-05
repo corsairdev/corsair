@@ -1,0 +1,2080 @@
+---
+title: API
+description: "API reference for Magic Hour: every `magichour.api.*` operation with input and output types."
+---
+
+Every `magichour.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get the account's credit balance and subscription details
+
+**Risk:** `read`
+
+```ts
+await corsair.magichour.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `tier` | `free \| creator \| pro \| business` | Yes | — |
+| `credits` | `number` | Yes | — |
+| `subscription` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscription full type">
+
+```ts
+{
+  name?: string | null,
+  status: active | past_due,
+  price: {
+    amount: number,
+    currency: string
+  },
+  discount?: {
+    percent_off?: number | null,
+    amount_off?: number | null
+  } | null,
+  billing_interval?: month | year | | null,
+  current_period_end?: string | null,
+  cancel_at_period_end: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audio
+
+### voiceCloner
+
+`audio.voiceCloner`
+
+Clone a voice from an audio sample and generate speech
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.audio.voiceCloner({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `assets` | `object` | Yes | — |
+| `style` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  audio_file_path: string
+}
+```
+</Accordion>
+
+<Accordion title="style full type">
+
+```ts
+{
+  prompt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### voiceGenerator
+
+`audio.voiceGenerator`
+
+Generate speech audio from text using a preset voice
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.audio.voiceGenerator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `style` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  prompt: string,
+  voice_name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+## Audio Projects
+
+### delete
+
+`audioProjects.delete`
+
+Permanently delete rendered audio file(s) [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.magichour.api.audioProjects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### getDetails
+
+`audioProjects.getDetails`
+
+Check the progress, status, and downloads of an audio project
+
+**Risk:** `read`
+
+```ts
+await corsair.magichour.api.audioProjects.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `draft \| queued \| rendering \| complete \| error \| canceled` | Yes | — |
+| `type` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+| `downloads` | `object[]` | No | — |
+| `error` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  url: string,
+  expires_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  message: string,
+  code: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Face Detection
+
+### detect
+
+`faceDetection.detect`
+
+Detect faces in an image or video
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.faceDetection.detect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `confidence_score` | `number` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  target_file_path: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### getDetails
+
+`faceDetection.getDetails`
+
+Get the details and detected faces of a face detection task
+
+**Risk:** `read`
+
+```ts
+await corsair.magichour.api.faceDetection.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+| `status` | `queued \| rendering \| complete \| error` | Yes | — |
+| `faces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="faces full type">
+
+```ts
+{
+  path: string,
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### generateUploadUrls
+
+`files.generateUploadUrls`
+
+Generate pre-signed URLs for uploading video, audio, or image assets
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.files.generateUploadUrls({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  type: video | audio | image,
+  extension: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  upload_url: string,
+  expires_at: string,
+  file_path: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### savedItemsList
+
+`files.savedItemsList`
+
+List saved items (characters, references, voices, moodboards, brand kits)
+
+**Risk:** `read`
+
+```ts
+await corsair.magichour.api.files.savedItemsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `character \| reference \| voice \| moodboard \| brand_kit` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  type: character | reference | voice | moodboard | brand_kit,
+  name?: string | null,
+  assets: {
+    file_path: string,
+    media_kind: IMAGE | VIDEO | AUDIO,
+    is_primary: boolean,
+    url: string,
+    url_expires_at: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Image Projects
+
+### delete
+
+`imageProjects.delete`
+
+Permanently delete rendered image(s) [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.magichour.api.imageProjects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### getDetails
+
+`imageProjects.getDetails`
+
+Check the progress, status, and downloads of an image project
+
+**Risk:** `read`
+
+```ts
+await corsair.magichour.api.imageProjects.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `draft \| queued \| rendering \| complete \| error \| canceled` | Yes | — |
+| `image_count` | `number` | Yes | — |
+| `type` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+| `downloads` | `object[]` | No | — |
+| `error` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  url: string,
+  expires_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  message: string,
+  code: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### backgroundRemover
+
+`images.backgroundRemover`
+
+Remove or replace an image background
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.backgroundRemover({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  image_file_path: string,
+  background_image_file_path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### bodySwap
+
+`images.bodySwap`
+
+Place a person into a scene image
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.bodySwap({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `resolution` | `640px \| 1k \| 2k \| 4k` | Yes | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  person_file_path: string,
+  scene_file_path: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### clothesChanger
+
+`images.clothesChanger`
+
+Change outfits in a photo using a garment reference
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.clothesChanger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  person_file_path: string,
+  garment_file_path: string,
+  garment_type?: entire_outfit | upper_body | lower_body | dresses
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### faceEditor
+
+`images.faceEditor`
+
+Edit facial features of an image
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.faceEditor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `assets` | `object` | Yes | — |
+| `style` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  image_file_path: string
+}
+```
+</Accordion>
+
+<Accordion title="style full type">
+
+```ts
+{
+  enhance_face?: boolean,
+  eyebrow_direction?: number,
+  eye_gaze_horizontal?: number,
+  eye_gaze_vertical?: number,
+  eye_open_ratio?: number,
+  lip_open_ratio?: number,
+  head_roll?: number,
+  mouth_grim?: number,
+  mouth_pout?: number,
+  mouth_purse?: number,
+  mouth_smile?: number,
+  mouth_position_horizontal?: number,
+  mouth_position_vertical?: number,
+  head_pitch?: number,
+  head_yaw?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### faceSwapPhoto
+
+`images.faceSwapPhoto`
+
+Swap faces in a photo
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.faceSwapPhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  face_swap_mode?: all-faces | individual-faces,
+  source_file_path?: string,
+  face_mappings?: {
+    original_face: string,
+    new_face: string
+  }[],
+  target_file_path: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### gifGenerator
+
+`images.gifGenerator`
+
+Generate an animated GIF from a prompt
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.gifGenerator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `style` | `object` | Yes | — |
+| `output_format` | `gif \| mp4 \| webm` | No | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  prompt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### headshotGenerator
+
+`images.headshotGenerator`
+
+Generate a professional headshot from a photo
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.headshotGenerator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `style` | `object` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  prompt?: string
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  image_file_path: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### headSwap
+
+`images.headSwap`
+
+Swap a head onto a body image
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.headSwap({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `max_resolution` | `number` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  body_file_path: string,
+  head_file_path: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### imageEditor
+
+`images.imageEditor`
+
+Edit an image with a prompt-driven AI model
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.imageEditor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `image_count` | `1 \| 4 \| 9 \| 16` | No | — |
+| `model` | `string` | No | — |
+| `aspect_ratio` | `auto \| 16:9 \| 9:16 \| 4:3 \| 3:2 \| 1:1 \| 4:5 \| 2:3` | No | — |
+| `resolution` | `auto \| 640px \| 1k \| 2k \| 4k` | No | — |
+| `style` | `object` | Yes | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  prompt: string
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  image_file_paths?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### imageGenerator
+
+`images.imageGenerator`
+
+Generate images from a text prompt
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.imageGenerator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `image_count` | `number` | Yes | — |
+| `model` | `string` | No | — |
+| `aspect_ratio` | `1:1 \| 16:9 \| 9:16` | No | — |
+| `resolution` | `auto \| 640px \| 1k \| 2k \| 4k` | No | — |
+| `style` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  prompt: string,
+  tool?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### imageUpscaler
+
+`images.imageUpscaler`
+
+Upscale an image 2x or 4x with AI
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.imageUpscaler({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `scale_factor` | `2 \| 4` | Yes | — |
+| `style` | `object` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  mode?: pro | preserve | balanced | creative,
+  prompt?: string
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  image_file_path: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### memeGenerator
+
+`images.memeGenerator`
+
+Generate a meme from a topic and template
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.memeGenerator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `style` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  topic: string,
+  template: string,
+  searchWeb?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### photoColorizer
+
+`images.photoColorizer`
+
+Colorize a black-and-white photo
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.photoColorizer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  image_file_path: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### qrCodeGenerator
+
+`images.qrCodeGenerator`
+
+Generate an artistic QR code
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.images.qrCodeGenerator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `style` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  art_style: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+## Video Projects
+
+### delete
+
+`videoProjects.delete`
+
+Permanently delete a rendered video [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.magichour.api.videoProjects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### getDetails
+
+`videoProjects.getDetails`
+
+Check the progress, status, and downloads of a video project
+
+**Risk:** `read`
+
+```ts
+await corsair.magichour.api.videoProjects.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `draft \| queued \| rendering \| complete \| error \| canceled` | Yes | — |
+| `type` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `width` | `number` | Yes | — |
+| `height` | `number` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `start_seconds` | `number` | Yes | — |
+| `end_seconds` | `number` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+| `fps` | `number` | Yes | — |
+| `error` | `object` | No | — |
+| `downloads` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  message: string,
+  code: string
+}
+```
+</Accordion>
+
+<Accordion title="downloads full type">
+
+```ts
+{
+  url: string,
+  expires_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### animation
+
+`videos.animation`
+
+Create a stylized animation video from an image and audio
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.animation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `fps` | `number` | Yes | — |
+| `end_seconds` | `number` | Yes | — |
+| `height` | `number` | Yes | — |
+| `width` | `number` | Yes | — |
+| `style` | `object` | Yes | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  art_style: string,
+  art_style_custom?: string,
+  camera_effect: string,
+  prompt_type: custom | use_lyrics | ai_choose,
+  prompt?: string,
+  transition_speed: number
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  audio_source: none | file | youtube,
+  audio_file_path?: string,
+  youtube_url?: string,
+  image_file_path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### audioToVideo
+
+`videos.audioToVideo`
+
+Create a video from an audio track
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.audioToVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `start_seconds` | `number` | No | — |
+| `end_seconds` | `number` | Yes | — |
+| `resolution` | `480p \| 720p \| 1080p` | No | — |
+| `assets` | `object` | Yes | — |
+| `style` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  audio_file_path: string,
+  image_file_path?: string
+}
+```
+</Accordion>
+
+<Accordion title="style full type">
+
+```ts
+{
+  prompt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### autoSubtitleGenerator
+
+`videos.autoSubtitleGenerator`
+
+Generate styled subtitles for a video
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.autoSubtitleGenerator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `start_seconds` | `number` | Yes | — |
+| `end_seconds` | `number` | Yes | — |
+| `assets` | `object` | Yes | — |
+| `style` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  video_file_path: string
+}
+```
+</Accordion>
+
+<Accordion title="style full type">
+
+```ts
+{
+  template?: karaoke | cinematic | minimalist | highlight,
+  custom_config?: {
+    font?: string,
+    font_size?: number,
+    font_style?: string,
+    text_color?: string,
+    highlighted_text_color?: string,
+    stroke_color?: string,
+    stroke_width?: number,
+    vertical_position?: string,
+    horizontal_position?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### characterReplace
+
+`videos.characterReplace`
+
+Replace or animate a character in a video
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.characterReplace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `start_seconds` | `number` | No | — |
+| `end_seconds` | `number` | Yes | — |
+| `model` | `wan-animate \| kling-3.0` | No | — |
+| `resolution` | `480p \| 720p \| 1080p` | No | — |
+| `assets` | `object` | Yes | — |
+| `style` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  video_file_path: string,
+  image_file_path: string
+}
+```
+</Accordion>
+
+<Accordion title="style full type">
+
+```ts
+{
+  mode?: replace | animate,
+  selection_mode?: auto | point,
+  points?: {
+    position_x: number,
+    position_y: number,
+    time_seconds: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### faceSwap
+
+`videos.faceSwap`
+
+Swap faces in a video using a reference face image
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.faceSwap({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `start_seconds` | `number` | Yes | — |
+| `end_seconds` | `number` | Yes | — |
+| `style` | `object` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  version?: v1 | v2 | default
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  face_swap_mode?: all-faces | individual-faces,
+  image_file_path?: string,
+  face_mappings?: {
+    original_face: string,
+    new_face: string
+  }[],
+  video_source: file | youtube,
+  video_file_path?: string,
+  youtube_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### imageToVideo
+
+`videos.imageToVideo`
+
+Animate a still image into a video
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.imageToVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `end_seconds` | `number` | Yes | — |
+| `model` | `string` | No | — |
+| `resolution` | `360p \| 480p \| 720p \| 1080p \| 4k` | No | — |
+| `audio` | `boolean` | No | — |
+| `style` | `object` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  prompt?: string
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  image_file_path: string,
+  end_image_file_path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### lipSync
+
+`videos.lipSync`
+
+Sync a video's lip movement to an audio track
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.lipSync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `start_seconds` | `number` | Yes | — |
+| `end_seconds` | `number` | Yes | — |
+| `max_fps_limit` | `number` | No | — |
+| `assets` | `object` | Yes | — |
+| `style` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  audio_file_path: string,
+  video_source: file | youtube,
+  video_file_path?: string,
+  youtube_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="style full type">
+
+```ts
+{
+  generation_mode?: lite | standard | pro
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### talkingPhoto
+
+`videos.talkingPhoto`
+
+Create a talking photo video from an image and an audio file
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.talkingPhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `start_seconds` | `number` | Yes | — |
+| `end_seconds` | `number` | Yes | — |
+| `assets` | `object` | Yes | — |
+| `style` | `object` | No | — |
+| `resolution` | `480p \| 720p` | No | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  image_file_path: string,
+  audio_file_path: string
+}
+```
+</Accordion>
+
+<Accordion title="style full type">
+
+```ts
+{
+  generation_mode?: realistic | prompted | pro | standard | stable | expressive,
+  prompt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### textToVideo
+
+`videos.textToVideo`
+
+Generate a video from a text prompt
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.textToVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `end_seconds` | `number` | Yes | — |
+| `aspect_ratio` | `16:9 \| 9:16 \| 1:1` | No | — |
+| `resolution` | `360p \| 480p \| 720p \| 1080p \| 4k` | No | — |
+| `model` | `string` | No | — |
+| `audio` | `boolean` | No | — |
+| `style` | `object` | Yes | — |
+| `references` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  prompt: string
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+  name: string,
+  file_path: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### ugcAd
+
+`videos.ugcAd`
+
+Create a spoken UGC ad video from an image and a script
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.ugcAd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assets` | `object` | Yes | — |
+| `script` | `string` | Yes | — |
+| `end_seconds` | `number` | Yes | — |
+| `model` | `kling-3.0 \| ltx-2.5 \| veo3.1` | No | — |
+| `resolution` | `480p \| 720p \| 1080p` | No | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  image_file_path: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### videoEditor
+
+`videos.videoEditor`
+
+Edit a video with a prompt-driven AI model
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.videoEditor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `start_seconds` | `number` | No | — |
+| `end_seconds` | `number` | Yes | — |
+| `model` | `gemini-omni-1.1 \| gemini-omni \| ltx-2.5 \| ltx-2.3` | No | — |
+| `resolution` | `480p \| 720p \| 1080p` | No | — |
+| `style` | `object` | Yes | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  prompt: string
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  video_file_path: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### videoToVideo
+
+`videos.videoToVideo`
+
+Restyle an existing video with a new art style
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.videoToVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `start_seconds` | `number` | Yes | — |
+| `end_seconds` | `number` | Yes | — |
+| `fps_resolution` | `FULL \| HALF` | No | — |
+| `style` | `object` | Yes | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="style full type">
+
+```ts
+{
+  art_style: string,
+  version?: v1 | v2 | default,
+  prompt_type?: default | custom | append_default,
+  prompt?: string | null,
+  model?: Dreamshaper | Absolute Reality | Flat 2D Anime | Soft Anime | Kaywaii | Western Anime | 3D Anime | default
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  video_source: file | youtube,
+  video_file_path?: string,
+  youtube_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+
+### videoTranslator
+
+`videos.videoTranslator`
+
+Translate the speech in a video into another language
+
+**Risk:** `write`
+
+```ts
+await corsair.magichour.api.videos.videoTranslator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `start_seconds` | `number` | No | — |
+| `end_seconds` | `number` | Yes | — |
+| `target_language` | `string` | Yes | — |
+| `resolution` | `480p \| 720p \| 1080p` | No | — |
+| `assets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  video_file_path: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `credits_charged` | `number` | Yes | — |
+
+
+
+---
+

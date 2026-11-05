@@ -1,0 +1,6745 @@
+---
+title: API
+description: "API reference for Cloudinary: every `cloudinary.api.*` operation with input and output types."
+---
+
+Every `cloudinary.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Adaptive
+
+### getAdaptiveStreamingProfiles
+
+`adaptive.getAdaptiveStreamingProfiles`
+
+List streaming profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.adaptive.getAdaptiveStreamingProfiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Analysis
+
+### getAnalysisTaskStatus
+
+`analysis.getAnalysisTaskStatus`
+
+Get analysis task status
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.analysis.getAnalysisTaskStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `task_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Asset
+
+### createAssetRelationsByAssetId
+
+`asset.createAssetRelationsByAssetId`
+
+Add related assets by asset ID
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.asset.createAssetRelationsByAssetId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `asset_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createAssetRelationsByPublicId
+
+`asset.createAssetRelationsByPublicId`
+
+Add related assets by public ID
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.asset.createAssetRelationsByPublicId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `type` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteAssetRelationsByAssetId
+
+`asset.deleteAssetRelationsByAssetId`
+
+Remove related assets by asset ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudinary.api.asset.deleteAssetRelationsByAssetId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `asset_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### deleteAssetRelationsByPublicId
+
+`asset.deleteAssetRelationsByPublicId`
+
+Remove related assets by public ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudinary.api.asset.deleteAssetRelationsByPublicId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `type` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### destroyAsset
+
+`asset.destroyAsset`
+
+Destroy asset by public ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.asset.destroyAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### destroyAssetById
+
+`asset.destroyAssetById`
+
+Destroy asset by asset ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.asset.destroyAssetById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### updateAssetMetadata
+
+`asset.updateAssetMetadata`
+
+Update asset metadata values
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.asset.updateAssetMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadAsset
+
+`asset.uploadAsset`
+
+Upload media asset
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.asset.uploadAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Assets
+
+### searchAssets
+
+`assets.searchAssets`
+
+Search assets with Lucene-like expressions
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.assets.searchAssets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchVisualAssets
+
+`assets.searchVisualAssets`
+
+Visual search for similar assets
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.assets.searchVisualAssets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Chunk
+
+### uploadChunk
+
+`chunk.uploadChunk`
+
+Upload a file chunk for large uploads (requires content_range and x_unique_upload_id)
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.chunk.uploadChunk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cloudinary
+
+### pingCloudinaryServers
+
+`cloudinary.pingCloudinaryServers`
+
+Ping Cloudinary servers
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.cloudinary.pingCloudinaryServers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+## Config
+
+### getConfig
+
+`config.getConfig`
+
+Get product environment config
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.config.getConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Context
+
+### manageContext
+
+`context.manageContext`
+
+Add or remove contextual metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.context.manageContext({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Create
+
+### createTrigger
+
+`create.createTrigger`
+
+Create webhook trigger
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.create.createTrigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `uri` | `string` | Yes | — |
+| `event_type` | `string` | Yes | — |
+| `additive` | `boolean` | No | — |
+| `auth_scheme` | `string` | No | — |
+
+
+
+---
+
+## Datasource
+
+### searchDatasourceInMetadataField
+
+`datasource.searchDatasourceInMetadataField`
+
+Search datasource in metadata field
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.datasource.searchDatasourceInMetadataField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_id` | `string` | Yes | — |
+| `term` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Delete
+
+### deleteTrigger
+
+`delete.deleteTrigger`
+
+Delete webhook trigger
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.delete.deleteTrigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `trigger_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+## Derived
+
+### deleteDerivedResources
+
+`derived.deleteDerivedResources`
+
+Delete derived resources
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.derived.deleteDerivedResources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+## Entries
+
+### deleteEntriesInMetadataFieldDatasource
+
+`entries.deleteEntriesInMetadataFieldDatasource`
+
+Delete datasource entries
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudinary.api.entries.deleteEntriesInMetadataFieldDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### restoreEntriesInMetadataFieldDatasource
+
+`entries.restoreEntriesInMetadataFieldDatasource`
+
+Restore datasource entries
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.entries.restoreEntriesInMetadataFieldDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `type` | `string` | No | — |
+| `mandatory` | `boolean` | No | — |
+| `default_value` | `any` | No | — |
+| `datasource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  values?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## File
+
+### uploadFileAutoDetect
+
+`file.uploadFileAutoDetect`
+
+Upload with auto resource type detection
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.file.uploadFileAutoDetect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folder
+
+### createFolder
+
+`folder.createFolder`
+
+Create a new asset folder
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.folder.createFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `folder` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+---
+
+### deleteFolder
+
+`folder.deleteFolder`
+
+Delete an empty folder
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.folder.deleteFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `folder` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### showFolder
+
+`folder.showFolder`
+
+List subfolders in a folder
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.folder.showFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `folder` | `string` | Yes | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `folders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="folders full type">
+
+```ts
+{
+  name: string,
+  path?: string,
+  external_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateFolder
+
+`folder.updateFolder`
+
+Rename or move a folder
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.folder.updateFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `folder` | `string` | Yes | — |
+| `to_folder` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+---
+
+## Folders
+
+### searchFolders
+
+`folders.searchFolders`
+
+Search asset folders
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.folders.searchFolders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `expression` | `any` | No | — |
+| `sort_by` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `folders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="folders full type">
+
+```ts
+{
+  name: string,
+  path?: string,
+  external_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchFoldersV2
+
+`folders.searchFoldersV2`
+
+Search folders (v2 POST)
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.folders.searchFoldersV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `folders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="folders full type">
+
+```ts
+{
+  name: string,
+  path?: string,
+  external_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Generate
+
+### generateArchive
+
+`generate.generateArchive`
+
+Generate ZIP/TGZ archive of assets
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.generate.generateArchive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Image
+
+### createImageFromText
+
+`image.createImageFromText`
+
+Generate an image from text
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.image.createImageFromText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### listImages
+
+`images.listImages`
+
+List image assets
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.images.listImages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `type` | `any` | No | — |
+| `prefix` | `any` | No | — |
+| `public_ids` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+| `start_at` | `any` | No | — |
+| `direction` | `any` | No | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `moderation` | `any` | No | — |
+| `tags` | `any` | No | — |
+| `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Live
+
+### activateLiveStream
+
+`live.activateLiveStream`
+
+Manually activate a live stream
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.live.activateLiveStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `stream_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### createLiveStream
+
+`live.createLiveStream`
+
+Create a new live stream
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.live.createLiveStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `stream_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### createLiveStreamOutput
+
+`live.createLiveStreamOutput`
+
+Create a live stream output
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.live.createLiveStreamOutput({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `stream_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### deleteLiveStream
+
+`live.deleteLiveStream`
+
+Delete a live stream
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.live.deleteLiveStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### deleteLiveStreamOutput
+
+`live.deleteLiveStreamOutput`
+
+Delete a live stream output
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.live.deleteLiveStreamOutput({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `liveStreamId` | `string` | Yes | — |
+| `liveStreamOutputId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### getLiveStream
+
+`live.getLiveStream`
+
+Get live stream details
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.live.getLiveStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `stream_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### getLiveStreamOutput
+
+`live.getLiveStreamOutput`
+
+Get live stream output details
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.live.getLiveStreamOutput({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `liveStreamId` | `string` | Yes | — |
+| `liveStreamOutputId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `stream_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### getLiveStreamOutputs
+
+`live.getLiveStreamOutputs`
+
+List live stream outputs
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.live.getLiveStreamOutputs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `liveStreamId` | `string` | Yes | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  total_count?: number,
+  live_streams?: {
+    id: string,
+    name?: string,
+    status?: string,
+    uri?: string,
+    stream_key?: string,
+    created_at?: string
+  }[]
+} | {
+  id: string,
+  name?: string,
+  status?: string,
+  uri?: string,
+  stream_key?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getLiveStreams
+
+`live.getLiveStreams`
+
+List live streams
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.live.getLiveStreams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  total_count?: number,
+  live_streams?: {
+    id: string,
+    name?: string,
+    status?: string,
+    uri?: string,
+    stream_key?: string,
+    created_at?: string
+  }[]
+} | {
+  id: string,
+  name?: string,
+  status?: string,
+  uri?: string,
+  stream_key?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### idleLiveStream
+
+`live.idleLiveStream`
+
+Put a live stream into idle state
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.live.idleLiveStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `stream_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### updateLiveStream
+
+`live.updateLiveStream`
+
+Update live stream configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.live.updateLiveStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `stream_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### updateLiveStreamOutput
+
+`live.updateLiveStreamOutput`
+
+Update live stream output configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.live.updateLiveStreamOutput({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `liveStreamId` | `string` | Yes | — |
+| `liveStreamOutputId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `stream_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+## Mapping
+
+### createUploadMapping
+
+`mapping.createUploadMapping`
+
+Create upload mapping
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.mapping.createUploadMapping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder` | `string` | Yes | — |
+| `template` | `string` | No | — |
+
+
+
+---
+
+### deleteUploadMapping
+
+`mapping.deleteUploadMapping`
+
+Delete upload mapping
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.mapping.deleteUploadMapping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `folder` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### getUploadMappingDetails
+
+`mapping.getUploadMappingDetails`
+
+Get upload mapping details
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.mapping.getUploadMappingDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `folder` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder` | `string` | Yes | — |
+| `template` | `string` | No | — |
+
+
+
+---
+
+### updateUploadMapping
+
+`mapping.updateUploadMapping`
+
+Update upload mapping
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.mapping.updateUploadMapping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `folder` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder` | `string` | Yes | — |
+| `template` | `string` | No | — |
+
+
+
+---
+
+## Mappings
+
+### getUploadMappings
+
+`mappings.getUploadMappings`
+
+List upload mappings
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.mappings.getUploadMappings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `mappings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="mappings full type">
+
+```ts
+{
+  folder: string,
+  template?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Metadata
+
+### createMetadataField
+
+`metadata.createMetadataField`
+
+Create metadata field definition
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.metadata.createMetadataField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `type` | `string` | No | — |
+| `mandatory` | `boolean` | No | — |
+| `default_value` | `any` | No | — |
+| `datasource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  values?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createMetadataRule
+
+`metadata.createMetadataRule`
+
+Create metadata rule
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.metadata.createMetadataRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `condition` | `object` | No | — |
+| `result` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="condition full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteMetadataField
+
+`metadata.deleteMetadataField`
+
+Delete metadata field
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.metadata.deleteMetadataField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### deleteMetadataRule
+
+`metadata.deleteMetadataRule`
+
+Delete metadata rule
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.metadata.deleteMetadataRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `metadata_rule_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### getMetadataFieldById
+
+`metadata.getMetadataFieldById`
+
+Get metadata field by external ID
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.metadata.getMetadataFieldById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `type` | `string` | No | — |
+| `mandatory` | `boolean` | No | — |
+| `default_value` | `any` | No | — |
+| `datasource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  values?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMetadataFields
+
+`metadata.listMetadataFields`
+
+List metadata fields
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.metadata.listMetadataFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_ids` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadata_fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata_fields full type">
+
+```ts
+{
+  external_id: string,
+  label?: string,
+  type?: string,
+  mandatory?: boolean,
+  default_value?: any,
+  datasource?: {
+    values?: {
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMetadataRules
+
+`metadata.listMetadataRules`
+
+List metadata rules
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.metadata.listMetadataRules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  condition?: {
+  },
+  result?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### orderMetadataFieldDatasource
+
+`metadata.orderMetadataFieldDatasource`
+
+Order metadata field datasource
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.metadata.orderMetadataFieldDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `type` | `string` | No | — |
+| `mandatory` | `boolean` | No | — |
+| `default_value` | `any` | No | — |
+| `datasource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  values?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reorderMetadataField
+
+`metadata.reorderMetadataField`
+
+Reorder a metadata field
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.metadata.reorderMetadataField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `type` | `string` | No | — |
+| `mandatory` | `boolean` | No | — |
+| `default_value` | `any` | No | — |
+| `datasource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  values?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reorderMetadataFields
+
+`metadata.reorderMetadataFields`
+
+Reorder all metadata fields
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.metadata.reorderMetadataFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `type` | `string` | No | — |
+| `mandatory` | `boolean` | No | — |
+| `default_value` | `any` | No | — |
+| `datasource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  values?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchMetadataFieldDatasource
+
+`metadata.searchMetadataFieldDatasource`
+
+Search all metadata datasources
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.metadata.searchMetadataFieldDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `term` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateMetadataField
+
+`metadata.updateMetadataField`
+
+Update metadata field definition
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.metadata.updateMetadataField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `type` | `string` | No | — |
+| `mandatory` | `boolean` | No | — |
+| `default_value` | `any` | No | — |
+| `datasource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  values?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateMetadataFieldDatasource
+
+`metadata.updateMetadataFieldDatasource`
+
+Update metadata field datasource
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.metadata.updateMetadataFieldDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `type` | `string` | No | — |
+| `mandatory` | `boolean` | No | — |
+| `default_value` | `any` | No | — |
+| `datasource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasource full type">
+
+```ts
+{
+  values?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateMetadataRule
+
+`metadata.updateMetadataRule`
+
+Update metadata rule
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.metadata.updateMetadataRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `metadata_rule_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `condition` | `object` | No | — |
+| `result` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="condition full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Multi
+
+### createMultiResource
+
+`multi.createMultiResource`
+
+Create animation from multiple images
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.multi.createMultiResource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Preset
+
+### createUploadPreset
+
+`preset.createUploadPreset`
+
+Create upload preset
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.preset.createUploadPreset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `unsigned` | `boolean` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteUploadPreset
+
+`preset.deleteUploadPreset`
+
+Delete upload preset
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.preset.deleteUploadPreset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### getUploadPreset
+
+`preset.getUploadPreset`
+
+Get upload preset
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.preset.getUploadPreset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `unsigned` | `boolean` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateUploadPreset
+
+`preset.updateUploadPreset`
+
+Update upload preset
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.preset.updateUploadPreset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `unsigned` | `boolean` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Presets
+
+### listUploadPresets
+
+`presets.listUploadPresets`
+
+List upload presets
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.presets.listUploadPresets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `presets` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="presets full type">
+
+```ts
+{
+  name: string,
+  unsigned?: boolean,
+  settings?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Raw
+
+### listRawFiles
+
+`raw.listRawFiles`
+
+List raw assets
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.raw.listRawFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `type` | `any` | No | — |
+| `prefix` | `any` | No | — |
+| `public_ids` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+| `start_at` | `any` | No | — |
+| `direction` | `any` | No | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `moderation` | `any` | No | — |
+| `tags` | `any` | No | — |
+| `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Resource
+
+### explicitResource
+
+`resource.explicitResource`
+
+Explicitly update or generate derived assets
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.resource.explicitResource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### explodeResource
+
+`resource.explodeResource`
+
+Explode multi-page resource into separate images
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.resource.explodeResource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getResourceByAssetId
+
+`resource.getResourceByAssetId`
+
+Get resource by asset ID
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.resource.getResourceByAssetId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `asset_id` | `string` | Yes | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `moderations` | `any` | No | — |
+| `quality_analysis` | `any` | No | — |
+| `accessibility_analysis` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getResourceByPublicId
+
+`resource.getResourceByPublicId`
+
+Get resource by public ID
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.resource.getResourceByPublicId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `type` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `moderations` | `any` | No | — |
+| `quality_analysis` | `any` | No | — |
+| `accessibility_analysis` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listResourceTypes
+
+`resource.listResourceTypes`
+
+List available resource types
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.resource.listResourceTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource_types` | `string[]` | Yes | — |
+
+
+
+---
+
+### renameResource
+
+`resource.renameResource`
+
+Rename or move resource public ID
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.resource.renameResource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateResourceByAssetId
+
+`resource.updateResourceByAssetId`
+
+Update resource by asset ID
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.resource.updateResourceByAssetId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `asset_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateResourceByPublicId
+
+`resource.updateResourceByPublicId`
+
+Update resource by public ID
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.resource.updateResourceByPublicId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `type` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateResourceTags
+
+`resource.updateResourceTags`
+
+Add, remove, or replace resource tags
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.resource.updateResourceTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Resources
+
+### deleteResourcesByAssetId
+
+`resources.deleteResourcesByAssetId`
+
+Delete resources by asset IDs
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.resources.deleteResourcesByAssetId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### deleteResourcesByPublicId
+
+`resources.deleteResourcesByPublicId`
+
+Delete resources by public ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.resources.deleteResourcesByPublicId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `type` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### deleteResourcesByTags
+
+`resources.deleteResourcesByTags`
+
+Delete resources by tag
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.resources.deleteResourcesByTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `tag` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### getResourcesByAssetFolder
+
+`resources.getResourcesByAssetFolder`
+
+List assets in a folder
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.resources.getResourcesByAssetFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `asset_folder` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+| `tags` | `any` | No | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `moderations` | `any` | No | — |
+| `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getResourcesByContext
+
+`resources.getResourcesByContext`
+
+Get resources by context metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.resources.getResourcesByContext({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `key` | `any` | No | — |
+| `value` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `tags` | `any` | No | — |
+| `moderations` | `any` | No | — |
+| `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getResourcesInModeration
+
+`resources.getResourcesInModeration`
+
+Get resources in moderation queue
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.resources.getResourcesInModeration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `moderation_kind` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `tags` | `any` | No | — |
+| `moderations` | `any` | No | — |
+| `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listResourcesByAssetIds
+
+`resources.listResourcesByAssetIds`
+
+List resources by asset IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.resources.listResourcesByAssetIds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `asset_ids` | `any` | No | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `moderations` | `any` | No | — |
+| `tags` | `any` | No | — |
+| `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listResourcesByExternalIds
+
+`resources.listResourcesByExternalIds`
+
+List resources by external IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.resources.listResourcesByExternalIds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `external_ids` | `any` | No | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `moderations` | `any` | No | — |
+| `tags` | `any` | No | — |
+| `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listResourcesByTag
+
+`resources.listResourcesByTag`
+
+List resources by tag
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.resources.listResourcesByTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `tag` | `string` | Yes | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `moderations` | `any` | No | — |
+| `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listResourcesByType
+
+`resources.listResourcesByType`
+
+List resources by type
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.resources.listResourcesByType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `type` | `string` | Yes | — |
+| `prefix` | `any` | No | — |
+| `public_ids` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+| `start_at` | `any` | No | — |
+| `direction` | `any` | No | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `moderation` | `any` | No | — |
+| `tags` | `any` | No | — |
+| `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publishResources
+
+`resources.publishResources`
+
+Publish resources to public access
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.resources.publishResources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restoreResources
+
+`resources.restoreResources`
+
+Restore deleted resources by public ID
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.resources.restoreResources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `type` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restoreResourcesByAssetIds
+
+`resources.restoreResourcesByAssetIds`
+
+Restore resources by asset IDs
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.resources.restoreResourcesByAssetIds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Root
+
+### getRootFolders
+
+`root.getRootFolders`
+
+List root folders
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.root.getRootFolders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `folders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="folders full type">
+
+```ts
+{
+  name: string,
+  path?: string,
+  external_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Slideshow
+
+### createSlideshow
+
+`slideshow.createSlideshow`
+
+Create video slideshow from assets
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.slideshow.createSlideshow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `image \| video \| raw` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `context` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `asset_folder` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sprite
+
+### generateSprite
+
+`sprite.generateSprite`
+
+Generate sprite from images (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.sprite.generateSprite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Streaming
+
+### createStreamingProfile
+
+`streaming.createStreamingProfile`
+
+Create adaptive streaming profile
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.streaming.createStreamingProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteStreamingProfile
+
+`streaming.deleteStreamingProfile`
+
+Delete streaming profile
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.streaming.deleteStreamingProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### getStreamingProfileDetails
+
+`streaming.getStreamingProfileDetails`
+
+Get streaming profile details
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.streaming.getStreamingProfileDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateStreamingProfile
+
+`streaming.updateStreamingProfile`
+
+Update streaming profile
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.streaming.updateStreamingProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tags
+
+### getTags
+
+`tags.getTags`
+
+List tags for a resource type
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.tags.getTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `string` | Yes | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `prefix` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+(
+  string | {
+    tag: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transformation
+
+### createTransformation
+
+`transformation.createTransformation`
+
+Create named transformation
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.transformation.createTransformation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `transformation` | `string` | No | — |
+| `allowed_for_strict` | `boolean` | No | — |
+| `used` | `boolean` | No | — |
+
+
+
+---
+
+### getTransformation
+
+`transformation.getTransformation`
+
+Get transformation details
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.transformation.getTransformation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `transformation` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `transformation` | `string` | No | — |
+| `allowed_for_strict` | `boolean` | No | — |
+| `used` | `boolean` | No | — |
+
+
+
+---
+
+## Transformation2
+
+### deleteTransformation2
+
+`transformation2.deleteTransformation2`
+
+Delete named transformation
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.cloudinary.api.transformation2.deleteTransformation2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `transformation` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | No | — |
+
+
+
+---
+
+### updateTransformation2
+
+`transformation2.updateTransformation2`
+
+Update named transformation
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.transformation2.updateTransformation2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `transformation` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `transformation` | `string` | No | — |
+| `allowed_for_strict` | `boolean` | No | — |
+| `used` | `boolean` | No | — |
+
+
+
+---
+
+## Transformations
+
+### getTransformations
+
+`transformations.getTransformations`
+
+List transformations
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.transformations.getTransformations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `named` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `transformations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="transformations full type">
+
+```ts
+{
+  name?: string,
+  transformation?: string,
+  allowed_for_strict?: boolean,
+  used?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Triggers
+
+### getTriggers
+
+`triggers.getTriggers`
+
+List webhook triggers
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.triggers.getTriggers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `event_type` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `triggers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="triggers full type">
+
+```ts
+{
+  id: string,
+  uri: string,
+  event_type: string,
+  additive?: boolean,
+  auth_scheme?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Update
+
+### updateTrigger
+
+`update.updateTrigger`
+
+Update webhook trigger
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudinary.api.update.updateTrigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `trigger_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `uri` | `string` | Yes | — |
+| `event_type` | `string` | Yes | — |
+| `additive` | `boolean` | No | — |
+| `auth_scheme` | `string` | No | — |
+
+
+
+---
+
+## Usage
+
+### getUsage
+
+`usage.getUsage`
+
+Get account usage details
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.usage.getUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `date` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plan` | `string` | No | — |
+| `last_updated` | `string` | No | — |
+| `credits` | `object` | No | — |
+| `storage` | `object` | No | — |
+| `bandwidth` | `object` | No | — |
+| `resources` | `number` | No | — |
+| `derived_resources` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="credits full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="storage full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="bandwidth full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video
+
+### getVideoViews
+
+`video.getVideoViews`
+
+Get video analytics views
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.video.getVideoViews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `public_ids` | `any` | No | — |
+| `start_date` | `any` | No | — |
+| `end_date` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Videos
+
+### listVideos
+
+`videos.listVideos`
+
+List video assets
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudinary.api.videos.listVideos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `any` | No | — |
+| `file` | `custom` | No | — |
+| `resource_type` | `image \| video \| raw \| auto` | No | — |
+| `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `type` | `any` | No | — |
+| `prefix` | `any` | No | — |
+| `public_ids` | `any` | No | — |
+| `max_results` | `any` | No | — |
+| `next_cursor` | `any` | No | — |
+| `start_at` | `any` | No | — |
+| `direction` | `any` | No | — |
+| `context` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `moderation` | `any` | No | — |
+| `tags` | `any` | No | — |
+| `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+| `resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  asset_id: string,
+  public_id: string,
+  resource_type?: image | video | raw,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  created_at?: string,
+  tags?: string[],
+  context?: {
+  },
+  metadata?: {
+  },
+  asset_folder?: string,
+  display_name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

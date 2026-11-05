@@ -1,0 +1,302 @@
+---
+title: API
+description: "API reference for Humanitix: every `humanitix.api.*` operation with input and output types."
+---
+
+Every `humanitix.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Events
+
+### get
+
+`events.get`
+
+Retrieve detailed information about a specific Humanitix event by eventId.
+
+**Risk:** `read`
+
+```ts
+await corsair.humanitix.api.events.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `userId` | `string` | No | — |
+| `organiserId` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `sharingDescription` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `url` | `string` | No | — |
+| `tagIds` | `string[]` | No | — |
+| `category` | `string` | No | — |
+| `classification` | `object` | No | — |
+| `public` | `boolean` | No | — |
+| `published` | `boolean` | No | — |
+| `suspendSales` | `boolean` | No | — |
+| `markedAsSoldOut` | `boolean` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `totalCapacity` | `number` | No | — |
+| `ticketTypes` | `object[]` | No | — |
+| `pricing` | `object` | No | — |
+| `publishedAt` | `string` | No | — |
+| `eventLocation` | `object` | No | — |
+| `dates` | `object[]` | No | — |
+| `keywords` | `string[]` | No | — |
+| `location` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="classification full type">
+
+```ts
+string | {
+  category?: string,
+  subcategory?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="ticketTypes full type">
+
+```ts
+{
+  _id?: string,
+  name?: string,
+  price?: number,
+  quantity?: number,
+  description?: string,
+  disabled?: boolean,
+  deleted?: boolean,
+  isDonation?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="pricing full type">
+
+```ts
+{
+  minimumPrice?: number,
+  maximumPrice?: number
+}
+```
+</Accordion>
+
+<Accordion title="eventLocation full type">
+
+```ts
+{
+  type?: string,
+  venueName?: string,
+  address?: string,
+  latLng?: number[],
+  city?: string,
+  region?: string,
+  country?: string,
+  onlineUrl?: string,
+  mapUrl?: string
+}
+```
+</Accordion>
+
+<Accordion title="dates full type">
+
+```ts
+{
+  _id?: string,
+  startDate?: string,
+  endDate?: string,
+  scheduleId?: string,
+  disabled?: boolean,
+  deleted?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+Retrieve a paginated list of Humanitix events (page, pageSize, inFutureOnly, since, overrideLocation).
+
+**Risk:** `read`
+
+```ts
+await corsair.humanitix.api.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `inFutureOnly` | `boolean` | No | — |
+| `since` | `string` | No | — |
+| `overrideLocation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | Yes | — |
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  _id: string,
+  userId?: string,
+  organiserId?: string,
+  currency?: string,
+  name?: string,
+  description?: string,
+  sharingDescription?: string,
+  slug?: string,
+  url?: string,
+  tagIds?: string[],
+  category?: string,
+  classification?: string | {
+    category?: string,
+    subcategory?: string,
+    type?: string
+  },
+  public?: boolean,
+  published?: boolean,
+  suspendSales?: boolean,
+  markedAsSoldOut?: boolean,
+  startDate?: string,
+  endDate?: string,
+  timezone?: string,
+  totalCapacity?: number,
+  ticketTypes?: {
+    _id?: string,
+    name?: string,
+    price?: number,
+    quantity?: number,
+    description?: string,
+    disabled?: boolean,
+    deleted?: boolean,
+    isDonation?: boolean
+  }[],
+  pricing?: {
+    minimumPrice?: number,
+    maximumPrice?: number
+  },
+  publishedAt?: string,
+  eventLocation?: {
+    type?: string,
+    venueName?: string,
+    address?: string,
+    latLng?: number[],
+    city?: string,
+    region?: string,
+    country?: string,
+    onlineUrl?: string,
+    mapUrl?: string
+  },
+  dates?: {
+    _id?: string,
+    startDate?: string,
+    endDate?: string,
+    scheduleId?: string,
+    disabled?: boolean,
+    deleted?: boolean
+  }[],
+  keywords?: string[],
+  location?: string,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### list
+
+`tags.list`
+
+Retrieve a paginated list of Humanitix tags (page, pageSize).
+
+**Risk:** `read`
+
+```ts
+await corsair.humanitix.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | Yes | — |
+| `tags` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  userId?: string,
+  location?: string,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

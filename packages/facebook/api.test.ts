@@ -110,8 +110,8 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 		expect(leaves).toHaveLength(44);
 	});
 
-	it('maps every Composio FACEBOOK_* op to a nested endpoint', () => {
-		const composioToEndpoint: Record<string, [string, string]> = {
+	it('maps every FACEBOOK_* op to a nested endpoint', () => {
+		const opToEndpoint: Record<string, [string, string]> = {
 			FACEBOOK_GET_CURRENT_USER: ['users', 'getCurrentUser'],
 			FACEBOOK_GET_USER_PAGES: ['users', 'getUserPages'],
 			FACEBOOK_LIST_MANAGED_PAGES: ['pages', 'listManaged'],
@@ -158,8 +158,8 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 			FACEBOOK_TOGGLE_TYPING_INDICATOR: ['messages', 'toggleTyping'],
 		};
 
-		expect(Object.keys(composioToEndpoint)).toHaveLength(44);
-		for (const [op, [group, name]] of Object.entries(composioToEndpoint)) {
+		expect(Object.keys(opToEndpoint)).toHaveLength(44);
+		for (const [op, [group, name]] of Object.entries(opToEndpoint)) {
 			expect(endpoints[group]?.[name]).toEqual(expect.any(Function));
 			void op;
 		}
@@ -170,7 +170,7 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 		expect(Object.keys(FacebookEndpointInputSchemas)).toHaveLength(44);
 	});
 
-	it('exposes 0 webhook triggers (Composio parity)', () => {
+	it('exposes 0 webhook triggers', () => {
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.pluginWebhookMatcher?.({} as never)).toBe(false);
 	});

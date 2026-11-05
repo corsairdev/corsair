@@ -1,0 +1,2006 @@
+{
+  "id": "teams",
+  "displayName": "Microsoft Teams",
+  "description": "Workplace collaboration hub for chat, meetings, channels, and Microsoft 365 team communication.",
+  "npmPackageName": "@corsair-dev/teams",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 25,
+    "webhooks": 4,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "subscription_id",
+        "client_state"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "teams.api.channels.create",
+      "shortPath": "channels.create",
+      "description": "Create a new channel in a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "membershipType",
+            "optional": true,
+            "type": "standard | private | shared"
+          },
+          {
+            "key": "isFavoriteByDefault",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "membershipType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isFavoriteByDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.channels.delete",
+      "shortPath": "channels.delete",
+      "description": "Delete a channel",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "teams.api.channels.get",
+      "shortPath": "channels.get",
+      "description": "Get details of a specific channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "membershipType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isFavoriteByDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.channels.list",
+      "shortPath": "channels.list",
+      "description": "List channels in a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, displayName?: string, description?: string | null, email?: string | null, webUrl?: string | null, membershipType?: string | null, isFavoriteByDefault?: boolean | null, createdDateTime?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.channels.update",
+      "shortPath": "channels.update",
+      "description": "Update a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isFavoriteByDefault",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "teams.api.chats.create",
+      "shortPath": "chats.create",
+      "description": "Create a new chat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chatType",
+            "optional": false,
+            "type": "oneOnOne | group"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ userId: string, roles?: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastUpdatedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.chats.get",
+      "shortPath": "chats.get",
+      "description": "Get details of a specific chat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chatId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastUpdatedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.chats.list",
+      "shortPath": "chats.list",
+      "description": "List chats for the current user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, topic?: string | null, createdDateTime?: string, lastUpdatedDateTime?: string, chatType?: string, webUrl?: string, tenantId?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.chats.listMessages",
+      "shortPath": "chats.listMessages",
+      "description": "List messages in a chat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chatId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skipToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, replyToId?: string | null, etag?: string, messageType?: string, createdDateTime?: string, lastModifiedDateTime?: string, deletedDateTime?: string | null, subject?: string | null, summary?: string | null, chatId?: string | null, importance?: string, locale?: string, webUrl?: string | null, from?: { application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null, body?: { contentType?: text | html, content?: string }, channelIdentity?: { teamId?: string, channelId?: string } | null, attachments?: {}[], mentions?: {}[], reactions?: {}[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.chats.sendMessage",
+      "shortPath": "chats.sendMessage",
+      "description": "Send a message in a chat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chatId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ content: string, contentType?: text | html }"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "normal | high | urgent"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyToId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deletedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: text | html, content?: string }"
+          },
+          {
+            "key": "channelIdentity",
+            "optional": true,
+            "type": "{ teamId?: string, channelId?: string }"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.members.add",
+      "shortPath": "members.add",
+      "description": "Add a member to a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "owner | member[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "visibleHistoryStartDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.members.get",
+      "shortPath": "members.get",
+      "description": "Get a specific team member",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "membershipId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "visibleHistoryStartDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.members.list",
+      "shortPath": "members.list",
+      "description": "List members of a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, displayName?: string | null, userId?: string | null, email?: string | null, tenantId?: string | null, roles?: string[], visibleHistoryStartDateTime?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.members.remove",
+      "shortPath": "members.remove",
+      "description": "Remove a member from a team",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "membershipId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "teams.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Delete a channel message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "teams.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Get a specific channel message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyToId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deletedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: text | html, content?: string }"
+          },
+          {
+            "key": "channelIdentity",
+            "optional": true,
+            "type": "{ teamId?: string, channelId?: string }"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages in a channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skipToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, replyToId?: string | null, etag?: string, messageType?: string, createdDateTime?: string, lastModifiedDateTime?: string, deletedDateTime?: string | null, subject?: string | null, summary?: string | null, chatId?: string | null, importance?: string, locale?: string, webUrl?: string | null, from?: { application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null, body?: { contentType?: text | html, content?: string }, channelIdentity?: { teamId?: string, channelId?: string } | null, attachments?: {}[], mentions?: {}[], reactions?: {}[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.messages.listReplies",
+      "shortPath": "messages.listReplies",
+      "description": "List replies to a channel message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, replyToId?: string | null, etag?: string, messageType?: string, createdDateTime?: string, lastModifiedDateTime?: string, deletedDateTime?: string | null, subject?: string | null, summary?: string | null, chatId?: string | null, importance?: string, locale?: string, webUrl?: string | null, from?: { application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null, body?: { contentType?: text | html, content?: string }, channelIdentity?: { teamId?: string, channelId?: string } | null, attachments?: {}[], mentions?: {}[], reactions?: {}[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.messages.reply",
+      "shortPath": "messages.reply",
+      "description": "Reply to a message in a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ content: string, contentType?: text | html }"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "normal | high | urgent"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyToId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deletedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: text | html, content?: string }"
+          },
+          {
+            "key": "channelIdentity",
+            "optional": true,
+            "type": "{ teamId?: string, channelId?: string }"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a message to a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ content: string, contentType?: text | html }"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "normal | high | urgent"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyToId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deletedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: text | html, content?: string }"
+          },
+          {
+            "key": "channelIdentity",
+            "optional": true,
+            "type": "{ teamId?: string, channelId?: string }"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a new team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "memberSettings",
+            "optional": true,
+            "type": "{ allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean, allowAddRemoveApps?: boolean, allowCreateUpdateRemoveTabs?: boolean, allowCreateUpdateRemoveConnectors?: boolean }"
+          },
+          {
+            "key": "guestSettings",
+            "optional": true,
+            "type": "{ allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean }"
+          },
+          {
+            "key": "messagingSettings",
+            "optional": true,
+            "type": "{ allowUserEditMessages?: boolean, allowUserDeleteMessages?: boolean, allowOwnerDeleteMessages?: boolean, allowTeamMentions?: boolean, allowChannelMentions?: boolean }"
+          },
+          {
+            "key": "funSettings",
+            "optional": true,
+            "type": "{ allowGiphy?: boolean, giphyContentRating?: string, allowStickersAndMemes?: boolean, allowCustomMemes?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Delete a team",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "teams.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get details of a specific team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "specialization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "memberSettings",
+            "optional": true,
+            "type": "{ allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean, allowAddRemoveApps?: boolean, allowCreateUpdateRemoveTabs?: boolean, allowCreateUpdateRemoveConnectors?: boolean }"
+          },
+          {
+            "key": "guestSettings",
+            "optional": true,
+            "type": "{ allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean }"
+          },
+          {
+            "key": "messagingSettings",
+            "optional": true,
+            "type": "{ allowUserEditMessages?: boolean, allowUserDeleteMessages?: boolean, allowOwnerDeleteMessages?: boolean, allowTeamMentions?: boolean, allowChannelMentions?: boolean }"
+          },
+          {
+            "key": "funSettings",
+            "optional": true,
+            "type": "{ allowGiphy?: boolean, giphyContentRating?: string, allowStickersAndMemes?: boolean, allowCustomMemes?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams the current user is a member of",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skipToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, displayName?: string, description?: string | null, internalId?: string | null, classification?: string | null, specialization?: string | null, visibility?: string | null, webUrl?: string | null, isArchived?: boolean | null, memberSettings?: { allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean, allowAddRemoveApps?: boolean, allowCreateUpdateRemoveTabs?: boolean, allowCreateUpdateRemoveConnectors?: boolean } | null, guestSettings?: { allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean } | null, messagingSettings?: { allowUserEditMessages?: boolean, allowUserDeleteMessages?: boolean, allowOwnerDeleteMessages?: boolean, allowTeamMentions?: boolean, allowChannelMentions?: boolean } | null, funSettings?: { allowGiphy?: boolean, giphyContentRating?: string, allowStickersAndMemes?: boolean, allowCustomMemes?: boolean } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teams.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Update team settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memberSettings",
+            "optional": true,
+            "type": "{ allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean, allowAddRemoveApps?: boolean, allowCreateUpdateRemoveTabs?: boolean, allowCreateUpdateRemoveConnectors?: boolean }"
+          },
+          {
+            "key": "guestSettings",
+            "optional": true,
+            "type": "{ allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean }"
+          },
+          {
+            "key": "messagingSettings",
+            "optional": true,
+            "type": "{ allowUserEditMessages?: boolean, allowUserDeleteMessages?: boolean, allowOwnerDeleteMessages?: boolean, allowTeamMentions?: boolean, allowChannelMentions?: boolean }"
+          },
+          {
+            "key": "funSettings",
+            "optional": true,
+            "type": "{ allowGiphy?: boolean, giphyContentRating?: string, allowStickersAndMemes?: boolean, allowCustomMemes?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "teams.webhooks.channels.created",
+      "shortPath": "channels.created",
+      "description": "A channel was created, updated, or deleted in a team",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId: string, changeType: created | updated | deleted, resource: string, tenantId?: string, clientState?: string, resourceData?: { @odata.type?: #Microsoft.Graph.channel, @odata.id?: string, id: string } }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId: string, changeType: created | updated | deleted, resource: string, tenantId?: string, clientState?: string, resourceData?: { @odata.type?: #Microsoft.Graph.channel, @odata.id?: string, id: string } }",
+      "usageExample": "teams({\n    webhookHooks: {\n        channels: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "teams.webhooks.channels.message",
+      "shortPath": "channels.message",
+      "description": "A message was created or updated in a team channel",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId: string, changeType: created | updated | deleted, resource: string, tenantId?: string, clientState?: string, resourceData?: { @odata.type?: #Microsoft.Graph.chatMessage, @odata.id?: string, id: string } }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId: string, changeType: created | updated | deleted, resource: string, tenantId?: string, clientState?: string, resourceData?: { @odata.type?: #Microsoft.Graph.chatMessage, @odata.id?: string, id: string } }",
+      "usageExample": "teams({\n    webhookHooks: {\n        channels: {\n            message: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "teams.webhooks.chats.message",
+      "shortPath": "chats.message",
+      "description": "A message was created or updated in a chat",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId: string, changeType: created | updated | deleted, resource: string, tenantId?: string, clientState?: string, resourceData?: { @odata.type?: #Microsoft.Graph.chatMessage, @odata.id?: string, id: string } }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId: string, changeType: created | updated | deleted, resource: string, tenantId?: string, clientState?: string, resourceData?: { @odata.type?: #Microsoft.Graph.chatMessage, @odata.id?: string, id: string } }",
+      "usageExample": "teams({\n    webhookHooks: {\n        chats: {\n            message: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "teams.webhooks.members.changed",
+      "shortPath": "members.changed",
+      "description": "A team membership was added, updated, or removed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId: string, changeType: created | updated | deleted, resource: string, tenantId?: string, clientState?: string, resourceData?: { @odata.type?: #Microsoft.Graph.aadUserConversationMember, @odata.id?: string, id: string } }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId: string, changeType: created | updated | deleted, resource: string, tenantId?: string, clientState?: string, resourceData?: { @odata.type?: #Microsoft.Graph.aadUserConversationMember, @odata.id?: string, id: string } }",
+      "usageExample": "teams({\n    webhookHooks: {\n        members: {\n            changed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "teams.db.channels.search",
+      "entityName": "channels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "membershipType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isFavoriteByDefault",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "teams.db.chats.search",
+      "entityName": "chats",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "topic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chatType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tenantId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastUpdatedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "teams.db.members.search",
+      "entityName": "members",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tenantId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "teams.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channelId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chatId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "replyToId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "messageType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deletedDateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bodyContent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bodyContentType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fromUserId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fromUserDisplayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "teams.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "classification",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "specialization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isArchived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

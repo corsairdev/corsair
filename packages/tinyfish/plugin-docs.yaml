@@ -1,0 +1,81 @@
+displayName: TinyFish
+description: Web search, page fetch, cloud browser sessions, web automation agents, cited research, and reusable browser profiles behind one API key.
+domain: tinyfish.ai
+recommendedAuth: api_key
+examples:
+  read:
+    path: search.search
+    title: Search the web
+    args:
+      query: open source integration layer
+      location: US
+  write:
+    path: agent.runAsync
+    title: Queue a web automation run
+    args:
+      url: https://example.com
+      goal: Extract the page title
+dbExample:
+  entity: agentRuns
+  note: Runs are stamped into the agentRuns entity by sync runs, async acknowledgements, polls and webhook deliveries, so one run never duplicates rows.
+  data:
+    status: COMPLETED
+apiExamples:
+  search.search:
+    call: "{ query: 'open source integration layer', domain_type: 'news', recency_minutes: 1440 }"
+  search.usage:
+    call: "{ status: 'completed', limit: 20 }"
+  fetch.fetch:
+    call: "{ urls: ['https://example.com'], format: 'markdown', links: true }"
+  fetch.usage:
+    call: "{ status: 'completed' }"
+  browser.createSession:
+    call: "{ url: 'https://example.com', timeout_seconds: 600 }"
+  browser.terminateSession:
+    call: "{ sessionId: 'sess_...' }"
+  browser.usage:
+    call: "{ status: 'ended', limit: 50 }"
+  agent.run:
+    call: "{ url: 'https://example.com', goal: 'Extract the page title' }"
+  agent.runAsync:
+    call: "{ url: 'https://example.com', goal: 'Extract the page title', webhook_url: 'https://hooks.example.com/tinyfish' }"
+  agent.runBatch:
+    call: "{ runs: [{ url: 'https://example.com', goal: 'Extract the page title' }] }"
+  agent.listRuns:
+    call: "{ status: 'RUNNING', limit: 20 }"
+  agent.getRun:
+    call: "{ runId: 'run_...', screenshots: 'url' }"
+  agent.getRuns:
+    call: "{ run_ids: ['run_...'] }"
+  agent.cancelRun:
+    call: "{ runId: 'run_...' }"
+  agent.cancelRuns:
+    call: "{ run_ids: ['run_...'] }"
+  agent.getStepScreenshot:
+    call: "{ runId: 'run_...', stepId: 'evt_...' }"
+  agent.getStepHtml:
+    call: "{ runId: 'run_...', stepId: 'evt_...' }"
+  research.start:
+    call: "{ query: 'state of browser agents in 2026', mode: 'deep' }"
+  research.list:
+    call: "{ status: 'RUNNING' }"
+  research.get:
+    call: "{ researchRunId: 'rr_...' }"
+  research.cancel:
+    call: "{ researchRunId: 'rr_...' }"
+  profiles.list: {}
+  profiles.create:
+    call: "{ name: 'Work', set_as_default: true }"
+  profiles.get:
+    call: "{ profileId: 'p_...' }"
+  profiles.update:
+    call: "{ profileId: 'p_...', name: 'Work laptop' }"
+  profiles.delete:
+    call: "{ profileId: 'p_...' }"
+  wallet.get: {}
+  vault.list: {}
+exampleWebhook:
+  path: run.completed
+  note: Fires when a web automation run finishes; the plugin stamps the terminal state into agentRuns.
+  after: |
+    console.log('Run finished:', result.data.run_id, result.data.status);

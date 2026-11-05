@@ -1,0 +1,3400 @@
+---
+title: API
+description: "API reference for Kling: every `kling.api.*` operation with input and output types."
+---
+
+Every `kling.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Image Generation
+
+### create
+
+`imageGeneration.create`
+
+Create a text-to-image or image-to-image task
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.imageGeneration.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_name` | `kling-v2-1 \| kling-v3` | No | — |
+| `prompt` | `string` | Yes | — |
+| `negative_prompt` | `string` | No | — |
+| `image` | `string` | No | — |
+| `image_reference` | `subject \| face` | No | — |
+| `image_fidelity` | `number` | No | — |
+| `human_fidelity` | `number` | No | — |
+| `element_list` | `object[]` | No | — |
+| `resolution` | `1k \| 2k` | No | — |
+| `n` | `number` | No | — |
+| `aspect_ratio` | `16:9 \| 9:16 \| 1:1 \| 4:3 \| 3:4 \| 3:2 \| 2:3 \| 21:9` | No | — |
+| `watermark_info` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `external_task_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="element_list full type">
+
+```ts
+{
+  element_id: number
+}[]
+```
+</Accordion>
+
+<Accordion title="watermark_info full type">
+
+```ts
+{
+  enabled: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`imageGeneration.get`
+
+Fetch an image generation task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.imageGeneration.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`imageGeneration.list`
+
+List image generation tasks by page
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.imageGeneration.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNum` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Image To Video
+
+### create
+
+`imageToVideo.create`
+
+Create an image-to-video generation task
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.imageToVideo.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `kling-2.5-turbo \| kling-2.6 \| kling-3.0 \| kling-3.0-turbo` | Yes | — |
+| `contents` | `object[]` | Yes | — |
+| `settings` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contents full type">
+
+```ts
+{
+  type: string,
+  text?: string,
+  url?: string,
+  id?: string,
+  voice_id?: string,
+  element_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  resolution?: string,
+  aspect_ratio?: string,
+  duration?: number,
+  audio?: string,
+  multi_shot?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  callback_url?: string,
+  external_task_id?: string,
+  watermark_info?: {
+    enabled: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`imageToVideo.get`
+
+Fetch an image-to-video task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.imageToVideo.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`imageToVideo.list`
+
+List image-to-video and other video tasks by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.imageToVideo.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `string \| number` | No | — |
+| `end_time` | `string \| number` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `filters` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  key: status | product_type,
+  values: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result: {
+    id?: string,
+    task_id?: string,
+    status?: string,
+    task_status?: string,
+    message?: string,
+    task_status_msg?: string,
+    create_time?: number,
+    update_time?: number,
+    created_at?: number,
+    updated_at?: number,
+    external_id?: string,
+    outputs?: {
+      type: string,
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string,
+      group_id?: string,
+      mp3_url?: string,
+      wav_url?: string,
+      mp3_duration?: string,
+      wav_duration?: string,
+      name?: string,
+      owned_by?: string,
+      status?: string
+    }[],
+    billing?: {
+      charge_type?: string,
+      cash_type?: string,
+      amount?: string,
+      currency?: string,
+      package_type?: string,
+      list_price?: string
+    }[],
+    final_unit_deduction?: string,
+    final_balance_deduction?: {
+      quota?: string,
+      list_price?: string
+    },
+    watermark_info?: {
+      enabled: boolean
+    },
+    task_info?: {
+      external_task_id?: string
+    },
+    task_result?: {
+      images?: {
+        index?: number,
+        url?: string,
+        watermark_url?: string
+      }[],
+      videos?: {
+        id?: string,
+        url?: string,
+        watermark_url?: string,
+        duration?: string
+      }[]
+    }
+  }[],
+  count?: number,
+  next_cursor?: string,
+  has_more?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lip Sync
+
+### create
+
+`lipSync.create`
+
+Create a lip-sync task for a detected face
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.lipSync.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `face_choose` | `object[]` | Yes | — |
+| `watermark_info` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `external_task_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="face_choose full type">
+
+```ts
+{
+  face_id: string,
+  audio_id?: string,
+  sound_file?: string,
+  sound_start_time: number,
+  sound_end_time: number,
+  sound_insert_time: number,
+  sound_volume?: number,
+  original_audio_volume?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="watermark_info full type">
+
+```ts
+{
+  enabled: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### detectFace
+
+`lipSync.detectFace`
+
+Identify faces in a video for lip-sync processing
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.lipSync.detectFace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | No | — |
+| `video_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  session_id: string,
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  face_data?: {
+    face_id?: string,
+    face_image?: string,
+    start_time?: number,
+    end_time?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`lipSync.get`
+
+Fetch a lip-sync task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.lipSync.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`lipSync.list`
+
+List lip-sync tasks by page
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.lipSync.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNum` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Motion Control
+
+### create
+
+`motionControl.create`
+
+Create a motion-control task from a motion reference
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.motionControl.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `kling-2.6 \| kling-3.0` | Yes | — |
+| `contents` | `object[]` | Yes | — |
+| `settings` | `object` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contents full type">
+
+```ts
+{
+  type: string,
+  text?: string,
+  url?: string,
+  id?: string,
+  voice_id?: string,
+  element_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  character_orientation: image | video,
+  resolution?: string,
+  aspect_ratio?: string,
+  duration?: number,
+  audio?: string,
+  multi_shot?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  callback_url?: string,
+  external_task_id?: string,
+  watermark_info?: {
+    enabled: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`motionControl.get`
+
+Fetch a motion-control task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.motionControl.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`motionControl.list`
+
+List motion-control and other video tasks by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.motionControl.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `string \| number` | No | — |
+| `end_time` | `string \| number` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `filters` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  key: status | product_type,
+  values: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result: {
+    id?: string,
+    task_id?: string,
+    status?: string,
+    task_status?: string,
+    message?: string,
+    task_status_msg?: string,
+    create_time?: number,
+    update_time?: number,
+    created_at?: number,
+    updated_at?: number,
+    external_id?: string,
+    outputs?: {
+      type: string,
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string,
+      group_id?: string,
+      mp3_url?: string,
+      wav_url?: string,
+      mp3_duration?: string,
+      wav_duration?: string,
+      name?: string,
+      owned_by?: string,
+      status?: string
+    }[],
+    billing?: {
+      charge_type?: string,
+      cash_type?: string,
+      amount?: string,
+      currency?: string,
+      package_type?: string,
+      list_price?: string
+    }[],
+    final_unit_deduction?: string,
+    final_balance_deduction?: {
+      quota?: string,
+      list_price?: string
+    },
+    watermark_info?: {
+      enabled: boolean
+    },
+    task_info?: {
+      external_task_id?: string
+    },
+    task_result?: {
+      images?: {
+        index?: number,
+        url?: string,
+        watermark_url?: string
+      }[],
+      videos?: {
+        id?: string,
+        url?: string,
+        watermark_url?: string,
+        duration?: string
+      }[]
+    }
+  }[],
+  count?: number,
+  next_cursor?: string,
+  has_more?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Multi Image To Image
+
+### create
+
+`multiImageToImage.create`
+
+Create a multi-image (subject, scene, style) task
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.multiImageToImage.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_name` | `kling-v2-1` | No | — |
+| `prompt` | `string` | No | — |
+| `subject_image_list` | `object[]` | Yes | — |
+| `scene_image` | `string` | No | — |
+| `style_image` | `string` | No | — |
+| `n` | `number` | No | — |
+| `aspect_ratio` | `16:9 \| 9:16 \| 1:1 \| 4:3 \| 3:4 \| 3:2 \| 2:3 \| 21:9` | No | — |
+| `watermark_info` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `external_task_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subject_image_list full type">
+
+```ts
+{
+  subject_image: string
+}[]
+```
+</Accordion>
+
+<Accordion title="watermark_info full type">
+
+```ts
+{
+  enabled: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`multiImageToImage.get`
+
+Fetch a multi-image task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.multiImageToImage.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`multiImageToImage.list`
+
+List multi-image tasks by page
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.multiImageToImage.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNum` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Omni Image
+
+### create
+
+`omniImage.create`
+
+Create an omni-image generation task
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.omniImage.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_name` | `kling-image-o1 \| kling-v3-omni` | No | — |
+| `prompt` | `string` | Yes | — |
+| `image_list` | `object[]` | No | — |
+| `element_list` | `object[]` | No | — |
+| `resolution` | `1k \| 2k \| 4k` | No | — |
+| `result_type` | `single \| series` | No | — |
+| `n` | `number` | No | — |
+| `series_amount` | `number \| auto` | No | — |
+| `aspect_ratio` | `16:9 \| 9:16 \| 1:1 \| 4:3 \| 3:4 \| 3:2 \| 2:3 \| 21:9 \| auto` | No | — |
+| `watermark_info` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `external_task_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="image_list full type">
+
+```ts
+{
+  image: string
+}[]
+```
+</Accordion>
+
+<Accordion title="element_list full type">
+
+```ts
+{
+  element_id: number
+}[]
+```
+</Accordion>
+
+<Accordion title="watermark_info full type">
+
+```ts
+{
+  enabled: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`omniImage.get`
+
+Fetch an omni-image task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.omniImage.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`omniImage.list`
+
+List omni-image tasks by page
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.omniImage.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNum` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Omni Video
+
+### create
+
+`omniVideo.create`
+
+Create an omni-video generation task
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.omniVideo.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `kling-3.0-omni \| kling-o1` | Yes | — |
+| `contents` | `object[]` | Yes | — |
+| `settings` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contents full type">
+
+```ts
+{
+  type: string,
+  text?: string,
+  url?: string,
+  id?: string,
+  voice_id?: string,
+  element_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  resolution?: string,
+  aspect_ratio?: string,
+  duration?: number,
+  audio?: string,
+  multi_shot?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  callback_url?: string,
+  external_task_id?: string,
+  watermark_info?: {
+    enabled: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`omniVideo.get`
+
+Fetch an omni-video task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.omniVideo.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`omniVideo.list`
+
+List omni-video and other video tasks by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.omniVideo.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `string \| number` | No | — |
+| `end_time` | `string \| number` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `filters` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  key: status | product_type,
+  values: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result: {
+    id?: string,
+    task_id?: string,
+    status?: string,
+    task_status?: string,
+    message?: string,
+    task_status_msg?: string,
+    create_time?: number,
+    update_time?: number,
+    created_at?: number,
+    updated_at?: number,
+    external_id?: string,
+    outputs?: {
+      type: string,
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string,
+      group_id?: string,
+      mp3_url?: string,
+      wav_url?: string,
+      mp3_duration?: string,
+      wav_duration?: string,
+      name?: string,
+      owned_by?: string,
+      status?: string
+    }[],
+    billing?: {
+      charge_type?: string,
+      cash_type?: string,
+      amount?: string,
+      currency?: string,
+      package_type?: string,
+      list_price?: string
+    }[],
+    final_unit_deduction?: string,
+    final_balance_deduction?: {
+      quota?: string,
+      list_price?: string
+    },
+    watermark_info?: {
+      enabled: boolean
+    },
+    task_info?: {
+      external_task_id?: string
+    },
+    task_result?: {
+      images?: {
+        index?: number,
+        url?: string,
+        watermark_url?: string
+      }[],
+      videos?: {
+        id?: string,
+        url?: string,
+        watermark_url?: string,
+        duration?: string
+      }[]
+    }
+  }[],
+  count?: number,
+  next_cursor?: string,
+  has_more?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Outpainting
+
+### create
+
+`outpainting.create`
+
+Create an image outpainting (expand) task
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.outpainting.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image` | `string` | Yes | — |
+| `up_expansion_ratio` | `number` | Yes | — |
+| `down_expansion_ratio` | `number` | Yes | — |
+| `left_expansion_ratio` | `number` | Yes | — |
+| `right_expansion_ratio` | `number` | Yes | — |
+| `prompt` | `string` | No | — |
+| `n` | `number` | No | — |
+| `watermark_info` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `external_task_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="watermark_info full type">
+
+```ts
+{
+  enabled: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`outpainting.get`
+
+Fetch an outpainting task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.outpainting.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`outpainting.list`
+
+List outpainting tasks by page
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.outpainting.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNum` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Text To Video
+
+### create
+
+`textToVideo.create`
+
+Create a text-to-video generation task
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.textToVideo.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `kling-2.5-turbo \| kling-2.6 \| kling-3.0 \| kling-3.0-turbo` | Yes | — |
+| `prompt` | `string` | Yes | — |
+| `settings` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  resolution?: string,
+  aspect_ratio?: string,
+  duration?: number,
+  audio?: string,
+  multi_shot?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  callback_url?: string,
+  external_task_id?: string,
+  watermark_info?: {
+    enabled: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`textToVideo.get`
+
+Fetch a text-to-video task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.textToVideo.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`textToVideo.list`
+
+List text-to-video and other video tasks by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.textToVideo.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `string \| number` | No | — |
+| `end_time` | `string \| number` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `filters` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  key: status | product_type,
+  values: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result: {
+    id?: string,
+    task_id?: string,
+    status?: string,
+    task_status?: string,
+    message?: string,
+    task_status_msg?: string,
+    create_time?: number,
+    update_time?: number,
+    created_at?: number,
+    updated_at?: number,
+    external_id?: string,
+    outputs?: {
+      type: string,
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string,
+      group_id?: string,
+      mp3_url?: string,
+      wav_url?: string,
+      mp3_duration?: string,
+      wav_duration?: string,
+      name?: string,
+      owned_by?: string,
+      status?: string
+    }[],
+    billing?: {
+      charge_type?: string,
+      cash_type?: string,
+      amount?: string,
+      currency?: string,
+      package_type?: string,
+      list_price?: string
+    }[],
+    final_unit_deduction?: string,
+    final_balance_deduction?: {
+      quota?: string,
+      list_price?: string
+    },
+    watermark_info?: {
+      enabled: boolean
+    },
+    task_info?: {
+      external_task_id?: string
+    },
+    task_result?: {
+      images?: {
+        index?: number,
+        url?: string,
+        watermark_url?: string
+      }[],
+      videos?: {
+        id?: string,
+        url?: string,
+        watermark_url?: string,
+        duration?: string
+      }[]
+    }
+  }[],
+  count?: number,
+  next_cursor?: string,
+  has_more?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video Effects
+
+### create
+
+`videoEffects.create`
+
+Create a video effect task from a scene template
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.videoEffects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effect_scene` | `string` | Yes | — |
+| `input` | `object` | Yes | — |
+| `callback_url` | `string` | No | — |
+| `external_task_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  image?: string,
+  images?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`videoEffects.get`
+
+Fetch a video effect task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.videoEffects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`videoEffects.list`
+
+List video effect tasks by page
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.videoEffects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNum` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Virtual Try On
+
+### create
+
+`virtualTryOn.create`
+
+Create a virtual try-on task for a product and person
+
+**Risk:** `write`
+
+```ts
+await corsair.kling.api.virtualTryOn.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contents` | `object[]` | Yes | — |
+| `settings` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contents full type">
+
+```ts
+{
+  type: product_image | person_image,
+  url: string
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  keep_face?: boolean,
+  keep_pose?: boolean,
+  keep_background?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  callback_url?: string,
+  external_task_id?: string,
+  watermark?: {
+    enabled: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  task_info?: {
+    external_task_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`virtualTryOn.get`
+
+Fetch a virtual try-on task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.virtualTryOn.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  task_id?: string,
+  status?: string,
+  task_status?: string,
+  message?: string,
+  task_status_msg?: string,
+  create_time?: number,
+  update_time?: number,
+  created_at?: number,
+  updated_at?: number,
+  external_id?: string,
+  outputs?: {
+    type: string,
+    id?: string,
+    url?: string,
+    watermark_url?: string,
+    duration?: string,
+    group_id?: string,
+    mp3_url?: string,
+    wav_url?: string,
+    mp3_duration?: string,
+    wav_duration?: string,
+    name?: string,
+    owned_by?: string,
+    status?: string
+  }[],
+  billing?: {
+    charge_type?: string,
+    cash_type?: string,
+    amount?: string,
+    currency?: string,
+    package_type?: string,
+    list_price?: string
+  }[],
+  final_unit_deduction?: string,
+  final_balance_deduction?: {
+    quota?: string,
+    list_price?: string
+  },
+  watermark_info?: {
+    enabled: boolean
+  },
+  task_info?: {
+    external_task_id?: string
+  },
+  task_result?: {
+    images?: {
+      index?: number,
+      url?: string,
+      watermark_url?: string
+    }[],
+    videos?: {
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`virtualTryOn.list`
+
+List virtual try-on tasks by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.kling.api.virtualTryOn.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `string \| number` | No | — |
+| `end_time` | `string \| number` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `filters` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  key: status,
+  values: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result: {
+    id?: string,
+    task_id?: string,
+    status?: string,
+    task_status?: string,
+    message?: string,
+    task_status_msg?: string,
+    create_time?: number,
+    update_time?: number,
+    created_at?: number,
+    updated_at?: number,
+    external_id?: string,
+    outputs?: {
+      type: string,
+      id?: string,
+      url?: string,
+      watermark_url?: string,
+      duration?: string,
+      group_id?: string,
+      mp3_url?: string,
+      wav_url?: string,
+      mp3_duration?: string,
+      wav_duration?: string,
+      name?: string,
+      owned_by?: string,
+      status?: string
+    }[],
+    billing?: {
+      charge_type?: string,
+      cash_type?: string,
+      amount?: string,
+      currency?: string,
+      package_type?: string,
+      list_price?: string
+    }[],
+    final_unit_deduction?: string,
+    final_balance_deduction?: {
+      quota?: string,
+      list_price?: string
+    },
+    watermark_info?: {
+      enabled: boolean
+    },
+    task_info?: {
+      external_task_id?: string
+    },
+    task_result?: {
+      images?: {
+        index?: number,
+        url?: string,
+        watermark_url?: string
+      }[],
+      videos?: {
+        id?: string,
+        url?: string,
+        watermark_url?: string,
+        duration?: string
+      }[]
+    }
+  }[],
+  count?: number,
+  next_cursor?: string,
+  has_more?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,128 @@
+---
+title: Overview
+description: "Supadata plugin for Corsair"
+---
+
+Use **Supadata** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 12 typed API operations
+- 10 synced entities (`accounts`, `mediaMetadata`, `transcriptJobs`, `transcripts`, `webMaps`, `webPages`, and 4 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/supadata
+```
+```bash yarn
+yarn add corsair @corsair-dev/supadata
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/supadata
+```
+```bash bun
+bun add corsair @corsair-dev/supadata
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { supadata } from '@corsair-dev/supadata';
+
+export const corsair = createCorsair({
+	plugins: [
+		supadata(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+supadata()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'supadata',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`account.me`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.supadata.api.account.me({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/supadata/api) reference._
+
+
+See the full list on the [API](/plugins/supadata/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.supadata.db.<entity>.search()` and `.list()`: `accounts`, `mediaMetadata`, `transcriptJobs`, `transcripts`, `webMaps`, `webPages`, `youtubeChannels`, `youtubePlaylists`, `youtubeSearchResults`, `youtubeVideos`.
+
+See [Database](/plugins/supadata/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/supadata/api">
+    Every `supadata.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/supadata/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

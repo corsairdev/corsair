@@ -1,0 +1,2074 @@
+{
+  "id": "alchemy",
+  "displayName": "Alchemy",
+  "description": "Blockchain development platform for Ethereum and Web3 apps, nodes, and APIs.",
+  "npmPackageName": "@corsair-dev/alchemy",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 36,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "alchemy.api.nft.computeRarityV3",
+      "shortPath": "nft.computeRarityV3",
+      "description": "Compute rarity for each attribute of an NFT.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokenId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rarities",
+            "optional": true,
+            "type": "{ traitType?: string, value?: string | number, prevalence?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getCollectionMetadata",
+      "shortPath": "nft.getCollectionMetadata",
+      "description": "Get collection metadata by marketplace slug.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "collectionSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getCollectionsForOwner",
+      "shortPath": "nft.getCollectionsForOwner",
+      "description": "Get NFT collections held by an owner.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "withMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeFilters",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludeFilters",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getContractMetadataBatchV3",
+      "shortPath": "nft.getContractMetadataBatchV3",
+      "description": "Batch-fetch NFT contract metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddresses",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contracts",
+            "optional": true,
+            "type": "{ address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getContractMetadataV3",
+      "shortPath": "nft.getContractMetadataV3",
+      "description": "Get metadata for an NFT contract.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalSupply",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tokenType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contractDeployer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployedBlockNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "openSeaMetadata",
+            "optional": true,
+            "type": "{ collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }"
+          },
+          {
+            "key": "isSpam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "spamClassifications",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getContractsForOwnerV3",
+      "shortPath": "nft.getContractsForOwnerV3",
+      "description": "Get NFT contracts owned by an address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "withMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeFilters",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludeFilters",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contracts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getFloorPriceV3",
+      "shortPath": "nft.getFloorPriceV3",
+      "description": "Get floor price across marketplaces.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionSlug",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getNftMetadata",
+      "shortPath": "nft.getNftMetadata",
+      "description": "Get metadata for a specific NFT.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokenId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokenType",
+            "optional": true,
+            "type": "ERC721 | ERC1155"
+          },
+          {
+            "key": "tokenUriTimeoutInMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "refreshCache",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contract",
+            "optional": true,
+            "type": "{ address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }"
+          },
+          {
+            "key": "contractAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tokenId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokenType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tokenUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "{ cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }"
+          },
+          {
+            "key": "animation",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "raw",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "mint",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "timeLastUpdated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "acquiredAt",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isSpam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "spamClassifications",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getNftMetadataBatch",
+      "shortPath": "nft.getNftMetadataBatch",
+      "description": "Batch-fetch NFT metadata (up to 100).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "tokens",
+            "optional": false,
+            "type": "{ contractAddress: string, tokenId: string, tokenType?: ERC721 | ERC1155 }[]"
+          },
+          {
+            "key": "tokenUriTimeoutInMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "refreshCache",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nfts",
+            "optional": true,
+            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: {} | null, raw?: {}, collection?: {} | null, mint?: {} | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: {} | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getNftSalesV3",
+      "shortPath": "nft.getNftSalesV3",
+      "description": "Get NFT sales across marketplaces.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "fromBlock",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "toBlock",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "marketplace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contractAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tokenId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "buyerAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sellerAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "taker",
+            "optional": true,
+            "type": "BUYER | SELLER"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nftSales",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getNftsForCollectionV3",
+      "shortPath": "nft.getNftsForCollectionV3",
+      "description": "Get NFTs for a collection slug or contract.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "collectionSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contractAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tokenUriTimeoutInMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nfts",
+            "optional": true,
+            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: {} | null, raw?: {}, collection?: {} | null, mint?: {} | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: {} | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getNftsForContract",
+      "shortPath": "nft.getNftsForContract",
+      "description": "Get NFTs for a contract address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "withMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tokenUriTimeoutInMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nfts",
+            "optional": true,
+            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: {} | null, raw?: {}, collection?: {} | null, mint?: {} | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: {} | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getNftsForOwner",
+      "shortPath": "nft.getNftsForOwner",
+      "description": "Get NFTs owned by an address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contractAddresses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "withMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeFilters",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "includeFilters",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "spamConfidenceLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tokenUriTimeoutInMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ownedNfts",
+            "optional": false,
+            "type": "{ contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: {} | null, raw?: {}, collection?: {} | null, mint?: {} | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: {} | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "validAt",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getOwnersForCollection",
+      "shortPath": "nft.getOwnersForCollection",
+      "description": "Get owners for an NFT collection/contract.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "withTokenBalances",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "block",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owners",
+            "optional": false,
+            "type": "(string | {})[]"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getOwnersForContract",
+      "shortPath": "nft.getOwnersForContract",
+      "description": "Get owners for an NFT contract.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "withTokenBalances",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "block",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owners",
+            "optional": false,
+            "type": "(string | {})[]"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.getOwnersForNftV3",
+      "shortPath": "nft.getOwnersForNftV3",
+      "description": "Get owners for a specific NFT.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokenId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owners",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.invalidateContractV3",
+      "shortPath": "nft.invalidateContractV3",
+      "description": "Invalidate cached metadata for an NFT contract.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | string"
+          },
+          {
+            "key": "numTokensInvalidated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.isAirdrop",
+      "shortPath": "nft.isAirdrop",
+      "description": "Check if an NFT token is marked as an airdrop.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokenId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "alchemy.api.nft.isAirdropNft",
+      "shortPath": "nft.isAirdropNft",
+      "description": "Check whether an NFT was airdropped to its owner.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokenId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "alchemy.api.nft.isHolderOfCollection",
+      "shortPath": "nft.isHolderOfCollection",
+      "description": "Check if a wallet owns any NFT from a collection/contract.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "wallet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isHolderOfContract",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.isHolderOfContract",
+      "shortPath": "nft.isHolderOfContract",
+      "description": "Check if a wallet holds any NFT from a contract.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "wallet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isHolderOfContract",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.isSpamContract",
+      "shortPath": "nft.isSpamContract",
+      "description": "Check if an NFT contract is marked as spam.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "alchemy.api.nft.isSpamContractV3",
+      "shortPath": "nft.isSpamContractV3",
+      "description": "Check if an NFT contract is marked as spam (v3).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "alchemy.api.nft.searchContractMetadataV3",
+      "shortPath": "nft.searchContractMetadataV3",
+      "description": "Search NFT contract metadata by keywords.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contracts",
+            "optional": true,
+            "type": "{ address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.nft.summarizeNftAttributes",
+      "shortPath": "nft.summarizeNftAttributes",
+      "description": "Summarize attribute distribution for a collection.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "alchemy.api.portfolio.getNftContractsByAddress",
+      "shortPath": "portfolio.getNftContractsByAddress",
+      "description": "Get NFT contracts for wallets across networks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ address: string, networks: string[] }[]"
+          },
+          {
+            "key": "withMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ contracts?: {}[], totalCount?: number, pageKey?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.portfolio.getPortfolioNftsByAddress",
+      "shortPath": "portfolio.getPortfolioNftsByAddress",
+      "description": "Get portfolio NFTs for wallets across networks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ address: string, networks: string[] }[]"
+          },
+          {
+            "key": "withMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "excludeFilters",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "includeFilters",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "spamConfidenceLevel",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ownedNfts?: { contract?: { address: string, name?: string | null, symbol?: string | null, totalSupply?: string | null, tokenType?: string | null, contractDeployer?: string | null, deployedBlockNumber?: number | null, openSeaMetadata?: { collectionName?: string | null, collectionSlug?: string | null, safelistRequestStatus?: string | null, imageUrl?: string | null, description?: string | null, externalUrl?: string | null, twitterUsername?: string | null, discordUrl?: string | null, bannerImageUrl?: string | null, floorPrice?: number | null }, isSpam?: boolean | null, spamClassifications?: string[] }, contractAddress?: string, tokenId: string, tokenType?: string | null, name?: string | null, description?: string | null, tokenUri?: string | null, image?: { cachedUrl?: string | null, thumbnailUrl?: string | null, pngUrl?: string | null, contentType?: string | null, size?: number | null, originalUrl?: string | null }, animation?: {} | null, raw?: {}, collection?: {} | null, mint?: {} | null, owners?: string[] | null, timeLastUpdated?: string | null, balance?: string | null, acquiredAt?: {} | null, network?: string, address?: string, isSpam?: boolean | null, spamClassifications?: string[] }[], totalCount?: number, pageKey?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.portfolio.getTokenBalancesByAddress",
+      "shortPath": "portfolio.getTokenBalancesByAddress",
+      "description": "Get lightweight token balances across networks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ address: string, networks: string[] }[]"
+          },
+          {
+            "key": "includeNativeTokens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeErc20Tokens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ tokens?: { network: string, address: string, tokenAddress?: string | null, tokenBalance: string }[], pageKey?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.portfolio.getTokensByAddress",
+      "shortPath": "portfolio.getTokensByAddress",
+      "description": "Get fungible tokens with metadata and prices.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ address: string, networks: string[] }[]"
+          },
+          {
+            "key": "withMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "withPrices",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeNativeTokens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeErc20Tokens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pageKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ tokens?: { network: string, address: string, tokenAddress?: string | null, tokenBalance: string, tokenMetadata?: {}, tokenPrices?: {}[], error?: string | null }[], pageKey?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.portfolio.getTransactionsHistoryByAddress",
+      "shortPath": "portfolio.getTransactionsHistoryByAddress",
+      "description": "Get transaction history across networks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ address: string, networks: string[] }[]"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.prices.getHistoricalPrices",
+      "shortPath": "prices.getHistoricalPrices",
+      "description": "Get historical token prices over a time range.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startTime",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "endTime",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "5m | 1h | 1d"
+          },
+          {
+            "key": "withMarketData",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ value: string, timestamp: string, marketCap?: string, totalVolume?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.prices.getPricesBySymbol",
+      "shortPath": "prices.getPricesBySymbol",
+      "description": "Get current token prices by symbol.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbols",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ symbol: string, prices?: { currency: string, value: string, lastUpdatedAt: string }[], error?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.prices.getTokenPricesByAddress",
+      "shortPath": "prices.getTokenPricesByAddress",
+      "description": "Get current token prices by address/network.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ network: string, address: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ network?: string, address?: string, prices?: { currency: string, value: string, lastUpdatedAt: string }[], error?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.rpc.getTransactionCount",
+      "shortPath": "rpc.getTransactionCount",
+      "description": "Get transaction count (nonce) for an address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "blockTag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hex",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.token.getTokenBalances",
+      "shortPath": "token.getTokenBalances",
+      "description": "Get ERC-20 token balances for an address (JSON-RPC).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokenAddresses",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokenBalances",
+            "optional": false,
+            "type": "{ contractAddress: string, tokenBalance?: string | null, error?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alchemy.api.token.getTokenMetadata",
+      "shortPath": "token.getTokenMetadata",
+      "description": "Get ERC-20 token metadata (JSON-RPC).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": true,
+            "type": "eth-mainnet | eth-sepolia | polygon-mainnet | polygon-amoy | arb-mainnet | arb-sepolia | opt-mainnet | opt-sepolia | base-mainnet | base-sepolia | bnb-mainnet | avax-mainnet | zksync-mainnet | worldchain-mainnet | solana-mainnet | solana-devnet"
+          },
+          {
+            "key": "contractAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "decimals",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "alchemy.db.AlchemyNft.search",
+      "entityName": "AlchemyNft",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contractAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "imageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "collectionSlug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ownerAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "balance",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isSpam",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "timeLastUpdated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "alchemy.db.AlchemyNftContract.search",
+      "entityName": "AlchemyNftContract",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "totalSupply",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contractDeployer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deployedBlockNumber",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "collectionName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "collectionSlug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "floorPrice",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isSpam",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "alchemy.db.AlchemyToken.search",
+      "entityName": "AlchemyToken",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contractAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "decimals",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "logo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "alchemy.db.AlchemyTokenBalance.search",
+      "entityName": "AlchemyTokenBalance",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "walletAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenBalance",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "alchemy.db.AlchemyTokenPrice.search",
+      "entityName": "AlchemyTokenPrice",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastUpdatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

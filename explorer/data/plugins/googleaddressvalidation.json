@@ -1,0 +1,100 @@
+{
+  "id": "googleaddressvalidation",
+  "displayName": "Google Address Validation",
+  "description": "Google API for validating, standardizing, and geocoding postal addresses worldwide.",
+  "npmPackageName": "@corsair-dev/googleaddressvalidation",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "googleaddressvalidation.api.address.provideFeedback",
+      "shortPath": "address.provideFeedback",
+      "description": "Report the outcome of a previous address validation sequence back to Google",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conclusion",
+            "optional": false,
+            "type": "VALIDATED_VERSION_USED | USER_VERSION_USED | UNVALIDATED_VERSION_USED | UNUSED"
+          },
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "googleaddressvalidation.api.address.validate",
+      "shortPath": "address.validate",
+      "description": "Validate a postal address and get standardized results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "{ revision?: 0, regionCode?: string, languageCode?: string, postalCode?: string, sortingCode?: string, administrativeArea?: string, locality?: string, sublocality?: string, addressLines: string[], recipients?: string[], organization?: string }"
+          },
+          {
+            "key": "previousResponseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enableUspsCass",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "languageOptions",
+            "optional": true,
+            "type": "{ returnEnglishLatinAddress?: boolean }"
+          },
+          {
+            "key": "sessionToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ verdict?: { inputGranularity?: GRANULARITY_UNSPECIFIED | SUB_PREMISE | PREMISE | PREMISE_PROXIMITY | BLOCK | ROUTE | OTHER, validationGranularity?: GRANULARITY_UNSPECIFIED | SUB_PREMISE | PREMISE | PREMISE_PROXIMITY | BLOCK | ROUTE | OTHER, geocodeGranularity?: GRANULARITY_UNSPECIFIED | SUB_PREMISE | PREMISE | PREMISE_PROXIMITY | BLOCK | ROUTE | OTHER, addressComplete?: boolean, hasUnconfirmedComponents?: boolean, hasInferredComponents?: boolean, hasReplacedComponents?: boolean, hasSpellCorrectedComponents?: boolean, possibleNextAction?: POSSIBLE_NEXT_ACTION_UNSPECIFIED | FIX | CONFIRM_ADD_SUBPREMISES | CONFIRM | ACCEPT }, address?: { formattedAddress?: string, postalAddress?: { revision?: 0, regionCode?: string, languageCode?: string, postalCode?: string, sortingCode?: string, administrativeArea?: string, locality?: string, sublocality?: string, addressLines?: string[], recipients?: string[], organization?: string }, addressComponents?: { componentName?: { text?: string, languageCode?: string }, componentType?: string, confirmationLevel?: CONFIRMATION_LEVEL_UNSPECIFIED | CONFIRMED | UNCONFIRMED_BUT_PLAUSIBLE | UNCONFIRMED_AND_SUSPICIOUS, inferred?: boolean, spellCorrected?: boolean, replaced?: boolean, unexpected?: boolean }[], missingComponentTypes?: string[], unconfirmedComponentTypes?: string[], unresolvedTokens?: string[] }, geocode?: { location?: { latitude?: number, longitude?: number }, plusCode?: { globalCode?: string, compoundCode?: string }, bounds?: { low?: { latitude?: number, longitude?: number }, high?: { latitude?: number, longitude?: number } }, featureSizeMeters?: number, placeId?: string, placeTypes?: string[] }, metadata?: { business?: boolean, poBox?: boolean, residential?: boolean }, uspsData?: { standardizedAddress?: { firstAddressLine?: string, firm?: string, secondAddressLine?: string, urbanization?: string, cityStateZipAddressLine?: string, city?: string, state?: string, zipCode?: string, zipCodeExtension?: string }, deliveryPointCode?: string, deliveryPointCheckDigit?: string, dpvConfirmation?: string, dpvFootnote?: string, dpvCmra?: string, dpvVacant?: string, dpvNoStat?: string, dpvNoStatReasonCode?: number, dpvDrop?: string, dpvThrowback?: string, dpvNonDeliveryDays?: string, dpvNonDeliveryDaysValues?: number, dpvNoSecureLocation?: string, dpvPbsa?: string, dpvDoorNotAccessible?: string, dpvEnhancedDeliveryCode?: string, carrierRoute?: string, carrierRouteIndicator?: string, ewsNoMatch?: boolean, postOfficeCity?: string, postOfficeState?: string, abbreviatedCity?: string, fipsCountyCode?: string, county?: string, elotNumber?: string, elotFlag?: string, lacsLinkReturnCode?: string, lacsLinkIndicator?: string, poBoxOnlyPostalCode?: boolean, suitelinkFootnote?: string, pmbDesignator?: string, pmbNumber?: string, addressRecordType?: string, defaultAddress?: boolean, errorMessage?: string, cassProcessed?: boolean }, englishLatinAddress?: { formattedAddress?: string, postalAddress?: { revision?: 0, regionCode?: string, languageCode?: string, postalCode?: string, sortingCode?: string, administrativeArea?: string, locality?: string, sublocality?: string, addressLines?: string[], recipients?: string[], organization?: string }, addressComponents?: { componentName?: { text?: string, languageCode?: string }, componentType?: string, confirmationLevel?: CONFIRMATION_LEVEL_UNSPECIFIED | CONFIRMED | UNCONFIRMED_BUT_PLAUSIBLE | UNCONFIRMED_AND_SUSPICIOUS, inferred?: boolean, spellCorrected?: boolean, replaced?: boolean, unexpected?: boolean }[], missingComponentTypes?: string[], unconfirmedComponentTypes?: string[], unresolvedTokens?: string[] } }"
+          },
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

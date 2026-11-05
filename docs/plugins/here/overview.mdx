@@ -1,0 +1,128 @@
+---
+title: Overview
+description: "Location platform for maps, routing, geocoding, and fleet tracking services worldwide."
+---
+
+Use **HERE** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 28 typed API operations
+- 6 synced entities (`addresses`, `places`, `positions`, `routes`, `trafficResults`, `weatherPlaces`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/here
+```
+```bash yarn
+yarn add corsair @corsair-dev/here
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/here
+```
+```bash bun
+bun add corsair @corsair-dev/here
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { here } from '@corsair-dev/here';
+
+export const corsair = createCorsair({
+	plugins: [
+		here(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+here()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'here',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`maps.coordinatesToTileIndices`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.here.api.maps.coordinatesToTileIndices({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/here/api) reference._
+
+
+See the full list on the [API](/plugins/here/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.here.db.<entity>.search()` and `.list()`: `addresses`, `places`, `positions`, `routes`, `trafficResults`, `weatherPlaces`.
+
+See [Database](/plugins/here/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/here/api">
+    Every `here.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/here/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

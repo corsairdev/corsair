@@ -12,8 +12,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import { getValidAccessToken } from './client';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import type {
 	GoogleDriveEndpointInputs,
 	GoogleDriveEndpointOutputs,
@@ -23,6 +22,7 @@ import {
 	FoldersEndpoints,
 	SearchEndpoints,
 	SharedDrivesEndpoints,
+	StorageEndpoints,
 } from './endpoints';
 import {
 	GoogleDriveEndpointInputSchemas,
@@ -78,6 +78,7 @@ export type GoogleDriveEndpoints = {
 	sharedDrivesUpdate: GoogleDriveEndpoint<'sharedDrivesUpdate'>;
 	sharedDrivesDelete: GoogleDriveEndpoint<'sharedDrivesDelete'>;
 	searchFilesAndFolders: GoogleDriveEndpoint<'searchFilesAndFolders'>;
+	storageGetQuota: GoogleDriveEndpoint<'storageGetQuota'>;
 };
 
 export type GoogleDriveBoundEndpoints = BindEndpoints<
@@ -130,6 +131,9 @@ const googleDriveEndpointsNested = {
 	},
 	search: {
 		filesAndFolders: SearchEndpoints.filesAndFolders,
+	},
+	storage: {
+		getQuota: StorageEndpoints.getQuota,
 	},
 } as const;
 
@@ -217,6 +221,10 @@ export const googledriveEndpointSchemas = {
 	'search.filesAndFolders': {
 		input: GoogleDriveEndpointInputSchemas.searchFilesAndFolders,
 		output: GoogleDriveEndpointOutputSchemas.searchFilesAndFolders,
+	},
+	'storage.getQuota': {
+		input: GoogleDriveEndpointInputSchemas.storageGetQuota,
+		output: GoogleDriveEndpointOutputSchemas.storageGetQuota,
 	},
 } as const;
 
@@ -339,11 +347,15 @@ const googleDriveEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Search for files and folders in Google Drive',
 	},
+	'storage.getQuota': {
+		riskLevel: 'read',
+		description: "Get the user's Google Drive storage quota and usage",
+	},
 } satisfies RequiredPluginEndpointMeta<typeof googleDriveEndpointsNested>;
 
 export const googledriveAuthConfig = {
 	oauth_2: {
-		account: ['channel_id'] as const,
+		account: ['channel_id', 'changes_page_token'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -398,60 +410,10 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('googledrive', 'oauth_2');
-				}
-
-				const res = await ctx.keys.get_integration_credentials();
-
-				if (!res.client_id || !res.client_secret) {
-					throw new Error(
-						'[corsair:googledrive] No client id or client secret',
-					);
-				}
-
-				try {
-					const result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: res.client_id,
-						clientSecret: res.client_secret,
-					});
-
-					if (result.refreshed) {
-						await Promise.all([
-							ctx.keys.set_access_token(result.accessToken),
-							ctx.keys.set_expires_at(String(result.expiresAt)),
-						]);
-					}
-
-					(ctx as Record<string, unknown>)._refreshAuth = async () => {
-						const freshResult = await getValidAccessToken({
-							accessToken: null,
-							expiresAt: null,
-							refreshToken,
-							clientId: res.client_id!,
-							clientSecret: res.client_secret!,
-							forceRefresh: true,
-						});
-						await ctx.keys.set_access_token(freshResult.accessToken);
-						await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-						return freshResult.accessToken;
-					};
-
-					return result.accessToken;
-				} catch (error) {
-					throw new Error(
-						`[corsair:googledrive] Failed to get valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
+				return getOAuthAccessToken(ctx, {
+					plugin: 'googledrive',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('googledrive', 'oauth_2');

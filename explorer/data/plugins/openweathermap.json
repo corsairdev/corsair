@@ -1,0 +1,1399 @@
+{
+  "id": "openweathermap",
+  "displayName": "OpenWeatherMap",
+  "description": "Weather data API for forecasts, current conditions, and historical climate information.",
+  "npmPackageName": "@corsair-dev/openweathermap",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "openweathermap.api.airPollution.current",
+      "shortPath": "airPollution.current",
+      "description": "Get current air pollution data for a latitude/longitude pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coord",
+            "optional": true,
+            "type": "tuple | {}"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ dt: number, main?: { aqi: number }, components?: { co?: number, no?: number, no2?: number, o3?: number, so2?: number, pm2_5?: number, pm10?: number, nh3?: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.airPollution.forecast",
+      "shortPath": "airPollution.forecast",
+      "description": "Get forecasted air pollution data for a latitude/longitude pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coord",
+            "optional": true,
+            "type": "tuple | {}"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ dt: number, main?: { aqi: number }, components?: { co?: number, no?: number, no2?: number, o3?: number, so2?: number, pm2_5?: number, pm10?: number, nh3?: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.airPollution.history",
+      "shortPath": "airPollution.history",
+      "description": "Get historical air pollution data for a latitude/longitude pair and time range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "number",
+            "description": "Start UNIX timestamp (UTC)"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "number",
+            "description": "End UNIX timestamp (UTC)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coord",
+            "optional": true,
+            "type": "tuple | {}"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ dt: number, main?: { aqi: number }, components?: { co?: number, no?: number, no2?: number, o3?: number, so2?: number, pm2_5?: number, pm10?: number, nh3?: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.geocoding.byZip",
+      "shortPath": "geocoding.byZip",
+      "description": "Convert a zip/post code into geographic coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zip",
+            "optional": false,
+            "type": "string",
+            "description": "Zip/post code and country code (e.g. E14,GB)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.geocoding.direct",
+      "shortPath": "geocoding.direct",
+      "description": "Convert a location name into geographic coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "City name, state code, and country code (e.g. London,UK)"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Max number of results (1-5)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string, local_names?: {}, lat: number, lon: number, country?: string, state?: string }[]"
+      }
+    },
+    {
+      "path": "openweathermap.api.geocoding.reverse",
+      "shortPath": "geocoding.reverse",
+      "description": "Convert geographic coordinates into location names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Max number of results (1-5)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string, local_names?: {}, lat: number, lon: number, country?: string, state?: string }[]"
+      }
+    },
+    {
+      "path": "openweathermap.api.history.timeMachine",
+      "shortPath": "history.timeMachine",
+      "description": "Get historical weather data for a specific timestamp (available from 1979-01-01)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude of the location"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude of the location"
+          },
+          {
+            "key": "dt",
+            "optional": false,
+            "type": "number",
+            "description": "Unix timestamp (UTC) for the requested historical date"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "standard | metric | imperial",
+            "description": "Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language code for weather descriptions"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone_offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ dt: number, sunrise: number, sunset: number, temp: number, feels_like: number, pressure: number, humidity: number, dew_point: number, uvi?: number, clouds: number, visibility?: number, wind_speed: number, wind_deg: number, wind_gust?: number, weather: { id: number, main: string, description: string, icon: string }[], rain?: { 1h: number }, snow?: { 1h: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.maps.weatherMapTile",
+      "shortPath": "maps.weatherMapTile",
+      "description": "Fetch a Weather Maps 2.0 tile image for a layer and coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "layer",
+            "optional": false,
+            "type": "PAC0 | PR0 | PA0 | PAR0 | PAS0 | SD0 | WS10 | WND | APM | TA2 | TD2 | TS0 | TS10 | HRD0 | CL",
+            "description": "Weather map layer code (Maps 2.0 op parameter)"
+          },
+          {
+            "key": "z",
+            "optional": false,
+            "type": "number",
+            "description": "Zoom level"
+          },
+          {
+            "key": "x",
+            "optional": false,
+            "type": "number",
+            "description": "Tile X coordinate"
+          },
+          {
+            "key": "y",
+            "optional": false,
+            "type": "number",
+            "description": "Tile Y coordinate"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "number",
+            "description": "Unix timestamp for forecast/historical tile"
+          },
+          {
+            "key": "opacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "palette",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fill_bound",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "arrow_step",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "use_norm",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "image/png"
+          },
+          {
+            "key": "dataBase64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.stations.create",
+      "shortPath": "stations.create",
+      "description": "Register a new personal weather station with OpenWeather",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "external_id",
+            "optional": false,
+            "type": "string",
+            "description": "Your external station identifier"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Station name"
+          },
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number",
+            "description": "Station latitude"
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number",
+            "description": "Station longitude"
+          },
+          {
+            "key": "altitude",
+            "optional": false,
+            "type": "number",
+            "description": "Station altitude in meters"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "openweathermap.api.stations.get",
+      "shortPath": "stations.get",
+      "description": "Get details for a registered weather station by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "station_id",
+            "optional": false,
+            "type": "string",
+            "description": "Internal OpenWeather station ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "altitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.stations.getMeasurements",
+      "shortPath": "stations.getMeasurements",
+      "description": "Get aggregated measurements from a registered station (minute/hour/day intervals)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "station_id",
+            "optional": false,
+            "type": "string",
+            "description": "Internal OpenWeather station ID"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "m | h | d",
+            "description": "Aggregation interval: m, h, or d"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "number",
+            "description": "Start of interval (Unix timestamp)"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "number",
+            "description": "End of interval (Unix timestamp)"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number",
+            "description": "Maximum number of records to return"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ station_id?: string, dt?: number, date?: number, temperature?: number | { min?: number, max?: number, average?: number, weight?: number }, temp?: number | { min?: number, max?: number, average?: number, weight?: number }, wind_speed?: number | { min?: number, max?: number, average?: number, weight?: number }, wind_gust?: number | { min?: number, max?: number, average?: number, weight?: number }, wind_deg?: number | { min?: number, max?: number, average?: number, weight?: number }, pressure?: number | { min?: number, max?: number, average?: number, weight?: number }, humidity?: number | { min?: number, max?: number, average?: number, weight?: number }, precipitation?: number | { min?: number, max?: number, average?: number, weight?: number } }[]"
+      }
+    },
+    {
+      "path": "openweathermap.api.stations.list",
+      "shortPath": "stations.list",
+      "description": "List all weather stations registered to your OpenWeather account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, external_id?: string, name?: string, latitude?: number, longitude?: number, altitude?: number, created_at?: string, updated_at?: string, rank?: number }[]"
+      }
+    },
+    {
+      "path": "openweathermap.api.stations.remove",
+      "shortPath": "stations.remove",
+      "description": "Delete a registered weather station from your account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "station_id",
+            "optional": false,
+            "type": "string",
+            "description": "Internal OpenWeather station ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.stations.submitMeasurements",
+      "shortPath": "stations.submitMeasurements",
+      "description": "Submit weather measurements from a registered station",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "measurements",
+            "optional": false,
+            "type": "{ station_id: string, dt: number, temperature?: number, wind_speed?: number, wind_gust?: number, wind_deg?: number, pressure?: number, humidity?: number, precipitation?: number, rain_1h?: number, snow_1h?: number }[]",
+            "description": "Measurement records to submit"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.stations.update",
+      "shortPath": "stations.update",
+      "description": "Update a registered weather station name, location, or external ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "station_id",
+            "optional": false,
+            "type": "string",
+            "description": "Internal OpenWeather station ID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "altitude",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "altitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.summary.daySummary",
+      "shortPath": "summary.daySummary",
+      "description": "Get aggregated weather summary for a specific date (temperature, wind, precipitation)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude of the location"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude of the location"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "Date in YYYY-MM-DD format"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "standard | metric | imperial",
+            "description": "Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language code for weather descriptions"
+          },
+          {
+            "key": "tz",
+            "optional": true,
+            "type": "string",
+            "description": "Timezone offset in ±XX:XX format (e.g. +05:30)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tz",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "units",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cloud_cover",
+            "optional": false,
+            "type": "{ afternoon: number }"
+          },
+          {
+            "key": "humidity",
+            "optional": false,
+            "type": "{ afternoon: number }"
+          },
+          {
+            "key": "precipitation",
+            "optional": false,
+            "type": "{ total: number }"
+          },
+          {
+            "key": "temperature",
+            "optional": false,
+            "type": "{ min: number, max: number, afternoon: number, night: number, evening: number, morning: number }"
+          },
+          {
+            "key": "pressure",
+            "optional": false,
+            "type": "{ afternoon: number }"
+          },
+          {
+            "key": "wind",
+            "optional": false,
+            "type": "{ max: { speed: number, direction: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.summary.overview",
+      "shortPath": "summary.overview",
+      "description": "Get a human-readable weather overview text for a location and date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude of the location"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude of the location"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Date in YYYY-MM-DD format (defaults to today)"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "standard | metric | imperial",
+            "description": "Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tz",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "units",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "weather_overview",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.weather.circleCity",
+      "shortPath": "weather.circleCity",
+      "description": "Get current weather for cities within a circle around a geographic point",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude of circle center"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude of circle center"
+          },
+          {
+            "key": "cnt",
+            "optional": true,
+            "type": "number",
+            "description": "Number of cities to return (1-50, default 10)"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "standard | metric | imperial"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ coord?: { lon: number, lat: number }, weather?: { id: number, main: string, description: string, icon: string }[], main?: { temp: number, feels_like?: number, temp_min?: number, temp_max?: number, pressure?: number, humidity?: number }, wind?: { speed: number, deg?: number, gust?: number }, clouds?: { all: number }, dt?: number, sys?: { country?: string, sunrise?: number, sunset?: number }, timezone?: number, id?: number, name?: string, cod?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.weather.current",
+      "shortPath": "weather.current",
+      "description": "Get current weather for a location by city name, city ID, zip code, or coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "City name, state code, country code"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number",
+            "description": "OpenWeatherMap city ID"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string",
+            "description": "Zip/post code with country code"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "standard | metric | imperial"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coord",
+            "optional": true,
+            "type": "{ lon: number, lat: number }"
+          },
+          {
+            "key": "weather",
+            "optional": true,
+            "type": "{ id: number, main: string, description: string, icon: string }[]"
+          },
+          {
+            "key": "main",
+            "optional": true,
+            "type": "{ temp: number, feels_like?: number, temp_min?: number, temp_max?: number, pressure?: number, humidity?: number }"
+          },
+          {
+            "key": "wind",
+            "optional": true,
+            "type": "{ speed: number, deg?: number, gust?: number }"
+          },
+          {
+            "key": "clouds",
+            "optional": true,
+            "type": "{ all: number }"
+          },
+          {
+            "key": "dt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sys",
+            "optional": true,
+            "type": "{ country?: string, sunrise?: number, sunset?: number }"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cod",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.weather.forecast5Day",
+      "shortPath": "weather.forecast5Day",
+      "description": "Get 5-day forecast in 3-hour steps (up to 40 timestamps) for a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "City name, state code, country code"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number",
+            "description": "OpenWeatherMap city ID"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string",
+            "description": "Zip/post code with country code"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "standard | metric | imperial"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cnt",
+            "optional": true,
+            "type": "number",
+            "description": "Number of timestamps to return (1-40)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cnt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ dt: number, main?: {}, weather?: { id: number, main: string, description: string, icon: string }[], clouds?: {}, wind?: {}, pop?: number, rain?: {}, snow?: {}, sys?: {}, dt_txt?: string }[]"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "{ id?: number, name?: string, coord?: {}, country?: string, population?: number, timezone?: number, sunrise?: number, sunset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openweathermap.api.weather.oneCall",
+      "shortPath": "weather.oneCall",
+      "description": "Get current weather, minutely/hourly/daily forecasts, and weather alerts for a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude of the location"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude of the location"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "current | minutely | hourly | daily | alerts[]",
+            "description": "Parts to exclude from the response: current, minutely, hourly, daily, alerts"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "standard | metric | imperial",
+            "description": "Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language code for weather descriptions"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone_offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "current",
+            "optional": true,
+            "type": "{ dt: number, sunrise?: number, sunset?: number, temp: number, feels_like: number, pressure: number, humidity: number, dew_point: number, uvi: number, clouds: number, visibility?: number, wind_speed: number, wind_deg: number, wind_gust?: number, weather: { id: number, main: string, description: string, icon: string }[], rain?: { 1h: number }, snow?: { 1h: number } }"
+          },
+          {
+            "key": "minutely",
+            "optional": true,
+            "type": "{ dt: number, precipitation: number }[]"
+          },
+          {
+            "key": "hourly",
+            "optional": true,
+            "type": "{ dt: number, temp: number, feels_like: number, pressure: number, humidity: number, dew_point: number, uvi: number, clouds: number, visibility?: number, wind_speed: number, wind_deg: number, wind_gust?: number, weather: { id: number, main: string, description: string, icon: string }[], pop: number, rain?: { 1h: number }, snow?: { 1h: number } }[]"
+          },
+          {
+            "key": "daily",
+            "optional": true,
+            "type": "{ dt: number, sunrise: number, sunset: number, moonrise: number, moonset: number, moon_phase: number, summary?: string, temp: { day: number, min: number, max: number, night: number, eve: number, morn: number }, feels_like: { day: number, night: number, eve: number, morn: number }, pressure: number, humidity: number, dew_point: number, wind_speed: number, wind_deg: number, wind_gust?: number, weather: { id: number, main: string, description: string, icon: string }[], clouds: number, pop: number, rain?: number, snow?: number, uvi: number }[]"
+          },
+          {
+            "key": "alerts",
+            "optional": true,
+            "type": "{ sender_name: string, event: string, start: number, end: number, description: string, tags: string[] }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "openweathermap.db.daySummaries.search",
+      "entityName": "daySummaries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lat",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lon",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tz",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "units",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "temperatureMin",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "temperatureMax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "temperatureAfternoon",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "temperatureMorning",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "temperatureEvening",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "temperatureNight",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "precipitationTotal",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "windMaxSpeed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "windMaxDirection",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cloudCoverAfternoon",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "humidityAfternoon",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pressureAfternoon",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "openweathermap.db.overviews.search",
+      "entityName": "overviews",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lat",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lon",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tz",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "units",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "weatherOverview",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

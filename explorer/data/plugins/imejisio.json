@@ -1,0 +1,107 @@
+{
+  "id": "imejisio",
+  "displayName": "Imejisio",
+  "description": "Imejisio plugin for Corsair",
+  "npmPackageName": "@corsair-dev/imejisio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "imejisio.api.designs.render",
+      "shortPath": "designs.render",
+      "description": "Render an Imejis template design into image/PDF bytes or a stored URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designId",
+            "optional": false,
+            "type": "string",
+            "description": "The design render code from the design render URL"
+          },
+          {
+            "key": "format",
+            "optional": false,
+            "type": "png | jpeg | webp | pdf",
+            "description": "Output format. Defaults to jpeg per the Imejis OpenAPI spec"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number",
+            "description": "JPEG quality from 1 to 100 (only affects jpeg output)"
+          },
+          {
+            "key": "delivery",
+            "optional": false,
+            "type": "stream | hosted | signed",
+            "description": "Delivery mode: stream (raw bytes normalized to base64), hosted (public URL), or signed (expiring URL)"
+          },
+          {
+            "key": "expiresIn",
+            "optional": true,
+            "type": "number",
+            "description": "Signed delivery only: link lifetime in minutes (default 60, maximum 7 days = 10080)"
+          },
+          {
+            "key": "overrides",
+            "optional": true,
+            "type": "{}",
+            "description": "Key-value overrides for dynamic design template fields"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ delivery: stream, format: png | jpeg | webp | pdf, contentType: string, base64: string } | { success?: boolean, delivery: hosted, url: string, format?: png | jpeg | webp | pdf, file?: {} } | { success?: boolean, delivery: signed, url: string, expiresAt?: string, format?: png | jpeg | webp | pdf, file?: {} }"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "imejisio.db.renders.search",
+      "entityName": "renders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "designId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expiresAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "renderedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

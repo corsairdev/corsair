@@ -1,0 +1,131 @@
+{
+  "id": "contentfulgraphql",
+  "displayName": "Contentful",
+  "description": "Headless CMS for structured content modeling, delivery, and omnichannel publishing via GraphQL.",
+  "npmPackageName": "@corsair-dev/contentfulgraphql",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "space_id",
+        "environment_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "contentfulgraphql.api.getCmaToken",
+      "shortPath": "getCmaToken",
+      "description": "Get the stored Contentful access token, space ID, and environment ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contentfulgraphql.api.graphQlContentApiPersistedQuery",
+      "shortPath": "graphQlContentApiPersistedQuery",
+      "description": "Run an automatic persisted query (APQ) against the Contentful GraphQL Content API using a SHA-256 hash",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha256Hash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "operationName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contentfulgraphql.api.graphQlContentApiQuery",
+      "shortPath": "graphQlContentApiQuery",
+      "description": "Run a GraphQL query against the Contentful GraphQL Content API for the configured space and environment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "operationName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

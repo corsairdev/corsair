@@ -1,4 +1,6 @@
 import { AuthMissingError } from '../core/auth/errors/auth-missing';
+import { cacheRefreshedTokens } from '../core/auth/oauth-token-cache';
+import { singleFlight } from '../core/auth/single-flight';
 import type { AccountKeyManagerFor } from '../core/auth/types';
 import { hubApiPost } from './client/http';
 import { parseOAuthRefreshResponse } from './contracts/connect-api';
@@ -28,70 +30,71 @@ export async function getManagedAccessToken(
 	const { keys, hub, plugin, tenantId } = ctx;
 	const forceRefresh = options?.forceRefresh ?? false;
 
-	const [accessToken, expiresAt, refreshToken] = await Promise.all([
-		keys.get_access_token(),
-		keys.get_expires_at(),
-		keys.get_refresh_token(),
-	]);
+	// Dedupe concurrent calls on this store into one flight. Keyed before any
+	// async read so two callers share a single execution — and, when a refresh is
+	// needed, one stateless Hub mint. Forced (401) refreshes share the same key as
+	// routine ones so a 401 retry racing an expiry refresh can't spend a rotating
+	// refresh_token twice.
+	const flightKey = `managed:${plugin}:${tenantId}`;
+	return singleFlight(keys, flightKey, async () => {
+		const [accessToken, expiresAt, refreshToken] = await Promise.all([
+			keys.get_access_token(),
+			keys.get_expires_at(),
+			keys.get_refresh_token(),
+		]);
 
-	if (!accessToken && !refreshToken) {
-		throw new AuthMissingError(plugin, 'managed');
-	}
-
-	const now = Math.floor(Date.now() / 1000);
-	if (
-		!forceRefresh &&
-		accessToken &&
-		expiresAt &&
-		Number(expiresAt) > now + TOKEN_REFRESH_BUFFER_SECONDS
-	) {
-		return {
-			accessToken,
-			expiresAt: Number(expiresAt),
-			refreshed: false,
-		};
-	}
-
-	// Non-expiring tokens may have no refresh token — keep using the access token
-	// while it is still valid. If it is expired (or due for refresh), fall through
-	// to the hub, which may still hold a refresh token even when local storage does not.
-	if (!refreshToken && accessToken && !forceRefresh) {
-		const expiresAtSeconds = expiresAt ? Number(expiresAt) : null;
-		const tokenStillUsable =
-			expiresAtSeconds === null ||
-			expiresAtSeconds > now + TOKEN_REFRESH_BUFFER_SECONDS;
-
-		if (tokenStillUsable) {
-			return {
-				accessToken,
-				expiresAt: expiresAtSeconds ?? now + 3600,
-				refreshed: false,
-			};
+		if (!accessToken && !refreshToken) {
+			throw new AuthMissingError(plugin, 'managed');
 		}
-	}
 
-	const tokens = await refreshManagedTokensFromHub(hub, plugin, tenantId);
+		const now = Math.floor(Date.now() / 1000);
+		if (
+			!forceRefresh &&
+			accessToken &&
+			expiresAt &&
+			Number(expiresAt) > now + TOKEN_REFRESH_BUFFER_SECONDS
+		) {
+			return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
+		}
 
-	const nextExpiresAt = tokens.expires_in
-		? now + tokens.expires_in
-		: expiresAt
-			? Number(expiresAt)
-			: now + 3600;
+		// Non-expiring tokens may have no refresh token — keep using the access
+		// token while still valid. If expired (or due for refresh), fall through to
+		// the hub, which may still hold a refresh token even when local storage does not.
+		if (!refreshToken && accessToken && !forceRefresh) {
+			const expiresAtSeconds = expiresAt ? Number(expiresAt) : null;
+			const tokenStillUsable =
+				expiresAtSeconds === null ||
+				expiresAtSeconds > now + TOKEN_REFRESH_BUFFER_SECONDS;
 
-	await keys.set_access_token(tokens.access_token);
-	await keys.set_expires_at(String(nextExpiresAt));
-	if (tokens.refresh_token) {
-		await keys.set_refresh_token(tokens.refresh_token);
-	}
-	if (tokens.scope) {
-		await keys.set_scope(tokens.scope);
-	}
+			if (tokenStillUsable) {
+				return {
+					accessToken,
+					expiresAt: expiresAtSeconds ?? now + 3600,
+					refreshed: false,
+				};
+			}
+		}
 
-	return {
-		accessToken: tokens.access_token,
-		expiresAt: nextExpiresAt,
-		refreshed: true,
-	};
+		// Without a local refresh_token the Hub has nothing to mint from either —
+		// it no longer stores managed tokens — so a refresh is impossible. Surface
+		// it as a reconnect instead of a doomed token-less Hub call.
+		if (!refreshToken) {
+			throw new AuthMissingError(plugin, 'managed');
+		}
+
+		const tokens = await refreshManagedTokensFromHub(
+			hub,
+			plugin,
+			tenantId,
+			refreshToken,
+		);
+		const nextExpiresAt = await cacheRefreshedTokens(keys, tokens, expiresAt);
+		return {
+			accessToken: tokens.access_token,
+			expiresAt: nextExpiresAt,
+			refreshed: true,
+		};
+	});
 }
 
 function isManagedConnectionMissingOnHub(message: string): boolean {
@@ -105,12 +108,14 @@ async function refreshManagedTokensFromHub(
 	hub: HubConfig,
 	plugin: string,
 	tenantId: string,
+	refreshToken: string,
 ) {
 	try {
 		return await hubApiPost({
 			hub,
 			path: '/oauth/refresh',
-			body: { plugin, tenantId },
+			// The SDK holds the token; Hub mints statelessly from its client_secret.
+			body: { plugin, tenantId, refresh_token: refreshToken },
 			parseResponse: parseOAuthRefreshResponse,
 		});
 	} catch (error) {

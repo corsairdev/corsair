@@ -52,8 +52,27 @@ test('non-plugin PR is skipped', () => {
 	assert.equal(r.isPluginPr, false);
 });
 
+test('framework adapters live outside packages/ and are not plugins', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: ['adapters/mastra/src/corsair-tool-provider.ts'],
+	});
+	assert.equal(r.isPluginPr, false);
+});
+
 test('draft plugin PR is skipped', () => {
 	const r = runGate({ ...goodInput, isDraft: true });
+	assert.equal(r.isPluginPr, false);
+});
+
+test('frpc binary-shim packages are not plugins', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/frpc-darwin-arm64/package.json',
+			'packages/frpc-linux-x64/package.json',
+		],
+	});
 	assert.equal(r.isPluginPr, false);
 });
 
@@ -69,6 +88,48 @@ test('R1: two plugins in one PR fails', () => {
 	const r = runGate({
 		...goodInput,
 		changedFiles: [...goodFiles, 'packages/slack/index.ts'],
+	});
+	assert.ok(r.failures.some((f) => f.rule === 'R1'));
+});
+
+test('plugin-docs.yaml + generated docs skip the plugin gate', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/plugin-docs.yaml',
+			'docs/plugins/airtable/overview.mdx',
+			'docs/docs.json',
+		],
+	});
+	assert.equal(r.isPluginPr, false);
+	assert.deepEqual(r.failures, []);
+});
+
+test('plugin-docs.yaml only skips the plugin gate', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: ['packages/airtable/plugin-docs.yaml'],
+	});
+	assert.equal(r.isPluginPr, false);
+});
+
+test('R1: same-plugin generated docs pass', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			...goodFiles,
+			'packages/onepassword/plugin-docs.yaml',
+			'docs/plugins/onepassword/overview.mdx',
+			'docs/docs.json',
+		],
+	});
+	assert.ok(!r.failures.some((f) => f.rule === 'R1'));
+});
+
+test('R1: other plugin docs fail', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [...goodFiles, 'docs/plugins/slack/overview.mdx'],
 	});
 	assert.ok(r.failures.some((f) => f.rule === 'R1'));
 });

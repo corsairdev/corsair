@@ -1,0 +1,2513 @@
+{
+  "id": "dovetail",
+  "displayName": "Dovetail",
+  "description": "Dovetail plugin for Corsair",
+  "npmPackageName": "@corsair-dev/dovetail",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 51,
+    "webhooks": 0,
+    "db": 13
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "dovetail.api.channels.create",
+      "shortPath": "channels.create",
+      "description": "Creates a new channel in Dovetail to organize and collect feedback data. Channels are containers for specific types of customer feedback such as app reviews, NPS responses, churn reasons, product reviews, or support tickets. Use this to set up a new data collection source before importing feedback data.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "APP_REVIEW | CHURN_REASONS | NPS_FEEDBACK | PRODUCT_REVIEW | SUPPORT_TICKETS"
+          },
+          {
+            "key": "project_category_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title: string, content_type?: string, project_category_id?: string | null, created_at?: string | null, updated_at?: string | null, url?: string, topics?: { id: string, channel_id?: string, title: string, description?: string, created_at?: string | null, updated_at?: string | null }[], project_category?: { id: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.channels.createDataPoint",
+      "shortPath": "channels.createDataPoint",
+      "description": "Tool to create a data point within a channel. Use after capturing new content to record and classify it in Dovetail.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, channel_id?: string, text?: string, timestamp?: string | null, source_title?: string | null, source_url?: string | null, created_at?: string | null, topics?: { id: string, title?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.channels.createTopic",
+      "shortPath": "channels.createTopic",
+      "description": "Tool to create a new topic in a Dovetail channel. Requires channel_id, title, and description. Use to organize feedback within channels by creating themed discussion topics.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, channel_id?: string, title: string, description?: string, created_at?: string | null, updated_at?: string | null, channel?: { id: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.channels.delete",
+      "shortPath": "channels.delete",
+      "description": "Tool to delete an existing channel. Use when you need to remove a channel and move it to the project's trash (restorable for 30 days). Confirm the channel ID before calling.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title: string, deleted_at: string, deleted: boolean, url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.channels.deleteTopic",
+      "shortPath": "channels.deleteTopic",
+      "description": "Tool to delete an existing topic. Use when you have confirmed the topic ID and want to move it to trash (restorable for 30 days). Example: \"Delete topic with ID 123e4567-e89b-12d3-a456-426614174000.\"",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "topic_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title: string, description?: string, deleted_at: string, deleted: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.channels.update",
+      "shortPath": "channels.update",
+      "description": "Tool to update an existing channel's title or context. Use after confirming the channel ID and fields to change.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title: string, content_type?: string, project_category_id?: string | null, created_at?: string | null, updated_at?: string | null, url?: string, topics?: { id: string, channel_id?: string, title: string, description?: string, created_at?: string | null, updated_at?: string | null }[], project_category?: { id: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.channels.updateTopic",
+      "shortPath": "channels.updateTopic",
+      "description": "Tool to update an existing topic. Use after confirming the topic ID and fields to change. Example: \"Update topic with id 123... to have title 'New'\".",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "topic_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, channel_id?: string, title: string, description?: string, created_at?: string | null, updated_at?: string | null, channel?: { id: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Tool to create a new contact in Dovetail. Use when you need to register a contact before logging interactions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, email?: string | null, avatar_url?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Tool to retrieve details of a specific contact. Use when you have confirmed the contact ID and need full contact metadata from Dovetail.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, email?: string | null, avatar_url?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "Retrieves a paginated list of contacts from a Dovetail workspace. Returns contact IDs, names, creation timestamps, and custom fields. Use cursor-based pagination (limit + start_cursor) to navigate large contact lists efficiently.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ name?: string }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, email?: string | null, avatar_url?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Tool to update an existing contact in Dovetail. Use when you need to modify a contact's name, email, or custom fields.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, email?: string | null, avatar_url?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.data.create",
+      "shortPath": "data.create",
+      "description": "Tool to create a data item in a Dovetail project with text content, title, and/or structured fields. Use when you need to capture and store research data, interview notes, or other content in a project.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, deleted?: boolean, deleted_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.data.delete",
+      "shortPath": "data.delete",
+      "description": "Tool to delete an existing data item. Use when you have confirmed the data ID and want to move it to trash (restorable for 30 days). Example: \"Delete data with ID 1tFfvvAmYPCLUqb9zO8dgN.\"",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, deleted?: boolean, deleted_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.data.export",
+      "shortPath": "data.export",
+      "description": "Tool to export data in HTML or Markdown format. Use when you need to retrieve a formatted version of data items from Dovetail.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "html | markdown"
+          },
+          {
+            "key": "include_file_content",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, content_html?: string, content_markdown?: string, content_text?: string, files?: { id: string, name?: string, text_status?: string }[], indexed?: boolean, truncated?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.data.get",
+      "shortPath": "data.get",
+      "description": "Tool to retrieve details of a specific data item by ID. Use when you have confirmed the data ID and need full metadata including custom fields, files, and project information from Dovetail.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, deleted?: boolean, deleted_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.data.importFile",
+      "shortPath": "data.importFile",
+      "description": "Tool to import a public URL of a file as new data in Dovetail. Use when you need to add external files to a project.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, deleted?: boolean, deleted_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.data.list",
+      "shortPath": "data.list",
+      "description": "Tool to list data items in Dovetail. Use when you need to retrieve, filter, sort, or paginate through your workspace data. Supports filtering by created_at (date range), project_id, and title. Results can be sorted by created_at or title. Uses cursor-based pagination with configurable page size.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ project_id?: string, folder_id?: string, title?: string, created_at?: { gt?: string, gte?: string, lt?: string, lte?: string } }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, deleted?: boolean, deleted_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.data.update",
+      "shortPath": "data.update",
+      "description": "Tool to update a data item in Dovetail. Use when you need to modify the title or fields of an existing data item.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, deleted?: boolean, deleted_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.docs.create",
+      "shortPath": "docs.create",
+      "description": "Tool to create a doc in a Dovetail project with text content, title and/or custom fields. Use when you need to document research findings, store notes, or create structured content within a project. The doc content is stored but not returned in the response.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "text | html | markdown"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.docs.delete",
+      "shortPath": "docs.delete",
+      "description": "Tool to delete an existing doc. Use when you need to remove a doc and move it to the project's trash (restorable for 30 days).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.docs.export",
+      "shortPath": "docs.export",
+      "description": "Tool to export a doc in HTML or Markdown format. Use when you need to retrieve the full content of a doc from Dovetail in a specific format.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "html | markdown"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, content_html?: string, content_markdown?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.docs.get",
+      "shortPath": "docs.get",
+      "description": "Tool to retrieve details of a specific doc by ID. Use when you have confirmed the doc ID and need full doc metadata from Dovetail.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.docs.importFile",
+      "shortPath": "docs.importFile",
+      "description": "Tool to import a public file URL as a new doc in Dovetail. Use when you need to create a doc from an external file source. The file must be publicly accessible at the provided URL.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.docs.list",
+      "shortPath": "docs.list",
+      "description": "Tool to list docs in a Dovetail workspace with optional filtering, sorting, and pagination. Use when you need to retrieve docs, optionally filtered by project, title, content, or creation date.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ project_id?: string, folder_id?: string, title?: string, created_at?: { gt?: string, gte?: string, lt?: string, lte?: string } }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.docs.listUserDocs",
+      "shortPath": "docs.listUserDocs",
+      "description": "Tool to get a list of docs associated with a user in Dovetail. Use when you need to retrieve documents for a specific user or the authenticated user (use 'me' as user_id).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ project_id?: string, folder_id?: string, title?: string, created_at?: { gt?: string, gte?: string, lt?: string, lte?: string } }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.docs.update",
+      "shortPath": "docs.update",
+      "description": "Tool to update a doc in Dovetail. Use when you need to modify a doc's title or custom fields.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover_image_file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.files.get",
+      "shortPath": "files.get",
+      "description": "Tool to retrieve details of a specific file by its ID. Use when you need file metadata, download URL, or processing status from Dovetail.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, size?: number, mime_type?: string, status?: string, created_at?: string | null, updated_at?: string | null, download_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.folders.get",
+      "shortPath": "folders.get",
+      "description": "Tool to retrieve details of a specific folder. Use when you have confirmed the folder ID and need full folder metadata from Dovetail.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title: string, parent_folder_id?: string | null, created_at?: string | null, updated_at?: string | null, folders?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "Tool to get a list of folders associated with a workspace. Use when you need to retrieve folder hierarchy, search for folders by title, or navigate the folder structure with pagination support.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ parent_folder_id?: string | null, title?: string }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title: string, parent_folder_id?: string | null, created_at?: string | null, updated_at?: string | null, folders?: string[] | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.highlights.list",
+      "shortPath": "highlights.list",
+      "description": "List highlights from your Dovetail workspace with optional filtering and pagination. Use this action to retrieve highlights that have been created across your notes and projects. Supports filtering by project or note, and cursor-based pagination for large result sets.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ project_id?: string, tag_id?: string, highlight_id?: string, created_at?: { gt?: string, gte?: string, lt?: string, lte?: string }, updated_at?: { gt?: string, gte?: string, lt?: string, lte?: string } }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, note_id?: string, tag_id?: string | null, text?: string, start_time?: number | null, end_time?: number | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.insights.create",
+      "shortPath": "insights.create",
+      "description": "Creates a new insight in Dovetail to store synthesized research findings, observations, or conclusions. Use this tool when you need to document and save key findings from user research, interviews, or data analysis. Insights can optionally be linked to a project for better organization. Returns the created insight's ID, title, creation timestamp, and other metadata. Note: The body content is stored but not included in the response.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "text | html | markdown"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.insights.delete",
+      "shortPath": "insights.delete",
+      "description": "Tool to delete an existing insight. Use when you have confirmed the insight ID and want to move it to trash (restorable for 30 days).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "insight_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.insights.export",
+      "shortPath": "insights.export",
+      "description": "Tool to export an insight in HTML or Markdown format. Use when you need to retrieve the full content of an insight for documentation, reporting, or sharing purposes. The exported content includes the insight's title and body in the specified format.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "insight_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "html | markdown"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, content_html?: string, content_markdown?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.insights.get",
+      "shortPath": "insights.get",
+      "description": "Tool to retrieve details of a specific insight by ID. Use when you need full insight metadata from Dovetail.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "insight_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.insights.importFile",
+      "shortPath": "insights.importFile",
+      "description": "Tool to import a file from a public URL as a new insight in Dovetail. Use when you need to create an insight from an external file source such as PDFs, images, or documents. The file must be publicly accessible for Dovetail to fetch and import it. After import, the insight can be analyzed, tagged, and connected to projects.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.insights.list",
+      "shortPath": "insights.list",
+      "description": "Tool to get a list of insights associated with a workspace. Use when you need to retrieve insights with optional filtering by project, publication status, or title, and support for cursor-based pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ project_id?: string, folder_id?: string, title?: string, created_at?: { gt?: string, gte?: string, lt?: string, lte?: string } }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.insights.listUserInsights",
+      "shortPath": "insights.listUserInsights",
+      "description": "List personal insights for a user in Dovetail. Returns a paginated list of insights including their IDs, titles, creation dates, and published status. Use DOVETAIL_GET_TOKEN_INFO to obtain a valid user_id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ project_id?: string, folder_id?: string, title?: string, created_at?: { gt?: string, gte?: string, lt?: string, lte?: string } }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.insights.update",
+      "shortPath": "insights.update",
+      "description": "Updates an existing insight in Dovetail, allowing you to modify the title and custom fields. Use when you need to revise insight information, correct titles, or update custom field values.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "insight_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover_image_file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, project_id?: string | null, folder_id?: string | null, cover_image_file_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Tool to create a note in a Dovetail project with text content, title and/or custom fields. Use when you need to document research notes, store interview findings, or create structured content within a project. The note content is stored but not returned in the response.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.notes.delete",
+      "shortPath": "notes.delete",
+      "description": "Tool to delete an existing note. Use when you have confirmed the note ID and want to move it to trash (restorable for 30 days).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "note_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.notes.export",
+      "shortPath": "notes.export",
+      "description": "Tool to export a note from Dovetail in HTML or Markdown format. Use when you need to retrieve the full content of a note in a specific export format.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "note_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "html | markdown"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, content_html?: string, content_markdown?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.notes.get",
+      "shortPath": "notes.get",
+      "description": "Tool to retrieve details of a specific note. Use when you have confirmed the note ID and need full note metadata from Dovetail.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "note_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.notes.importFile",
+      "shortPath": "notes.importFile",
+      "description": "Tool to import a file from a public URL as a new note in Dovetail. Use when you need to create a note by importing content from an accessible file URL (PDF, video, audio, etc.).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "List notes in Dovetail workspace with optional pagination and sorting. Use this tool to retrieve notes from your Dovetail workspace. Supports pagination for large result sets and sorting options. Returns note metadata including IDs, titles, timestamps, and associated project information.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ project_id?: string, folder_id?: string, created_at?: { gt?: string, gte?: string, lt?: string, lte?: string } }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.notes.update",
+      "shortPath": "notes.update",
+      "description": "Tool to update an existing note in Dovetail. Use when you need to modify a note's title, content, or custom fields. Example: \"Update note 8IFq5LEC6hV1Vgsu0jPNJ with new title 'Q1 Review'\".",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "note_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label: string, value?: any, type?: BOOLEAN | DATETIME | EMAIL | NPS | NUMBER | PERSON | PHONE | SELECT | TEXT | URL }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, project_id?: string, title?: string | null, folder_id?: string | null, created_at?: string | null, updated_at?: string | null, fields?: { id?: string, label: string, value?: any, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Tool to create a new project in your Dovetail workspace. Use when you need to create a project to organize research data.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title: string, folder_id?: string | null, template_id?: string | null, created_at?: string | null, updated_at?: string | null, overview?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Tool to retrieve details of a specific project. Use when you have confirmed the project ID and need full project metadata from Dovetail.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title: string, folder_id?: string | null, template_id?: string | null, created_at?: string | null, updated_at?: string | null, overview?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "Tool to list all projects in Dovetail. Use after authenticating with a valid workspace token when you need to retrieve the full project list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ folder_id?: string, title?: string }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title: string, folder_id?: string | null, template_id?: string | null, created_at?: string | null, updated_at?: string | null, overview?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.search.magicSearch",
+      "shortPath": "search.magicSearch",
+      "description": "Tool to perform a magic search across workspace data. Use when you need to retrieve relevant highlights, notes, insights, channels, themes, or tags by query.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "highlights",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "insights",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "themes",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List all tags in the authenticated Dovetail workspace. Returns tag details including title, color, highlight count, and timestamps. Supports pagination for workspaces with many tags.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ start_cursor?: string, limit?: number }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ project_id?: string, tag_board_id?: string }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title: string, color?: string, project_id?: string | null, tag_board_id?: string | null, scope?: string, highlight_count?: number, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ total_count?: number, has_more?: boolean, next_cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dovetail.api.token.getInfo",
+      "shortPath": "token.getInfo",
+      "description": "Retrieves information about the current API token, including its unique identifier and the associated workspace subdomain. Use this to verify which workspace the token belongs to.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, subdomain: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "dovetail.db.channels.search",
+      "entityName": "channels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_category_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.data.search",
+      "entityName": "data",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folder_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.dataPoints.search",
+      "entityName": "dataPoints",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.docs.search",
+      "entityName": "docs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folder_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cover_image_file_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "mime_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.folders.search",
+      "entityName": "folders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_folder_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.highlights.search",
+      "entityName": "highlights",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "note_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "end_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.insights.search",
+      "entityName": "insights",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folder_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cover_image_file_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.notes.search",
+      "entityName": "notes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folder_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folder_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "template_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag_board_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scope",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "highlight_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dovetail.db.topics.search",
+      "entityName": "topics",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

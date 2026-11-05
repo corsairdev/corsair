@@ -12,9 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import {
-	getValidConfluenceAccessToken,
 	normalizeConfluenceCloudUrl,
 	resolveConfluenceCloudResource,
 } from './client';
@@ -204,45 +203,18 @@ export function confluence<const T extends ConfluencePluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const [
-					accessToken,
-					expiresAt,
-					refreshToken,
-					storedCloudId,
-					storedCloudUrl,
-					credentials,
-				] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-					ctx.keys.get_cloud_id(),
-					ctx.keys.get_cloud_url(),
-					ctx.keys.get_integration_credentials(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('confluence', 'refresh_token');
-				}
-				if (!credentials.client_id || !credentials.client_secret) {
-					throw new AuthMissingError('confluence', 'client_credentials');
-				}
-
-				const result = await getValidConfluenceAccessToken({
-					accessToken,
-					expiresAt,
-					refreshToken,
-					clientId: credentials.client_id,
-					clientSecret: credentials.client_secret,
+				const accessToken = await getOAuthAccessToken(ctx, {
+					plugin: 'confluence',
+					tokenUrl: 'https://auth.atlassian.com/oauth/token',
+					bodyFormat: 'json',
 				});
 
-				if (result.refreshed) {
-					await Promise.all([
-						ctx.keys.set_access_token(result.accessToken),
-						ctx.keys.set_expires_at(String(result.expiresAt)),
-						ctx.keys.set_refresh_token(result.refreshToken),
-					]);
-				}
-
+				// Atlassian Cloud API calls are keyed by the site's cloud_id — resolve
+				// and persist it once, or when the configured site changes.
+				const [storedCloudId, storedCloudUrl] = await Promise.all([
+					ctx.keys.get_cloud_id(),
+					ctx.keys.get_cloud_url(),
+				]);
 				const configuredCloudUrl = options.cloudUrl ?? storedCloudUrl;
 				const normalizedConfiguredUrl = configuredCloudUrl
 					? normalizeConfluenceCloudUrl(configuredCloudUrl)
@@ -257,7 +229,7 @@ export function confluence<const T extends ConfluencePluginOptions>(
 						normalizedConfiguredUrl !== normalizedStoredUrl)
 				) {
 					const resource = await resolveConfluenceCloudResource(
-						result.accessToken,
+						accessToken,
 						configuredCloudUrl,
 					);
 					await Promise.all([
@@ -266,7 +238,7 @@ export function confluence<const T extends ConfluencePluginOptions>(
 					]);
 				}
 
-				return result.accessToken;
+				return accessToken;
 			}
 
 			throw new AuthMissingError('confluence', 'api_key');

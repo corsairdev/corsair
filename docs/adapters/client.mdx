@@ -1,6 +1,6 @@
 ---
-title: Vanilla Client
-description: createCorsairClient is a typed fetch wrapper for the management API. No React, no framework — types only.
+title: Vanilla client
+description: createCorsairClient is a typed fetch wrapper for the management API. No React, no framework, types only.
 ---
 
 `createCorsairClient({ baseURL })` returns a typed client that mirrors every route on the [handler](/management/handler). Use it from a Node script, a CLI, a worker, or a non-React frontend.
@@ -11,7 +11,7 @@ import { createCorsairClient } from "corsair";
 const client = createCorsairClient({ baseURL: "/api/corsair" });
 ```
 
-For React, prefer [`createCorsairReactClient`](/adapters/react) — it wraps this one and adds hooks.
+For React, prefer [`createCorsairReactClient`](/adapters/react). It wraps this one and adds hooks.
 
 ## Reading
 
@@ -45,9 +45,14 @@ const status = await client.connectionStatus.get({ tenantId: "acme" });
 
 ```ts writes.ts
 await client.tenants.create({ id: "acme" });      // POST /tenants
+
+await client.connect.createLink({                 // POST /connect/link
+  plugin: "github",
+  tenantId: "acme",
+});
 ```
 
-Connect/OAuth methods are documented on the [Connect page](/management/connect).
+`client.*` is the HTTP mirror of `corsair.manage.*`; `client.connect` also carries `.resolve` and `.oauthCallback`. Connect/OAuth methods are documented on the [Connect page](/management/connect).
 
 ## Options
 
@@ -60,7 +65,7 @@ createCorsairClient({
 
 `baseURL` is the origin + base path the handler is mounted at, e.g. `https://app.example.com/api/corsair`. A trailing slash is tolerated.
 
-`fetch` is optional — see [Custom fetch](#custom-fetch) below.
+`fetch` is optional. See [Custom fetch](#custom-fetch) below.
 
 Need auth headers, custom retry, or interceptors? Pass a wrapped `fetch`:
 
@@ -94,18 +99,18 @@ try {
 }
 ```
 
-Network failures (DNS, abort, no response) throw a plain `Error` — `CorsairClientError` is only used when the server responded with a non-2xx body.
+Network failures (DNS, abort, no response) throw a plain `Error`. `CorsairClientError` is only used when the server responded with a non-2xx body.
 
 ## Custom fetch
 
-When you call `createCorsairClient`, the client picks its `fetch` function once — either the one you pass in, or `globalThis.fetch` at that moment. Every later call (`client.tenants.list()`, etc.) uses that same function; it does not re-read `globalThis.fetch` on each request.
+When you call `createCorsairClient`, the client picks its `fetch` function once, either the one you pass in, or `globalThis.fetch` at that moment. Every later call (`client.tenants.list()`, etc.) uses that same function; it does not re-read `globalThis.fetch` on each request.
 
 In a normal browser or Node 18+ app, this makes no practical difference. `fetch` is already available when you create the client, and it stays the same.
 
 It only matters in two cases:
 
-- **Tests** — your test runner or jsdom may install or replace `fetch` after your client module is imported. Pass an explicit `fetch` so the client uses the right one.
-- **Custom behavior** — auth headers, retries, or routing requests to an in-process handler instead of over HTTP.
+- **Tests**: your test runner or jsdom may install or replace `fetch` after your client module is imported. Pass an explicit `fetch` so the client uses the right one.
+- **Custom behavior**: auth headers, retries, or routing requests to an in-process handler instead of over HTTP.
 
 ```ts
 // Test: wire the client directly to the handler, no TCP socket

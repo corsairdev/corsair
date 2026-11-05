@@ -81,11 +81,6 @@ export const getTaskStatus: AlgoliaEndpoint = async (ctx, input = {}) => {
 	return executeAlgoliaOperation(ctx, input, getTaskStatusRoute);
 };
 
-const indexExistsRoute = getRoute('indexExists');
-export const indexExists: AlgoliaEndpoint = async (ctx, input = {}) => {
-	return executeAlgoliaOperation(ctx, input, indexExistsRoute);
-};
-
 const listIndicesRoute = getRoute('listIndices');
 export const listIndices: AlgoliaEndpoint = async (ctx, input = {}) => {
 	return executeAlgoliaOperation(ctx, input, listIndicesRoute);
@@ -126,7 +121,6 @@ export const IndicesEndpoints = {
 	getRecord,
 	getSettings,
 	getTaskStatus,
-	indexExists,
 	listIndices,
 	partialUpdateObjects,
 	setSettings,

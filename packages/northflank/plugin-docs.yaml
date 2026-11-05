@@ -1,0 +1,4 @@
+displayName: Northflank
+description: Connect Northflank to manage projects, services, preview environments, secrets, plans, and regions.
+overviewExampleCalls:
+  - path: projects.list

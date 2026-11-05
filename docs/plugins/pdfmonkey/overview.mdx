@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "PDF generation API for creating documents from HTML templates and dynamic data."
+---
+
+Use **PDFMonkey** through Corsair: one client, typed API calls, and incoming webhooks.
+
+**What you get:**
+
+- 12 typed API operations
+- 2 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/pdfmonkey
+```
+```bash yarn
+yarn add corsair @corsair-dev/pdfmonkey
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/pdfmonkey
+```
+```bash bun
+bun add corsair @corsair-dev/pdfmonkey
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { pdfmonkey } from '@corsair-dev/pdfmonkey';
+
+export const corsair = createCorsair({
+	plugins: [
+		pdfmonkey(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+pdfmonkey()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'pdfmonkey',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`documents.getDocument`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.documents.getDocument({});
+```
+
+
+**`documents.createDocument`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.documents.createDocument({});
+```
+
+
+See the full list on the [API](/plugins/pdfmonkey/api) page.
+
+## Webhooks
+
+This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/pdfmonkey/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/pdfmonkey/api">
+    Every `pdfmonkey.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/pdfmonkey/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

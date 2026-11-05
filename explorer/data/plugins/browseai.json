@@ -1,0 +1,784 @@
+{
+  "id": "browseai",
+  "displayName": "Browse AI",
+  "description": "No-code web scraping robots for monitoring sites and extracting structured data.",
+  "npmPackageName": "@corsair-dev/browseai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "browseai.api.monitors.create",
+      "shortPath": "monitors.create",
+      "description": "Create a robot monitor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "robotId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "inputParameters",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "notifyOnCapturedScreenshotChange",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "notifyOnCapturedTextChange",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "capturedScreenshotNotificationThreshold",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedules",
+            "optional": true,
+            "type": "{ type: FIXED_INTERVAL, everyMinutes: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monitor",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, status?: string | null, pausedReason?: string | null, inputParameters?: {} | null, schedules?: { type?: string | null, everyMinutes?: number | null }[] | null, schedule?: string | null, notifyOnCapturedScreenshotChange?: boolean | null, notifyOnCapturedTextChange?: boolean | null, capturedScreenshotNotificationThreshold?: number | null, createdAt?: number | null, pausedAt?: number | null, updatedAt?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseai.api.monitors.delete",
+      "shortPath": "monitors.delete",
+      "description": "Delete a robot monitor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "robotId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "monitorId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messageCode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseai.api.robots.bulkRun",
+      "shortPath": "robots.bulkRun",
+      "description": "Start a bulk run of robot tasks",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "robotId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inputParameters",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ bulkRun?: { id?: string | null, title?: string | null, status?: string | null, tasksCount?: number | null, successfulTasks?: number | null, failedTasks?: number | null, robotId?: string | null, createdAt?: number | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseai.api.robots.list",
+      "shortPath": "robots.list",
+      "description": "List robots on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "robots",
+            "optional": true,
+            "type": "{ totalCount?: number | null, items?: { id?: string | null, name?: string | null, createdAt?: number | null, inputParameters?: { type?: string | null, name?: string | null, label?: string | null, required?: boolean | null, encrypted?: boolean | null, defaultValue?: string | number | string[] | null, value?: string | number | string[] | null, min?: number | null, max?: number | null, pattern?: string | null, options?: { label?: string | null, value?: string | null }[] | null }[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseai.api.robots.run",
+      "shortPath": "robots.run",
+      "description": "Start a robot task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "robotId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordVideo",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inputParameters",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ id?: string | null, inputParameters?: {} | null, robotId?: string | null, status?: string | null, runByUserId?: string | null, robotBulkRunId?: string | null, runByTaskMonitorId?: string | null, runByAPI?: boolean | null, createdAt?: number | null, startedAt?: number | null, finishedAt?: number | null, userFriendlyError?: string | null, triedRecordingVideo?: boolean | null, videoUrl?: string | null, videoRemovedAt?: number | null, retriedOriginalTaskId?: string | null, retriedTaskId?: string | null, retriedByTaskId?: string | null, capturedDataTemporaryUrl?: string | null, capturedTexts?: {} | null, capturedScreenshots?: {} | null, capturedLists?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseai.api.system.getStatus",
+      "shortPath": "system.getStatus",
+      "description": "Check Browse AI task-queue status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tasksQueueStatus",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseai.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a robot task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "robotId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ id?: string | null, inputParameters?: {} | null, robotId?: string | null, status?: string | null, runByUserId?: string | null, robotBulkRunId?: string | null, runByTaskMonitorId?: string | null, runByAPI?: boolean | null, createdAt?: number | null, startedAt?: number | null, finishedAt?: number | null, userFriendlyError?: string | null, triedRecordingVideo?: boolean | null, videoUrl?: string | null, videoRemovedAt?: number | null, retriedOriginalTaskId?: string | null, retriedTaskId?: string | null, retriedByTaskId?: string | null, capturedDataTemporaryUrl?: string | null, capturedTexts?: {} | null, capturedScreenshots?: {} | null, capturedLists?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseai.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks for a robot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "robotId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "failed | successful | in-progress"
+          },
+          {
+            "key": "robotBulkRunId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeRetried",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ robotTasks?: { totalCount?: number | null, pageNumber?: number | null, hasMore?: boolean | null, items?: { id?: string | null, inputParameters?: {} | null, robotId?: string | null, status?: string | null, runByUserId?: string | null, robotBulkRunId?: string | null, runByTaskMonitorId?: string | null, runByAPI?: boolean | null, createdAt?: number | null, startedAt?: number | null, finishedAt?: number | null, userFriendlyError?: string | null, triedRecordingVideo?: boolean | null, videoUrl?: string | null, videoRemovedAt?: number | null, retriedOriginalTaskId?: string | null, retriedTaskId?: string | null, retriedByTaskId?: string | null, capturedDataTemporaryUrl?: string | null, capturedTexts?: {} | null, capturedScreenshots?: {} | null, capturedLists?: {} | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseai.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a robot webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "robotId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hookUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "taskCapturedDataChanged | taskFinished | taskFinishedSuccessfully | taskFinishedWithError | tableExportFinishedSuccessfully"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null, webhookEvent?: string | null, createdAt?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browseai.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhooks for a robot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "robotId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "{ totalCount?: number | null, items?: { id?: string | null, url?: string | null, webhookEvent?: string | null, createdAt?: number | null }[] | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "browseai.db.bulkRun.search",
+      "entityName": "bulkRun",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tasksCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "successfulTasks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "failedTasks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "robotId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browseai.db.monitor.search",
+      "entityName": "monitor",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pausedReason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "schedule",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notifyOnCapturedScreenshotChange",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "notifyOnCapturedTextChange",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "capturedScreenshotNotificationThreshold",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pausedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browseai.db.robot.search",
+      "entityName": "robot",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browseai.db.robotTask.search",
+      "entityName": "robotTask",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "robotId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "runByUserId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "robotBulkRunId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "runByTaskMonitorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "runByAPI",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "startedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "finishedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "userFriendlyError",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "triedRecordingVideo",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "videoUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "videoRemovedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "retriedOriginalTaskId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "retriedTaskId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "retriedByTaskId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "capturedDataTemporaryUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browseai.db.systemStatus.search",
+      "entityName": "systemStatus",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "statusCode",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "messageCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tasksQueueStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browseai.db.webhook.search",
+      "entityName": "webhook",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webhookEvent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

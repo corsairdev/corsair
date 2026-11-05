@@ -1,0 +1,944 @@
+---
+title: Webhooks
+description: "Slackbot incoming webhooks: event paths, payloads, and response data."
+---
+
+The Slackbot plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/slackbot/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `channels`
+  - `created` (`channels.created`)
+- `messages`
+  - `botMessage` (`messages.botMessage`)
+  - `directMessage` (`messages.directMessage`)
+  - `groupDirectMessage` (`messages.groupDirectMessage`)
+  - `message` (`messages.message`)
+  - `privateChannelMessage` (`messages.privateChannelMessage`)
+  - `threadReply` (`messages.threadReply`)
+- `reactions`
+  - `added` (`reactions.added`)
+  - `removed` (`reactions.removed`)
+- `setup`
+  - `challenge` (`setup.challenge`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Channels
+
+### Created
+
+`channels.created`
+
+A new channel created in the workspace
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `channel_created` | Yes | — |
+| `channel` | `object` | Yes | — |
+| `event_ts` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  created?: number,
+  creator?: string,
+  is_channel?: boolean,
+  is_private?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: channel_created,
+  channel: {
+    id: string,
+    name?: string,
+    created?: number,
+    creator?: string,
+    is_channel?: boolean,
+    is_private?: boolean
+  },
+  event_ts?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slackbot({
+    webhookHooks: {
+        channels: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Messages
+
+### Bot Message
+
+`messages.botMessage`
+
+A message posted by another bot or app
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `message` | Yes | — |
+| `subtype` | `string` | No | — |
+| `channel` | `string` | Yes | — |
+| `channel_type` | `channel \| group \| im \| mpim` | No | — |
+| `user` | `string` | No | — |
+| `bot_id` | `string` | No | — |
+| `app_id` | `string` | No | — |
+| `bot_profile` | `object` | No | — |
+| `text` | `string` | No | — |
+| `ts` | `string` | Yes | — |
+| `thread_ts` | `string` | No | — |
+| `parent_user_id` | `string` | No | — |
+| `team` | `string` | No | — |
+| `event_ts` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bot_profile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: message,
+  subtype?: string,
+  channel: string,
+  channel_type?: channel | group | im | mpim,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  bot_profile?: {
+  },
+  text?: string,
+  ts: string,
+  thread_ts?: string,
+  parent_user_id?: string,
+  team?: string,
+  event_ts?: string,
+  blocks?: {
+  }[],
+  files?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slackbot({
+    webhookHooks: {
+        messages: {
+            botMessage: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Direct Message
+
+`messages.directMessage`
+
+A direct message sent to the bot
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `message` | Yes | — |
+| `subtype` | `string` | No | — |
+| `channel` | `string` | Yes | — |
+| `channel_type` | `channel \| group \| im \| mpim` | No | — |
+| `user` | `string` | No | — |
+| `bot_id` | `string` | No | — |
+| `app_id` | `string` | No | — |
+| `bot_profile` | `object` | No | — |
+| `text` | `string` | No | — |
+| `ts` | `string` | Yes | — |
+| `thread_ts` | `string` | No | — |
+| `parent_user_id` | `string` | No | — |
+| `team` | `string` | No | — |
+| `event_ts` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bot_profile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: message,
+  subtype?: string,
+  channel: string,
+  channel_type?: channel | group | im | mpim,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  bot_profile?: {
+  },
+  text?: string,
+  ts: string,
+  thread_ts?: string,
+  parent_user_id?: string,
+  team?: string,
+  event_ts?: string,
+  blocks?: {
+  }[],
+  files?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slackbot({
+    webhookHooks: {
+        messages: {
+            directMessage: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Group Direct Message
+
+`messages.groupDirectMessage`
+
+A message in a multi-person direct message
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `message` | Yes | — |
+| `subtype` | `string` | No | — |
+| `channel` | `string` | Yes | — |
+| `channel_type` | `channel \| group \| im \| mpim` | No | — |
+| `user` | `string` | No | — |
+| `bot_id` | `string` | No | — |
+| `app_id` | `string` | No | — |
+| `bot_profile` | `object` | No | — |
+| `text` | `string` | No | — |
+| `ts` | `string` | Yes | — |
+| `thread_ts` | `string` | No | — |
+| `parent_user_id` | `string` | No | — |
+| `team` | `string` | No | — |
+| `event_ts` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bot_profile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: message,
+  subtype?: string,
+  channel: string,
+  channel_type?: channel | group | im | mpim,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  bot_profile?: {
+  },
+  text?: string,
+  ts: string,
+  thread_ts?: string,
+  parent_user_id?: string,
+  team?: string,
+  event_ts?: string,
+  blocks?: {
+  }[],
+  files?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slackbot({
+    webhookHooks: {
+        messages: {
+            groupDirectMessage: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Message
+
+`messages.message`
+
+A message posted by a person in a public channel
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `message` | Yes | — |
+| `subtype` | `string` | No | — |
+| `channel` | `string` | Yes | — |
+| `channel_type` | `channel \| group \| im \| mpim` | No | — |
+| `user` | `string` | No | — |
+| `bot_id` | `string` | No | — |
+| `app_id` | `string` | No | — |
+| `bot_profile` | `object` | No | — |
+| `text` | `string` | No | — |
+| `ts` | `string` | Yes | — |
+| `thread_ts` | `string` | No | — |
+| `parent_user_id` | `string` | No | — |
+| `team` | `string` | No | — |
+| `event_ts` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bot_profile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: message,
+  subtype?: string,
+  channel: string,
+  channel_type?: channel | group | im | mpim,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  bot_profile?: {
+  },
+  text?: string,
+  ts: string,
+  thread_ts?: string,
+  parent_user_id?: string,
+  team?: string,
+  event_ts?: string,
+  blocks?: {
+  }[],
+  files?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slackbot({
+    webhookHooks: {
+        messages: {
+            message: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Private Channel Message
+
+`messages.privateChannelMessage`
+
+A message posted by a person in a private channel
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `message` | Yes | — |
+| `subtype` | `string` | No | — |
+| `channel` | `string` | Yes | — |
+| `channel_type` | `channel \| group \| im \| mpim` | No | — |
+| `user` | `string` | No | — |
+| `bot_id` | `string` | No | — |
+| `app_id` | `string` | No | — |
+| `bot_profile` | `object` | No | — |
+| `text` | `string` | No | — |
+| `ts` | `string` | Yes | — |
+| `thread_ts` | `string` | No | — |
+| `parent_user_id` | `string` | No | — |
+| `team` | `string` | No | — |
+| `event_ts` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bot_profile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: message,
+  subtype?: string,
+  channel: string,
+  channel_type?: channel | group | im | mpim,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  bot_profile?: {
+  },
+  text?: string,
+  ts: string,
+  thread_ts?: string,
+  parent_user_id?: string,
+  team?: string,
+  event_ts?: string,
+  blocks?: {
+  }[],
+  files?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slackbot({
+    webhookHooks: {
+        messages: {
+            privateChannelMessage: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Thread Reply
+
+`messages.threadReply`
+
+A reply posted inside a message thread
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `message` | Yes | — |
+| `subtype` | `string` | No | — |
+| `channel` | `string` | Yes | — |
+| `channel_type` | `channel \| group \| im \| mpim` | No | — |
+| `user` | `string` | No | — |
+| `bot_id` | `string` | No | — |
+| `app_id` | `string` | No | — |
+| `bot_profile` | `object` | No | — |
+| `text` | `string` | No | — |
+| `ts` | `string` | Yes | — |
+| `thread_ts` | `string` | No | — |
+| `parent_user_id` | `string` | No | — |
+| `team` | `string` | No | — |
+| `event_ts` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bot_profile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: message,
+  subtype?: string,
+  channel: string,
+  channel_type?: channel | group | im | mpim,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  bot_profile?: {
+  },
+  text?: string,
+  ts: string,
+  thread_ts?: string,
+  parent_user_id?: string,
+  team?: string,
+  event_ts?: string,
+  blocks?: {
+  }[],
+  files?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slackbot({
+    webhookHooks: {
+        messages: {
+            threadReply: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Reactions
+
+### Added
+
+`reactions.added`
+
+An emoji reaction added to a message or file
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `reaction_added` | Yes | — |
+| `user` | `string` | Yes | — |
+| `reaction` | `string` | Yes | — |
+| `item_user` | `string` | No | — |
+| `item` | `object` | Yes | — |
+| `event_ts` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type: string,
+  channel?: string,
+  ts?: string,
+  file?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: reaction_added,
+  user: string,
+  reaction: string,
+  item_user?: string,
+  item: {
+    type: string,
+    channel?: string,
+    ts?: string,
+    file?: string
+  },
+  event_ts?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slackbot({
+    webhookHooks: {
+        reactions: {
+            added: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Removed
+
+`reactions.removed`
+
+An emoji reaction removed from a message or file
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `reaction_removed` | Yes | — |
+| `user` | `string` | Yes | — |
+| `reaction` | `string` | Yes | — |
+| `item_user` | `string` | No | — |
+| `item` | `object` | Yes | — |
+| `event_ts` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  type: string,
+  channel?: string,
+  ts?: string,
+  file?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: reaction_removed,
+  user: string,
+  reaction: string,
+  item_user?: string,
+  item: {
+    type: string,
+    channel?: string,
+    ts?: string,
+    file?: string
+  },
+  event_ts?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slackbot({
+    webhookHooks: {
+        reactions: {
+            removed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Setup
+
+### Challenge
+
+`setup.challenge`
+
+Slack Events API URL verification handshake
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `url_verification` | Yes | — |
+| `token` | `string` | No | — |
+| `challenge` | `string` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: url_verification,
+  challenge: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slackbot({
+    webhookHooks: {
+        setup: {
+            challenge: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,0 +1,261 @@
+---
+title: Database
+description: "Pinecone local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Pinecone plugin syncs data locally. Use `corsair.pinecone.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Assistant Files
+
+Path: `pinecone.db.assistantFiles.search`
+
+```ts
+const rows = await corsair.pinecone.db.assistantFiles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `signed_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Assistants
+
+Path: `pinecone.db.assistants.search`
+
+```ts
+const rows = await corsair.pinecone.db.assistants.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `host` | `string` | equals, contains, startsWith, endsWith, in |
+| `instructions` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Backups
+
+Path: `pinecone.db.backups.search`
+
+```ts
+const rows = await corsair.pinecone.db.backups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `backup_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `source_index_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `source_index_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `source_index_deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `cloud` | `string` | equals, contains, startsWith, endsWith, in |
+| `region` | `string` | equals, contains, startsWith, endsWith, in |
+| `dimension` | `number` | equals, gt, gte, lt, lte, in |
+| `metric` | `string` | equals, contains, startsWith, endsWith, in |
+| `record_count` | `number` | equals, gt, gte, lt, lte, in |
+| `namespace_count` | `number` | equals, gt, gte, lt, lte, in |
+| `size_bytes` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Collections
+
+Path: `pinecone.db.collections.search`
+
+```ts
+const rows = await corsair.pinecone.db.collections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `environment` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `vector_count` | `number` | equals, gt, gte, lt, lte, in |
+| `dimension` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Indexes
+
+Path: `pinecone.db.indexes.search`
+
+```ts
+const rows = await corsair.pinecone.db.indexes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `host` | `string` | equals, contains, startsWith, endsWith, in |
+| `dimension` | `number` | equals, gt, gte, lt, lte, in |
+| `metric` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Models
+
+Path: `pinecone.db.models.search`
+
+```ts
+const rows = await corsair.pinecone.db.models.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `model` | `string` | equals, contains, startsWith, endsWith, in |
+| `short_description` | `string` | equals, contains, startsWith, endsWith, in |
+| `dimension` | `number` | equals, gt, gte, lt, lte, in |
+| `max_sequence_length` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Namespaces
+
+Path: `pinecone.db.namespaces.search`
+
+```ts
+const rows = await corsair.pinecone.db.namespaces.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `record_count` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Restore Jobs
+
+Path: `pinecone.db.restoreJobs.search`
+
+```ts
+const rows = await corsair.pinecone.db.restoreJobs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `restore_job_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `backup_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `target_index_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `target_index_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `completed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `percent_complete` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Vectors
+
+Path: `pinecone.db.vectors.search`
+
+```ts
+const rows = await corsair.pinecone.db.vectors.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

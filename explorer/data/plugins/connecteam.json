@@ -1,0 +1,1198 @@
+{
+  "id": "connecteam",
+  "displayName": "Connecteam",
+  "description": "Workforce management app for deskless teams, scheduling, chat, and mobile operations.",
+  "npmPackageName": "@corsair-dev/connecteam",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 13
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "connecteam.api.attachments.generateUploadUrl",
+      "shortPath": "attachments.generateUploadUrl",
+      "description": "Generate a time-limited pre-signed file upload URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "featureType",
+            "optional": false,
+            "type": "chat | shiftscheduler | users | quicktasks"
+          },
+          {
+            "key": "fileTypeHint",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ fileId: string, uploadFileUrl: string }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.chat.get",
+      "shortPath": "chat.get",
+      "description": "List team chats and channels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ conversations?: { id?: number | string, conversationId?: number | string, type?: string | null, title?: string | null }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.customFieldCategories.get",
+      "shortPath": "customFieldCategories.get",
+      "description": "List custom field categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "names",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ categories: { id: number, name?: string | null }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.customFields.get",
+      "shortPath": "customFields.get",
+      "description": "List custom fields with optional filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customFieldTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFieldIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "names",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "categoryIds",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ customFields: { id: number, name?: string | null, type?: string | null, categoryId?: number | null, isRequired?: boolean | null, isVisibleToAllAdmins?: boolean | null, isEditableForAllAdmins?: boolean | null, isVisibleToUsers?: boolean | null, isEditableForUsers?: boolean | null, isMultiSelect?: boolean | null, dropdownOptions?: any[] }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "List form definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ forms: { formId: number, formName?: string | null, createdAt?: number | null, lastUpdatedAt?: number | null, questions?: any[], settings?: any }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "List jobs for a scheduler or time clock instance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instanceIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "jobIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "jobNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "jobCodes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "includeDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "title"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ jobs: { jobId: string, title?: string | null, code?: string | null, color?: string | null, description?: string | null, gps?: any, isDeleted?: boolean | null, assign?: any, useParentData?: boolean | null, parentId?: string | null, subJobs?: any[], instanceIds?: number[], customFields?: any[] }[], paging?: { offset?: number } }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.me.list",
+      "shortPath": "me.list",
+      "description": "Get Connecteam account company name and company ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ companyId: string, companyName?: string | null }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.performanceIndicators.get",
+      "shortPath": "performanceIndicators.get",
+      "description": "List performance metric indicators",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ indicators?: { id?: string | number, name?: string | null }[], performanceIndicators?: { id?: string | number, name?: string | null }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.policyTypes.get",
+      "shortPath": "policyTypes.get",
+      "description": "List time-off policy types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ policyTypes?: { id?: string | number, policyTypeId?: string | number, name?: string | null, policies?: { id?: string | number, name?: string | null, unit?: string | null, accrualType?: string | null }[] }[], policies?: { id?: string | number, policyTypeId?: string | number, name?: string | null, policies?: { id?: string | number, name?: string | null, unit?: string | null, accrualType?: string | null }[] }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.publishers.get",
+      "shortPath": "publishers.get",
+      "description": "List custom publishers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ publishers?: { id?: number, publisherId?: number | null, name?: string | null }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.schedulers.get",
+      "shortPath": "schedulers.get",
+      "description": "List job schedulers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ schedulers: { schedulerId: number, name?: string | null, isArchived?: boolean | null, timezone?: string | null }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.smartGroups.get",
+      "shortPath": "smartGroups.get",
+      "description": "List smart groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ groups?: { id?: number, smartGroupId?: number | null, name?: string | null, groupSegmentId?: number | null, description?: string | null }[], smartGroups?: { id?: number, smartGroupId?: number | null, name?: string | null, groupSegmentId?: number | null, description?: string | null }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.taskBoards.get",
+      "shortPath": "taskBoards.get",
+      "description": "List task boards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ taskBoards?: { id?: number | string, taskBoardId?: number | null, name?: string | null, title?: string | null, isArchived?: boolean | null }[], taskboards?: { id?: number | string, taskBoardId?: number | null, name?: string | null, title?: string | null, isArchived?: boolean | null }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.users.archive",
+      "shortPath": "users.archive",
+      "description": "Archive Connecteam users by ID without deleting records",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userIds",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create users in Connecteam",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ firstName: string, lastName?: string, phoneNumber: string, email?: string, userType?: user, isArchived?: boolean, customFields?: any[] }[]"
+          },
+          {
+            "key": "sendActivation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ results?: { userId: number, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, userType?: string | null, email?: string | null, customFields?: any[], isArchived?: boolean | null, kioskCode?: string | null, createdAt?: number | null, modifiedAt?: number | null, archivedAt?: number | null, lastLogin?: number | null, smartGroupsIds?: number[], invitedToBeManager?: boolean | null, profilePictureUrl?: string | null, mobileDevice?: string | null, osVersion?: string | null, appVersion?: string | null, mobileDeviceId?: string | null }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "connecteam.api.users.get",
+      "shortPath": "users.get",
+      "description": "List Connecteam users with optional filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "created_at"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "userIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "userStatus",
+            "optional": true,
+            "type": "active | archived | all"
+          },
+          {
+            "key": "fullNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastLogin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archivedAt",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ users: { userId: number, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, userType?: string | null, email?: string | null, customFields?: any[], isArchived?: boolean | null, kioskCode?: string | null, createdAt?: number | null, modifiedAt?: number | null, archivedAt?: number | null, lastLogin?: number | null, smartGroupsIds?: number[], invitedToBeManager?: boolean | null, profilePictureUrl?: string | null, mobileDevice?: string | null, osVersion?: string | null, appVersion?: string | null, mobileDeviceId?: string | null }[] }"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ offset?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "connecteam.db.account.search",
+      "entityName": "account",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.conversations.search",
+      "entityName": "conversations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.customFieldCategories.search",
+      "entityName": "customFieldCategories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.customFields.search",
+      "entityName": "customFields",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "categoryId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isRequired",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isVisibleToAllAdmins",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isEditableForAllAdmins",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isVisibleToUsers",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isEditableForUsers",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isMultiSelect",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.forms.search",
+      "entityName": "forms",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "formId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "formName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lastUpdatedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isDeleted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "useParentData",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.performanceIndicators.search",
+      "entityName": "performanceIndicators",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.policyTypes.search",
+      "entityName": "policyTypes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.publishers.search",
+      "entityName": "publishers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "publisherId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.schedulers.search",
+      "entityName": "schedulers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "schedulerId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isArchived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.smartGroups.search",
+      "entityName": "smartGroups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "smartGroupId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "groupSegmentId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.taskBoards.search",
+      "entityName": "taskBoards",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "taskBoardId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isArchived",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "connecteam.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phoneNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isArchived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "kioskCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "modifiedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "archivedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lastLogin",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "invitedToBeManager",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "profilePictureUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mobileDevice",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "osVersion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "appVersion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mobileDeviceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1255 @@
+---
+title: API
+description: "API reference for MrScraper: every `mrscraper.api.*` operation with input and output types."
+---
+
+Every `mrscraper.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get the subscription account and token usage
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tokenLimit?: number,
+  tokenUsage?: number,
+  stripeSubscriptionId?: string | null,
+  userId?: string,
+  stripeStatus?: string | null,
+  quantity?: number,
+  endsAt?: string | null,
+  isEnterprise?: boolean,
+  rateLimit?: number,
+  rateTtl?: number,
+  isAutoRenew?: boolean,
+  user?: {
+    id?: string,
+    name?: string | null,
+    email?: string,
+    latestApiToken?: string | null,
+    isVerified?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Analytics
+
+### proxyBandwidth
+
+`analytics.proxyBandwidth`
+
+Get proxy bandwidth usage for the account
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.analytics.proxyBandwidth({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | Yes | — |
+| `endDate` | `string` | Yes | — |
+| `timezone` | `string` | No | — |
+| `region` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  username: string,
+  total_bandwidth_usage?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### statuses
+
+`analytics.statuses`
+
+Get per-domain request status analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.analytics.statuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `startDate` | `string` | Yes | — |
+| `endDate` | `string` | Yes | — |
+| `action` | `string` | No | — |
+| `apiTokenName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  countAll?: number | string,
+  successRate?: number | string,
+  reqPerMinute?: number | string,
+  avgLatency?: number | string,
+  data: {
+    key: string,
+    value: number | string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Results
+
+### get
+
+`results.get`
+
+Get a scrape result by id
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.results.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  userId?: string,
+  scraperId?: string,
+  type?: string,
+  url?: string | null,
+  status?: string,
+  error?: string | null,
+  tokenUsage?: number,
+  runtime?: number | string | null,
+  data?: any,
+  htmlPath?: string | null,
+  htmlContent?: string | null,
+  recordingPath?: string | null,
+  screenshotPath?: string | null,
+  dataPath?: string | null,
+  curl?: string | null,
+  html?: string | null,
+  markdown?: string | null,
+  screenshot?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`results.list`
+
+List scrape results with pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.results.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `sortField` | `string` | No | — |
+| `sortOrder` | `ASC \| DESC` | No | — |
+| `sort` | `string` | No | — |
+| `search` | `string` | No | — |
+| `dateRangeColumn` | `string` | No | — |
+| `startAt` | `string` | No | — |
+| `endAt` | `string` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  scraperId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  userId?: string,
+  scraperId?: string,
+  type?: string,
+  url?: string | null,
+  status?: string,
+  error?: string | null,
+  tokenUsage?: number,
+  runtime?: number | string | null,
+  data?: any,
+  htmlPath?: string | null,
+  htmlContent?: string | null,
+  recordingPath?: string | null,
+  screenshotPath?: string | null,
+  dataPath?: string | null,
+  curl?: string | null,
+  html?: string | null,
+  markdown?: string | null,
+  screenshot?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number,
+  pageSize?: number,
+  total?: number,
+  totalPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Scrape
+
+### fetch
+
+`scrape.fetch`
+
+Fetch a page and return its rendered HTML
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.scrape.fetch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `html` | `boolean` | No | — |
+| `super` | `boolean` | No | — |
+| `browserRendering` | `boolean` | No | — |
+| `waitUntil` | `domcontentloaded \| load \| networkidle0 \| networkidle2` | No | — |
+| `timeout` | `number` | No | — |
+| `blockResources` | `boolean` | No | — |
+| `waitForSelector` | `string` | No | — |
+| `returnCookie` | `boolean` | No | — |
+| `geoCode` | `string` | No | — |
+| `proxyCountry` | `string` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### json
+
+`scrape.json`
+
+Scrape a page and extract structured JSON with an agent
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.scrape.json({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `prompt` | `string` | No | — |
+| `agent` | `general \| map \| listing` | No | — |
+| `tokenCap` | `number` | No | — |
+| `maxRetries` | `number` | No | — |
+| `html` | `boolean` | No | — |
+| `browserRendering` | `boolean` | No | — |
+| `waitUntil` | `domcontentloaded \| load \| networkidle0 \| networkidle2` | No | — |
+| `timeout` | `number` | No | — |
+| `screenshot` | `full \| top` | No | — |
+| `super` | `boolean` | No | — |
+| `geoCode` | `string` | No | — |
+| `proxyCountry` | `string` | No | — |
+| `saveResult` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `data` | `any` | No | — |
+| `extractions` | `object` | No | — |
+| `error` | `string` | No | — |
+| `runtime` | `number \| string` | No | — |
+| `token_usage` | `number` | No | — |
+| `screenshots` | `string[]` | No | — |
+| `recording_path` | `string` | No | — |
+| `data_path` | `string` | No | — |
+| `html_path` | `string` | No | — |
+| `residential_proxy_usage` | `object` | No | — |
+| `listen_network_data` | `any` | No | — |
+| `html` | `string` | No | — |
+| `markdown` | `string` | No | — |
+| `screenshot` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="extractions full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="residential_proxy_usage full type">
+
+```ts
+{
+  received?: number,
+  sent?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listing
+
+`scrape.listing`
+
+Scrape paginated listing pages and extract their items
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.scrape.listing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `prompt` | `string` | No | — |
+| `agent` | `general \| map \| listing` | No | — |
+| `maxPages` | `number` | No | — |
+| `super` | `boolean` | No | — |
+| `browserRendering` | `boolean` | No | — |
+| `waitUntil` | `domcontentloaded \| load \| networkidle0 \| networkidle2` | No | — |
+| `timeout` | `number` | No | — |
+| `screenshot` | `full \| top` | No | — |
+| `geoCode` | `string` | No | — |
+| `proxyCountry` | `string` | No | — |
+| `saveResult` | `boolean` | No | — |
+| `tokenCap` | `number` | No | — |
+| `maxRetries` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `data` | `any` | No | — |
+| `extractions` | `object` | No | — |
+| `error` | `string` | No | — |
+| `runtime` | `number \| string` | No | — |
+| `token_usage` | `number` | No | — |
+| `screenshots` | `string[]` | No | — |
+| `recording_path` | `string` | No | — |
+| `data_path` | `string` | No | — |
+| `html_path` | `string` | No | — |
+| `residential_proxy_usage` | `object` | No | — |
+| `listen_network_data` | `any` | No | — |
+| `html` | `string` | No | — |
+| `markdown` | `string` | No | — |
+| `screenshot` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="extractions full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="residential_proxy_usage full type">
+
+```ts
+{
+  received?: number,
+  sent?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markdown
+
+`scrape.markdown`
+
+Scrape a page and return its content as Markdown
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.scrape.markdown({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `tokenCap` | `number` | No | — |
+| `maxRetries` | `number` | No | — |
+| `super` | `boolean` | No | — |
+| `browserRendering` | `boolean` | No | — |
+| `waitUntil` | `domcontentloaded \| load \| networkidle0 \| networkidle2` | No | — |
+| `timeout` | `number` | No | — |
+| `screenshot` | `full \| top` | No | — |
+| `geoCode` | `string` | No | — |
+| `proxyCountry` | `string` | No | — |
+| `blockResources` | `boolean` | No | — |
+| `waitForSelector` | `string` | No | — |
+| `action` | `string` | No | — |
+| `proxy` | `string` | No | — |
+| `returnCookie` | `boolean` | No | — |
+| `saveResult` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `data` | `any` | No | — |
+| `extractions` | `object` | No | — |
+| `error` | `string` | No | — |
+| `runtime` | `number \| string` | No | — |
+| `token_usage` | `number` | No | — |
+| `screenshots` | `string[]` | No | — |
+| `recording_path` | `string` | No | — |
+| `data_path` | `string` | No | — |
+| `html_path` | `string` | No | — |
+| `residential_proxy_usage` | `object` | No | — |
+| `listen_network_data` | `any` | No | — |
+| `html` | `string` | No | — |
+| `markdown` | `string` | No | — |
+| `screenshot` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="extractions full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="residential_proxy_usage full type">
+
+```ts
+{
+  received?: number,
+  sent?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### screenshot
+
+`scrape.screenshot`
+
+Scrape a page and capture a screenshot
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.scrape.screenshot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `screenshot` | `full \| top` | No | — |
+| `record` | `boolean` | No | — |
+| `browserRendering` | `boolean` | No | — |
+| `waitUntil` | `domcontentloaded \| load \| networkidle0 \| networkidle2` | No | — |
+| `timeout` | `number` | No | — |
+| `html` | `boolean` | No | — |
+| `markdown` | `boolean` | No | — |
+| `super` | `boolean` | No | — |
+| `geoCode` | `string` | No | — |
+| `proxyCountry` | `string` | No | — |
+| `saveResult` | `boolean` | No | — |
+| `blockResources` | `boolean` | No | — |
+| `waitForSelector` | `string` | No | — |
+| `action` | `string` | No | — |
+| `proxy` | `string` | No | — |
+| `returnCookie` | `boolean` | No | — |
+| `tokenCap` | `number` | No | — |
+| `maxRetries` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `data` | `any` | No | — |
+| `extractions` | `object` | No | — |
+| `error` | `string` | No | — |
+| `runtime` | `number \| string` | No | — |
+| `token_usage` | `number` | No | — |
+| `screenshots` | `string[]` | No | — |
+| `recording_path` | `string` | No | — |
+| `data_path` | `string` | No | — |
+| `html_path` | `string` | No | — |
+| `residential_proxy_usage` | `object` | No | — |
+| `listen_network_data` | `any` | No | — |
+| `html` | `string` | No | — |
+| `markdown` | `string` | No | — |
+| `screenshot` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="extractions full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="residential_proxy_usage full type">
+
+```ts
+{
+  received?: number,
+  sent?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sitemap
+
+`scrape.sitemap`
+
+Discover a site sitemap and map its URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.mrscraper.api.scrape.sitemap({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `agent` | `general \| map \| listing` | No | — |
+| `maxDepth` | `number` | No | — |
+| `maxPages` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `includePatterns` | `string[]` | No | — |
+| `excludePatterns` | `string[]` | No | — |
+| `browserRendering` | `boolean` | No | — |
+| `waitUntil` | `domcontentloaded \| load \| networkidle0 \| networkidle2` | No | — |
+| `timeout` | `number` | No | — |
+| `screenshot` | `full \| top` | No | — |
+| `super` | `boolean` | No | — |
+| `geoCode` | `string` | No | — |
+| `proxyCountry` | `string` | No | — |
+| `saveResult` | `boolean` | No | — |
+| `tokenCap` | `number` | No | — |
+| `maxRetries` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `data` | `any` | No | — |
+| `extractions` | `object` | No | — |
+| `error` | `string` | No | — |
+| `runtime` | `number \| string` | No | — |
+| `token_usage` | `number` | No | — |
+| `screenshots` | `string[]` | No | — |
+| `recording_path` | `string` | No | — |
+| `data_path` | `string` | No | — |
+| `html_path` | `string` | No | — |
+| `residential_proxy_usage` | `object` | No | — |
+| `listen_network_data` | `any` | No | — |
+| `html` | `string` | No | — |
+| `markdown` | `string` | No | — |
+| `screenshot` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="extractions full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="residential_proxy_usage full type">
+
+```ts
+{
+  received?: number,
+  sent?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Scrapers
+
+### aiInit
+
+`scrapers.aiInit`
+
+Start an AI scraper chat and return starter scrape code
+
+**Risk:** `write`
+
+```ts
+await corsair.mrscraper.api.scrapers.aiInit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `prompt` | `string` | No | — |
+| `message` | `string` | No | — |
+| `agent` | `general \| map \| listing` | No | — |
+| `proxyCountry` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  userId?: string,
+  scraperId?: string,
+  type?: string,
+  url?: string | null,
+  status?: string,
+  error?: string | null,
+  tokenUsage?: number,
+  runtime?: number | string | null,
+  data?: any,
+  htmlPath?: string | null,
+  htmlContent?: string | null,
+  recordingPath?: string | null,
+  screenshotPath?: string | null,
+  dataPath?: string | null,
+  curl?: string | null,
+  html?: string | null,
+  markdown?: string | null,
+  screenshot?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### aiRerun
+
+`scrapers.aiRerun`
+
+Re-run an AI scraper against a URL
+
+**Risk:** `write`
+
+```ts
+await corsair.mrscraper.api.scrapers.aiRerun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scraperId` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `maxDepth` | `number` | No | — |
+| `maxPages` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `includePatterns` | `string \| string[]` | No | — |
+| `excludePatterns` | `string \| string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  userId?: string,
+  scraperId?: string,
+  type?: string,
+  url?: string | null,
+  status?: string,
+  error?: string | null,
+  tokenUsage?: number,
+  runtime?: number | string | null,
+  data?: any,
+  htmlPath?: string | null,
+  htmlContent?: string | null,
+  recordingPath?: string | null,
+  screenshotPath?: string | null,
+  dataPath?: string | null,
+  curl?: string | null,
+  html?: string | null,
+  markdown?: string | null,
+  screenshot?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### aiRerunBulk
+
+`scrapers.aiRerunBulk`
+
+Re-run an AI scraper against multiple URLs
+
+**Risk:** `write`
+
+```ts
+await corsair.mrscraper.api.scrapers.aiRerunBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scraperId` | `string` | Yes | — |
+| `urls` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  userId?: string,
+  scraperId?: string,
+  type?: string,
+  url?: string | null,
+  status?: string,
+  error?: string | null,
+  tokenUsage?: number,
+  runtime?: number | string | null,
+  data?: {
+    mergedData?: any[],
+    urlDetails?: {
+      url: string,
+      status?: string,
+      error?: string | null
+    }[],
+    summary?: {
+      totalUrls?: number,
+      successfulUrls?: number,
+      failedUrls?: number,
+      scrapedCount?: number,
+      totalTokenUsage?: number,
+      estimatedFinishAt?: string | null
+    }
+  },
+  htmlPath?: string | null,
+  htmlContent?: string | null,
+  recordingPath?: string | null,
+  screenshotPath?: string | null,
+  dataPath?: string | null,
+  curl?: string | null,
+  html?: string | null,
+  markdown?: string | null,
+  screenshot?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cancelBulkByResult
+
+`scrapers.cancelBulkByResult`
+
+Cancel a queued bulk run by its result id
+
+**Risk:** `write`
+
+```ts
+await corsair.mrscraper.api.scrapers.cancelBulkByResult({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resultId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bulkUrls?: string[],
+  canceledUrls?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cancelBulkByScraper
+
+`scrapers.cancelBulkByScraper`
+
+Cancel every queued bulk URL for a scraper
+
+**Risk:** `write`
+
+```ts
+await corsair.mrscraper.api.scrapers.cancelBulkByScraper({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scraperId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bulkUrls?: string[],
+  canceledUrls?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### manualHeal
+
+`scrapers.manualHeal`
+
+Heal a broken manual scraper workflow
+
+**Risk:** `write`
+
+```ts
+await corsair.mrscraper.api.scrapers.manualHeal({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scraperId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  success: boolean,
+  scraperId?: string,
+  workflowUpdated?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### manualRerun
+
+`scrapers.manualRerun`
+
+Re-run a manual scraper against a URL
+
+**Risk:** `write`
+
+```ts
+await corsair.mrscraper.api.scrapers.manualRerun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scraperId` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `workflow` | `any[]` | No | — |
+| `record` | `boolean` | No | — |
+| `paginator` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="paginator full type">
+
+```ts
+{
+  type?: string,
+  max_page?: number,
+  enabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  userId?: string,
+  scraperId?: string,
+  type?: string,
+  url?: string | null,
+  status?: string,
+  error?: string | null,
+  tokenUsage?: number,
+  runtime?: number | string | null,
+  data?: any,
+  htmlPath?: string | null,
+  htmlContent?: string | null,
+  recordingPath?: string | null,
+  screenshotPath?: string | null,
+  dataPath?: string | null,
+  curl?: string | null,
+  html?: string | null,
+  markdown?: string | null,
+  screenshot?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### manualRerunBulk
+
+`scrapers.manualRerunBulk`
+
+Re-run a manual scraper against multiple URLs
+
+**Risk:** `write`
+
+```ts
+await corsair.mrscraper.api.scrapers.manualRerunBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scraperId` | `string` | Yes | — |
+| `urls` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  userId?: string,
+  scraperId?: string,
+  type?: string,
+  url?: string | null,
+  status?: string,
+  error?: string | null,
+  tokenUsage?: number,
+  runtime?: number | string | null,
+  data?: {
+    mergedData?: any[],
+    urlDetails?: {
+      url: string,
+      status?: string,
+      error?: string | null
+    }[],
+    summary?: {
+      totalUrls?: number,
+      successfulUrls?: number,
+      failedUrls?: number,
+      scrapedCount?: number,
+      totalTokenUsage?: number,
+      estimatedFinishAt?: string | null
+    }
+  },
+  htmlPath?: string | null,
+  htmlContent?: string | null,
+  recordingPath?: string | null,
+  screenshotPath?: string | null,
+  dataPath?: string | null,
+  curl?: string | null,
+  html?: string | null,
+  markdown?: string | null,
+  screenshot?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

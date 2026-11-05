@@ -1,0 +1,205 @@
+---
+title: Database
+description: "Cloudflare API token local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Cloudflare API token plugin syncs data locally. Use `corsair.cloudflareapikey.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Dns Records
+
+Path: `cloudflareapikey.db.dnsRecords.search`
+
+```ts
+const rows = await corsair.cloudflareapikey.db.dnsRecords.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `zone_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `zone_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `proxiable` | `boolean` | equals |
+| `proxied` | `boolean` | equals |
+| `ttl` | `number` | equals, gt, gte, lt, lte, in |
+| `priority` | `number` | equals, gt, gte, lt, lte, in |
+| `locked` | `boolean` | equals |
+| `created_on` | `date` | equals, before, after, between |
+| `modified_on` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Dnssec
+
+Path: `cloudflareapikey.db.dnssec.search`
+
+```ts
+const rows = await corsair.cloudflareapikey.db.dnssec.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `zone_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `algorithm` | `string` | equals, contains, startsWith, endsWith, in |
+| `digest` | `string` | equals, contains, startsWith, endsWith, in |
+| `digest_algorithm` | `string` | equals, contains, startsWith, endsWith, in |
+| `digest_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `ds` | `string` | equals, contains, startsWith, endsWith, in |
+| `dnssec_multi_signer` | `boolean` | equals |
+| `dnssec_presigned` | `boolean` | equals |
+| `dnssec_use_nsec3` | `boolean` | equals |
+| `flags` | `number` | equals, gt, gte, lt, lte, in |
+| `key_tag` | `number` | equals, gt, gte, lt, lte, in |
+| `key_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `public_key` | `string` | equals, contains, startsWith, endsWith, in |
+| `modified_on` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Lockdowns
+
+Path: `cloudflareapikey.db.lockdowns.search`
+
+```ts
+const rows = await corsair.cloudflareapikey.db.lockdowns.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `zone_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `paused` | `boolean` | equals |
+| `priority` | `number` | equals, gt, gte, lt, lte, in |
+| `created_on` | `date` | equals, before, after, between |
+| `modified_on` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## R2Objects
+
+Path: `cloudflareapikey.db.r2Objects.search`
+
+```ts
+const rows = await corsair.cloudflareapikey.db.r2Objects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `bucket_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `key` | `string` | equals, contains, startsWith, endsWith, in |
+| `etag` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `string` | equals, contains, startsWith, endsWith, in |
+| `storage_class` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `uploaded` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Rulesets
+
+Path: `cloudflareapikey.db.rulesets.search`
+
+```ts
+const rows = await corsair.cloudflareapikey.db.rulesets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `zone_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `kind` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated` | `date` | equals, before, after, between |
+| `phase` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Zones
+
+Path: `cloudflareapikey.db.zones.search`
+
+```ts
+const rows = await corsair.cloudflareapikey.db.zones.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `paused` | `boolean` | equals |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_on` | `date` | equals, before, after, between |
+| `modified_on` | `date` | equals, before, after, between |
+| `activated_on` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

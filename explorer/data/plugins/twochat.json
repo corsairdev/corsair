@@ -1,0 +1,332 @@
+{
+  "id": "twochat",
+  "displayName": "TwoChat",
+  "description": "WhatsApp Business API platform for messaging automation and customer chat workflows.",
+  "npmPackageName": "@corsair-dev/twochat",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "twochat.api.account.getApiUsageInfo",
+      "shortPath": "account.getApiUsageInfo",
+      "description": "Retrieve current API usage and account information. Use when you need to monitor your remaining quotas before sending more requests.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ name?: string, uuid?: string, on_trial?: boolean, blocked?: boolean, created_at?: string, expires_at?: string }"
+          },
+          {
+            "key": "limits",
+            "optional": true,
+            "type": "{ requests_per_minute?: number }"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ api_request_count?: number, max_api_request_count?: number, number_check_count?: number, max_number_check_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twochat.api.account.testApiKey",
+      "shortPath": "account.testApiKey",
+      "description": "Validate your API key and retrieve account info. Use when confirming credentials before performing other operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ name?: string, uuid?: string, on_trial?: boolean, blocked?: boolean, created_at?: string, expires_at?: string }"
+          },
+          {
+            "key": "limits",
+            "optional": true,
+            "type": "{ requests_per_minute?: number }"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ api_request_count?: number, max_api_request_count?: number, number_check_count?: number, max_number_check_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twochat.api.contacts.createContact",
+      "shortPath": "contacts.createContact",
+      "description": "Create a new contact in your 2Chat account. Use after gathering and verifying first name and at least one contact detail (email, phone, or address).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string",
+            "description": "First name of the new contact"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string",
+            "description": "Last name of the new contact"
+          },
+          {
+            "key": "profile_pic_url",
+            "optional": true,
+            "type": "string",
+            "description": "Publicly accessible URL to the contact profile picture"
+          },
+          {
+            "key": "channel_uuid",
+            "optional": true,
+            "type": "string",
+            "description": "UUID of a WhatsApp channel — if provided the contact is also created on that WhatsApp account"
+          },
+          {
+            "key": "contact_details",
+            "optional": false,
+            "type": "{ type: E | A | PH | WAPH, value: string }[]",
+            "description": "At least one contact detail (email, phone, or address). Required."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ uuid: string, first_name: string, last_name?: string, name?: string, channel_uuid?: string | null, profile_pic_url?: string | null, details?: { type: E | A | PH | WAPH, value: string, id?: number, created_at?: string | number, updated_at?: string | number }[], contact_details?: { type: E | A | PH | WAPH, value: string, id?: number, created_at?: string | number, updated_at?: string | number }[], last_updated?: string, created_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twochat.api.contacts.listContacts",
+      "shortPath": "contacts.listContacts",
+      "description": "List all contacts in your 2Chat account. Use when you need to retrieve your contact list after confirming your account connection.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_number",
+            "optional": false,
+            "type": "number",
+            "description": "Zero-based page number for pagination"
+          },
+          {
+            "key": "results_per_page",
+            "optional": false,
+            "type": "number",
+            "description": "Number of contacts per page (1–100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ uuid: string, first_name: string, last_name?: string, name?: string, channel_uuid?: string | null, profile_pic_url?: string | null, details?: { type: E | A | PH | WAPH, value: string, id?: number, created_at?: string | number, updated_at?: string | number }[], contact_details?: { type: E | A | PH | WAPH, value: string, id?: number, created_at?: string | number, updated_at?: string | number }[], last_updated?: string, created_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twochat.api.webhookSubscriptions.listWebhooks",
+      "shortPath": "webhookSubscriptions.listWebhooks",
+      "description": "List all configured webhook subscriptions for WhatsApp and phone call events. Returns details including webhook UUID, event type, channel UUID, callback URL, and creation timestamp.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ uuid: string, event_name: string, channel_uuid?: string, hook_url: string, hook_params?: {}, created_at?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "twochat.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "on_trial",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "blocked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "requests_per_minute",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twochat.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_pic_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "twochat.db.webhookSubscriptions.search",
+      "entityName": "webhookSubscriptions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel_uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hook_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

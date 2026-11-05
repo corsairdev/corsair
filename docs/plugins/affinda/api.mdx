@@ -1,0 +1,5983 @@
+---
+title: API
+description: "API reference for Affinda: every `affinda.api.*` operation with input and output types."
+---
+
+Every `affinda.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Annotations
+
+### batchUpdateAnnotations
+
+`annotations.batchUpdateAnnotations`
+
+Batch update multiple document annotations in a single API call. Use this action to efficiently update parsed values or other fields across many annotations at once, rather than making individual update requests for each annotation. Prerequisites: - Obtain annotation IDs using the 'Get Annotations' action with a document filter - Annotations must exist in documents that have been processed by Affinda Common use cases: - Correcting OCR/extraction errors in bulk - Updating parsed values after manual review - Modifying annotation data programmatically
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.annotations.batchUpdateAnnotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `annotations` | `any[]` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createBatchAnnotations
+
+`annotations.createBatchAnnotations`
+
+Batch create multiple document annotations in a single API call. Use this action to efficiently create multiple annotations at once for documents that have been processed by Affinda. This is useful for programmatically adding structured data to documents or importing annotation data from external sources. Prerequisites: - Documents must be created first using 'Create Document' action - Obtain document identifiers from 'Create Document' or 'Get Documents' actions - Know the data point identifiers for your collection (from extractor configuration) Common use cases: - Importing annotation data from external systems - Programmatically adding structured data to documents - Creating annotations for validation or training purposes
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.annotations.createBatchAnnotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `annotations` | `any[]` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteAnnotationsBatch
+
+`annotations.deleteAnnotationsBatch`
+
+Batch delete multiple document annotations in a single API call. Use this action to efficiently remove multiple annotations at once rather than making individual delete requests for each annotation. Prerequisites: - Obtain annotation IDs using the 'Get Annotations' action with a document filter - Annotations must exist in documents that have been processed by Affinda Common use cases: - Removing incorrect or unwanted annotations in bulk - Cleaning up annotations after document reprocessing - Deleting specific extracted data fields programmatically
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.annotations.deleteAnnotationsBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `annotation_ids` | `any[]` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAnnotations
+
+`annotations.getAnnotations`
+
+Retrieves all annotations for a specific document. Annotations are extracted data fields (text, dates, numbers, tables, etc.) from parsed documents. Use this after a document has been processed to access the extracted data.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.annotations.getAnnotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateAnnotation
+
+`annotations.updateAnnotation`
+
+Tool to update data of a single annotation in Affinda. Use when you need to correct extracted values, verify annotations, or modify annotation metadata after document processing. Prerequisites: - Obtain the annotation ID using the 'Get Annotations' action with a document filter - Annotations must exist in documents that have been processed by Affinda Common use cases: - Correcting OCR or extraction errors in individual fields - Marking annotations as verified after manual review (set isClientVerified=true) - Updating parsed values to fix incorrect data extraction - Modifying annotation coordinates or page references Note: For bulk updates across multiple annotations, use the 'Batch Update Annotations' action instead for better efficiency.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.annotations.updateAnnotation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `raw` | `string` | No | — |
+| `field` | `string` | No | — |
+| `parent` | `number` | No | — |
+| `parsed` | `string` | No | — |
+| `document` | `string` | No | — |
+| `dataPoint` | `string` | No | — |
+| `pageIndex` | `number` | No | — |
+| `rectangles` | `any[]` | No | — |
+| `isClientVerified` | `boolean` | No | — |
+| `validationResults` | `any[]` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Api Users
+
+### createApiUser
+
+`apiUsers.createApiUser`
+
+Tool to create a new API user within an organization. Use when you need to generate a new API user with authentication credentials for programmatic access to Affinda services.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.apiUsers.createApiUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `avatar` | `string` | No | — |
+| `username` | `string` | No | — |
+| `organization` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAllApiUsers
+
+`apiUsers.getAllApiUsers`
+
+Tool to retrieve a list of all API users. Use when you need to list API users, optionally filtered by organization.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.apiUsers.getAllApiUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `organization` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Collections
+
+### createCollection
+
+`collections.createCollection`
+
+Tool to create a new collection. Use after you have a valid workspace ID and want to group documents by a specific extractor within that workspace.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.collections.createCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `extractor` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createDataFieldForCollection
+
+`collections.createDataFieldForCollection`
+
+Tool to create a data field for a collection along with a new data point. Use when you need to add a custom field to a collection for document processing and validation.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.collections.createDataFieldForCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `object` | Yes | — |
+| `dataPoint` | `object` | Yes | — |
+| `identifier` | `string` | Yes | — |
+| `categoryLabel` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="field full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="dataPoint full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteCollection
+
+`collections.deleteCollection`
+
+Permanently delete a collection from Affinda by its identifier. This is a destructive operation that cannot be undone. Use Get Collections first to verify the collection ID before deletion. Note: Documents in the collection may also be affected.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.collections.deleteCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCollection
+
+`collections.getCollection`
+
+Tool to retrieve details of a specific collection by its ID. Use when you need full metadata about a collection after confirming its identifier.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.collections.getCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCollectionFields
+
+`collections.getCollectionFields`
+
+Tool to retrieve data field configuration for a collection associated with a data point. Use when you need to understand the structure and validation rules of a specific field in a collection. Note: This endpoint is deprecated.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.collections.getCollectionFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `datapoint_identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCollections
+
+`collections.getCollections`
+
+Tool to retrieve a list of all collections. Use when you need to list collections in your Affinda workspace after authentication.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.collections.getCollections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCollectionUsage
+
+`collections.getCollectionUsage`
+
+Retrieves monthly credits consumption statistics for a specific collection. Returns a list of usage records showing how many credits were consumed each month. Use this to track collection activity, monitor consumption trends, or generate usage reports. Note: This endpoint is deprecated.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.collections.getCollectionUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `end` | `string` | No | — |
+| `start` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateCollection
+
+`collections.updateCollection`
+
+Tool to update specific fields of a collection. Use when you need to rename or reassign a collection after creation.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.collections.updateCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateDataFieldForCollection
+
+`collections.updateDataFieldForCollection`
+
+Tool to update a data field configuration for a collection's data point. Use when you need to modify field properties such as label, type, mandatory status, or validation settings after the field has been created.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.collections.updateDataFieldForCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | No | — |
+| `mapping` | `string` | No | — |
+| `fieldType` | `string` | No | — |
+| `mandatory` | `boolean` | No | — |
+| `dataSource` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `showDropdown` | `boolean` | No | — |
+| `displayRawText` | `string` | No | — |
+| `displayEnumValue` | `boolean` | No | — |
+| `datapoint_identifier` | `string` | Yes | — |
+| `autoValidationThreshold` | `number` | No | — |
+| `enableAutoValidationThreshold` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Data Point Choices
+
+### createDataPointChoice
+
+`dataPointChoices.createDataPointChoice`
+
+Tool to create a custom data point choice. Use when you need to add a new choice option for a specific data point in a collection or organization. Note: This endpoint is deprecated but still functional.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.dataPointChoices.createDataPointChoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `synonyms` | `any[]` | No | — |
+| `dataPoint` | `string` | Yes | — |
+| `collection` | `string` | No | — |
+| `description` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDataPointChoice
+
+`dataPointChoices.getDataPointChoice`
+
+Tool to return a specific data point choice by its ID. Use when you need details about a particular data point choice option. Note: This endpoint is deprecated but still functional.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.dataPointChoices.getDataPointChoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listDataPointChoices
+
+`dataPointChoices.listDataPointChoices`
+
+Tool to retrieve available choices for a specific enum data point. Use when you need to discover valid options for dropdown/enum fields in a collection's data schema. Note: This endpoint is deprecated but still functional for accessing data point choice metadata.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.dataPointChoices.listDataPointChoices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+| `collection` | `string` | Yes | — |
+| `data_point` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### replaceDataPointChoices
+
+`dataPointChoices.replaceDataPointChoices`
+
+Tool to completely replace all choices for a data point. Use when you need to bulk update enum options - existing choices are matched by value, new values are created, updated values are modified, and values not in the incoming list are deleted. Note: This is a deprecated endpoint but still functional. Either collection or organization must be specified to scope the replacement.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.dataPointChoices.replaceDataPointChoices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `choices` | `any[]` | Yes | — |
+| `dataPoint` | `string` | Yes | — |
+| `collection` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateDataPointChoice
+
+`dataPointChoices.updateDataPointChoice`
+
+Tool to update data of a data point choice by its ID. Use when you need to modify label, value, description, synonyms, or associated collection/organization for an existing data point choice. Note: This endpoint is deprecated but still functional.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.dataPointChoices.updateDataPointChoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `label` | `string` | No | — |
+| `value` | `string` | No | — |
+| `synonyms` | `any[]` | No | — |
+| `dataPoint` | `string` | No | — |
+| `collection` | `string` | No | — |
+| `description` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Data Points
+
+### createDataPoint
+
+`dataPoints.createDataPoint`
+
+Tool to create a custom data point for document extraction. Use when you need to define a new field that should be extracted from documents in a specific extractor. Note: This endpoint is deprecated but still functional. Data points define custom fields for extraction models.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.dataPoints.createDataPoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `noRect` | `boolean` | No | — |
+| `parent` | `string` | No | — |
+| `multiple` | `boolean` | No | — |
+| `extractor` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `manualEntry` | `boolean` | No | — |
+| `organization` | `string` | Yes | — |
+| `mappingDataSource` | `string` | No | — |
+| `annotationContentType` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteDataPoint
+
+`dataPoints.deleteDataPoint`
+
+Tool to permanently delete a data point by its identifier. Use when you need to remove a data point from the database after confirming the identifier. Note: This endpoint is deprecated but still functional.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.dataPoints.deleteDataPoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDataPoint
+
+`dataPoints.getDataPoint`
+
+Tool to retrieve details of a specific data point by its identifier. Use when you need to inspect a data point's configuration, type, or structure. Data points represent individual fields that can be extracted from documents (e.g., 'name', 'email', 'date'). This endpoint is deprecated but still functional for retrieving data point metadata.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.dataPoints.getDataPoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listDataPoints
+
+`dataPoints.listDataPoints`
+
+Tool to retrieve all data points. Returns both custom data points and Affinda's off-the-shelf data points. Use when you need to list available data points for extractors.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.dataPoints.listDataPoints({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `extractor` | `string` | No | — |
+| `identifier` | `any[]` | No | — |
+| `description` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `include_public` | `boolean` | No | — |
+| `annotation_content_type` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateDataPoint
+
+`dataPoints.updateDataPoint`
+
+Tool to update data of a data point by its identifier. Use when you need to modify a data point's name, description, slug, parent, or mapping data source. Note: This endpoint is deprecated but still functional.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.dataPoints.updateDataPoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `parent` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `mappingDataSource` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Data Sources
+
+### createDataSource
+
+`dataSources.createDataSource`
+
+Tool to create a custom mapping data source. Use when you need to set up a new data source for mapping AI-extracted values to your database records.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.dataSources.createDataSource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `schema` | `object` | No | — |
+| `values` | `any[]` | No | — |
+| `workspace` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `keyProperty` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `displayProperty` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createDataSourceValue
+
+`dataSources.createDataSourceValue`
+
+Tool to add a new value to a mapping data source. Use when you need to add entries to a data source for mapping or validation purposes. The created value can then be referenced in document extraction and mapping workflows.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.dataSources.createDataSourceValue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | No | — |
+| `value` | `string` | Yes | — |
+| `identifier` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteDataSource
+
+`dataSources.deleteDataSource`
+
+Permanently delete a mapping data source from the database by its identifier. This is a destructive operation that cannot be undone. Use when you need to remove a data source that is no longer needed or was created in error.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.dataSources.deleteDataSource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteDataSourceValue
+
+`dataSources.deleteDataSourceValue`
+
+Tool to delete a specific value from a mapping data source. Use when you need to remove an incorrect or outdated value from a data source mapping.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.dataSources.deleteDataSourceValue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `string` | Yes | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDataSource
+
+`dataSources.getDataSource`
+
+Tool to retrieve details of a specific mapping data source by its identifier. Use when you need to fetch mapping data source metadata and schema configuration.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.dataSources.getDataSource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDataSourceValue
+
+`dataSources.getDataSourceValue`
+
+Tool to retrieve a specific value from a mapping data source. Use when you need to get details about a particular value in a data source.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.dataSources.getDataSourceValue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `string` | Yes | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDataSourceValues
+
+`dataSources.getDataSourceValues`
+
+Tool to retrieve all values from a mapping data source. Use when you need to list or search values in a specific data source after authentication.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.dataSources.getDataSourceValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+| `document` | `string` | No | — |
+| `annotation` | `number` | No | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listDataSources
+
+`dataSources.listDataSources`
+
+Tool to retrieve the list of all custom mapping data sources. Use when you need to list or search for mapping data sources in your Affinda workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.dataSources.listDataSources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `workspace` | `string` | No | — |
+| `identifier` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### replaceDataSourceValues
+
+`dataSources.replaceDataSourceValues`
+
+Tool to completely replace all values in a mapping data source. Use when you need to bulk update or refresh an entire data source's value list. Note: For large data sources (>1000 values), new values may take a few minutes to become searchable after the operation completes.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.dataSources.replaceDataSourceValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `any[]` | Yes | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateDataSourceValue
+
+`dataSources.updateDataSourceValue`
+
+Tool to update an existing value in a mapping data source. Use when you need to modify the label or description of an existing data source value. The value identifier itself cannot be changed.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.dataSources.updateDataSourceValue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | No | — |
+| `value` | `string` | Yes | — |
+| `identifier` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Documents
+
+### addTagToDocuments
+
+`documents.addTagToDocuments`
+
+Tool to add a tag to multiple documents in a single operation. Use when you need to organize or categorize multiple documents by assigning them a shared tag. Tags enable efficient filtering and grouping of documents in your workspace.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.documents.addTagToDocuments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `number` | Yes | — |
+| `identifiers` | `any[]` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createDocument
+
+`documents.createDocument`
+
+Upload a document to Affinda for parsing and data extraction. Use this action when you need to: - Parse resumes/CVs to extract candidate information - Process invoices to extract line items, amounts, and vendor details - Extract data from any supported document type (PDF, DOCX, images) You can upload either a file directly or provide a publicly accessible URL. The document will be processed by Affinda's AI extraction engine. Prerequisites: - For collection-based uploads: Get collection ID from get_collections action - For workspace-specific uploads: Get workspace ID from get_workspaces action
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.documents.createDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `file` | `object` | No | — |
+| `wait` | `boolean` | No | — |
+| `compact` | `boolean` | No | — |
+| `fileName` | `string` | No | — |
+| `language` | `string` | No | — |
+| `workspace` | `string` | No | — |
+| `collection` | `string` | No | — |
+| `expiryTime` | `string` | No | — |
+| `identifier` | `string` | No | — |
+| `rejectDuplicates` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createFromDataDocuments
+
+`documents.createFromDataDocuments`
+
+Create a document from structured resume or job description data for Search & Match. Use this when you have structured data to create a document programmatically without file uploads. Returns an identifier for subsequent status checks via /documents/{identifier}.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.documents.createFromDataDocuments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | — |
+| `wait` | `boolean` | No | — |
+| `language` | `string` | No | — |
+| `file_name` | `string` | No | — |
+| `workspace` | `string` | No | — |
+| `collection` | `string` | No | — |
+| `identifier` | `string` | No | — |
+| `snake_case` | `boolean` | No | — |
+| `expiry_time` | `string` | No | — |
+| `document_type` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteDocument
+
+`documents.deleteDocument`
+
+Tool to delete a specific document by its ID. Use when you need to remove a document that is incorrect or no longer needed, after confirming the document ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.documents.deleteDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDocument
+
+`documents.getDocument`
+
+Retrieve full details and parsed data for a specific document by its identifier. Use this tool to get comprehensive information about a document including: - Processing status (ready/failed) - Document metadata (file name, page count, language) - Parsed/extracted data results - URLs for PDF, original file, and review page - Collection and workspace information The document identifier can be either a system-generated ID or a custom identifier set during document upload.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.documents.getDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDocumentRedacted
+
+`documents.getDocumentRedacted`
+
+Tool to retrieve the redacted version of a document as a PDF file. Use when you need to get a document with sensitive information removed. The original document is not modified by this operation.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.documents.getDocumentRedacted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDocuments
+
+`documents.getDocuments`
+
+Tool to retrieve a list of all documents. Use when you need to list documents in your Affinda workspace after authentication.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.documents.getDocuments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `ready` | `boolean` | No | — |
+| `state` | `string` | No | — |
+| `failed` | `boolean` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+| `compact` | `boolean` | No | — |
+| `ordering` | `string` | No | — |
+| `workspace` | `string` | No | — |
+| `collection` | `string` | No | — |
+| `include_data` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### removeTagFromDocuments
+
+`documents.removeTagFromDocuments`
+
+Remove a tag from multiple documents in a single batch operation. Use this action to efficiently untag many documents at once rather than making individual remove requests. The operation is idempotent - removing a tag that isn't present on a document will not cause an error.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.documents.removeTagFromDocuments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `number` | Yes | — |
+| `identifiers` | `any[]` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateDocument
+
+`documents.updateDocument`
+
+Tool to update specific fields of a document. Use when you need to rename, reassign, or adjust expiry and storage settings after document creation.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.documents.updateDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | No | — |
+| `language` | `string` | No | — |
+| `workspace` | `string` | No | — |
+| `collection` | `string` | No | — |
+| `expiryTime` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `regionBias` | `object` | No | — |
+| `customIdentifier` | `string` | No | — |
+| `deleteAfterParse` | `boolean` | No | — |
+| `enableValidationTool` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="regionBias full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateDocumentData
+
+`documents.updateDocumentData`
+
+Update parsed data for a resume or job description document in Affinda. This endpoint is ONLY applicable for documents that have been processed with 'resume' or 'job-description' extractors. For other document types, use the batch_update_annotations endpoint instead. Use this tool when you need to correct or add parsed fields to an existing resume or job description document after it has been uploaded and processed.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.documents.updateDocumentData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Document Splitters
+
+### getAllDocumentSplitters
+
+`documentSplitters.getAllDocumentSplitters`
+
+Tool to get a list of all document splitters. Use when you need to retrieve document splitters, optionally filtered by organization.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.documentSplitters.getAllDocumentSplitters({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `organization` | `string` | No | — |
+| `includePublic` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDocumentSplitter
+
+`documentSplitters.getDocumentSplitter`
+
+Tool to retrieve details of a specific document splitter by its identifier. Use when you need to fetch metadata about a document splitter configuration.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.documentSplitters.getDocumentSplitter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Document Types
+
+### createDocumentType
+
+`documentTypes.createDocumentType`
+
+Tool to create a new document type in the specified organization. Use when you need to define a new category of documents for processing. Document types allow you to organize and categorize documents within an organization.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.documentTypes.createDocumentType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `organization` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteDocumentType
+
+`documentTypes.deleteDocumentType`
+
+Tool to permanently delete a document type by its identifier. Use when you need to remove a document type that is no longer needed. This is a destructive operation that cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.documentTypes.deleteDocumentType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDocumentType
+
+`documentTypes.getDocumentType`
+
+Tool to retrieve details of a specific document type by its ID. Use when you need to confirm the configuration or metadata of a document type before processing documents.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.documentTypes.getDocumentType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDocumentTypeJsonSchema
+
+`documentTypes.getDocumentTypeJsonSchema`
+
+Tool to generate a JSON schema from a document type by its identifier. Use when you need the structured schema definition for a document type to understand its field structure and validation rules.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.documentTypes.getDocumentTypeJsonSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDocumentTypePydanticModels
+
+`documentTypes.getDocumentTypePydanticModels`
+
+Tool to generate Pydantic model code from a document type's schema. Use when you need type-safe Python models for parsing documents of a specific type.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.documentTypes.getDocumentTypePydanticModels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `model_name` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDocumentTypes
+
+`documentTypes.getDocumentTypes`
+
+Retrieve all document types accessible to the authenticated user. Returns a list containing each document type's identifier, name, description, ingest email, and organization. Use this to discover available document types before uploading or processing documents. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.documentTypes.getDocumentTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateDocumentType
+
+`documentTypes.updateDocumentType`
+
+Tool to update a document type by its identifier. Use when you need to modify the name or description of an existing document type.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.documentTypes.updateDocumentType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Extractors
+
+### createExtractor
+
+`extractors.createExtractor`
+
+Tool to create a new extractor. Use when you need to define a custom document parser with specific fields and extraction rules, typically derived from a base extractor.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.extractors.createExtractor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `category` | `string` | No | — |
+| `namePlural` | `string` | No | — |
+| `fieldGroups` | `any[]` | No | — |
+| `validatable` | `boolean` | No | — |
+| `organization` | `string` | Yes | — |
+| `baseExtractor` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteExtractor
+
+`extractors.deleteExtractor`
+
+Permanently delete an extractor from Affinda by its identifier. This is a destructive operation that cannot be undone. Use Get Extractors first to verify the extractor ID before deletion. Note: This action is deprecated by the API.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.extractors.deleteExtractor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getExtractor
+
+`extractors.getExtractor`
+
+Tool to retrieve detailed information about a specific extractor by its identifier. Use when you need complete metadata about an extractor's configuration, fields, and capabilities.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.extractors.getExtractor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getExtractors
+
+`extractors.getExtractors`
+
+Retrieve all extractors available for an organization. Extractors are document parsing configurations that define what data to extract from documents. This includes both Affinda's built-in extractors (resumes, invoices, etc.) and any custom extractors created for the organization. Use this action to: - List available extractors before creating a collection - Find the identifier of a specific extractor type - Check if custom extractors exist for the organization
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.extractors.getExtractors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | Yes | — |
+| `include_public_extractors` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `validatable` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateExtractor
+
+`extractors.updateExtractor`
+
+Tool to update specific fields of an extractor. Use when you need to modify an extractor's name, category, validation settings, or field groups after creation.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.extractors.updateExtractor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `category` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `namePlural` | `string` | No | — |
+| `fieldGroups` | `any[]` | No | — |
+| `validatable` | `boolean` | No | — |
+| `baseExtractor` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Indexes
+
+### createIndex
+
+`indexes.createIndex`
+
+Tool to create a new index for search and match functionality. Use when you need to set up a new index for organizing and searching documents like resumes or job descriptions.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.indexes.createIndex({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `docType` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteIndex
+
+`indexes.deleteIndex`
+
+Tool to permanently delete an index from Affinda by its name. Use when you need to remove an index that is no longer needed. This is a destructive operation that cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.indexes.deleteIndex({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getIndexDocuments
+
+`indexes.getIndexDocuments`
+
+Tool to retrieve all indexed documents for a specific index. Use when you need to list documents in a search index after creating or accessing an index.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.indexes.getIndexDocuments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listIndexes
+
+`indexes.listIndexes`
+
+Tool to retrieve a list of all search indexes. Use when you need to view available indexes for searching and matching documents in Affinda.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.indexes.listIndexes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `document_type` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateIndex
+
+`indexes.updateIndex`
+
+Tool to update the name of an existing search index. Use when you need to rename an index after creation.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.indexes.updateIndex({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `new_name` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Invitations
+
+### createInvitation
+
+`invitations.createInvitation`
+
+Tool to create a new organization invitation. Use when you need to invite a user to join an organization with a specific role.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.invitations.createInvitation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role` | `string` | No | — |
+| `email` | `string` | Yes | — |
+| `organization` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteInvitation
+
+`invitations.deleteInvitation`
+
+Tool to delete an invitation by its identifier. Use when you need to remove or revoke an invitation after confirming the invitation identifier.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.invitations.deleteInvitation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAllInvitations
+
+`invitations.getAllInvitations`
+
+Tool to retrieve all invitations you created or sent to you. Use when you need to list organization invitations with optional filtering by status, role, or organization.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.invitations.getAllInvitations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `status` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getInvitation
+
+`invitations.getInvitation`
+
+Tool to retrieve details of a specific organization invitation by its identifier. Use when you need to check invitation status or get invitation metadata.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.invitations.getInvitation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateInvitation
+
+`invitations.updateInvitation`
+
+Tool to update an organization invitation's role. Use when you need to change the role assigned to an invitation before it is accepted.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.invitations.updateInvitation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Job Description Search
+
+### createJobDescriptionSearch
+
+`jobDescriptionSearch.createJobDescriptionSearch`
+
+Search through parsed job descriptions using custom criteria or resume matching. Use this action when you need to find job postings that match specific requirements such as skills, experience, location, education, or to find jobs matching a candidate's resume. Returns ranked results with detailed match scores.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.jobDescriptionSearch.createJobDescriptionSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `resume` | `string` | No | — |
+| `skills` | `any[]` | No | — |
+| `degrees` | `any[]` | No | — |
+| `indices` | `any[]` | Yes | — |
+| `socCodes` | `any[]` | No | — |
+| `jobTitles` | `any[]` | No | — |
+| `languages` | `any[]` | No | — |
+| `locations` | `any[]` | No | — |
+| `customData` | `any[]` | No | — |
+| `degreeTypes` | `any[]` | No | — |
+| `skillsWeight` | `number` | No | — |
+| `socCodesWeight` | `number` | No | — |
+| `degreesRequired` | `boolean` | No | — |
+| `educationWeight` | `number` | No | — |
+| `jobTitlesWeight` | `number` | No | — |
+| `languagesWeight` | `number` | No | — |
+| `locationsWeight` | `number` | No | — |
+| `managementLevel` | `string` | No | — |
+| `searchExpression` | `string` | No | — |
+| `socCodesRequired` | `boolean` | No | — |
+| `jobTitlesRequired` | `boolean` | No | — |
+| `locationsRequired` | `boolean` | No | — |
+| `degreeTypesRequired` | `boolean` | No | — |
+| `totalYearsExperience` | `number` | No | — |
+| `managementLevelWeight` | `number` | No | — |
+| `yearsExperienceWeight` | `number` | No | — |
+| `searchExpressionWeight` | `number` | No | — |
+| `managementLevelRequired` | `boolean` | No | — |
+| `yearsExperienceRequired` | `boolean` | No | — |
+| `searchExpressionRequired` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createJobDescriptionSearchEmbedUrl
+
+`jobDescriptionSearch.createJobDescriptionSearchEmbedUrl`
+
+Tool to create and return a signed URL for the embeddable job description search tool. Use this when you need to generate a URL that can be embedded on a web page to provide job description search functionality. Optionally pass config_override to customize display settings, field weights, and theme.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.jobDescriptionSearch.createJobDescriptionSearchEmbedUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configOverride` | `object` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="configOverride full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getJobDescriptionSearchConfig
+
+`jobDescriptionSearch.getJobDescriptionSearchConfig`
+
+Tool to get the configuration for the logged in user's embeddable job description search tool. Returns display settings, field weights, and maximum results limits. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.jobDescriptionSearch.getJobDescriptionSearchConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateJobDescriptionSearchConfig
+
+`jobDescriptionSearch.updateJobDescriptionSearchConfig`
+
+Tool to update the configuration for the logged in user's embeddable job description search tool. Use to configure display fields, field weights, maximum results, and UI customization options.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.jobDescriptionSearch.updateJobDescriptionSearchConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `number` | No | — |
+| `actions` | `any[]` | No | — |
+| `indices` | `any[]` | No | — |
+| `username` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `hideToolbar` | `boolean` | No | — |
+| `distanceUnit` | `string` | No | — |
+| `weightSkills` | `number` | No | — |
+| `displaySkills` | `boolean` | No | — |
+| `hideSidePanel` | `boolean` | No | — |
+| `weightJobTitle` | `number` | No | — |
+| `weightKeywords` | `number` | No | — |
+| `weightLocation` | `number` | No | — |
+| `displayJobTitle` | `boolean` | No | — |
+| `displayKeywords` | `boolean` | No | — |
+| `displayLocation` | `boolean` | No | — |
+| `searchToolTheme` | `object` | No | — |
+| `weightEducation` | `number` | No | — |
+| `weightLanguages` | `number` | No | — |
+| `allowPdfDownload` | `boolean` | No | — |
+| `displayEducation` | `boolean` | No | — |
+| `displayLanguages` | `boolean` | No | — |
+| `showIndexDropdown` | `boolean` | No | — |
+| `customFieldsConfig` | `any[]` | No | — |
+| `weightManagementLevel` | `number` | No | — |
+| `weightOccupationGroup` | `number` | No | — |
+| `weightYearsExperience` | `number` | No | — |
+| `displayManagementLevel` | `boolean` | No | — |
+| `displayOccupationGroup` | `boolean` | No | — |
+| `displayYearsExperience` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="searchToolTheme full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Mappings
+
+### createMapping
+
+`mappings.createMapping`
+
+Tool to create a custom mapping for a data source. Use when you need to configure specific lookup settings for a MappingDataSource. Note: This endpoint is deprecated.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.mappings.createMapping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderBy` | `string` | No | — |
+| `dataSource` | `string` | Yes | — |
+| `scoreCutoff` | `number` | No | — |
+| `organization` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteMapping
+
+`mappings.deleteMapping`
+
+Tool to delete a specific mapping by its identifier. Use when you need to remove an unused or incorrect mapping from the database. Note: This endpoint is deprecated.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.mappings.deleteMapping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getMapping
+
+`mappings.getMapping`
+
+Tool to retrieve a specific mapping by its identifier. Use when you need to fetch mapping configuration details for a lookup against a MappingDataSource.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.mappings.getMapping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listMappings
+
+`mappings.listMappings`
+
+Tool to retrieve the list of all custom data mappings. Use when you need to list mappings for a specific data source.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.mappings.listMappings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `mappingDataSource` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateMapping
+
+`mappings.updateMapping`
+
+Tool to update a specific mapping's settings. Use when you need to adjust score cutoff or ordering for a lookup against a MappingDataSource.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.mappings.updateMapping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderBy` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `scoreCutoff` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Occupation Groups
+
+### listOccupationGroups
+
+`occupationGroups.listOccupationGroups`
+
+Tool to retrieve the list of searchable occupation groups. Use when you need to get available occupation categories for job matching or classification. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.occupationGroups.listOccupationGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Organization Memberships
+
+### getAllOrganizationMemberships
+
+`organizationMemberships.getAllOrganizationMemberships`
+
+Retrieve all organization memberships across the account. Returns paginated results showing which users belong to which organizations. Use to audit organization access or find specific user memberships.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.organizationMemberships.getAllOrganizationMemberships({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `organization` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOrganizationMembership
+
+`organizationMemberships.getOrganizationMembership`
+
+Tool to retrieve details of a specific organization membership by its ID. Use when you need to confirm a user's role and details within an organization.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.organizationMemberships.getOrganizationMembership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateOrganizationMembership
+
+`organizationMemberships.updateOrganizationMembership`
+
+Tool to update an organization membership's role. Use when you need to change a user's role within an organization.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.organizationMemberships.updateOrganizationMembership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Organizations
+
+### createOrganization
+
+`organizations.createOrganization`
+
+Tool to create a new organization. Use when you have a unique organization name and want to group resources under it.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.organizations.createOrganization({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteOrganization
+
+`organizations.deleteOrganization`
+
+Permanently deletes an organization from Affinda. This action is destructive and cannot be undone. All workspaces, collections, and documents associated with the organization will also be deleted. Use the get_organizations action first to confirm the organization identifier before deletion.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.organizations.deleteOrganization({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOrganization
+
+`organizations.getOrganization`
+
+Tool to retrieve details of a specific organization by its ID. Use when you need to fetch an organization's metadata after confirming its identifier.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.organizations.getOrganization({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOrganizations
+
+`organizations.getOrganizations`
+
+Retrieves all organizations accessible to the authenticated user. Returns a list of organizations with details including identifier, name, user role, trial status, and configuration settings. Use the 'identifier' field from the response when calling other organization-related endpoints. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.organizations.getOrganizations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateOrganization
+
+`organizations.updateOrganization`
+
+Tool to update specific fields of an organization. Use when you need to modify an organization's name, avatar, or webhook and validation settings after creation.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.organizations.updateOrganization({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `avatar` | `string` | No | — |
+| `identifier` | `string` | Yes | — |
+| `resthook_signature_key` | `string` | No | — |
+| `validation_tool_config` | `object` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="validation_tool_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Resthooks
+
+### createResthookSubscription
+
+`resthooks.createResthookSubscription`
+
+Tool to create a new RESTHook subscription. Use after confirming your webhook endpoint is ready to receive document event notifications.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.resthooks.createResthookSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | No | — |
+| `targetUrl` | `string` | Yes | — |
+| `organization` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteResthookSubscription
+
+`resthooks.deleteResthookSubscription`
+
+Tool to delete a specific resthook subscription by ID. Use after confirming the subscription identifier when the webhook is no longer needed.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.resthooks.deleteResthookSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getResthookSubscription
+
+`resthooks.getResthookSubscription`
+
+Tool to retrieve details of a specific resthook subscription by its ID. Use after confirming its creation to verify its settings.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.resthooks.getResthookSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getResthookSubscriptions
+
+`resthooks.getResthookSubscriptions`
+
+Tool to retrieve a list of all RESTHook subscriptions. Use after authenticating to list all webhook subscriptions associated with your account.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.resthooks.getResthookSubscriptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateResthookSubscription
+
+`resthooks.updateResthookSubscription`
+
+Tool to update an existing RESTHook subscription. Use after confirming the subscription identifier to modify its URL, event, or activation status.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.resthooks.updateResthookSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `targetUrl` | `string` | No | — |
+| `identifier` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Resume Search
+
+### createResumeSearch
+
+`resumeSearch.createResumeSearch`
+
+Tool to search through parsed resumes using three methods: match to a job description, match to a resume, or custom criteria. Use when you need to find candidates matching specific requirements.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.resumeSearch.createResumeSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `resume` | `string` | No | — |
+| `skills` | `any[]` | No | — |
+| `degrees` | `any[]` | No | — |
+| `indices` | `any[]` | Yes | — |
+| `socCodes` | `any[]` | No | — |
+| `jobTitles` | `any[]` | No | — |
+| `languages` | `any[]` | No | — |
+| `locations` | `any[]` | No | — |
+| `customData` | `any[]` | No | — |
+| `institutions` | `any[]` | No | — |
+| `skillsWeight` | `number` | No | — |
+| `jobDescription` | `string` | No | — |
+| `socCodesWeight` | `number` | No | — |
+| `degreesRequired` | `boolean` | No | — |
+| `educationWeight` | `number` | No | — |
+| `jobTitlesWeight` | `number` | No | — |
+| `languagesWeight` | `number` | No | — |
+| `locationsWeight` | `number` | No | — |
+| `managementLevel` | `string` | No | — |
+| `isCurrentStudent` | `boolean` | No | — |
+| `isRecentGraduate` | `boolean` | No | — |
+| `searchExpression` | `string` | No | — |
+| `socCodesRequired` | `boolean` | No | — |
+| `jobTitlesRequired` | `boolean` | No | — |
+| `locationsRequired` | `boolean` | No | — |
+| `highestDegreeTypes` | `any[]` | No | — |
+| `yearsExperienceMax` | `number` | No | — |
+| `yearsExperienceMin` | `number` | No | — |
+| `institutionsRequired` | `boolean` | No | — |
+| `jobTitlesCurrentOnly` | `boolean` | No | — |
+| `managementLevelWeight` | `number` | No | — |
+| `yearsExperienceWeight` | `number` | No | — |
+| `searchExpressionWeight` | `number` | No | — |
+| `managementLevelRequired` | `boolean` | No | — |
+| `yearsExperienceRequired` | `boolean` | No | — |
+| `isCurrentStudentRequired` | `boolean` | No | — |
+| `isRecentGraduateRequired` | `boolean` | No | — |
+| `searchExpressionRequired` | `boolean` | No | — |
+| `highestDegreeTypesRequired` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createResumeSearchEmbedUrl
+
+`resumeSearch.createResumeSearchEmbedUrl`
+
+Tool to create and return a signed URL for the embeddable resume search tool. Use this when you need to generate a URL that can be embedded on a web page to provide resume search functionality. Optionally pass config_override to customize display settings, field weights, and theme.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.resumeSearch.createResumeSearchEmbedUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configOverride` | `object` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="configOverride full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listResumeSearchConfig
+
+`resumeSearch.listResumeSearchConfig`
+
+Tool to get the configuration for the logged in user's embeddable resume search tool. Use this to retrieve display field settings, search weights, maximum results, and theme customization options for the resume search interface. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.resumeSearch.listResumeSearchConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listResumeSearchJobTitleSuggestions
+
+`resumeSearch.listResumeSearchJobTitleSuggestions`
+
+Tool to get job title suggestions based on provided job title(s). Use when you need to find related job titles for resume search.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.resumeSearch.listResumeSearchJobTitleSuggestions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_titles` | `any[]` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listResumeSearchSkillSuggestions
+
+`resumeSearch.listResumeSearchSkillSuggestions`
+
+Tool to get skill suggestions based on provided skills. Use when you need to find related skills to expand or refine resume search queries.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.resumeSearch.listResumeSearchSkillSuggestions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skills` | `any[]` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateResumeSearchConfig
+
+`resumeSearch.updateResumeSearchConfig`
+
+Tool to update the configuration for the logged in user's embeddable resume search tool. Use this to modify which fields are displayed, their search weights, maximum results limit, distance units, custom actions, and theme settings.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.resumeSearch.updateResumeSearchConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `number` | No | — |
+| `actions` | `any[]` | No | — |
+| `indices` | `any[]` | No | — |
+| `username` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `hideToolbar` | `boolean` | No | — |
+| `distanceUnit` | `string` | No | — |
+| `weightSkills` | `number` | No | — |
+| `displaySkills` | `boolean` | No | — |
+| `hideSidePanel` | `boolean` | No | — |
+| `weightJobTitle` | `number` | No | — |
+| `weightKeywords` | `number` | No | — |
+| `weightLocation` | `number` | No | — |
+| `displayJobTitle` | `boolean` | No | — |
+| `displayKeywords` | `boolean` | No | — |
+| `displayLocation` | `boolean` | No | — |
+| `searchToolTheme` | `object` | No | — |
+| `weightEducation` | `number` | No | — |
+| `weightLanguages` | `number` | No | — |
+| `allowPdfDownload` | `boolean` | No | — |
+| `displayEducation` | `boolean` | No | — |
+| `displayLanguages` | `boolean` | No | — |
+| `showIndexDropdown` | `boolean` | No | — |
+| `customFieldsConfig` | `any[]` | No | — |
+| `weightManagementLevel` | `number` | No | — |
+| `weightOccupationGroup` | `number` | No | — |
+| `weightYearsExperience` | `number` | No | — |
+| `displayManagementLevel` | `boolean` | No | — |
+| `displayOccupationGroup` | `boolean` | No | — |
+| `displayYearsExperience` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="searchToolTheme full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Tags
+
+### createTag
+
+`tags.createTag`
+
+Creates a new tag in the specified workspace. Tags can be used to categorize and label documents for organization and filtering. Each tag name must be unique within its workspace. Returns the created tag with its ID and metadata.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.tags.createTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteTag
+
+`tags.deleteTag`
+
+Permanently delete a tag from Affinda by its ID. This is a destructive operation that cannot be undone. Use Get Tags first to verify the tag ID before deletion.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.tags.deleteTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAllTags
+
+`tags.getAllTags`
+
+Tool to list all tags. Use after confirming authentication to fetch tags across workspaces.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.tags.getAllTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `workspace` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getTag
+
+`tags.getTag`
+
+Tool to retrieve details of a specific tag by its ID. Use when you need to fetch information about a particular tag.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.tags.getTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateTag
+
+`tags.updateTag`
+
+Tool to update data of a tag. Use when you need to modify a tag's name or reassign it to a different workspace. Only provide the fields you want to change; other fields will remain unchanged.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.tags.updateTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `workspace` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Validation
+
+### splitDocumentPages
+
+`validation.splitDocumentPages`
+
+Split a document into multiple documents by dividing its pages. Use when you need to separate a multi-page document into distinct documents based on page groupings. Prerequisites: - Obtain the document identifier from create_document or get_document actions - Use get_document to retrieve page IDs for the pages you want to split Important notes: - Each page can only be assigned to one split - All pages should be accounted for across all splits - One split can optionally use the original document identifier to maintain the root document
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.validation.splitDocumentPages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `splits` | `any[]` | Yes | — |
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Validation Results
+
+### createValidationResult
+
+`validationResults.createValidationResult`
+
+Create a validation result for document annotations in Affinda. Use this tool to record validation outcomes after parsing a document. Validation results track whether specific annotations (extracted data fields) pass or fail business rules. Prerequisites: 1. Get a document identifier from Get Documents or Create Document 2. Get annotation IDs from Get Annotations for that document 3. Define a kebab-case rule slug that identifies your validation rule Example use cases: - Recording that an invoice total matches the sum of line items - Marking that a required field is present and valid - Logging validation failures for review workflows
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.validationResults.createValidationResult({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passed` | `boolean` | No | — |
+| `message` | `string` | Yes | — |
+| `document` | `string` | Yes | — |
+| `ruleSlug` | `string` | Yes | — |
+| `annotations` | `any[]` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createValidationResultsBatch
+
+`validationResults.createValidationResultsBatch`
+
+Batch create multiple validation results for document annotations in a single API call. Use this action to efficiently record validation outcomes for multiple documents or rules at once, rather than making individual create requests for each validation result. This is particularly useful for bulk validation workflows or when validating multiple rules across many documents. Prerequisites: - Obtain document identifiers from Get Documents or Create Document actions - Get annotation IDs from Get Annotations for those documents - Define kebab-case rule slugs that identify your validation rules Common use cases: - Bulk recording of validation results across multiple documents - Validating multiple business rules on the same document - Automated validation workflows for large document batches
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.validationResults.createValidationResultsBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `validation_results` | `any[]` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteValidationResults
+
+`validationResults.deleteValidationResults`
+
+Delete multiple validation results in a single API call. Use this action to efficiently remove multiple validation results at once rather than making individual delete requests for each validation result. Prerequisites: - Obtain validation result IDs using the 'Get All Validation Results' action Common use cases: - Removing obsolete validation results in bulk - Cleaning up validation results after reprocessing documents - Deleting validation results for specific documents programmatically
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.validationResults.deleteValidationResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `any[]` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAllValidationResults
+
+`validationResults.getAllValidationResults`
+
+Tool to list validation results for documents. Use after processing documents to inspect validation outcomes.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.validationResults.getAllValidationResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `document` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Workspace Memberships
+
+### createWorkspaceMembership
+
+`workspaceMemberships.createWorkspaceMembership`
+
+Tool to add a user to a workspace by creating a membership. Use when you need to grant a user access to a specific workspace.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.workspaceMemberships.createWorkspaceMembership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `number` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteWorkspaceMembership
+
+`workspaceMemberships.deleteWorkspaceMembership`
+
+Tool to remove a user from a workspace by membership ID. Use after confirming the workspace membership ID to revoke access.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.workspaceMemberships.deleteWorkspaceMembership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAllWorkspaceMemberships
+
+`workspaceMemberships.getAllWorkspaceMemberships`
+
+Retrieve all workspace memberships across the account. Returns paginated results showing which users belong to which workspaces. Use to audit workspace access or find specific user memberships.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.workspaceMemberships.getAllWorkspaceMemberships({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `workspace` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getWorkspaceMembership
+
+`workspaceMemberships.getWorkspaceMembership`
+
+Tool to retrieve details of a specific workspace membership by its ID. Use when you need to confirm a user's role and details within a workspace after obtaining the membership identifier.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.workspaceMemberships.getWorkspaceMembership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Workspaces
+
+### createWorkspace
+
+`workspaces.createWorkspace`
+
+Tool to create a new workspace. Use when you need to programmatically create a workspace container within an organization.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.workspaces.createWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `visibility` | `string` | No | — |
+| `organization` | `string` | Yes | — |
+| `rejectInvalidDocuments` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteWorkspace
+
+`workspaces.deleteWorkspace`
+
+Tool to delete a specific workspace by its ID. Use when you need to remove an unused workspace after confirming the workspace ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.affinda.api.workspaces.deleteWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getUsageByWorkspace
+
+`workspaces.getUsageByWorkspace`
+
+Retrieves monthly document processing usage statistics for a specific workspace. Returns a list of usage records showing how many documents were processed each month. Use this to track workspace activity, monitor consumption trends, or generate usage reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.workspaces.getUsageByWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `end` | `string` | No | — |
+| `start` | `string` | No | — |
+| `workspace_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getWorkspace
+
+`workspaces.getWorkspace`
+
+Tool to retrieve details of a specific workspace by its ID. Use when you need full workspace metadata after confirming its identifier.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.workspaces.getWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getWorkspaces
+
+`workspaces.getWorkspaces`
+
+Tool to retrieve a list of all workspaces. Use when you need to list workspaces filtered by organization and optional name.
+
+**Risk:** `read`
+
+```ts
+await corsair.affinda.api.workspaces.getWorkspaces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `organization` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateWorkspace
+
+`workspaces.updateWorkspace`
+
+Tool to update specific fields of a workspace. Use when you need to modify a workspace's name, visibility, document rejection policy, or other settings. Only provide the fields you want to change; other fields will remain unchanged.
+
+**Risk:** `write`
+
+```ts
+await corsair.affinda.api.workspaces.updateWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `workspace_id` | `string` | Yes | — |
+| `documentTypes` | `any[]` | No | — |
+| `documentSplitter` | `string` | No | — |
+| `rejectDuplicates` | `boolean` | No | — |
+| `rejectInvalidDocuments` | `boolean` | No | — |
+| `whitelistIngestAddresses` | `any[]` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+

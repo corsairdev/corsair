@@ -39,6 +39,7 @@ import type {
 	TranscriptProcessingEvent,
 } from './webhooks/types';
 import {
+	hasFirefliesWebhookSignatureHeader,
 	InMeetingPayloadSchema,
 	MeetingDeletedPayloadSchema,
 	NewMeetingPayloadSchema,
@@ -277,7 +278,7 @@ const firefliesEndpointMeta = {
 	},
 	'askFred.deleteThread': {
 		riskLevel: 'destructive',
-		description: 'Delete an AskFred conversation thread [DESTRUCTIVE]',
+		description: 'Delete an AskFred conversation thread',
 	},
 	'audio.upload': {
 		riskLevel: 'write',
@@ -394,8 +395,7 @@ export function fireflies<const T extends FirefliesPluginOptions>(
 		endpointSchemas: firefliesEndpointSchemas,
 		webhookSchemas: firefliesWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-fireflies-signature' in headers;
+			return hasFirefliesWebhookSignatureHeader(request.headers);
 		},
 		pluginTenantWebhookMatcher: matchFirefliesTenantWebhook,
 		errorHandlers: {

@@ -15,13 +15,15 @@ export function currentRound(issueComments: { body: string }[]): number {
 export function decide(
 	round: number,
 	findings: Finding[],
-): 'comment' | 'fix' | 'escalate' | 'done' {
+): 'comment' | 'escalate' | 'done' {
 	const serious = findings.filter((f) => f.severity !== 'P2');
 	if (serious.length === 0) return 'done';
 	if (round === 0) return 'comment';
-	if (round === 1) return 'fix';
-	if (round === 2) return 'escalate';
-	// Already escalated — stay silent no matter how many pushes follow.
+	// round 1, or a legacy round=2 marker left by the retired fix job — escalate
+	// to the maintainer queue. Escalating posts the round=3 marker, so the next
+	// review lands here as round 3.
+	if (round <= 2) return 'escalate';
+	// Round 3+: already escalated — stay silent; the done branch refreshes in place.
 	return 'done';
 }
 
@@ -64,7 +66,7 @@ export function buildRoundOneComment(
 	}
 	parts.push(
 		'',
-		'_If anything remains after your next push, a bot commit will clean it up; a maintainer always does the final review and merge._',
+		'_If anything remains after your next push, a maintainer will take it from there and do the final review and merge._',
 	);
 	return parts.join('\n');
 }

@@ -1,0 +1,376 @@
+---
+title: API
+description: "API reference for WebScraping.AI: every `webscrapingai.api.*` operation with input and output types."
+---
+
+Every `webscrapingai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getInfo
+
+`account.getInfo`
+
+Return account quota and credit information
+
+**Risk:** `read`
+
+```ts
+await corsair.webscrapingai.api.account.getInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `remaining_api_calls` | `number` | No | — |
+| `remaining_monthly_credits` | `number` | No | — |
+| `remaining_payg_credits` | `number` | No | — |
+| `remaining_total_credits` | `number` | No | — |
+| `resets_at` | `number` | No | — |
+
+
+
+---
+
+## Ai
+
+### askQuestion
+
+`ai.askQuestion`
+
+Answer a question using the content of a web page
+
+**Risk:** `read`
+
+```ts
+await corsair.webscrapingai.api.ai.askQuestion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `js` | `boolean` | No | — |
+| `js_timeout` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `wait_for` | `string` | No | — |
+| `proxy` | `datacenter \| residential \| stealth` | No | — |
+| `country` | `string` | No | — |
+| `device` | `desktop \| mobile \| tablet` | No | — |
+| `headers` | `object` | No | — |
+| `js_script` | `string` | No | — |
+| `custom_proxy` | `string` | No | — |
+| `error_on_404` | `boolean` | No | — |
+| `error_on_redirect` | `boolean` | No | — |
+| `question` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### extractFields
+
+`ai.extractFields`
+
+Extract requested fields from a web page as structured JSON
+
+**Risk:** `read`
+
+```ts
+await corsair.webscrapingai.api.ai.extractFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `js` | `boolean` | No | — |
+| `js_timeout` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `wait_for` | `string` | No | — |
+| `proxy` | `datacenter \| residential \| stealth` | No | — |
+| `country` | `string` | No | — |
+| `device` | `desktop \| mobile \| tablet` | No | — |
+| `headers` | `object` | No | — |
+| `js_script` | `string` | No | — |
+| `custom_proxy` | `string` | No | — |
+| `error_on_404` | `boolean` | No | — |
+| `error_on_redirect` | `boolean` | No | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Scraping
+
+### getHtml
+
+`scraping.getHtml`
+
+Return the rendered HTML of a web page
+
+**Risk:** `read`
+
+```ts
+await corsair.webscrapingai.api.scraping.getHtml({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `js` | `boolean` | No | — |
+| `js_timeout` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `wait_for` | `string` | No | — |
+| `proxy` | `datacenter \| residential \| stealth` | No | — |
+| `country` | `string` | No | — |
+| `device` | `desktop \| mobile \| tablet` | No | — |
+| `headers` | `object` | No | — |
+| `js_script` | `string` | No | — |
+| `custom_proxy` | `string` | No | — |
+| `error_on_404` | `boolean` | No | — |
+| `error_on_redirect` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### getSelectedHtml
+
+`scraping.getSelectedHtml`
+
+Return HTML matching one CSS selector
+
+**Risk:** `read`
+
+```ts
+await corsair.webscrapingai.api.scraping.getSelectedHtml({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `js` | `boolean` | No | — |
+| `js_timeout` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `wait_for` | `string` | No | — |
+| `proxy` | `datacenter \| residential \| stealth` | No | — |
+| `country` | `string` | No | — |
+| `device` | `desktop \| mobile \| tablet` | No | — |
+| `headers` | `object` | No | — |
+| `js_script` | `string` | No | — |
+| `custom_proxy` | `string` | No | — |
+| `error_on_404` | `boolean` | No | — |
+| `error_on_redirect` | `boolean` | No | — |
+| `selector` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### getSelectedMultiple
+
+`scraping.getSelectedMultiple`
+
+Return HTML matching multiple CSS selectors
+
+**Risk:** `read`
+
+```ts
+await corsair.webscrapingai.api.scraping.getSelectedMultiple({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `js` | `boolean` | No | — |
+| `js_timeout` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `wait_for` | `string` | No | — |
+| `proxy` | `datacenter \| residential \| stealth` | No | — |
+| `country` | `string` | No | — |
+| `device` | `desktop \| mobile \| tablet` | No | — |
+| `headers` | `object` | No | — |
+| `js_script` | `string` | No | — |
+| `custom_proxy` | `string` | No | — |
+| `error_on_404` | `boolean` | No | — |
+| `error_on_redirect` | `boolean` | No | — |
+| `selectors` | `string[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | string[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getText
+
+`scraping.getText`
+
+Return clean text or Markdown extracted from a web page
+
+**Risk:** `read`
+
+```ts
+await corsair.webscrapingai.api.scraping.getText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `js` | `boolean` | No | — |
+| `js_timeout` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `wait_for` | `string` | No | — |
+| `proxy` | `datacenter \| residential \| stealth` | No | — |
+| `country` | `string` | No | — |
+| `device` | `desktop \| mobile \| tablet` | No | — |
+| `headers` | `object` | No | — |
+| `js_script` | `string` | No | — |
+| `custom_proxy` | `string` | No | — |
+| `error_on_404` | `boolean` | No | — |
+| `error_on_redirect` | `boolean` | No | — |
+| `text_format` | `plain \| json \| xml` | No | — |
+| `return_links` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  title?: string,
+  description?: string | null,
+  content: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

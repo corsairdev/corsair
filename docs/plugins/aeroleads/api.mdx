@@ -1,0 +1,81 @@
+---
+title: API
+description: "API reference for AeroLeads: every `aeroleads.api.*` operation with input and output types."
+---
+
+Every `aeroleads.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Linkedin Details
+
+### get
+
+`linkedinDetails.get`
+
+Retrieve detailed information about a prospect using their LinkedIn profile URL, including emails, phone numbers, job details, and company data
+
+**Risk:** `read`
+
+```ts
+await corsair.aeroleads.api.linkedinDetails.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkedin_url` | `string` | Yes | The LinkedIn profile URL of the prospect |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `full_name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `linkedin_url` | `string` | No | — |
+| `location` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `job_company_name` | `string` | No | — |
+| `job_company_url` | `string` | No | — |
+| `job_company_linkedin_url` | `string` | No | — |
+| `job_description` | `string` | No | — |
+| `education` | `string \| any[]` | No | — |
+| `experience` | `string \| any[]` | No | — |
+| `interests` | `string \| any[]` | No | — |
+| `skills` | `string \| any[]` | No | — |
+| `languages` | `object[]` | No | — |
+| `emails` | `string \| any[]` | No | — |
+| `phone_numbers` | `string \| any[]` | No | — |
+| `cb_rank` | `string` | No | — |
+| `db_logo_url` | `string` | No | — |
+| `profile_picture_url` | `string` | No | — |
+| `job_company_size` | `string \| number` | No | — |
+| `industry` | `string` | No | — |
+| `job_title_detailed_role_s2` | `string` | No | — |
+| `organization_founded_year_s2` | `string` | No | — |
+| `organization_facebook_url_s2` | `string` | No | — |
+| `organization_twitter_url_s2` | `string` | No | — |
+| `organization_current_technologies_s2` | `string` | No | — |
+| `emails_s2` | `string` | No | — |
+| `phone_numbers_s2` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="languages full type">
+
+```ts
+string | {
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

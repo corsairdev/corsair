@@ -1,0 +1,1178 @@
+{
+  "id": "orbit",
+  "displayName": "Orbit",
+  "description": "Search for people and enrich public profiles on the Orbit API.",
+  "npmPackageName": "@corsair-dev/orbit",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 24,
+    "webhooks": 1,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "orbit.api.bulk.cancel",
+      "shortPath": "bulk.cancel",
+      "description": "Cancel undispatched bulk items",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | running | waiting_for_credits | needs_attention | completed | completed_with_errors | canceled"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.bulk.get",
+      "shortPath": "bulk.get",
+      "description": "Read bulk search progress",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | running | waiting_for_credits | needs_attention | completed | completed_with_errors | canceled"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.bulk.results",
+      "shortPath": "bulk.results",
+      "description": "Read bulk search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.bulk.submit",
+      "shortPath": "bulk.submit",
+      "description": "Submit a bulk search",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ query?: string, intent?: { names?: string[], experiences?: {}[], semanticClauses?: {}[], schools?: {}[], geo?: {} | null, demographics?: {} | null, personalization?: {} | null }, signals?: { address?: string, email?: string, phone?: string, linkedin_url?: string, urls?: string[], usernames?: string[], face_source?: { image_url: string, bbox?: number[] } }, candidate_discovery?: boolean, candidate_discovery_limit?: number, profile_depth?: partial | full, include_profile?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | running | waiting_for_credits | needs_attention | completed | completed_with_errors | canceled"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.enrich.batch",
+      "shortPath": "enrich.batch",
+      "description": "Enrich up to 20 profiles",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "partial | full | regenerate"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_profile",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.enrich.get",
+      "shortPath": "enrich.get",
+      "description": "Poll an enrichment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profile_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "running | completed | failed"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.enrich.read",
+      "shortPath": "enrich.read",
+      "description": "Read an enriched profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | markdown"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.enrich.start",
+      "shortPath": "enrich.start",
+      "description": "Enrich one profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "partial | full | regenerate"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_profile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profile_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "running | completed | failed"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.faces.detect",
+      "shortPath": "faces.detect",
+      "description": "Detect faces in a photo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "image/jpeg | image/png | image/webp"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "faces",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.faces.index",
+      "shortPath": "faces.index",
+      "description": "Search the face index",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bbox",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matches",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.search.get",
+      "shortPath": "search.get",
+      "description": "Poll a people search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "running | completed | completed_with_errors | failed"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.search.quotePopulation",
+      "shortPath": "search.quotePopulation",
+      "description": "Price a population search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "population",
+            "optional": false,
+            "type": "{ kind: company | school, id: string, name: string }"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "profile_depth",
+            "optional": true,
+            "type": "partial | full"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.search.start",
+      "shortPath": "search.start",
+      "description": "Start a people search",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "intent",
+            "optional": true,
+            "type": "{ names?: string[], experiences?: {}[], semanticClauses?: {}[], schools?: {}[], geo?: {} | null, demographics?: {} | null, personalization?: {} | null }"
+          },
+          {
+            "key": "signals",
+            "optional": true,
+            "type": "{ address?: string, email?: string, phone?: string, linkedin_url?: string, urls?: string[], usernames?: string[], face_source?: { image_url: string, bbox?: number[] } }"
+          },
+          {
+            "key": "candidate_discovery",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "candidate_discovery_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "profile_depth",
+            "optional": true,
+            "type": "partial | full"
+          },
+          {
+            "key": "include_profile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "running | completed | completed_with_errors | failed"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.search.startPopulation",
+      "shortPath": "search.startPopulation",
+      "description": "Search everyone at a company or school",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "population",
+            "optional": false,
+            "type": "{ kind: company | school, id: string, name: string }"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "profile_depth",
+            "optional": true,
+            "type": "partial | full"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "running | completed | completed_with_errors | failed"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.watchers.create",
+      "shortPath": "watchers.create",
+      "description": "Watch a profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orbit_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "phases",
+            "optional": true,
+            "type": "existing_sources | existing_socials | new_sources[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orbit_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.watchers.delete",
+      "shortPath": "watchers.delete",
+      "description": "Delete a watcher",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watcher_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.watchers.get",
+      "shortPath": "watchers.get",
+      "description": "Get a watcher",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watcher_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orbit_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.watchers.list",
+      "shortPath": "watchers.list",
+      "description": "List watchers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watchers",
+            "optional": true,
+            "type": "{ id: string, orbit_id?: string, enabled?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.watchers.runs",
+      "shortPath": "watchers.runs",
+      "description": "List watcher runs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watcher_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runs",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.watchers.update",
+      "shortPath": "watchers.update",
+      "description": "Update a watcher",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watcher_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "interval_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "phases",
+            "optional": true,
+            "type": "existing_sources | existing_socials | new_sources[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orbit_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a webhook endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "profile.updated | company.thesis.changed | company.alert | portfolio.changed | search.profile.updated | search.completed[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_types",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook endpoint",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook endpoints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "{ id: string, url: string, event_types: string[], enabled: boolean, secret?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "orbit.api.webhooks.test",
+      "shortPath": "webhooks.test",
+      "description": "Send a test webhook delivery",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "profile.updated | company.thesis.changed | company.alert | portfolio.changed | search.profile.updated | search.completed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delivered",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "orbit.webhooks.events.delivery",
+      "shortPath": "events.delivery",
+      "description": "A signed Orbit event delivery",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{}",
+      "usageExample": "orbit({\n    webhookHooks: {\n        events: {\n            delivery: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "orbit.db.bulkJobs.search",
+      "entityName": "bulkJobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requestId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "orbit.db.enrichments.search",
+      "entityName": "enrichments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requestId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profileId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "orbit.db.searches.search",
+      "entityName": "searches",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "searchId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requestId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

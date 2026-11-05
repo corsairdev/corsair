@@ -1,0 +1,4049 @@
+{
+  "id": "sharepoint",
+  "displayName": "SharePoint",
+  "description": "Microsoft collaboration platform for document libraries, sites, lists, and intranet content.",
+  "npmPackageName": "@corsair-dev/sharepoint",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 86,
+    "webhooks": 1,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "site_id",
+        "subscription_id",
+        "client_state"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "sharepoint.api.contentTypes.addFieldLink",
+      "shortPath": "contentTypes.addFieldLink",
+      "description": "Add a field link to a list content type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contenttypeid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_internal_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_link",
+            "optional": true,
+            "type": "{ Id?: string, Name?: string, Hidden?: boolean, Required?: boolean, FieldInternalName?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.contentTypes.create",
+      "shortPath": "contentTypes.create",
+      "description": "Create a new SharePoint content type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "{ StringValue: string } | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.contentTypes.createListField",
+      "shortPath": "contentTypes.createListField",
+      "description": "Create a new field (column) on a SharePoint list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "internal_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "default_value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "readOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultValue",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.contentTypes.get",
+      "shortPath": "contentTypes.get",
+      "description": "Get a SharePoint content type by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content_type_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.contentTypes.getAll",
+      "shortPath": "contentTypes.getAll",
+      "description": "Get all content types defined on the site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, name?: string, description?: string, group?: string, hidden?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.contentTypes.getById",
+      "shortPath": "contentTypes.getById",
+      "description": "Get a content type from a list by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.contentTypes.getForList",
+      "shortPath": "contentTypes.getForList",
+      "description": "Get content types available for a specific list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, name?: string, description?: string, group?: string, hidden?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.contentTypes.update",
+      "shortPath": "contentTypes.update",
+      "description": "Update an existing SharePoint content type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content_type_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.drive.createSharingLink",
+      "shortPath": "drive.createSharingLink",
+      "description": "Create a sharing link for a drive item via Graph API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "view | edit | embed"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "anonymous | organization | users"
+          },
+          {
+            "key": "expiration_date_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "{ type?: string, webUrl?: string, scope?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.drive.deleteVersion",
+      "shortPath": "drive.deleteVersion",
+      "description": "Delete a specific version of a drive item",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.drive.getAnalytics",
+      "shortPath": "drive.getAnalytics",
+      "description": "Get analytics for a SharePoint drive item via Graph API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "allTime",
+            "optional": true,
+            "type": "{ access?: { actionCount?: number, actorCount?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.drive.listRecentItems",
+      "shortPath": "drive.listRecentItems",
+      "description": "List recently accessed drive items via Graph API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, name?: string, size?: number, webUrl?: string, createdDateTime?: string, lastModifiedDateTime?: string, file?: {}, folder?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.drive.restoreVersion",
+      "shortPath": "drive.restoreVersion",
+      "description": "Restore a previous version of a drive item via Graph API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.drive.updateItem",
+      "shortPath": "drive.updateItem",
+      "description": "Update a drive item (rename, move) via Graph API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_reference",
+            "optional": true,
+            "type": "{ driveId?: string, id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.files.checkIn",
+      "shortPath": "files.checkIn",
+      "description": "Check in a SharePoint file to publish changes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checkintype",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_relative_path",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.files.checkOut",
+      "shortPath": "files.checkOut",
+      "description": "Check out a SharePoint file for exclusive editing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_relative_path",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.files.download",
+      "shortPath": "files.download",
+      "description": "Download a file by its server-relative URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.files.get",
+      "shortPath": "files.get",
+      "description": "Get metadata of a SharePoint file by server-relative URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "parentReference",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.files.listInFolder",
+      "shortPath": "files.listInFolder",
+      "description": "List all files in a SharePoint folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_server_relative_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, name?: string, webUrl?: string, size?: number, createdDateTime?: string, lastModifiedDateTime?: string, file?: {}, folder?: {}, parentReference?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.files.recycle",
+      "shortPath": "files.recycle",
+      "description": "Move a SharePoint file to the recycle bin",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.files.undoCheckout",
+      "shortPath": "files.undoCheckout",
+      "description": "Undo a checked-out SharePoint file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_relative_path",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file to a SharePoint document library folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_server_relative_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_base64",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "parentReference",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a new SharePoint folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "parentReference",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Delete a SharePoint folder and all its contents",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.folders.get",
+      "shortPath": "folders.get",
+      "description": "Get a SharePoint folder by server-relative URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "parentReference",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.folders.getAll",
+      "shortPath": "folders.getAll",
+      "description": "Get all SharePoint folders in a list or location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_relative_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, name?: string, webUrl?: string, size?: number, createdDateTime?: string, lastModifiedDateTime?: string, file?: {}, folder?: {}, parentReference?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.folders.listSubfolders",
+      "shortPath": "folders.listSubfolders",
+      "description": "List subfolders inside a SharePoint folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, name?: string, webUrl?: string, size?: number, createdDateTime?: string, lastModifiedDateTime?: string, file?: {}, folder?: {}, parentReference?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.folders.rename",
+      "shortPath": "folders.rename",
+      "description": "Rename a SharePoint folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server_relative_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "new_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "new_server_relative_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.addAttachment",
+      "shortPath": "items.addAttachment",
+      "description": "Add a file attachment to a SharePoint list item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_base64",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ServerRelativeUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.create",
+      "shortPath": "items.create",
+      "description": "Create a new SharePoint list item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "@odata.etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.createByGuid",
+      "shortPath": "items.createByGuid",
+      "description": "Create a new item in a SharePoint list by GUID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_guid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "@odata.etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.createInFolder",
+      "shortPath": "items.createInFolder",
+      "description": "Create a new list item inside a specific folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "@odata.etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.delete",
+      "shortPath": "items.delete",
+      "description": "Permanently delete a SharePoint list item",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.get",
+      "shortPath": "items.get",
+      "description": "Get a SharePoint list item by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "@odata.etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.getAttachmentContent",
+      "shortPath": "items.getAttachmentContent",
+      "description": "Download the content of a list item attachment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.getEtag",
+      "shortPath": "items.getEtag",
+      "description": "Get the ETag for a SharePoint list item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.getVersion",
+      "shortPath": "items.getVersion",
+      "description": "Get a specific version of a SharePoint list item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "version_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.list",
+      "shortPath": "items.list",
+      "description": "List items in a SharePoint list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, createdDateTime?: string, lastModifiedDateTime?: string, webUrl?: string, fields?: {}, @odata.etag?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.listAttachments",
+      "shortPath": "items.listAttachments",
+      "description": "List all attachments for a SharePoint list item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ FileName?: string, ServerRelativeUrl?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.listByGuid",
+      "shortPath": "items.listByGuid",
+      "description": "List items in a SharePoint list by GUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_guid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, createdDateTime?: string, lastModifiedDateTime?: string, webUrl?: string, fields?: {}, @odata.etag?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.recycle",
+      "shortPath": "items.recycle",
+      "description": "Move a SharePoint list item to the recycle bin",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.items.update",
+      "shortPath": "items.update",
+      "description": "Update an existing SharePoint list item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a new SharePoint list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "enable_versioning",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ hidden?: boolean, template?: string, contentTypesEnabled?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete a SharePoint list by GUID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_guid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.lists.deleteByTitle",
+      "shortPath": "lists.deleteByTitle",
+      "description": "Delete a SharePoint list by title",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.lists.getByGuid",
+      "shortPath": "lists.getByGuid",
+      "description": "Get a SharePoint list by GUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_guid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ hidden?: boolean, template?: string, contentTypesEnabled?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.lists.getByTitle",
+      "shortPath": "lists.getByTitle",
+      "description": "Get a SharePoint list by title",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ hidden?: boolean, template?: string, contentTypesEnabled?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.lists.getChanges",
+      "shortPath": "lists.getChanges",
+      "description": "Get change log entries for a SharePoint list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "change_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, createdDateTime?: string, lastModifiedDateTime?: string, webUrl?: string, fields?: {}, @odata.etag?: string }[]"
+          },
+          {
+            "key": "@odata.deltaLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.lists.listAll",
+      "shortPath": "lists.listAll",
+      "description": "List all SharePoint lists in the site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, displayName?: string, description?: string, webUrl?: string, createdDateTime?: string, lastModifiedDateTime?: string, list?: { hidden?: boolean, template?: string, contentTypesEnabled?: boolean } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.lists.listColumns",
+      "shortPath": "lists.listColumns",
+      "description": "List all columns (fields) in a SharePoint list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, name?: string, displayName?: string, required?: boolean, hidden?: boolean, readOnly?: boolean, defaultValue?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.lists.renderDataAsStream",
+      "shortPath": "lists.renderDataAsStream",
+      "description": "Render list data as a pageable stream",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "view_xml",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "row_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging_info",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Row",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "NextHref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrevHref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FirstRow",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "LastRow",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Update an existing SharePoint list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enable_versioning",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.permissions.addRoleToItem",
+      "shortPath": "permissions.addRoleToItem",
+      "description": "Grant a role assignment to a user on a list item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "principal_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "role_definition_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "principal_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "role_definition_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.permissions.addRoleToList",
+      "shortPath": "permissions.addRoleToList",
+      "description": "Grant a role assignment to a user on a SharePoint list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "principal_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "role_definition_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.permissions.breakInheritanceOnItem",
+      "shortPath": "permissions.breakInheritanceOnItem",
+      "description": "Break permission inheritance on a list item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "copy_role_assignments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clear_subscopes",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.permissions.breakInheritanceOnList",
+      "shortPath": "permissions.breakInheritanceOnList",
+      "description": "Break permission inheritance on a SharePoint list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "copy_role_assignments",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "clear_subscopes",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.permissions.getRoleDefinitions",
+      "shortPath": "permissions.getRoleDefinitions",
+      "description": "Get all role definitions (permission levels) in the site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: number | string, Name?: string, Description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.recycleBin.deletePermanent",
+      "shortPath": "recycleBin.deletePermanent",
+      "description": "Permanently delete an item from the recycle bin",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.recycleBin.list",
+      "shortPath": "recycleBin.list",
+      "description": "List items in the SharePoint recycle bin",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "row_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_ascending",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ Id?: string, Title?: string, DirName?: string, LeafName?: string, DeletedDate?: string, DeletedByName?: string, Size?: string, ItemType?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.recycleBin.restore",
+      "shortPath": "recycleBin.restore",
+      "description": "Restore an item from the SharePoint recycle bin",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.search.query",
+      "shortPath": "search.query",
+      "description": "Execute a full-text search query against SharePoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query_text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "row_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_row",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "select_properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "refiners",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refinement_filters",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_list",
+            "optional": true,
+            "type": "{ Property: string, Direction: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ searchTerms?: string[], hitsContainers?: { hits?: { hitId?: string, rank?: number, summary?: string, resource?: {} }[], total?: number, moreResultsAvailable?: boolean }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.search.suggest",
+      "shortPath": "search.suggest",
+      "description": "Get query suggestions from SharePoint search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query_text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "show_people_name_suggestions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_suggestion_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_prefix_match",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.social.follow",
+      "shortPath": "social.follow",
+      "description": "Follow a SharePoint actor (person, document, site, tag)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "actor_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_guid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.social.getFollowed",
+      "shortPath": "social.getFollowed",
+      "description": "Get entities followed by the current user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "types",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ AccountName?: string, ActorType?: number, ContentUri?: string, Id?: string, ImageUri?: string | null, Name?: string, StatusText?: string, Uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.social.getFollowers",
+      "shortPath": "social.getFollowers",
+      "description": "Get followers of the current user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ AccountName?: string, ActorType?: number, ContentUri?: string, Id?: string, ImageUri?: string | null, Name?: string, StatusText?: string, Uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.social.isFollowed",
+      "shortPath": "social.isFollowed",
+      "description": "Check if the current user is following an actor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "actor_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_guid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.users.create",
+      "shortPath": "users.create",
+      "description": "Add an Azure AD user to the SharePoint site",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "login_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userPrincipalName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.users.ensure",
+      "shortPath": "users.ensure",
+      "description": "Ensure a user exists in SharePoint (create if not present)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "login_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userPrincipalName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.users.find",
+      "shortPath": "users.find",
+      "description": "Find SharePoint users by name or email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, displayName?: string, mail?: string, userPrincipalName?: string, jobTitle?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.users.getCurrent",
+      "shortPath": "users.getCurrent",
+      "description": "Get the currently authenticated SharePoint user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userPrincipalName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.users.getEffectivePermissions",
+      "shortPath": "users.getEffectivePermissions",
+      "description": "Get the effective permissions of a user on the web",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_login_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userPrincipalName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.users.getGroupUsers",
+      "shortPath": "users.getGroupUsers",
+      "description": "Get users belonging to a SharePoint site group by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, displayName?: string, mail?: string, userPrincipalName?: string, jobTitle?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.users.getGroupUsersById",
+      "shortPath": "users.getGroupUsersById",
+      "description": "Get users belonging to a SharePoint site group by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, displayName?: string, mail?: string, userPrincipalName?: string, jobTitle?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.users.listGroups",
+      "shortPath": "users.listGroups",
+      "description": "List all site groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, displayName?: string, description?: string, mail?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.users.listSite",
+      "shortPath": "users.listSite",
+      "description": "List all users in the SharePoint site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, displayName?: string, mail?: string, userPrincipalName?: string, jobTitle?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.users.remove",
+      "shortPath": "users.remove",
+      "description": "Remove a user from the SharePoint site",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "login_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.web.createSubsite",
+      "shortPath": "web.createSubsite",
+      "description": "Create a new SharePoint subsite",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "use_unique_permissions",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "siteCollection",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.web.getContextInfo",
+      "shortPath": "web.getContextInfo",
+      "description": "Get SharePoint context info including form digest token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FormDigestValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FormDigestTimeoutSeconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "LibraryVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SiteFullUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "WebFullUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.web.getDriveItemByPath",
+      "shortPath": "web.getDriveItemByPath",
+      "description": "Get a drive item by its path using Microsoft Graph",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.web.getInfo",
+      "shortPath": "web.getInfo",
+      "description": "Get information about the current SharePoint web/site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "siteCollection",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.web.getSiteCollectionInfo",
+      "shortPath": "web.getSiteCollectionInfo",
+      "description": "Get information about the SharePoint site collection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "siteCollection",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.web.getSitePage",
+      "shortPath": "web.getSitePage",
+      "description": "Get the content of a SharePoint modern site page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_server_relative_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.web.logEvent",
+      "shortPath": "web.logEvent",
+      "description": "Log a custom event to the SharePoint ULS log",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entry_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "event_code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.web.updateSite",
+      "shortPath": "web.updateSite",
+      "description": "Update SharePoint site title or description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.webhookSubscriptions.get",
+      "shortPath": "webhookSubscriptions.get",
+      "description": "Get a specific SharePoint webhook subscription",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscription_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notificationUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sharepoint.api.webhookSubscriptions.getAll",
+      "shortPath": "webhookSubscriptions.getAll",
+      "description": "Get all webhook subscriptions for a SharePoint list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, clientState?: string | null, expirationDateTime?: string, notificationUrl?: string, resource?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "sharepoint.webhooks.lists.listChanged",
+      "shortPath": "lists.listChanged",
+      "description": "A SharePoint list item was created, updated, or deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId: string, clientState?: string | null, expirationDateTime?: string, resource: string, tenantId: string, siteUrl: string, webId: string }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId: string, resource: string, siteUrl: string, webId: string, tenantId: string, receivedAt: Date }",
+      "usageExample": "sharepoint({\n    webhookHooks: {\n        lists: {\n            listChanged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "sharepoint.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "serverRelativeUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timeCreated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timeLastModified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "length",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "majorVersion",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "minorVersion",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "checkOutType",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "eTag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "modifiedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "sharepoint.db.folders.search",
+      "entityName": "folders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "serverRelativeUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "itemCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "timeCreated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timeLastModified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "modifiedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "sharepoint.db.items.search",
+      "entityName": "items",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "listId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "listTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "editorId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fileSystemObjectType",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "serverRedirectedEmbedUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "modifiedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "sharepoint.db.lists.search",
+      "entityName": "lists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "itemCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "baseType",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "baseTemplate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastItemModifiedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastItemUserModifiedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hidden",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "serverRelativeUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "modifiedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "sharepoint.db.sites.search",
+      "entityName": "sites",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "serverRelativeUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastItemUserModifiedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webTemplate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "sharepoint.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "loginName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "principalType",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isSiteAdmin",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

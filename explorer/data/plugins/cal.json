@@ -1,0 +1,609 @@
+{
+  "id": "cal",
+  "displayName": "Cal.com",
+  "description": "Open scheduling platform for booking meetings, availability, and calendar integrations.",
+  "npmPackageName": "@corsair-dev/cal",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 5,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "organization_id",
+        "user_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "cal.api.bookings.cancel",
+      "shortPath": "bookings.cancel",
+      "description": "Cancel a booking",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cancellationReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allRemainingBookings",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cal.api.bookings.confirm",
+      "shortPath": "bookings.confirm",
+      "description": "Confirm a pending booking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cal.api.bookings.create",
+      "shortPath": "bookings.create",
+      "description": "Create a new booking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventTypeId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "attendee",
+            "optional": false,
+            "type": "{ name: string, email: string, timeZone: string }"
+          },
+          {
+            "key": "meetingUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lengthInMinutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bookingFieldsResponses",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cal.api.bookings.decline",
+      "shortPath": "bookings.decline",
+      "description": "Decline a pending booking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cal.api.bookings.get",
+      "shortPath": "bookings.get",
+      "description": "Get a booking by UID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cal.api.bookings.list",
+      "shortPath": "bookings.list",
+      "description": "List all bookings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "upcoming | recurring | past | cancelled | unconfirmed"
+          },
+          {
+            "key": "attendeeEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attendeeName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventTypeIds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventTypeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "teamsIds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "afterStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "beforeEnd",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortStart",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "sortEnd",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "sortCreated",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "take",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cal.api.bookings.reschedule",
+      "shortPath": "bookings.reschedule",
+      "description": "Reschedule a booking to a new time",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rescheduledBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "cal.webhooks.bookings.bookingCancelled",
+      "shortPath": "bookings.bookingCancelled",
+      "description": "A booking was cancelled",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "triggerEvent",
+            "optional": false,
+            "type": "BOOKING_CANCELLED"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null }"
+          }
+        ]
+      },
+      "responseType": "{ triggerEvent: BOOKING_CANCELLED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null } }",
+      "usageExample": "cal({\n    webhookHooks: {\n        bookings: {\n            bookingCancelled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "cal.webhooks.bookings.bookingCreated",
+      "shortPath": "bookings.bookingCreated",
+      "description": "A new booking was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "triggerEvent",
+            "optional": false,
+            "type": "BOOKING_CREATED"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null }"
+          }
+        ]
+      },
+      "responseType": "{ triggerEvent: BOOKING_CREATED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null } }",
+      "usageExample": "cal({\n    webhookHooks: {\n        bookings: {\n            bookingCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "cal.webhooks.bookings.bookingRescheduled",
+      "shortPath": "bookings.bookingRescheduled",
+      "description": "A booking was rescheduled",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "triggerEvent",
+            "optional": false,
+            "type": "BOOKING_RESCHEDULED"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null }"
+          }
+        ]
+      },
+      "responseType": "{ triggerEvent: BOOKING_RESCHEDULED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null } }",
+      "usageExample": "cal({\n    webhookHooks: {\n        bookings: {\n            bookingRescheduled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "cal.webhooks.bookings.meetingEnded",
+      "shortPath": "bookings.meetingEnded",
+      "description": "A meeting ended",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "triggerEvent",
+            "optional": false,
+            "type": "MEETING_ENDED"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null }"
+          }
+        ]
+      },
+      "responseType": "{ triggerEvent: MEETING_ENDED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null } }",
+      "usageExample": "cal({\n    webhookHooks: {\n        bookings: {\n            meetingEnded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "cal.webhooks.system.ping",
+      "shortPath": "system.ping",
+      "description": "Ping test to verify webhook endpoint",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "triggerEvent",
+            "optional": false,
+            "type": "PING"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ triggerEvent: PING, createdAt?: string, payload?: {} }",
+      "usageExample": "cal({\n    webhookHooks: {\n        system: {\n            ping: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "cal.db.bookings.search",
+      "entityName": "bookings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "bookingId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "uid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "end",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "length",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "eventTypeId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "meetingUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cancellationReason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reschedulingReason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

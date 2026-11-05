@@ -1,0 +1,395 @@
+---
+title: Database
+description: "SAP SuccessFactors local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The SAP SuccessFactors plugin syncs data locally. Use `corsair.sapsuccessfactors.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Calibration Session
+
+Path: `sapsuccessfactors.db.calibrationSession.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.calibrationSession.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `sessionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `sessionName` | `string` | equals, contains, startsWith, endsWith, in |
+| `sessionOwnerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `sessionType` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `startDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `endDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Candidate
+
+Path: `sapsuccessfactors.db.candidate.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.candidate.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `primaryEmail` | `string` | equals, contains, startsWith, endsWith, in |
+| `contactEmail` | `string` | equals, contains, startsWith, endsWith, in |
+| `cellPhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `currentTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Company
+
+Path: `sapsuccessfactors.db.company.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.company.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `startDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_defaultValue` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `entityOID` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Employment
+
+Path: `sapsuccessfactors.db.employment.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.employment.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `string` | equals, contains, startsWith, endsWith, in |
+| `personIdExternal` | `string` | equals, contains, startsWith, endsWith, in |
+| `startDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `endDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `originalStartDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `seniorityDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `assignmentClass` | `string` | equals, contains, startsWith, endsWith, in |
+| `employmentType` | `string` | equals, contains, startsWith, endsWith, in |
+| `isContingentWorker` | `boolean` | equals |
+| `lastModifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Goal
+
+Path: `sapsuccessfactors.db.goal.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.goal.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `flag` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `metric` | `string` | equals, contains, startsWith, endsWith, in |
+| `done` | `number` | equals, gt, gte, lt, lte, in |
+| `start` | `string` | equals, contains, startsWith, endsWith, in |
+| `due` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Goal Plan
+
+Path: `sapsuccessfactors.db.goalPlan.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.goalPlan.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `dueDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Job Application
+
+Path: `sapsuccessfactors.db.jobApplication.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.jobApplication.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `appStatusSetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `applicationDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Job Requisition
+
+Path: `sapsuccessfactors.db.jobRequisition.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.jobRequisition.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `internalStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `department` | `string` | equals, contains, startsWith, endsWith, in |
+| `division` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `statusSetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `appStatusSetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Person
+
+Path: `sapsuccessfactors.db.person.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.person.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `personIdExternal` | `string` | equals, contains, startsWith, endsWith, in |
+| `personId` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateOfBirth` | `string` | equals, contains, startsWith, endsWith, in |
+| `countryOfBirth` | `string` | equals, contains, startsWith, endsWith, in |
+| `regionOfBirth` | `string` | equals, contains, startsWith, endsWith, in |
+| `placeOfBirth` | `string` | equals, contains, startsWith, endsWith, in |
+| `perPersonUuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Personal
+
+Path: `sapsuccessfactors.db.personal.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.personal.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `personIdExternal` | `string` | equals, contains, startsWith, endsWith, in |
+| `startDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `endDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `middleName` | `string` | equals, contains, startsWith, endsWith, in |
+| `formalName` | `string` | equals, contains, startsWith, endsWith, in |
+| `birthName` | `string` | equals, contains, startsWith, endsWith, in |
+| `gender` | `string` | equals, contains, startsWith, endsWith, in |
+| `maritalStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `nationality` | `string` | equals, contains, startsWith, endsWith, in |
+| `preferredName` | `string` | equals, contains, startsWith, endsWith, in |
+| `salutation` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Position
+
+Path: `sapsuccessfactors.db.position.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.position.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `string` | equals, contains, startsWith, endsWith, in |
+| `effectiveStartDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `effectiveEndDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `effectiveStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalName_defaultValue` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `department` | `string` | equals, contains, startsWith, endsWith, in |
+| `division` | `string` | equals, contains, startsWith, endsWith, in |
+| `company` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `payGrade` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## User
+
+Path: `sapsuccessfactors.db.user.search`
+
+```ts
+const rows = await corsair.sapsuccessfactors.db.user.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `defaultFullName` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `mi` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `department` | `string` | equals, contains, startsWith, endsWith, in |
+| `division` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `managerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `hrId` | `string` | equals, contains, startsWith, endsWith, in |
+| `hireDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModified` | `string` | equals, contains, startsWith, endsWith, in |
+| `timeZone` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `zipCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `addressLine1` | `string` | equals, contains, startsWith, endsWith, in |
+| `businessPhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `cellPhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `empId` | `string` | equals, contains, startsWith, endsWith, in |
+| `totalTeamSize` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

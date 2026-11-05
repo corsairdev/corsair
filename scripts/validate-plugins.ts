@@ -7,7 +7,11 @@ const IGNORED_PACKAGES = ['corsair', 'cli', 'mcp', 'studio', 'ui', 'app'];
 const plugins = fs
 	.readdirSync(PACKAGES_DIR, { withFileTypes: true })
 	.filter(
-		(dirent) => dirent.isDirectory() && !IGNORED_PACKAGES.includes(dirent.name),
+		(dirent) =>
+			dirent.isDirectory() &&
+			!IGNORED_PACKAGES.includes(dirent.name) &&
+			// frpc-<platform>-<arch> are prebuilt binary shims, not integrations.
+			!dirent.name.startsWith('frpc-'),
 	)
 	.map((dirent) => dirent.name);
 

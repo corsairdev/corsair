@@ -1,0 +1,49 @@
+displayName: BuiltWith
+description: Web technology profiling for domains, technology adoption lists, trends, redirects, and company financials.
+recommendedAuth: api_key
+examples:
+  read:
+    path: domain.lookup
+    title: Look up a domain's technology stack
+    args:
+      lookup: builtwith.com
+apiExamples:
+  createDomainListFile:
+    args:
+      domains:
+        - builtwith.com
+        - shopify.com
+  datasets.lookup:
+    args:
+      tech: Shopify
+      date: '2024-01-01'
+  domain.lookup:
+    args:
+      lookup: builtwith.com
+      liveonly: true
+  financial.lookup:
+    args:
+      lookup: shopify.com
+  free.lookup:
+    args:
+      lookup: builtwith.com
+  lists.getList:
+    args:
+      tech: Shopify
+      country: US
+  mcp.lookup:
+    args:
+      search: payments
+  product.lookup:
+    args:
+      query: running shoes
+      limit: 10
+  recommendations.lookup:
+    args:
+      lookup: builtwith.com
+  redirects.lookup:
+    args:
+      lookup: builtwith.com
+  social.lookup:
+    args:
+      lookup: twitter.com/builtwith

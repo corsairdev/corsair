@@ -1,0 +1,6573 @@
+---
+title: API
+description: "API reference for HeyGen: every `heygen.api.*` operation with input and output types."
+---
+
+Every `heygen.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Ai Clipping
+
+### create
+
+`aiClipping.create`
+
+Create an AI clipping job that turns a long video into short highlight clips
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.aiClipping.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video` | `object` | Yes | — |
+| `title` | `string` | No | — |
+| `input_language` | `string` | No | — |
+| `output_settings` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="video full type">
+
+```ts
+{
+  type: url,
+  url: string
+} | {
+  type: asset_id,
+  asset_id: string
+}
+```
+</Accordion>
+
+<Accordion title="output_settings full type">
+
+```ts
+{
+  duration_types: 30 | 60 | 180 | long[],
+  aspect_ratio?: landscape | portrait | square,
+  captions?: boolean,
+  caption_style?: string,
+  prompt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ai_clipping_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`aiClipping.delete`
+
+Soft-delete an AI clipping job and its clips
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.aiClipping.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`aiClipping.get`
+
+Retrieve the status and generated clips of an AI clipping job
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.aiClipping.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  status: pending | running | completed | failed | cancelled,
+  input_language?: string | null,
+  source_duration?: number | null,
+  clips?: {
+    id: string,
+    status: pending | completed | failed,
+    duration_seconds?: number | null,
+    aspect_ratio?: landscape | portrait | square | null,
+    title?: string | null,
+    virality_score?: number | null,
+    thumbnail_url?: string | null,
+    video_url?: string | null,
+    failure_message?: string | null
+  }[],
+  progress?: number,
+  callback_id?: string | null,
+  created_at?: number | null,
+  failure_message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`aiClipping.list`
+
+Retrieve a cursor-paginated list of AI clipping jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.aiClipping.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  status: pending | running | completed | failed | cancelled,
+  input_language?: string | null,
+  source_duration?: number | null,
+  clips?: {
+    id: string,
+    status: pending | completed | failed,
+    duration_seconds?: number | null,
+    aspect_ratio?: landscape | portrait | square | null,
+    title?: string | null,
+    virality_score?: number | null,
+    thumbnail_url?: string | null,
+    video_url?: string | null,
+    failure_message?: string | null
+  }[],
+  progress?: number,
+  callback_id?: string | null,
+  created_at?: number | null,
+  failure_message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Assets
+
+### completeUpload
+
+`assets.completeUpload`
+
+Finalize a presigned direct-upload session into a usable asset
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.assets.completeUpload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+| `checksum_sha256` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  asset_id: string,
+  url: string,
+  mime_type: string,
+  size_bytes: number,
+  status: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFolder
+
+`assets.createFolder`
+
+Create a new folder to organize videos and assets
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.assets.createFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `parent_folder_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  folder_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createUploadSession
+
+`assets.createUploadSession`
+
+Create a presigned direct-upload session for a large asset
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.assets.createUploadSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+| `content_type` | `string` | Yes | — |
+| `size_bytes` | `number` | Yes | — |
+| `checksum_sha256` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  asset_id: string,
+  upload_url: string,
+  upload_headers: {
+  },
+  expires_in_seconds: number,
+  max_bytes: number,
+  status: pending_upload
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteAsset
+
+`assets.deleteAsset`
+
+Permanently delete a specific media asset by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.assets.deleteAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteAssetV3
+
+`assets.deleteAssetV3`
+
+Permanently delete an asset via the v3 API
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.assets.deleteAssetV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAsset
+
+`assets.getAsset`
+
+Retrieve metadata for an asset via the v3 API
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.assets.getAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string,
+  owner: string,
+  space_id: string,
+  folder_id?: string | null,
+  uploaded_at: number,
+  url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTemplate
+
+`assets.getTemplate`
+
+Retrieve structure, placeholders, and avatar settings of a specific template
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.assets.getTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  template_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAssets
+
+`assets.listAssets`
+
+Retrieve a paginated list of assets with type/folder filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.assets.listAssets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_type` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  assets: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAssets2
+
+`assets.listAssets2`
+
+Retrieve a list of uploaded assets with cursor/page pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.assets.listAssets2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  assets: {
+  }[],
+  next_cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFolders
+
+`assets.listFolders`
+
+Retrieve a paginated list of folders in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.assets.listFolders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  folders: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTemplates
+
+`assets.listTemplates`
+
+Retrieve a list of pre-designed avatar templates
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.assets.listTemplates({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  templates: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restoreFolder
+
+`assets.restoreFolder`
+
+Recover a previously trashed folder
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.assets.restoreFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trashFolder
+
+`assets.trashFolder`
+
+Soft-delete a folder by moving it to trash (recoverable via restoreFolder)
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.assets.trashFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateFolder
+
+`assets.updateFolder`
+
+Rename an existing folder by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.assets.updateFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadAsset
+
+`assets.uploadAsset`
+
+Upload an image, video, or audio file asset to the platform
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.assets.uploadAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileBase64` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadAssetV3
+
+`assets.uploadAssetV3`
+
+Upload an image, video, audio, or PDF asset via the v3 API
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.assets.uploadAssetV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileBase64` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  asset_id: string,
+  url: string,
+  mime_type: string,
+  size_bytes: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audio
+
+### search
+
+`audio.search`
+
+Search HeyGen's library of background music and sound effects
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.audio.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `type` | `music \| sound_effects` | No | — |
+| `limit` | `number` | No | — |
+| `min_score` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Avatar Realtime
+
+### appendText
+
+`avatarRealtime.appendText`
+
+Append streamed text to an active text_stream avatar realtime session
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatarRealtime.appendText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stream_id` | `string` | Yes | — |
+| `delta` | `string` | Yes | — |
+| `final` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ok?: boolean,
+  buffered_bytes: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cancelSession
+
+`avatarRealtime.cancelSession`
+
+Cancel an active avatar realtime streaming session
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatarRealtime.cancelSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stream_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  stream_id: string,
+  cancelled: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createSession
+
+`avatarRealtime.createSession`
+
+Create a low-latency HLS streaming session with an interactive avatar
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatarRealtime.createSession({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  type: tts,
+  avatar_id: string,
+  text: string,
+  voice_id: string
+} | {
+  type: audio,
+  avatar_id: string,
+  audio: {
+    type: url,
+    url: string
+  } | {
+    type: asset_id,
+    asset_id: string
+  } | {
+    type: base64,
+    media_type: string,
+    data: string
+  }
+} | {
+  type: text_stream,
+  avatar_id: string,
+  voice_id: string,
+  text: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  stream_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSession
+
+`avatarRealtime.getSession`
+
+Retrieve the status and playback URL of an avatar realtime session
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatarRealtime.getSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stream_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  stream_id: string,
+  status: pending | streaming | completed | error,
+  hls_url?: string | null,
+  error_message?: string | null,
+  end_reason?: final_marker | idle_timeout | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Avatars
+
+### addLooks
+
+`avatars.addLooks`
+
+Add up to 4 image look variations to an existing photo avatar group
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatars.addLooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+| `image_keys` | `string[]` | Yes | — |
+| `name` | `string` | No | — |
+| `generation_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  generation_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addMotion
+
+`avatars.addMotion`
+
+Animate a still photo avatar into a moving lifelike motion avatar
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatars.addMotion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### checkLookStatus
+
+`avatars.checkLookStatus`
+
+Monitor the generation status/progress of photo avatar looks
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.checkLookStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generation_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  generation_id?: string,
+  status?: string,
+  image_url_list?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`avatars.create`
+
+Create a new avatar from a prompt, digital twin video, or photo
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatars.create({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  type: prompt,
+  name: string,
+  prompt: string,
+  reference_images?: (
+    {
+      type: url,
+      url: string
+    } | {
+      type: asset_id,
+      asset_id: string
+    } | {
+      type: base64,
+      media_type: string,
+      data: string
+    }
+  )[],
+  avatar_group_id?: string | null,
+  avatar_id?: string | null
+} | {
+  type: digital_twin,
+  name: string,
+  file: {
+    type: url,
+    url: string
+  } | {
+    type: asset_id,
+    asset_id: string
+  } | {
+    type: base64,
+    media_type: string,
+    data: string
+  },
+  avatar_group_id?: string | null
+} | {
+  type: photo,
+  name: string,
+  file: {
+    type: url,
+    url: string
+  } | {
+    type: asset_id,
+    asset_id: string
+  } | {
+    type: base64,
+    media_type: string,
+    data: string
+  },
+  avatar_group_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  avatar_item?: {
+    id: string,
+    name: string,
+    avatar_type: studio_avatar | digital_twin | photo_avatar,
+    group_id?: string | null,
+    preview_image_url?: string | null,
+    preview_video_url?: string | null,
+    gender?: string | null,
+    tags?: string[] | null,
+    default_voice_id?: string | null,
+    supported_api_engines?: string[] | null,
+    image_width?: number | null,
+    image_height?: number | null,
+    preferred_orientation?: portrait | landscape | square | null,
+    status?: processing | pending_consent | failed | completed | null,
+    error?: {
+      code: string,
+      message: string
+    } | null
+  } | null,
+  avatar_group?: {
+    id: string,
+    name: string,
+    created_at: number,
+    looks_count: number,
+    preview_image_url?: string | null,
+    preview_video_url?: string | null,
+    gender?: string | null,
+    default_voice_id?: string | null,
+    consent_status?: string | null,
+    status?: processing | pending_consent | failed | completed | null,
+    error?: {
+      code: string,
+      message: string
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createConsent
+
+`avatars.createConsent`
+
+Start the consent verification flow required for a custom avatar group
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatars.createConsent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+| `reroute_url` | `string` | No | — |
+| `consent_text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  avatar_group: {
+    id: string,
+    name: string,
+    created_at: number,
+    looks_count: number,
+    preview_image_url?: string | null,
+    preview_video_url?: string | null,
+    gender?: string | null,
+    default_voice_id?: string | null,
+    consent_status?: string | null,
+    status?: processing | pending_consent | failed | completed | null,
+    error?: {
+      code: string,
+      message: string
+    } | null
+  },
+  url: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createPhotoGroup
+
+`avatars.createPhotoGroup`
+
+Create an avatar group for AI-generated and user-uploaded photos
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatars.createPhotoGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `image_key` | `string` | Yes | — |
+| `generation_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  image_url?: string,
+  name?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteGroup
+
+`avatars.deleteGroup`
+
+Permanently delete an avatar group by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.avatars.deleteGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteLook
+
+`avatars.deleteLook`
+
+Permanently delete a photo avatar or digital twin look
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.avatars.deleteLook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `look_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deletePhoto
+
+`avatars.deletePhoto`
+
+Delete a photo avatar by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.avatars.deletePhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deletePhotoGroup
+
+`avatars.deletePhotoGroup`
+
+Delete a photo avatar group by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.avatars.deletePhotoGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTalkingPhoto
+
+`avatars.deleteTalkingPhoto`
+
+Permanently delete a specific talking photo resource
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.avatars.deleteTalkingPhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `talking_photo_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generatePhotos
+
+`avatars.generatePhotos`
+
+Generate AI avatar photos based on text prompts and attributes
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatars.generatePhotos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `age` | `string` | Yes | — |
+| `gender` | `string` | Yes | — |
+| `ethnicity` | `string` | Yes | — |
+| `orientation` | `string` | Yes | — |
+| `pose` | `string` | Yes | — |
+| `style` | `string` | Yes | — |
+| `appearance` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  generation_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDetails
+
+`avatars.getDetails`
+
+Retrieve comprehensive details, display properties, and preview media for an avatar
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `avatar_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  avatar_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGroup
+
+`avatars.getGroup`
+
+Retrieve details for a specific avatar group
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.getGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  created_at: number,
+  looks_count: number,
+  preview_image_url?: string | null,
+  preview_video_url?: string | null,
+  gender?: string | null,
+  default_voice_id?: string | null,
+  consent_status?: string | null,
+  status?: processing | pending_consent | failed | completed | null,
+  error?: {
+    code: string,
+    message: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLook
+
+`avatars.getLook`
+
+Retrieve details for a specific avatar look
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.getLook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `look_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  avatar_type: studio_avatar | digital_twin | photo_avatar,
+  group_id?: string | null,
+  preview_image_url?: string | null,
+  preview_video_url?: string | null,
+  gender?: string | null,
+  tags?: string[] | null,
+  default_voice_id?: string | null,
+  supported_api_engines?: string[] | null,
+  image_width?: number | null,
+  image_height?: number | null,
+  preferred_orientation?: portrait | landscape | square | null,
+  status?: processing | pending_consent | failed | completed | null,
+  error?: {
+    code: string,
+    message: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPhotoDetails
+
+`avatars.getPhotoDetails`
+
+Retrieve comprehensive metadata and configuration for a photo avatar/look
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.getPhotoDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTrainingStatus
+
+`avatars.getTrainingStatus`
+
+Monitor the training progress of a photo avatar training job
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.getTrainingStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`avatars.list`
+
+Retrieve a list of available public and private avatars with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownership` | `public \| private` | No | — |
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGroupAvatars
+
+`avatars.listGroupAvatars`
+
+Retrieve all avatars within a specific avatar group
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.listGroupAvatars({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  avatar_list: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGroups
+
+`avatars.listGroups`
+
+Retrieve a list of all avatar groups in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.listGroups({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  avatar_group_list: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLooks
+
+`avatars.listLooks`
+
+Retrieve a paginated list of avatar looks (outfits, poses, styles)
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.listLooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | No | — |
+| `avatar_type` | `studio_avatar \| digital_twin \| photo_avatar` | No | — |
+| `ownership` | `public \| private` | No | — |
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  avatar_type: studio_avatar | digital_twin | photo_avatar,
+  group_id?: string | null,
+  preview_image_url?: string | null,
+  preview_video_url?: string | null,
+  gender?: string | null,
+  tags?: string[] | null,
+  default_voice_id?: string | null,
+  supported_api_engines?: string[] | null,
+  image_width?: number | null,
+  image_height?: number | null,
+  preferred_orientation?: portrait | landscape | square | null,
+  status?: processing | pending_consent | failed | completed | null,
+  error?: {
+    code: string,
+    message: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTalkingPhotos
+
+`avatars.listTalkingPhotos`
+
+Retrieve a list of existing interactive talking photo projects
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.listTalkingPhotos({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchPublicGroups
+
+`avatars.searchPublicGroups`
+
+Search public avatar groups with filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.avatars.searchPublicGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  avatar_group_list: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateLook
+
+`avatars.updateLook`
+
+Rename a photo avatar or digital twin look
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatars.updateLook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `look_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  avatar_type: studio_avatar | digital_twin | photo_avatar,
+  group_id?: string | null,
+  preview_image_url?: string | null,
+  preview_video_url?: string | null,
+  gender?: string | null,
+  tags?: string[] | null,
+  default_voice_id?: string | null,
+  supported_api_engines?: string[] | null,
+  image_width?: number | null,
+  image_height?: number | null,
+  preferred_orientation?: portrait | landscape | square | null,
+  status?: processing | pending_consent | failed | completed | null,
+  error?: {
+    code: string,
+    message: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadTalkingPhoto
+
+`avatars.uploadTalkingPhoto`
+
+Create an interactive talking photo from an uploaded JPEG/PNG binary image
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatars.uploadTalkingPhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageBase64` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  talking_photo_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upscale
+
+`avatars.upscale`
+
+Enhance the resolution and quality of an existing motion avatar
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.avatars.upscale({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Brand
+
+### listGlossaries
+
+`brand.listGlossaries`
+
+Retrieve a paginated list of brand glossaries for custom term translation
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.brand.listGlossaries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  brand_glossary_id: string,
+  name: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listKits
+
+`brand.listKits`
+
+Retrieve a paginated list of brand kits (logos, colors, fonts)
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.brand.listKits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  brand_kit_id: string,
+  name: string,
+  logo_url?: string | null,
+  colors?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Hyperframes
+
+### create
+
+`hyperframes.create`
+
+Create a HyperFrames cloud render from an HTML/motion-graphics project
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.hyperframes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+| `fps` | `number` | No | — |
+| `quality` | `draft \| standard \| high` | No | — |
+| `format` | `mp4 \| webm \| mov` | No | — |
+| `resolution` | `1080p \| 4k` | No | — |
+| `aspect_ratio` | `16:9 \| 9:16 \| 1:1` | No | — |
+| `composition` | `string` | No | — |
+| `variables` | `object` | No | — |
+| `title` | `string` | No | — |
+| `callback_id` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  type: url,
+  url: string
+} | {
+  type: asset_id,
+  asset_id: string
+} | {
+  type: base64,
+  media_type: string,
+  data: string
+}
+```
+</Accordion>
+
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  render_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`hyperframes.delete`
+
+Permanently delete a HyperFrames render
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.hyperframes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `render_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  render_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`hyperframes.get`
+
+Retrieve the status and details of a HyperFrames render
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.hyperframes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `render_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  render_id: string,
+  status: queued | rendering | completed | failed,
+  format: mp4 | webm | mov,
+  title?: string | null,
+  callback_id?: string | null,
+  video_url?: string | null,
+  thumbnail_url?: string | null,
+  duration?: number | null,
+  fps?: number | null,
+  quality?: draft | standard | high | null,
+  resolution?: 1080p | 4k | null,
+  aspect_ratio?: 16:9 | 9:16 | 1:1 | null,
+  composition?: string | null,
+  created_at?: number | null,
+  completed_at?: number | null,
+  failure_message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`hyperframes.list`
+
+Retrieve a cursor-paginated list of HyperFrames renders
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.hyperframes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  render_id: string,
+  status: queued | rendering | completed | failed,
+  format: mp4 | webm | mov,
+  title?: string | null,
+  callback_id?: string | null,
+  video_url?: string | null,
+  thumbnail_url?: string | null,
+  duration?: number | null,
+  fps?: number | null,
+  quality?: draft | standard | high | null,
+  resolution?: 1080p | 4k | null,
+  aspect_ratio?: 16:9 | 9:16 | 1:1 | null,
+  composition?: string | null,
+  created_at?: number | null,
+  completed_at?: number | null,
+  failure_message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Knowledge Bases
+
+### create
+
+`knowledgeBases.create`
+
+Create a knowledge base with a custom name, opening line, and prompt for interactive sessions
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.knowledgeBases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `opening` | `string` | No | — |
+| `prompt` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  knowledge_base_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`knowledgeBases.delete`
+
+Permanently remove a knowledge base by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.knowledgeBases.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`knowledgeBases.list`
+
+Retrieve a list of all existing knowledge bases
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.knowledgeBases.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  list: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`knowledgeBases.update`
+
+Modify the opening line, prompt, or name of an existing knowledge base
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.knowledgeBases.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `opening` | `string` | No | — |
+| `prompt` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lipsync
+
+### create
+
+`lipsync.create`
+
+Create a lipsync job that syncs a video to a separate audio track
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.lipsync.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video` | `object` | Yes | — |
+| `audio` | `object` | Yes | — |
+| `title` | `string` | No | — |
+| `mode` | `speed \| precision` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_id` | `string` | No | — |
+| `enable_caption` | `boolean` | No | — |
+| `keep_the_same_format` | `boolean` | No | — |
+| `enable_dynamic_duration` | `boolean` | No | — |
+| `disable_music_track` | `boolean` | No | — |
+| `enable_speech_enhancement` | `boolean` | No | — |
+| `enable_watermark` | `boolean` | No | — |
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `fps_mode` | `vfr \| cfr \| passthrough` | No | — |
+| `folder_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="video full type">
+
+```ts
+{
+  type: url,
+  url: string
+} | {
+  type: asset_id,
+  asset_id: string
+}
+```
+</Accordion>
+
+<Accordion title="audio full type">
+
+```ts
+{
+  type: url,
+  url: string
+} | {
+  type: asset_id,
+  asset_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  lipsync_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`lipsync.delete`
+
+Permanently delete a lipsync job and its output
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.lipsync.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lipsync_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`lipsync.get`
+
+Retrieve the status and details of a lipsync job
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.lipsync.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lipsync_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  status: pending | running | completed | failed,
+  duration?: number | null,
+  video_url?: string | null,
+  caption_url?: string | null,
+  callback_id?: string | null,
+  created_at?: number | null,
+  failure_message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`lipsync.list`
+
+Retrieve a cursor-paginated list of lipsync jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.lipsync.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  status: pending | running | completed | failed,
+  duration?: number | null,
+  video_url?: string | null,
+  caption_url?: string | null,
+  callback_id?: string | null,
+  created_at?: number | null,
+  failure_message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`lipsync.update`
+
+Update the display title of a lipsync job
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.lipsync.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lipsync_id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  status: pending | running | completed | failed,
+  duration?: number | null,
+  video_url?: string | null,
+  caption_url?: string | null,
+  callback_id?: string | null,
+  created_at?: number | null,
+  failure_message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Proofread
+
+### create
+
+`proofread.create`
+
+Create a proofread session for reviewing a video translation before rendering
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.proofread.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video` | `object` | Yes | — |
+| `output_languages` | `string[]` | Yes | — |
+| `title` | `string` | Yes | — |
+| `brand_voice_id` | `string` | No | — |
+| `brand_glossary_id` | `string` | No | — |
+| `speaker_num` | `number` | No | — |
+| `folder_id` | `string` | No | — |
+| `enable_video_stretching` | `boolean` | No | — |
+| `disable_music_track` | `boolean` | No | — |
+| `enable_speech_enhancement` | `boolean` | No | — |
+| `srt` | `object` | No | — |
+| `mode` | `speed \| precision` | No | — |
+| `keep_the_same_format` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="video full type">
+
+```ts
+{
+  type: url,
+  url: string
+} | {
+  type: asset_id,
+  asset_id: string
+}
+```
+</Accordion>
+
+<Accordion title="srt full type">
+
+```ts
+{
+  type: url,
+  url: string
+} | {
+  type: asset_id,
+  asset_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  proofread_ids: string[],
+  status: processing | completed | failed
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### downloadSrt
+
+`proofread.downloadSrt`
+
+Retrieve presigned download URLs for a proofread session's SRT files
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.proofread.downloadSrt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proofread_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  srt_url: string,
+  original_srt_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateVideo
+
+`proofread.generateVideo`
+
+Render the final translated video from a completed proofread session
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.proofread.generateVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proofread_id` | `string` | Yes | — |
+| `captions` | `boolean` | No | — |
+| `translate_audio_only` | `boolean` | No | — |
+| `callback_id` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  video_translation_id: string,
+  status: processing | completed | failed
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`proofread.get`
+
+Retrieve the status and details of a proofread session
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.proofread.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proofread_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: processing | completed | failed,
+  title?: string | null,
+  output_language?: string | null,
+  input_language?: string | null,
+  submitted_for_review?: boolean | null,
+  created_at?: number | null,
+  failure_message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadSrt
+
+`proofread.uploadSrt`
+
+Replace a proofread session's subtitles with an edited SRT file
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.proofread.uploadSrt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proofread_id` | `string` | Yes | — |
+| `srt` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="srt full type">
+
+```ts
+{
+  type: url,
+  url: string
+} | {
+  type: asset_id,
+  asset_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: processing | completed | failed,
+  title?: string | null,
+  output_language?: string | null,
+  input_language?: string | null,
+  submitted_for_review?: boolean | null,
+  created_at?: number | null,
+  failure_message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Streaming
+
+### createToken
+
+`streaming.createToken`
+
+Generate a time-limited authentication token for streaming sessions
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.streaming.createToken({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ice
+
+`streaming.ice`
+
+Submit ICE candidate information for WebRTC peer-to-peer negotiation
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.streaming.ice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `candidate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="candidate full type">
+
+```ts
+{
+  candidate: string,
+  sdpMLineIndex?: string | number,
+  sdpMid?: string,
+  usernameFragment?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### interrupt
+
+`streaming.interrupt`
+
+Abruptly interrupt an avatar's ongoing action/speech for instant control
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.streaming.interrupt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### keepAlive
+
+`streaming.keepAlive`
+
+Reset the idle timeout counter for an active streaming session
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.streaming.keepAlive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`streaming.list`
+
+Retrieve a list of active or available streaming sessions
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.streaming.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sessions: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAvatars
+
+`streaming.listAvatars`
+
+Retrieve a list of public and custom interactive avatars available for streaming
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.streaming.listAvatars({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSessionHistory
+
+`streaming.listSessionHistory`
+
+Retrieve a paginated history and metadata of past streaming sessions
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.streaming.listSessionHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sessions: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### new
+
+`streaming.new`
+
+Initiate a streaming session with specified quality settings
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.streaming.new({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quality` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  session_id: string,
+  sdp?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### newSession
+
+`streaming.newSession`
+
+Initiate a streaming session with an Interactive Avatar to get a WebSocket URL, session ID, and token
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.streaming.newSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quality` | `string` | No | — |
+| `avatar_id` | `string` | No | — |
+| `voice` | `object` | No | — |
+| `knowledge_base_id` | `string` | No | — |
+| `version` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="voice full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  session_id: string,
+  sdp?: any,
+  access_token?: string,
+  url?: string,
+  ice_servers?: any,
+  session_duration_limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`streaming.start`
+
+Establish a WebRTC SDP offer connection for real-time video/audio streaming
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.streaming.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `sdp` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sdp full type">
+
+```ts
+{
+  type: string,
+  sdp: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sdp?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stop
+
+`streaming.stop`
+
+Terminate an active WebRTC streaming session and free resources
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.streaming.stop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### task
+
+`streaming.task`
+
+Send a real-time text speaking task to an active streaming avatar
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.streaming.task({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `task_type` | `talk \| repeat` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  duration_ms?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video Agents
+
+### createSession
+
+`videoAgents.createSession`
+
+Create a video agent session that generates a video from a text prompt
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.videoAgents.createSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | — |
+| `mode` | `generate \| chat` | No | — |
+| `avatar_id` | `string` | No | — |
+| `voice_id` | `string` | No | — |
+| `style_id` | `string` | No | — |
+| `brand_kit_id` | `string` | No | — |
+| `orientation` | `landscape \| portrait` | No | — |
+| `files` | `object[]` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_id` | `string` | No | — |
+| `incognito_mode` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+(
+  {
+    type: url,
+    url: string
+  } | {
+    type: asset_id,
+    asset_id: string
+  } | {
+    type: base64,
+    media_type: string,
+    data: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  session_id: string,
+  status: generating | thinking | completed | failed,
+  video_id?: string | null,
+  created_at: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getResource
+
+`videoAgents.getResource`
+
+Retrieve a specific resource generated within a video agent session
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videoAgents.getResource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `resource_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  resource_id: string,
+  resource_type: string,
+  source_type?: string | null,
+  url?: string | null,
+  thumbnail_url?: string | null,
+  preview_url?: string | null,
+  created_at?: number | null,
+  metadata?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSession
+
+`videoAgents.getSession`
+
+Retrieve the status, progress, and chat history of a video agent session
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videoAgents.getSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  session_id: string,
+  status: thinking | waiting_for_input | reviewing | generating | completed | failed,
+  progress?: number,
+  title?: string | null,
+  video_id?: string | null,
+  created_at: number,
+  messages: {
+    role: string,
+    content: string,
+    type: text | resource | error,
+    created_at?: number | null,
+    resource_ids?: string[] | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSessions
+
+`videoAgents.listSessions`
+
+Retrieve a paginated list of video agent sessions
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videoAgents.listSessions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  session_id: string,
+  title?: string | null,
+  created_at: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listStyles
+
+`videoAgents.listStyles`
+
+Retrieve a paginated list of available video agent styles
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videoAgents.listStyles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  style_id: string,
+  name: string,
+  thumbnail_url?: string | null,
+  preview_video_url?: string | null,
+  tags?: string[] | null,
+  aspect_ratio?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listVideos
+
+`videoAgents.listVideos`
+
+Retrieve the videos generated within a video agent session
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videoAgents.listVideos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: pending | processing | completed | failed
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendMessage
+
+`videoAgents.sendMessage`
+
+Send a chat message or revision request to an active video agent session
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.videoAgents.sendMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `avatar_id` | `string` | No | — |
+| `voice_id` | `string` | No | — |
+| `brand_kit_id` | `string` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+(
+  {
+    type: url,
+    url: string
+  } | {
+    type: asset_id,
+    asset_id: string
+  } | {
+    type: base64,
+    media_type: string,
+    data: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  session_id: string,
+  run_id: string,
+  title?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stopSession
+
+`videoAgents.stopSession`
+
+Stop an in-progress video agent session
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.videoAgents.stopSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  session_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### createWebm
+
+`videos.createWebm`
+
+Create a WebM format video with transparent background featuring studio avatars
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.videos.createWebm({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `avatar_id` | `string` | Yes | — |
+| `avatar_style` | `string` | No | — |
+| `input_text` | `string` | No | — |
+| `input_audio` | `string` | No | — |
+| `voice_id` | `string` | No | — |
+| `background_color` | `string` | No | — |
+| `title` | `string` | No | — |
+| `callback_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  video_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`videos.delete`
+
+Delete a generated or translated video by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.videos.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteV3
+
+`videos.deleteV3`
+
+Permanently delete a video and its associated files via the v3 API
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.videos.deleteV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  deleted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generate
+
+`videos.generate`
+
+Generate a customized avatar video with voices and character configs
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.videos.generate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `avatar \| image \| cinematic_avatar` | Yes | — |
+| `title` | `string` | No | — |
+| `resolution` | `string` | No | — |
+| `aspect_ratio` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_id` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  video_id: string,
+  status?: string,
+  output_format?: mp4 | webm
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSharableUrl
+
+`videos.getSharableUrl`
+
+Generate a public, shareable URL for a video without authentication requirements
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.videos.getSharableUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  share_url: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatus
+
+`videos.getStatus`
+
+Retrieve asynchronous video processing status and time-limited download URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videos.getStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  status: pending | processing | completed | failed,
+  created_at?: number | null,
+  completed_at?: number | null,
+  video_url?: string | null,
+  thumbnail_url?: string | null,
+  gif_url?: string | null,
+  captioned_video_url?: string | null,
+  subtitle_url?: string | null,
+  duration?: number | null,
+  folder_id?: string | null,
+  output_language?: string | null,
+  failure_code?: string | null,
+  failure_message?: string | null,
+  video_page_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`videos.list`
+
+Retrieve a paginated list of videos associated with the account
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videos.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  videos: {
+  }[],
+  token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listV3
+
+`videos.listV3`
+
+Retrieve a cursor-paginated list of videos via the v3 API
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videos.listV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `title` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: pending | processing | completed | failed
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### personalizedAddContact
+
+`videos.personalizedAddContact`
+
+Add recipient contacts (name/email) to a personalized video project
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.videos.personalizedAddContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `variables_list` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="variables_list full type">
+
+```ts
+{
+  email?: string,
+  first_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### personalizedProjectDetail
+
+`videos.personalizedProjectDetail`
+
+Retrieve details, status, and metadata for a personalized video project
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videos.personalizedProjectDetail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  project_id?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### templateGenerate
+
+`videos.templateGenerate`
+
+Generate a customized video from a pre-existing template using variable definitions
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.videos.templateGenerate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `caption` | `boolean` | No | — |
+| `test` | `boolean` | No | — |
+| `dimension` | `object` | No | — |
+| `folder_id` | `string` | No | — |
+| `variables` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="dimension full type">
+
+```ts
+{
+  width: number,
+  height: number
+}
+```
+</Accordion>
+
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  video_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### translate
+
+`videos.translate`
+
+Translate video content or audio tracks across 77+ languages
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.videos.translate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video` | `object` | Yes | — |
+| `output_languages` | `string[]` | Yes | — |
+| `title` | `string` | No | — |
+| `audio` | `object` | No | — |
+| `input_language` | `string` | No | — |
+| `translate_audio_only` | `boolean` | No | — |
+| `speaker_num` | `number` | No | — |
+| `mode` | `speed \| precision` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_id` | `string` | No | — |
+| `enable_caption` | `boolean` | No | — |
+| `folder_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="video full type">
+
+```ts
+{
+  type: url,
+  url: string
+} | {
+  type: asset_id,
+  asset_id: string
+}
+```
+</Accordion>
+
+<Accordion title="audio full type">
+
+```ts
+{
+  type: url,
+  url: string
+} | {
+  type: asset_id,
+  asset_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  video_translation_ids: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### translateStatus
+
+`videos.translateStatus`
+
+Retrieve current progress/status of a video translation job
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videos.translateStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_translate_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: pending | running | completed | failed,
+  title?: string | null,
+  output_language?: string | null,
+  input_language?: string | null,
+  duration?: number | null,
+  translate_audio_only?: boolean | null,
+  video_url?: string | null,
+  audio_url?: string | null,
+  srt_caption_url?: string | null,
+  vtt_caption_url?: string | null,
+  callback_id?: string | null,
+  created_at?: number | null,
+  failure_message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### translateTargetLanguages
+
+`videos.translateTargetLanguages`
+
+Retrieve the list of all supported target languages for video translation
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videos.translateTargetLanguages({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  languages: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video Translations
+
+### delete
+
+`videoTranslations.delete`
+
+Permanently delete a video translation and its associated files
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.videoTranslations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_translation_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`videoTranslations.list`
+
+Retrieve a cursor-paginated list of video translation jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.videoTranslations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: pending | running | completed | failed,
+  title?: string | null,
+  output_language?: string | null,
+  input_language?: string | null,
+  duration?: number | null,
+  translate_audio_only?: boolean | null,
+  video_url?: string | null,
+  audio_url?: string | null,
+  srt_caption_url?: string | null,
+  vtt_caption_url?: string | null,
+  callback_id?: string | null,
+  created_at?: number | null,
+  failure_message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`videoTranslations.update`
+
+Update the display title of a video translation job
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.videoTranslations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_translation_id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: pending | running | completed | failed,
+  title?: string | null,
+  output_language?: string | null,
+  input_language?: string | null,
+  duration?: number | null,
+  translate_audio_only?: boolean | null,
+  video_url?: string | null,
+  audio_url?: string | null,
+  srt_caption_url?: string | null,
+  vtt_caption_url?: string | null,
+  callback_id?: string | null,
+  created_at?: number | null,
+  failure_message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Voices
+
+### clone
+
+`voices.clone`
+
+Clone a custom voice from a reference audio sample
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.voices.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audio` | `object` | Yes | — |
+| `voice_name` | `string` | Yes | — |
+| `language` | `string` | No | — |
+| `remove_background_noise` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="audio full type">
+
+```ts
+{
+  type: url,
+  url: string
+} | {
+  type: asset_id,
+  asset_id: string
+} | {
+  type: base64,
+  media_type: string,
+  data: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voice_clone_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteV3
+
+`voices.deleteV3`
+
+Permanently delete a voice via the v3 API
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.voices.deleteV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voice_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### design
+
+`voices.design`
+
+Generate up to 3 candidate synthetic voices from a text description
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.voices.design({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | — |
+| `gender` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `seed` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voices: {
+    voice_id: string,
+    name?: string | null,
+    language?: string | null,
+    gender?: string | null,
+    preview_audio_url?: string | null,
+    support_pause?: boolean,
+    support_locale?: boolean,
+    type?: public | private
+  }[],
+  seed: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generatePreview
+
+`voices.generatePreview`
+
+Generate a short audio preview clip (Enterprise Beta)
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.voices.generatePreview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | Yes | — |
+| `text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  audio_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateSpeech
+
+`voices.generateSpeech`
+
+Generate a speech audio file from text input using the Starfish TTS model
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.voices.generateSpeech({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `voice_id` | `string` | Yes | — |
+| `speed` | `number` | No | — |
+| `pitch` | `number` | No | — |
+| `locale` | `string` | No | — |
+| `input_type` | `text \| ssml` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  audio_url?: string,
+  duration?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateSpeechV3
+
+`voices.generateSpeechV3`
+
+Generate a speech audio file from text via the v3 Starfish TTS engine
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.voices.generateSpeechV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `voice_id` | `string` | Yes | — |
+| `input_type` | `text \| ssml` | No | — |
+| `speed` | `number` | No | — |
+| `language` | `string` | No | — |
+| `locale` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  audio_url: string,
+  duration: number,
+  request_id?: string | null,
+  word_timestamps?: {
+    word: string,
+    start: number,
+    end: number
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getV3
+
+`voices.getV3`
+
+Retrieve the status and details of a voice via the v3 API
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.voices.getV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voice_id: string,
+  name?: string | null,
+  language?: string | null,
+  gender?: string | null,
+  preview_audio_url?: string | null,
+  status?: processing | complete | failed | null,
+  failure_message?: string | null,
+  support_pause?: boolean,
+  support_interactive_avatar?: boolean,
+  created_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBrandVoices
+
+`voices.listBrandVoices`
+
+Retrieve brand glossaries maintaining consistent terminology/pronunciation
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.voices.listBrandVoices({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  brand_voices: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLocales
+
+`voices.listLocales`
+
+Retrieve available locales/dialects for multilingual voices
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.voices.listLocales({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  locales: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTts
+
+`voices.listTts`
+
+Retrieve public and custom voices compatible with the Starfish model
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.voices.listTts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language` | `string` | No | — |
+| `gender` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voices: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listV1
+
+`voices.listV1`
+
+Retrieve a metadata list of all available studio voices
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.voices.listV1({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voices: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listV2
+
+`voices.listV2`
+
+Retrieve a comprehensive list of available voice models and characteristics
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.voices.listV2({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voices: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listV3
+
+`voices.listV3`
+
+Retrieve a cursor-paginated list of voices via the v3 API
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.voices.listV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `public \| private` | No | — |
+| `engine` | `string` | No | — |
+| `language` | `string` | No | — |
+| `gender` | `male \| female` | No | — |
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voice_id: string,
+  name?: string | null,
+  language?: string | null,
+  gender?: string | null,
+  preview_audio_url?: string | null,
+  support_pause?: boolean,
+  support_locale?: boolean,
+  type?: public | private
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks Quota
+
+### addEndpoint
+
+`webhooksQuota.addEndpoint`
+
+Configure a new webhook URL to receive notifications for specified events
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.webhooksQuota.addEndpoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `events` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  endpoint_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addEndpointV3
+
+`webhooksQuota.addEndpointV3`
+
+Register a new v3 webhook endpoint URL to receive event notifications
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.webhooksQuota.addEndpointV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `events` | `string[]` | No | — |
+| `entity_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  endpoint_id: string,
+  url: string,
+  events?: string[] | null,
+  status: string,
+  created_at: string,
+  secret?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteEndpoint
+
+`webhooksQuota.deleteEndpoint`
+
+Permanently delete a webhook endpoint configuration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.webhooksQuota.deleteEndpoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteEndpointV3
+
+`webhooksQuota.deleteEndpointV3`
+
+Permanently delete a v3 webhook endpoint configuration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.heygen.api.webhooksQuota.deleteEndpointV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCurrentUser
+
+`webhooksQuota.getCurrentUser`
+
+Retrieve the authenticated user profile, quotas, and subscription details
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.webhooksQuota.getCurrentUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  username: string,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  billing_type?: wallet | subscription | usage_based | null,
+  wallet?: {
+  },
+  subscription?: {
+  },
+  usage_based?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEndpoints
+
+`webhooksQuota.listEndpoints`
+
+Retrieve a list of configured webhook endpoints and status
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.webhooksQuota.listEndpoints({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEndpointsV3
+
+`webhooksQuota.listEndpointsV3`
+
+Retrieve a paginated list of configured v3 webhook endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.webhooksQuota.listEndpointsV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  endpoint_id: string,
+  url: string,
+  events?: string[] | null,
+  status: string,
+  created_at: string,
+  secret?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEvents
+
+`webhooksQuota.listEvents`
+
+Retrieve a paginated log of delivered v3 webhook events
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.webhooksQuota.listEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `string` | No | — |
+| `entity_id` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  event_id: string,
+  event_type: string,
+  event_data: {
+  },
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEventTypes
+
+`webhooksQuota.listEventTypes`
+
+Retrieve a complete list of supported webhook event types
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.webhooksQuota.listEventTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEventTypesV3
+
+`webhooksQuota.listEventTypesV3`
+
+Retrieve all available v3 webhook event types with descriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.webhooksQuota.listEventTypesV3({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  event_type: string,
+  description: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remainingQuota
+
+`webhooksQuota.remainingQuota`
+
+Retrieve the current remaining API credit quota and available resources
+
+**Risk:** `read`
+
+```ts
+await corsair.heygen.api.webhooksQuota.remainingQuota({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  remaining_quota?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rotateSecret
+
+`webhooksQuota.rotateSecret`
+
+Rotate the signing secret for a v3 webhook endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.webhooksQuota.rotateSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  endpoint_id: string,
+  secret: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateEndpoint
+
+`webhooksQuota.updateEndpoint`
+
+Modify the URL or subscribed events of an existing webhook endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.webhooksQuota.updateEndpoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `events` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `any` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateEndpointV3
+
+`webhooksQuota.updateEndpointV3`
+
+Modify the URL or subscribed events of an existing v3 webhook endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.heygen.api.webhooksQuota.updateEndpointV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `events` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  endpoint_id: string,
+  url: string,
+  events?: string[] | null,
+  status: string,
+  created_at: string,
+  secret?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

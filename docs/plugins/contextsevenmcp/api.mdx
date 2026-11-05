@@ -1,0 +1,150 @@
+---
+title: API
+description: "API reference for Context7: every `contextsevenmcp.api.*` operation with input and output types."
+---
+
+Every `contextsevenmcp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Context
+
+### get
+
+`context.get`
+
+Get documentation context for a library
+
+**Risk:** `read`
+
+```ts
+await corsair.contextsevenmcp.api.context.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `libraryId` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `type` | `json \| txt` | No | — |
+| `fast` | `true \| false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `codeSnippets` | `object[]` | Yes | — |
+| `infoSnippets` | `object[]` | Yes | — |
+| `rules` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="codeSnippets full type">
+
+```ts
+{
+  codeTitle: string,
+  codeDescription: string,
+  codeLanguage: string,
+  codeTokens: number,
+  codeId: string,
+  pageTitle: string,
+  codeList: {
+    language: string,
+    code: string
+  }[],
+  isDynamic?: boolean,
+  sourceFile?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="infoSnippets full type">
+
+```ts
+{
+  pageId?: string,
+  breadcrumb?: string,
+  content: string,
+  contentTokens: number
+}[]
+```
+</Accordion>
+
+<Accordion title="rules full type">
+
+```ts
+{
+  global?: string[],
+  libraryOwn?: string[],
+  libraryTeam?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Library
+
+### search
+
+`library.search`
+
+Search Context7 libraries by name
+
+**Risk:** `read`
+
+```ts
+await corsair.contextsevenmcp.api.library.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `libraryName` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `fast` | `true \| false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `searchFilterApplied` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  description?: string,
+  branch?: string,
+  lastUpdateDate?: string,
+  state?: string,
+  totalTokens?: number,
+  totalSnippets?: number,
+  stars?: number,
+  trustScore?: number,
+  benchmarkScore?: number,
+  versions?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

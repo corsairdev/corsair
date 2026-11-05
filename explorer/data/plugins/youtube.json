@@ -1,0 +1,3613 @@
+{
+  "id": "youtube",
+  "displayName": "YouTube",
+  "description": "Video platform for uploading, managing channels, playlists, analytics, and content metadata.",
+  "npmPackageName": "@corsair-dev/youtube",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 51,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "channel_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "youtube.api.captions.list",
+      "shortPath": "captions.list",
+      "description": "List caption tracks for a video",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string",
+            "description": "The YouTube video ID to list captions for"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { videoId?: string, lastUpdated?: string, trackKind?: string, language?: string, name?: string, audioTrackType?: string, isCC?: boolean, isLarge?: boolean, isEasyReader?: boolean, isDraft?: boolean, isAutoSynced?: boolean, status?: string } }[]"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitorId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.captions.load",
+      "shortPath": "captions.load",
+      "description": "Download a caption track",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The caption track ID to download"
+          },
+          {
+            "key": "tfmt",
+            "optional": true,
+            "type": "string",
+            "description": "Caption format (srt, vtt, etc.)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "captions_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.captions.update",
+      "shortPath": "captions.update",
+      "description": "Update a caption track",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The caption track ID to update"
+          },
+          {
+            "key": "snippet",
+            "optional": false,
+            "type": "{ isDraft?: boolean }",
+            "description": "Updated caption snippet"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ videoId?: string, lastUpdated?: string, trackKind?: string, language?: string, name?: string, audioTrackType?: string, isCC?: boolean, isLarge?: boolean, isEasyReader?: boolean, isDraft?: boolean, isAutoSynced?: boolean, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.channels.getActivities",
+      "shortPath": "channels.getActivities",
+      "description": "Get a channel's activity feed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string",
+            "description": "The channel ID to get activities for"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "publishedAfter",
+            "optional": true,
+            "type": "string",
+            "description": "RFC 3339 datetime - only return activities after this time"
+          },
+          {
+            "key": "publishedBefore",
+            "optional": true,
+            "type": "string",
+            "description": "RFC 3339 datetime - only return activities before this time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { channelId?: string, title?: string, description?: string, publishedAt?: string, type?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } } }, contentDetails?: {} }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.channels.getIdByHandle",
+      "shortPath": "channels.getIdByHandle",
+      "description": "Get channel ID by handle",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_handle",
+            "optional": false,
+            "type": "string",
+            "description": "YouTube channel handle (e.g. @channelname)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, customUrl?: string, publishedAt?: string, country?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } } }, statistics?: { viewCount?: string, subscriberCount?: string, videoCount?: string, hiddenSubscriberCount?: boolean }, contentDetails?: { relatedPlaylists?: { uploads?: string, likes?: string } }, brandingSettings?: { channel?: { title?: string, description?: string, keywords?: string } } }[]"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, customUrl?: string, publishedAt?: string, country?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } } }, statistics?: { viewCount?: string, subscriberCount?: string, videoCount?: string, hiddenSubscriberCount?: boolean }, contentDetails?: { relatedPlaylists?: { uploads?: string, likes?: string } }, brandingSettings?: { channel?: { title?: string, description?: string, keywords?: string } } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.channels.getStatistics",
+      "shortPath": "channels.getStatistics",
+      "description": "Get channel statistics and details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Channel ID(s), comma-separated"
+          },
+          {
+            "key": "mine",
+            "optional": true,
+            "type": "boolean",
+            "description": "Get statistics for the authenticated user's channel"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "forHandle",
+            "optional": true,
+            "type": "string",
+            "description": "Channel handle (e.g. @channelname)"
+          },
+          {
+            "key": "forUsername",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, customUrl?: string, publishedAt?: string, country?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } } }, statistics?: { viewCount?: string, subscriberCount?: string, videoCount?: string, hiddenSubscriberCount?: boolean }, contentDetails?: { relatedPlaylists?: { uploads?: string, likes?: string } }, brandingSettings?: { channel?: { title?: string, description?: string, keywords?: string } } }[]"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, customUrl?: string, publishedAt?: string, country?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } } }, statistics?: { viewCount?: string, subscriberCount?: string, videoCount?: string, hiddenSubscriberCount?: boolean }, contentDetails?: { relatedPlaylists?: { uploads?: string, likes?: string } }, brandingSettings?: { channel?: { title?: string, description?: string, keywords?: string } } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.channels.update",
+      "shortPath": "channels.update",
+      "description": "Update channel branding settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The channel ID to update"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brandingSettings",
+            "optional": true,
+            "type": "{ channel?: { title?: string, description?: string, keywords?: string, country?: string } }"
+          },
+          {
+            "key": "localizations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "onBehalfOfContentOwner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ title?: string, description?: string, customUrl?: string, publishedAt?: string, country?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } } }"
+          },
+          {
+            "key": "statistics",
+            "optional": true,
+            "type": "{ viewCount?: string, subscriberCount?: string, videoCount?: string }"
+          },
+          {
+            "key": "brandingSettings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "localizations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.channelSections.create",
+      "shortPath": "channelSections.create",
+      "description": "Create a new channel section",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snippet",
+            "optional": false,
+            "type": "{ type: allPlaylists | completedEvents | liveEvents | multipleChannels | multiplePlaylists | popularUploads | recentUploads | singlePlaylist | subscriptions | upcomingEvents, title?: string, position?: number }",
+            "description": "Section snippet"
+          },
+          {
+            "key": "contentDetails",
+            "optional": true,
+            "type": "{ channels?: string[], playlists?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ type?: string, title?: string, position?: number, channelId?: string }"
+          },
+          {
+            "key": "contentDetails",
+            "optional": true,
+            "type": "{ playlists?: string[], channels?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.channelSections.delete",
+      "shortPath": "channelSections.delete",
+      "description": "Delete a channel section",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the channel section to delete"
+          },
+          {
+            "key": "onBehalfOfContentOwner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "channel_section_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.channelSections.list",
+      "shortPath": "channelSections.list",
+      "description": "List channel sections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "part",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated list of parts (snippet,contentDetails)"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Section ID(s), comma-separated"
+          },
+          {
+            "key": "mine",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "channelId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "onBehalfOfContentOwner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { type?: string, title?: string, position?: number, channelId?: string }, contentDetails?: { playlists?: string[], channels?: string[] } }[]"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitorId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.channelSections.update",
+      "shortPath": "channelSections.update",
+      "description": "Update a channel section",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the channel section to update"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ type?: string, title?: string, position?: number }"
+          },
+          {
+            "key": "contentDetails",
+            "optional": true,
+            "type": "{ playlists?: string[], channels?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ type?: string, title?: string, position?: number, channelId?: string }"
+          },
+          {
+            "key": "contentDetails",
+            "optional": true,
+            "type": "{ playlists?: string[], channels?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.comments.createReply",
+      "shortPath": "comments.createReply",
+      "description": "Post a reply to a comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parentId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the parent comment thread to reply to"
+          },
+          {
+            "key": "textOriginal",
+            "optional": false,
+            "type": "string",
+            "description": "The reply text"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ videoId?: string, textDisplay?: string, textOriginal?: string, authorDisplayName?: string, authorProfileImageUrl?: string, authorChannelUrl?: string, authorChannelId?: { value?: string }, likeCount?: number, publishedAt?: string, updatedAt?: string, parentId?: string, canRate?: boolean, viewerRating?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Delete a comment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the comment to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "comment_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Comment ID(s), comma-separated"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string",
+            "description": "Parent comment thread ID to list replies for"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "textFormat",
+            "optional": true,
+            "type": "html | plainText"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { videoId?: string, textDisplay?: string, textOriginal?: string, authorDisplayName?: string, authorProfileImageUrl?: string, authorChannelUrl?: string, authorChannelId?: { value?: string }, likeCount?: number, publishedAt?: string, updatedAt?: string, parentId?: string, canRate?: boolean, viewerRating?: string } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.comments.markSpam",
+      "shortPath": "comments.markSpam",
+      "description": "Mark a comment as spam",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the comment to mark as spam"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "comment_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "http_status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.comments.post",
+      "shortPath": "comments.post",
+      "description": "Post a comment on a video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "videoId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the video to comment on"
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string",
+            "description": "The channel ID that owns the video"
+          },
+          {
+            "key": "textOriginal",
+            "optional": false,
+            "type": "string",
+            "description": "The comment text"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ channelId?: string, videoId?: string, totalReplyCount?: number, isPublic?: boolean, topLevelComment?: { id?: string, etag?: string, kind?: string, snippet?: { videoId?: string, textDisplay?: string, textOriginal?: string, authorDisplayName?: string, authorProfileImageUrl?: string, authorChannelUrl?: string, authorChannelId?: { value?: string }, likeCount?: number, publishedAt?: string, updatedAt?: string, parentId?: string, canRate?: boolean, viewerRating?: string } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.comments.setModerationStatus",
+      "shortPath": "comments.setModerationStatus",
+      "description": "Set moderation status for a comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the comment to moderate"
+          },
+          {
+            "key": "moderationStatus",
+            "optional": false,
+            "type": "heldForReview | published | rejected",
+            "description": "The moderation status to set"
+          },
+          {
+            "key": "banAuthor",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ban the author from the channel"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.comments.threadsList",
+      "shortPath": "comments.threadsList",
+      "description": "List comment threads (deprecated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "time | relevance"
+          },
+          {
+            "key": "videoId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "textFormat",
+            "optional": true,
+            "type": "html | plainText"
+          },
+          {
+            "key": "searchTerms",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allThreadsRelatedToChannelId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { channelId?: string, videoId?: string, totalReplyCount?: number, isPublic?: boolean, topLevelComment?: { id?: string, etag?: string, kind?: string, snippet?: { videoId?: string, textDisplay?: string, textOriginal?: string, authorDisplayName?: string, authorProfileImageUrl?: string, authorChannelUrl?: string, authorChannelId?: { value?: string }, likeCount?: number, publishedAt?: string, updatedAt?: string, parentId?: string, canRate?: boolean, viewerRating?: string } } }, replies?: { comments?: { id?: string, etag?: string, kind?: string, snippet?: { videoId?: string, textDisplay?: string, textOriginal?: string, authorDisplayName?: string, authorProfileImageUrl?: string, authorChannelUrl?: string, authorChannelId?: { value?: string }, likeCount?: number, publishedAt?: string, updatedAt?: string, parentId?: string, canRate?: boolean, viewerRating?: string } }[] } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.comments.threadsList2",
+      "shortPath": "comments.threadsList2",
+      "description": "List comment threads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "part",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated list of parts"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "time | relevance"
+          },
+          {
+            "key": "videoId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "textFormat",
+            "optional": true,
+            "type": "html | plainText"
+          },
+          {
+            "key": "searchTerms",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "moderationStatus",
+            "optional": true,
+            "type": "heldForReview | likelySpam | published | rejected"
+          },
+          {
+            "key": "allThreadsRelatedToChannelId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { channelId?: string, videoId?: string, totalReplyCount?: number, isPublic?: boolean, topLevelComment?: { id?: string, etag?: string, kind?: string, snippet?: { videoId?: string, textDisplay?: string, textOriginal?: string, authorDisplayName?: string, authorProfileImageUrl?: string, authorChannelUrl?: string, authorChannelId?: { value?: string }, likeCount?: number, publishedAt?: string, updatedAt?: string, parentId?: string, canRate?: boolean, viewerRating?: string } } }, replies?: { comments?: { id?: string, etag?: string, kind?: string, snippet?: { videoId?: string, textDisplay?: string, textOriginal?: string, authorDisplayName?: string, authorProfileImageUrl?: string, authorChannelUrl?: string, authorChannelId?: { value?: string }, likeCount?: number, publishedAt?: string, updatedAt?: string, parentId?: string, canRate?: boolean, viewerRating?: string } }[] } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.comments.update",
+      "shortPath": "comments.update",
+      "description": "Update a comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the comment to update"
+          },
+          {
+            "key": "textOriginal",
+            "optional": false,
+            "type": "string",
+            "description": "The updated comment text"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ videoId?: string, textDisplay?: string, textOriginal?: string, authorDisplayName?: string, authorProfileImageUrl?: string, authorChannelUrl?: string, authorChannelId?: { value?: string }, likeCount?: number, publishedAt?: string, updatedAt?: string, parentId?: string, canRate?: boolean, viewerRating?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.i18n.listLanguages",
+      "shortPath": "i18n.listLanguages",
+      "description": "List supported i18n languages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string",
+            "description": "Language to use for the response"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { hl?: string, name?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.i18n.listRegions",
+      "shortPath": "i18n.listRegions",
+      "description": "List supported i18n regions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { gl?: string, name?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.liveChat.listMessages",
+      "shortPath": "liveChat.listMessages",
+      "description": "List messages in a live chat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "liveChatId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the live chat to list messages for"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "profileImageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { type?: string, liveChatId?: string, authorChannelId?: string, publishedAt?: string, hasDisplayContent?: boolean, displayMessage?: string, textMessageDetails?: { messageText?: string } }, authorDetails?: { channelId?: string, channelUrl?: string, displayName?: string, profileImageUrl?: string, isVerified?: boolean, isChatOwner?: boolean, isChatModerator?: boolean } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "offlineAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activePollItem",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "pollingIntervalMillis",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.liveChat.listSuperChatEvents",
+      "shortPath": "liveChat.listSuperChatEvents",
+      "description": "List Super Chat events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, snippet?: { displayString?: string, amountMicros?: string, currency?: string, channelId?: string, createdAt?: string } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.playlistImages.list",
+      "shortPath": "playlistImages.list",
+      "description": "List playlist images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string",
+            "description": "The parent playlist ID"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "onBehalfOfContentOwner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "onBehalfOfContentOwnerChannel",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, kind?: string, snippet?: { type?: string, width?: number, height?: number, url?: string } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.playlistItems.add",
+      "shortPath": "playlistItems.add",
+      "description": "Add a video to a playlist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "videoId",
+            "optional": false,
+            "type": "string",
+            "description": "The YouTube video ID to add to the playlist"
+          },
+          {
+            "key": "playlistId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the playlist to add the video to"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based position to insert the video"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ title?: string, description?: string, position?: number, channelId?: string, channelTitle?: string, playlistId?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, resourceId?: { kind?: string, videoId?: string, channelId?: string, playlistId?: string }, videoOwnerChannelId?: string, videoOwnerChannelTitle?: string }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ privacyStatus?: string }"
+          },
+          {
+            "key": "contentDetails",
+            "optional": true,
+            "type": "{ videoId?: string, videoPublishedAt?: string, note?: string, startAt?: string, endAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.playlistItems.delete",
+      "shortPath": "playlistItems.delete",
+      "description": "Remove an item from a playlist",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the playlist item to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "playlist_item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.playlistItems.list",
+      "shortPath": "playlistItems.list",
+      "description": "List items in a playlist",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playlistId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the playlist to list items for"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "videoId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by video ID"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "onBehalfOfContentOwner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, position?: number, channelId?: string, channelTitle?: string, playlistId?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, resourceId?: { kind?: string, videoId?: string, channelId?: string, playlistId?: string }, videoOwnerChannelId?: string, videoOwnerChannelTitle?: string }, status?: { privacyStatus?: string }, contentDetails?: { videoId?: string, videoPublishedAt?: string, note?: string, startAt?: string, endAt?: string } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitorId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.playlistItems.update",
+      "shortPath": "playlistItems.update",
+      "description": "Update a playlist item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the playlist item to update"
+          },
+          {
+            "key": "snippet",
+            "optional": false,
+            "type": "{ playlistId: string, resourceId?: { kind?: string, videoId?: string, channelId?: string, playlistId?: string }, position?: number }",
+            "description": "Updated snippet"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentDetails",
+            "optional": true,
+            "type": "{ note?: string, startAt?: string, endAt?: string }"
+          },
+          {
+            "key": "onBehalfOfContentOwner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ title?: string, description?: string, position?: number, channelId?: string, channelTitle?: string, playlistId?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, resourceId?: { kind?: string, videoId?: string, channelId?: string, playlistId?: string }, videoOwnerChannelId?: string, videoOwnerChannelTitle?: string }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ privacyStatus?: string }"
+          },
+          {
+            "key": "contentDetails",
+            "optional": true,
+            "type": "{ videoId?: string, videoPublishedAt?: string, note?: string, startAt?: string, endAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.playlists.create",
+      "shortPath": "playlists.create",
+      "description": "Create a new playlist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Playlist title (max 150 characters)"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Playlist description"
+          },
+          {
+            "key": "privacyStatus",
+            "optional": true,
+            "type": "public | private | unlisted",
+            "description": "Privacy status of the playlist"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ title?: string, description?: string, channelId?: string, channelTitle?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, localized?: { title?: string, description?: string } }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ privacyStatus?: string }"
+          },
+          {
+            "key": "contentDetails",
+            "optional": true,
+            "type": "{ itemCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.playlists.delete",
+      "shortPath": "playlists.delete",
+      "description": "Delete a playlist",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the playlist to delete"
+          },
+          {
+            "key": "confirmDelete",
+            "optional": false,
+            "type": "boolean",
+            "description": "Confirm that you want to delete the playlist"
+          },
+          {
+            "key": "onBehalfOfContentOwner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "playlist_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.playlists.list",
+      "shortPath": "playlists.list",
+      "description": "List the authenticated user's playlists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated list of resource parts (snippet,status,contentDetails)"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string",
+            "description": "Token for the next page of results"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return (1-50)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, channelId?: string, channelTitle?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, localized?: { title?: string, description?: string } }, status?: { privacyStatus?: string }, contentDetails?: { itemCount?: number } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.playlists.update",
+      "shortPath": "playlists.update",
+      "description": "Update an existing playlist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the playlist to update"
+          },
+          {
+            "key": "snippet",
+            "optional": false,
+            "type": "{ title?: string, description?: string }",
+            "description": "Updated snippet fields"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated list of parts to update"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ privacyStatus?: string }"
+          },
+          {
+            "key": "onBehalfOfContentOwner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ title?: string, description?: string, channelId?: string, channelTitle?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, localized?: { title?: string, description?: string } }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ privacyStatus?: string }"
+          },
+          {
+            "key": "contentDetails",
+            "optional": true,
+            "type": "{ itemCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.search.youtube",
+      "shortPath": "search.youtube",
+      "description": "Search YouTube for videos, channels, and playlists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search query"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Resource type to search (video, channel, playlist)"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: { kind?: string, videoId?: string, channelId?: string, playlistId?: string }, etag?: string, kind?: string, snippet?: { publishedAt?: string, channelId?: string, title?: string, description?: string, channelTitle?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, liveBroadcastContent?: string } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "regionCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List the authenticated user's subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { publishedAt?: string, title?: string, description?: string, channelId?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, resourceId?: { kind?: string, videoId?: string, channelId?: string, playlistId?: string }, channelTitle?: string }, contentDetails?: { totalItemCount?: number, newItemCount?: number, activityType?: string }, subscriberSnippet?: { title?: string, description?: string, channelId?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } } } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.subscriptions.subscribe",
+      "shortPath": "subscriptions.subscribe",
+      "description": "Subscribe to a YouTube channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the channel to subscribe to"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ publishedAt?: string, title?: string, description?: string, channelId?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, resourceId?: { kind?: string, videoId?: string, channelId?: string, playlistId?: string }, channelTitle?: string }"
+          },
+          {
+            "key": "contentDetails",
+            "optional": true,
+            "type": "{ totalItemCount?: number, newItemCount?: number }"
+          },
+          {
+            "key": "subscriberSnippet",
+            "optional": true,
+            "type": "{ title?: string, channelId?: string }"
+          },
+          {
+            "key": "already_subscribed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.subscriptions.unsubscribe",
+      "shortPath": "subscriptions.unsubscribe",
+      "description": "Unsubscribe from a YouTube channel",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the subscription to remove"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "unsubscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subscription_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videoActions.getRating",
+      "shortPath": "videoActions.getRating",
+      "description": "Get the authenticated user's rating for a video",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The YouTube video ID to get the rating for"
+          },
+          {
+            "key": "onBehalfOfContentOwner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ videoId?: string, rating?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videoActions.listAbuseReasons",
+      "shortPath": "videoActions.listAbuseReasons",
+      "description": "List available video abuse report reasons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string",
+            "description": "Language for the response"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, label?: string, secondaryReasons?: { id?: string, label?: string }[] }[]"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitorId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videoActions.rate",
+      "shortPath": "videoActions.rate",
+      "description": "Rate a video (like, dislike, or remove rating)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The YouTube video ID to rate"
+          },
+          {
+            "key": "rating",
+            "optional": false,
+            "type": "like | dislike | none",
+            "description": "The rating to apply"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "video_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videoActions.reportAbuse",
+      "shortPath": "videoActions.reportAbuse",
+      "description": "Report a video for abuse",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "videoId",
+            "optional": false,
+            "type": "string",
+            "description": "The YouTube video ID to report"
+          },
+          {
+            "key": "reasonId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the abuse reason"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "string",
+            "description": "Additional comments about the abuse"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secondaryReasonId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videoActions.updateThumbnail",
+      "shortPath": "videoActions.updateThumbnail",
+      "description": "Update the thumbnail for a video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "videoId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the video to update the thumbnail for"
+          },
+          {
+            "key": "thumbnailUrl",
+            "optional": false,
+            "type": "string",
+            "description": "URL of the new thumbnail image"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ url?: string, width?: number, height?: number }[]"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitorId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videoCategories.list",
+      "shortPath": "videoCategories.list",
+      "description": "List video categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Category ID(s), comma-separated"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionCode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { channelId?: string, title?: string, assignable?: boolean } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videos.delete",
+      "shortPath": "videos.delete",
+      "description": "Delete a video",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "videoId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the video to delete"
+          },
+          {
+            "key": "confirmDelete",
+            "optional": false,
+            "type": "boolean",
+            "description": "Confirm that you want to delete the video"
+          },
+          {
+            "key": "onBehalfOfContentOwner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "video_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videos.get",
+      "shortPath": "videos.get",
+      "description": "Get details for a single video",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string",
+            "description": "The YouTube video ID"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated list of resource parts"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, channelId?: string, channelTitle?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, tags?: string[], categoryId?: string, defaultLanguage?: string, liveBroadcastContent?: string }, status?: { privacyStatus?: string, uploadStatus?: string, publishAt?: string, license?: string, embeddable?: boolean, publicStatsViewable?: boolean }, statistics?: { viewCount?: string, likeCount?: string, dislikeCount?: string, favoriteCount?: string, commentCount?: string }, contentDetails?: { duration?: string, dimension?: string, definition?: string, caption?: string, licensedContent?: boolean } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videos.getBatch",
+      "shortPath": "videos.getBatch",
+      "description": "Get details for multiple videos in one request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string[]",
+            "description": "Array of YouTube video IDs to retrieve (max 50)"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string",
+            "description": "Language for localized metadata"
+          },
+          {
+            "key": "parts",
+            "optional": true,
+            "type": "string[]",
+            "description": "Resource parts to include"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, channelId?: string, channelTitle?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, tags?: string[], categoryId?: string, defaultLanguage?: string, liveBroadcastContent?: string }, status?: { privacyStatus?: string, uploadStatus?: string, publishAt?: string, license?: string, embeddable?: boolean, publicStatsViewable?: boolean }, statistics?: { viewCount?: string, likeCount?: string, dislikeCount?: string, favoriteCount?: string, commentCount?: string }, contentDetails?: { duration?: string, dimension?: string, definition?: string, caption?: string, licensedContent?: boolean } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "found_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "not_found_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "requested_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "not_found_video_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "requested_video_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "partial_failure",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videos.list",
+      "shortPath": "videos.list",
+      "description": "List videos for a channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mine",
+            "optional": true,
+            "type": "boolean",
+            "description": "List videos for the authenticated user"
+          },
+          {
+            "key": "channelId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by channel ID"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, channelId?: string, channelTitle?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, tags?: string[], categoryId?: string, defaultLanguage?: string, liveBroadcastContent?: string }, status?: { privacyStatus?: string, uploadStatus?: string, publishAt?: string, license?: string, embeddable?: boolean, publicStatsViewable?: boolean }, statistics?: { viewCount?: string, likeCount?: string, dislikeCount?: string, favoriteCount?: string, commentCount?: string }, contentDetails?: { duration?: string, dimension?: string, definition?: string, caption?: string, licensedContent?: boolean } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "regionCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videos.listMostPopular",
+      "shortPath": "videos.listMostPopular",
+      "description": "List most popular videos on YouTube",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chart",
+            "optional": true,
+            "type": "string",
+            "description": "Chart to use (mostPopular)"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "regionCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "videoCategoryId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, channelId?: string, channelTitle?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, tags?: string[], categoryId?: string, defaultLanguage?: string, liveBroadcastContent?: string }, status?: { privacyStatus?: string, uploadStatus?: string, publishAt?: string, license?: string, embeddable?: boolean, publicStatsViewable?: boolean }, statistics?: { viewCount?: string, likeCount?: string, dislikeCount?: string, favoriteCount?: string, commentCount?: string }, contentDetails?: { duration?: string, dimension?: string, definition?: string, caption?: string, licensedContent?: boolean } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ totalResults?: number, resultsPerPage?: number }"
+          },
+          {
+            "key": "regionCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videos.update",
+      "shortPath": "videos.update",
+      "description": "Update video metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the video to update"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Updated video title"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Updated video description"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Updated video tags"
+          },
+          {
+            "key": "categoryId",
+            "optional": true,
+            "type": "string",
+            "description": "Updated category ID"
+          },
+          {
+            "key": "privacy_status",
+            "optional": true,
+            "type": "string",
+            "description": "Updated privacy status (public, private, unlisted)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "{ title?: string, description?: string, channelId?: string, channelTitle?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, tags?: string[], categoryId?: string, defaultLanguage?: string, liveBroadcastContent?: string }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ privacyStatus?: string, uploadStatus?: string }"
+          },
+          {
+            "key": "statistics",
+            "optional": true,
+            "type": "{ viewCount?: string, likeCount?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videos.upload",
+      "shortPath": "videos.upload",
+      "description": "Upload a new video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Video title"
+          },
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string",
+            "description": "Video category ID"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string",
+            "description": "Video description"
+          },
+          {
+            "key": "privacyStatus",
+            "optional": false,
+            "type": "public | private | unlisted",
+            "description": "Privacy status"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "Video tags"
+          },
+          {
+            "key": "videoFilePath",
+            "optional": false,
+            "type": "{ name?: string, content_type?: string, s3_key?: string, s3_url?: string, storage_type?: string, content_length?: number }",
+            "description": "Video file reference"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response_data",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "youtube.api.videos.uploadMultipart",
+      "shortPath": "videos.uploadMultipart",
+      "description": "Upload a new video using multipart upload",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Video title"
+          },
+          {
+            "key": "videoFile",
+            "optional": false,
+            "type": "{ name?: string, content_type?: string, s3_key?: string, s3_url?: string, storage_type?: string, content_length?: number }",
+            "description": "Video file reference"
+          },
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string",
+            "description": "Video category ID"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string",
+            "description": "Video description"
+          },
+          {
+            "key": "privacyStatus",
+            "optional": false,
+            "type": "public | private | unlisted",
+            "description": "Privacy status"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Video tags"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video",
+            "optional": true,
+            "type": "{ id?: string, etag?: string, kind?: string, snippet?: { title?: string, description?: string, channelId?: string, channelTitle?: string, publishedAt?: string, thumbnails?: { default?: { url?: string, width?: number, height?: number }, medium?: { url?: string, width?: number, height?: number }, high?: { url?: string, width?: number, height?: number }, standard?: { url?: string, width?: number, height?: number }, maxres?: { url?: string, width?: number, height?: number } }, tags?: string[], categoryId?: string, defaultLanguage?: string, liveBroadcastContent?: string }, status?: { privacyStatus?: string, uploadStatus?: string, publishAt?: string, license?: string, embeddable?: boolean, publicStatsViewable?: boolean }, statistics?: { viewCount?: string, likeCount?: string, dislikeCount?: string, favoriteCount?: string, commentCount?: string }, contentDetails?: { duration?: string, dimension?: string, definition?: string, caption?: string, licensedContent?: boolean } }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "youtube.db.activities.search",
+      "entityName": "activities",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channelId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "youtube.db.captions.search",
+      "entityName": "captions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "videoId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isDraft",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "trackKind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "youtube.db.channels.search",
+      "entityName": "channels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subscriberCount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "videoCount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "viewCount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "youtube.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "videoId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "textDisplay",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "textOriginal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorDisplayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorChannelId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "likeCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "youtube.db.playlistItems.search",
+      "entityName": "playlistItems",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "playlistId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "videoId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "position",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channelId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "youtube.db.playlists.search",
+      "entityName": "playlists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channelId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "privacyStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "itemCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "youtube.db.subscriptions.search",
+      "entityName": "subscriptions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channelId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "youtube.db.videos.search",
+      "entityName": "videos",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channelId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "privacyStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "viewCount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "likeCount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "commentCount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "categoryId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "defaultThumbnailUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

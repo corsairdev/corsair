@@ -14,20 +14,8 @@ export const ZendeskWebhookPayloadSchema = z.object({
 
 export type ZendeskWebhookPayload = z.infer<typeof ZendeskWebhookPayloadSchema>;
 
-export const ExampleEventSchema = ZendeskWebhookPayloadSchema.extend({
-	type: z.literal('example'),
-	data: z
-		.object({
-			id: z.string(),
-		})
-		.loose(),
-});
-
-export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
-
-export type ZendeskWebhookOutputs = {
-	example: ExampleEvent;
-};
+/** No webhook handlers are registered yet. */
+export type ZendeskWebhookOutputs = Record<string, never>;
 
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {

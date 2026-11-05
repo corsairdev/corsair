@@ -1,0 +1,243 @@
+---
+title: Database
+description: "Webflow local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Webflow plugin syncs data locally. Use `corsair.webflow.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Asset Folders
+
+Path: `webflow.db.assetFolders.search`
+
+```ts
+const rows = await corsair.webflow.db.assetFolders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentFolder` | `string` | equals, contains, startsWith, endsWith, in |
+| `siteId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdOn` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastUpdated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Assets
+
+Path: `webflow.db.assets.search`
+
+```ts
+const rows = await corsair.webflow.db.assets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contentType` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `siteId` | `string` | equals, contains, startsWith, endsWith, in |
+| `hostedUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `originalFileName` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdOn` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Collection Items
+
+Path: `webflow.db.collectionItems.search`
+
+```ts
+const rows = await corsair.webflow.db.collectionItems.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `collectionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `cmsLocaleId` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastPublished` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastUpdated` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdOn` | `string` | equals, contains, startsWith, endsWith, in |
+| `isArchived` | `boolean` | equals |
+| `isDraft` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Collections
+
+Path: `webflow.db.collections.search`
+
+```ts
+const rows = await corsair.webflow.db.collections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `siteId` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `singularName` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdOn` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastUpdated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Orders
+
+Path: `webflow.db.orders.search`
+
+```ts
+const rows = await corsair.webflow.db.orders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `orderId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `acceptedOn` | `string` | equals, contains, startsWith, endsWith, in |
+| `fulfilledOn` | `string` | equals, contains, startsWith, endsWith, in |
+| `refundedOn` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Pages
+
+Path: `webflow.db.pages.search`
+
+```ts
+const rows = await corsair.webflow.db.pages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `siteId` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `collectionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdOn` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastUpdated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sites
+
+Path: `webflow.db.sites.search`
+
+```ts
+const rows = await corsair.webflow.db.sites.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `workspaceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortName` | `string` | equals, contains, startsWith, endsWith, in |
+| `previewUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `timeZone` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastPublished` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdOn` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhooks
+
+Path: `webflow.db.webhooks.search`
+
+```ts
+const rows = await corsair.webflow.db.webhooks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `triggerType` | `string` | equals, contains, startsWith, endsWith, in |
+| `siteId` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `workspaceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdOn` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

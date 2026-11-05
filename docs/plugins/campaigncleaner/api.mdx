@@ -1,0 +1,185 @@
+---
+title: API
+description: "API reference for CampaignCleaner: every `campaigncleaner.api.*` operation with input and output types."
+---
+
+Every `campaigncleaner.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaign
+
+### delete
+
+`campaign.delete`
+
+Delete a saved Campaign Cleaner campaign by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.campaigncleaner.api.campaign.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| failure` | Yes | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`campaign.list`
+
+List saved Campaign Cleaner campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.campaigncleaner.api.campaign.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_list` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign_list full type">
+
+```ts
+{
+  id: string,
+  campaign_name: string,
+  status: processing | completed | paused,
+  date_added: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pdfAnalysis
+
+`campaign.pdfAnalysis`
+
+Download PDF analysis for a processed campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.campaigncleaner.api.campaign.pdfAnalysis({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content_type` | `string` | Yes | — |
+| `content_base64` | `string` | Yes | — |
+
+
+
+---
+
+### status
+
+`campaign.status`
+
+Get processing status for a Campaign Cleaner campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.campaigncleaner.api.campaign.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_status` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign_status full type">
+
+```ts
+{
+  id: string,
+  campaign_name: string,
+  status: processing | completed | paused,
+  date_added: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credits
+
+### get
+
+`credits.get`
+
+Get remaining Campaign Cleaner credits
+
+**Risk:** `read`
+
+```ts
+await corsair.campaigncleaner.api.credits.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number` | Yes | — |
+
+
+
+---
+

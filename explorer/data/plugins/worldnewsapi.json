@@ -1,0 +1,728 @@
+{
+  "id": "worldnewsapi",
+  "displayName": "World News API",
+  "description": "Global news aggregation API for headlines, articles, and searchable current events data.",
+  "npmPackageName": "@corsair-dev/worldnewsapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "worldnewsapi.api.news.extractNews",
+      "shortPath": "news.extractNews",
+      "description": "Extract a news article from a website to a well-structured JSON object, including title, text, images, videos, publish date, authors, language, and sentiment.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the news article to extract into structured data."
+          },
+          {
+            "key": "analyze",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to analyze the extracted news (extract named entities, detect sentiment, etc.). Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ title?: string, url: string, width?: number, height?: number }[]"
+          },
+          {
+            "key": "video",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "videos",
+            "optional": true,
+            "type": "{ title?: string, url: string, summary?: string, duration?: number, thumbnail?: string }[]"
+          },
+          {
+            "key": "publish_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authors",
+            "optional": true,
+            "type": "string | null[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentiment",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{ name: string, type: string, sentiment?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worldnewsapi.api.news.extractNewsLinks",
+      "shortPath": "news.extractNewsLinks",
+      "description": "Extract news article links from a website or webpage, with optional filtering by URL prefix and subdomain inclusion.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The webpage or site URL from which news article links should be extracted."
+          },
+          {
+            "key": "analyze",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to analyze extracted links. Defaults to false."
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string",
+            "description": "The prefix that discovered news links must start with."
+          },
+          {
+            "key": "subDomain",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to include links to news articles on sub-domains. Defaults to true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "news_links",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worldnewsapi.api.news.getGeoCoordinates",
+      "shortPath": "news.getGeoCoordinates",
+      "description": "Retrieve latitude and longitude of a location name to fill the location-filter parameter in news search operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string",
+            "description": "The address or location name to geocode (e.g., \"Tokyo, Japan\" or \"Mumbai, India\")."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worldnewsapi.api.news.newsWebsiteToRssFeed",
+      "shortPath": "news.newsWebsiteToRssFeed",
+      "description": "Convert any news website page into an RSS feed with the latest news from that page.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the news website/page to convert into an RSS 2.0 feed."
+          },
+          {
+            "key": "extractNews",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to extract full article text/data for each item in the feed (costs additional quota). Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pubDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastBuildDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ title?: string, link?: string, guid?: string, pubDate?: string, description?: string, author?: string, category?: string, enclosureUrl?: string }[]"
+          },
+          {
+            "key": "rawXml",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worldnewsapi.api.news.searchNews",
+      "shortPath": "news.searchNews",
+      "description": "Search and filter news by text, date, location, category, language, and more.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "Search query text. Supports implicit AND, OR, negation with -, parentheses, and quotes for exact phrases."
+          },
+          {
+            "key": "textMatchIndexes",
+            "optional": true,
+            "type": "string",
+            "description": "Where to search for text: \"title\", \"content\", or \"title,content\"."
+          },
+          {
+            "key": "sourceCountry",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by 2-letter ISO 3166 country code."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by 2-letter ISO 639-1 language code."
+          },
+          {
+            "key": "minSentiment",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum sentiment score between -1.0 (very negative) and 1.0 (very positive)."
+          },
+          {
+            "key": "maxSentiment",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum sentiment score between -1.0 and 1.0."
+          },
+          {
+            "key": "earliestPublishDate",
+            "optional": true,
+            "type": "string",
+            "description": "Filter for news published on or after this timestamp (YYYY-MM-DD HH:MM:SS or YYYY-MM-DD)."
+          },
+          {
+            "key": "latestPublishDate",
+            "optional": true,
+            "type": "string",
+            "description": "Filter for news published on or before this timestamp (YYYY-MM-DD HH:MM:SS or YYYY-MM-DD)."
+          },
+          {
+            "key": "newsSources",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated list of up to 10 news sources (e.g., \"bbc.co.uk,nytimes.com\")."
+          },
+          {
+            "key": "authors",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated list of author names."
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated categories (politics, sports, business, technology, entertainment, health, science, etc.)."
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by semantic entities (e.g., \"ORG:Tesla,PER:Elon Musk\")."
+          },
+          {
+            "key": "locationFilter",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by geographic radius in the format \"latitude,longitude,radius in km\" (radius: 1-100)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Sort criteria, typically \"publish-time\"."
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Sort direction: \"ASC\" or \"DESC\". Defaults to DESC for publish-time."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip for pagination."
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to return (1-100). Defaults to 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "available",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "news",
+            "optional": false,
+            "type": "{ id: number, title: string, text?: string, summary?: string | null, url: string, image?: string | null, video?: string | null, publish_date?: string, author?: string | null, authors?: string | null[], category?: string, language?: string, source_country?: string, sentiment?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worldnewsapi.api.news.searchNewsSources",
+      "shortPath": "news.searchNewsSources",
+      "description": "Search whether a news source is being monitored by the World News API.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The (partial) name of the news source to search for (e.g. \"bbc\", \"reuters\", \"times\")."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "available",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "{ name: string, url: string, language?: string, country?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worldnewsapi.api.news.topNews",
+      "shortPath": "news.topNews",
+      "description": "Get the top news from a country in a specific language for a given date. The top news are clustered from multiple sources in the specified country.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceCountry",
+            "optional": false,
+            "type": "string",
+            "description": "The 2-letter ISO 3166 country code for which top news should be retrieved (e.g., \"us\", \"in\", \"gb\")."
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string",
+            "description": "The 2-letter ISO 639-1 language code of the top news (e.g., \"en\", \"es\", \"fr\")."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "The date for which the top news should be retrieved (YYYY-MM-DD). Defaults to today."
+          },
+          {
+            "key": "headlinesOnly",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to only return basic headline fields (id, title, url). Defaults to false."
+          },
+          {
+            "key": "maxNewsPerCluster",
+            "optional": true,
+            "type": "number",
+            "description": "How many news articles to return per story cluster. Default is 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top_news",
+            "optional": false,
+            "type": "{ news: { id: number, title: string, text?: string, summary?: string | null, url: string, image?: string | null, video?: string | null, publish_date?: string, author?: string | null, authors?: string | null[], category?: string, language?: string, source_country?: string, sentiment?: number }[] }[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "worldnewsapi.db.articles.search",
+      "entityName": "articles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "video",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publish_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sentiment",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "worldnewsapi.db.extractedArticles.search",
+      "entityName": "extractedArticles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "video",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publish_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sentiment",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "extractedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "worldnewsapi.db.geoCoordinates.search",
+      "entityName": "geoCoordinates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "longitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolvedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "worldnewsapi.db.sources.search",
+      "entityName": "sources",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "searchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

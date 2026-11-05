@@ -52,33 +52,6 @@ export function TagFilterSkeleton() {
 	);
 }
 
-export function LeaderboardSkeleton() {
-	return (
-		<div aria-busy="true" aria-label="Loading leaderboard">
-			<div className="mb-10 grid gap-4 sm:grid-cols-3 sm:items-end sm:gap-2">
-				{Array.from({ length: 3 }, (_, i) => (
-					<div key={i} className="space-y-0">
-						<Pulse className="h-48 w-full border border-[#1c1c1c1a]" />
-						<Pulse className="h-9 w-full" />
-					</div>
-				))}
-			</div>
-			<FramedPanel corners={false}>
-				<div className="space-y-0 divide-y divide-[#1c1c1c0d]">
-					{Array.from({ length: 5 }, (_, i) => (
-						<div key={i} className="flex items-center gap-3 px-6 py-3">
-							<Pulse className="h-3 w-4" />
-							<Pulse className="size-5 rounded-full" />
-							<Pulse className="h-4 flex-1 max-w-32" />
-							<Pulse className="h-4 w-10" />
-						</div>
-					))}
-				</div>
-			</FramedPanel>
-		</div>
-	);
-}
-
 export function OssSidebarSkeleton() {
 	return (
 		<aside className="space-y-10" aria-busy="true" aria-label="Loading sidebar">
@@ -86,11 +59,7 @@ export function OssSidebarSkeleton() {
 				<Pulse className="h-3 w-16" />
 				<div className="mt-4 space-y-3">
 					{Array.from({ length: 4 }, (_, i) => (
-						<div key={i} className="flex items-center gap-3">
-							<Pulse className="h-3 w-8" />
-							<Pulse className="size-5 rounded-full" />
-							<Pulse className="h-4 flex-1" />
-						</div>
+						<Pulse key={i} className="h-10 w-full" />
 					))}
 				</div>
 			</div>

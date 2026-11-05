@@ -1,0 +1,304 @@
+---
+title: API
+description: "API reference for CoinMarketCal: every `coinmarketcal.api.*` operation with input and output types."
+---
+
+Every `coinmarketcal.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Categories
+
+### list
+
+`categories.list`
+
+List event categories from CoinMarketCal
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcal.api.categories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  slug?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Coins
+
+### get
+
+`coins.get`
+
+Get a cryptocurrency by slug from CoinMarketCal
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcal.api.coins.get({ slug: 'bitcoin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+| `symbol` | `string` | No | — |
+| `name` | `string` | No | — |
+| `rank` | `number` | No | — |
+| `tracked` | `boolean` | No | — |
+| `iconUrl` | `string` | No | — |
+| `upcomingCount` | `number` | No | — |
+| `majorCount` | `number` | No | — |
+| `peakImpact` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`coins.list`
+
+List available cryptocurrencies from CoinMarketCal
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcal.api.coins.list({ q: 'bitcoin', tracked: true, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `tracked` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  slug: string,
+  symbol?: string,
+  name?: string,
+  rank?: number | null,
+  tracked?: boolean,
+  iconUrl?: string | null,
+  upcomingCount?: number | null,
+  majorCount?: number | null,
+  peakImpact?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### get
+
+`events.get`
+
+Get a cryptocurrency event by id from CoinMarketCal
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcal.api.events.get({ id: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `date` | `string` | No | — |
+| `dateEnd` | `string` | No | — |
+| `dateType` | `string` | No | — |
+| `isEstimated` | `boolean` | No | — |
+| `displayedDate` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `coins` | `object[]` | No | — |
+| `impact` | `number \| string` | No | — |
+| `impactSummary` | `string` | No | — |
+| `sourceUrl` | `string` | No | — |
+| `snapshotUrl` | `string` | No | — |
+| `lastVerifiedAt` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="coins full type">
+
+```ts
+{
+  slug: string,
+  symbol: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+List cryptocurrency events from CoinMarketCal
+
+**Risk:** `read`
+
+```ts
+await corsair.coinmarketcal.api.events.list({
+	coins: 'bitcoin,ethereum',
+	from: '2026-01-01',
+	to: '2026-03-31',
+	limit: 20,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coins` | `string` | No | — |
+| `categories` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `keyword` | `string` | No | — |
+| `impactMin` | `number` | No | — |
+| `sortBy` | `date_asc \| date_desc \| created_desc \| created_desc_and_updated_desc \| impact_desc` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  slug?: string,
+  title?: string,
+  description?: string | null,
+  date?: string,
+  dateEnd?: string | null,
+  dateType?: string,
+  isEstimated?: boolean,
+  displayedDate?: string,
+  categories?: string[],
+  coins?: {
+    slug: string,
+    symbol: string,
+    name: string
+  }[],
+  impact?: number | string | null,
+  impactSummary?: string | null,
+  sourceUrl?: string | null,
+  snapshotUrl?: string | null,
+  lastVerifiedAt?: string | null,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

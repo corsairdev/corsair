@@ -1,0 +1,459 @@
+{
+  "id": "studiobyai21labs",
+  "displayName": "ElevenLabs Studio",
+  "description": "AI audio studio for voice generation, dubbing, and long-form spoken content production.",
+  "npmPackageName": "@corsair-dev/studiobyai21labs",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "studiobyai21labs.api.chat.completions",
+      "shortPath": "chat.completions",
+      "description": "Generate a Jamba chat completion from a conversation history",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | user | assistant | tool, content?: string | null, tool_calls?: { id: string, type: string, function: { name: string, arguments: string } }[], tool_call_id?: string }[]"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ type: function, function: { name: string, description?: string, parameters?: {} } }[]"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ content: string, metadata?: {} }[]"
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "{ type: text | json_object }"
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index?: number, message?: { role?: string, content?: string | null, tool_calls?: any[] }, finish_reason?: string }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens?: number, completion_tokens?: number, total_tokens?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "studiobyai21labs.api.library.delete",
+      "shortPath": "library.delete",
+      "description": "Delete a library file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "studiobyai21labs.api.library.download",
+      "shortPath": "library.download",
+      "description": "Get a signed download URL for a library file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "studiobyai21labs.api.library.get",
+      "shortPath": "library.get",
+      "description": "Get metadata for a library file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "studiobyai21labs.api.library.list",
+      "shortPath": "library.list",
+      "description": "List workspace library files with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "DB_RECORD_CREATED | UPLOADED | UPLOAD_FAILED | PROCESSED | PROCESSING_FAILED"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, size?: number, created_at?: string, labels?: string[], errorCode?: string, errorMessage?: string }[]"
+      }
+    },
+    {
+      "path": "studiobyai21labs.api.library.update",
+      "shortPath": "library.update",
+      "description": "Update a library file public URL or labels",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "publicUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "studiobyai21labs.api.library.upload",
+      "shortPath": "library.upload",
+      "description": "Upload a file or register a public URL in the library",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | custom"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "publicUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "studiobyai21labs.api.maestro.createRun",
+      "shortPath": "maestro.createRun",
+      "description": "Create an AI21 Maestro run",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | { role: user | assistant, content: string }[]"
+          },
+          {
+            "key": "system_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requirements",
+            "optional": true,
+            "type": "{ name: string, description: string, is_mandatory?: boolean }[]"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "({ type: mcp, server_label: string, server_url: string, headers?: {}, allowed_tools?: string[] } | { type: http, function: { name: string, description?: string, parameters?: {} }, endpoint: { url: string, headers?: {} } } | { type: file_search, labels?: string[], file_ids?: string[] } | { type: web_search, urls?: string[] })[]"
+          },
+          {
+            "key": "models",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "low | medium | high"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "data_sources | requirements_result[]"
+          },
+          {
+            "key": "response_language",
+            "optional": true,
+            "type": "arabic | dutch | english | french | german | hebrew | italian | portuguese | spanish"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "completed | failed | in_progress"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "requirements_result",
+            "optional": true,
+            "type": "{ score?: number, finish_reason?: string, requirements?: any[] }"
+          },
+          {
+            "key": "data_sources",
+            "optional": true,
+            "type": "{ web_search?: any[], file_search?: any[], tool_calls?: any[] }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ message?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "studiobyai21labs.api.maestro.retrieveRun",
+      "shortPath": "maestro.retrieveRun",
+      "description": "Retrieve an AI21 Maestro run by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "completed | failed | in_progress"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "requirements_result",
+            "optional": true,
+            "type": "{ score?: number, finish_reason?: string, requirements?: any[] }"
+          },
+          {
+            "key": "data_sources",
+            "optional": true,
+            "type": "{ web_search?: any[], file_search?: any[], tool_calls?: any[] }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ message?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

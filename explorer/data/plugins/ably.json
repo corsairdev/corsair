@@ -1,0 +1,1063 @@
+{
+  "id": "ably",
+  "displayName": "Ably",
+  "description": "Realtime messaging platform for pub/sub, chat, and live data streaming at scale.",
+  "npmPackageName": "@corsair-dev/ably",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ably.api.application.getServiceTime",
+      "shortPath": "application.getServiceTime",
+      "description": "Get the current Ably service time.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number[]"
+      }
+    },
+    {
+      "path": "ably.api.application.getStats",
+      "shortPath": "application.getStats",
+      "description": "Retrieve application usage statistics.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "forwards | backwards"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "minute | hour | day | month"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "ably.api.application.requestAccessToken",
+      "shortPath": "application.requestAccessToken",
+      "description": "Request an Ably access token.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "capability",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "issued",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "capability",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ably.api.channels.batchPresence",
+      "shortPath": "channels.batchPresence",
+      "description": "Retrieve presence information for multiple channels.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channels",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "ably.api.channels.batchPresenceHistory",
+      "shortPath": "channels.batchPresenceHistory",
+      "description": "Retrieve presence history for multiple channels.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channels",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "forwards | backwards"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "ably.api.channels.getChannelDetails",
+      "shortPath": "channels.getChannelDetails",
+      "description": "Retrieve details for an active channel.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ isActive?: boolean, occupancy?: { metrics?: {} } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ably.api.channels.getChannelHistory",
+      "shortPath": "channels.getChannelHistory",
+      "description": "Retrieve message history for a channel.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "forwards | backwards"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, name?: string, data?: any, clientId?: string, connectionId?: string, timestamp?: number, encoding?: string, extras?: {} }[]"
+      }
+    },
+    {
+      "path": "ably.api.channels.getChannelPresence",
+      "shortPath": "channels.getChannelPresence",
+      "description": "Retrieve current channel presence members.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, action?: string | number, clientId?: string, connectionId?: string, data?: any, timestamp?: number, encoding?: string }[]"
+      }
+    },
+    {
+      "path": "ably.api.channels.getMessageVersions",
+      "shortPath": "channels.getMessageVersions",
+      "description": "Retrieve historical versions of a message.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "serial",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, name?: string, data?: any, clientId?: string, connectionId?: string, timestamp?: number, encoding?: string, extras?: {} }[]"
+      }
+    },
+    {
+      "path": "ably.api.channels.getPresenceHistory",
+      "shortPath": "channels.getPresenceHistory",
+      "description": "Retrieve presence history for a channel.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "forwards | backwards"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, action?: string | number, clientId?: string, connectionId?: string, data?: any, timestamp?: number, encoding?: string }[]"
+      }
+    },
+    {
+      "path": "ably.api.channels.listChannels",
+      "shortPath": "channels.listChannels",
+      "description": "List active Ably channels.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "by",
+            "optional": true,
+            "type": "id | value"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "(string | { channelId?: string, status?: { isActive?: boolean, occupancy?: { metrics?: {} } } })[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ably.api.channels.publishBatchMessages",
+      "shortPath": "channels.publishBatchMessages",
+      "description": "Publish messages to multiple Ably channels.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ channels: string[], messages: { id?: string, name?: string, data?: any, clientId?: string, connectionId?: string, timestamp?: number, encoding?: string, extras?: {} }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "ably.api.channels.publishMessageToChannel",
+      "shortPath": "channels.publishMessageToChannel",
+      "description": "Publish a message to an Ably channel.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extras",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "ably.api.push.createPushChannelSubscription",
+      "shortPath": "push.createPushChannelSubscription",
+      "description": "Subscribe a device or client to a push channel.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deviceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "ably.api.push.deleteChannelSubscription",
+      "shortPath": "push.deleteChannelSubscription",
+      "description": "Delete matching push channel subscriptions.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deviceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "ably.api.push.getPushDevice",
+      "shortPath": "push.getPushDevice",
+      "description": "Retrieve a push device registration.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formFactor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "updateToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "push",
+            "optional": true,
+            "type": "{ state?: string, recipient?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ably.api.push.listPushChannels",
+      "shortPath": "push.listPushChannels",
+      "description": "List channels with push subscribers.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ably.api.push.listPushChannelSubscriptions",
+      "shortPath": "push.listPushChannelSubscriptions",
+      "description": "List push channel subscriptions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deviceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ channel: string, deviceId?: string, clientId?: string }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ably.api.push.listRegisteredPushDevices",
+      "shortPath": "push.listRegisteredPushDevices",
+      "description": "List registered push notification devices.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deviceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, clientId?: string, platform?: string, formFactor?: string, metadata?: {}, updateToken?: string, push?: { state?: string, recipient?: {} } }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ably.api.push.patchPushDeviceRegistration",
+      "shortPath": "push.patchPushDeviceRegistration",
+      "description": "Partially update a push device registration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "push",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formFactor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "updateToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "push",
+            "optional": true,
+            "type": "{ state?: string, recipient?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ably.api.push.publishPushNotification",
+      "shortPath": "push.publishPushNotification",
+      "description": "Publish a push notification.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "notification",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "ably.api.push.publishPushNotificationsBatch",
+      "shortPath": "push.publishPushNotificationsBatch",
+      "description": "Publish a batch of push notifications.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notifications",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "ably.api.push.registerPushDevice",
+      "shortPath": "push.registerPushDevice",
+      "description": "Register a device for push notifications.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "ios | android | browser"
+          },
+          {
+            "key": "formFactor",
+            "optional": false,
+            "type": "phone | tablet | desktop | tv | watch | car | embedded"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "updateToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "push",
+            "optional": false,
+            "type": "{ recipient: { transportType: fcm | apns | web } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formFactor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "updateToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "push",
+            "optional": true,
+            "type": "{ state?: string, recipient?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ably.api.push.unregisterAllPushDevices",
+      "shortPath": "push.unregisterAllPushDevices",
+      "description": "Delete matching push device registrations.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "ably.api.push.unregisterPushDevice",
+      "shortPath": "push.unregisterPushDevice",
+      "description": "Delete a push device registration.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "ably.api.push.updatePushDevice",
+      "shortPath": "push.updatePushDevice",
+      "description": "Create or replace a push device registration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "ios | android | browser"
+          },
+          {
+            "key": "formFactor",
+            "optional": false,
+            "type": "phone | tablet | desktop | tv | watch | car | embedded"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "updateToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "push",
+            "optional": false,
+            "type": "{ recipient: { transportType: fcm | apns | web } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formFactor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "updateToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "push",
+            "optional": true,
+            "type": "{ state?: string, recipient?: {} }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

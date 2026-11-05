@@ -1,0 +1,857 @@
+{
+  "id": "customerio",
+  "displayName": "Customer.io",
+  "description": "Customer.io plugin for Corsair",
+  "npmPackageName": "@corsair-dev/customerio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "tenant_external_id",
+        "track_api_key",
+        "cdp_write_key"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "customerio.api.broadcasts.getTrigger",
+      "shortPath": "broadcasts.getTrigger",
+      "description": "Get details of a specific broadcast trigger",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "broadcast_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "trigger_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "broadcast_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "processed_at",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.broadcasts.listTriggers",
+      "shortPath": "broadcasts.listTriggers",
+      "description": "List API trigger instances for a broadcast",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "broadcast_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "triggers",
+            "optional": false,
+            "type": "{ id: number, broadcast_id?: number, campaign_id?: number, state?: string, data?: lazy, created?: number | string, created_at?: number | string, processed_at?: number | string }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.broadcasts.trigger",
+      "shortPath": "broadcasts.trigger",
+      "description": "Trigger a Customer.io broadcast to a defined audience",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "broadcast_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "per_user_data",
+            "optional": true,
+            "type": "{ id?: string, email?: string, data?: lazy }[]"
+          },
+          {
+            "key": "data_file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_add_duplicates",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "email_ignore_missing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "id_ignore_missing",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "broadcast_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "trigger_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.cdp.batch",
+      "shortPath": "cdp.batch",
+      "description": "Send multiple CDP calls (identify, track, page, screen, group, alias) in one batch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch",
+            "optional": false,
+            "type": "({ type: identify, userId?: string, anonymousId?: string, traits?: lazy, context?: lazy, timestamp?: string } | { type: track, userId?: string, anonymousId?: string, event: string, properties?: lazy, context?: lazy, timestamp?: string } | { type: page, userId?: string, anonymousId?: string, name?: string, properties?: lazy, context?: lazy, timestamp?: string } | { type: screen, userId?: string, anonymousId?: string, name: string, properties?: lazy, context?: lazy, timestamp?: string } | { type: group, userId?: string, anonymousId?: string, groupId: string, traits?: lazy, context?: lazy, timestamp?: string } | { type: alias, userId: string, previousId: string, context?: lazy, timestamp?: string })[]"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "lazy"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "customerio.api.cdp.page",
+      "shortPath": "cdp.page",
+      "description": "Track a website page view via the CDP API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "anonymousId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "customerio.api.cdp.screen",
+      "shortPath": "cdp.screen",
+      "description": "Track a mobile screen view via the CDP API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "anonymousId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "customerio.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "List Collections metadata in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": true,
+            "type": "{ id?: string, name?: string, schema?: lazy, rows?: number, bytes?: number, created?: number | string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.groups.addPerson",
+      "shortPath": "groups.addPerson",
+      "description": "Add a person to a group (company, account or project)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "traits",
+            "optional": true,
+            "type": "lazy"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "customerio.api.info.listIps",
+      "shortPath": "info.listIps",
+      "description": "List IP addresses used by Customer.io for sending messages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip_addresses",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages sent from the workspace with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drafts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "email | push | sms | in_app | inbox | whatsapp"
+          },
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "newsletter_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "action_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ id?: string | number, type?: string, customer_id?: string, campaign_id?: number, newsletter_id?: number, action_id?: number, subject?: string, created?: number | string }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.newsletters.list",
+      "shortPath": "newsletters.list",
+      "description": "List one-time sends (newsletters) with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "newsletters",
+            "optional": false,
+            "type": "{ id?: number, name?: string, type?: string, content_ids?: number[], sent_at?: number | string }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.profiles.alias",
+      "shortPath": "profiles.alias",
+      "description": "Merge two profiles by aliasing the secondary into the primary",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "primary",
+            "optional": false,
+            "type": "{ id?: string | number, email?: string, cio_id?: string }"
+          },
+          {
+            "key": "secondary",
+            "optional": false,
+            "type": "{ id?: string | number, email?: string, cio_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "customerio.api.profiles.identify",
+      "shortPath": "profiles.identify",
+      "description": "Identify a person and assign traits (creates or updates the profile)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "lazy"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "customerio.api.profiles.reportPush",
+      "shortPath": "profiles.reportPush",
+      "description": "Report delivery metrics via the metrics endpoint (push events endpoint is deprecated)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delivery_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "bounced | clicked | converted | deferred | delivered | dropped | opened | spammed"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "bounced | clicked | converted | deferred | delivered | dropped | opened | spammed"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recipient",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "customerio.api.profiles.suppress",
+      "shortPath": "profiles.suppress",
+      "description": "Suppress a profile: permanently deletes it and blocks re-adding",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "customerio.api.profiles.trackEvent",
+      "shortPath": "profiles.trackEvent",
+      "description": "Record an event for a person",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "lazy"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "anonymous_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "customerio.api.profiles.unsubscribe",
+      "shortPath": "profiles.unsubscribe",
+      "description": "Unsubscribe a person from emails for a specific delivery",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delivery_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unsubscribe",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "customerio.api.reportingWebhooks.list",
+      "shortPath": "reportingWebhooks.list",
+      "description": "List reporting webhook configurations in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reporting_webhooks",
+            "optional": true,
+            "type": "{ id?: number, name?: string, endpoint?: string, events?: string[], disabled?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.segments.get",
+      "shortPath": "segments.get",
+      "description": "Get details of a specific segment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segment",
+            "optional": false,
+            "type": "{ id: number, name?: string, description?: string, type?: string, created?: number | string, updated?: number | string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "List segments in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segments",
+            "optional": false,
+            "type": "{ id: number, name?: string, description?: string, type?: string, created?: number | string, updated?: number | string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.segments.membership",
+      "shortPath": "segments.membership",
+      "description": "List customers in a segment with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segment_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customers",
+            "optional": true,
+            "type": "lazy[]"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.snippets.list",
+      "shortPath": "snippets.list",
+      "description": "List reusable content snippets in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snippets",
+            "optional": false,
+            "type": "{ name: string, value?: string, updated_at?: number | string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customerio.api.transactional.list",
+      "shortPath": "transactional.list",
+      "description": "List transactional message templates and their IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ id?: string | number, transactional_id?: string | number, name?: string, trigger_name?: string, description?: string, created_at?: number | string, updated_at?: number | string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

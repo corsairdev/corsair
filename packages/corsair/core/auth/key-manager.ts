@@ -1,3 +1,4 @@
+import { reencryptSealedAccountData } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { AuthTypes } from '../constants';
 import {
@@ -301,12 +302,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		...extraAccountFields,
 	];
 
-	// Cache for account lookup
-	let cachedAccount: {
-		id: string;
-		config: Record<string, unknown>;
-		dek: string | null;
-	} | null = null;
+	// Not cached across calls: the /call route keeps one manager per (instance,
+	// tenant) alive for the whole process, and a tenant's token is rewritten
+	// out-of-band on reconnect / Hub delivery. A cached row served a revoked token.
 
 	// Cache for integration lookup
 	let cachedIntegration: {
@@ -357,8 +355,6 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		getIntegration,
 
 		getAccount: async () => {
-			if (cachedAccount) return cachedAccount;
-
 			let provisionAttempted = false;
 
 			while (true) {
@@ -383,13 +379,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 					);
 				}
 
-				cachedAccount = {
+				return {
 					id: account.id,
 					config: parseConfig(account.config),
 					dek: account.dek ?? null,
 				};
-
-				return cachedAccount;
 			}
 		},
 
@@ -404,19 +398,16 @@ export function createAccountKeyManager<T extends AuthTypes>(
 				})
 				.where('id', '=', account.id)
 				.execute();
-
-			// Invalidate cache
-			cachedAccount = null;
 		},
 	};
 
-	// DEK caches
+	// DEK cache keyed to its encrypted source: since the row is re-read each call,
+	// a DEK rotated out-of-band must re-decrypt, not reuse a stale key.
 	let cachedDek: string | null = null;
+	let cachedDekSource: string | null = null;
 	let cachedIntegrationDek: string | null = null;
 
 	const getDecryptedDek = async (): Promise<string> => {
-		if (cachedDek) return cachedDek;
-
 		const account = await ctx.getAccount();
 		if (!account.dek) {
 			throw new Error(
@@ -424,7 +415,10 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			);
 		}
 
+		if (cachedDek && cachedDekSource === account.dek) return cachedDek;
+
 		cachedDek = await decryptDEK(account.dek, kek);
+		cachedDekSource = account.dek;
 		return cachedDek;
 	};
 
@@ -483,10 +477,25 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	const doUpdateConfig = async (
 		updates: Record<string, string | null>,
 	): Promise<void> => {
-		const dek = await getDecryptedDek();
+		// Read the row ONCE and derive both the DEK and the current config from that
+		// same snapshot. Reading them via two separate getAccount() calls lets a DEK
+		// rotation land between them, so we'd re-encrypt with a DEK that no longer
+		// matches the row — the next read then fails to decrypt and the catch below
+		// discards the config. One read keeps DEK and config consistent.
+		const account = await ctx.getAccount();
+		if (!account.dek) {
+			throw new Error(
+				`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
+			);
+		}
+		const dek = await decryptDEK(account.dek, kek);
 		let currentConfig: Record<string, string>;
 		try {
-			currentConfig = await getDecryptedConfig();
+			const config = account.config as Record<string, string>;
+			currentConfig =
+				!config || Object.keys(config).length === 0
+					? {}
+					: decryptConfig(config, dek);
 		} catch (err) {
 			console.error(
 				`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"), starting fresh:`,
@@ -516,10 +525,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			const account = await ctx.getAccount();
 			const newDek = generateDEK();
 
-			// If there's an existing DEK, re-encrypt config; otherwise start fresh
+			// If there's an existing DEK, re-encrypt config and sealed rows; otherwise start fresh
 			let newConfig: Record<string, string> = {};
+			let oldDek: string | null = null;
 			if (account.dek) {
-				const oldDek = await decryptDEK(account.dek, kek);
+				oldDek = await decryptDEK(account.dek, kek);
 				const config = account.config as Record<string, string>;
 				if (config && Object.keys(config).length > 0) {
 					newConfig = reEncryptConfig(config, oldDek, newDek);
@@ -528,12 +538,34 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 			const encryptedNewDek = await encryptDEK(newDek, kek);
 
-			await ctx.updateAccount({
-				config: newConfig,
-				dek: encryptedNewDek,
-			});
+			if (oldDek) {
+				const previousDek = oldDek;
+				await database.db.transaction().execute(async (trx) => {
+					await reencryptSealedAccountData(
+						trx,
+						account.id,
+						previousDek,
+						newDek,
+					);
+					await trx
+						.updateTable('corsair_accounts')
+						.set({
+							config: newConfig,
+							dek: encryptedNewDek,
+							updated_at: new Date(),
+						})
+						.where('id', '=', account.id)
+						.execute();
+				});
+			} else {
+				await ctx.updateAccount({
+					config: newConfig,
+					dek: encryptedNewDek,
+				});
+			}
 
 			cachedDek = newDek;
+			cachedDekSource = encryptedNewDek;
 			return newDek;
 		},
 

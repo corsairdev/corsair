@@ -6,6 +6,10 @@ Thanks for contributing to Corsair. We welcome improvements to the core library,
 
 Please create an issue before starting work on anything significant. This helps us avoid duplicate work, align on scope, and catch design constraints early.
 
+We recommend waiting to be assigned an issue before you start work on it. Comment on the issue with your proposed approach and wait for a maintainer to assign it to you. This helps avoid overlap with other contributors and gives us a chance to confirm that your plan for completing the issue is in line with our expectation.
+
+Issues labeled **Good First Issue** are reserved for first-time contributors to Corsair. If you have already merged a contribution to this repository, please do not claim or work on a good first issue. The Corsair team will close the issue or pull request if a non-first-time contributor picks one up.
+
 If you want to contribute a new integration, check the [OSS Integrations page](https://corsair.dev/oss) first. It shows which integrations are available, which are already claimed, and who is working on them. Claim an integration there before you start so two people do not work on the same plugin.
 
 Before opening a new issue:
@@ -187,7 +191,7 @@ When starting a new plugin, figure out the integration's default auth model earl
 
 For example, OAuth integrations usually require more than just storing an access token. You should think through token refresh, token expiry, re-auth flows, and any account-scoping rules the provider imposes. API key integrations are often simpler, but you should still confirm whether they are account-level, environment-level, or user-level keys and model them accordingly.
 
-If you are unsure how the auth should fit into Corsair, try asking on our [Discord](https://discord.gg/DphupWS7). We can discuss the integration there and help you get unblocked.
+If you are unsure how the auth should fit into Corsair, try asking on our [Discord](https://discord.gg/uNgCP3mSzU). We can discuss the integration there and help you get unblocked.
 
 ## Webhook Testing
 
@@ -228,7 +232,7 @@ Corsair is strongly typed, and contributions should preserve that.
 
 Not every integration fits perfectly into the current plugin infrastructure. That is expected.
 
-If you discover that Corsair's plugin model does not work well for the integration you want to add, please do not hack around it silently. Open an issue so other contributors can help you. Also, as mentioned before, try asking on our [Discord](https://discord.gg/DphupWS7).
+If you discover that Corsair's plugin model does not work well for the integration you want to add, please do not hack around it silently. Open an issue so other contributors can help you. Also, as mentioned before, try asking on our [Discord](https://discord.gg/uNgCP3mSzU).
 
 Building plugin infrastructure that fits every API and webhook model is hard, and some integrations will need new accommodation points in the framework. We would rather discuss those cases early than merge a plugin that has to fight the abstractions.
 

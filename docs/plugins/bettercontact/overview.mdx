@@ -1,0 +1,129 @@
+---
+title: Overview
+description: "Waterfall enrichment API for finding verified B2B emails and mobile phone numbers."
+---
+
+Use **BetterContact** through Corsair: one client, typed API calls.
+
+BetterContact integrates waterfall enrichment across multiple data providers for verified work emails and direct phone numbers.
+
+Pass `key` to the plugin factory or set `BETTERCONTACT_API_KEY` in environment variables:
+
+```ts
+bettercontact({ key: process.env.BETTERCONTACT_API_KEY })
+```
+
+**What you get:**
+
+- 5 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/bettercontact
+```
+```bash yarn
+yarn add corsair @corsair-dev/bettercontact
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/bettercontact
+```
+```bash bun
+bun add corsair @corsair-dev/bettercontact
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { bettercontact } from '@corsair-dev/bettercontact';
+
+export const corsair = createCorsair({
+	plugins: [
+		bettercontact(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+bettercontact()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'bettercontact',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`credits.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bettercontact.api.credits.get({});
+```
+
+
+**`enrichment.enrich`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bettercontact.api.enrichment.enrich({});
+```
+
+
+See the full list on the [API](/plugins/bettercontact/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/bettercontact/api">
+    Every `bettercontact.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

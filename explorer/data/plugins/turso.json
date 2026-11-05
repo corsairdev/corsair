@@ -1,0 +1,144 @@
+{
+  "id": "turso",
+  "displayName": "Turso",
+  "description": "Serverless SQLite databases on libSQL with global replication.",
+  "npmPackageName": "@corsair-dev/turso",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "database_token"]
+    }
+  ],
+  "api": [
+    {
+      "path": "turso.api.changes.listen",
+      "shortPath": "changes.listen",
+      "description": "Listen to committed insert/update/delete events for a table in a Turso database",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Database-specific URL, e.g. https://mydb-myorg.turso.io — NOT the platform API host"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string",
+            "description": "Table to watch for committed changes"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "insert | update | delete",
+            "description": "Which committed action to stream: insert, update or delete"
+          },
+          {
+            "key": "maxEvents",
+            "optional": false,
+            "type": "number",
+            "description": "Stop after this many events have been received"
+          },
+          {
+            "key": "timeoutMs",
+            "optional": false,
+            "type": "number",
+            "description": "Stop listening after this many milliseconds"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ mode: stream, table: string, action: insert | update | delete, events: { table: string, action: insert | update | delete, receivedAt: string, data?: {} }[], stoppedBy: max_events | timeout | stream_closed } | { mode: health_check, table: string, action: insert | update | delete, listenAvailable: false, reason: string, databaseReachable: boolean }"
+      }
+    },
+    {
+      "path": "turso.api.regions.closest",
+      "shortPath": "regions.closest",
+      "description": "Get the closest Turso region based on client location, to minimize latency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "server",
+            "optional": false,
+            "type": "string",
+            "description": "Location code for the server that answered the request"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "string",
+            "description": "Location code for the requesting client"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turso.api.tokens.validate",
+      "shortPath": "tokens.validate",
+      "description": "Validate a Turso API token and retrieve its expiration time (-1 when it never expires)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exp",
+            "optional": false,
+            "type": "number",
+            "description": "Token expiry in unix epoch seconds, or -1 when the token never expires"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "turso.db.changeEvents.search",
+      "entityName": "changeEvents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "databaseUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "table",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "receivedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

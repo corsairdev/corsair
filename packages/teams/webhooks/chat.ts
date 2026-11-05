@@ -26,6 +26,14 @@ export const chatMessage: TeamsWebhooks['chatMessage'] = {
 		}
 
 		const { value: notifications } = request.payload;
+		if (!notifications[0]) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: 'Invalid payload: missing notification',
+			};
+		}
+
 		let corsairEntityId = '';
 
 		const accessToken = await ctx.keys.get_access_token();
@@ -37,7 +45,7 @@ export const chatMessage: TeamsWebhooks['chatMessage'] = {
 					if (!messageId) continue;
 
 					// resource format: chats('chatId')/messages('messageId')
-					const chatId = extractODataId(resource.split('/')[0] ?? '');
+					const chatId = extractODataId(resource?.split('/')[0] ?? '');
 
 					if (changeType === 'deleted') {
 						await ctx.db.messages.deleteByEntityId(messageId);

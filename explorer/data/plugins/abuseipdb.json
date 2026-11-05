@@ -1,0 +1,517 @@
+{
+  "id": "abuseipdb",
+  "displayName": "AbuseIPDB",
+  "description": "IP address reputation database for detecting and reporting malicious network activity.",
+  "npmPackageName": "@corsair-dev/abuseipdb",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "abuseipdb.api.address.clear",
+      "shortPath": "address.clear",
+      "description": "Remove all reports for an IP address from your account and return the number deleted",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ipAddress",
+            "optional": false,
+            "type": "string | string",
+            "description": "IPv4 or IPv6 address to clear reports for"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "numReportsDeleted",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abuseipdb.api.blacklist.get",
+      "shortPath": "blacklist.get",
+      "description": "Download the blacklist of most-reported IPs, optionally filtered by confidence minimum, country, and IP version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "confidenceMinimum",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum abuse confidence score (25–100)"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of entries to return"
+          },
+          {
+            "key": "onlyCountries",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only include IPs from these ISO 3166 alpha-2 country codes"
+          },
+          {
+            "key": "exceptCountries",
+            "optional": true,
+            "type": "string[]",
+            "description": "Exclude IPs from these ISO 3166 alpha-2 country codes"
+          },
+          {
+            "key": "ipVersion",
+            "optional": true,
+            "type": "4 | 6",
+            "description": "Restrict to a single IP version (4 or 6)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ ipAddress: string, abuseConfidenceScore: number, lastReportedAt?: string | null, countryCode?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abuseipdb.api.block.check",
+      "shortPath": "block.check",
+      "description": "Check a CIDR network block and list the reported addresses within it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string | string",
+            "description": "CIDR notation network block, e.g. \"127.0.0.1/24\""
+          },
+          {
+            "key": "maxAgeInDays",
+            "optional": true,
+            "type": "number",
+            "description": "Only consider reports from the last N days (1–365)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "networkAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "netmask",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "minAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numPossibleHosts",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "addressSpaceDesc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reportedAddress",
+            "optional": false,
+            "type": "{ ipAddress: string, numReports: number, mostRecentReport?: string | null, abuseConfidenceScore: number, countryCode?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abuseipdb.api.check.ip",
+      "shortPath": "check.ip",
+      "description": "Look up an IP address and get its abuse confidence score, country, ISP, usage type, and optionally recent reports",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ipAddress",
+            "optional": false,
+            "type": "string | string",
+            "description": "IPv4 or IPv6 address to check"
+          },
+          {
+            "key": "maxAgeInDays",
+            "optional": true,
+            "type": "number",
+            "description": "Only consider reports from the last N days (1–365)"
+          },
+          {
+            "key": "verbose",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the full reports array"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ipAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isPublic",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "ipVersion",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "isWhitelisted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "abuseConfidenceScore",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "countryName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usageType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hostnames",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "isTor",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "totalReports",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "numDistinctUsers",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lastReportedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reports",
+            "optional": true,
+            "type": "{ reportedAt: string, comment?: string | null, categories: number[], reporterId: number, reporterCountryCode?: string | null, reporterCountryName?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abuseipdb.api.report.ip",
+      "shortPath": "report.ip",
+      "description": "Submit an abuse report for an IP address with one or more abuse category IDs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string | string",
+            "description": "IPv4 or IPv6 address being reported"
+          },
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "number[]",
+            "description": "Abuse category IDs (integers 1–30)"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string",
+            "description": "Descriptive text of the attack; avoid any PII"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 datetime of the attack, defaults to now"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ipAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "abuseConfidenceScore",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abuseipdb.api.reports.list",
+      "shortPath": "reports.list",
+      "description": "Get a paginated list of abuse reports filed against a single IP address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ipAddress",
+            "optional": false,
+            "type": "string | string",
+            "description": "IPv4 or IPv6 address to fetch reports for"
+          },
+          {
+            "key": "maxAgeInDays",
+            "optional": true,
+            "type": "number",
+            "description": "Only consider reports from the last N days (1–365)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Reports per page (1–100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previousPageUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ reportedAt: string, comment?: string | null, categories: number[], reporterId: number, reporterCountryCode?: string | null, reporterCountryName?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "abuseipdb.db.ipChecks.search",
+      "entityName": "ipChecks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ipAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abuseConfidenceScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isPublic",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ipVersion",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "usageType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isTor",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "totalReports",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numDistinctUsers",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "abuseipdb.db.reports.search",
+      "entityName": "reports",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ipAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abuseConfidenceScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "reportedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import type {
 	ConnectionStatus,
 	ConnectLink,
+	ConnectRequest,
 	CreateConnectLinkInput,
 	CreateTenantInput,
 	ManagementOk,
@@ -48,6 +49,22 @@ export type CorsairManagementClient = {
 		resolve: (state: string) => Promise<ResolvedConnectLink>;
 		oauthCallback: (input: OAuthCallbackInput) => Promise<OAuthCallbackResult>;
 	};
+	connectRequest: {
+		get: (query?: {
+			tenantId?: string;
+		}) => Promise<{ request: ConnectRequest | null }>;
+		clear: (input?: {
+			tenantId?: string;
+			plugin?: string;
+		}) => Promise<{ ok: true }>;
+	};
+	/** Invoke a plugin op via `POST /:tenant/:plugin/call/:op`. Returns the op's result. */
+	call: <T = unknown>(
+		plugin: string,
+		op: string,
+		tenantId: string,
+		args?: unknown,
+	) => Promise<T>;
 };
 
 export class CorsairClientError extends Error {

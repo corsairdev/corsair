@@ -1,0 +1,610 @@
+---
+title: API
+description: "API reference for Blackbaud: every `blackbaud.api.*` operation with input and output types."
+---
+
+Every `blackbaud.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Batch
+
+### addGiftsToBatch
+
+`batch.addGiftsToBatch`
+
+Add one or more gifts (donations) to an existing open gift batch in Blackbaud Raiser's Edge NXT. Returns the added gifts and any per-gift errors.
+
+**Risk:** `write`
+
+```ts
+await corsair.blackbaud.api.batch.addGiftsToBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch_id` | `string` | Yes | — |
+| `gifts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="gifts full type">
+
+```ts
+{
+  amount: {
+    value: number
+  },
+  constituent_id: string,
+  gift_splits: {
+    amount: {
+      value: number
+    },
+    fund_id: string,
+    appeal_id?: string,
+    campaign_id?: string,
+    package_id?: string
+  }[],
+  type: string,
+  payments: {
+    payment_method?: string,
+    account_token?: string,
+    bbps_configuration_id?: string,
+    bbps_transaction_id?: string,
+    check_date?: {
+      d?: number,
+      m?: number,
+      y?: number
+    },
+    check_number?: string,
+    checkout_transaction_id?: string,
+    charge_transaction?: boolean,
+    reason?: string,
+    reference?: string,
+    reference_date?: {
+      d?: number,
+      m?: number,
+      y?: number
+    },
+    rejection_details?: string
+  }[],
+  date?: string,
+  post_date?: string,
+  post_status?: string,
+  gift_status?: string,
+  subtype?: string,
+  constituency?: string,
+  gift_code?: string,
+  is_anonymous?: boolean,
+  lookup_id?: string,
+  origin?: string,
+  reference?: string,
+  batch_number?: string,
+  batch_prefix?: string,
+  linked_gifts?: string[],
+  fundraisers?: {
+    amount: {
+      value: number
+    },
+    constituent_id: string
+  }[],
+  soft_credits?: {
+    amount: {
+      value: number
+    },
+    constituent_id: string
+  }[],
+  default_fundraiser_credits?: boolean,
+  default_soft_credits?: boolean,
+  custom_fields?: {
+    category: string,
+    value?: string | number | boolean,
+    comment?: string,
+    date?: string,
+    parent_id?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gifts` | `object[]` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="gifts full type">
+
+```ts
+{
+  id?: string,
+  constituent_id?: string,
+  amount?: {
+    value: number
+  },
+  balance?: {
+    value: number
+  },
+  batch_number?: string,
+  constituency?: string,
+  date?: string,
+  date_added?: string,
+  date_modified?: string,
+  gift_code?: string,
+  gift_status?: string,
+  is_anonymous?: boolean,
+  lookup_id?: string,
+  origin?: string,
+  post_date?: string,
+  post_status?: string,
+  reference?: string,
+  subtype?: string,
+  type?: string,
+  linked_gifts?: string[],
+  gift_splits?: {
+    id?: string,
+    amount?: {
+      value: number
+    },
+    appeal_id?: string,
+    campaign_id?: string,
+    fund_id?: string,
+    package_id?: string
+  }[],
+  payments?: {
+    payment_method?: string,
+    account_token?: string,
+    bbps_configuration_id?: string,
+    bbps_transaction_id?: string,
+    check_date?: {
+      d?: number,
+      m?: number,
+      y?: number
+    },
+    check_number?: string,
+    checkout_transaction_id?: string,
+    reference?: string,
+    reference_date?: {
+      d?: number,
+      m?: number,
+      y?: number
+    }
+  }[],
+  fundraisers?: {
+    amount?: {
+      value: number
+    },
+    constituent_id?: string
+  }[],
+  soft_credits?: {
+    id?: string,
+    amount?: {
+      value: number
+    },
+    constituent_id?: string,
+    gift_id?: string
+  }[],
+  receipts?: {
+    amount?: {
+      value: number
+    },
+    date?: string,
+    number?: number,
+    status?: string
+  }[],
+  acknowledgements?: {
+    date?: string,
+    letter?: string,
+    status?: string
+  }[],
+  batch_id?: string,
+  approved_gift_id?: string,
+  errors?: {
+    affected_field?: string,
+    batch_id?: string,
+    exception_error_code?: number,
+    exception_error_message?: string,
+    exception_error_name?: string,
+    gift_id?: string,
+    lookup_id?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  affected_field?: string,
+  batch_id?: string,
+  exception_error_code?: number,
+  exception_error_message?: string,
+  exception_error_name?: string,
+  gift_id?: string,
+  lookup_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Gifts
+
+### getGiftById
+
+`gifts.getGiftById`
+
+Retrieves comprehensive gift details from Blackbaud Raiser's Edge NXT by gift ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.blackbaud.api.gifts.getGiftById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gift_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `constituent_id` | `string` | No | — |
+| `amount` | `object` | No | — |
+| `balance` | `object` | No | — |
+| `batch_number` | `string` | No | — |
+| `constituency` | `string` | No | — |
+| `date` | `string` | No | — |
+| `date_added` | `string` | No | — |
+| `date_modified` | `string` | No | — |
+| `gift_code` | `string` | No | — |
+| `gift_status` | `string` | No | — |
+| `is_anonymous` | `boolean` | No | — |
+| `lookup_id` | `string` | No | — |
+| `origin` | `string` | No | — |
+| `post_date` | `string` | No | — |
+| `post_status` | `string` | No | — |
+| `reference` | `string` | No | — |
+| `subtype` | `string` | No | — |
+| `type` | `string` | No | — |
+| `linked_gifts` | `string[]` | No | — |
+| `gift_splits` | `object[]` | No | — |
+| `payments` | `object[]` | No | — |
+| `fundraisers` | `object[]` | No | — |
+| `soft_credits` | `object[]` | No | — |
+| `receipts` | `object[]` | No | — |
+| `acknowledgements` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="amount full type">
+
+```ts
+{
+  value: number
+}
+```
+</Accordion>
+
+<Accordion title="balance full type">
+
+```ts
+{
+  value: number
+}
+```
+</Accordion>
+
+<Accordion title="gift_splits full type">
+
+```ts
+{
+  id?: string,
+  amount?: {
+    value: number
+  },
+  appeal_id?: string,
+  campaign_id?: string,
+  fund_id?: string,
+  package_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="payments full type">
+
+```ts
+{
+  payment_method?: string,
+  account_token?: string,
+  bbps_configuration_id?: string,
+  bbps_transaction_id?: string,
+  check_date?: {
+    d?: number,
+    m?: number,
+    y?: number
+  },
+  check_number?: string,
+  checkout_transaction_id?: string,
+  reference?: string,
+  reference_date?: {
+    d?: number,
+    m?: number,
+    y?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="fundraisers full type">
+
+```ts
+{
+  amount?: {
+    value: number
+  },
+  constituent_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="soft_credits full type">
+
+```ts
+{
+  id?: string,
+  amount?: {
+    value: number
+  },
+  constituent_id?: string,
+  gift_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="receipts full type">
+
+```ts
+{
+  amount?: {
+    value: number
+  },
+  date?: string,
+  number?: number,
+  status?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="acknowledgements full type">
+
+```ts
+{
+  date?: string,
+  letter?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Membership
+
+### getMembershipDetails
+
+`membership.getMembershipDetails`
+
+Retrieves membership details (program, category, dues, renewal dates) from Blackbaud Raiser's Edge NXT by member junction ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.blackbaud.api.membership.getMembershipDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member_junction_id` | `string` | Yes | Membership record ID for the constituent (the "id" returned by the constituent memberships list). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dues` | `number` | No | — |
+| `category_name` | `string` | No | — |
+| `program_name` | `string` | No | — |
+| `sub_category_name` | `string` | No | — |
+| `last_renewed_date` | `string` | No | — |
+| `last_dropped_date` | `string` | No | — |
+| `next_renewal_date` | `string` | No | — |
+| `joined_date` | `string` | No | — |
+| `total_years` | `number` | No | — |
+| `times_renewed` | `number` | No | — |
+| `consec_years` | `number` | No | — |
+| `constituent_id` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `type` | `Joined \| Renewal \| Rejoined \| Upgrade \| Downgrade \| Dropped` | No | — |
+
+
+
+---
+
+## One Roster
+
+### oneRosterOAuth2BaseApi
+
+`oneRoster.oneRosterOAuth2BaseApi`
+
+Reads Blackbaud OneRoster OAuth2 discovery metadata (openid-configuration, public keys).
+
+**Risk:** `read`
+
+```ts
+await corsair.blackbaud.api.oneRoster.oneRosterOAuth2BaseApi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation` | `openid-configuration \| publickeys` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issuer` | `string` | No | — |
+| `authorization_endpoint` | `string` | No | — |
+| `token_endpoint` | `string` | No | — |
+| `jwks_uri` | `string` | No | — |
+| `response_types_supported` | `string[]` | No | — |
+| `subject_types_supported` | `string[]` | No | — |
+| `id_token_signing_alg_values_supported` | `string[]` | No | — |
+| `code_challenge_methods_supported` | `string[]` | No | — |
+| `keys` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="keys full type">
+
+```ts
+{
+  kty: string,
+  alg?: string,
+  use?: string,
+  kid?: string,
+  x5t?: string,
+  x5c?: string[],
+  e?: string,
+  n?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payments
+
+### getPaymentTransaction
+
+`payments.getPaymentTransaction`
+
+Retrieves payment transaction details from Blackbaud SKY Payments API.
+
+**Risk:** `read`
+
+```ts
+await corsair.blackbaud.api.payments.getPaymentTransaction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `amount` | `number` | No | — |
+| `net_amount` | `number` | No | — |
+| `additional_fee` | `number` | No | — |
+| `application_fee` | `number` | No | — |
+| `total_fees` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `state` | `Unknown \| Processed \| Failed \| Refunded \| Pending \| Authorized \| Voided \| Created` | No | — |
+| `transaction_date` | `string` | No | — |
+| `pending_date` | `string` | No | — |
+| `transaction_type` | `string` | No | — |
+| `transaction_category` | `string` | No | — |
+| `account_type` | `string` | No | — |
+| `application` | `string` | No | — |
+| `authorization_code` | `string` | No | — |
+| `check_number` | `string` | No | — |
+| `comment` | `string` | No | — |
+| `disbursement_status` | `string` | No | — |
+| `donor_ip_address` | `string` | No | — |
+| `email_address` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `is_live` | `boolean` | No | — |
+| `token` | `string` | No | — |
+| `reference_transaction_id` | `string` | No | — |
+| `billing_info` | `object` | No | — |
+| `credit_card` | `object` | No | — |
+| `related_transactions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing_info full type">
+
+```ts
+{
+  city?: string | null,
+  country?: string | null,
+  post_code?: string | null,
+  state?: string | null,
+  street?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="credit_card full type">
+
+```ts
+{
+  card_type?: string | null,
+  exp_month?: number,
+  exp_year?: number,
+  last_four?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="related_transactions full type">
+
+```ts
+{
+  id?: string | null,
+  transaction_type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

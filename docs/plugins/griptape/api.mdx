@@ -1,0 +1,4889 @@
+---
+title: API
+description: "API reference for Griptape: every `griptape.api.*` operation with input and output types."
+---
+
+Every `griptape.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Assistant
+
+### create
+
+`assistant.create`
+
+Create an assistant
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.assistant.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`assistant.delete`
+
+Delete an assistant
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.assistant.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`assistant.get`
+
+Get an assistant
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.assistant.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `created_by` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `input` | `string` | No | — |
+| `knowledge_base_ids` | `string[]` | Yes | — |
+| `model` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `organization_id` | `string` | Yes | — |
+| `retriever_ids` | `string[]` | Yes | — |
+| `ruleset_ids` | `string[]` | Yes | — |
+| `structure_ids` | `string[]` | Yes | — |
+| `tool_ids` | `string[]` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`assistant.list`
+
+List assistants
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.assistant.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistants` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assistants full type">
+
+```ts
+{
+  assistant_id: string,
+  created_at: string,
+  created_by: string,
+  description: string,
+  input?: string,
+  knowledge_base_ids: string[],
+  model?: string,
+  name: string,
+  organization_id: string,
+  retriever_ids: string[],
+  ruleset_ids: string[],
+  structure_ids: string[],
+  tool_ids: string[],
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`assistant.update`
+
+Update an assistant
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.assistant.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Assistant Run
+
+### cancel
+
+`assistantRun.cancel`
+
+Cancel an assistant run
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.assistantRun.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_run_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`assistantRun.create`
+
+Create an assistant run
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.assistantRun.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_id` | `string` | Yes | — |
+| `additional_knowledge_base_ids` | `string[]` | No | — |
+| `additional_retriever_ids` | `string[]` | No | — |
+| `additional_ruleset_ids` | `string[]` | No | — |
+| `additional_structure_ids` | `string[]` | No | — |
+| `additional_tool_ids` | `string[]` | No | — |
+| `args` | `string[]` | No | — |
+| `input` | `string` | No | — |
+| `knowledge_base_ids` | `string[]` | No | — |
+| `model` | `string` | No | — |
+| `new_thread` | `boolean` | No | — |
+| `retriever_ids` | `string[]` | No | — |
+| `ruleset_ids` | `string[]` | No | — |
+| `stream` | `boolean` | No | — |
+| `structure_ids` | `string[]` | No | — |
+| `thread_id` | `string` | No | — |
+| `tool_ids` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### events
+
+`assistantRun.events`
+
+List events for an assistant run
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.assistantRun.events({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_run_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`assistantRun.get`
+
+Retrieve an assistant run
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.assistantRun.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_run_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`assistantRun.list`
+
+List runs for an assistant
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.assistantRun.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Billing
+
+### managementUrl
+
+`billing.managementUrl`
+
+Get the billing management URL
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.billing.managementUrl({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Bucket
+
+### assetUrl
+
+`bucket.assetUrl`
+
+Get a signed bucket asset URL
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.bucket.assetUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `bucket_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`bucket.create`
+
+Create a bucket
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.bucket.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAsset
+
+`bucket.createAsset`
+
+Create a bucket asset
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.bucket.createAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `bucket_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`bucket.delete`
+
+Delete a bucket
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.bucket.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucket_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteAsset
+
+`bucket.deleteAsset`
+
+Delete a bucket asset
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.bucket.deleteAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucket_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`bucket.get`
+
+Get a bucket
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.bucket.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucket_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAsset
+
+`bucket.getAsset`
+
+Get a bucket asset
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.bucket.getAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucket_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`bucket.list`
+
+List buckets
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.bucket.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAssets
+
+`bucket.listAssets`
+
+List assets in a bucket
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.bucket.listAssets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucket_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `postfix` | `string` | No | — |
+| `prefix` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`bucket.update`
+
+Update a bucket
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.bucket.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `bucket_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Config
+
+### get
+
+`config.get`
+
+Get Cloud configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.config.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Connection
+
+### list
+
+`connection.list`
+
+List connections
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.connection.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credits
+
+### balance
+
+`credits.balance`
+
+Get the credits balance
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.credits.balance({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Data Connector
+
+### create
+
+`dataConnector.create`
+
+Create a data connector
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.dataConnector.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createJob
+
+`dataConnector.createJob`
+
+Create a data connector job
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.dataConnector.createJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `data_connector_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`dataConnector.delete`
+
+Delete a data connector
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.dataConnector.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_connector_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`dataConnector.get`
+
+Get a data connector
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.dataConnector.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_connector_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`dataConnector.list`
+
+List data connectors
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.dataConnector.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`dataConnector.update`
+
+Update a data connector
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.dataConnector.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `data_connector_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Data Job
+
+### cancel
+
+`dataJob.cancel`
+
+Cancel a data job
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.dataJob.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_job_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`dataJob.get`
+
+Get a data job
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.dataJob.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_job_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Export Job
+
+### create
+
+`exportJob.create`
+
+Create an export job
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.exportJob.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`exportJob.get`
+
+Get an export job
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.exportJob.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `export_job_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`exportJob.list`
+
+List export jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.exportJob.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Function
+
+### create
+
+`function.create`
+
+Create a function
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.function.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createDeployment
+
+`function.createDeployment`
+
+Create a function deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.function.createDeployment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `function_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`function.delete`
+
+Delete a function
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.function.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `function_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`function.get`
+
+Get a function
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.function.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `function_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`function.list`
+
+List functions
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.function.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDeployments
+
+`function.listDeployments`
+
+List deployments for a function
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.function.listDeployments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `function_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`function.update`
+
+Update a function
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.function.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `function_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Import Job
+
+### create
+
+`importJob.create`
+
+Create an import job
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.importJob.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`importJob.get`
+
+Get an import job
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.importJob.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `import_job_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`importJob.list`
+
+List import jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.importJob.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Integration
+
+### create
+
+`integration.create`
+
+Create an integration
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.integration.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`integration.delete`
+
+Delete an integration
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.integration.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integration_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`integration.get`
+
+Get an integration
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.integration.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integration_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`integration.list`
+
+List integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.integration.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`integration.update`
+
+Update an integration
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.integration.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `integration_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Knowledge Base
+
+### create
+
+`knowledgeBase.create`
+
+Create a knowledge base
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.knowledgeBase.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createJob
+
+`knowledgeBase.createJob`
+
+Create a knowledge base ingestion job
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.knowledgeBase.createJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `knowledge_base_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`knowledgeBase.delete`
+
+Delete a knowledge base
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.knowledgeBase.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`knowledgeBase.get`
+
+Get a knowledge base
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.knowledgeBase.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getJob
+
+`knowledgeBase.getJob`
+
+Get a knowledge base job
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.knowledgeBase.getJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_job_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getSearch
+
+`knowledgeBase.getSearch`
+
+Get a knowledge base search
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.knowledgeBase.getSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_search_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`knowledgeBase.list`
+
+List knowledge bases
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.knowledgeBase.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listJobs
+
+`knowledgeBase.listJobs`
+
+List knowledge base jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.knowledgeBase.listJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listQueries
+
+`knowledgeBase.listQueries`
+
+List queries for a knowledge base
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.knowledgeBase.listQueries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSearches
+
+`knowledgeBase.listSearches`
+
+List searches for a knowledge base
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.knowledgeBase.listSearches({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`knowledgeBase.query`
+
+Semantic search against a knowledge base
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.knowledgeBase.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `query_args` | `any` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### search
+
+`knowledgeBase.search`
+
+Search a knowledge base with a synthesized answer
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.knowledgeBase.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `query_args` | `any` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`knowledgeBase.update`
+
+Update a knowledge base
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.knowledgeBase.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `knowledge_base_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Library
+
+### create
+
+`library.create`
+
+Create a library
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.library.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`library.delete`
+
+Delete a library
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.library.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `library_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`library.get`
+
+Get a library
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.library.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `library_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`library.list`
+
+List libraries
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.library.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`library.update`
+
+Update a library
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.library.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `library_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Message
+
+### delete
+
+`message.delete`
+
+Delete a message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.message.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`message.get`
+
+Get a message
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.message.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`message.update`
+
+Update a message
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.message.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `message_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Model
+
+### create
+
+`model.create`
+
+Create a model configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.model.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAuthConfig
+
+`model.createAuthConfig`
+
+Create a model auth config
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.model.createAuthConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`model.delete`
+
+Delete a model configuration
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.model.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_config_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteAuthConfig
+
+`model.deleteAuthConfig`
+
+Delete a model auth config
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.model.deleteAuthConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `auth_config_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`model.get`
+
+Get a model configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.model.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_config_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAuthConfig
+
+`model.getAuthConfig`
+
+Get a model auth config
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.model.getAuthConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `auth_config_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`model.list`
+
+List models
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.model.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAuthConfigs
+
+`model.listAuthConfigs`
+
+List model auth configs
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.model.listAuthConfigs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`model.update`
+
+Update a model configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.model.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `model_config_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateAuthConfig
+
+`model.updateAuthConfig`
+
+Update a model auth config
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.model.updateAuthConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `auth_config_id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Organization
+
+### createApiKey
+
+`organization.createApiKey`
+
+Create an organization API key
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.organization.createApiKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `organization_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`organization.get`
+
+Get an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.organization.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`organization.list`
+
+List organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.organization.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listApiKeys
+
+`organization.listApiKeys`
+
+List API keys for an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.organization.listApiKeys({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`organization.update`
+
+Update an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.organization.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `organization_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Retriever
+
+### create
+
+`retriever.create`
+
+Create a retriever
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.retriever.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`retriever.get`
+
+Get a retriever
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.retriever.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `retriever_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`retriever.list`
+
+List retrievers
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.retriever.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`retriever.query`
+
+Query a retriever
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.retriever.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `retriever_components_query_args` | `any` | No | — |
+| `retriever_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`retriever.update`
+
+Update a retriever
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.retriever.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `retriever_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Retriever Component
+
+### create
+
+`retrieverComponent.create`
+
+Create a retriever component
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.retrieverComponent.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`retrieverComponent.get`
+
+Get a retriever component
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.retrieverComponent.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `retriever_component_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`retrieverComponent.list`
+
+List retriever components
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.retrieverComponent.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`retrieverComponent.update`
+
+Update a retriever component
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.retrieverComponent.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `retriever_component_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Rule
+
+### create
+
+`rule.create`
+
+Create a rule
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.rule.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`rule.delete`
+
+Delete a rule
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.rule.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`rule.get`
+
+Get a rule
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.rule.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`rule.list`
+
+List rules
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.rule.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`rule.update`
+
+Update a rule
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.rule.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `rule_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Ruleset
+
+### create
+
+`ruleset.create`
+
+Create a ruleset
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.ruleset.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`ruleset.delete`
+
+Delete a ruleset
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.ruleset.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ruleset_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`ruleset.get`
+
+Get a ruleset
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.ruleset.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ruleset_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getByAlias
+
+`ruleset.getByAlias`
+
+Get a ruleset by alias
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.ruleset.getByAlias({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alias` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`ruleset.update`
+
+Update a ruleset
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.ruleset.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `ruleset_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Secret
+
+### create
+
+`secret.create`
+
+Create a secret
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.secret.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`secret.delete`
+
+Delete a secret
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.secret.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`secret.get`
+
+Get a secret
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.secret.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`secret.list`
+
+List secrets
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.secret.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`secret.update`
+
+Update a secret
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.secret.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `secret_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Structure
+
+### create
+
+`structure.create`
+
+Create a structure
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.structure.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createDeployment
+
+`structure.createDeployment`
+
+Create a structure deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.structure.createDeployment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `structure_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### dashboard
+
+`structure.dashboard`
+
+Get structure dashboard metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.structure.dashboard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `end_time` | `string` | No | — |
+| `period` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `structure_ids` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`structure.delete`
+
+Delete a structure
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.structure.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `structure_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`structure.get`
+
+Get a structure
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.structure.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `structure_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`structure.list`
+
+List structures
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.structure.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDeployments
+
+`structure.listDeployments`
+
+List deployments for a structure
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.structure.listDeployments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `structure_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRuns
+
+`structure.listRuns`
+
+List runs for a structure
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.structure.listRuns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `structure_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`structure.update`
+
+Update a structure
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.structure.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `structure_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Thread
+
+### create
+
+`thread.create`
+
+Create a thread
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.thread.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`thread.delete`
+
+Delete a thread
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.thread.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thread_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`thread.get`
+
+Get a thread
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.thread.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thread_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`thread.list`
+
+List threads
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.thread.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alias` | `string` | No | — |
+| `created_by` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `starts_with` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`thread.update`
+
+Update a thread
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.thread.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `thread_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Thread Message
+
+### create
+
+`threadMessage.create`
+
+Create a message in a thread
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.threadMessage.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `output` | `string` | Yes | — |
+| `thread_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`threadMessage.list`
+
+List messages in a thread
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.threadMessage.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `thread_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tool
+
+### create
+
+`tool.create`
+
+Create a tool
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.tool.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createDeployment
+
+`tool.createDeployment`
+
+Create a tool deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.tool.createDeployment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `tool_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`tool.delete`
+
+Delete a tool
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.tool.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deploymentStatus
+
+`tool.deploymentStatus`
+
+Get a tool deployment status
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.tool.deploymentStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deployment_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`tool.get`
+
+Get a tool
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.tool.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`tool.list`
+
+List tools
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.tool.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDeployments
+
+`tool.listDeployments`
+
+List deployments for a tool
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.tool.listDeployments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRuns
+
+`tool.listRuns`
+
+List runs for a tool
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.tool.listRuns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tool.update`
+
+Update a tool
+
+**Risk:** `write`
+
+```ts
+await corsair.griptape.api.tool.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `tool_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Usage
+
+### get
+
+`usage.get`
+
+Get usage statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.usage.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## User
+
+### deleteApiKey
+
+`user.deleteApiKey`
+
+Delete an API key
+
+**Risk:** `destructive`
+
+```ts
+await corsair.griptape.api.user.deleteApiKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_key_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`user.get`
+
+Get a user
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.user.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getApiKey
+
+`user.getApiKey`
+
+Get an API key
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.user.getApiKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_key_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`user.list`
+
+List users
+
+**Risk:** `read`
+
+```ts
+await corsair.griptape.api.user.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_page?: number,
+  page_number: number,
+  page_size: number,
+  previous_page?: number,
+  total_count: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

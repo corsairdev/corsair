@@ -1,0 +1,1417 @@
+---
+title: API
+description: "API reference for BART: every `bart.api.*` operation with input and output types."
+---
+
+Every `bart.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Advisories
+
+### elevators
+
+`advisories.elevators`
+
+Get current elevator status and elevator outage advisories
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.advisories.elevators({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orig` | `string` | No | — |
+| `date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `time` | `string` | No | — |
+| `bsa` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="bsa full type">
+
+```ts
+{
+  station?: string,
+  type?: string,
+  description?: string | {
+    #cdata-section: string
+  },
+  sms_text?: string | {
+    #cdata-section: string
+  },
+  posted?: string,
+  expires?: string
+}[] | {
+  station?: string,
+  type?: string,
+  description?: string | {
+    #cdata-section: string
+  },
+  sms_text?: string | {
+    #cdata-section: string
+  },
+  posted?: string,
+  expires?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`advisories.list`
+
+Get current BART system advisories and service delays
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.advisories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orig` | `string` | No | — |
+| `date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `time` | `string` | No | — |
+| `bsa` | `object` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="bsa full type">
+
+```ts
+{
+  station?: string,
+  type?: string,
+  description?: string | {
+    #cdata-section: string
+  },
+  sms_text?: string | {
+    #cdata-section: string
+  },
+  posted?: string,
+  expires?: string
+}[] | {
+  station?: string,
+  type?: string,
+  description?: string | {
+    #cdata-section: string
+  },
+  sms_text?: string | {
+    #cdata-section: string
+  },
+  posted?: string,
+  expires?: string
+}
+```
+</Accordion>
+
+<Accordion title="message full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trainCount
+
+`advisories.trainCount`
+
+Get the number of trains currently active in the BART system
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.advisories.trainCount({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `time` | `string` | No | — |
+| `traincount` | `string \| number` | Yes | — |
+
+
+
+---
+
+## Etd
+
+### station
+
+`etd.station`
+
+Get real-time estimated departure times for a BART station
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.etd.station({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orig` | `string` | Yes | — |
+| `plat` | `string \| number` | No | — |
+| `dir` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `time` | `string` | No | — |
+| `station` | `object` | Yes | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="station full type">
+
+```ts
+{
+  name: string,
+  abbr: string,
+  etd?: {
+    destination: string,
+    abbreviation: string,
+    limited?: string,
+    estimate: {
+      minutes: string,
+      platform?: string,
+      direction?: string,
+      length?: string,
+      color?: string,
+      hexcolor?: string,
+      bikeflag?: string,
+      delay?: string,
+      cancelflag?: string,
+      dynamicflag?: string
+    }[] | {
+      minutes: string,
+      platform?: string,
+      direction?: string,
+      length?: string,
+      color?: string,
+      hexcolor?: string,
+      bikeflag?: string,
+      delay?: string,
+      cancelflag?: string,
+      dynamicflag?: string
+    }
+  }[] | {
+    destination: string,
+    abbreviation: string,
+    limited?: string,
+    estimate: {
+      minutes: string,
+      platform?: string,
+      direction?: string,
+      length?: string,
+      color?: string,
+      hexcolor?: string,
+      bikeflag?: string,
+      delay?: string,
+      cancelflag?: string,
+      dynamicflag?: string
+    }[] | {
+      minutes: string,
+      platform?: string,
+      direction?: string,
+      length?: string,
+      color?: string,
+      hexcolor?: string,
+      bikeflag?: string,
+      delay?: string,
+      cancelflag?: string,
+      dynamicflag?: string
+    }
+  }
+}[] | {
+  name: string,
+  abbr: string,
+  etd?: {
+    destination: string,
+    abbreviation: string,
+    limited?: string,
+    estimate: {
+      minutes: string,
+      platform?: string,
+      direction?: string,
+      length?: string,
+      color?: string,
+      hexcolor?: string,
+      bikeflag?: string,
+      delay?: string,
+      cancelflag?: string,
+      dynamicflag?: string
+    }[] | {
+      minutes: string,
+      platform?: string,
+      direction?: string,
+      length?: string,
+      color?: string,
+      hexcolor?: string,
+      bikeflag?: string,
+      delay?: string,
+      cancelflag?: string,
+      dynamicflag?: string
+    }
+  }[] | {
+    destination: string,
+    abbreviation: string,
+    limited?: string,
+    estimate: {
+      minutes: string,
+      platform?: string,
+      direction?: string,
+      length?: string,
+      color?: string,
+      hexcolor?: string,
+      bikeflag?: string,
+      delay?: string,
+      cancelflag?: string,
+      dynamicflag?: string
+    }[] | {
+      minutes: string,
+      platform?: string,
+      direction?: string,
+      length?: string,
+      color?: string,
+      hexcolor?: string,
+      bikeflag?: string,
+      delay?: string,
+      cancelflag?: string,
+      dynamicflag?: string
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="message full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fares
+
+### calculate
+
+`fares.calculate`
+
+Calculate transit fares and ticket prices between two BART stations
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.fares.calculate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orig` | `string` | Yes | — |
+| `dest` | `string` | Yes | — |
+| `date` | `string` | No | — |
+| `sched` | `string \| number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | No | — |
+| `destination` | `string` | No | — |
+| `sched` | `string` | No | — |
+| `sched_num` | `string` | No | — |
+| `trip` | `object` | No | — |
+| `fares` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="trip full type">
+
+```ts
+{
+  fare?: string,
+  discount?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="fares full type">
+
+```ts
+{
+  fare?: {
+    @amount?: string,
+    @class?: string,
+    @name?: string,
+    @type?: string
+  }[] | {
+    @amount?: string,
+    @class?: string,
+    @name?: string,
+    @type?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Routes
+
+### info
+
+`routes.info`
+
+Get detailed information about a specific BART transit route
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.routes.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `route` | `string \| number` | Yes | — |
+| `sched` | `string \| number` | No | — |
+| `date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sched` | `string` | No | — |
+| `routes` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="routes full type">
+
+```ts
+{
+  route: {
+    name: string,
+    abbr: string,
+    routeID: string,
+    number: string,
+    origin?: string,
+    destination?: string,
+    direction?: string,
+    color?: string,
+    hexcolor?: string,
+    holidays?: string,
+    numStns?: string,
+    config?: {
+      station?: string[] | string
+    }
+  }[] | {
+    name: string,
+    abbr: string,
+    routeID: string,
+    number: string,
+    origin?: string,
+    destination?: string,
+    direction?: string,
+    color?: string,
+    hexcolor?: string,
+    holidays?: string,
+    numStns?: string,
+    config?: {
+      station?: string[] | string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`routes.list`
+
+Get the list of all current BART transit routes
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.routes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sched` | `string \| number` | No | — |
+| `date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sched` | `string` | No | — |
+| `routes` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="routes full type">
+
+```ts
+{
+  route: {
+    name: string,
+    abbr: string,
+    routeID: string,
+    number: string,
+    hexcolor?: string,
+    color?: string
+  }[] | {
+    name: string,
+    abbr: string,
+    routeID: string,
+    number: string,
+    hexcolor?: string,
+    color?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schedules
+
+### arrivals
+
+`schedules.arrivals`
+
+Get scheduled arrivals and trip itinerary between two BART stations
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.schedules.arrivals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orig` | `string` | Yes | — |
+| `dest` | `string` | Yes | — |
+| `time` | `string` | No | — |
+| `date` | `string` | No | — |
+| `b` | `string \| number` | No | — |
+| `a` | `string \| number` | No | — |
+| `l` | `string \| number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | No | — |
+| `destination` | `string` | No | — |
+| `schedule` | `object` | No | — |
+| `schedule_files` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="schedule full type">
+
+```ts
+{
+  date?: string,
+  time?: string,
+  before?: string,
+  after?: string,
+  request?: {
+    trip?: {
+    }
+  },
+  trip?: {
+    @origin?: string,
+    @destination?: string,
+    @fare?: string,
+    @origTimeMin?: string,
+    @origTimeDate?: string,
+    @destTimeMin?: string,
+    @destTimeDate?: string,
+    @tripTime?: string,
+    @clipper?: string,
+    leg?: {
+      @order?: string,
+      @transfercode?: string,
+      @origin?: string,
+      @destination?: string,
+      @origTimeMin?: string,
+      @origTimeDate?: string,
+      @destTimeMin?: string,
+      @destTimeDate?: string,
+      @line?: string,
+      @bikeflag?: string,
+      @trainHeadStation?: string,
+      @trainIdx?: string
+    }[] | {
+      @order?: string,
+      @transfercode?: string,
+      @origin?: string,
+      @destination?: string,
+      @origTimeMin?: string,
+      @origTimeDate?: string,
+      @destTimeMin?: string,
+      @destTimeDate?: string,
+      @line?: string,
+      @bikeflag?: string,
+      @trainHeadStation?: string,
+      @trainIdx?: string
+    },
+    fares?: {
+      fare?: {
+        @amount?: string,
+        @class?: string,
+        @name?: string,
+        @type?: string
+      }[] | {
+        @amount?: string,
+        @class?: string,
+        @name?: string,
+        @type?: string
+      }
+    }
+  }[] | {
+    @origin?: string,
+    @destination?: string,
+    @fare?: string,
+    @origTimeMin?: string,
+    @origTimeDate?: string,
+    @destTimeMin?: string,
+    @destTimeDate?: string,
+    @tripTime?: string,
+    @clipper?: string,
+    leg?: {
+      @order?: string,
+      @transfercode?: string,
+      @origin?: string,
+      @destination?: string,
+      @origTimeMin?: string,
+      @origTimeDate?: string,
+      @destTimeMin?: string,
+      @destTimeDate?: string,
+      @line?: string,
+      @bikeflag?: string,
+      @trainHeadStation?: string,
+      @trainIdx?: string
+    }[] | {
+      @order?: string,
+      @transfercode?: string,
+      @origin?: string,
+      @destination?: string,
+      @origTimeMin?: string,
+      @origTimeDate?: string,
+      @destTimeMin?: string,
+      @destTimeDate?: string,
+      @line?: string,
+      @bikeflag?: string,
+      @trainHeadStation?: string,
+      @trainIdx?: string
+    },
+    fares?: {
+      fare?: {
+        @amount?: string,
+        @class?: string,
+        @name?: string,
+        @type?: string
+      }[] | {
+        @amount?: string,
+        @class?: string,
+        @name?: string,
+        @type?: string
+      }
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="schedule_files full type">
+
+```ts
+{
+  file?: {
+  }[] | {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### departures
+
+`schedules.departures`
+
+Get scheduled departures and trip itinerary between two BART stations
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.schedules.departures({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orig` | `string` | Yes | — |
+| `dest` | `string` | Yes | — |
+| `time` | `string` | No | — |
+| `date` | `string` | No | — |
+| `b` | `string \| number` | No | — |
+| `a` | `string \| number` | No | — |
+| `l` | `string \| number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | No | — |
+| `destination` | `string` | No | — |
+| `schedule` | `object` | No | — |
+| `schedule_files` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="schedule full type">
+
+```ts
+{
+  date?: string,
+  time?: string,
+  before?: string,
+  after?: string,
+  request?: {
+    trip?: {
+    }
+  },
+  trip?: {
+    @origin?: string,
+    @destination?: string,
+    @fare?: string,
+    @origTimeMin?: string,
+    @origTimeDate?: string,
+    @destTimeMin?: string,
+    @destTimeDate?: string,
+    @tripTime?: string,
+    @clipper?: string,
+    leg?: {
+      @order?: string,
+      @transfercode?: string,
+      @origin?: string,
+      @destination?: string,
+      @origTimeMin?: string,
+      @origTimeDate?: string,
+      @destTimeMin?: string,
+      @destTimeDate?: string,
+      @line?: string,
+      @bikeflag?: string,
+      @trainHeadStation?: string,
+      @trainIdx?: string
+    }[] | {
+      @order?: string,
+      @transfercode?: string,
+      @origin?: string,
+      @destination?: string,
+      @origTimeMin?: string,
+      @origTimeDate?: string,
+      @destTimeMin?: string,
+      @destTimeDate?: string,
+      @line?: string,
+      @bikeflag?: string,
+      @trainHeadStation?: string,
+      @trainIdx?: string
+    },
+    fares?: {
+      fare?: {
+        @amount?: string,
+        @class?: string,
+        @name?: string,
+        @type?: string
+      }[] | {
+        @amount?: string,
+        @class?: string,
+        @name?: string,
+        @type?: string
+      }
+    }
+  }[] | {
+    @origin?: string,
+    @destination?: string,
+    @fare?: string,
+    @origTimeMin?: string,
+    @origTimeDate?: string,
+    @destTimeMin?: string,
+    @destTimeDate?: string,
+    @tripTime?: string,
+    @clipper?: string,
+    leg?: {
+      @order?: string,
+      @transfercode?: string,
+      @origin?: string,
+      @destination?: string,
+      @origTimeMin?: string,
+      @origTimeDate?: string,
+      @destTimeMin?: string,
+      @destTimeDate?: string,
+      @line?: string,
+      @bikeflag?: string,
+      @trainHeadStation?: string,
+      @trainIdx?: string
+    }[] | {
+      @order?: string,
+      @transfercode?: string,
+      @origin?: string,
+      @destination?: string,
+      @origTimeMin?: string,
+      @origTimeDate?: string,
+      @destTimeMin?: string,
+      @destTimeDate?: string,
+      @line?: string,
+      @bikeflag?: string,
+      @trainHeadStation?: string,
+      @trainIdx?: string
+    },
+    fares?: {
+      fare?: {
+        @amount?: string,
+        @class?: string,
+        @name?: string,
+        @type?: string
+      }[] | {
+        @amount?: string,
+        @class?: string,
+        @name?: string,
+        @type?: string
+      }
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="schedule_files full type">
+
+```ts
+{
+  file?: {
+  }[] | {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### routes
+
+`schedules.routes`
+
+Get the full timetable and stop schedule for a specific BART route
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.schedules.routes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `route` | `string \| number` | Yes | — |
+| `time` | `string` | No | — |
+| `date` | `string` | No | — |
+| `l` | `string \| number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `route` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="route full type">
+
+```ts
+{
+  train?: {
+    @trainIdx?: string,
+    @trainHeadStation?: string,
+    stop?: {
+      @station?: string,
+      @origTime?: string,
+      @bikeflag?: string,
+      @load?: string
+    }[] | {
+      @station?: string,
+      @origTime?: string,
+      @bikeflag?: string,
+      @load?: string
+    }
+  }[] | {
+    @trainIdx?: string,
+    @trainHeadStation?: string,
+    stop?: {
+      @station?: string,
+      @origTime?: string,
+      @bikeflag?: string,
+      @load?: string
+    }[] | {
+      @station?: string,
+      @origTime?: string,
+      @bikeflag?: string,
+      @load?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stations
+
+### access
+
+`stations.access`
+
+Get station access details including parking, lockers, and transit connections
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.stations.access({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orig` | `string` | Yes | — |
+| `l` | `string \| number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stations` | `object` | No | — |
+| `station` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  station: {
+    name: string,
+    abbr: string,
+    entering?: string | {
+      #cdata-section: string
+    },
+    exiting?: string | {
+      #cdata-section: string
+    },
+    parking?: string | {
+      #cdata-section: string
+    },
+    fill_time?: string | {
+      #cdata-section: string
+    },
+    car_share?: string | {
+      #cdata-section: string
+    },
+    lockers?: string | {
+      #cdata-section: string
+    },
+    bike_station_text?: string | {
+      #cdata-section: string
+    },
+    dest_stations?: string | {
+      #cdata-section: string
+    },
+    transit_info?: string | {
+      #cdata-section: string
+    },
+    link?: string | {
+      #cdata-section: string
+    }
+  }[] | {
+    name: string,
+    abbr: string,
+    entering?: string | {
+      #cdata-section: string
+    },
+    exiting?: string | {
+      #cdata-section: string
+    },
+    parking?: string | {
+      #cdata-section: string
+    },
+    fill_time?: string | {
+      #cdata-section: string
+    },
+    car_share?: string | {
+      #cdata-section: string
+    },
+    lockers?: string | {
+      #cdata-section: string
+    },
+    bike_station_text?: string | {
+      #cdata-section: string
+    },
+    dest_stations?: string | {
+      #cdata-section: string
+    },
+    transit_info?: string | {
+      #cdata-section: string
+    },
+    link?: string | {
+      #cdata-section: string
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="station full type">
+
+```ts
+{
+  name: string,
+  abbr: string,
+  entering?: string | {
+    #cdata-section: string
+  },
+  exiting?: string | {
+    #cdata-section: string
+  },
+  parking?: string | {
+    #cdata-section: string
+  },
+  fill_time?: string | {
+    #cdata-section: string
+  },
+  car_share?: string | {
+    #cdata-section: string
+  },
+  lockers?: string | {
+    #cdata-section: string
+  },
+  bike_station_text?: string | {
+    #cdata-section: string
+  },
+  dest_stations?: string | {
+    #cdata-section: string
+  },
+  transit_info?: string | {
+    #cdata-section: string
+  },
+  link?: string | {
+    #cdata-section: string
+  }
+}[] | {
+  name: string,
+  abbr: string,
+  entering?: string | {
+    #cdata-section: string
+  },
+  exiting?: string | {
+    #cdata-section: string
+  },
+  parking?: string | {
+    #cdata-section: string
+  },
+  fill_time?: string | {
+    #cdata-section: string
+  },
+  car_share?: string | {
+    #cdata-section: string
+  },
+  lockers?: string | {
+    #cdata-section: string
+  },
+  bike_station_text?: string | {
+    #cdata-section: string
+  },
+  dest_stations?: string | {
+    #cdata-section: string
+  },
+  transit_info?: string | {
+    #cdata-section: string
+  },
+  link?: string | {
+    #cdata-section: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`stations.info`
+
+Get detailed station information, connections, and platforms
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.stations.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orig` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stations` | `object` | No | — |
+| `station` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  station: {
+    name: string,
+    abbr: string,
+    gtfs_latitude?: string,
+    gtfs_longitude?: string,
+    address?: string,
+    city?: string,
+    county?: string,
+    state?: string,
+    zipcode?: string,
+    north_routes?: {
+      route?: string[] | string
+    },
+    south_routes?: {
+      route?: string[] | string
+    },
+    north_platforms?: {
+      platform?: string[] | string
+    },
+    south_platforms?: {
+      platform?: string[] | string
+    },
+    platform_info?: string,
+    intro?: string | {
+      #cdata-section: string
+    },
+    cross_street?: string | {
+      #cdata-section: string
+    },
+    food?: string | {
+      #cdata-section: string
+    },
+    shopping?: string | {
+      #cdata-section: string
+    },
+    attraction?: string | {
+      #cdata-section: string
+    },
+    link?: string | {
+      #cdata-section: string
+    }
+  }[] | {
+    name: string,
+    abbr: string,
+    gtfs_latitude?: string,
+    gtfs_longitude?: string,
+    address?: string,
+    city?: string,
+    county?: string,
+    state?: string,
+    zipcode?: string,
+    north_routes?: {
+      route?: string[] | string
+    },
+    south_routes?: {
+      route?: string[] | string
+    },
+    north_platforms?: {
+      platform?: string[] | string
+    },
+    south_platforms?: {
+      platform?: string[] | string
+    },
+    platform_info?: string,
+    intro?: string | {
+      #cdata-section: string
+    },
+    cross_street?: string | {
+      #cdata-section: string
+    },
+    food?: string | {
+      #cdata-section: string
+    },
+    shopping?: string | {
+      #cdata-section: string
+    },
+    attraction?: string | {
+      #cdata-section: string
+    },
+    link?: string | {
+      #cdata-section: string
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="station full type">
+
+```ts
+{
+  name: string,
+  abbr: string,
+  gtfs_latitude?: string,
+  gtfs_longitude?: string,
+  address?: string,
+  city?: string,
+  county?: string,
+  state?: string,
+  zipcode?: string,
+  north_routes?: {
+    route?: string[] | string
+  },
+  south_routes?: {
+    route?: string[] | string
+  },
+  north_platforms?: {
+    platform?: string[] | string
+  },
+  south_platforms?: {
+    platform?: string[] | string
+  },
+  platform_info?: string,
+  intro?: string | {
+    #cdata-section: string
+  },
+  cross_street?: string | {
+    #cdata-section: string
+  },
+  food?: string | {
+    #cdata-section: string
+  },
+  shopping?: string | {
+    #cdata-section: string
+  },
+  attraction?: string | {
+    #cdata-section: string
+  },
+  link?: string | {
+    #cdata-section: string
+  }
+}[] | {
+  name: string,
+  abbr: string,
+  gtfs_latitude?: string,
+  gtfs_longitude?: string,
+  address?: string,
+  city?: string,
+  county?: string,
+  state?: string,
+  zipcode?: string,
+  north_routes?: {
+    route?: string[] | string
+  },
+  south_routes?: {
+    route?: string[] | string
+  },
+  north_platforms?: {
+    platform?: string[] | string
+  },
+  south_platforms?: {
+    platform?: string[] | string
+  },
+  platform_info?: string,
+  intro?: string | {
+    #cdata-section: string
+  },
+  cross_street?: string | {
+    #cdata-section: string
+  },
+  food?: string | {
+    #cdata-section: string
+  },
+  shopping?: string | {
+    #cdata-section: string
+  },
+  attraction?: string | {
+    #cdata-section: string
+  },
+  link?: string | {
+    #cdata-section: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`stations.list`
+
+Get list of all BART stations with geographic coordinates and addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.bart.api.stations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stations` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  station: {
+    name: string,
+    abbr: string,
+    gtfs_latitude?: string,
+    gtfs_longitude?: string,
+    address?: string,
+    city?: string,
+    county?: string,
+    state?: string,
+    zipcode?: string
+  }[] | {
+    name: string,
+    abbr: string,
+    gtfs_latitude?: string,
+    gtfs_longitude?: string,
+    address?: string,
+    city?: string,
+    county?: string,
+    state?: string,
+    zipcode?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

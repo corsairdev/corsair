@@ -1,0 +1,2743 @@
+{
+  "id": "booqable",
+  "displayName": "Booqable",
+  "description": "Booqable plugin for Corsair",
+  "npmPackageName": "@corsair-dev/booqable",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 49,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "booqable.api.barcodes.listBarcodes",
+      "shortPath": "barcodes.listBarcodes",
+      "description": "Retrieve a list of barcodes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: barcodes, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.bundleItems.listBundleItems",
+      "shortPath": "bundleItems.listBundleItems",
+      "description": "Retrieve a list of bundle items.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: bundle_items, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.bundles.searchBundles",
+      "shortPath": "bundles.searchBundles",
+      "description": "Search bundles with advanced filtering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: bundles, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.clusters.listClusters",
+      "shortPath": "clusters.listClusters",
+      "description": "Retrieve a list of clusters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: clusters, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.companies.updateCompany",
+      "shortPath": "companies.updateCompany",
+      "description": "Update the current company information.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: companies, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.coupons.listCoupons",
+      "shortPath": "coupons.listCoupons",
+      "description": "Retrieve a list of coupons.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: coupons, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.customers.createCustomer",
+      "shortPath": "customers.createCustomer",
+      "description": "Create a new customer in Booqable.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: customers, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.customers.deleteCustomer",
+      "shortPath": "customers.deleteCustomer",
+      "description": "Delete (archive) a customer by ID.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { id: string, type: customers, attributes?: {}, relationships?: {} }, included?: { id: string, type: string, attributes?: {}, relationships?: {} }[], links?: {}, meta?: {} } | { data: null, links?: {}, meta?: {} }"
+      }
+    },
+    {
+      "path": "booqable.api.customers.getCustomer",
+      "shortPath": "customers.getCustomer",
+      "description": "Fetch a specific customer by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: customers, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.customers.getCustomers",
+      "shortPath": "customers.getCustomers",
+      "description": "Retrieve a paginated list of customers.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: customers, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.customers.searchCustomers",
+      "shortPath": "customers.searchCustomers",
+      "description": "Search customers with advanced filtering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: customers, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.defaultProperties.listDefaultProperties",
+      "shortPath": "defaultProperties.listDefaultProperties",
+      "description": "Retrieve default property definitions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: default_properties, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.documents.listDocuments",
+      "shortPath": "documents.listDocuments",
+      "description": "Retrieve a list of documents.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: documents, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.documents.searchDocuments",
+      "shortPath": "documents.searchDocuments",
+      "description": "Search documents with advanced filtering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: documents, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.emailTemplates.listEmailTemplates",
+      "shortPath": "emailTemplates.listEmailTemplates",
+      "description": "List email templates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: email_templates, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.employees.listEmployees",
+      "shortPath": "employees.listEmployees",
+      "description": "Retrieve a list of employees.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: employees, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.inventoryBreakdowns.listInventoryBreakdowns",
+      "shortPath": "inventoryBreakdowns.listInventoryBreakdowns",
+      "description": "Retrieve inventory breakdowns by status and product.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: inventory_breakdowns, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.inventoryLevels.getInventoryLevels",
+      "shortPath": "inventoryLevels.getInventoryLevels",
+      "description": "Fetch inventory levels for products across locations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: inventory_levels, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.items.listItems",
+      "shortPath": "items.listItems",
+      "description": "Retrieve a list of items (products and product groups).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: items, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.items.searchItems",
+      "shortPath": "items.searchItems",
+      "description": "Search items with advanced filtering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: items, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.lines.listLines",
+      "shortPath": "lines.listLines",
+      "description": "Retrieve a paginated list of order lines.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: lines, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.locations.listLocations",
+      "shortPath": "locations.listLocations",
+      "description": "Retrieve a list of locations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: locations, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.notes.listNotes",
+      "shortPath": "notes.listNotes",
+      "description": "Retrieve a list of notes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: notes, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.orders.createOrder",
+      "shortPath": "orders.createOrder",
+      "description": "Create a new order.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: orders, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.orders.deleteOrder",
+      "shortPath": "orders.deleteOrder",
+      "description": "Delete (archive) an order by ID.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { id: string, type: orders, attributes?: {}, relationships?: {} }, included?: { id: string, type: string, attributes?: {}, relationships?: {} }[], links?: {}, meta?: {} } | { data: null, links?: {}, meta?: {} }"
+      }
+    },
+    {
+      "path": "booqable.api.orders.getNewOrder",
+      "shortPath": "orders.getNewOrder",
+      "description": "Retrieve a new order template with default values.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: orders, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.orders.getOrder",
+      "shortPath": "orders.getOrder",
+      "description": "Retrieve a specific order by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: orders, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.orders.listOrders",
+      "shortPath": "orders.listOrders",
+      "description": "Retrieve a paginated list of orders.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: orders, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.orders.searchOrders",
+      "shortPath": "orders.searchOrders",
+      "description": "Search orders with advanced filtering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: orders, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.paymentMethods.listPaymentMethods",
+      "shortPath": "paymentMethods.listPaymentMethods",
+      "description": "Retrieve a list of payment methods.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: payment_methods, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.payments.listPayments",
+      "shortPath": "payments.listPayments",
+      "description": "List all payments.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: payments, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.photos.listPhotos",
+      "shortPath": "photos.listPhotos",
+      "description": "Retrieve a paginated list of photos.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: photos, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.plannings.listPlannings",
+      "shortPath": "plannings.listPlannings",
+      "description": "Retrieve planning records for reservations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: plannings, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.plannings.searchPlannings",
+      "shortPath": "plannings.searchPlannings",
+      "description": "Search plannings with advanced filtering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: plannings, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.priceRulesets.listPriceRulesets",
+      "shortPath": "priceRulesets.listPriceRulesets",
+      "description": "List price rulesets.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: price_rulesets, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.priceStructures.listPriceStructures",
+      "shortPath": "priceStructures.listPriceStructures",
+      "description": "List price structures.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: price_structures, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.productGroups.createProductGroup",
+      "shortPath": "productGroups.createProductGroup",
+      "description": "Create a new product group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: product_groups, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.productGroups.deleteProductGroup",
+      "shortPath": "productGroups.deleteProductGroup",
+      "description": "Delete a product group by ID.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { id: string, type: product_groups, attributes?: {}, relationships?: {} }, included?: { id: string, type: string, attributes?: {}, relationships?: {} }[], links?: {}, meta?: {} } | { data: null, links?: {}, meta?: {} }"
+      }
+    },
+    {
+      "path": "booqable.api.productGroups.getProductGroup",
+      "shortPath": "productGroups.getProductGroup",
+      "description": "Fetch a specific product group by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: product_groups, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.productGroups.listProductGroups",
+      "shortPath": "productGroups.listProductGroups",
+      "description": "List product groups with filtering and pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: product_groups, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.products.getProduct",
+      "shortPath": "products.getProduct",
+      "description": "Fetch a specific product by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: products, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.products.listProducts",
+      "shortPath": "products.listProducts",
+      "description": "Retrieve a paginated list of products.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: products, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.properties.listProperties",
+      "shortPath": "properties.listProperties",
+      "description": "Retrieve a list of custom properties.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: properties, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.provinces.listProvinces",
+      "shortPath": "provinces.listProvinces",
+      "description": "Retrieve a list of provinces.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: provinces, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.stockItemPlannings.listStockItemPlannings",
+      "shortPath": "stockItemPlannings.listStockItemPlannings",
+      "description": "Retrieve stock item plannings.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: stock_item_plannings, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.stockItems.listStockItems",
+      "shortPath": "stockItems.listStockItems",
+      "description": "Retrieve a list of stock items.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: stock_items, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.taxRates.listTaxRates",
+      "shortPath": "taxRates.listTaxRates",
+      "description": "Retrieve a list of tax rates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: tax_rates, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.taxValues.listTaxValues",
+      "shortPath": "taxValues.listTaxValues",
+      "description": "Retrieve a list of tax values.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: tax_values, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "booqable.api.users.listUsers",
+      "shortPath": "users.listUsers",
+      "description": "Retrieve a list of users.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: users, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -481,7 +481,7 @@ const figmaEndpointMeta = {
 	},
 	'comments.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a comment from a Figma file [DESTRUCTIVE]',
+		description: 'Delete a comment from a Figma file',
 	},
 	'comments.list': {
 		riskLevel: 'read',
@@ -505,7 +505,7 @@ const figmaEndpointMeta = {
 	},
 	'webhooks.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Figma webhook [DESTRUCTIVE]',
+		description: 'Delete a Figma webhook',
 	},
 	'webhooks.get': {
 		riskLevel: 'read',
@@ -526,7 +526,7 @@ const figmaEndpointMeta = {
 	},
 	'devResources.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a dev resource from a Figma file [DESTRUCTIVE]',
+		description: 'Delete a dev resource from a Figma file',
 	},
 	'devResources.get': {
 		riskLevel: 'read',

@@ -1,4 +1,80 @@
 import { z } from 'zod';
+import type {
+	AirPollutionCurrentInput,
+	AirPollutionForecastInput,
+	AirPollutionHistoryInput,
+	AirPollutionResponse,
+} from './air-pollution-types';
+import {
+	AirPollutionCurrentInputSchema,
+	AirPollutionForecastInputSchema,
+	AirPollutionHistoryInputSchema,
+	AirPollutionResponseSchema,
+} from './air-pollution-types';
+import type {
+	GeocodingByZipInput,
+	GeocodingByZipResponse,
+	GeocodingDirectInput,
+	GeocodingDirectResponse,
+	GeocodingReverseInput,
+	GeocodingReverseResponse,
+} from './geocoding-types';
+import {
+	GeocodingByZipInputSchema,
+	GeocodingByZipResponseSchema,
+	GeocodingDirectInputSchema,
+	GeocodingDirectResponseSchema,
+	GeocodingReverseInputSchema,
+	GeocodingReverseResponseSchema,
+} from './geocoding-types';
+import type { WeatherMapTileInput, WeatherMapTileResponse } from './maps-types';
+import {
+	WeatherMapTileInputSchema,
+	WeatherMapTileResponseSchema,
+} from './maps-types';
+import type {
+	Station,
+	StationCreateInput,
+	StationGetInput,
+	StationGetMeasurementsInput,
+	StationGetMeasurementsResponse,
+	StationRemoveInput,
+	StationRemoveResponse,
+	StationSubmitMeasurementsInput,
+	StationSubmitMeasurementsResponse,
+	StationsListResponse,
+	StationUpdateInput,
+} from './stations-types';
+import {
+	StationCreateInputSchema,
+	StationCreateResponseSchema,
+	StationGetInputSchema,
+	StationGetMeasurementsInputSchema,
+	StationGetMeasurementsResponseSchema,
+	StationRemoveInputSchema,
+	StationRemoveResponseSchema,
+	StationSchema,
+	StationSubmitMeasurementsInputSchema,
+	StationSubmitMeasurementsResponseSchema,
+	StationsListResponseSchema,
+	StationUpdateInputSchema,
+} from './stations-types';
+import type {
+	CircleCityInput,
+	CircleCityResponse,
+	CurrentWeatherInput,
+	CurrentWeatherResponse,
+	Forecast5DayInput,
+	Forecast5DayResponse,
+} from './weather-types';
+import {
+	CircleCityInputSchema,
+	CircleCityResponseSchema,
+	CurrentWeatherInputSchema,
+	CurrentWeatherResponseSchema,
+	Forecast5DayInputSchema,
+	Forecast5DayResponseSchema,
+} from './weather-types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared / Common Schemas
@@ -392,11 +468,119 @@ export type OverviewResponse = z.infer<typeof OverviewResponseSchema>;
 // Plugin Endpoint Input / Output Maps
 // ─────────────────────────────────────────────────────────────────────────────
 
+export type {
+	AirPollutionCurrentInput,
+	AirPollutionForecastInput,
+	AirPollutionHistoryInput,
+	AirPollutionResponse,
+} from './air-pollution-types';
+export {
+	AirPollutionCurrentInputSchema,
+	AirPollutionForecastInputSchema,
+	AirPollutionHistoryInputSchema,
+	AirPollutionResponseSchema,
+} from './air-pollution-types';
+
+export type {
+	GeocodingByZipInput,
+	GeocodingByZipResponse,
+	GeocodingDirectInput,
+	GeocodingDirectResponse,
+	GeocodingReverseInput,
+	GeocodingReverseResponse,
+} from './geocoding-types';
+export {
+	GeocodingByZipInputSchema,
+	GeocodingByZipResponseSchema,
+	GeocodingDirectInputSchema,
+	GeocodingDirectResponseSchema,
+	GeocodingReverseInputSchema,
+	GeocodingReverseResponseSchema,
+} from './geocoding-types';
+
+export type {
+	WeatherMapLayer,
+	WeatherMapTileInput,
+	WeatherMapTileResponse,
+} from './maps-types';
+export {
+	WEATHER_MAP_LAYERS,
+	WeatherMapTileInputSchema,
+	WeatherMapTileResponseSchema,
+} from './maps-types';
+
+export type { EmptySuccess } from './schema-helpers';
+export { EmptySuccessSchema } from './schema-helpers';
+
+export type {
+	Station,
+	StationCreateInput,
+	StationGetInput,
+	StationGetMeasurementsInput,
+	StationGetMeasurementsResponse,
+	StationRemoveInput,
+	StationRemoveResponse,
+	StationSubmitMeasurementsInput,
+	StationSubmitMeasurementsResponse,
+	StationsListResponse,
+	StationUpdateInput,
+} from './stations-types';
+export {
+	STATION_MEASUREMENT_TYPES,
+	StationCreateInputSchema,
+	StationCreateResponseSchema,
+	StationGetInputSchema,
+	StationGetMeasurementsInputSchema,
+	StationGetMeasurementsResponseSchema,
+	StationMeasurementInputSchema,
+	StationRemoveInputSchema,
+	StationRemoveResponseSchema,
+	StationSchema,
+	StationSubmitMeasurementsInputSchema,
+	StationSubmitMeasurementsResponseSchema,
+	StationsListResponseSchema,
+	StationUpdateInputSchema,
+} from './stations-types';
+
+export type {
+	CircleCityInput,
+	CircleCityResponse,
+	CurrentWeatherInput,
+	CurrentWeatherResponse,
+	Forecast5DayInput,
+	Forecast5DayResponse,
+} from './weather-types';
+export {
+	CircleCityInputSchema,
+	CircleCityResponseSchema,
+	CurrentWeatherInputSchema,
+	CurrentWeatherResponseSchema,
+	Forecast5DayInputSchema,
+	Forecast5DayResponseSchema,
+} from './weather-types';
+
 export type OpenWeatherMapEndpointInputs = {
 	oneCall: OneCallInput;
 	timeMachine: TimeMachineInput;
 	daySummary: DaySummaryInput;
 	overview: OverviewInput;
+	currentWeather: CurrentWeatherInput;
+	forecast5Day: Forecast5DayInput;
+	circleCity: CircleCityInput;
+	airPollutionCurrent: AirPollutionCurrentInput;
+	airPollutionForecast: AirPollutionForecastInput;
+	airPollutionHistory: AirPollutionHistoryInput;
+	geocodingDirect: GeocodingDirectInput;
+	geocodingReverse: GeocodingReverseInput;
+	geocodingByZip: GeocodingByZipInput;
+	weatherMapTile: WeatherMapTileInput;
+	stationsList: Record<string, never>;
+	stationsGet: StationGetInput;
+	stationsCreate: StationCreateInput;
+	stationsUpdate: StationUpdateInput;
+	stationsRemove: StationRemoveInput;
+	stationsGetMeasurements: StationGetMeasurementsInput;
+	stationsSubmitMeasurements: StationSubmitMeasurementsInput;
 };
 
 export type OpenWeatherMapEndpointOutputs = {
@@ -404,6 +588,23 @@ export type OpenWeatherMapEndpointOutputs = {
 	timeMachine: TimeMachineResponse;
 	daySummary: DaySummaryResponse;
 	overview: OverviewResponse;
+	currentWeather: CurrentWeatherResponse;
+	forecast5Day: Forecast5DayResponse;
+	circleCity: CircleCityResponse;
+	airPollutionCurrent: AirPollutionResponse;
+	airPollutionForecast: AirPollutionResponse;
+	airPollutionHistory: AirPollutionResponse;
+	geocodingDirect: GeocodingDirectResponse;
+	geocodingReverse: GeocodingReverseResponse;
+	geocodingByZip: GeocodingByZipResponse;
+	weatherMapTile: WeatherMapTileResponse;
+	stationsList: StationsListResponse;
+	stationsGet: Station;
+	stationsCreate: Station;
+	stationsUpdate: Station;
+	stationsRemove: StationRemoveResponse;
+	stationsGetMeasurements: StationGetMeasurementsResponse;
+	stationsSubmitMeasurements: StationSubmitMeasurementsResponse;
 };
 
 export const OpenWeatherMapEndpointInputSchemas = {
@@ -411,6 +612,23 @@ export const OpenWeatherMapEndpointInputSchemas = {
 	timeMachine: TimeMachineInputSchema,
 	daySummary: DaySummaryInputSchema,
 	overview: OverviewInputSchema,
+	currentWeather: CurrentWeatherInputSchema,
+	forecast5Day: Forecast5DayInputSchema,
+	circleCity: CircleCityInputSchema,
+	airPollutionCurrent: AirPollutionCurrentInputSchema,
+	airPollutionForecast: AirPollutionForecastInputSchema,
+	airPollutionHistory: AirPollutionHistoryInputSchema,
+	geocodingDirect: GeocodingDirectInputSchema,
+	geocodingReverse: GeocodingReverseInputSchema,
+	geocodingByZip: GeocodingByZipInputSchema,
+	weatherMapTile: WeatherMapTileInputSchema,
+	stationsList: z.object({}),
+	stationsGet: StationGetInputSchema,
+	stationsCreate: StationCreateInputSchema,
+	stationsUpdate: StationUpdateInputSchema,
+	stationsRemove: StationRemoveInputSchema,
+	stationsGetMeasurements: StationGetMeasurementsInputSchema,
+	stationsSubmitMeasurements: StationSubmitMeasurementsInputSchema,
 } as const;
 
 export const OpenWeatherMapEndpointOutputSchemas = {
@@ -418,4 +636,21 @@ export const OpenWeatherMapEndpointOutputSchemas = {
 	timeMachine: TimeMachineResponseSchema,
 	daySummary: DaySummaryResponseSchema,
 	overview: OverviewResponseSchema,
+	currentWeather: CurrentWeatherResponseSchema,
+	forecast5Day: Forecast5DayResponseSchema,
+	circleCity: CircleCityResponseSchema,
+	airPollutionCurrent: AirPollutionResponseSchema,
+	airPollutionForecast: AirPollutionResponseSchema,
+	airPollutionHistory: AirPollutionResponseSchema,
+	geocodingDirect: GeocodingDirectResponseSchema,
+	geocodingReverse: GeocodingReverseResponseSchema,
+	geocodingByZip: GeocodingByZipResponseSchema,
+	weatherMapTile: WeatherMapTileResponseSchema,
+	stationsList: StationsListResponseSchema,
+	stationsGet: StationSchema,
+	stationsCreate: StationCreateResponseSchema,
+	stationsUpdate: StationSchema,
+	stationsRemove: StationRemoveResponseSchema,
+	stationsGetMeasurements: StationGetMeasurementsResponseSchema,
+	stationsSubmitMeasurements: StationSubmitMeasurementsResponseSchema,
 } as const;

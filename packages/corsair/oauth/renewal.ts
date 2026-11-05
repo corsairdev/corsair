@@ -1,6 +1,7 @@
 import type { CorsairInternalConfig, CorsairKeyBuilderBase } from '../core';
 import { createAccountKeyManager } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
+import { getPluginAuthType } from '../core/utils/plugin-auth';
 import { subscribeAndReport } from './subscribe-report';
 
 export type SubscribableAccountRow = {
@@ -33,13 +34,14 @@ export async function renewAccounts(input: {
 		if (!plugin?.subscribe) continue;
 		const label = `${plugin.id}/${row.tenantId}`;
 		try {
+			const authType = getPluginAuthType(plugin) ?? 'oauth_2';
 			const keys = createAccountKeyManager({
-				authType: 'oauth_2',
+				authType,
 				integrationName: plugin.id,
 				tenantId: row.tenantId,
 				kek: internal.kek,
 				database: internal.database,
-				extraAccountFields: [...(plugin.authConfig?.oauth_2?.account ?? [])],
+				extraAccountFields: [...(plugin.authConfig?.[authType]?.account ?? [])],
 			});
 			// Refresh first: stored access tokens expire (~1h) between renewal
 			// passes, and the bookkept expires_at can drift from the real token
@@ -52,7 +54,7 @@ export async function renewAccounts(input: {
 					get_expires_at: { value: async () => '0' },
 				});
 				await keyBuilder(
-					{ authType: 'oauth_2', keys: primingKeys },
+					{ authType, keys: primingKeys, hub: internal.hub },
 					'endpoint',
 				);
 			}

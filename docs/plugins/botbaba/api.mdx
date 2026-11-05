@@ -1,0 +1,1752 @@
+---
+title: API
+description: "API reference for Botbaba: every `botbaba.api.*` operation with input and output types."
+---
+
+Every `botbaba.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Actions
+
+### execute
+
+`actions.execute`
+
+Execute a bot action for a conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.actions.execute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `string` | No | — |
+| `conv_id` | `string` | No | — |
+| `tag_ids` | `string` | No | — |
+| `action_id` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### executeByUser
+
+`actions.executeByUser`
+
+Execute a bot action for users
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.actions.executeByUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `string` | No | — |
+| `bot_id` | `number` | No | — |
+| `action_id` | `number` | No | — |
+| `bot_user_id` | `any[]` | No | — |
+| `json_payload` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWidgetSettings
+
+`actions.getWidgetSettings`
+
+Get bot widget settings
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.actions.getWidgetSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bot_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Broadcasts
+
+### delete
+
+`broadcasts.delete`
+
+Delete a broadcast
+
+**Risk:** `destructive`
+
+```ts
+await corsair.botbaba.api.broadcasts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `broadcast_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`broadcasts.get`
+
+Get a broadcast
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.broadcasts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `broadcast_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`broadcasts.list`
+
+List broadcasts
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.broadcasts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### delete
+
+`contacts.delete`
+
+Delete a Botbaba contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.botbaba.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`contacts.get`
+
+Fetch a Botbaba contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAnalytics
+
+`contacts.getAnalytics`
+
+Retrieve contact analytics over a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.contacts.getAnalytics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `end_date` | `string` | No | — |
+| `start_date` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing Botbaba contact
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `tags` | `string[]` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `custom_fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Flows
+
+### delete
+
+`flows.delete`
+
+Delete a conversation flow
+
+**Risk:** `destructive`
+
+```ts
+await corsair.botbaba.api.flows.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flow_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`flows.get`
+
+Get a conversation flow
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.flows.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flow_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`flows.list`
+
+List conversation flows
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.flows.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Gupshup
+
+### forwardMessage
+
+`gupshup.forwardMessage`
+
+Forward a Gupshup WhatsApp webhook to Botbaba
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.gupshup.forwardMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Messages
+
+### get
+
+`messages.get`
+
+Get a message
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAnalytics
+
+`messages.getAnalytics`
+
+Get message analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.messages.getAnalytics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sendWhatsappTemplate
+
+`messages.sendWhatsappTemplate`
+
+Send a WhatsApp template via Botbaba
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.messages.sendWhatsappTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Shopify
+
+### cartCreation
+
+`shopify.cartCreation`
+
+Forward Shopify cart creation to Botbaba
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.shopify.cartCreation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+| `X-Shopify-Topic` | `string` | No | — |
+| `X-Shopify-Webhook-Id` | `string` | No | — |
+| `X-Shopify-API-Version` | `string` | No | — |
+| `X-Shopify-Hmac-SHA256` | `string` | No | — |
+| `X-Shopify-Shop-Domain` | `string` | No | — |
+| `X-Shopify-Triggered-At` | `string` | No | — |
+| `x_shopify_topic` | `string` | No | — |
+| `x_shopify_webhook_id` | `string` | No | — |
+| `x_shopify_api_version` | `string` | No | — |
+| `x_shopify_hmac_sha256` | `string` | No | — |
+| `x_shopify_shop_domain` | `string` | No | — |
+| `x_shopify_triggered_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### cartUpdate
+
+`shopify.cartUpdate`
+
+Forward Shopify cart update to Botbaba
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.shopify.cartUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+| `X-Shopify-Topic` | `string` | No | — |
+| `X-Shopify-Webhook-Id` | `string` | No | — |
+| `X-Shopify-API-Version` | `string` | No | — |
+| `X-Shopify-Hmac-SHA256` | `string` | No | — |
+| `X-Shopify-Shop-Domain` | `string` | No | — |
+| `X-Shopify-Triggered-At` | `string` | No | — |
+| `x_shopify_topic` | `string` | No | — |
+| `x_shopify_webhook_id` | `string` | No | — |
+| `x_shopify_api_version` | `string` | No | — |
+| `x_shopify_hmac_sha256` | `string` | No | — |
+| `x_shopify_shop_domain` | `string` | No | — |
+| `x_shopify_triggered_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### checkoutCreation
+
+`shopify.checkoutCreation`
+
+Forward Shopify checkout creation to Botbaba
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.shopify.checkoutCreation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+| `X-Shopify-Topic` | `string` | No | — |
+| `X-Shopify-Webhook-Id` | `string` | No | — |
+| `X-Shopify-API-Version` | `string` | No | — |
+| `X-Shopify-Hmac-SHA256` | `string` | No | — |
+| `X-Shopify-Shop-Domain` | `string` | No | — |
+| `X-Shopify-Triggered-At` | `string` | No | — |
+| `x_shopify_topic` | `string` | No | — |
+| `x_shopify_webhook_id` | `string` | No | — |
+| `x_shopify_api_version` | `string` | No | — |
+| `x_shopify_hmac_sha256` | `string` | No | — |
+| `x_shopify_shop_domain` | `string` | No | — |
+| `x_shopify_triggered_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### checkoutUpdate
+
+`shopify.checkoutUpdate`
+
+Forward Shopify checkout update to Botbaba
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.shopify.checkoutUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_payload` | `object` | Yes | — |
+| `X-Shopify-Topic` | `string` | No | — |
+| `X-Shopify-Webhook-Id` | `string` | No | — |
+| `X-Shopify-API-Version` | `string` | No | — |
+| `X-Shopify-Hmac-SHA256` | `string` | No | — |
+| `X-Shopify-Shop-Domain` | `string` | No | — |
+| `X-Shopify-Triggered-At` | `string` | No | — |
+| `x_shopify_topic` | `string` | No | — |
+| `x_shopify_webhook_id` | `string` | No | — |
+| `x_shopify_api_version` | `string` | No | — |
+| `x_shopify_hmac_sha256` | `string` | No | — |
+| `x_shopify_shop_domain` | `string` | No | — |
+| `x_shopify_triggered_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook_payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### orderCancellation
+
+`shopify.orderCancellation`
+
+Forward Shopify order cancellation to Botbaba
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.shopify.orderCancellation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+| `X-Shopify-Topic` | `string` | Yes | — |
+| `X-Shopify-Webhook-Id` | `string` | Yes | — |
+| `X-Shopify-API-Version` | `string` | No | — |
+| `X-Shopify-Hmac-SHA256` | `string` | Yes | — |
+| `X-Shopify-Shop-Domain` | `string` | Yes | — |
+| `X-Shopify-Triggered-At` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### orderFulfillment
+
+`shopify.orderFulfillment`
+
+Forward Shopify order fulfillment to Botbaba
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.shopify.orderFulfillment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+| `X-Shopify-Topic` | `string` | No | — |
+| `X-Shopify-Webhook-Id` | `string` | No | — |
+| `X-Shopify-API-Version` | `string` | No | — |
+| `X-Shopify-Hmac-SHA256` | `string` | No | — |
+| `X-Shopify-Shop-Domain` | `string` | No | — |
+| `X-Shopify-Triggered-At` | `string` | No | — |
+| `x_shopify_topic` | `string` | No | — |
+| `x_shopify_webhook_id` | `string` | No | — |
+| `x_shopify_api_version` | `string` | No | — |
+| `x_shopify_hmac_sha256` | `string` | No | — |
+| `x_shopify_shop_domain` | `string` | No | — |
+| `x_shopify_triggered_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### orderPayment
+
+`shopify.orderPayment`
+
+Forward Shopify order payment to Botbaba
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.shopify.orderPayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+| `X-Shopify-Event-Id` | `string` | No | — |
+| `X-Shopify-Topic` | `string` | No | — |
+| `X-Shopify-Webhook-Id` | `string` | No | — |
+| `X-Shopify-API-Version` | `string` | No | — |
+| `X-Shopify-Hmac-SHA256` | `string` | No | — |
+| `X-Shopify-Shop-Domain` | `string` | No | — |
+| `X-Shopify-Triggered-At` | `string` | No | — |
+| `x_shopify_topic` | `string` | No | — |
+| `x_shopify_webhook_id` | `string` | No | — |
+| `x_shopify_api_version` | `string` | No | — |
+| `x_shopify_hmac_sha256` | `string` | No | — |
+| `x_shopify_shop_domain` | `string` | No | — |
+| `x_shopify_triggered_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Simulators
+
+### cartCreation
+
+`simulators.cartCreation`
+
+Simulate a Shopify cart creation payload
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.simulators.cartCreation({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### checkoutCreation
+
+`simulators.checkoutCreation`
+
+Simulate a Shopify checkout creation payload
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.simulators.checkoutCreation({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### checkoutUpdate
+
+`simulators.checkoutUpdate`
+
+Simulate a Shopify checkout update payload
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.simulators.checkoutUpdate({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### gupshup
+
+`simulators.gupshup`
+
+Simulate a Gupshup WhatsApp webhook payload
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.simulators.gupshup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sender` | `string` | Yes | — |
+| `recipient` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `timestamp` | `number` | No | — |
+| `event_type` | `message \| delivery \| read \| interactive` | No | — |
+| `message_id` | `string` | No | — |
+| `interactive` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="interactive full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### orderFulfillment
+
+`simulators.orderFulfillment`
+
+Simulate a Shopify order fulfillment payload
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.simulators.orderFulfillment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variant` | `standard \| with_tracking \| partial` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### delete
+
+`tags.delete`
+
+Delete a tag
+
+**Risk:** `destructive`
+
+```ts
+await corsair.botbaba.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`tags.list`
+
+List all tags
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.tags.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`tags.update`
+
+Rename a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.tags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `tag_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Templates
+
+### delete
+
+`templates.delete`
+
+Delete a message template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.botbaba.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`templates.get`
+
+Get a message template
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`templates.list`
+
+List message templates
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`templates.update`
+
+Update a message template
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.templates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `content` | `string` | No | — |
+| `parameters` | `any[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Utils
+
+### getFilename
+
+`utils.getFilename`
+
+Extract a filename from a path
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.utils.getFilename({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+
+
+
+---
+
+## Webhooks
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.botbaba.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listEventTypes
+
+`webhooks.listEventTypes`
+
+List webhook event types
+
+**Risk:** `read`
+
+```ts
+await corsair.botbaba.api.webhooks.listEventTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.botbaba.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `events` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

@@ -1,0 +1,699 @@
+---
+title: API
+description: "API reference for Ploid: every `ploid.api.*` operation with input and output types."
+---
+
+Every `ploid.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### credits
+
+`account.credits`
+
+Read the workspace ACU balance and API key budget state
+
+**Risk:** `read`
+
+```ts
+await corsair.ploid.api.account.credits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  plan?: string,
+  acu?: {
+    included: number,
+    purchased: number,
+    used: number,
+    available: number,
+    overage: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usage
+
+`account.usage`
+
+Read workspace ACU usage plus the calling key id and active key count
+
+**Risk:** `read`
+
+```ts
+await corsair.ploid.api.account.usage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  credits?: {
+    plan?: string,
+    acu?: {
+      included: number,
+      purchased: number,
+      used: number,
+      available: number,
+      overage: number
+    }
+  },
+  api_key?: {
+    id?: string,
+    active_keys?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### enrich
+
+`contacts.enrich`
+
+Resolve contact fields (work_email 1, personal_email 3, phone 10 ACU per hit) from a person_id, LinkedIn URL, email, or name plus company domain
+
+**Risk:** `write`
+
+```ts
+await corsair.ploid.api.contacts.enrich({
+	identifier: { person_id: 'per_abc123' },
+	fields: ['work_email', 'phone'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `object` | Yes | — |
+| `fields` | `work_email \| personal_email \| phone[]` | Yes | — |
+| `response_format` | `standard` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifier full type">
+
+```ts
+{
+  linkedin_url: string
+} | {
+  person_id: string
+} | {
+  email: string
+} | {
+  name: string,
+  company_domain: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  work_email?: {
+    value?: string | null,
+    status: found | not_found | unavailable,
+    confidence?: guess | strong | verified | null,
+    source?: contact_network | linked_profile | public_code | public_web | null,
+    last_seen?: string | null
+  },
+  personal_email?: {
+    value?: string | null,
+    status: found | not_found | unavailable,
+    confidence?: guess | strong | verified | null,
+    source?: contact_network | linked_profile | public_code | public_web | null,
+    last_seen?: string | null
+  },
+  phone?: {
+    value?: string | null,
+    status: found | not_found | unavailable,
+    confidence?: guess | strong | verified | null,
+    source?: contact_network | linked_profile | public_code | public_web | null,
+    last_seen?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Person
+
+### cancelRun
+
+`person.cancelRun`
+
+Cancel a queued or running person research run
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ploid.api.person.cancelRun({ id: 'run_abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  run_id: string,
+  status: queued | running | cancelled,
+  poll_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`person.get`
+
+Fetch a reviewed deep person profile (25 ACU first profile) or start a durable research run (202)
+
+**Risk:** `write`
+
+```ts
+await corsair.ploid.api.person.get({
+	identifier: { person_id: 'per_abc123' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="identifier full type">
+
+```ts
+{
+  person_id: string
+} | {
+  linkedin_url: string
+} | {
+  name: string,
+  company_domain: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    run_id: string,
+    status: queued | running | cancelled,
+    poll_url?: string
+  },
+  meta: {
+    request_id: string
+  }
+} | {
+  data?: {
+    person_id?: string,
+    summary?: string | null,
+    identity?: {
+      name?: string,
+      linkedin_url?: string | null,
+      headline?: string | null,
+      company?: string | null,
+      location?: string | null,
+      confidence?: number
+    } | null
+  } | null,
+  meta: {
+    request_id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRun
+
+`person.getRun`
+
+Poll a person research run by id; returns run state or, once finished, the reviewed profile. 404 unknown, 410 expired
+
+**Risk:** `read`
+
+```ts
+await corsair.ploid.api.person.getRun({ id: 'run_abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    run_id: string,
+    status: queued | running | cancelled,
+    poll_url?: string
+  },
+  meta: {
+    request_id: string
+  }
+} | {
+  data?: {
+    person_id?: string,
+    summary?: string | null,
+    identity?: {
+      name?: string,
+      linkedin_url?: string | null,
+      headline?: string | null,
+      company?: string | null,
+      location?: string | null,
+      confidence?: number
+    } | null
+  } | null,
+  meta: {
+    request_id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resolve
+
+`person.resolve`
+
+Identify one person from a name plus a clue and return the permanent person_id; 2 ACU when found, free when not
+
+**Risk:** `write`
+
+```ts
+await corsair.ploid.api.person.resolve({ name: 'Jane Doe', company: 'acme.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `company` | `string` | No | — |
+| `role` | `string` | No | — |
+| `location` | `string` | No | — |
+| `address` | `string` | No | — |
+| `work_email` | `string` | No | — |
+| `personal_email` | `string` | No | — |
+| `phone` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  found: boolean,
+  person?: {
+    person_id: string,
+    name: string,
+    headline?: string | null,
+    company?: string | null,
+    location?: string | null,
+    profiles?: {
+      linkedin?: string,
+      github?: string,
+      x?: string
+    },
+    identity_verified?: boolean
+  } | null,
+  confidence: number,
+  summary?: string,
+  sources?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### candidates
+
+`search.candidates`
+
+Find candidate identities in the people index for 1 ACU, including zero matches
+
+**Risk:** `write`
+
+```ts
+await corsair.ploid.api.search.candidates({ name: 'Jane Doe', company: 'Acme', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `company` | `string` | No | — |
+| `location` | `string` | No | — |
+| `title` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  matches: {
+    person_id: string,
+    name: string,
+    title?: string | null,
+    company?: string | null,
+    location?: string | null,
+    linkedin_url?: string | null,
+    profile_url?: string | null
+  }[],
+  returned: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`search.search`
+
+Search people by semantic query and hard filters; synchronous, at most 150 results
+
+**Risk:** `write`
+
+```ts
+await corsair.ploid.api.search.search({ query: 'venture-backed founders in Berlin', num_results: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `type` | `instant \| fast \| auto \| deep` | No | — |
+| `category` | `people` | No | — |
+| `num_results` | `number` | No | — |
+| `criteria` | `string[]` | No | — |
+| `async` | `boolean` | No | — |
+| `webhook_url` | `string` | No | — |
+| `filters` | `object` | No | — |
+| `freshness` | `object` | No | — |
+| `contents` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  title?: string | {
+    any_of?: string[],
+    none_of?: string[]
+  },
+  seniority?: string | {
+    any_of?: string[],
+    none_of?: string[]
+  },
+  company?: string | {
+    any_of?: string[],
+    none_of?: string[],
+    employee_count?: {
+      gte?: number,
+      lte?: number
+    },
+    funding_stage?: {
+      in: pre_seed | seed | series_a | series_b | series_c | series_d_plus | public | bootstrapped[]
+    }
+  },
+  industry?: string | {
+    any_of?: string[],
+    none_of?: string[]
+  },
+  location?: string | {
+    any_of?: string[],
+    none_of?: string[],
+    countries?: string[],
+    cities?: string[]
+  },
+  company_size?: {
+    min?: number,
+    max?: number
+  },
+  experience?: {
+    past_companies: {
+      any_of: string[]
+    }
+  },
+  education?: {
+    schools: {
+      any_of: string[]
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="freshness full type">
+
+```ts
+{
+  max_age_days: number
+}
+```
+</Accordion>
+
+<Accordion title="contents full type">
+
+```ts
+{
+  fields?: linkedin | title | company | location | name[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    results: {
+      url?: string | null,
+      title?: string | null,
+      score?: number | null,
+      person: {
+        person_id: string,
+        name?: string | null,
+        title?: string | null,
+        company?: string | null,
+        location?: string | null,
+        linkedin_url?: string | null,
+        profile_url?: string | null,
+        confidence?: number | null,
+        identity_verified?: boolean
+      }
+    }[]
+  },
+  meta: {
+    request_id: string
+  }
+} | {
+  data: {
+    mode: async,
+    set_id: string,
+    status?: string,
+    items_url?: string,
+    events_url?: string
+  },
+  meta: {
+    request_id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

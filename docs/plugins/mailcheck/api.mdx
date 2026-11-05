@@ -1,0 +1,101 @@
+---
+title: API
+description: "API reference for Mailcheck: every `mailcheck.api.*` operation with input and output types."
+---
+
+Every `mailcheck.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Domain
+
+### validate
+
+`domain.validate`
+
+Check a domain for MX records, disposable providers, and catch-all mail
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcheck.api.domain.validate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `mxExists` | `boolean` | Yes | — |
+| `isNotDisposable` | `boolean` | Yes | — |
+| `isNotSmtpCatchAll` | `boolean` | Yes | — |
+
+
+
+---
+
+## Email
+
+### verify
+
+`email.verify`
+
+Verify an email for syntax, MX records, and SMTP validity
+
+**Risk:** `read`
+
+```ts
+await corsair.mailcheck.api.email.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `trustRate` | `number` | Yes | — |
+| `mxExists` | `boolean` | Yes | — |
+| `smtpExists` | `boolean` | Yes | — |
+| `isNotDisposable` | `boolean` | Yes | — |
+| `isNotSmtpCatchAll` | `boolean` | Yes | — |
+| `gravatar` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="gravatar full type">
+
+```ts
+{
+  entries?: {
+    profileUrl?: string,
+    preferredUsername?: string,
+    accounts?: {
+      domain: string
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

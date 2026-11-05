@@ -1,0 +1,2274 @@
+---
+title: API
+description: "API reference for Fundable: every `fundable.api.*` operation with input and output types."
+---
+
+Every `fundable.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Alerts
+
+### configurations
+
+`alerts.configurations`
+
+Authenticated user's alert configurations
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.alerts.configurations({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  configurations: {
+    configuration_id: string,
+    configuration_name: string,
+    frequency: DAILY | WEEKLY | BIWEEKLY | MONTHLY,
+    description?: string,
+    filters: {
+      industries?: string[],
+      super_categories?: string[],
+      locations?: string[],
+      financing_types?: string[],
+      deal_size_min?: number | null,
+      deal_size_max?: number | null,
+      num_employees?: string[],
+      investors?: {
+        id?: string,
+        name?: string
+      }[],
+      companies?: {
+        id?: string,
+        name?: string
+      }[]
+    }
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`alerts.list`
+
+Saved alert matches with deals and reasoning in a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.alerts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alert_ids` | `string` | Yes | — |
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  alerts: {
+    alertId: string,
+    alertName: string,
+    alertFrequency: DAILY | WEEKLY | BIWEEKLY | MONTHLY,
+    totalDealCount: number,
+    deals: {
+      id: string,
+      company_id?: string,
+      company_name?: string,
+      company_guru_permalink?: string,
+      round_type?: string,
+      total_round_raised?: number,
+      date?: string,
+      company_website?: string | null,
+      company_linkedin?: string | null,
+      location?: {
+        city?: string | null,
+        state?: string | null,
+        country?: string | null,
+        region?: string | null
+      } | null,
+      deal_short_description?: string | null,
+      deal_long_description?: string | null,
+      reasoning?: string | null,
+      articles?: {
+        link?: string,
+        is_primary: boolean,
+        publishedDate?: string
+      }[]
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Companies
+
+### deals
+
+`companies.deals`
+
+Get a company's complete funding history by identifier
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.companies.deals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deals: {
+    id: string,
+    round_type?: string | null,
+    extension?: boolean | null,
+    intermediate?: string | null,
+    pre?: boolean | null,
+    date?: string | null,
+    created_at?: string | null,
+    total_round_raised?: number | null,
+    deal_descriptions?: {
+      short_description?: string | null,
+      long_description?: string | null
+    } | null,
+    company_id?: string | null,
+    investor_ids?: string[],
+    angel_investor_ids?: string[],
+    financings?: {
+      id?: string | null,
+      type?: string | null,
+      size_usd?: number | null,
+      size_native?: number | null,
+      currency?: string | null
+    }[],
+    valuation?: {
+      type: string,
+      valuation_usd?: number | null,
+      valuation_native?: number | null,
+      valuation_currency?: string | null
+    } | null,
+    articles?: {
+      link?: string | null,
+      date?: string | null,
+      is_primary: boolean
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`companies.get`
+
+Get company details and recent funding by identifier
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.companies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  company: {
+    id?: string | null,
+    name?: string | null,
+    legal_name?: string | null,
+    guru_permalink?: string | null,
+    domain?: string | null,
+    region?: string | null,
+    operating_status?: string | null,
+    founded_date?: string | null,
+    acquired?: boolean | null,
+    short_description?: string | null,
+    long_description?: string | null,
+    num_employees?: string | null,
+    linkedin?: string | null,
+    twitter?: string | null,
+    facebook?: string | null,
+    pitchbook?: string | null,
+    crunchbase?: string | null,
+    address?: string | null,
+    ipo_status?: string | null,
+    num_funding_rounds?: number | null,
+    num_investors?: number | null,
+    total_raised?: number | null,
+    latest_valuation_usd?: number | null,
+    latest_valuation_date?: string | null,
+    industries?: {
+      permalink?: string | null,
+      name?: string | null
+    }[],
+    location?: {
+      region?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      country?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      state?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      city?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null
+    } | null,
+    latest_deal?: {
+      id?: string | null,
+      type?: string | null,
+      total_round_raised?: number | null,
+      date?: string | null,
+      extension?: boolean | null,
+      pre?: boolean | null,
+      intermediate?: string | null,
+      description?: {
+        short_description?: string | null,
+        long_description?: string | null
+      } | null,
+      investors?: string[],
+      angel_investor_ids?: string[],
+      financings?: {
+        id?: string | null,
+        type?: string | null,
+        size_usd?: number | null,
+        size_native?: number | null,
+        currency?: string | null
+      }[],
+      articles?: {
+        link?: string | null,
+        date?: string | null,
+        is_primary: boolean
+      }[]
+    } | null,
+    all_investor_ids?: string[] | null,
+    similarity?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`companies.post`
+
+Discover companies with metadata and full latest-deal details
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.companies.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifiers` | `object` | No | — |
+| `company` | `object` | No | — |
+| `latest_deal` | `object` | No | — |
+| `investors` | `object` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `sort_by` | `most_recent_raise \| oldest_raise \| most_recent_founded \| oldest_founded \| largest_valuation \| smallest_valuation \| largest_total_raise \| smallest_total_raise \| most_funding_rounds \| most_investors` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  ids?: string[],
+  domains?: string[],
+  linkedin_urls?: string[],
+  crunchbase_urls?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  search_query?: string,
+  min_relevance?: number,
+  locations?: string[],
+  industries?: string[],
+  super_categories?: string[],
+  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
+  ipo_status?: public | private[],
+  total_raised_min?: number,
+  total_raised_max?: number
+}
+```
+</Accordion>
+
+<Accordion title="latest_deal full type">
+
+```ts
+{
+  financing_types?: {
+    type: SERIES_A | SERIES_B | SERIES_C | SERIES_D | SERIES_E | SERIES_F | SERIES_G | SERIES_H | SERIES_I | SERIES_J | SERIES_K | SERIES_L | SERIES_M | SEED | SAFE | CONVERTIBLE_NOTE | EQUITY | PREFERRED | SECONDARY_MARKET | DEBT_FINANCING | GRANT | NON_EQUITY_ASSISTANCE | CROWDFUNDING | INITIAL_COIN_OFFERING | FUNDING_ROUND,
+    pre?: boolean,
+    extension?: boolean
+  }[],
+  size_min?: number,
+  size_max?: number,
+  date_start?: string,
+  date_end?: string,
+  created_start?: string,
+  created_end?: string,
+  investor_ids?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="investors full type">
+
+```ts
+{
+  investor_ids?: string[],
+  people_ids?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  companies: {
+    id?: string | null,
+    name?: string | null,
+    legal_name?: string | null,
+    guru_permalink?: string | null,
+    domain?: string | null,
+    region?: string | null,
+    operating_status?: string | null,
+    founded_date?: string | null,
+    acquired?: boolean | null,
+    short_description?: string | null,
+    long_description?: string | null,
+    num_employees?: string | null,
+    linkedin?: string | null,
+    twitter?: string | null,
+    facebook?: string | null,
+    pitchbook?: string | null,
+    crunchbase?: string | null,
+    address?: string | null,
+    ipo_status?: string | null,
+    num_funding_rounds?: number | null,
+    num_investors?: number | null,
+    total_raised?: number | null,
+    latest_valuation_usd?: number | null,
+    latest_valuation_date?: string | null,
+    industries?: {
+      permalink?: string | null,
+      name?: string | null
+    }[],
+    location?: {
+      region?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      country?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      state?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      city?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null
+    } | null,
+    latest_deal?: {
+      id?: string | null,
+      type?: string | null,
+      total_round_raised?: number | null,
+      date?: string | null,
+      extension?: boolean | null,
+      pre?: boolean | null,
+      intermediate?: string | null,
+      description?: {
+        short_description?: string | null,
+        long_description?: string | null
+      } | null,
+      investors?: string[],
+      angel_investor_ids?: string[],
+      financings?: {
+        id?: string | null,
+        type?: string | null,
+        size_usd?: number | null,
+        size_native?: number | null,
+        currency?: string | null
+      }[],
+      articles?: {
+        link?: string | null,
+        date?: string | null,
+        is_primary: boolean
+      }[]
+    } | null,
+    all_investor_ids?: string[] | null,
+    similarity?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`companies.search`
+
+Fuzzy company lookup by name, domain, LinkedIn, or Crunchbase
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.companies.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  companies: {
+    id: string,
+    guru_permalink?: string | null,
+    name: string,
+    short_description?: string | null,
+    relevance_score?: number,
+    domain?: string | null,
+    linkedin?: string | null,
+    crunchbase?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Deals
+
+### get
+
+`deals.get`
+
+Get a specific funding round by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.deals.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deal: {
+    id: string,
+    round_type?: string | null,
+    extension?: boolean | null,
+    intermediate?: string | null,
+    pre?: boolean | null,
+    date?: string | null,
+    created_at?: string | null,
+    total_round_raised?: number | null,
+    deal_descriptions?: {
+      short_description?: string | null,
+      long_description?: string | null
+    } | null,
+    company_id?: string | null,
+    investor_ids?: string[],
+    angel_investor_ids?: string[],
+    financings?: {
+      id?: string | null,
+      type?: string | null,
+      size_usd?: number | null,
+      size_native?: number | null,
+      currency?: string | null
+    }[],
+    valuation?: {
+      type: string,
+      valuation_usd?: number | null,
+      valuation_native?: number | null,
+      valuation_currency?: string | null
+    } | null,
+    articles?: {
+      link?: string | null,
+      date?: string | null,
+      is_primary: boolean
+    }[]
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### investors
+
+`deals.investors`
+
+Full investor lineup for a funding round (firms, angels, leads)
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.deals.investors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  investors: {
+    id: string,
+    name: string,
+    lead_investor?: boolean | null,
+    personnel?: {
+      id: string,
+      name?: string | null,
+      linkedin?: string | null,
+      crunchbase?: string | null,
+      twitter?: string | null
+    }[],
+    financing_type?: string | null,
+    domain?: string | null,
+    linkedin?: string | null,
+    crunchbase?: string | null
+  }[],
+  angel_investors: {
+    id: string,
+    name?: string | null,
+    financing_type?: string | null,
+    linkedin?: string | null,
+    crunchbase?: string | null,
+    twitter?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`deals.post`
+
+Find funding rounds across complete company histories
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.deals.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifiers` | `object` | No | — |
+| `deal` | `object` | No | — |
+| `company` | `object` | No | — |
+| `investors` | `object` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `sort_by` | `most_recent_deal \| oldest_deal \| largest_raise \| smallest_raise` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  deal_ids?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="deal full type">
+
+```ts
+{
+  financing_types?: {
+    type: SERIES_A | SERIES_B | SERIES_C | SERIES_D | SERIES_E | SERIES_F | SERIES_G | SERIES_H | SERIES_I | SERIES_J | SERIES_K | SERIES_L | SERIES_M | SEED | SAFE | CONVERTIBLE_NOTE | EQUITY | PREFERRED | SECONDARY_MARKET | DEBT_FINANCING | GRANT | NON_EQUITY_ASSISTANCE | CROWDFUNDING | INITIAL_COIN_OFFERING | FUNDING_ROUND,
+    pre?: boolean,
+    extension?: boolean
+  }[],
+  size_min?: number,
+  size_max?: number,
+  date_start?: string,
+  date_end?: string,
+  created_start?: string,
+  created_end?: string
+}
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  company_ids?: string[],
+  locations?: string[],
+  industries?: string[],
+  super_categories?: string[],
+  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
+  ipo_status?: public | private[],
+  total_raised_min?: number,
+  total_raised_max?: number
+}
+```
+</Accordion>
+
+<Accordion title="investors full type">
+
+```ts
+{
+  investor_ids?: string[],
+  people_ids?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deals: {
+    id: string,
+    round_type?: string | null,
+    extension?: boolean | null,
+    intermediate?: string | null,
+    pre?: boolean | null,
+    date?: string | null,
+    created_at?: string | null,
+    total_round_raised?: number | null,
+    deal_descriptions?: {
+      short_description?: string | null,
+      long_description?: string | null
+    } | null,
+    company_id?: string | null,
+    investor_ids?: string[],
+    angel_investor_ids?: string[],
+    financings?: {
+      id?: string | null,
+      type?: string | null,
+      size_usd?: number | null,
+      size_native?: number | null,
+      currency?: string | null
+    }[],
+    valuation?: {
+      type: string,
+      valuation_usd?: number | null,
+      valuation_native?: number | null,
+      valuation_currency?: string | null
+    } | null,
+    articles?: {
+      link?: string | null,
+      date?: string | null,
+      is_primary: boolean
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Filters
+
+### industries
+
+`filters.industries`
+
+Resolve industry and super-category labels to exact permalinks
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.filters.industries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `INDUSTRY \| SUPER_CATEGORY` | No | — |
+| `industry_type` | `INDUSTRY \| SUPER_CATEGORY` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  industries: {
+    permalink: string,
+    name: string,
+    industry_type?: INDUSTRY | SUPER_CATEGORY
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations
+
+`filters.locations`
+
+Resolve location labels to exact permalinks
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.filters.locations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `CITY \| STATE \| REGION \| COUNTRY` | No | — |
+| `location_type` | `CITY \| STATE \| REGION \| COUNTRY` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  locations: {
+    permalink: string,
+    name: string,
+    location_type?: CITY | STATE | REGION | COUNTRY
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Investors
+
+### deals
+
+`investors.deals`
+
+Investor's complete deal history by identifier
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.investors.deals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deals: {
+    id: string,
+    round_type?: string | null,
+    extension?: boolean | null,
+    intermediate?: string | null,
+    pre?: boolean | null,
+    date?: string | null,
+    created_at?: string | null,
+    total_round_raised?: number | null,
+    deal_descriptions?: {
+      short_description?: string | null,
+      long_description?: string | null
+    } | null,
+    company_id?: string | null,
+    investor_ids?: string[],
+    angel_investor_ids?: string[],
+    financings?: {
+      id?: string | null,
+      type?: string | null,
+      size_usd?: number | null,
+      size_native?: number | null,
+      currency?: string | null
+    }[],
+    valuation?: {
+      type: string,
+      valuation_usd?: number | null,
+      valuation_native?: number | null,
+      valuation_currency?: string | null
+    } | null,
+    articles?: {
+      link?: string | null,
+      date?: string | null,
+      is_primary: boolean
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`investors.get`
+
+Investor profile, stats, and portfolio summary by identifier
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.investors.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  investor: {
+    id: string,
+    name: string,
+    total_deal_count?: number,
+    lead_deal_count?: number,
+    deal_count_last_12_months?: number,
+    lead_deal_count_last_12_months?: number | null,
+    most_recent_deal_date?: string | null,
+    guru_permalink?: string,
+    domain?: string | null,
+    website?: string | null,
+    linkedin?: string | null,
+    pitchbook?: string | null,
+    crunchbase?: string | null,
+    description?: string | null,
+    legal_name?: string | null,
+    num_employees?: string | null,
+    investment_stage?: string | null,
+    contact_email?: string | null,
+    contact_phone?: string | null,
+    location?: {
+      region?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      country?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      state?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      city?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null
+    } | null,
+    top_industries?: {
+      name?: string | null,
+      permalink?: string | null,
+      count?: number | null
+    }[],
+    top_locations?: {
+      name?: string | null,
+      full_name?: string | null,
+      permalink?: string | null,
+      type?: string | null,
+      count?: number | null
+    }[],
+    top_round_types?: {
+      type?: string | null,
+      count?: number | null
+    }[],
+    filtered_deal_count?: number | null,
+    filtered_lead_count?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`investors.post`
+
+Discover investor firms by attributes and investments
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.investors.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifiers` | `object` | No | — |
+| `investor` | `object` | No | — |
+| `company_investments` | `object` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `sort_by` | `most_recent_deal \| recent_deals \| deals_led_ltm \| total_deals \| matching_deals` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  ids?: string[],
+  domains?: string[],
+  linkedin_urls?: string[],
+  crunchbase_urls?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="investor full type">
+
+```ts
+{
+  locations?: string[],
+  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[]
+}
+```
+</Accordion>
+
+<Accordion title="company_investments full type">
+
+```ts
+{
+  company_ids?: string[],
+  search_query?: string,
+  min_relevance?: number,
+  locations?: string[],
+  industries?: string[],
+  super_categories?: string[],
+  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
+  ipo_status?: public | private[],
+  total_raised_min?: number,
+  total_raised_max?: number,
+  financing_types?: {
+    type: SERIES_A | SERIES_B | SERIES_C | SERIES_D | SERIES_E | SERIES_F | SERIES_G | SERIES_H | SERIES_I | SERIES_J | SERIES_K | SERIES_L | SERIES_M | SEED | SAFE | CONVERTIBLE_NOTE | EQUITY | PREFERRED | SECONDARY_MARKET | DEBT_FINANCING | GRANT | NON_EQUITY_ASSISTANCE | CROWDFUNDING | INITIAL_COIN_OFFERING | FUNDING_ROUND,
+    pre?: boolean,
+    extension?: boolean
+  }[],
+  deal_size_min?: number,
+  deal_size_max?: number,
+  deal_start_date?: string,
+  deal_end_date?: string,
+  only_lead_deals?: boolean,
+  min_matching_deals?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  investors: {
+    id: string,
+    name: string,
+    total_deal_count?: number,
+    lead_deal_count?: number,
+    deal_count_last_12_months?: number,
+    lead_deal_count_last_12_months?: number | null,
+    most_recent_deal_date?: string | null,
+    guru_permalink?: string,
+    domain?: string | null,
+    website?: string | null,
+    linkedin?: string | null,
+    pitchbook?: string | null,
+    crunchbase?: string | null,
+    description?: string | null,
+    legal_name?: string | null,
+    num_employees?: string | null,
+    investment_stage?: string | null,
+    contact_email?: string | null,
+    contact_phone?: string | null,
+    location?: {
+      region?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      country?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      state?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null,
+      city?: {
+        name?: string | null,
+        permalink?: string | null
+      } | null
+    } | null,
+    top_industries?: {
+      name?: string | null,
+      permalink?: string | null,
+      count?: number | null
+    }[],
+    top_locations?: {
+      name?: string | null,
+      full_name?: string | null,
+      permalink?: string | null,
+      type?: string | null,
+      count?: number | null
+    }[],
+    top_round_types?: {
+      type?: string | null,
+      count?: number | null
+    }[],
+    filtered_deal_count?: number | null,
+    filtered_lead_count?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`investors.search`
+
+Fuzzy investor lookup by name, domain, LinkedIn, or Crunchbase
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.investors.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  investors: {
+    id: string,
+    guru_permalink?: string | null,
+    name: string,
+    description?: string | null,
+    image?: string | null,
+    relevance_score?: number,
+    domain?: string | null,
+    website?: string | null,
+    linkedin?: string | null,
+    crunchbase?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## People
+
+### deals
+
+`people.deals`
+
+Deals a person participated in as an investor
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.people.deals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deals: {
+    id: string,
+    round_type?: string | null,
+    extension?: boolean | null,
+    intermediate?: string | null,
+    pre?: boolean | null,
+    date?: string | null,
+    created_at?: string | null,
+    total_round_raised?: number | null,
+    deal_descriptions?: {
+      short_description?: string | null,
+      long_description?: string | null
+    } | null,
+    company_id?: string | null,
+    investor_ids?: string[],
+    angel_investor_ids?: string[],
+    financings?: {
+      id?: string | null,
+      type?: string | null,
+      size_usd?: number | null,
+      size_native?: number | null,
+      currency?: string | null
+    }[],
+    valuation?: {
+      type: string,
+      valuation_usd?: number | null,
+      valuation_native?: number | null,
+      valuation_currency?: string | null
+    } | null,
+    articles?: {
+      link?: string | null,
+      date?: string | null,
+      is_primary: boolean
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### email
+
+`people.email`
+
+Unlock a person's verified email address
+
+**Risk:** `write`
+
+```ts
+await corsair.fundable.api.people.email({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+| `twitter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  person_id: string,
+  email: string,
+  already_unlocked: boolean
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`people.get`
+
+Full person detail including employment and education by identifier
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.people.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+| `twitter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  person: {
+    id: string,
+    name?: string | null,
+    title?: string | null,
+    linkedin_url?: string | null,
+    crunchbase_url?: string | null,
+    twitter_url?: string | null,
+    location?: string | null,
+    city?: string | null,
+    country_code?: string | null,
+    about?: string | null,
+    is_founder: boolean,
+    current_company?: {
+      id?: string | null,
+      name?: string | null,
+      permalink?: string | null,
+      domain?: string | null
+    } | null,
+    employment_history: {
+      title?: string | null,
+      company_name?: string | null,
+      company_id?: string | null,
+      company_url?: string | null,
+      location?: string | null,
+      description?: string | null,
+      start_date?: string | null,
+      end_date?: string | null,
+      is_current?: boolean
+    }[],
+    education_history: {
+      school_name?: string | null,
+      school_id?: string | null,
+      school_url?: string | null,
+      degree?: string | null,
+      field_of_study?: string | null,
+      start_date?: string | null,
+      end_date?: string | null,
+      description?: string | null
+    }[],
+    is_investor: boolean,
+    is_angel: boolean,
+    has_led_deal: boolean,
+    investment_firms: {
+      id?: string | null,
+      name?: string | null,
+      permalink?: string | null,
+      domain?: string | null,
+      deal_count?: number | null,
+      last_deal_date?: string | null
+    }[],
+    investor_highlights?: {
+      total_deal_count?: number | null,
+      lead_deal_count?: number | null,
+      deal_count_last_12_months?: number | null,
+      lead_deal_count_last_12_months?: number | null,
+      most_recent_deal_date?: string | null,
+      top_industries?: {
+        name?: string | null,
+        permalink?: string | null,
+        count?: number | null
+      }[],
+      top_locations?: {
+        name?: string | null,
+        full_name?: string | null,
+        permalink?: string | null,
+        type?: string | null,
+        count?: number | null
+      }[],
+      top_round_types?: {
+        type?: string | null,
+        count?: number | null
+      }[]
+    } | null,
+    filtered_deal_count?: number | null,
+    filtered_lead_count?: number | null,
+    filtered_most_recent_date?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### phone
+
+`people.phone`
+
+Unlock a person's verified phone number
+
+**Risk:** `write`
+
+```ts
+await corsair.fundable.api.people.phone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+| `twitter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  person_id: string,
+  phone: string,
+  already_unlocked: boolean
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`people.post`
+
+Discover founders, employees, angels, and lead investors
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.people.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person_type` | `company \| investor \| any` | No | — |
+| `identifiers` | `object` | No | — |
+| `person` | `object` | No | — |
+| `company` | `object` | No | — |
+| `investor` | `object` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `sort_by` | `most_recent_deal_date \| total_raised \| latest_deal_size \| name \| total_deal_count \| deal_count_last_12_months \| lead_deal_count \| lead_deal_count_last_12_months \| filtered_deal_count` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  ids?: string[],
+  linkedin_urls?: string[],
+  crunchbase_urls?: string[],
+  twitter_urls?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="person full type">
+
+```ts
+{
+  roles?: founder | ceo | key_person[],
+  contact_types?: linkedin | email | phone | twitter[],
+  job_titles?: string[],
+  education_schools?: string[],
+  linkedin_companies?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  search_query?: string,
+  min_relevance?: number,
+  ids?: string[],
+  locations?: string[],
+  industries?: string[],
+  super_categories?: string[],
+  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
+  ipo_status?: public | private | acquired | delisted[],
+  total_raised_min?: number,
+  total_raised_max?: number,
+  investor_people_ids?: string[],
+  latest_deal?: {
+    financing_types?: {
+      type: SERIES_A | SERIES_B | SERIES_C | SERIES_D | SERIES_E | SERIES_F | SERIES_G | SERIES_H | SERIES_I | SERIES_J | SERIES_K | SERIES_L | SERIES_M | SEED | SAFE | CONVERTIBLE_NOTE | EQUITY | PREFERRED | SECONDARY_MARKET | DEBT_FINANCING | GRANT | NON_EQUITY_ASSISTANCE | CROWDFUNDING | INITIAL_COIN_OFFERING | FUNDING_ROUND,
+      pre?: boolean,
+      extension?: boolean
+    }[],
+    size_min?: number,
+    size_max?: number,
+    date_start?: string,
+    date_end?: string,
+    investor_ids?: string[],
+    investor_locations?: string[]
+  }
+}
+```
+</Accordion>
+
+<Accordion title="investor full type">
+
+```ts
+{
+  ids?: string[],
+  domains?: string[],
+  linkedin_urls?: string[],
+  crunchbase_urls?: string[],
+  permalinks?: string[],
+  locations?: string[],
+  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
+  deals?: {
+    search_query?: string,
+    min_relevance?: number,
+    investment_type?: all | angel | institutional,
+    only_lead_deals?: boolean,
+    min_matching_deals?: number,
+    financing_types?: {
+      type: SERIES_A | SERIES_B | SERIES_C | SERIES_D | SERIES_E | SERIES_F | SERIES_G | SERIES_H | SERIES_I | SERIES_J | SERIES_K | SERIES_L | SERIES_M | SEED | SAFE | CONVERTIBLE_NOTE | EQUITY | PREFERRED | SECONDARY_MARKET | DEBT_FINANCING | GRANT | NON_EQUITY_ASSISTANCE | CROWDFUNDING | INITIAL_COIN_OFFERING | FUNDING_ROUND,
+      pre?: boolean,
+      extension?: boolean
+    }[],
+    size_min?: number,
+    size_max?: number,
+    date_start?: string,
+    date_end?: string,
+    industries?: string[],
+    super_categories?: string[],
+    portfolio_locations?: string[],
+    portfolio_employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
+    ipo_status?: public | private[],
+    total_raised_min?: number,
+    total_raised_max?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  people: {
+    id: string,
+    name?: string | null,
+    title?: string | null,
+    linkedin_url?: string | null,
+    crunchbase_url?: string | null,
+    twitter_url?: string | null,
+    location?: string | null,
+    city?: string | null,
+    country_code?: string | null,
+    about?: string | null,
+    is_founder: boolean,
+    current_company?: {
+      id?: string | null,
+      name?: string | null,
+      permalink?: string | null,
+      domain?: string | null
+    } | null,
+    employment_history: {
+      title?: string | null,
+      company_name?: string | null,
+      company_id?: string | null,
+      company_url?: string | null,
+      location?: string | null,
+      description?: string | null,
+      start_date?: string | null,
+      end_date?: string | null,
+      is_current?: boolean
+    }[],
+    education_history: {
+      school_name?: string | null,
+      school_id?: string | null,
+      school_url?: string | null,
+      degree?: string | null,
+      field_of_study?: string | null,
+      start_date?: string | null,
+      end_date?: string | null,
+      description?: string | null
+    }[],
+    is_investor: boolean,
+    is_angel: boolean,
+    has_led_deal: boolean,
+    investment_firms: {
+      id?: string | null,
+      name?: string | null,
+      permalink?: string | null,
+      domain?: string | null,
+      deal_count?: number | null,
+      last_deal_date?: string | null
+    }[],
+    investor_highlights?: {
+      total_deal_count?: number | null,
+      lead_deal_count?: number | null,
+      deal_count_last_12_months?: number | null,
+      lead_deal_count_last_12_months?: number | null,
+      most_recent_deal_date?: string | null,
+      top_industries?: {
+        name?: string | null,
+        permalink?: string | null,
+        count?: number | null
+      }[],
+      top_locations?: {
+        name?: string | null,
+        full_name?: string | null,
+        permalink?: string | null,
+        type?: string | null,
+        count?: number | null
+      }[],
+      top_round_types?: {
+        type?: string | null,
+        count?: number | null
+      }[]
+    } | null,
+    filtered_deal_count?: number | null,
+    filtered_lead_count?: number | null,
+    filtered_most_recent_date?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`people.search`
+
+Fuzzy person lookup by name or identifier
+
+**Risk:** `read`
+
+```ts
+await corsair.fundable.api.people.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `id` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `crunchbase` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `person_type` | `investor \| company` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  people: {
+    id: string,
+    name?: string | null,
+    linkedin_url?: string | null,
+    crunchbase_url?: string | null,
+    twitter_url?: string | null,
+    person_type?: investor | company
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_size?: number,
+  credits_used?: number,
+  credit_source?: string | null,
+  monthly_credits_remaining?: number | null,
+  purchased_credits_remaining?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

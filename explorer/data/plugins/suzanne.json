@@ -1,0 +1,361 @@
+{
+  "id": "suzanne",
+  "displayName": "Suzanne",
+  "description": "Turn a text prompt or photos into a downloadable 3D mesh.",
+  "npmPackageName": "@corsair-dev/suzanne",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "suzanne.api.generations.photoTo3d",
+      "shortPath": "generations.photoTo3d",
+      "description": "Submit one to four photos and queue a 3D mesh job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "sculptor | atelier | capture"
+          },
+          {
+            "key": "images_upload_ids",
+            "optional": true,
+            "type": "{ front: string, back?: string, left?: string, right?: string }"
+          },
+          {
+            "key": "images_inline",
+            "optional": true,
+            "type": "{ front: string }"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{ faces?: 200000 | 500000 | 1000000 | 2000000, pbr?: boolean, quad?: boolean, texture_quality?: standard | detailed }"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "glb | obj | stl | fbx[]"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "billable_amount_cents",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suzanne.api.generations.textTo3d",
+      "shortPath": "generations.textTo3d",
+      "description": "Submit a text prompt and queue a 3D mesh job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "sculptor | atelier"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{ faces?: 200000 | 500000 | 1000000 | 2000000, pbr?: boolean, quad?: boolean, texture_quality?: standard | detailed }"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "glb | obj | stl | fbx[]"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "billable_amount_cents",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suzanne.api.jobs.cancel",
+      "shortPath": "jobs.cancel",
+      "description": "Cancel a queued or running generation job",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_terminal",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suzanne.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Read a generation job and its download URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "{ format: string, download_url: string }[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: string, message: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suzanne.api.models.download",
+      "shortPath": "models.download",
+      "description": "Mint a fresh download URL for a finished mesh",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": false,
+            "type": "glb | obj | stl | fbx"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "suzanne.api.uploads.create",
+      "shortPath": "uploads.create",
+      "description": "Create a presigned URL for a JPEG or PNG upload",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upload_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "upload_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "suzanne.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "providerCreatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "completedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "billableAmountCents",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "errorCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "errorMessage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

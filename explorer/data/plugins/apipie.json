@@ -1,0 +1,627 @@
+{
+  "id": "apipie",
+  "displayName": "APIpie",
+  "description": "AI model aggregation API for routing requests across multiple LLM providers.",
+  "npmPackageName": "@corsair-dev/apipie",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "apipie.api.chat.createCompletion",
+      "shortPath": "chat.createCompletion",
+      "description": "Generate a chat completion using an APIpie model, with optional provider routing and memory.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: string, content: string }[]"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "routing",
+            "optional": true,
+            "type": "price | perf | perf_avg"
+          },
+          {
+            "key": "maxTokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topP",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topK",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequencyPenalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "presencePenalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "memory",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "memSession",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memExpire",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "memClear",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "integrity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "integrityModel",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index?: number, message: { role: string, content: string }, finish_reason?: string, finishReason?: string }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apipie.api.embeddings.create",
+      "shortPath": "embeddings.create",
+      "description": "Create embeddings for the given input text(s).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[]"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, index?: number, embedding: number[] }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apipie.api.images.generate",
+      "shortPath": "images.generate",
+      "description": "Generate image(s) from a text prompt.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "responseFormat",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ url?: string, b64_json?: string, revised_prompt?: string }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apipie.api.models.list",
+      "shortPath": "models.list",
+      "description": "List APIpie models available to the account, filterable by type, subtype, provider, and model.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, model?: string | null, provider?: string | null, type?: string | null, subtype?: string | null, route?: string | null, description?: string | null, enabled?: boolean | number | null, available?: boolean | number | null, avg_cost?: string | null, input_cost?: string | null, output_cost?: string | null, price_type?: string | null, img_price?: any | null, img_json?: {} | null, latency?: string | null, query_count?: string | null, max_tokens?: number | null, max_response_tokens?: number | null }[] | { object?: string, data: { id: string, model?: string | null, provider?: string | null, type?: string | null, subtype?: string | null, route?: string | null, description?: string | null, enabled?: boolean | number | null, available?: boolean | number | null, avg_cost?: string | null, input_cost?: string | null, output_cost?: string | null, price_type?: string | null, img_price?: any | null, img_json?: {} | null, latency?: string | null, query_count?: string | null, max_tokens?: number | null, max_response_tokens?: number | null }[] }"
+      }
+    },
+    {
+      "path": "apipie.api.models.listDetailed",
+      "shortPath": "models.listDetailed",
+      "description": "List APIpie models with detailed metadata including capabilities, limits, and pricing.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, model?: string | null, provider?: string | null, type?: string | null, subtype?: string | null, route?: string | null, description?: string | null, enabled?: boolean | number | null, available?: boolean | number | null, abortable?: boolean | null, moderationRequired?: boolean | null, supports_multipart?: boolean | null, input_modalities?: string[] | null, output_modalities?: string[] | null, instruct_type?: string | null, quantization?: string | null, pool?: string | null, mmlu?: number | null, output_vector_size?: number | null, max_tokens?: number | null, max_response_tokens?: number | null, max_images_per_prompt?: number | null, max_audio_per_prompt?: number | null, max_audio_length_hours?: number | null, max_videos_per_prompt?: number | null, max_video_length?: number | null, max_pdf_size_mb?: number | null, latency?: string | null, query_count?: string | null, pricing?: {} | null, supported_input_parameters?: {} | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "apipie.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revised_prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "apipie.db.modelDetails.search",
+      "entityName": "modelDetails",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subtype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "route",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abortable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "moderationRequired",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "supports_multipart",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "instruct_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quantization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pool",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mmlu",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "output_vector_size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_tokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_response_tokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_images_per_prompt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_audio_per_prompt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_audio_length_hours",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_videos_per_prompt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_video_length",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_pdf_size_mb",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "latency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query_count",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "apipie.db.models.search",
+      "entityName": "models",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subtype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "route",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avg_cost",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "input_cost",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "output_cost",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query_count",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "max_tokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_response_tokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

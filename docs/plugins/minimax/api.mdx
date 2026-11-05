@@ -1,0 +1,2079 @@
+---
+title: API
+description: "API reference for MiniMax: every `minimax.api.*` operation with input and output types."
+---
+
+Every `minimax.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chat
+
+### completion
+
+`chat.completion`
+
+Create a chat completion with a MiniMax text model
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.chat.completion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `MiniMax-M3.1-Flash-Preview \| MiniMax-M3 \| MiniMax-M2.7 \| MiniMax-M2.7-highspeed \| MiniMax-M2.5 \| MiniMax-M2.5-highspeed \| MiniMax-M2.1 \| MiniMax-M2` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `max_completion_tokens` | `number` | No | — |
+| `max_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `tool_choice` | `none \| auto` | No | — |
+| `tools` | `object[]` | No | — |
+| `response_format` | `object` | No | — |
+| `mask_sensitive_info` | `boolean` | No | — |
+| `stream` | `false` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  name?: string,
+  content?: string | {
+    type?: string
+  }[] | null,
+  tool_calls?: {
+    type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  type: string,
+  function: {
+    name: string,
+    description?: string,
+    parameters?: {
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="response_format full type">
+
+```ts
+{
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `choices` | `object[]` | No | — |
+| `created` | `number` | No | — |
+| `model` | `string` | No | — |
+| `object` | `chat.completion \| chat.completion.chunk` | No | — |
+| `usage` | `object` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  finish_reason?: string,
+  index?: number,
+  message?: {
+    role: system | user | assistant | tool,
+    name?: string,
+    content?: string | {
+      type?: string
+    }[] | null,
+    tool_calls?: {
+      type?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  total_tokens?: number
+}
+```
+</Accordion>
+
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createResponse
+
+`chat.createResponse`
+
+Create a model response via the Responses API
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.chat.createResponse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `input` | `object[]` | Yes | — |
+| `instructions` | `string` | No | — |
+| `max_output_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `service_tier` | `standard \| priority` | No | — |
+| `tools` | `object[]` | No | — |
+| `tool_choice` | `none \| auto` | No | — |
+| `metadata` | `object` | No | — |
+| `prompt_cache_key` | `string` | No | — |
+| `text` | `object` | No | — |
+| `reasoning` | `object` | No | — |
+| `stream` | `false` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | {
+  type?: message | function_call | function_call_output | reasoning,
+  role?: user | assistant | system | developer | tool,
+  content?: string | {
+    type?: string
+  }[],
+  call_id?: string,
+  name?: string,
+  arguments?: string,
+  output?: string | {
+    type?: string
+  }[],
+  summary?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="text full type">
+
+```ts
+{
+  format?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="reasoning full type">
+
+```ts
+{
+  effort?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `model` | `string` | No | — |
+| `status` | `completed \| incomplete \| failed` | No | — |
+| `output` | `object[]` | No | — |
+| `output_text` | `string` | No | — |
+| `usage` | `object` | No | — |
+| `error` | `object` | No | — |
+| `incomplete_details` | `object` | No | — |
+| `parallel_tool_calls` | `boolean` | No | — |
+| `store` | `boolean` | No | — |
+| `truncation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+{
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code?: string,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="incomplete_details full type">
+
+```ts
+{
+  reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### estimateInputTokens
+
+`chat.estimateInputTokens`
+
+Estimate the input token count of a request
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.chat.estimateInputTokens({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `input` | `object[]` | Yes | — |
+| `instructions` | `string` | No | — |
+| `tools` | `object[]` | No | — |
+| `tool_choice` | `none \| auto` | No | — |
+| `text` | `object` | No | — |
+| `reasoning` | `object` | No | — |
+| `stream` | `false` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | {
+  type?: message | function_call | function_call_output | reasoning,
+  role?: user | assistant | system | developer | tool,
+  content?: string | {
+    type?: string
+  }[],
+  call_id?: string,
+  name?: string,
+  arguments?: string,
+  output?: string | {
+    type?: string
+  }[],
+  summary?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="text full type">
+
+```ts
+{
+  format?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="reasoning full type">
+
+```ts
+{
+  effort?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `response.input_tokens` | Yes | — |
+| `input_tokens` | `number` | Yes | — |
+
+
+
+---
+
+## Files
+
+### delete
+
+`files.delete`
+
+Delete an uploaded file permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.minimax.api.files.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `number` | Yes | — |
+| `purpose` | `voice_clone \| prompt_audio \| t2a_async \| t2a_async_input \| video_generation` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `number` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List uploaded files for a purpose
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `purpose` | `voice_clone \| prompt_audio \| t2a_async_input \| video_generation_input` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | Yes | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  file_id?: number,
+  bytes?: number,
+  created_at?: number,
+  filename?: string,
+  purpose?: string,
+  download_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`files.retrieve`
+
+Retrieve the metadata of an uploaded file
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.files.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `object` | Yes | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  file_id?: number,
+  bytes?: number,
+  created_at?: number,
+  filename?: string,
+  purpose?: string,
+  download_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Image
+
+### generate
+
+`image.generate`
+
+Generate images from a prompt, optionally with a subject reference
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.image.generate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `image-01 \| image-01-live` | Yes | — |
+| `prompt` | `string` | Yes | — |
+| `subject_reference` | `object[]` | No | — |
+| `aspect_ratio` | `1:1 \| 16:9 \| 4:3 \| 3:2 \| 2:3 \| 3:4 \| 9:16 \| 21:9` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `response_format` | `url \| base64` | No | — |
+| `seed` | `number` | No | — |
+| `n` | `number` | No | — |
+| `prompt_optimizer` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="subject_reference full type">
+
+```ts
+{
+  type: character,
+  image_file: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `id` | `string` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  image_urls?: string[],
+  image_base64?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  success_count?: number,
+  failed_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+List available models (OpenAI-compatible)
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.models.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object?: string,
+  created?: number,
+  owned_by?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAnthropic
+
+`models.listAnthropic`
+
+List available models (Anthropic-compatible)
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.models.listAnthropic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after_id` | `string` | No | — |
+| `before_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `first_id` | `string` | No | — |
+| `has_more` | `boolean` | No | — |
+| `last_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  created_at?: string,
+  display_name?: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`models.retrieve`
+
+Retrieve a model (OpenAI-compatible)
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.models.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `owned_by` | `string` | No | — |
+
+
+
+---
+
+### retrieveAnthropic
+
+`models.retrieveAnthropic`
+
+Retrieve a model (Anthropic-compatible)
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.models.retrieveAnthropic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `type` | `string` | No | — |
+
+
+
+---
+
+## Music
+
+### coverPreprocess
+
+`music.coverPreprocess`
+
+Preprocess reference audio for two-step music cover generation
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.music.coverPreprocess({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `music-cover` | Yes | — |
+| `audio_url` | `string` | No | — |
+| `audio_base64` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cover_feature_id` | `string` | No | — |
+| `formatted_lyrics` | `string` | No | — |
+| `structure_result` | `string` | No | — |
+| `audio_duration` | `number` | No | — |
+| `trace_id` | `string` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generate
+
+`music.generate`
+
+Generate a song from a prompt and lyrics
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.music.generate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `music-3.0 \| music-2.6 \| music-cover \| music-3.0-free \| music-2.6-free \| music-cover-free` | Yes | — |
+| `prompt` | `string` | No | — |
+| `lyrics` | `string` | No | — |
+| `output_format` | `url \| hex` | No | — |
+| `audio_setting` | `object` | No | — |
+| `lyrics_optimizer` | `boolean` | No | — |
+| `is_instrumental` | `boolean` | No | — |
+| `audio_url` | `string` | No | — |
+| `audio_base64` | `string` | No | — |
+| `cover_feature_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="audio_setting full type">
+
+```ts
+{
+  sample_rate?: number,
+  bitrate?: number,
+  format?: mp3 | wav | pcm
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status?: number,
+  audio?: string
+}
+```
+</Accordion>
+
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateLyrics
+
+`music.generateLyrics`
+
+Generate or edit song lyrics
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.music.generateLyrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mode` | `write_full_song \| edit` | Yes | — |
+| `prompt` | `string` | No | — |
+| `lyrics` | `string` | No | — |
+| `title` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `song_title` | `string` | No | — |
+| `style_tags` | `string` | No | — |
+| `lyrics` | `string` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Speech
+
+### createAsyncTask
+
+`speech.createAsyncTask`
+
+Create an asynchronous long-text speech synthesis task
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.speech.createAsyncTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `speech-2.8-hd \| speech-2.8-turbo \| speech-2.6-hd \| speech-2.6-turbo \| speech-02-hd \| speech-02-turbo \| speech-01-hd \| speech-01-turbo` | Yes | — |
+| `text` | `string` | No | — |
+| `text_file_id` | `number` | No | — |
+| `voice_setting` | `object` | Yes | — |
+| `audio_setting` | `object` | No | — |
+| `pronunciation_dict` | `object` | No | — |
+| `language_boost` | `Chinese \| Chinese,Yue \| English \| Arabic \| Russian \| Spanish \| French \| Portuguese \| German \| Turkish \| Dutch \| Ukrainian \| Vietnamese \| Indonesian \| Japanese \| Italian \| Korean \| Thai \| Polish \| Romanian \| Greek \| Czech \| Finnish \| Hindi \| Bulgarian \| Danish \| Hebrew \| Malay \| Persian \| Slovak \| Swedish \| Croatian \| Filipino \| Hungarian \| Norwegian \| Slovenian \| Catalan \| Nynorsk \| Tamil \| Afrikaans \| auto` | No | — |
+| `voice_modify` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="voice_setting full type">
+
+```ts
+{
+  voice_id: string,
+  speed?: number,
+  vol?: number,
+  pitch?: number,
+  emotion?: happy | sad | angry | fearful | disgusted | surprised | calm | fluent | whisper,
+  english_normalization?: boolean,
+  latex_read?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="audio_setting full type">
+
+```ts
+{
+  audio_sample_rate?: number,
+  bitrate?: number,
+  format?: mp3 | pcm | flac | wav | pcmu_raw | pcmu_wav | opus,
+  channel?: number
+}
+```
+</Accordion>
+
+<Accordion title="pronunciation_dict full type">
+
+```ts
+{
+  tone?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="voice_modify full type">
+
+```ts
+{
+  pitch?: number,
+  intensity?: number,
+  timbre?: number,
+  sound_effects?: spacious_echo | auditorium_echo | lofi_telephone | robotic
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `file_id` | `number` | No | — |
+| `task_token` | `string` | No | — |
+| `usage_characters` | `number` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryAsyncTask
+
+`speech.queryAsyncTask`
+
+Query the status of an asynchronous speech synthesis task
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.speech.queryAsyncTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string \| number` | No | — |
+| `status` | `success \| failed \| expired \| processing \| Success \| Failed \| Expired \| Processing` | Yes | — |
+| `file_id` | `number` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### t2a
+
+`speech.t2a`
+
+Synthesize speech from text (synchronous T2A)
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.speech.t2a({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `speech-2.8-hd \| speech-2.8-turbo \| speech-2.6-hd \| speech-2.6-turbo \| speech-02-hd \| speech-02-turbo \| speech-01-hd \| speech-01-turbo` | Yes | — |
+| `text` | `string` | Yes | — |
+| `voice_setting` | `object` | No | — |
+| `audio_setting` | `object` | No | — |
+| `pronunciation_dict` | `object` | No | — |
+| `timbre_weights` | `object[]` | No | — |
+| `language_boost` | `Chinese \| Chinese,Yue \| English \| Arabic \| Russian \| Spanish \| French \| Portuguese \| German \| Turkish \| Dutch \| Ukrainian \| Vietnamese \| Indonesian \| Japanese \| Italian \| Korean \| Thai \| Polish \| Romanian \| Greek \| Czech \| Finnish \| Hindi \| Bulgarian \| Danish \| Hebrew \| Malay \| Persian \| Slovak \| Swedish \| Croatian \| Filipino \| Hungarian \| Norwegian \| Slovenian \| Catalan \| Nynorsk \| Tamil \| Afrikaans \| auto` | No | — |
+| `text_normalization_mode` | `basic \| quality` | No | — |
+| `voice_modify` | `object` | No | — |
+| `subtitle_enable` | `boolean` | No | — |
+| `subtitle_type` | `sentence \| word \| word_streaming` | No | — |
+| `output_format` | `url \| hex` | No | — |
+
+<AccordionGroup>
+<Accordion title="voice_setting full type">
+
+```ts
+{
+  voice_id: string,
+  speed?: number,
+  vol?: number,
+  pitch?: number,
+  emotion?: happy | sad | angry | fearful | disgusted | surprised | calm | fluent | whisper,
+  text_normalization?: boolean,
+  latex_read?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="audio_setting full type">
+
+```ts
+{
+  sample_rate?: number,
+  bitrate?: number,
+  format?: mp3 | pcm | flac | wav | pcmu_raw | pcmu_wav | opus,
+  channel?: number,
+  force_cbr?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="pronunciation_dict full type">
+
+```ts
+{
+  tone?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="timbre_weights full type">
+
+```ts
+{
+  voice_id: string,
+  weight: number
+}[]
+```
+</Accordion>
+
+<Accordion title="voice_modify full type">
+
+```ts
+{
+  pitch?: number,
+  intensity?: number,
+  timbre?: number,
+  sound_effects?: spacious_echo | auditorium_echo | lofi_telephone | robotic
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `trace_id` | `string` | No | — |
+| `extra_info` | `object` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  audio?: string,
+  status?: number,
+  subtitle_file?: string,
+  subtitle?: string,
+  subtitles?: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="extra_info full type">
+
+```ts
+{
+  audio_length?: number,
+  audio_sample_rate?: number,
+  audio_size?: number,
+  bitrate?: number,
+  audio_format?: string,
+  audio_channel?: number,
+  usage_characters?: number,
+  word_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video
+
+### cancelOrDeleteV2
+
+`video.cancelOrDeleteV2`
+
+Cancel a queued task or delete a finished task record permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.minimax.api.video.cancelOrDeleteV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | No | — |
+| `action` | `cancelled \| deleted` | No | — |
+| `status` | `cancelled \| deleted` | No | — |
+
+
+
+---
+
+### contextIr
+
+`video.contextIr`
+
+Create an H3-Context-IR task that enriches a video prompt
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.video.contextIr({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `MiniMax-H3` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `number` | Yes | — |
+| `ratio` | `adaptive \| 21:9 \| 16:9 \| 4:3 \| 1:1 \| 3:4 \| 9:16` | No | — |
+| `callback_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  type: text | image_url | video_url | audio_url,
+  text?: string,
+  image_url?: {
+    url: string
+  },
+  video_url?: {
+    url: string
+  },
+  audio_url?: {
+    url: string
+  },
+  role?: first_frame | last_frame | reference_image | reference_video | reference_audio
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+---
+
+### generate
+
+`video.generate`
+
+Create a Hailuo video generation task (text, image, first/last frame or subject reference)
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.video.generate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `MiniMax-Hailuo-2.3 \| MiniMax-Hailuo-2.3-Fast \| MiniMax-Hailuo-02 \| T2V-01-Director \| T2V-01 \| I2V-01-Director \| I2V-01-live \| I2V-01 \| S2V-01` | Yes | — |
+| `prompt` | `string` | No | — |
+| `first_frame_image` | `string` | No | — |
+| `last_frame_image` | `string` | No | — |
+| `subject_reference` | `object[]` | No | — |
+| `prompt_optimizer` | `boolean` | No | — |
+| `fast_pretreatment` | `boolean` | No | — |
+| `duration` | `number` | No | — |
+| `resolution` | `512P \| 720P \| 768P \| 1080P` | No | — |
+| `callback_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subject_reference full type">
+
+```ts
+{
+  type: character,
+  image: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateV2
+
+`video.generateV2`
+
+Create an H3 multimodal video generation task
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.video.generateV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `MiniMax-H3 \| MiniMax-H3-Max` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `resolution` | `480P \| 768P \| 2K` | Yes | — |
+| `duration` | `number` | Yes | — |
+| `ratio` | `adaptive \| 21:9 \| 16:9 \| 4:3 \| 1:1 \| 3:4 \| 9:16` | No | — |
+| `extra` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  type: text | image_url | video_url | audio_url,
+  text?: string,
+  image_url?: {
+    url: string
+  },
+  video_url?: {
+    url: string
+  },
+  audio_url?: {
+    url: string
+  },
+  role?: first_frame | last_frame | reference_image | reference_video | reference_audio
+}[]
+```
+</Accordion>
+
+<Accordion title="extra full type">
+
+```ts
+{
+  prompt_expansion_mode?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+---
+
+### listV2
+
+`video.listV2`
+
+List H3 video tasks from the last 7 days
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.video.listV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNum` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `status` | `queued \| running \| succeeded \| failed \| cancelled` | No | — |
+| `taskIds` | `string[]` | No | — |
+| `model` | `string` | No | — |
+| `taskType` | `generation \| h3_context_ir \| regeneration` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  model?: string,
+  status?: queued | running | succeeded | failed | cancelled,
+  error?: {
+    code?: string,
+    message?: string
+  },
+  created_at?: number,
+  updated_at?: number,
+  content?: {
+    url?: string,
+    prompt?: string
+  },
+  resolution?: string,
+  duration?: number,
+  usage?: {
+  },
+  ratio?: string,
+  task_type?: generation | h3_context_ir | regeneration,
+  modality?: video | text
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`video.query`
+
+Query a Hailuo video generation task
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.video.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | No | — |
+| `status` | `Preparing \| Queueing \| Processing \| Success \| Fail` | No | — |
+| `file_id` | `string` | No | — |
+| `video_width` | `number` | No | — |
+| `video_height` | `number` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryV2
+
+`video.queryV2`
+
+Query an H3 video task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.video.queryV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id?: string,
+  model?: string,
+  status?: queued | running | succeeded | failed | cancelled,
+  error?: {
+    code?: string,
+    message?: string
+  },
+  created_at?: number,
+  updated_at?: number,
+  content?: {
+    url?: string,
+    prompt?: string
+  },
+  resolution?: string,
+  duration?: number,
+  usage?: {
+  },
+  ratio?: string,
+  task_type?: generation | h3_context_ir | regeneration,
+  modality?: video | text
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### regenerate
+
+`video.regenerate`
+
+Create a 2K video regeneration task
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.video.regenerate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `MiniMax-H3` | Yes | — |
+| `source_task_id` | `string` | No | — |
+| `content` | `object[]` | No | — |
+| `resolution` | `2K` | Yes | — |
+| `callback_url` | `string` | No | — |
+| `aigc_watermark` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  type: text | image_url | video_url | audio_url,
+  text?: string,
+  image_url?: {
+    url: string
+  },
+  video_url?: {
+    url: string
+  },
+  audio_url?: {
+    url: string
+  },
+  role?: base_video | first_frame | last_frame | reference_image | reference_video | reference_audio
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+---
+
+### templateGenerate
+
+`video.templateGenerate`
+
+Create a Video Agent task from a template
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.video.templateGenerate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+| `text_inputs` | `object[]` | No | — |
+| `media_inputs` | `object[]` | No | — |
+| `callback_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="text_inputs full type">
+
+```ts
+{
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="media_inputs full type">
+
+```ts
+{
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### templateQuery
+
+`video.templateQuery`
+
+Query a Video Agent template generation task
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.video.templateQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | No | — |
+| `status` | `Preparing \| Queueing \| Processing \| Success \| Fail` | No | — |
+| `video_url` | `string` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Voice
+
+### clone
+
+`voice.clone`
+
+Clone a voice from uploaded audio
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.voice.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `number` | Yes | — |
+| `voice_id` | `string` | Yes | — |
+| `clone_prompt` | `object` | No | — |
+| `text` | `string` | No | — |
+| `model` | `speech-2.8-hd \| speech-2.8-turbo \| speech-2.6-hd \| speech-2.6-turbo \| speech-02-hd \| speech-02-turbo \| speech-01-hd \| speech-01-turbo` | No | — |
+| `language_boost` | `Chinese \| Chinese,Yue \| English \| Arabic \| Russian \| Spanish \| French \| Portuguese \| German \| Turkish \| Dutch \| Ukrainian \| Vietnamese \| Indonesian \| Japanese \| Italian \| Korean \| Thai \| Polish \| Romanian \| Greek \| Czech \| Finnish \| Hindi \| Bulgarian \| Danish \| Hebrew \| Malay \| Persian \| Slovak \| Swedish \| Croatian \| Filipino \| Hungarian \| Norwegian \| Slovenian \| Catalan \| Nynorsk \| Tamil \| Afrikaans \| auto` | No | — |
+| `text_validation` | `string` | No | — |
+| `accuracy` | `number` | No | — |
+| `need_noise_reduction` | `boolean` | No | — |
+| `need_volume_normalization` | `boolean` | No | — |
+| `aigc_watermark` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="clone_prompt full type">
+
+```ts
+{
+  prompt_audio: number,
+  prompt_text: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `demo_audio` | `string` | No | — |
+| `input_sensitive` | `object` | No | — |
+| `extra_info` | `object` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input_sensitive full type">
+
+```ts
+{
+  type?: number
+}
+```
+</Accordion>
+
+<Accordion title="extra_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`voice.delete`
+
+Delete a generated voice permanently [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.minimax.api.voice.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_type` | `voice_cloning \| voice_generation` | Yes | — |
+| `voice_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | No | — |
+| `created_time` | `string` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### design
+
+`voice.design`
+
+Design a custom voice from a description
+
+**Risk:** `write`
+
+```ts
+await corsair.minimax.api.voice.design({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | — |
+| `preview_text` | `string` | Yes | — |
+| `voice_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | Yes | — |
+| `trial_audio` | `string` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`voice.list`
+
+List system, cloned and generated voices
+
+**Risk:** `read`
+
+```ts
+await corsair.minimax.api.voice.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_type` | `system \| voice_cloning \| voice_generation \| all` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `system_voice` | `object[]` | No | — |
+| `voice_cloning` | `object[]` | No | — |
+| `voice_generation` | `object[]` | No | — |
+| `base_resp` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="system_voice full type">
+
+```ts
+{
+  voice_id: string,
+  voice_name?: string,
+  description?: string[],
+  created_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="voice_cloning full type">
+
+```ts
+{
+  voice_id: string,
+  voice_name?: string,
+  description?: string[],
+  created_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="voice_generation full type">
+
+```ts
+{
+  voice_id: string,
+  voice_name?: string,
+  description?: string[],
+  created_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="base_resp full type">
+
+```ts
+{
+  status_code: number,
+  status_msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

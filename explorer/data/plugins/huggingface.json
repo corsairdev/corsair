@@ -1,0 +1,4768 @@
+{
+  "id": "huggingface",
+  "displayName": "Hugging Face",
+  "description": "AI community hub for models, datasets, inference APIs, and machine learning deployments.",
+  "npmPackageName": "@corsair-dev/huggingface",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 139,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "huggingface.api.account.deleteNotifications",
+      "shortPath": "account.deleteNotifications",
+      "description": "Delete notifications by discussion ids or filters",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discussionIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "applyToAll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.account.getWhoami",
+      "shortPath": "account.getWhoami",
+      "description": "Get authenticated Hugging Face user info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.account.listNotifications",
+      "shortPath": "account.listNotifications",
+      "description": "List notifications for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.collections.create",
+      "shortPath": "collections.create",
+      "description": "Create a new collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "namespace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "List collections on the Hub",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.checkUploadMethod",
+      "shortPath": "datasets.checkUploadMethod",
+      "description": "Check LFS vs regular upload method for dataset files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ path: string, size: number, sample: string }[]"
+          },
+          {
+            "key": "gitAttributes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gitIgnore",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.checkValidity",
+      "shortPath": "datasets.checkValidity",
+      "description": "Check whether a dataset is valid on the Hub viewer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.createBranch",
+      "shortPath": "datasets.createBranch",
+      "description": "Create a branch on a dataset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startingPoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emptyBranch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.createCommit",
+      "shortPath": "datasets.createCommit",
+      "description": "Create a commit on a dataset (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentCommit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createPr",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hotReload",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | ndjson"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ path: string, content?: string, encoding?: utf-8 | base64, oldPath?: string }[]"
+          },
+          {
+            "key": "deletedEntries",
+            "optional": true,
+            "type": "{ path: string }[]"
+          },
+          {
+            "key": "lfsFiles",
+            "optional": true,
+            "type": "{ path: string, oid?: string, algo?: sha256, size?: number, oldPath?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.createSqlConsoleEmbed",
+      "shortPath": "datasets.createSqlConsoleEmbed",
+      "description": "Create a SQL Console embed for a dataset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "dataset"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.createTag",
+      "shortPath": "datasets.createTag",
+      "description": "Create a tag on a dataset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.deleteBranch",
+      "shortPath": "datasets.deleteBranch",
+      "description": "Delete a branch on a dataset",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.deleteTag",
+      "shortPath": "datasets.deleteTag",
+      "description": "Delete a tag on a dataset",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.filterRows",
+      "shortPath": "datasets.filterRows",
+      "description": "Filter dataset rows with SQL-like where clause",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "length",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.get",
+      "shortPath": "datasets.get",
+      "description": "Get dataset repository info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getCompare",
+      "shortPath": "datasets.getCompare",
+      "description": "Compare two revisions of a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "compare",
+            "optional": false,
+            "type": "string",
+            "description": "e.g. main...other or sha1...sha2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getCroissant",
+      "shortPath": "datasets.getCroissant",
+      "description": "Get Croissant JSON-LD metadata for a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getFirstRows",
+      "shortPath": "datasets.getFirstRows",
+      "description": "Get first ~100 rows of a dataset split",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getInfo",
+      "shortPath": "datasets.getInfo",
+      "description": "Get dataset info (features, splits, citation)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getJwt",
+      "shortPath": "datasets.getJwt",
+      "description": "Get JWT for a dataset repo",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "write",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expireAt",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getLeaderboard",
+      "shortPath": "datasets.getLeaderboard",
+      "description": "Get evaluation leaderboard for a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string",
+            "description": "namespace/repo"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getNotebook",
+      "shortPath": "datasets.getNotebook",
+      "description": "Get notebook URL from a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getResolve",
+      "shortPath": "datasets.getResolve",
+      "description": "Resolve a file from a dataset (follows redirects / XET info)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "xetFileInfo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getResolveCache",
+      "shortPath": "datasets.getResolveCache",
+      "description": "Resolve a file from dataset cache",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "xetFileInfo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getRows",
+      "shortPath": "datasets.getRows",
+      "description": "Get a slice of dataset rows (offset/length)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "length",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getScan",
+      "shortPath": "datasets.getScan",
+      "description": "Get security scan status for a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string",
+            "description": "namespace/repo"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getSize",
+      "shortPath": "datasets.getSize",
+      "description": "Get dataset size (rows and bytes)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getStatistics",
+      "shortPath": "datasets.getStatistics",
+      "description": "Get statistics for a dataset split",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getTagsByType",
+      "shortPath": "datasets.getTagsByType",
+      "description": "Get dataset tags grouped by type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getTreeSize",
+      "shortPath": "datasets.getTreeSize",
+      "description": "Get repository tree size for a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.getXetReadToken",
+      "shortPath": "datasets.getXetReadToken",
+      "description": "Get XET read token for a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.handleAccessRequest",
+      "shortPath": "datasets.handleAccessRequest",
+      "description": "Accept/reject gated dataset access request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "accepted | rejected | pending"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.list",
+      "shortPath": "datasets.list",
+      "description": "List datasets on the Hub",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "-1 | 1 | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.listAccessRequests",
+      "shortPath": "datasets.listAccessRequests",
+      "description": "List access requests for a gated dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | accepted | rejected"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.listCommits",
+      "shortPath": "datasets.listCommits",
+      "description": "List commits for a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "p",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.listParquetFiles",
+      "shortPath": "datasets.listParquetFiles",
+      "description": "List Parquet files for a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.listPathsInfo",
+      "shortPath": "datasets.listPathsInfo",
+      "description": "List path metadata in a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paths",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.listRefs",
+      "shortPath": "datasets.listRefs",
+      "description": "List refs (branches/tags) for a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includePullRequests",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.listSplits",
+      "shortPath": "datasets.listSplits",
+      "description": "List dataset configurations and splits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.search",
+      "shortPath": "datasets.search",
+      "description": "Full-text search within a dataset split",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "split",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "length",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.squashCommits",
+      "shortPath": "datasets.squashCommits",
+      "description": "Squash all commits in a dataset ref (irreversible)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.updateSettings",
+      "shortPath": "datasets.updateSettings",
+      "description": "Update settings for a dataset repository",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "gated",
+            "optional": true,
+            "type": "boolean | string"
+          },
+          {
+            "key": "discussionsDisabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.datasets.updateSqlConsoleEmbed",
+      "shortPath": "datasets.updateSqlConsoleEmbed",
+      "description": "Update a SQL Console embed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "dataset"
+          },
+          {
+            "key": "embedId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sql",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.discussions.changeStatus",
+      "shortPath": "discussions.changeStatus",
+      "description": "Open or close a discussion",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "discussionNum",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "open | closed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.discussions.create",
+      "shortPath": "discussions.create",
+      "description": "Create a discussion on a repository",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pullRequest",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.discussions.createComment",
+      "shortPath": "discussions.createComment",
+      "description": "Comment on a discussion",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "discussionNum",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.discussions.delete",
+      "shortPath": "discussions.delete",
+      "description": "Delete a discussion",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "discussionNum",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.discussions.get",
+      "shortPath": "discussions.get",
+      "description": "Get discussion details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "discussionNum",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.discussions.list",
+      "shortPath": "discussions.list",
+      "description": "List discussions for a repository",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | closed | all"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "discussion | pull_request"
+          },
+          {
+            "key": "p",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.discussions.pin",
+      "shortPath": "discussions.pin",
+      "description": "Pin or unpin a discussion",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "discussionNum",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pinned",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.discussions.updateTitle",
+      "shortPath": "discussions.updateTitle",
+      "description": "Update discussion title",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "discussionNum",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.docs.list",
+      "shortPath": "docs.list",
+      "description": "List available Hugging Face documentation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.docs.search",
+      "shortPath": "docs.search",
+      "description": "Search Hugging Face documentation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.endpoints.deleteNetworkCidr",
+      "shortPath": "endpoints.deleteNetworkCidr",
+      "description": "Delete a network CIDR list entry for Inference Endpoints",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "namespace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cidr",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.endpoints.list",
+      "shortPath": "endpoints.list",
+      "description": "List Inference Endpoints for a namespace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "namespace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.endpoints.listVendors",
+      "shortPath": "endpoints.listVendors",
+      "description": "List cloud provider vendors for Inference Endpoints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.inference.chatCompletion",
+      "shortPath": "inference.chatCompletion",
+      "description": "Generate chat completion via Inference Providers (OpenAI-compatible)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxTokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.inference.embeddings",
+      "shortPath": "inference.embeddings",
+      "description": "Generate text embeddings via Inference Providers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[]"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.jobs.getHardware",
+      "shortPath": "jobs.getHardware",
+      "description": "List available Jobs hardware",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.checkUploadMethod",
+      "shortPath": "models.checkUploadMethod",
+      "description": "Check LFS vs regular upload method for model files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ path: string, size: number, sample: string }[]"
+          },
+          {
+            "key": "gitAttributes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gitIgnore",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.createBranch",
+      "shortPath": "models.createBranch",
+      "description": "Create a branch on a model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startingPoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emptyBranch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.createCommit",
+      "shortPath": "models.createCommit",
+      "description": "Create a commit on a model (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentCommit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createPr",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hotReload",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | ndjson"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ path: string, content?: string, encoding?: utf-8 | base64, oldPath?: string }[]"
+          },
+          {
+            "key": "deletedEntries",
+            "optional": true,
+            "type": "{ path: string }[]"
+          },
+          {
+            "key": "lfsFiles",
+            "optional": true,
+            "type": "{ path: string, oid?: string, algo?: sha256, size?: number, oldPath?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.createTag",
+      "shortPath": "models.createTag",
+      "description": "Create a tag on a model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.deleteBranch",
+      "shortPath": "models.deleteBranch",
+      "description": "Delete a branch on a model",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.deleteTag",
+      "shortPath": "models.deleteTag",
+      "description": "Delete a tag on a model",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.get",
+      "shortPath": "models.get",
+      "description": "Get model repository info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.getCompare",
+      "shortPath": "models.getCompare",
+      "description": "Compare two revisions of a model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "compare",
+            "optional": false,
+            "type": "string",
+            "description": "e.g. main...other or sha1...sha2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.getJwt",
+      "shortPath": "models.getJwt",
+      "description": "Get JWT for a model repo",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "write",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expireAt",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.getNotebook",
+      "shortPath": "models.getNotebook",
+      "description": "Get notebook URL from a model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.getResolve",
+      "shortPath": "models.getResolve",
+      "description": "Resolve a file from a model (follows redirects / XET info)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "xetFileInfo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.getResolveCache",
+      "shortPath": "models.getResolveCache",
+      "description": "Resolve a file from model cache",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "xetFileInfo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.getScan",
+      "shortPath": "models.getScan",
+      "description": "Get security scan status for a model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string",
+            "description": "namespace/repo"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.getTagsByType",
+      "shortPath": "models.getTagsByType",
+      "description": "Get model tags grouped by type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.getTreeSize",
+      "shortPath": "models.getTreeSize",
+      "description": "Get repository tree size for a model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.getXetReadToken",
+      "shortPath": "models.getXetReadToken",
+      "description": "Get XET read token for a model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.list",
+      "shortPath": "models.list",
+      "description": "List models on the Hub",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "-1 | 1 | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.listCommits",
+      "shortPath": "models.listCommits",
+      "description": "List commits for a model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "p",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.listPathsInfo",
+      "shortPath": "models.listPathsInfo",
+      "description": "List path metadata in a model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paths",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.listRefs",
+      "shortPath": "models.listRefs",
+      "description": "List refs (branches/tags) for a model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includePullRequests",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.models.updateSettings",
+      "shortPath": "models.updateSettings",
+      "description": "Update settings for a model repository",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "gated",
+            "optional": true,
+            "type": "boolean | string"
+          },
+          {
+            "key": "discussionsDisabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.organizations.getAvatar",
+      "shortPath": "organizations.getAvatar",
+      "description": "Get organization avatar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.organizations.getMembers",
+      "shortPath": "organizations.getMembers",
+      "description": "List organization members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.organizations.getSocials",
+      "shortPath": "organizations.getSocials",
+      "description": "Get organization social handles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.papers.claimAuthorship",
+      "shortPath": "papers.claimAuthorship",
+      "description": "Claim authorship of a paper",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paperId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.papers.createComment",
+      "shortPath": "papers.createComment",
+      "description": "Comment on a paper",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paperId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.papers.createCommentReply",
+      "shortPath": "papers.createCommentReply",
+      "description": "Reply to a paper comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paperId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.papers.createIndex",
+      "shortPath": "papers.createIndex",
+      "description": "Index an arXiv paper by id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paperId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.papers.getDaily",
+      "shortPath": "papers.getDaily",
+      "description": "Get daily papers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.papers.search",
+      "shortPath": "papers.search",
+      "description": "Search papers (hybrid semantic/full-text)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.repos.create",
+      "shortPath": "repos.create",
+      "description": "Create a model, dataset, or Space repository",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sdk",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hardware",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.repos.getResolve",
+      "shortPath": "repos.getResolve",
+      "description": "Resolve a file in any repository type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "xetFileInfo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.repos.listFiles",
+      "shortPath": "repos.listFiles",
+      "description": "List repository file tree with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.repos.requestAccess",
+      "shortPath": "repos.requestAccess",
+      "description": "Request access to a gated repository",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoType",
+            "optional": false,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.createWebhook",
+      "shortPath": "settings.createWebhook",
+      "description": "Create a settings webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "watched",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.deleteWebhook",
+      "shortPath": "settings.deleteWebhook",
+      "description": "Delete a settings webhook",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.getBillingUsageV2",
+      "shortPath": "settings.getBillingUsageV2",
+      "description": "Get billing usage for a custom date range (unix timestamps)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.getJobsUsage",
+      "shortPath": "settings.getJobsUsage",
+      "description": "Get Jobs usage and billing for current subscription period",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.getLiveBillingUsage",
+      "shortPath": "settings.getLiveBillingUsage",
+      "description": "Get live billing usage stream snapshot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.getMcp",
+      "shortPath": "settings.getMcp",
+      "description": "Get MCP tools configuration for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.getWebhook",
+      "shortPath": "settings.getWebhook",
+      "description": "Get a webhook by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.listWebhooks",
+      "shortPath": "settings.listWebhooks",
+      "description": "List all webhooks in settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.updateNotifications",
+      "shortPath": "settings.updateNotifications",
+      "description": "Update notification settings for the authenticated user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notifications",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.updateWatch",
+      "shortPath": "settings.updateWatch",
+      "description": "Update watch settings (orgs/users/repos to follow)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "add",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "remove",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.updateWebhook",
+      "shortPath": "settings.updateWebhook",
+      "description": "Update an existing settings webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "watched",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.settings.updateWebhookStatus",
+      "shortPath": "settings.updateWebhookStatus",
+      "description": "Enable or disable a webhook (action: enable|disable)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "enable | disable"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.checkUploadMethod",
+      "shortPath": "spaces.checkUploadMethod",
+      "description": "Check LFS vs regular upload method for space files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ path: string, size: number, sample: string }[]"
+          },
+          {
+            "key": "gitAttributes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gitIgnore",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.createBranch",
+      "shortPath": "spaces.createBranch",
+      "description": "Create a branch on a space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startingPoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emptyBranch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.createCommit",
+      "shortPath": "spaces.createCommit",
+      "description": "Create a commit on a space (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentCommit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createPr",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hotReload",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | ndjson"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ path: string, content?: string, encoding?: utf-8 | base64, oldPath?: string }[]"
+          },
+          {
+            "key": "deletedEntries",
+            "optional": true,
+            "type": "{ path: string }[]"
+          },
+          {
+            "key": "lfsFiles",
+            "optional": true,
+            "type": "{ path: string, oid?: string, algo?: sha256, size?: number, oldPath?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.createSecret",
+      "shortPath": "spaces.createSecret",
+      "description": "Create or update a Space secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.createTag",
+      "shortPath": "spaces.createTag",
+      "description": "Create a tag on a space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.createVariable",
+      "shortPath": "spaces.createVariable",
+      "description": "Create or update a Space variable",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.deleteBranch",
+      "shortPath": "spaces.deleteBranch",
+      "description": "Delete a branch on a space",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.deleteSecret",
+      "shortPath": "spaces.deleteSecret",
+      "description": "Delete a Space secret",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.deleteTag",
+      "shortPath": "spaces.deleteTag",
+      "description": "Delete a tag on a space",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.deleteVariable",
+      "shortPath": "spaces.deleteVariable",
+      "description": "Delete a Space variable",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.get",
+      "shortPath": "spaces.get",
+      "description": "Get space repository info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getCompare",
+      "shortPath": "spaces.getCompare",
+      "description": "Compare two revisions of a space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "compare",
+            "optional": false,
+            "type": "string",
+            "description": "e.g. main...other or sha1...sha2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getEvents",
+      "shortPath": "spaces.getEvents",
+      "description": "Stream Space status events (SSE snapshot)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string",
+            "description": "namespace/repo"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getJwt",
+      "shortPath": "spaces.getJwt",
+      "description": "Get JWT for a space repo",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "write",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expireAt",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getMetrics",
+      "shortPath": "spaces.getMetrics",
+      "description": "Get live Space metrics (SSE snapshot)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string",
+            "description": "namespace/repo"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getNotebook",
+      "shortPath": "spaces.getNotebook",
+      "description": "Get notebook URL from a space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getResolve",
+      "shortPath": "spaces.getResolve",
+      "description": "Resolve a file from a space (follows redirects / XET info)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "xetFileInfo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getResolveCache",
+      "shortPath": "spaces.getResolveCache",
+      "description": "Resolve a file from space cache",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "xetFileInfo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getScan",
+      "shortPath": "spaces.getScan",
+      "description": "Get security scan status for a space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string",
+            "description": "namespace/repo"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getTreeSize",
+      "shortPath": "spaces.getTreeSize",
+      "description": "Get repository tree size for a space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getXetReadToken",
+      "shortPath": "spaces.getXetReadToken",
+      "description": "Get XET read token for a space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.getXetWriteToken",
+      "shortPath": "spaces.getXetWriteToken",
+      "description": "Get XET write token for a Space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.list",
+      "shortPath": "spaces.list",
+      "description": "List spaces on the Hub",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "-1 | 1 | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.listCommits",
+      "shortPath": "spaces.listCommits",
+      "description": "List commits for a space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "p",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.listHardware",
+      "shortPath": "spaces.listHardware",
+      "description": "List available Space hardware configurations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.listLfsFiles",
+      "shortPath": "spaces.listLfsFiles",
+      "description": "List LFS files in a Space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.listPathsInfo",
+      "shortPath": "spaces.listPathsInfo",
+      "description": "List path metadata in a space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paths",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.listRefs",
+      "shortPath": "spaces.listRefs",
+      "description": "List refs (branches/tags) for a space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includePullRequests",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.squashCommits",
+      "shortPath": "spaces.squashCommits",
+      "description": "Squash all commits in a Space ref (irreversible)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.spaces.updateSettings",
+      "shortPath": "spaces.updateSettings",
+      "description": "Update settings for a space repository",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "gated",
+            "optional": true,
+            "type": "boolean | string"
+          },
+          {
+            "key": "discussionsDisabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.trending.get",
+      "shortPath": "trending.get",
+      "description": "Get trending repositories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "model | dataset | space"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.users.getAvatar",
+      "shortPath": "users.getAvatar",
+      "description": "Get user avatar URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.users.getOverview",
+      "shortPath": "users.getOverview",
+      "description": "Get user profile overview",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "huggingface.api.users.getSocials",
+      "shortPath": "users.getSocials",
+      "description": "Get user social handles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "huggingface.db.collections.search",
+      "entityName": "collections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastUpdated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "theme",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "upvotes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isUpvotedByUser",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "huggingface.db.datasets.search",
+      "entityName": "datasets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sha",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "disabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "downloads",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "likes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "trendingScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "citation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "paperswithcode_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "usedStorage",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "huggingface.db.discussions.search",
+      "entityName": "discussions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "num",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isPullRequest",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "pinned",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "numComments",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numReactionUsers",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "huggingface.db.models.search",
+      "entityName": "models",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modelId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sha",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "disabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "downloads",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "likes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "trendingScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pipeline_tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "library_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "usedStorage",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "huggingface.db.papers.search",
+      "entityName": "papers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "upvotes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "ai_summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "huggingface.db.spaces.search",
+      "entityName": "spaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sha",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "disabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "likes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "trendingScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sdk",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subdomain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "host",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "usedStorage",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

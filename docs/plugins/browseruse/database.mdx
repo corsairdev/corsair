@@ -1,0 +1,81 @@
+---
+title: Database
+description: "Browser Use local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Browser Use plugin syncs data locally. Use `corsair.browseruse.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Browsers
+
+Path: `browseruse.db.browsers.search`
+
+```ts
+const rows = await corsair.browseruse.db.browsers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `liveUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdpUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `timeoutAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `startedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `finishedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `proxyUsedMb` | `string` | equals, contains, startsWith, endsWith, in |
+| `proxyCost` | `string` | equals, contains, startsWith, endsWith, in |
+| `browserCost` | `string` | equals, contains, startsWith, endsWith, in |
+| `agentSessionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `recordingUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `recordingAvailable` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Runs
+
+Path: `browseruse.db.runs.search`
+
+```ts
+const rows = await corsair.browseruse.db.runs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `task` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `model` | `string` | equals, contains, startsWith, endsWith, in |
+| `sessionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `workspaceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `result` | `string` | equals, contains, startsWith, endsWith, in |
+| `error` | `string` | equals, contains, startsWith, endsWith, in |
+| `contextLimit` | `number` | equals, gt, gte, lt, lte, in |
+| `totalInputTokens` | `number` | equals, gt, gte, lt, lte, in |
+| `totalOutputTokens` | `number` | equals, gt, gte, lt, lte, in |
+| `totalCostUsd` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

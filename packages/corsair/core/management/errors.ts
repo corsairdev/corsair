@@ -23,10 +23,14 @@ export class ManagementApiError extends Error {
 	}
 }
 
-export function json(status: number, body: unknown): Response {
+export function json(
+	status: number,
+	body: unknown,
+	headers?: Record<string, string>,
+): Response {
 	return new Response(JSON.stringify(body), {
 		status,
-		headers: { 'content-type': 'application/json' },
+		headers: { 'content-type': 'application/json', ...headers },
 	});
 }
 

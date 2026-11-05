@@ -1,0 +1,449 @@
+---
+title: API
+description: "API reference for Abyssale: every `abyssale.api.*` operation with input and output types."
+---
+
+Every `abyssale.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Auth
+
+### test
+
+`auth.test`
+
+Test Abyssale API key authentication validity
+
+**Risk:** `read`
+
+```ts
+await corsair.abyssale.api.auth.test({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+| `version` | `string` | No | — |
+
+
+
+---
+
+## Designs
+
+### list
+
+`designs.list`
+
+Get a list of designs in Abyssale
+
+**Risk:** `read`
+
+```ts
+await corsair.abyssale.api.designs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `type` | `static \| animated \| printer \| printer_multipage` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  template_id?: string,
+  name: string,
+  type: string,
+  project_id?: string,
+  project_name?: string,
+  category_id?: string,
+  category_name?: string,
+  version?: string,
+  created_at?: number,
+  updated_at?: number,
+  preview_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Fonts
+
+### list
+
+`fonts.list`
+
+Get a list of available fonts in Abyssale
+
+**Risk:** `read`
+
+```ts
+await corsair.abyssale.api.fonts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `google \| custom` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: google | custom,
+  available_weights: (
+    number | string
+  )[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Generation
+
+### batch
+
+`generation.batch`
+
+Start an asynchronous multi-format generation from an Abyssale design
+
+**Risk:** `write`
+
+```ts
+await corsair.abyssale.api.generation.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | — |
+| `elements` | `object` | No | — |
+| `template_format_names` | `string[]` | No | — |
+| `callback_url` | `string` | No | — |
+| `image_file_type` | `png \| jpeg \| webp \| avif \| gif \| pdf \| html5 \| mp4 \| auto` | No | — |
+| `file_compression_level` | `number` | No | — |
+| `html5` | `object` | No | — |
+| `gif` | `object` | No | — |
+| `video` | `object` | No | — |
+| `print` | `object` | No | — |
+| `original_visual_id` | `string` | No | — |
+| `pages` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="html5 full type">
+
+```ts
+{
+  page_title?: string,
+  click_tag?: string,
+  ad_network?: string,
+  include_backup_image?: boolean,
+  repeat?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="gif full type">
+
+```ts
+{
+  max_fps?: number,
+  repeat?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="video full type">
+
+```ts
+{
+  fps?: number
+}
+```
+</Accordion>
+
+<Accordion title="print full type">
+
+```ts
+{
+  color_profile?: string,
+  display_crop_marks?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generation_request_id` | `string` | Yes | — |
+
+
+
+---
+
+### image
+
+`generation.image`
+
+Synchronously generate a single image from an Abyssale design
+
+**Risk:** `write`
+
+```ts
+await corsair.abyssale.api.generation.image({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | — |
+| `elements` | `object` | No | — |
+| `template_format_name` | `string` | No | — |
+| `image_file_type` | `png \| jpeg \| webp \| avif \| pdf \| auto` | No | — |
+| `file_compression_level` | `number` | No | — |
+| `original_visual_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `version` | `number` | No | — |
+| `sharing_id` | `string` | No | — |
+| `file` | `object` | No | — |
+| `format` | `object` | No | — |
+| `template` | `object` | No | — |
+| `project` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  type?: string,
+  url?: string,
+  cdn_url?: string,
+  fallback_image_url?: string,
+  filename?: string
+}
+```
+</Accordion>
+
+<Accordion title="format full type">
+
+```ts
+{
+  id?: string,
+  width?: number,
+  height?: number,
+  unit?: string
+}
+```
+</Accordion>
+
+<Accordion title="template full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  created_at?: number,
+  updated_at?: number
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`generation.status`
+
+Poll the status of an asynchronous generation request
+
+**Risk:** `read`
+
+```ts
+await corsair.abyssale.api.generation.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generationRequestId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_finalized` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+| `banners` | `object[]` | Yes | — |
+| `errors` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="banners full type">
+
+```ts
+{
+  id: string,
+  version?: number,
+  sharing_id?: string,
+  file?: {
+    type?: string,
+    url?: string,
+    cdn_url?: string,
+    fallback_image_url?: string,
+    filename?: string
+  },
+  format?: {
+    id?: string,
+    width?: number,
+    height?: number,
+    unit?: string
+  },
+  template?: {
+    id?: string,
+    name?: string,
+    created_at?: number,
+    updated_at?: number
+  },
+  project?: {
+    id?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  template_format_name: string,
+  reason: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new project in Abyssale
+
+**Risk:** `write`
+
+```ts
+await corsair.abyssale.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `created_at_ts` | `number` | Yes | — |
+| `version` | `string` | No | — |
+
+
+
+---
+

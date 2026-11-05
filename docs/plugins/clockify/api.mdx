@@ -1,0 +1,235 @@
+---
+title: API
+description: "API reference for Clockify: every `clockify.api.*` operation with input and output types."
+---
+
+Every `clockify.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Projects
+
+### list
+
+`projects.list`
+
+List projects in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clockify.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  workspaceId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tasks
+
+### list
+
+`tasks.list`
+
+List tasks for a project in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clockify.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `projectId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  projectId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Time Entries
+
+### create
+
+`timeEntries.create`
+
+Create a new time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.clockify.api.timeEntries.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `taskId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `workspaceId` | `string` | Yes | — |
+| `projectId` | `string` | No | — |
+| `taskId` | `string` | No | — |
+| `timeInterval` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="timeInterval full type">
+
+```ts
+{
+  start: string,
+  end?: string | null,
+  duration?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`timeEntries.list`
+
+List time entries for a user in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.clockify.api.timeEntries.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `project` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  description: string,
+  workspaceId: string,
+  projectId?: string | null,
+  taskId?: string | null,
+  timeInterval?: {
+    start: string,
+    end?: string | null,
+    duration?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Workspaces
+
+### list
+
+`workspaces.list`
+
+List all workspaces
+
+**Risk:** `read`
+
+```ts
+await corsair.clockify.api.workspaces.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

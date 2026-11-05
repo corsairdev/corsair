@@ -12,8 +12,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import { getValidAccessToken } from './client';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import type { GmailEndpointInputs, GmailEndpointOutputs } from './endpoints';
 import {
 	DraftsEndpoints,
@@ -80,7 +79,6 @@ export type GmailEndpoints = {
 	messagesList: GmailEndpoint<'messagesList'>;
 	messagesGet: GmailEndpoint<'messagesGet'>;
 	messagesSend: GmailEndpoint<'messagesSend'>;
-	messagesDelete: GmailEndpoint<'messagesDelete'>;
 	messagesModify: GmailEndpoint<'messagesModify'>;
 	messagesBatchModify: GmailEndpoint<'messagesBatchModify'>;
 	messagesTrash: GmailEndpoint<'messagesTrash'>;
@@ -99,7 +97,6 @@ export type GmailEndpoints = {
 	threadsList: GmailEndpoint<'threadsList'>;
 	threadsGet: GmailEndpoint<'threadsGet'>;
 	threadsModify: GmailEndpoint<'threadsModify'>;
-	threadsDelete: GmailEndpoint<'threadsDelete'>;
 	threadsTrash: GmailEndpoint<'threadsTrash'>;
 	threadsUntrash: GmailEndpoint<'threadsUntrash'>;
 	usersGetProfile: GmailEndpoint<'usersGetProfile'>;
@@ -127,7 +124,6 @@ export const gmailEndpointsNested = {
 		list: MessagesEndpoints.list,
 		get: MessagesEndpoints.get,
 		send: MessagesEndpoints.send,
-		delete: MessagesEndpoints.delete,
 		modify: MessagesEndpoints.modify,
 		batchModify: MessagesEndpoints.batchModify,
 		trash: MessagesEndpoints.trash,
@@ -152,7 +148,6 @@ export const gmailEndpointsNested = {
 		list: ThreadsEndpoints.list,
 		get: ThreadsEndpoints.get,
 		modify: ThreadsEndpoints.modify,
-		delete: ThreadsEndpoints.delete,
 		trash: ThreadsEndpoints.trash,
 		untrash: ThreadsEndpoints.untrash,
 	},
@@ -170,10 +165,6 @@ export const gmailEndpointSchemas = {
 	'messages.send': {
 		input: GmailEndpointInputSchemas.messagesSend,
 		output: GmailEndpointOutputSchemas.messagesSend,
-	},
-	'messages.delete': {
-		input: GmailEndpointInputSchemas.messagesDelete,
-		output: GmailEndpointOutputSchemas.messagesDelete,
 	},
 	'messages.modify': {
 		input: GmailEndpointInputSchemas.messagesModify,
@@ -247,10 +238,6 @@ export const gmailEndpointSchemas = {
 		input: GmailEndpointInputSchemas.threadsModify,
 		output: GmailEndpointOutputSchemas.threadsModify,
 	},
-	'threads.delete': {
-		input: GmailEndpointInputSchemas.threadsDelete,
-		output: GmailEndpointOutputSchemas.threadsDelete,
-	},
 	'threads.trash': {
 		input: GmailEndpointInputSchemas.threadsTrash,
 		output: GmailEndpointOutputSchemas.threadsTrash,
@@ -319,11 +306,6 @@ const gmailEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Send an email to one or more recipients',
 	},
-	'messages.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Permanently delete a message [DESTRUCTIVE · IRREVERSIBLE]',
-	},
 	'messages.modify': {
 		riskLevel: 'write',
 		description: 'Add or remove labels from a message',
@@ -352,7 +334,7 @@ const gmailEndpointMeta = {
 	},
 	'labels.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a label [DESTRUCTIVE]',
+		description: 'Delete a label',
 	},
 	'drafts.list': {
 		riskLevel: 'read',
@@ -366,7 +348,7 @@ const gmailEndpointMeta = {
 	},
 	'drafts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a draft [DESTRUCTIVE]',
+		description: 'Delete a draft',
 	},
 	'drafts.send': {
 		riskLevel: 'write',
@@ -380,11 +362,6 @@ const gmailEndpointMeta = {
 	'threads.modify': {
 		riskLevel: 'write',
 		description: 'Add or remove labels from a thread',
-	},
-	'threads.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Permanently delete a thread [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'threads.trash': {
 		riskLevel: 'write',
@@ -433,10 +410,9 @@ export function gmail<const T extends GmailPluginOptions>(
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 			tokenUrl: 'https://oauth2.googleapis.com/token',
 			scopes: [
+				// Supersedes gmail.labels/send/compose. Covers every operation
+				// except permanent purge, which this plugin does not expose.
 				'https://www.googleapis.com/auth/gmail.modify',
-				'https://www.googleapis.com/auth/gmail.labels',
-				'https://www.googleapis.com/auth/gmail.send',
-				'https://www.googleapis.com/auth/gmail.compose',
 			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
@@ -455,67 +431,10 @@ export function gmail<const T extends GmailPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('gmail', 'oauth_2');
-				}
-
-				const res = await ctx.keys.get_integration_credentials();
-
-				if (!res.client_id || !res.client_secret) {
-					throw new Error(
-						'[auth-missing:gmail:client_credentials]: Gmail client credentials are missing',
-					);
-				}
-
-				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
-				try {
-					result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: res.client_id,
-						clientSecret: res.client_secret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:gmail] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await ctx.keys.set_access_token(result.accessToken);
-						await ctx.keys.set_expires_at(String(result.expiresAt));
-					} catch (error) {
-						throw new Error(
-							`[corsair:gmail] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				// Expose a force-refresh function on the context so endpoints can
-				// retry on 401 without waiting for `expires_at` to lapse.
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientId: res.client_id!,
-						clientSecret: res.client_secret!,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					return freshResult.accessToken;
-				};
-
-				return result.accessToken;
+				return getOAuthAccessToken(ctx, {
+					plugin: 'gmail',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('gmail', 'oauth_2');

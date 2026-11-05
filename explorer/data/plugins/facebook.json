@@ -1,0 +1,2792 @@
+{
+  "id": "facebook",
+  "displayName": "Facebook",
+  "description": "Social media platform APIs for pages, posts, ads, and Meta business integrations.",
+  "npmPackageName": "@corsair-dev/facebook",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 44,
+    "webhooks": 0,
+    "db": 12
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "facebook.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Create a comment on a Page post or other object.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_id",
+            "optional": false,
+            "type": "string",
+            "description": "Post ID, photo ID, or other commentable object ID."
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when object_id is composite PageID_PostID."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Delete a comment.",
+      "riskLevel": "write",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Page ID used to resolve the Page access token."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.comments.get",
+      "shortPath": "comments.get",
+      "description": "Retrieve a single comment by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when comment_id embeds the page id."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string, name?: string }"
+          },
+          {
+            "key": "is_hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "like_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List comments on a Page post or other object.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_id",
+            "optional": false,
+            "type": "string",
+            "description": "Object ID whose comments should be listed."
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when object_id is composite PageID_PostID."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "stream | toplevel"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, message?: string, created_time?: string, from?: { id?: string, name?: string }, is_hidden?: boolean, like_count?: number, comment_count?: number }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.comments.update",
+      "shortPath": "comments.update",
+      "description": "Update or hide a comment.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Page ID used to resolve the Page access token."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_hidden",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.conversations.getMessages",
+      "shortPath": "conversations.getMessages",
+      "description": "List messages in a Messenger conversation.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, message?: string, created_time?: string, from?: { id?: string, name?: string, email?: string }, to?: { data?: { id?: string, name?: string, email?: string }[] }, attachments?: { data?: {}[] } }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List Messenger conversations for a Page (optional platform filter).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Facebook Page ID"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "messenger | instagram | whatsapp",
+            "description": "Filter conversations by messaging platform."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, link?: string, updated_time?: string, message_count?: number, unread_count?: number, snippet?: string, participants?: { data?: { id?: string, name?: string, email?: string }[] } }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.messages.getDetails",
+      "shortPath": "messages.getDetails",
+      "description": "Retrieve a single Messenger message by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string, name?: string, email?: string }"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{ data?: { id?: string, name?: string, email?: string }[] }"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ data?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.messages.markSeen",
+      "shortPath": "messages.markSeen",
+      "description": "Mark the most recent messages in a conversation as seen.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a text Messenger message from a Page.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messaging_type",
+            "optional": true,
+            "type": "RESPONSE | UPDATE | MESSAGE_TAG | UTILITY"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.messages.sendMedia",
+      "shortPath": "messages.sendMedia",
+      "description": "Send a media Messenger message from a Page.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachment_type",
+            "optional": false,
+            "type": "image | video | audio | file"
+          },
+          {
+            "key": "attachment_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messaging_type",
+            "optional": true,
+            "type": "RESPONSE | UPDATE | MESSAGE_TAG | UTILITY"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.messages.toggleTyping",
+      "shortPath": "messages.toggleTyping",
+      "description": "Show or hide the Messenger typing indicator.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "typing_on | typing_off"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.pages.assignTask",
+      "shortPath": "pages.assignTask",
+      "description": "Assign Page tasks to a business/system user via /assigned_users.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string",
+            "description": "Business user or system user ID to assign tasks to."
+          },
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "string[]",
+            "description": "Page tasks such as MANAGE, CREATE_CONTENT, MODERATE, ADVERTISE, ANALYZE."
+          },
+          {
+            "key": "business",
+            "optional": true,
+            "type": "string",
+            "description": "Business ID. Required for many Business Manager assigned_users flows."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.pages.getDetails",
+      "shortPath": "pages.getDetails",
+      "description": "Retrieve metadata for a Facebook Page.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Facebook Page ID"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "access_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_list",
+            "optional": true,
+            "type": "{ id?: string, name?: string }[]"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "picture",
+            "optional": true,
+            "type": "{ data?: { url?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.pages.getInsights",
+      "shortPath": "pages.getInsights",
+      "description": "Retrieve Page insights for the given metrics and period.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Facebook Page ID"
+          },
+          {
+            "key": "metric",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "Insight metric name(s), e.g. page_follows, page_views_total."
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "day | week | days_28 | month | lifetime"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, period?: string, values?: { value: number | string | {}, end_time?: string }[], title?: string, description?: string, id?: string }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.pages.getRoles",
+      "shortPath": "pages.getRoles",
+      "description": "List users and their roles on a Facebook Page.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Facebook Page ID"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, name?: string, tasks?: string[], role?: string }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.pages.listManaged",
+      "shortPath": "pages.listManaged",
+      "description": "List Facebook Pages the authenticated user manages, including page access tokens.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, access_token?: string, category?: string, category_list?: { id?: string, name?: string }[], tasks?: string[], about?: string, link?: string, phone?: string, website?: string, emails?: string[], picture?: { data?: { url?: string } } }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.pages.removeTask",
+      "shortPath": "pages.removeTask",
+      "description": "Remove a business/system user from Page task assignments.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string",
+            "description": "Business user or system user ID to remove from Page tasks."
+          },
+          {
+            "key": "business",
+            "optional": true,
+            "type": "string",
+            "description": "Business ID. Required for many Business Manager assigned_users flows."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.pages.search",
+      "shortPath": "pages.search",
+      "description": "Search Pages via /pages/search (deprecated for most apps; Workplace-only). Prefer pages.listManaged or pages.getDetails.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search query for page names."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, access_token?: string, category?: string, category_list?: { id?: string, name?: string }[], tasks?: string[], about?: string, link?: string, phone?: string, website?: string, emails?: string[], picture?: { data?: { url?: string } } }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.pages.updateSettings",
+      "shortPath": "pages.updateSettings",
+      "description": "Update editable settings on a Facebook Page.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "general_info",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.photos.addToAlbum",
+      "shortPath": "photos.addToAlbum",
+      "description": "Add a photo to an existing album.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "album_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Page ID used to resolve the Page access token."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Publicly accessible image URL."
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Deprecated alias for caption; mapped to caption at runtime."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.photos.createAlbum",
+      "shortPath": "photos.createAlbum",
+      "description": "Create a photo album on a Page.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.photos.createPost",
+      "shortPath": "photos.createPost",
+      "description": "Create and publish a photo post on a Page (uses caption per Graph docs).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string",
+            "description": "Preferred photo caption field per Graph docs."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Deprecated alias for caption; mapped to caption at runtime."
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "scheduled_publish_time",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.photos.list",
+      "shortPath": "photos.list",
+      "description": "List Page photos via /photos (defaults to type=uploaded).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Facebook Page ID"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "uploaded | profile | tagged",
+            "description": "Defaults to uploaded. Graph defaults to profile without this."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, created_time?: string, source?: string, link?: string, images?: { height?: number, width?: number, source?: string }[] }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.photos.upload",
+      "shortPath": "photos.upload",
+      "description": "Upload a photo to a Page.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Publicly accessible image URL."
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false so the photo can be attached to a feed post."
+          },
+          {
+            "key": "temporary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "no_story",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.photos.uploadBatch",
+      "shortPath": "photos.uploadBatch",
+      "description": "Upload multiple photos using the Graph API batch endpoint.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "photos",
+            "optional": false,
+            "type": "{ url: string, caption?: string, published?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ code: number, headers?: { name: string, value: string }[], body?: string }[]"
+      }
+    },
+    {
+      "path": "facebook.api.posts.create",
+      "shortPath": "posts.create",
+      "description": "Publish or schedule a Page feed post (supports attached_media for multi-photo).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "scheduled_publish_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unpublished_content_type",
+            "optional": true,
+            "type": "SCHEDULED | DRAFT | ADS_POST",
+            "description": "Required by Graph for some unpublished/scheduled media attach flows."
+          },
+          {
+            "key": "attached_media",
+            "optional": true,
+            "type": "{ media_fbid: string }[]",
+            "description": "Multi-photo/video attach. Upload unpublished media first, then pass media_fbid values."
+          },
+          {
+            "key": "targeting",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.posts.delete",
+      "shortPath": "posts.delete",
+      "description": "Delete a Page post.",
+      "riskLevel": "write",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when post_id is composite PageID_PostID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.posts.get",
+      "shortPath": "posts.get",
+      "description": "Retrieve a single Page post by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when post_id is composite PageID_PostID."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_published",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "scheduled_publish_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "permalink_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_picture",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.posts.getInsights",
+      "shortPath": "posts.getInsights",
+      "description": "Retrieve insights for a Page post.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when post_id is composite PageID_PostID."
+          },
+          {
+            "key": "metric",
+            "optional": false,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, period?: string, values?: { value: number | string | {}, end_time?: string }[], title?: string, description?: string, id?: string }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.posts.getReactions",
+      "shortPath": "posts.getReactions",
+      "description": "List reactions on a Page post.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when post_id is composite PageID_PostID."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "LIKE | LOVE | WOW | HAHA | SAD | ANGRY | CARE"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, name?: string, type?: string }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.posts.list",
+      "shortPath": "posts.list",
+      "description": "List Page timeline content via /feed (page posts + visitor posts + tagged posts).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Facebook Page ID"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, message?: string, created_time?: string, updated_time?: string, is_published?: boolean, scheduled_publish_time?: number, status_type?: string, permalink_url?: string, full_picture?: string }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.posts.listScheduled",
+      "shortPath": "posts.listScheduled",
+      "description": "List scheduled but unpublished Page posts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Facebook Page ID"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, message?: string, created_time?: string, updated_time?: string, is_published?: boolean, scheduled_publish_time?: number, status_type?: string, permalink_url?: string, full_picture?: string }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.posts.listTagged",
+      "shortPath": "posts.listTagged",
+      "description": "List posts in which the Page is tagged.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Facebook Page ID"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, message?: string, created_time?: string, updated_time?: string, is_published?: boolean, scheduled_publish_time?: number, status_type?: string, permalink_url?: string, full_picture?: string }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.posts.publishScheduled",
+      "shortPath": "posts.publishScheduled",
+      "description": "Publish a previously scheduled post immediately.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when post_id is composite PageID_PostID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.posts.reschedule",
+      "shortPath": "posts.reschedule",
+      "description": "Change the scheduled publish time of a post.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when post_id is composite PageID_PostID."
+          },
+          {
+            "key": "scheduled_publish_time",
+            "optional": false,
+            "type": "number",
+            "description": "Unix timestamp for the new scheduled publish time."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.posts.update",
+      "shortPath": "posts.update",
+      "description": "Update an existing Page post.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when post_id is composite PageID_PostID."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_hidden",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.reactions.add",
+      "shortPath": "reactions.add",
+      "description": "Add a LIKE to a post or comment via /likes (Graph only allows LIKE programmatically).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_id",
+            "optional": false,
+            "type": "string",
+            "description": "Post ID, comment ID, or other reactable object ID."
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when object_id is composite PageID_PostID."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "LIKE",
+            "description": "Only LIKE is supported by the Graph API for programmatic reactions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.reactions.unlike",
+      "shortPath": "reactions.unlike",
+      "description": "Remove a LIKE from a post or comment via DELETE /likes.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_id",
+            "optional": false,
+            "type": "string",
+            "description": "Post ID or comment ID to remove a like/reaction from."
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string",
+            "description": "Page ID for Page-token auth. Optional when object_id is composite PageID_PostID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.users.getCurrentUser",
+      "shortPath": "users.getCurrentUser",
+      "description": "Get the authenticated Facebook user via /me.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.users.getUserPages",
+      "shortPath": "users.getUserPages",
+      "description": "Deprecated. List Facebook Pages for the authenticated user via /me/accounts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, access_token?: string, category?: string, category_list?: { id?: string, name?: string }[], tasks?: string[], about?: string, link?: string, phone?: string, website?: string, emails?: string[], picture?: { data?: { url?: string } } }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.videos.createPost",
+      "shortPath": "videos.createPost",
+      "description": "Create a video post on a Page using file_url.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string",
+            "description": "Publicly accessible video URL."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "scheduled_publish_time",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.videos.list",
+      "shortPath": "videos.list",
+      "description": "List Page videos via GET /{page-id}/videos (Video API; needs pages_read_engagement + MANAGE).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "Facebook Page ID"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string, description?: string, created_time?: string, source?: string, length?: number, permalink_url?: string, status?: { video_status?: string, processing_progress?: number } }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string, previous?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "facebook.api.videos.upload",
+      "shortPath": "videos.upload",
+      "description": "Publish a Page video from file_url (same edge as createPost; not resumable/chunked).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "scheduled_publish_time",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "facebook.db.albums.search",
+      "entityName": "albums",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "albumId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "photoCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "commentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "objectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isHidden",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.conversations.search",
+      "entityName": "conversations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "messageCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unreadCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "snippet",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.insights.search",
+      "entityName": "insights",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "insightId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "objectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "messageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "senderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "senderName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.pageRoles.search",
+      "entityName": "pageRoles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.pages.search",
+      "entityName": "pages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "facebookId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accessToken",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "about",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.photos.search",
+      "entityName": "photos",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "photoId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "albumId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.posts.search",
+      "entityName": "posts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isPublished",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "permalinkUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduledPublishTime",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.reactions.search",
+      "entityName": "reactions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "objectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "facebookUserId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "facebook.db.videos.search",
+      "entityName": "videos",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "videoId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "permalinkUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

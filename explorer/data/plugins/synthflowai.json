@@ -1,0 +1,1855 @@
+{
+  "id": "synthflowai",
+  "displayName": "Synthflow AI",
+  "description": "Voice AI platform for building phone agents, call automation, and conversational IVR flows.",
+  "npmPackageName": "@corsair-dev/synthflowai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 37,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "synthflowai.api.actions.attach",
+      "shortPath": "actions.attach",
+      "description": "Attach actions to a Synthflow AI agent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "action_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.actions.create",
+      "shortPath": "actions.create",
+      "description": "Create a new action in Synthflow AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "REAL_TIME_BOOKING",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "CALCOM",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "GHL",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "INFORMATION_EXTRACTOR",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "LIVE_TRANSFER",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "SEND_SMS",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "INCALL_SMS",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "INCALL_WHATSAPP",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "CUSTOM_ACTION",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "CUSTOM_EVAL",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.actions.delete",
+      "shortPath": "actions.delete",
+      "description": "Delete an action in Synthflow AI",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.actions.detach",
+      "shortPath": "actions.detach",
+      "description": "Detach actions from a Synthflow AI agent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "action_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.actions.get",
+      "shortPath": "actions.get",
+      "description": "Retrieve metadata about a specific action by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.actions.list",
+      "shortPath": "actions.list",
+      "description": "List all actions in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.actions.update",
+      "shortPath": "actions.update",
+      "description": "Update an existing action in Synthflow AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "REAL_TIME_BOOKING",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "CALCOM",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "GHL",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "INFORMATION_EXTRACTOR",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "LIVE_TRANSFER",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "SEND_SMS",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "INCALL_SMS",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "INCALL_WHATSAPP",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "CUSTOM_ACTION",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "CUSTOM_EVAL",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.assistants.create",
+      "shortPath": "assistants.create",
+      "description": "Create a new Synthflow AI assistant",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "outbound | inbound | widget"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agent",
+            "optional": false,
+            "type": "{ prompt: string, greeting_message: string, llm: string, language: string, voice_id: string }"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_recording",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ model_id?: string }"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "{ phone?: string, voice?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.assistants.delete",
+      "shortPath": "assistants.delete",
+      "description": "Delete a Synthflow AI assistant",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistant_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.assistants.get",
+      "shortPath": "assistants.get",
+      "description": "Retrieve details of an existing Synthflow AI assistant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistant_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.assistants.list",
+      "shortPath": "assistants.list",
+      "description": "List all Synthflow AI assistants",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ pagination?: { total_records?: number, limit?: number, offset?: number }, assistants?: {}[] | {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.assistants.update",
+      "shortPath": "assistants.update",
+      "description": "Update a Synthflow AI assistant's settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "outbound | inbound | widget"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_recording",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "agent",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.calls.create",
+      "shortPath": "calls.create",
+      "description": "Initiate an outbound voice call via Synthflow AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "{ key: string, value: string }[] | {}"
+          },
+          {
+            "key": "lead_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "greeting",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ answer?: string, call_id?: string }"
+          },
+          {
+            "key": "eta",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.calls.get",
+      "shortPath": "calls.get",
+      "description": "Retrieve details and transcript of a phone call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "call_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.calls.list",
+      "shortPath": "calls.list",
+      "description": "List call history logs for a Synthflow AI model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "call_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration_min",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration_max",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lead_phone_number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ pagination?: {}, calls?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new contact in Synthflow AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact in Synthflow AI",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Retrieve details of a contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts in Synthflow AI",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ pagination?: {}, contacts?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update contact details in Synthflow AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.knowledgeBases.attach",
+      "shortPath": "knowledgeBases.attach",
+      "description": "Attach a knowledge base to an assistant model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ body?: any, knowledge_base_id?: string, model_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.knowledgeBases.create",
+      "shortPath": "knowledgeBases.create",
+      "description": "Create a new knowledge base in Synthflow AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rag_use_condition",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ body?: string, knowledge_base_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.knowledgeBases.delete",
+      "shortPath": "knowledgeBases.delete",
+      "description": "Delete a knowledge base in Synthflow AI",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.knowledgeBases.detach",
+      "shortPath": "knowledgeBases.detach",
+      "description": "Detach a knowledge base from an assistant model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.knowledgeBases.get",
+      "shortPath": "knowledgeBases.get",
+      "description": "Get details of a knowledge base by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.knowledgeBases.update",
+      "shortPath": "knowledgeBases.update",
+      "description": "Update a knowledge base name or usage conditions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rag_use_condition",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.memoryStores.attachToAgent",
+      "shortPath": "memoryStores.attachToAgent",
+      "description": "Attach a memory store to an assistant agent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_store_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.memoryStores.create",
+      "shortPath": "memoryStores.create",
+      "description": "Create a new memory store in Synthflow AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.memoryStores.delete",
+      "shortPath": "memoryStores.delete",
+      "description": "Delete a memory store in Synthflow AI",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_store_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.memoryStores.detachFromAgent",
+      "shortPath": "memoryStores.detachFromAgent",
+      "description": "Detach a memory store from an assistant agent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_store_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.memoryStores.get",
+      "shortPath": "memoryStores.get",
+      "description": "Get details of a memory store by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_store_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.memoryStores.list",
+      "shortPath": "memoryStores.list",
+      "description": "List memory stores in Synthflow AI",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.memoryStores.update",
+      "shortPath": "memoryStores.update",
+      "description": "Update a memory store's title and description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_store_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.phoneBooks.create",
+      "shortPath": "phoneBooks.create",
+      "description": "Create a new phone book in Synthflow AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.phoneBooks.delete",
+      "shortPath": "phoneBooks.delete",
+      "description": "Delete a phone book in Synthflow AI",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phone_book_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.phoneBooks.list",
+      "shortPath": "phoneBooks.list",
+      "description": "List all phone books in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "synthflowai.api.voices.list",
+      "shortPath": "voices.list",
+      "description": "List all text-to-speech voices available in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "elevenlabs | deepgram | synthflow"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "synthflowai.db.actions.search",
+      "entityName": "actions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "action_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "synthflowai.db.assistants.search",
+      "entityName": "assistants",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "synthflowai.db.calls.search",
+      "entityName": "calls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "call_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "call_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "synthflowai.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "synthflowai.db.knowledgeBases.search",
+      "entityName": "knowledgeBases",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "knowledge_base_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rag_use_condition",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "synthflowai.db.memoryStores.search",
+      "entityName": "memoryStores",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "synthflowai.db.phoneBooks.search",
+      "entityName": "phoneBooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_book_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspace_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "entry_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "synthflowai.db.voices.search",
+      "entityName": "voices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "voice_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspace",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

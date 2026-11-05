@@ -1,0 +1,261 @@
+{
+  "id": "bigpictureio",
+  "displayName": "BigPicture.io",
+  "description": "BigPicture.io plugin for Corsair",
+  "npmPackageName": "@corsair-dev/bigpictureio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bigpictureio.api.company.find",
+      "shortPath": "company.find",
+      "description": "Find detailed company information by domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, name?: string, legalName?: string, domain?: string, url?: string, logo?: string, type?: string, phone?: string, ticker?: string, description?: string, foundedYear?: number, tags?: string[], tech?: string[], aliases?: string[], domainAliases?: string[], category?: { sector?: string, industryGroup?: string, industry?: string, subIndustry?: string, naicsCode?: string }, metrics?: { raised?: number, employees?: number, marketCap?: number, trancoRank?: number, alexaUsRank?: number, annualRevenue?: number, employeesRange?: string, alexaGlobalRank?: number, estimatedAnnualRevenue?: string }, location?: string, geo?: { streetNumber?: string | null, streetName?: string | null, subPremise?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, stateCode?: string | null, country?: string | null, countryCode?: string | null }, facebook?: { handle?: string }, linkedin?: { handle?: string, industry?: string }, twitter?: { id?: string, bio?: string, site?: string, avatar?: string, handle?: string, location?: string, followers?: number, following?: number }, crunchbase?: { handle?: string }, emailProvider?: boolean, indexedAt?: string } | { pending: true, webhookUrl: string, webhookId?: string }"
+      }
+    },
+    {
+      "path": "bigpictureio.api.company.stream",
+      "shortPath": "company.stream",
+      "description": "Hold the company lookup open until BigPicture finishes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "legalName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "foundedYear",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tech",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "domainAliases",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "{ sector?: string, industryGroup?: string, industry?: string, subIndustry?: string, naicsCode?: string }"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{ raised?: number, employees?: number, marketCap?: number, trancoRank?: number, alexaUsRank?: number, annualRevenue?: number, employeesRange?: string, alexaGlobalRank?: number, estimatedAnnualRevenue?: string }"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "geo",
+            "optional": true,
+            "type": "{ streetNumber?: string | null, streetName?: string | null, subPremise?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, stateCode?: string | null, country?: string | null, countryCode?: string | null }"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "{ handle?: string }"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "{ handle?: string, industry?: string }"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "{ id?: string, bio?: string, site?: string, avatar?: string, handle?: string, location?: string, followers?: number, following?: number }"
+          },
+          {
+            "key": "crunchbase",
+            "optional": true,
+            "type": "{ handle?: string }"
+          },
+          {
+            "key": "emailProvider",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "indexedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigpictureio.api.ip.find",
+      "shortPath": "ip.find",
+      "description": "Find the company associated with an IP address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fuzzy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "confidence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "geo",
+            "optional": true,
+            "type": "{ city?: string, state?: string, stateCode?: string, country?: string, countryCode?: string, continent?: string, continentCode?: string, isEU?: boolean }"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ id?: string, name?: string, legalName?: string, domain?: string, url?: string, logo?: string, type?: string, phone?: string, ticker?: string, description?: string, foundedYear?: number, tags?: string[], tech?: string[], aliases?: string[], domainAliases?: string[], category?: { sector?: string, industryGroup?: string, industry?: string, subIndustry?: string, naicsCode?: string }, metrics?: { raised?: number, employees?: number, marketCap?: number, trancoRank?: number, alexaUsRank?: number, annualRevenue?: number, employeesRange?: string, alexaGlobalRank?: number, estimatedAnnualRevenue?: string }, location?: string, geo?: { streetNumber?: string | null, streetName?: string | null, subPremise?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, stateCode?: string | null, country?: string | null, countryCode?: string | null }, facebook?: { handle?: string }, linkedin?: { handle?: string, industry?: string }, twitter?: { id?: string, bio?: string, site?: string, avatar?: string, handle?: string, location?: string, followers?: number, following?: number }, crunchbase?: { handle?: string }, emailProvider?: boolean, indexedAt?: string }"
+          },
+          {
+            "key": "whois",
+            "optional": true,
+            "type": "{ domain?: string, name?: string }"
+          },
+          {
+            "key": "asn",
+            "optional": true,
+            "type": "{ asn?: string, name?: string, route?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

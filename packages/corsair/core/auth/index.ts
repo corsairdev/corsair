@@ -10,7 +10,12 @@ export {
 	reEncryptConfig,
 } from './encryption';
 // Auth error utilities
-export { AuthMissingError, createMissingConfigProxy } from './errors';
+export {
+	AuthMissingError,
+	CorsairKekMissingError,
+	createMissingConfigProxy,
+	ReconnectRequiredError,
+} from './errors';
 export type { TokenResponse } from './exchange';
 // Token exchange utility
 export { exchangeCodeForTokens } from './exchange';
@@ -23,6 +28,12 @@ export {
 	initializeAccountDEK,
 	initializeIntegrationDEK,
 } from './key-manager';
+// OAuth access-token acquisition (BYO+Hub / inline switchboard)
+export {
+	getOAuthAccessToken,
+	type OAuthAccessContext,
+	type OAuthAccessOptions,
+} from './oauth-access';
 export {
 	type AuthFieldLevel,
 	type AuthFieldStatus,

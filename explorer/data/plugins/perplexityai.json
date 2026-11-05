@@ -1,0 +1,135 @@
+{
+  "id": "perplexityai",
+  "displayName": "Perplexity",
+  "description": "AI search and answer API for grounded responses with web citations and research.",
+  "npmPackageName": "@corsair-dev/perplexityai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "perplexityai.api.chat.completions",
+      "shortPath": "chat.completions",
+      "description": "Create a chat completion",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | user | assistant, content: string }[]"
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_k",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "return_citations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "return_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "presence_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency_penalty",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, finish_reason?: string | null, message?: { role: string, content: string }, delta?: { role?: string, content?: string } }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+          },
+          {
+            "key": "citations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

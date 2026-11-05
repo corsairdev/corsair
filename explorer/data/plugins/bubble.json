@@ -1,0 +1,396 @@
+{
+  "id": "bubble",
+  "displayName": "Bubble",
+  "description": "No-code app builder with data and workflow APIs for custom web applications.",
+  "npmPackageName": "@corsair-dev/bubble",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "appName"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bubble.api.meta.getSwagger",
+      "shortPath": "meta.getSwagger",
+      "description": "Retrieve the auto-generated Swagger 2.0 JSON for enabled Bubble APIs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "bubble.api.things.bulkCreate",
+      "shortPath": "things.bulkCreate",
+      "description": "Create up to 1,000 things in one request, returning per-record results",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "typeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ status: string, id?: string, message?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bubble.api.things.create",
+      "shortPath": "things.create",
+      "description": "Create a single thing with the supplied field values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "typeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bubble.api.things.delete",
+      "shortPath": "things.delete",
+      "description": "Permanently delete a thing by its unique ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "typeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "bubble.api.things.get",
+      "shortPath": "things.get",
+      "description": "Retrieve a single thing by its unique ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "typeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Created By",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Created Date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Modified Date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bubble.api.things.list",
+      "shortPath": "things.list",
+      "description": "Search and paginate things of a data type, with optional constraints and sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "typeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "constraints",
+            "optional": true,
+            "type": "{ key: string, constraint_type: string, value?: string | number | boolean | lazy }[]"
+          },
+          {
+            "key": "sortField",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descending",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "excludeRemaining",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "additionalSortFields",
+            "optional": true,
+            "type": "{ sortField: string, descending?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": false,
+            "type": "{ cursor: number, count: number, remaining?: number, results: { _id: string, Created By?: string, Created Date?: string, Modified Date?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bubble.api.things.replace",
+      "shortPath": "things.replace",
+      "description": "Overwrite all editable fields of an existing thing (omitted fields reset to default)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "typeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "bubble.api.things.update",
+      "shortPath": "things.update",
+      "description": "Change selected fields of an existing thing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "typeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "bubble.api.workflows.run",
+      "shortPath": "workflows.run",
+      "description": "Run an API workflow with the supplied parameters (Workflow API POST)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bubble.api.workflows.runGet",
+      "shortPath": "workflows.runGet",
+      "description": "Run an API workflow with query-string parameters (Workflow API GET)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bubble.db.things.search",
+      "entityName": "things",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Created By",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Created Date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Modified Date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

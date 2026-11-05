@@ -1,0 +1,1940 @@
+---
+title: API
+description: "API reference for Everhour: every `everhour.api.*` operation with input and output types."
+---
+
+Every `everhour.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Clients
+
+### createClient
+
+`clients.createClient`
+
+Create a client
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.clients.createClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `projects` | `string[]` | No | — |
+| `businessDetails` | `string` | No | — |
+| `email` | `string[]` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string \| string[]` | No | — |
+| `phone` | `string` | No | — |
+| `address` | `string` | No | — |
+| `projects` | `string[]` | No | — |
+| `businessDetails` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### deleteClient
+
+`clients.deleteClient`
+
+Delete a client
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.clients.deleteClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### getClient
+
+`clients.getClient`
+
+Get a client
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.clients.getClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string \| string[]` | No | — |
+| `phone` | `string` | No | — |
+| `address` | `string` | No | — |
+| `projects` | `string[]` | No | — |
+| `businessDetails` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### listClients
+
+`clients.listClients`
+
+List clients
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.clients.listClients({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  name: string,
+  email?: string | string[],
+  phone?: string,
+  address?: string,
+  projects?: string[],
+  businessDetails?: string | null,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateClient
+
+`clients.updateClient`
+
+Update a client
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.clients.updateClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `projects` | `string[]` | No | — |
+| `businessDetails` | `string` | No | — |
+| `email` | `string[]` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string \| string[]` | No | — |
+| `phone` | `string` | No | — |
+| `address` | `string` | No | — |
+| `projects` | `string[]` | No | — |
+| `businessDetails` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Expenses
+
+### listExpenseCategories
+
+`expenses.listExpenseCategories`
+
+List expense categories
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.expenses.listExpenseCategories({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  color?: string,
+  unitBased?: boolean,
+  unitName?: string,
+  unitPrice?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listExpenses
+
+`expenses.listExpenses`
+
+List expenses
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.expenses.listExpenses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  amount?: number,
+  date?: string,
+  project?: string,
+  category?: string | number,
+  user?: string | number,
+  billable?: boolean,
+  details?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Hooks
+
+### createWebhook
+
+`hooks.createWebhook`
+
+Create a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.hooks.createWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `targetUrl` | `string` | Yes | — |
+| `events` | `string[]` | Yes | — |
+| `project` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `targetUrl` | `string` | Yes | — |
+| `events` | `string[]` | Yes | — |
+| `project` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `lastUsedAt` | `string` | No | — |
+
+
+
+---
+
+### deleteWebhook
+
+`hooks.deleteWebhook`
+
+Delete a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.hooks.deleteWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hookId` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### getWebhook
+
+`hooks.getWebhook`
+
+Get a webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.hooks.getWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `targetUrl` | `string` | Yes | — |
+| `events` | `string[]` | Yes | — |
+| `project` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `lastUsedAt` | `string` | No | — |
+
+
+
+---
+
+### listWebhooks
+
+`hooks.listWebhooks`
+
+List webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.hooks.listWebhooks({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  targetUrl: string,
+  events: string[],
+  project?: string | null,
+  active?: boolean,
+  createdAt: string,
+  lastUsedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateWebhook
+
+`hooks.updateWebhook`
+
+Update a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.hooks.updateWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hookId` | `string` | Yes | — |
+| `events` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `targetUrl` | `string` | Yes | — |
+| `events` | `string[]` | Yes | — |
+| `project` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `lastUsedAt` | `string` | No | — |
+
+
+
+---
+
+## Invoices
+
+### listInvoices
+
+`invoices.listInvoices`
+
+List invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.invoices.listInvoices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  status?: string,
+  createdAt?: string,
+  publicId?: string,
+  totalAmount?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Platforms
+
+### listPlatforms
+
+`platforms.listPlatforms`
+
+List supported platforms
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.platforms.listPlatforms({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Projects
+
+### createProject
+
+`projects.createProject`
+
+Create a project
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.projects.createProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `board \| list` | Yes | — |
+| `users` | `number[]` | No | — |
+| `client` | `number` | No | — |
+| `privacy` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `client` | `string \| number` | No | — |
+| `client_id` | `string` | No | — |
+| `color` | `string` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `users` | `(string \| number)[]` | No | — |
+| `type` | `string` | No | — |
+
+
+
+---
+
+### deleteProject
+
+`projects.deleteProject`
+
+Delete a project
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.projects.deleteProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### getProject
+
+`projects.getProject`
+
+Get a project
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.projects.getProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `client` | `string \| number` | No | — |
+| `client_id` | `string` | No | — |
+| `color` | `string` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `users` | `(string \| number)[]` | No | — |
+| `type` | `string` | No | — |
+
+
+
+---
+
+### listProjects
+
+`projects.listProjects`
+
+List projects
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.projects.listProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `platform` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  client?: string | number | null,
+  client_id?: string,
+  color?: string,
+  is_archived?: boolean,
+  users?: (
+    string | number
+  )[],
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateProject
+
+`projects.updateProject`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.projects.updateProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `board \| list` | No | — |
+| `users` | `number[]` | No | — |
+| `client` | `number` | No | — |
+| `privacy` | `boolean` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `client` | `string \| number` | No | — |
+| `client_id` | `string` | No | — |
+| `color` | `string` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `users` | `(string \| number)[]` | No | — |
+| `type` | `string` | No | — |
+
+
+
+---
+
+## Sections
+
+### createSection
+
+`sections.createSection`
+
+Create a section
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.sections.createSection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `open \| archived` | No | — |
+| `collapsed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `position` | `number` | Yes | — |
+| `status` | `string` | No | — |
+| `collapsed` | `boolean` | No | — |
+
+
+
+---
+
+### deleteSection
+
+`sections.deleteSection`
+
+Delete a section
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.sections.deleteSection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sectionId` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### getSection
+
+`sections.getSection`
+
+Get a section
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.sections.getSection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `position` | `number` | Yes | — |
+| `status` | `string` | No | — |
+| `collapsed` | `boolean` | No | — |
+
+
+
+---
+
+### listSections
+
+`sections.listSections`
+
+List sections in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.sections.listSections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  name: string,
+  project: string,
+  position: number,
+  status?: string,
+  collapsed?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tags
+
+### listTags
+
+`tags.listTags`
+
+List workspace tags
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.tags.listTags({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  color?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tasks
+
+### createTask
+
+`tasks.createTask`
+
+Create a task
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.tasks.createTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `section` | `number` | No | — |
+| `labels` | `string[]` | No | — |
+| `status` | `open \| closed` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `projects` | `string[]` | No | — |
+| `project_id` | `string` | No | — |
+| `description` | `string` | No | — |
+| `estimate` | `any` | No | — |
+| `status` | `string` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `section` | `number` | No | — |
+| `labels` | `string[]` | No | — |
+
+
+
+---
+
+### getTask
+
+`tasks.getTask`
+
+Get a specific task
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.tasks.getTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `projects` | `string[]` | No | — |
+| `project_id` | `string` | No | — |
+| `description` | `string` | No | — |
+| `estimate` | `any` | No | — |
+| `status` | `string` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `section` | `number` | No | — |
+| `labels` | `string[]` | No | — |
+
+
+
+---
+
+### listTasksForProject
+
+`tasks.listTasksForProject`
+
+List tasks for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.tasks.listTasksForProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  query?: string,
+  limit?: number,
+  page?: number,
+  searchInClosed?: boolean,
+  searchInUnscheduled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  projects?: string[],
+  project_id?: string,
+  description?: string | null,
+  estimate?: any,
+  status?: string,
+  is_archived?: boolean,
+  section?: number | null,
+  labels?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchTasks
+
+`tasks.searchTasks`
+
+Search tasks across projects
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.tasks.searchTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `project` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `searchInClosed` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  projects?: string[],
+  project_id?: string,
+  description?: string | null,
+  estimate?: any,
+  status?: string,
+  is_archived?: boolean,
+  section?: number | null,
+  labels?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Time
+
+### deleteTimeEntry
+
+`time.deleteTimeEntry`
+
+Delete a time record
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.time.deleteTimeEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeId` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### discardTimesheetApproval
+
+`time.discardTimesheetApproval`
+
+Discard a pending timesheet approval request
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.time.discardTimesheetApproval({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timesheetId` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+| `reviewer` | `number` | No | — |
+| `sendNotification` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `user` | `string \| number` | No | — |
+| `weekId` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### listUserTime
+
+`time.listUserTime`
+
+List time records for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.time.listUserTime({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  time?: number,
+  user?: string | number,
+  date?: string,
+  task?: any,
+  task_id?: string,
+  user_id?: string,
+  start_date?: Date,
+  end_date?: Date | null,
+  duration?: number,
+  description?: string,
+  comment?: string,
+  is_billable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUserTimesheets
+
+`time.listUserTimesheets`
+
+List timesheets for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.time.listUserTimesheets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### logTime
+
+`time.logTime`
+
+Log a new time record
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.time.logTime({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time` | `number` | Yes | — |
+| `date` | `string` | No | — |
+| `task` | `string` | No | — |
+| `user` | `number` | No | — |
+| `comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `time` | `number` | No | — |
+| `user` | `string \| number` | No | — |
+| `date` | `string` | No | — |
+| `task` | `any` | No | — |
+| `task_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `start_date` | `Date` | No | — |
+| `end_date` | `Date` | No | — |
+| `duration` | `number` | No | — |
+| `description` | `string` | No | — |
+| `comment` | `string` | No | — |
+| `is_billable` | `boolean` | No | — |
+
+
+
+---
+
+### requestTimesheetApproval
+
+`time.requestTimesheetApproval`
+
+Request approval for a timesheet week
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.time.requestTimesheetApproval({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timesheetId` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+| `reviewer` | `number` | No | — |
+| `sendNotification` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `user` | `string \| number` | No | — |
+| `weekId` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### updateTimeEntry
+
+`time.updateTimeEntry`
+
+Update a time record
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.time.updateTimeEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeId` | `string` | Yes | — |
+| `time` | `number` | Yes | — |
+| `date` | `string` | No | — |
+| `task` | `string` | No | — |
+| `user` | `number` | No | — |
+| `comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `time` | `number` | No | — |
+| `user` | `string \| number` | No | — |
+| `date` | `string` | No | — |
+| `task` | `any` | No | — |
+| `task_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `start_date` | `Date` | No | — |
+| `end_date` | `Date` | No | — |
+| `duration` | `number` | No | — |
+| `description` | `string` | No | — |
+| `comment` | `string` | No | — |
+| `is_billable` | `boolean` | No | — |
+
+
+
+---
+
+## Timecards
+
+### clockIn
+
+`timecards.clockIn`
+
+Clock a user in
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.timecards.clockIn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `userDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string \| number` | Yes | — |
+| `workTime` | `number` | Yes | — |
+| `clockIn` | `string` | No | — |
+| `clockOut` | `string` | No | — |
+| `breakTime` | `number` | No | — |
+| `date` | `string` | No | — |
+| `weekId` | `number` | No | — |
+| `isLocked` | `boolean` | No | — |
+
+
+
+---
+
+### clockOut
+
+`timecards.clockOut`
+
+Clock a user out
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.timecards.clockOut({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `userDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string \| number` | Yes | — |
+| `workTime` | `number` | Yes | — |
+| `clockIn` | `string` | No | — |
+| `clockOut` | `string` | No | — |
+| `breakTime` | `number` | No | — |
+| `date` | `string` | No | — |
+| `weekId` | `number` | No | — |
+| `isLocked` | `boolean` | No | — |
+
+
+
+---
+
+### deleteTimecard
+
+`timecards.deleteTimecard`
+
+Delete a user timecard
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.timecards.deleteTimecard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### getTimecard
+
+`timecards.getTimecard`
+
+Get a user timecard for a date
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.timecards.getTimecard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string \| number` | Yes | — |
+| `workTime` | `number` | Yes | — |
+| `clockIn` | `string` | No | — |
+| `clockOut` | `string` | No | — |
+| `breakTime` | `number` | No | — |
+| `date` | `string` | No | — |
+| `weekId` | `number` | No | — |
+| `isLocked` | `boolean` | No | — |
+
+
+
+---
+
+### listTimecards
+
+`timecards.listTimecards`
+
+List team timecards
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.timecards.listTimecards({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  user: string | number,
+  workTime: number,
+  clockIn?: string,
+  clockOut?: string,
+  breakTime?: number,
+  date?: string,
+  weekId?: number,
+  isLocked?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUserTimecards
+
+`timecards.listUserTimecards`
+
+List timecards for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.timecards.listUserTimecards({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  user: string | number,
+  workTime: number,
+  clockIn?: string,
+  clockOut?: string,
+  breakTime?: number,
+  date?: string,
+  weekId?: number,
+  isLocked?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateTimecard
+
+`timecards.updateTimecard`
+
+Update a user timecard
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.timecards.updateTimecard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `clockIn` | `string` | No | — |
+| `clockOut` | `string` | No | — |
+| `breakTime` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string \| number` | Yes | — |
+| `workTime` | `number` | Yes | — |
+| `clockIn` | `string` | No | — |
+| `clockOut` | `string` | No | — |
+| `breakTime` | `number` | No | — |
+| `date` | `string` | No | — |
+| `weekId` | `number` | No | — |
+| `isLocked` | `boolean` | No | — |
+
+
+
+---
+
+## Timer
+
+### getCurrentTimer
+
+`timer.getCurrentTimer`
+
+Get the current active timer
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.timer.getCurrentTimer({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `task_id` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `status` | `active \| stopped` | No | — |
+| `duration` | `number` | No | — |
+| `startedAt` | `string` | No | — |
+| `task` | `any` | No | — |
+
+
+
+---
+
+### startTimer
+
+`timer.startTimer`
+
+Start a new timer
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.timer.startTimer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `string` | Yes | — |
+| `userDate` | `string` | No | — |
+| `comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `task_id` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `status` | `active \| stopped` | No | — |
+| `duration` | `number` | No | — |
+| `startedAt` | `string` | No | — |
+| `task` | `any` | No | — |
+
+
+
+---
+
+### stopTimer
+
+`timer.stopTimer`
+
+Stop the currently running timer
+
+**Risk:** `write`
+
+```ts
+await corsair.everhour.api.timer.stopTimer({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `task_id` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `status` | `active \| stopped` | No | — |
+| `duration` | `number` | No | — |
+| `startedAt` | `string` | No | — |
+| `task` | `any` | No | — |
+
+
+
+---
+
+## User
+
+### getUser
+
+`user.getUser`
+
+Get current user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.user.getUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `avatarUrl` | `string` | No | — |
+| `avatar` | `string` | No | — |
+| `role` | `string` | No | — |
+| `status` | `string` | No | — |
+| `headline` | `string` | No | — |
+| `team` | `any` | No | — |
+
+
+
+---
+
+### listTeams
+
+`user.listTeams`
+
+Get the authenticated Everhour workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.user.listTeams({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTeamUsers
+
+`user.listTeamUsers`
+
+List all team users
+
+**Risk:** `read`
+
+```ts
+await corsair.everhour.api.user.listTeamUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `limit` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  avatarUrl?: string,
+  avatar?: string,
+  role?: string,
+  status?: string,
+  headline?: string | null,
+  team?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

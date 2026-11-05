@@ -1,0 +1,1538 @@
+{
+  "id": "callpage",
+  "displayName": "CallPage",
+  "description": "Click-to-call widgets that connect website visitors with your sales team.",
+  "npmPackageName": "@corsair-dev/callpage",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 30,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "callpage.api.calls.get",
+      "shortPath": "calls.get",
+      "description": "Get a CallPage call by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "human_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "leadable_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leadable_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadable_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm",
+            "optional": true,
+            "type": "{ utm_medium?: string | null, utm_source?: string | null, utm_content?: string | null, utm_campaign?: string | null }"
+          },
+          {
+            "key": "referer",
+            "optional": true,
+            "type": "{ medium?: string | null, source?: string | null }"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: number, ip?: string | null, url?: string | null, locale?: string | null, geo_city?: string | null, geo_country_code?: string | null, geo_country_name?: string | null, user_agent_device?: string | null, user_agent_device_type?: string | null }"
+          },
+          {
+            "key": "call",
+            "optional": true,
+            "type": "{ id?: number, sid?: string | null, type?: number | null, transcribed?: boolean | null, billing_time?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.calls.history",
+      "shortPath": "calls.history",
+      "description": "List and filter CallPage call history.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "display_hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "call_id",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "statuses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "widget_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incoming_number_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widget_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, to?: string | null, to_formatted?: string | null, human_status?: string | null, created_at?: string | null, scheduled_at?: string | null, cancelled_at?: string | null, scheduled_success?: boolean | null, leadable_id?: number | null, leadable_type?: string | null, leadable_description?: string | null, utm?: { utm_medium?: string | null, utm_source?: string | null, utm_content?: string | null, utm_campaign?: string | null }, referer?: { medium?: string | null, source?: string | null }, request?: { id?: number, ip?: string | null, url?: string | null, locale?: string | null, geo_city?: string | null, geo_country_code?: string | null, geo_country_name?: string | null, user_agent_device?: string | null, user_agent_device_type?: string | null }, call?: { id?: number, sid?: string | null, type?: number | null, transcribed?: boolean | null, billing_time?: number | null } }[]"
+      }
+    },
+    {
+      "path": "callpage.api.managers.create",
+      "shortPath": "managers.create",
+      "description": "Create a CallPage manager for a widget.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "business_times",
+            "optional": true,
+            "type": "{ day_of_week: number, enabled: boolean, start_time?: string | null, end_time?: string | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.managers.delete",
+      "shortPath": "managers.delete",
+      "description": "Delete a CallPage manager from a widget.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "callpage.api.managers.get",
+      "shortPath": "managers.get",
+      "description": "Get a CallPage manager by user and widget.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "widget_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, tel?: string | null, email?: string | null, avatar?: string | null }"
+          },
+          {
+            "key": "departments",
+            "optional": true,
+            "type": "{ id: number, name: string }[]"
+          },
+          {
+            "key": "business_times",
+            "optional": true,
+            "type": "{ day_of_week: number, enabled: boolean, timezone?: string | null, start_time?: string | null, end_time?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.managers.list",
+      "shortPath": "managers.list",
+      "description": "List managers for a CallPage widget with pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, widget_id?: number, user_id?: number, enabled?: boolean, user?: { id: number, name?: string | null, tel?: string | null, email?: string | null, avatar?: string | null }, departments?: { id: number, name: string }[], business_times?: { day_of_week: number, enabled: boolean, timezone?: string | null, start_time?: string | null, end_time?: string | null }[] }[]"
+      }
+    },
+    {
+      "path": "callpage.api.managers.statusStatistics",
+      "shortPath": "managers.statusStatistics",
+      "description": "Count enabled and disabled managers for a CallPage widget.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "disabled",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.managers.update",
+      "shortPath": "managers.update",
+      "description": "Update a CallPage manager.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "business_times",
+            "optional": true,
+            "type": "{ day_of_week: number, enabled: boolean, start_time?: string | null, end_time?: string | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.root.get",
+      "shortPath": "root.get",
+      "description": "Get the CallPage API root greeting to verify connectivity.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.sms.create",
+      "shortPath": "sms.create",
+      "description": "Create a custom SMS message for a CallPage widget.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.sms.list",
+      "shortPath": "sms.list",
+      "description": "List SMS messages for a CallPage widget.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ widget_id?: number, message_id: string, text: string, enabled?: boolean | number, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "callpage.api.sms.reset",
+      "shortPath": "sms.reset",
+      "description": "Reset CallPage widget SMS messages to defaults.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "callpage.api.sms.update",
+      "shortPath": "sms.update",
+      "description": "Update a custom SMS message for a CallPage widget.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a CallPage user.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "admin | manager"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a CallPage user.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "callpage.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a CallPage user.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tel_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tel_extension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_online",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "activated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "{ slug: string }"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "caller_id",
+            "optional": true,
+            "type": "{ id?: number, tel?: string | null, activated_at?: string | null, updated_at?: string | null, tel_formatted?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.users.list",
+      "shortPath": "users.list",
+      "description": "List CallPage users.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, email?: string | null, tel?: string | null, tel_formatted?: string | null, tel_extension?: string | null, last_online?: string | null, parent_id?: number | null, activated_at?: string | null, role?: { slug: string } | null, avatar?: string | null, caller_id?: { id?: number, tel?: string | null, activated_at?: string | null, updated_at?: string | null, tel_formatted?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "callpage.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a CallPage user.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "admin | manager"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.voiceMessages.create",
+      "shortPath": "voiceMessages.create",
+      "description": "Create a custom voice message for a CallPage widget.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.voiceMessages.list",
+      "shortPath": "voiceMessages.list",
+      "description": "List voice messages for a CallPage widget.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ widget_id?: number, message_id: string, enabled?: boolean | number, updated_at?: string | null, recording?: { full_url: string } | null }[]"
+      }
+    },
+    {
+      "path": "callpage.api.voiceMessages.reset",
+      "shortPath": "voiceMessages.reset",
+      "description": "Reset CallPage widget voice messages to defaults.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "callpage.api.voiceMessages.update",
+      "shortPath": "voiceMessages.update",
+      "description": "Update a custom voice message for a CallPage widget.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.widgets.addUsers",
+      "shortPath": "widgets.addUsers",
+      "description": "Add users to a CallPage widget as managers.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number | number[]"
+          },
+          {
+            "key": "business_times",
+            "optional": true,
+            "type": "{ day_of_week: number, enabled: boolean, start_time?: string | null, end_time?: string | null }[] | { day_of_week: number, enabled: boolean, start_time?: string | null, end_time?: string | null }[][]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ user_id: number, manager_id: number }[]"
+      }
+    },
+    {
+      "path": "callpage.api.widgets.call",
+      "shortPath": "widgets.call",
+      "description": "Initiate a CallPage widget call.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "manager_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.widgets.callOrSchedule",
+      "shortPath": "widgets.callOrSchedule",
+      "description": "Initiate or schedule a CallPage widget call.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.widgets.create",
+      "shortPath": "widgets.create",
+      "description": "Create a CallPage widget.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "locale_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.widgets.delete",
+      "shortPath": "widgets.delete",
+      "description": "Delete a CallPage widget.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "callpage.api.widgets.get",
+      "shortPath": "widgets.get",
+      "description": "Get a CallPage widget.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "widget_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "encrypted_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locale_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "installation_status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "installed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_sms_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_requests_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managers",
+            "optional": true,
+            "type": "{ id: number, widget_id?: number, user_id?: number, enabled?: boolean, user?: { id: number, name?: string | null, tel?: string | null, email?: string | null, avatar?: string | null }, departments?: { id: number, name: string }[], business_times?: { day_of_week: number, enabled: boolean, timezone?: string | null, start_time?: string | null, end_time?: string | null }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callpage.api.widgets.list",
+      "shortPath": "widgets.list",
+      "description": "List CallPage widgets with pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, description?: string | null, url?: string | null, enabled?: boolean, locale_code?: string | null, installation_status?: number | null, installed_at?: string | null, company_sms_name?: string | null, call_requests_count?: number | null, managers?: { id: number, widget_id?: number, user_id?: number, enabled?: boolean, user?: { id: number, name?: string | null, tel?: string | null, email?: string | null, avatar?: string | null }, departments?: { id: number, name: string }[], business_times?: { day_of_week: number, enabled: boolean, timezone?: string | null, start_time?: string | null, end_time?: string | null }[] }[] }[]"
+      }
+    },
+    {
+      "path": "callpage.api.widgets.update",
+      "shortPath": "widgets.update",
+      "description": "Update a CallPage widget.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "locale_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "callpage.db.calls.search",
+      "entityName": "calls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "to",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "to_formatted",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "human_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduled_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cancelled_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduled_success",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "leadable_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "leadable_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "leadable_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "callpage.db.managers.search",
+      "entityName": "managers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "widget_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "callpage.db.smsMessages.search",
+      "entityName": "smsMessages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "widget_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "message_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "callpage.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tel_formatted",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tel_extension",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_online",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "activated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "callpage.db.voiceMessages.search",
+      "entityName": "voiceMessages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "widget_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "message_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "callpage.db.widgets.search",
+      "entityName": "widgets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "locale_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "installation_status",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "installed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company_sms_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "call_requests_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

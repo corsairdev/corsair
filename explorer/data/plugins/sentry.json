@@ -1,0 +1,2305 @@
+{
+  "id": "sentry",
+  "displayName": "Sentry",
+  "description": "Application monitoring for error tracking, performance tracing, and release health insights.",
+  "npmPackageName": "@corsair-dev/sentry",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 25,
+    "webhooks": 9,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "installation_id",
+        "organization_slug"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "sentry.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get an event by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateReceived",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ key: string, value: string }[]"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.events.list",
+      "shortPath": "events.list",
+      "description": "List events for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ eventID: string, title?: string | null, message?: string | null, platform?: string | null, dateCreated?: string | null, dateReceived?: string | null, type?: string | null, groupID?: string | null, tags?: { key: string, value: string }[] | null, context?: {} | null }[]"
+      }
+    },
+    {
+      "path": "sentry.api.issues.delete",
+      "shortPath": "issues.delete",
+      "description": "Permanently delete an issue",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issueId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "sentry.api.issues.get",
+      "shortPath": "issues.get",
+      "description": "Get an issue by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issueId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shortId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "culprit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "permalink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "level",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "firstSeen",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastSeen",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isBookmarked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasSeen",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSubscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: string, name: string, slug: string }"
+          },
+          {
+            "key": "assignedTo",
+            "optional": true,
+            "type": "{ id: string, name: string, type: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.issues.list",
+      "shortPath": "issues.list",
+      "description": "List issues for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, shortId: string, title: string, culprit?: string | null, permalink?: string | null, level?: string | null, status: string, platform?: string | null, type?: string | null, count?: string | null, userCount?: number | null, firstSeen?: string | null, lastSeen?: string | null, isPublic?: boolean | null, isBookmarked?: boolean | null, hasSeen?: boolean | null, isSubscribed?: boolean | null, metadata?: {} | null, project?: { id: string, name: string, slug: string } | null, assignedTo?: { id: string, name: string, type: string } | null }[]"
+      }
+    },
+    {
+      "path": "sentry.api.issues.update",
+      "shortPath": "issues.update",
+      "description": "Update an issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issueId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "resolved | unresolved | ignored"
+          },
+          {
+            "key": "assignedTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasSeen",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isBookmarked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSubscribed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shortId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "culprit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "permalink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "level",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "firstSeen",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastSeen",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isBookmarked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasSeen",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSubscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: string, name: string, slug: string }"
+          },
+          {
+            "key": "assignedTo",
+            "optional": true,
+            "type": "{ id: string, name: string, type: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.organizations.create",
+      "shortPath": "organizations.create",
+      "description": "Create a new organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agreeTerms",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ id: string, name: string }"
+          },
+          {
+            "key": "isEarlyAdopter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "require2FA",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "{ avatarType: string, avatarUuid?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Get an organization by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ id: string, name: string }"
+          },
+          {
+            "key": "isEarlyAdopter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "require2FA",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "{ avatarType: string, avatarUuid?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List organizations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, slug: string, name: string, dateCreated?: string | null, status?: { id: string, name: string } | null, isEarlyAdopter?: boolean | null, require2FA?: boolean | null, avatar?: { avatarType: string, avatarUuid?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "sentry.api.organizations.update",
+      "shortPath": "organizations.update",
+      "description": "Update an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ id: string, name: string }"
+          },
+          {
+            "key": "isEarlyAdopter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "require2FA",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "{ avatarType: string, avatarUuid?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isBookmarked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isMember",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ id: string, slug: string, name: string, dateCreated?: string | null, status?: { id: string, name: string } | null, isEarlyAdopter?: boolean | null, require2FA?: boolean | null, avatar?: { avatarType: string, avatarUuid?: string | null } | null }"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id: string, slug: string, name: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently delete a project",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "sentry.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a project by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isBookmarked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isMember",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ id: string, slug: string, name: string, dateCreated?: string | null, status?: { id: string, name: string } | null, isEarlyAdopter?: boolean | null, require2FA?: boolean | null, avatar?: { avatarType: string, avatarUuid?: string | null } | null }"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id: string, slug: string, name: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects for an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, slug: string, name: string, platform?: string | null, dateCreated?: string | null, isBookmarked?: boolean | null, isMember?: boolean | null, hasAccess?: boolean | null, organization?: { id: string, slug: string, name: string, dateCreated?: string | null, status?: { id: string, name: string } | null, isEarlyAdopter?: boolean | null, require2FA?: boolean | null, avatar?: { avatarType: string, avatarUuid?: string | null } | null } | null, team?: { id: string, slug: string, name: string } | null }[]"
+      }
+    },
+    {
+      "path": "sentry.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isBookmarked",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isBookmarked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isMember",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ id: string, slug: string, name: string, dateCreated?: string | null, status?: { id: string, name: string } | null, isEarlyAdopter?: boolean | null, require2FA?: boolean | null, avatar?: { avatarType: string, avatarUuid?: string | null } | null }"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id: string, slug: string, name: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.releases.create",
+      "shortPath": "releases.create",
+      "description": "Create a new release",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "dateReleased",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shortVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateReleased",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstEvent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastEvent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "newGroups",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projects",
+            "optional": true,
+            "type": "{ id: number, slug: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.releases.delete",
+      "shortPath": "releases.delete",
+      "description": "Delete a release",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "sentry.api.releases.get",
+      "shortPath": "releases.get",
+      "description": "Get a release by version ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shortVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateReleased",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstEvent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastEvent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "newGroups",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projects",
+            "optional": true,
+            "type": "{ id: number, slug: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.releases.list",
+      "shortPath": "releases.list",
+      "description": "List releases for an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, version: string, shortVersion?: string | null, dateCreated?: string | null, dateReleased?: string | null, firstEvent?: string | null, lastEvent?: string | null, newGroups?: number | null, url?: string | null, ref?: string | null, projects?: { id: number, slug: string, name: string }[] | null }[]"
+      }
+    },
+    {
+      "path": "sentry.api.releases.update",
+      "shortPath": "releases.update",
+      "description": "Update a release",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateReleased",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shortVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateReleased",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstEvent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastEvent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "newGroups",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projects",
+            "optional": true,
+            "type": "{ id: number, slug: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a new team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isMember",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPending",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "{ avatarType: string, avatarUuid?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Delete a team",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "sentry.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get a team by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isMember",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPending",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "{ avatarType: string, avatarUuid?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sentry.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams for an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, slug: string, name: string, dateCreated?: string | null, isMember?: boolean | null, memberCount?: number | null, hasAccess?: boolean | null, isPending?: boolean | null, avatar?: { avatarType: string, avatarUuid?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "sentry.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Update a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateCreated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isMember",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPending",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "{ avatarType: string, avatarUuid?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "sentry.webhooks.alerts.eventAlert",
+      "shortPath": "alerts.eventAlert",
+      "description": "An issue alert rule was triggered",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "triggered"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ event: { event_id?: string, title?: string, message?: string, platform?: string | null, level?: string | null, url?: string }, triggered_rule?: string }"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "{ type: string, id?: number, name?: string }"
+          },
+          {
+            "key": "installation",
+            "optional": true,
+            "type": "{ uuid: string }"
+          }
+        ]
+      },
+      "responseType": "{ action: triggered, data: { event: { event_id?: string, title?: string, message?: string, platform?: string | null, level?: string | null, url?: string }, triggered_rule?: string }, actor?: { type: string, id?: number, name?: string }, installation?: { uuid: string } }",
+      "usageExample": "sentry({\n    webhookHooks: {\n        alerts: {\n            eventAlert: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "sentry.webhooks.alerts.metricAlert",
+      "shortPath": "alerts.metricAlert",
+      "description": "A metric alert was triggered",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "triggered"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ metric_alert: { id?: string, title?: string, alert_rule?: { id?: number, name?: string }, status?: string, date_triggered?: string }, description_title?: string, description_text?: string }"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "{ type: string, id?: number, name?: string }"
+          },
+          {
+            "key": "installation",
+            "optional": true,
+            "type": "{ uuid: string }"
+          }
+        ]
+      },
+      "responseType": "{ action: triggered, data: { metric_alert: { id?: string, title?: string, alert_rule?: { id?: number, name?: string }, status?: string, date_triggered?: string }, description_title?: string, description_text?: string }, actor?: { type: string, id?: number, name?: string }, installation?: { uuid: string } }",
+      "usageExample": "sentry({\n    webhookHooks: {\n        alerts: {\n            metricAlert: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "sentry.webhooks.comments.created",
+      "shortPath": "comments.created",
+      "description": "A comment was added to an issue",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "created"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ comment_id?: string, issue_id?: string, project_slug?: string, comment?: string, timestamp?: string }"
+          },
+          {
+            "key": "actor",
+            "optional": false,
+            "type": "{ type: string, id?: number, name?: string }"
+          },
+          {
+            "key": "installation",
+            "optional": true,
+            "type": "{ uuid: string }"
+          }
+        ]
+      },
+      "responseType": "{ action: created, data: { comment_id?: string, issue_id?: string, project_slug?: string, comment?: string, timestamp?: string }, actor: { type: string, id?: number, name?: string }, installation?: { uuid: string } }",
+      "usageExample": "sentry({\n    webhookHooks: {\n        comments: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "sentry.webhooks.comments.deleted",
+      "shortPath": "comments.deleted",
+      "description": "A comment was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "deleted"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ comment_id?: string, issue_id?: string, project_slug?: string, comment?: string, timestamp?: string }"
+          },
+          {
+            "key": "actor",
+            "optional": false,
+            "type": "{ type: string, id?: number, name?: string }"
+          },
+          {
+            "key": "installation",
+            "optional": true,
+            "type": "{ uuid: string }"
+          }
+        ]
+      },
+      "responseType": "{ action: deleted, data: { comment_id?: string, issue_id?: string, project_slug?: string, comment?: string, timestamp?: string }, actor: { type: string, id?: number, name?: string }, installation?: { uuid: string } }",
+      "usageExample": "sentry({\n    webhookHooks: {\n        comments: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "sentry.webhooks.comments.updated",
+      "shortPath": "comments.updated",
+      "description": "A comment was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "updated"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ comment_id?: string, issue_id?: string, project_slug?: string, comment?: string, timestamp?: string }"
+          },
+          {
+            "key": "actor",
+            "optional": false,
+            "type": "{ type: string, id?: number, name?: string }"
+          },
+          {
+            "key": "installation",
+            "optional": true,
+            "type": "{ uuid: string }"
+          }
+        ]
+      },
+      "responseType": "{ action: updated, data: { comment_id?: string, issue_id?: string, project_slug?: string, comment?: string, timestamp?: string }, actor: { type: string, id?: number, name?: string }, installation?: { uuid: string } }",
+      "usageExample": "sentry({\n    webhookHooks: {\n        comments: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "sentry.webhooks.errors.created",
+      "shortPath": "errors.created",
+      "description": "A new error event was captured in Sentry",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "created"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ error: { event_id?: string, title?: string, platform?: string | null, level?: string | null, url?: string, culprit?: string | null, project?: string | null, message?: string | null } }"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "{ type: string, id?: number, name?: string }"
+          },
+          {
+            "key": "installation",
+            "optional": true,
+            "type": "{ uuid: string }"
+          }
+        ]
+      },
+      "responseType": "{ action: created, data: { error: { event_id?: string, title?: string, platform?: string | null, level?: string | null, url?: string, culprit?: string | null, project?: string | null, message?: string | null } }, actor?: { type: string, id?: number, name?: string }, installation?: { uuid: string } }",
+      "usageExample": "sentry({\n    webhookHooks: {\n        errors: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "sentry.webhooks.issues.assigned",
+      "shortPath": "issues.assigned",
+      "description": "An issue was assigned to a user or team",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "assigned"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ issue: { id: string, shortId: string, title: string, culprit?: string | null, level?: string | null, status: string, platform?: string | null, type?: string | null, permalink?: string | null, firstSeen?: string | null, lastSeen?: string | null, assignedTo?: { id?: string, name?: string, type?: string } | null } }"
+          },
+          {
+            "key": "actor",
+            "optional": false,
+            "type": "{ type: string, id?: number, name?: string }"
+          },
+          {
+            "key": "installation",
+            "optional": true,
+            "type": "{ uuid: string }"
+          }
+        ]
+      },
+      "responseType": "{ action: assigned, data: { issue: { id: string, shortId: string, title: string, culprit?: string | null, level?: string | null, status: string, platform?: string | null, type?: string | null, permalink?: string | null, firstSeen?: string | null, lastSeen?: string | null, assignedTo?: { id?: string, name?: string, type?: string } | null } }, actor: { type: string, id?: number, name?: string }, installation?: { uuid: string } }",
+      "usageExample": "sentry({\n    webhookHooks: {\n        issues: {\n            assigned: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "sentry.webhooks.issues.created",
+      "shortPath": "issues.created",
+      "description": "A new issue was created in Sentry",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "created"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ issue: { id: string, shortId: string, title: string, culprit?: string | null, level?: string | null, status: string, platform?: string | null, type?: string | null, permalink?: string | null, firstSeen?: string | null, lastSeen?: string | null } }"
+          },
+          {
+            "key": "actor",
+            "optional": false,
+            "type": "{ type: string, id?: number, name?: string }"
+          },
+          {
+            "key": "installation",
+            "optional": true,
+            "type": "{ uuid: string }"
+          }
+        ]
+      },
+      "responseType": "{ action: created, data: { issue: { id: string, shortId: string, title: string, culprit?: string | null, level?: string | null, status: string, platform?: string | null, type?: string | null, permalink?: string | null, firstSeen?: string | null, lastSeen?: string | null } }, actor: { type: string, id?: number, name?: string }, installation?: { uuid: string } }",
+      "usageExample": "sentry({\n    webhookHooks: {\n        issues: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "sentry.webhooks.issues.resolved",
+      "shortPath": "issues.resolved",
+      "description": "An issue was resolved",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "resolved"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ issue: { id: string, shortId: string, title: string, culprit?: string | null, level?: string | null, status: string, platform?: string | null, type?: string | null, permalink?: string | null, firstSeen?: string | null, lastSeen?: string | null }, resolution_type?: string }"
+          },
+          {
+            "key": "actor",
+            "optional": false,
+            "type": "{ type: string, id?: number, name?: string }"
+          },
+          {
+            "key": "installation",
+            "optional": true,
+            "type": "{ uuid: string }"
+          }
+        ]
+      },
+      "responseType": "{ action: resolved, data: { issue: { id: string, shortId: string, title: string, culprit?: string | null, level?: string | null, status: string, platform?: string | null, type?: string | null, permalink?: string | null, firstSeen?: string | null, lastSeen?: string | null }, resolution_type?: string }, actor: { type: string, id?: number, name?: string }, installation?: { uuid: string } }",
+      "usageExample": "sentry({\n    webhookHooks: {\n        issues: {\n            resolved: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "sentry.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issue_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "sentry.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eventID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "platform",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCreated",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "dateReceived",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "groupID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sentry.db.issues.search",
+      "entityName": "issues",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "culprit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "permalink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "level",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "platform",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "count",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "firstSeen",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastSeen",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "isPublic",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isBookmarked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasSeen",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isSubscribed",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "sentry.db.organizations.search",
+      "entityName": "organizations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCreated",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "isEarlyAdopter",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "require2FA",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "sentry.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "platform",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCreated",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "isBookmarked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isMember",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasAccess",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "organization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "team",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sentry.db.releases.search",
+      "entityName": "releases",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortVersion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCreated",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "dateReleased",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "firstEvent",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastEvent",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "newGroups",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sentry.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCreated",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "isMember",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "memberCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "hasAccess",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isPending",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/razorpay",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Razorpay plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,9 +36,15 @@
     "razorpay",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/razorpay"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/razorpay"
 }

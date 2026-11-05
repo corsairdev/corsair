@@ -1,0 +1,955 @@
+---
+title: API
+description: "API reference for Whautomate: every `whautomate.api.*` operation with input and output types."
+---
+
+Every `whautomate.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getAccountInfo
+
+`account.getAccountInfo`
+
+Fetch account name and owner email
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.account.getAccountInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `ownerEmail` | `string` | No | — |
+| `apiHost` | `string` | No | — |
+
+
+
+---
+
+## Broadcasts
+
+### getBroadcastById
+
+`broadcasts.getBroadcastById`
+
+Fetch a single broadcast by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.broadcasts.getBroadcastById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `segmentId` | `string` | No | — |
+| `messageTemplate` | `string` | No | — |
+| `scheduledAt` | `string` | No | — |
+| `sentAt` | `string` | No | — |
+| `stats` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="stats full type">
+
+```ts
+{
+  total?: number,
+  sent?: number,
+  delivered?: number,
+  read?: number,
+  failed?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBroadcasts
+
+`broadcasts.getBroadcasts`
+
+List broadcasts with status and date filters
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.broadcasts.getBroadcasts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `status` | `draft \| scheduled \| sending \| sent \| failed` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  status: string,
+  segmentId?: string | null,
+  messageTemplate?: string,
+  scheduledAt?: string | null,
+  sentAt?: string | null,
+  stats?: {
+    total?: number,
+    sent?: number,
+    delivered?: number,
+    read?: number,
+    failed?: number
+  },
+  createdAt?: string,
+  updatedAt?: string
+}[] | {
+  data: {
+    id: string,
+    name: string,
+    status: string,
+    segmentId?: string | null,
+    messageTemplate?: string,
+    scheduledAt?: string | null,
+    sentAt?: string | null,
+    stats?: {
+      total?: number,
+      sent?: number,
+      delivered?: number,
+      read?: number,
+      failed?: number
+    },
+    createdAt?: string,
+    updatedAt?: string
+  }[],
+  pagination?: {
+    page?: number,
+    limit?: number,
+    total?: number,
+    totalPages?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### addContact
+
+`contacts.addContact`
+
+Create a new contact
+
+**Risk:** `write`
+
+```ts
+await corsair.whautomate.api.contacts.addContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `phoneNumber` | `string` | Yes | — |
+| `location` | `object` | Yes | — |
+| `email` | `string` | No | — |
+| `avatar` | `string` | No | — |
+| `segmentId` | `string` | No | — |
+| `stage` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `customFields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id: string,
+  title?: string
+}
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `phoneNumber` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `email` | `string` | No | — |
+| `avatar` | `string` | No | — |
+| `segmentId` | `string` | No | — |
+| `location` | `object` | No | — |
+| `stage` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `customFields` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id: string,
+  title?: string
+}
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContacts
+
+`contacts.getContacts`
+
+List contacts with pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.contacts.getContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `search` | `string` | No | — |
+| `segmentId` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  phoneNumber?: string | null,
+  phone?: string | null,
+  email?: string | null,
+  avatar?: string | null,
+  segmentId?: string | null,
+  location?: {
+    id: string,
+    title?: string
+  },
+  stage?: string | null,
+  notes?: string | null,
+  tags?: string[],
+  customFields?: {
+  } | null,
+  createdAt?: string,
+  updatedAt?: string
+}[] | {
+  data: {
+    id: string,
+    name: string,
+    phoneNumber?: string | null,
+    phone?: string | null,
+    email?: string | null,
+    avatar?: string | null,
+    segmentId?: string | null,
+    location?: {
+      id: string,
+      title?: string
+    },
+    stage?: string | null,
+    notes?: string | null,
+    tags?: string[],
+    customFields?: {
+    } | null,
+    createdAt?: string,
+    updatedAt?: string
+  }[],
+  pagination?: {
+    page?: number,
+    limit?: number,
+    total?: number,
+    totalPages?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMessagesOfContact
+
+`contacts.getMessagesOfContact`
+
+Get chat messages for a contact with pagination and date filters
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.contacts.getMessagesOfContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  contactId?: string,
+  contact?: any,
+  channel?: string,
+  isIncoming?: boolean,
+  direction?: string,
+  text?: string,
+  content?: string,
+  type?: string,
+  status?: string,
+  mediaUrl?: string | null,
+  timestamp?: string,
+  createdAt?: string
+}[] | {
+  data: {
+    id: string,
+    contactId?: string,
+    contact?: any,
+    channel?: string,
+    isIncoming?: boolean,
+    direction?: string,
+    text?: string,
+    content?: string,
+    type?: string,
+    status?: string,
+    mediaUrl?: string | null,
+    timestamp?: string,
+    createdAt?: string
+  }[],
+  pagination?: {
+    page?: number,
+    limit?: number,
+    total?: number,
+    totalPages?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Segments
+
+### deleteSegment
+
+`segments.deleteSegment`
+
+Delete a segment by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.whautomate.api.segments.deleteSegment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### getSegments
+
+`segments.getSegments`
+
+List segments with name filter and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.segments.getSegments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  contactCount?: number,
+  createdAt?: string,
+  updatedAt?: string
+}[] | {
+  data: {
+    id: string,
+    name: string,
+    contactCount?: number,
+    createdAt?: string,
+    updatedAt?: string
+  }[],
+  pagination?: {
+    page?: number,
+    limit?: number,
+    total?: number,
+    totalPages?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Service Categories
+
+### deleteServiceCategory
+
+`serviceCategories.deleteServiceCategory`
+
+Delete a service category by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.whautomate.api.serviceCategories.deleteServiceCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### getServiceCategories
+
+`serviceCategories.getServiceCategories`
+
+List service categories with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.serviceCategories.getServiceCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  createdAt?: string,
+  updatedAt?: string
+}[] | {
+  data: {
+    id: string,
+    name: string,
+    description?: string | null,
+    createdAt?: string,
+    updatedAt?: string
+  }[],
+  pagination?: {
+    page?: number,
+    limit?: number,
+    total?: number,
+    totalPages?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Services
+
+### getServiceById
+
+`services.getServiceById`
+
+Fetch a single service by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.services.getServiceById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `price` | `number` | No | — |
+| `duration` | `number` | No | — |
+| `categoryId` | `string` | No | — |
+| `isActive` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### getServices
+
+`services.getServices`
+
+List services with filters
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.services.getServices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `categoryId` | `string` | No | — |
+| `search` | `string` | No | — |
+| `isActive` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  price?: number,
+  duration?: number,
+  categoryId?: string | null,
+  isActive?: boolean,
+  createdAt?: string,
+  updatedAt?: string
+}[] | {
+  data: {
+    id: string,
+    name: string,
+    description?: string | null,
+    price?: number,
+    duration?: number,
+    categoryId?: string | null,
+    isActive?: boolean,
+    createdAt?: string,
+    updatedAt?: string
+  }[],
+  pagination?: {
+    page?: number,
+    limit?: number,
+    total?: number,
+    totalPages?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateService
+
+`services.updateService`
+
+Update service name, pricing, duration, and active status
+
+**Risk:** `write`
+
+```ts
+await corsair.whautomate.api.services.updateService({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `price` | `number` | No | — |
+| `duration` | `number` | No | — |
+| `categoryId` | `string` | No | — |
+| `isActive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `price` | `number` | No | — |
+| `duration` | `number` | No | — |
+| `categoryId` | `string` | No | — |
+| `isActive` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+## Staff
+
+### getStaffAvailabilityBlocks
+
+`staff.getStaffAvailabilityBlocks`
+
+Get staff availability blocks by date range
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.staff.getStaffAvailabilityBlocks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `staffId` | `string` | Yes | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  staff: {
+    id: string,
+    firstName: string,
+    lastName: string
+  },
+  date: string,
+  slots: {
+    start?: string,
+    end?: string,
+    startTime?: string,
+    endTime?: string,
+    startTimeUTC?: string,
+    endTimeUTC?: string,
+    available?: boolean
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getStaffById
+
+`staff.getStaffById`
+
+Fetch a single staff member by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.staff.getStaffById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `firstName` | `string` | Yes | — |
+| `lastName` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `avatar` | `string` | No | — |
+| `role` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `locations` | `string[]` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### getStaffs
+
+`staff.getStaffs`
+
+List staff members with pagination and search
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.staff.getStaffs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  firstName: string,
+  lastName: string,
+  email?: string | null,
+  phone?: string | null,
+  avatar?: string | null,
+  role?: string | null,
+  active?: boolean,
+  locations?: string[],
+  createdAt?: string,
+  updatedAt?: string
+}[] | {
+  data: {
+    id: string,
+    firstName: string,
+    lastName: string,
+    email?: string | null,
+    phone?: string | null,
+    avatar?: string | null,
+    role?: string | null,
+    active?: boolean,
+    locations?: string[],
+    createdAt?: string,
+    updatedAt?: string
+  }[],
+  pagination?: {
+    page?: number,
+    limit?: number,
+    total?: number,
+    totalPages?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks
+
+### getAllWebhooks
+
+`webhooks.getAllWebhooks`
+
+Retrieve registered webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.whautomate.api.webhooks.getAllWebhooks({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  events: string[],
+  isActive: boolean,
+  createdAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

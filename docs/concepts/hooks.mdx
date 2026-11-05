@@ -3,7 +3,7 @@ title: Hooks
 description: Hook into API calls and webhooks to customize behavior.
 ---
 
-Hooks let you "hook into" the lifecycle of API calls and webhook processing. Use them to add custom logic — logging, validation, transformations — without modifying your core application code.
+Hooks let you "hook into" the lifecycle of API calls and webhook processing. Use them to add custom logic like logging, validation, and transformations without modifying your core application code.
 
 ```ts corsair.ts
 slack({
@@ -22,7 +22,7 @@ slack({
 })
 ```
 
-## Before Hooks
+## Before hooks
 
 **Before hooks** run *before* an operation executes. Use them to:
 
@@ -31,7 +31,7 @@ slack({
 - Add default values
 - Short-circuit operations
 
-### Modify Arguments
+### Modify arguments
 
 Transform the arguments before the API call is made.
 
@@ -56,7 +56,7 @@ slack({
 })
 ```
 
-### Validate Input
+### Validate input
 
 Check conditions before proceeding.
 
@@ -77,7 +77,7 @@ slack({
 })
 ```
 
-### Log Actions
+### Log actions
 
 Track every API call for debugging or auditing.
 
@@ -96,7 +96,7 @@ slack({
 })
 ```
 
-## After Hooks
+## After hooks
 
 **After hooks** run *after* an operation completes. Use them to:
 
@@ -105,7 +105,7 @@ slack({
 - Transform responses
 - Send notifications
 
-### Send Notifications
+### Send notifications
 
 Notify your team when something happens.
 
@@ -126,7 +126,7 @@ slack({
 })
 ```
 
-### Log Results
+### Log results
 
 Track successful operations.
 
@@ -144,7 +144,7 @@ slack({
 })
 ```
 
-## API Hooks
+## API hooks
 
 API hooks are defined under `hooks` in your plugin configuration. They follow the structure: `hooks.[resource].[action].before/after`.
 
@@ -184,9 +184,9 @@ slack({
 })
 ```
 
-## Webhook Hooks
+## Webhook hooks
 
-Webhook hooks are defined under `webhookHooks`. They guarantee your logic runs every time a webhook is processed — even if Corsair handles the database update automatically.
+Webhook hooks are defined under `webhookHooks`. They guarantee your logic runs every time a webhook is processed, even if Corsair handles the database update automatically.
 
 ```ts corsair.ts
 slack({
@@ -221,13 +221,13 @@ slack({
 
 See [Webhooks](/concepts/webhooks) for more on webhook processing.
 
-## Context Object
+## Context object
 
 Both before and after hooks receive a `ctx` object with useful properties:
 
-- **`ctx.options`** — Plugin configuration options
-- **`ctx.db`** — Database service clients for this plugin
-- **`ctx.endpoints`** — Bound API endpoints (call other APIs within hooks)
+- **`ctx.options`**: plugin configuration options
+- **`ctx.db`**: database service clients for this plugin
+- **`ctx.endpoints`**: bound API endpoints (call other APIs within hooks)
 
 ```ts example.ts
 before: (ctx, args) => {
@@ -241,13 +241,13 @@ before: (ctx, args) => {
 }
 ```
 
-## Hook Order
+## Hook order
 
 When both plugin-level and operation-level hooks exist:
 
-1. **Before hooks** run in order: plugin → operation
+1. **Before hooks** run in order: plugin then operation
 2. The **operation** executes
-3. **After hooks** run in order: operation → plugin
+3. **After hooks** run in order: operation then plugin
 
 This lets you add global logging at the plugin level while keeping operation-specific logic separate.
 

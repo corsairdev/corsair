@@ -1,0 +1,1085 @@
+---
+title: API
+description: "API reference for Cody: every `cody.api.*` operation with input and output types."
+---
+
+Every `cody.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bots
+
+### list
+
+`bots.list`
+
+Get all bots with optional keyword filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.cody.api.bots.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Keyword to filter bots by name |
+| `keyword` | `string` | No | Keyword to filter bots by name |
+| `page` | `number` | No | Page number for pagination |
+| `per_page` | `number` | No | Number of items per page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  model?: string,
+  created_at?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    total?: number,
+    count?: number,
+    per_page?: number,
+    current_page?: number,
+    total_pages?: number,
+    links?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conversations
+
+### create
+
+`conversations.create`
+
+Create a new conversation with a specified bot and optional focus mode documents
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.conversations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the conversation |
+| `bot_id` | `string` | Yes | Bot ID to create the conversation with |
+| `document_ids` | `string[]` | No | Optional document IDs to limit bot focus to specific knowledge |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  bot_id: string,
+  created_at?: number,
+  document_ids?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`conversations.delete`
+
+Delete a conversation by its ID
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.conversations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the conversation to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `boolean \| null` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`conversations.get`
+
+Fetch a conversation by its ID from Cody AI
+
+**Risk:** `read`
+
+```ts
+await corsair.cody.api.conversations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the conversation |
+| `includes` | `string` | No | Extra attributes to include (e.g. document_ids) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  bot_id: string,
+  created_at?: number,
+  document_ids?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+Get all conversations with optional filtering by bot, keyword, or includes
+
+**Risk:** `read`
+
+```ts
+await corsair.cody.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Keyword to filter conversations by name |
+| `keyword` | `string` | No | Keyword to filter conversations by name |
+| `bot_id` | `string` | No | Filter conversations by bot ID |
+| `includes` | `string` | No | Extra attributes to include (e.g. document_ids) |
+| `page` | `number` | No | Page number for pagination |
+| `per_page` | `number` | No | Number of items per page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  bot_id: string,
+  created_at?: number,
+  document_ids?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    total?: number,
+    count?: number,
+    per_page?: number,
+    current_page?: number,
+    total_pages?: number,
+    links?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`conversations.update`
+
+Update a conversation by its ID including name, bot_id, and document_ids
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.conversations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the conversation |
+| `name` | `string` | No | Updated name for the conversation |
+| `bot_id` | `string` | No | Updated bot ID for the conversation |
+| `document_ids` | `string[]` | No | Updated document IDs for focus mode |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  bot_id: string,
+  created_at?: number,
+  document_ids?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Documents
+
+### create
+
+`documents.create`
+
+Create a new document with text or HTML content in Cody AI
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.documents.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the document |
+| `content` | `string` | Yes | Text or HTML content of the document (up to 768 KB) |
+| `content_type` | `text/plain \| text/html` | Yes | MIME content type of the content body |
+| `folder_id` | `string` | No | Folder ID where the document should be stored |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  status?: string,
+  content_url?: string,
+  folder_id?: string | null,
+  created_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromFile
+
+`documents.createFromFile`
+
+Create a document by uploading a file (up to 100 MB)
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.documents.createFromFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | S3 storage key obtained from uploads.getSignedUrl |
+| `folder_id` | `string` | No | Folder ID where the document should be stored |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  status?: string,
+  content_url?: string,
+  folder_id?: string | null,
+  created_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromWebpage
+
+`documents.createFromWebpage`
+
+Create a document from a publicly accessible webpage URL
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.documents.createFromWebpage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Publicly accessible webpage URL to import |
+| `folder_id` | `string` | No | Folder ID where the document should be stored |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  status?: string,
+  content_url?: string,
+  folder_id?: string | null,
+  created_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`documents.delete`
+
+Delete a document by id
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.documents.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the document to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `boolean \| null` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`documents.get`
+
+Retrieve a specific document by its identifier from Cody AI
+
+**Risk:** `read`
+
+```ts
+await corsair.cody.api.documents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the document |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  status?: string,
+  content_url?: string,
+  folder_id?: string | null,
+  created_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`documents.list`
+
+Retrieve all documents from Cody AI account with optional filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.cody.api.documents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Keyword to filter documents by name |
+| `keyword` | `string` | No | Keyword to filter documents by name |
+| `folder_id` | `string` | No | Filter documents by folder ID |
+| `conversation_id` | `string` | No | Filter documents by conversation ID |
+| `page` | `number` | No | Page number for pagination |
+| `per_page` | `number` | No | Number of items per page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  status?: string,
+  content_url?: string,
+  folder_id?: string | null,
+  created_at?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    total?: number,
+    count?: number,
+    per_page?: number,
+    current_page?: number,
+    total_pages?: number,
+    links?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a new folder in Cody AI for organizing content
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.folders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the folder |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  created_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`folders.get`
+
+Retrieve a specific folder by its identifier
+
+**Risk:** `read`
+
+```ts
+await corsair.cody.api.folders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the folder |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  created_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`folders.list`
+
+Retrieve all folders with optional keyword filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.cody.api.folders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Keyword to filter folders by name |
+| `keyword` | `string` | No | Keyword to filter folders by name |
+| `page` | `number` | No | Page number for pagination |
+| `per_page` | `number` | No | Number of items per page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  created_at?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    total?: number,
+    count?: number,
+    per_page?: number,
+    current_page?: number,
+    total_pages?: number,
+    links?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`folders.update`
+
+Update a folder by its ID
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.folders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the folder to update |
+| `name` | `string` | Yes | New name for the folder |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  created_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### get
+
+`messages.get`
+
+Fetch a specific message by its ID from Cody AI
+
+**Risk:** `read`
+
+```ts
+await corsair.cody.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the message |
+| `includes` | `string` | No | Extra message attributes to include (sources, usage) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content: string,
+  conversation_id: string,
+  machine?: boolean,
+  failed_responding?: boolean,
+  flagged?: boolean,
+  created_at?: number,
+  sources?: {
+    data?: {
+    }[]
+  },
+  usage?: {
+    tokens?: number,
+    credits?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+Retrieve a paginated list of messages from Cody, optionally filtered by conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.cody.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversation_id` | `string` | Yes | Conversation ID to retrieve messages for |
+| `includes` | `string` | No | Extra message attributes to include (sources, usage) |
+| `page` | `number` | No | Page number for pagination |
+| `per_page` | `number` | No | Number of items per page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content: string,
+  conversation_id: string,
+  machine?: boolean,
+  failed_responding?: boolean,
+  flagged?: boolean,
+  created_at?: number,
+  sources?: {
+    data?: {
+    }[]
+  },
+  usage?: {
+    tokens?: number,
+    credits?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    total?: number,
+    count?: number,
+    per_page?: number,
+    current_page?: number,
+    total_pages?: number,
+    links?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a message to Cody AI and receive an AI-generated response
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversation_id` | `string` | Yes | Conversation ID to send the message in |
+| `content` | `string` | Yes | Text content of the message (up to 2000 characters) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content: string,
+  conversation_id: string,
+  machine?: boolean,
+  failed_responding?: boolean,
+  flagged?: boolean,
+  created_at?: number,
+  sources?: {
+    data?: {
+    }[]
+  },
+  usage?: {
+    tokens?: number,
+    credits?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendForStream
+
+`messages.sendForStream`
+
+Send a message to Cody AI and receive a Server-Sent Events (SSE) stream URL for the AI response
+
+**Risk:** `write`
+
+```ts
+await corsair.cody.api.messages.sendForStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversation_id` | `string` | Yes | Conversation ID to send the streaming message in |
+| `content` | `string` | Yes | Text content of the message (up to 2000 characters) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  stream_url: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Uploads
+
+### getSignedUrl
+
+`uploads.getSignedUrl`
+
+Get an AWS S3 signed upload URL for file uploads
+
+**Risk:** `read`
+
+```ts
+await corsair.cody.api.uploads.getSignedUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_name` | `string` | Yes | Original file name with extension to upload (e.g. document.pdf) |
+| `content_type` | `string` | Yes | MIME content type of the file (e.g. application/pdf) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url: string,
+  key: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

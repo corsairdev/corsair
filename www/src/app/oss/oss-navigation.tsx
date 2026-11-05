@@ -6,7 +6,7 @@ import { createContext, useContext, useTransition } from 'react';
 
 type OssNavigationContextValue = {
 	isPending: boolean;
-	navigate: (href: string) => void;
+	navigate: (href: string, options?: { scroll?: boolean }) => void;
 };
 
 const OssNavigationContext = createContext<OssNavigationContextValue | null>(
@@ -17,9 +17,9 @@ export function OssNavigationProvider({ children }: { children: ReactNode }) {
 	const router = useRouter();
 	const [isPending, startTransition] = useTransition();
 
-	const navigate = (href: string) => {
+	const navigate = (href: string, options?: { scroll?: boolean }) => {
 		startTransition(() => {
-			router.replace(href);
+			router.replace(href, { scroll: options?.scroll ?? false });
 		});
 	};
 

@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
 	Channels,
@@ -428,7 +429,7 @@ const defaultAuthType = 'api_key' as const;
 const slackEndpointMeta = {
 	'channels.archive': {
 		riskLevel: 'destructive',
-		description: 'Archive a Slack channel [DESTRUCTIVE]',
+		description: 'Archive a Slack channel',
 	},
 	'channels.close': {
 		riskLevel: 'write',
@@ -527,7 +528,7 @@ const slackEndpointMeta = {
 	'files.upload': { riskLevel: 'write', description: 'Upload a file to Slack' },
 	'messages.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a message [DESTRUCTIVE]',
+		description: 'Delete a message',
 	},
 	'messages.getPermalink': {
 		riskLevel: 'read',
@@ -643,6 +644,9 @@ export const slackAuthConfig = {
 	oauth_2: {
 		account: ['team_id'] as const,
 	},
+	managed: {
+		account: ['team_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 /**
@@ -659,7 +663,7 @@ type SlackWebhook<K extends keyof SlackWebhookOutputs, TEvent> = CorsairWebhook<
 export type SlackBoundWebhooks = BindWebhooks<SlackWebhooks>;
 
 export type SlackPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	signingSecret?: string;
 	hooks?: InternalSlackPlugin['hooks'];
@@ -718,11 +722,25 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 			scopes: [
 				'channels:read',
 				'channels:history',
-				'chat:write',
-				'users:read',
+				'channels:join',
+				'channels:manage',
 				'groups:read',
+				'groups:history',
+				'groups:write',
 				'im:read',
+				'im:history',
+				'im:write',
 				'mpim:read',
+				'mpim:history',
+				'mpim:write',
+				'chat:write',
+				'chat:write.public',
+				'reactions:read',
+				'reactions:write',
+				'files:read',
+				'files:write',
+				'users:read',
+				'users:read.email',
 			],
 		},
 		schema: SlackSchema,
@@ -787,6 +805,25 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				}
 
 				return res;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:slack:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'slack',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('slack', 'oauth_2');
@@ -894,3 +931,4 @@ export type {
 	UsersProfileSetResponse,
 } from './endpoints/types';
 export * from './error-handlers';
+export { SlackSchema } from './schema';

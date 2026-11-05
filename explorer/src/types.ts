@@ -4,8 +4,9 @@
  * These mirror the doc-introspection types from `corsair/core/inspect` but are
  * defined locally so the explorer server has no runtime dependency on
  * `corsair`. The catalog builder script (scripts/build-explorer-catalog.ts)
- * produces a JSON that conforms to {@link PluginCatalog} and the server just
- * reads it.
+ * produces a {@link PluginCatalogIndex} at `data/catalog.json` and one
+ * {@link PluginEntry} per plugin under `data/plugins/`. The server reads the
+ * index at startup and lazy-loads plugin files on demand.
  */
 
 export type DocSchemaFieldRow = {
@@ -21,6 +22,19 @@ export type DocSchemaShape =
 
 export type EndpointRiskLevel = 'read' | 'write' | 'destructive';
 
+/** Mirrors `EndpointJob` in `corsair/core`: how to follow the job an operation starts. */
+export type DocsEndpointJob = {
+	idPath: string;
+	status: {
+		op: string;
+		idArg: string;
+		statusPath: string;
+		done: readonly string[];
+		failed: readonly string[];
+	};
+	cancel?: { op: string; idArg: string };
+};
+
 export type DocsApiEndpoint = {
 	path: string;
 	/** Dot path after `plugin.api.` (e.g. `messages.post`). */
@@ -28,6 +42,8 @@ export type DocsApiEndpoint = {
 	description?: string;
 	riskLevel?: EndpointRiskLevel;
 	irreversible?: boolean;
+	/** Present only on operations that start a long job. */
+	job?: DocsEndpointJob;
 	input: DocSchemaShape;
 	output: DocSchemaShape;
 };
@@ -92,6 +108,31 @@ export type PluginEntry = PluginSummary & {
 	db: DocsDbEntity[];
 };
 
+/** Lightweight row used by {@link PluginCatalogIndex.search}. */
+export type CatalogSearchEntry = {
+	pluginId: string;
+	kind: 'api' | 'webhook';
+	shortPath: string;
+	/** Lowercase, space-joined searchable fields for substring matching. */
+	haystack: string;
+};
+
+/** Small index file — one row per plugin plus a flat search index. */
+export type PluginCatalogIndex = {
+	/** ISO timestamp for when the catalog was built. */
+	generatedAt: string;
+	/** `corsair` package version at build time. */
+	corsairVersion: string;
+	/** Schema version for consumers that want to guard against breaking changes. */
+	catalogVersion: 2;
+	plugins: PluginSummary[];
+	search: CatalogSearchEntry[];
+};
+
+/**
+ * Legacy monolithic catalog (v1). Prefer {@link PluginCatalogIndex} plus
+ * per-plugin JSON files under `data/plugins/`.
+ */
 export type PluginCatalog = {
 	/** ISO timestamp for when the catalog was built. */
 	generatedAt: string;

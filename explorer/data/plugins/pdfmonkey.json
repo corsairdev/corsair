@@ -1,0 +1,788 @@
+{
+  "id": "pdfmonkey",
+  "displayName": "PDFMonkey",
+  "description": "PDF generation API for creating documents from HTML templates and dynamic data.",
+  "npmPackageName": "@corsair-dev/pdfmonkey",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 2,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pdfmonkey.api.documents.createDocument",
+      "shortPath": "documents.createDocument",
+      "description": "Create a document and queue it for PDF generation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ document_template_id: string, status?: draft | pending, payload?: any, meta?: any }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document_template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document_template_identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "draft | pending | generating | success | failure"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_share_link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "generation_logs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "failure_cause",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "output_type",
+            "optional": true,
+            "type": "pdf | image"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.documents.createDocumentSync",
+      "shortPath": "documents.createDocumentSync",
+      "description": "Create a document and wait for generation to complete",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ document_template_id: string, status: draft | pending, payload?: any, meta?: any }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document_template_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document_template_identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "draft | pending | generating | success | failure"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_share_link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure_cause",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "output_type",
+            "optional": true,
+            "type": "pdf | image"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.documents.deleteDocument",
+      "shortPath": "documents.deleteDocument",
+      "description": "Delete a document [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.documents.getDocument",
+      "shortPath": "documents.getDocument",
+      "description": "Get a full document including payload and generation logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document_template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document_template_identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "draft | pending | generating | success | failure"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_share_link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "generation_logs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "failure_cause",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "output_type",
+            "optional": true,
+            "type": "pdf | image"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.documents.getDocumentCard",
+      "shortPath": "documents.getDocumentCard",
+      "description": "Get a document card with status and download URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document_template_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document_template_identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "draft | pending | generating | success | failure"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_share_link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure_cause",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "output_type",
+            "optional": true,
+            "type": "pdf | image"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.documents.listDocumentCards",
+      "shortPath": "documents.listDocumentCards",
+      "description": "List document cards with pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "{ document_template_id?: string, status?: draft | pending | generating | success | failure, workspace_id?: string, updated_since?: string, search?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_cards",
+            "optional": false,
+            "type": "{ id: string, app_id: string, document_template_id?: string, document_template_identifier?: string, status: draft | pending | generating | success | failure, filename?: string | null, download_url?: string | null, preview_url?: string | null, public_share_link?: string | null, failure_cause?: string | null, meta?: any | null, output_type?: pdf | image, created_at: string, updated_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page: number, next_page?: number | null, prev_page?: number | null, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.documents.updateDocument",
+      "shortPath": "documents.updateDocument",
+      "description": "Update a document's payload, metadata, or template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ document_template_id?: string, status?: draft | pending, payload?: any, meta?: any }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document_template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document_template_identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "draft | pending | generating | success | failure"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_share_link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "generation_logs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "failure_cause",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "output_type",
+            "optional": true,
+            "type": "pdf | image"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.templates.createTemplate",
+      "shortPath": "templates.createTemplate",
+      "description": "Create a new document template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_template",
+            "optional": false,
+            "type": "{ app_id: string, identifier: string, body: string, body_draft?: string, scss_style?: string, scss_style_draft?: string, sample_data?: string, sample_data_draft?: string, settings?: any, settings_draft?: any, pdf_engine_id?: string, pdf_engine_draft_id?: string, template_folder_id?: string, ttl?: number | null, edition_mode: code | builder, output_type: pdf | image }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_template",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.templates.deleteTemplate",
+      "shortPath": "templates.deleteTemplate",
+      "description": "Delete a template [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.templates.getTemplate",
+      "shortPath": "templates.getTemplate",
+      "description": "Get a template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_template",
+            "optional": false,
+            "type": "{ id: string, app_id: string, identifier?: string, body?: string, body_draft?: string, scss_style?: string, scss_style_draft?: string, sample_data?: string, sample_data_draft?: string, settings?: any, settings_draft?: any, pdf_engine_id?: string | null, pdf_engine_draft_id?: string | null, template_folder_id?: string | null, template_folder_identifier?: string, ttl?: number | null, edition_mode?: code | builder, output_type?: pdf | image, created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.templates.listTemplateCards",
+      "shortPath": "templates.listTemplateCards",
+      "description": "List template cards for a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "q",
+            "optional": false,
+            "type": "{ workspace_id: string, folders?: string }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_template_cards",
+            "optional": false,
+            "type": "{ id: string, app_id: string, identifier?: string, edition_mode?: code | builder, output_type?: pdf | image, is_draft?: boolean, created_at: string, updated_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page: number, next_page?: number | null, prev_page?: number | null, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfmonkey.api.templates.updateTemplate",
+      "shortPath": "templates.updateTemplate",
+      "description": "Update an existing template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document_template",
+            "optional": false,
+            "type": "{ identifier?: string, body?: string, body_draft?: string, scss_style?: string, scss_style_draft?: string, sample_data?: string, sample_data_draft?: string, settings?: any, settings_draft?: any, pdf_engine_id?: string, pdf_engine_draft_id?: string, template_folder_id?: string, ttl?: number | null, edition_mode?: code | builder, output_type?: pdf | image }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_template",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "pdfmonkey.webhooks.documents.generationFailure",
+      "shortPath": "documents.generationFailure",
+      "description": "A document failed to generate",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "documents.generation.failure"
+          },
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ id: string, app_id: string, document_template_id?: string, document_template_identifier?: string, status: failure, filename?: string | null, download_url?: string | null, preview_url?: string | null, public_share_link?: string | null, failure_cause?: string | null, meta?: any | null, output_type?: pdf | image, created_at: string, updated_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ type?: documents.generation.failure, document: { id: string, app_id: string, document_template_id?: string, document_template_identifier?: string, status: failure, filename?: string | null, download_url?: string | null, preview_url?: string | null, public_share_link?: string | null, failure_cause?: string | null, meta?: any | null, output_type?: pdf | image, created_at: string, updated_at: string } }",
+      "usageExample": "pdfmonkey({\n    webhookHooks: {\n        documents: {\n            generationFailure: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "pdfmonkey.webhooks.documents.generationSuccess",
+      "shortPath": "documents.generationSuccess",
+      "description": "A document finished generating successfully",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "documents.generation.success"
+          },
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ id: string, app_id: string, document_template_id?: string, document_template_identifier?: string, status: success, filename?: string | null, download_url?: string | null, preview_url?: string | null, public_share_link?: string | null, failure_cause?: string | null, meta?: any | null, output_type?: pdf | image, created_at: string, updated_at: string }"
+          }
+        ]
+      },
+      "responseType": "{ type?: documents.generation.success, document: { id: string, app_id: string, document_template_id?: string, document_template_identifier?: string, status: success, filename?: string | null, download_url?: string | null, preview_url?: string | null, public_share_link?: string | null, failure_cause?: string | null, meta?: any | null, output_type?: pdf | image, created_at: string, updated_at: string } }",
+      "usageExample": "pdfmonkey({\n    webhookHooks: {\n        documents: {\n            generationSuccess: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

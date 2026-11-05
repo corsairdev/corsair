@@ -1,0 +1,3028 @@
+---
+title: API
+description: "API reference for SendGrid: every `sendgrid.api.*` operation with input and output types."
+---
+
+Every `sendgrid.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api Keys
+
+### create
+
+`apiKeys.create`
+
+Create an API key
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.apiKeys.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `scopes` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`apiKeys.get`
+
+Retrieve an API key
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.apiKeys.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAll
+
+`apiKeys.getAll`
+
+Retrieve all API keys
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.apiKeys.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### remove
+
+`apiKeys.remove`
+
+Delete an API key
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.apiKeys.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`apiKeys.update`
+
+Update an API key name or scopes
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.apiKeys.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `scopes` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Asm
+
+### addGroupSuppressions
+
+`asm.addGroupSuppressions`
+
+Add suppressions to an unsubscribe group
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.asm.addGroupSuppressions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `recipient_emails` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createGroup
+
+`asm.createGroup`
+
+Create an unsubscribe group
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.asm.createGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `is_default` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteGroup
+
+`asm.deleteGroup`
+
+Delete an unsubscribe group
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.asm.deleteGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteGroupSuppression
+
+`asm.deleteGroupSuppression`
+
+Delete a suppression from an unsubscribe group
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.asm.deleteGroupSuppression({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getGroup
+
+`asm.getGroup`
+
+Retrieve an unsubscribe group
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.asm.getGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getGroups
+
+`asm.getGroups`
+
+Retrieve unsubscribe groups
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.asm.getGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getGroupSuppressions
+
+`asm.getGroupSuppressions`
+
+Retrieve suppressions for an unsubscribe group
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.asm.getGroupSuppressions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateGroup
+
+`asm.updateGroup`
+
+Update an unsubscribe group
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.asm.updateGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `is_default` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Contacts
+
+### addOrUpdate
+
+`contacts.addOrUpdate`
+
+Add or update contacts in SendGrid Marketing
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.contacts.addOrUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_ids` | `string[]` | No | — |
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  phone_number_id?: string,
+  external_id?: string,
+  anonymous_id?: string,
+  first_name?: string,
+  last_name?: string,
+  address_line_1?: string,
+  address_line_2?: string,
+  alternate_emails?: string[],
+  city?: string,
+  country?: string,
+  postal_code?: string,
+  state_province_region?: string,
+  custom_fields?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+---
+
+### export
+
+`contacts.export`
+
+Create a marketing contacts export job
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.contacts.export({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_ids` | `string[]` | No | — |
+| `segment_ids` | `string[]` | No | — |
+| `file_type` | `csv \| json` | No | — |
+| `max_file_size` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### exportStatus
+
+`contacts.exportStatus`
+
+Get a marketing contacts export job
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.contacts.exportStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a marketing contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCount
+
+`contacts.getCount`
+
+Get marketing contact count
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.contacts.getCount({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getSample
+
+`contacts.getSample`
+
+Get a sample of marketing contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.contacts.getSample({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | — |
+| `page_token` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### import
+
+`contacts.import`
+
+Create a marketing contacts import job
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.contacts.import({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_type` | `csv` | Yes | — |
+| `field_mappings` | `string \| null[]` | Yes | — |
+| `list_ids` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### importStatus
+
+`contacts.importStatus`
+
+Get a marketing contacts import job
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.contacts.importStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listExports
+
+`contacts.listExports`
+
+List marketing contacts export jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.contacts.listExports({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### remove
+
+`contacts.remove`
+
+Delete marketing contacts by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.contacts.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+---
+
+### search
+
+`contacts.search`
+
+Search marketing contacts with SGQL
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.contacts.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### searchEmails
+
+`contacts.searchEmails`
+
+Search marketing contacts by email
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.contacts.searchEmails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Fields
+
+### create
+
+`fields.create`
+
+Create a custom field definition
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.fields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `field_type` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAll
+
+`fields.getAll`
+
+Get all marketing field definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.fields.getAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### remove
+
+`fields.remove`
+
+Delete a custom field definition
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.fields.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`fields.update`
+
+Update a custom field definition
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.fields.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create a new marketing contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.lists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `contact_count` | `number` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Get a marketing list by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.lists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contact_sample` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAll
+
+`lists.getAll`
+
+Retrieve all marketing contact lists
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.lists.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | — |
+| `page_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  contact_count: number,
+  _metadata?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContactCount
+
+`lists.getContactCount`
+
+Get contact count for a marketing list
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.lists.getContactCount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### remove
+
+`lists.remove`
+
+Delete a marketing list
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.lists.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `delete_contacts` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### removeContacts
+
+`lists.removeContacts`
+
+Remove contacts from a marketing list
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.lists.removeContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contact_ids` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Update a marketing list
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.lists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `contact_count` | `number` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mail
+
+### cancelScheduledSend
+
+`mail.cancelScheduledSend`
+
+Cancel or pause a scheduled send
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.mail.cancelScheduledSend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch_id` | `string` | Yes | — |
+| `status` | `pause \| cancel` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createBatchId
+
+`mail.createBatchId`
+
+Create a batch ID for scheduled mail
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.mail.createBatchId({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteScheduledSend
+
+`mail.deleteScheduledSend`
+
+Delete a cancellation/pause for a scheduled send
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.mail.deleteScheduledSend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getScheduledSend
+
+`mail.getScheduledSend`
+
+Retrieve a scheduled send by batch ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.mail.getScheduledSend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch_id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listScheduledSends
+
+`mail.listScheduledSends`
+
+Retrieve all scheduled sends
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.mail.listScheduledSends({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### send
+
+`mail.send`
+
+Send an email via SendGrid Mail Send API v3
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.mail.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `personalizations` | `object[]` | Yes | — |
+| `from` | `object` | Yes | — |
+| `subject` | `string` | No | — |
+| `content` | `object[]` | No | — |
+| `reply_to` | `object` | No | — |
+| `template_id` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `send_at` | `number` | No | — |
+| `batch_id` | `string` | No | — |
+| `ip_pool_name` | `string` | No | — |
+| `asm` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="personalizations full type">
+
+```ts
+{
+  to: {
+    email: string,
+    name?: string
+  }[],
+  cc?: {
+    email: string,
+    name?: string
+  }[],
+  bcc?: {
+    email: string,
+    name?: string
+  }[],
+  subject?: string,
+  headers?: {
+  },
+  substitutions?: {
+  },
+  dynamic_template_data?: {
+  },
+  custom_args?: {
+  },
+  send_at?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+{
+  type: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="reply_to full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="asm full type">
+
+```ts
+{
+  group_id: number,
+  groups_to_display?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `x_message_id` | `string` | No | — |
+
+
+
+---
+
+### updateScheduledSend
+
+`mail.updateScheduledSend`
+
+Update a scheduled send status
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.mail.updateScheduledSend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch_id` | `string` | Yes | — |
+| `status` | `pause \| cancel` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### validateBatchId
+
+`mail.validateBatchId`
+
+Validate a mail batch ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.mail.validateBatchId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Segments
+
+### create
+
+`segments.create`
+
+Create a Marketing Campaigns segment 2.0
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.segments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `query_dsl` | `string` | No | — |
+| `parent_list_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`segments.get`
+
+Get a Marketing Campaigns segment 2.0
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.segments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contacts_sample` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAll
+
+`segments.getAll`
+
+Get all Marketing Campaigns segments 2.0
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.segments.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent_list_ids` | `string` | No | — |
+| `no_parent_list_id` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### refresh
+
+`segments.refresh`
+
+Manually refresh a Marketing Campaigns segment 2.0
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.segments.refresh({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `user_time_zone` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### remove
+
+`segments.remove`
+
+Delete a Marketing Campaigns segment 2.0
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.segments.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`segments.update`
+
+Update a Marketing Campaigns segment 2.0
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.segments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `query_dsl` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Senders
+
+### create
+
+`senders.create`
+
+Create a verified sender
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.senders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nickname` | `string` | Yes | — |
+| `from_email` | `string` | Yes | — |
+| `from_name` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createIdentity
+
+`senders.createIdentity`
+
+Create a Marketing Campaigns sender identity
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.senders.createIdentity({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAll
+
+`senders.getAll`
+
+Retrieve verified senders
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.senders.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `lastSeenID` | `number` | No | — |
+| `id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: number,
+  nickname: string,
+  from_email: string,
+  from_name?: string,
+  reply_to?: string,
+  reply_to_name?: string,
+  address?: string,
+  address2?: string,
+  state?: string,
+  city?: string,
+  zip?: string,
+  country?: string,
+  verified: boolean,
+  locked?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getIdentity
+
+`senders.getIdentity`
+
+Get a Marketing Campaigns sender identity
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.senders.getIdentity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listIdentities
+
+`senders.listIdentities`
+
+Get Marketing Campaigns sender identities
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.senders.listIdentities({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### remove
+
+`senders.remove`
+
+Delete a verified sender
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.senders.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### resend
+
+`senders.resend`
+
+Resend verified sender verification
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.senders.resend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`senders.update`
+
+Update a verified sender
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.senders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `nickname` | `string` | No | — |
+| `from_email` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Stats
+
+### getCategory
+
+`stats.getCategory`
+
+Retrieve category statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.stats.getCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | No | — |
+| `aggregated_by` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `mailbox_providers` | `string` | No | — |
+| `country` | `string` | No | — |
+| `categories` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getClient
+
+`stats.getClient`
+
+Retrieve email client statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.stats.getClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | No | — |
+| `aggregated_by` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `mailbox_providers` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDevice
+
+`stats.getDevice`
+
+Retrieve device statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.stats.getDevice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | No | — |
+| `aggregated_by` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `mailbox_providers` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getGeo
+
+`stats.getGeo`
+
+Retrieve geographic statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.stats.getGeo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | No | — |
+| `aggregated_by` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `mailbox_providers` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getGlobal
+
+`stats.getGlobal`
+
+Retrieve global email statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.stats.getGlobal({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | No | — |
+| `aggregated_by` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `mailbox_providers` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMailboxProvider
+
+`stats.getMailboxProvider`
+
+Retrieve mailbox provider statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.stats.getMailboxProvider({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | No | — |
+| `aggregated_by` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `mailbox_providers` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Suppressions
+
+### addGlobalUnsubscribes
+
+`suppressions.addGlobalUnsubscribes`
+
+Add emails to the global unsubscribe list
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.suppressions.addGlobalUnsubscribes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient_emails` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteBlock
+
+`suppressions.deleteBlock`
+
+Delete a block by email
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.suppressions.deleteBlock({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteBlocks
+
+`suppressions.deleteBlocks`
+
+Delete blocked emails
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.suppressions.deleteBlocks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delete_all` | `boolean` | No | — |
+| `emails` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteBounce
+
+`suppressions.deleteBounce`
+
+Delete a bounce by email
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.suppressions.deleteBounce({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteBounces
+
+`suppressions.deleteBounces`
+
+Delete bounce suppressions
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.suppressions.deleteBounces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delete_all` | `boolean` | No | — |
+| `emails` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteGlobalUnsubscribe
+
+`suppressions.deleteGlobalUnsubscribe`
+
+Delete a global unsubscribe by email
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.suppressions.deleteGlobalUnsubscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteInvalidEmail
+
+`suppressions.deleteInvalidEmail`
+
+Delete an invalid email
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.suppressions.deleteInvalidEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteInvalidEmails
+
+`suppressions.deleteInvalidEmails`
+
+Delete invalid emails
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.suppressions.deleteInvalidEmails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delete_all` | `boolean` | No | — |
+| `emails` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteSpamReport
+
+`suppressions.deleteSpamReport`
+
+Delete a spam report by email
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.suppressions.deleteSpamReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteSpamReports
+
+`suppressions.deleteSpamReports`
+
+Delete spam reports
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.suppressions.deleteSpamReports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delete_all` | `boolean` | No | — |
+| `emails` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getBlock
+
+`suppressions.getBlock`
+
+Retrieve a block by email
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.suppressions.getBlock({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getBlocks
+
+`suppressions.getBlocks`
+
+Retrieve blocked emails
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.suppressions.getBlocks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBounce
+
+`suppressions.getBounce`
+
+Retrieve a bounce by email
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.suppressions.getBounce({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getBounces
+
+`suppressions.getBounces`
+
+Retrieve email bounce suppressions
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.suppressions.getBounces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bounces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="bounces full type">
+
+```ts
+{
+  created: number,
+  email: string,
+  reason: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGlobalUnsubscribe
+
+`suppressions.getGlobalUnsubscribe`
+
+Retrieve a global unsubscribe by email
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.suppressions.getGlobalUnsubscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getGlobalUnsubscribes
+
+`suppressions.getGlobalUnsubscribes`
+
+Retrieve global unsubscribes
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.suppressions.getGlobalUnsubscribes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInvalidEmail
+
+`suppressions.getInvalidEmail`
+
+Retrieve an invalid email
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.suppressions.getInvalidEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getInvalidEmails
+
+`suppressions.getInvalidEmails`
+
+Retrieve invalid emails
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.suppressions.getInvalidEmails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSpamReport
+
+`suppressions.getSpamReport`
+
+Retrieve a spam report by email
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.suppressions.getSpamReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSpamReports
+
+`suppressions.getSpamReports`
+
+Retrieve spam reports
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.suppressions.getSpamReports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### activateVersion
+
+`templates.activateVersion`
+
+Activate a transactional template version
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.templates.activateVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `version_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`templates.create`
+
+Create a transactional template
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.templates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `generation` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createVersion
+
+`templates.createVersion`
+
+Create a transactional template version
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.templates.createVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `html_content` | `string` | No | — |
+| `plain_content` | `string` | No | — |
+| `active` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`templates.get`
+
+Get a transactional template
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAll
+
+`templates.getAll`
+
+Get all transactional templates
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.templates.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generations` | `string` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getVersion
+
+`templates.getVersion`
+
+Get a transactional template version
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.templates.getVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `version_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### remove
+
+`templates.remove`
+
+Delete a transactional template
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.templates.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### removeVersion
+
+`templates.removeVersion`
+
+Delete a transactional template version
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.templates.removeVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `version_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`templates.update`
+
+Update a transactional template
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.templates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateVersion
+
+`templates.updateVersion`
+
+Update a transactional template version
+
+**Risk:** `write`
+
+```ts
+await corsair.sendgrid.api.templates.updateVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `version_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `html_content` | `string` | No | — |
+| `plain_content` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## User
+
+### getAccount
+
+`user.getAccount`
+
+Retrieve the user account
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.user.getAccount({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCredits
+
+`user.getCredits`
+
+Retrieve remaining email credits
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.user.getCredits({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getEmail
+
+`user.getEmail`
+
+Retrieve the account email address
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.user.getEmail({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getProfile
+
+`user.getProfile`
+
+Retrieve the user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.user.getProfile({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getScopes
+
+`user.getScopes`
+
+Retrieve API key scopes for the current key
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.user.getScopes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getUsername
+
+`user.getUsername`
+
+Retrieve the account username
+
+**Risk:** `read`
+
+```ts
+await corsair.sendgrid.api.user.getUsername({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+

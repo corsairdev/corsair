@@ -1,0 +1,2115 @@
+{
+  "id": "parseur",
+  "displayName": "Parseur",
+  "description": "Document parsing service that extracts structured data from emails and PDF attachments.",
+  "npmPackageName": "@corsair-dev/parseur",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 30,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "parseur.api.bootstrap.getBootstrap",
+      "shortPath": "bootstrap.getBootstrap",
+      "description": "Retrieve bootstrap configuration: choices, mappings, max_field_lengths, email_domain, extra_fields, and master_parser_set.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "mappings",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "max_field_lengths",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "email_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "extra_fields",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "master_parser_set",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.documents.copyDocument",
+      "shortPath": "documents.copyDocument",
+      "description": "Copy a document to another mailbox.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "target_mailbox_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notification_set",
+            "optional": false,
+            "type": "{ info: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.documents.createEmailDocument",
+      "shortPath": "documents.createEmailDocument",
+      "description": "Upload an email or text document to Parseur for parsing. Requires subject, from, and recipient.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_plain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_headers",
+            "optional": true,
+            "type": "tuple[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DocumentID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DocumentIDs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ name?: string, DocumentID?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.documents.deleteDocument",
+      "shortPath": "documents.deleteDocument",
+      "description": "Delete a document by ID [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.documents.getDocument",
+      "shortPath": "documents.getDocument",
+      "description": "Retrieve full details of a document by ID: status, processing info, parsed results, and download URLs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parser",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "INCOMING | ANALYZING | PROGRESS | PARSEDOK | PARSEDKO | QUOTAEXC | SKIPPED | SPLIT | EXPORTKO | TRANSKO | INVALID | string"
+          },
+          {
+            "key": "received",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "processed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string | {} | null"
+          },
+          {
+            "key": "json_download_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "csv_download_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "xls_download_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.documents.getDocumentLogs",
+      "shortPath": "documents.getDocumentLogs",
+      "description": "Get document logs for a document. Returns a paginated list of logs with status, source, and message details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string | number, created?: string, status?: string, source?: string, message?: string, code?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.documents.listDocuments",
+      "shortPath": "documents.listDocuments",
+      "description": "List documents within a mailbox. Use when you need to paginate, search, or sort documents after obtaining the mailbox ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "name | -name | created | -created | processed | -processed | status | -status"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "INCOMING | ANALYZING | PROGRESS | PARSEDOK | PARSEDKO | QUOTAEXC | SKIPPED | SPLIT | EXPORTKO | TRANSKO | INVALID"
+          },
+          {
+            "key": "received_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "received_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tz",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "with_result",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string | number, name?: string, parser?: number, status?: INCOMING | ANALYZING | PROGRESS | PARSEDOK | PARSEDKO | QUOTAEXC | SKIPPED | SPLIT | EXPORTKO | TRANSKO | INVALID | string, received?: string, processed?: string | null, result?: string | {} | null, json_download_url?: string | null, csv_download_url?: string | null, xls_download_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.documents.processDocument",
+      "shortPath": "documents.processDocument",
+      "description": "Reprocess a document with the current template configuration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notification_set",
+            "optional": false,
+            "type": "{ info: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.documents.skipDocument",
+      "shortPath": "documents.skipDocument",
+      "description": "Skip a document. Marks the document with status SKIPPED.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parser",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "INCOMING | ANALYZING | PROGRESS | PARSEDOK | PARSEDKO | QUOTAEXC | SKIPPED | SPLIT | EXPORTKO | TRANSKO | INVALID | string"
+          },
+          {
+            "key": "received",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "processed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string | {} | null"
+          },
+          {
+            "key": "json_download_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "csv_download_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "xls_download_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.documents.uploadDocument",
+      "shortPath": "documents.uploadDocument",
+      "description": "Upload a binary file to a Parseur mailbox as multipart/form-data.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": false,
+            "type": "{ name?: string, DocumentID?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.exportConfigs.createExportConfig",
+      "shortPath": "exportConfigs.createExportConfig",
+      "description": "Create a custom download for a mailbox. Requires type and items (field names).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "PARSER | PARSER_FIELD"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "parser_field_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "PARSER | PARSER_FIELD"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "parser_field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parser_field_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "csv_download",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "xls_download",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.exportConfigs.deleteExportConfig",
+      "shortPath": "exportConfigs.deleteExportConfig",
+      "description": "Delete a custom download from a mailbox [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.exportConfigs.listExportConfigs",
+      "shortPath": "exportConfigs.listExportConfigs",
+      "description": "List custom downloads (export configurations) for a mailbox.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, type?: PARSER | PARSER_FIELD, items?: string[], parser_field_id?: string | null, parser_field_name?: string | null, csv_download?: string, xls_download?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.exportConfigs.updateExportConfig",
+      "shortPath": "exportConfigs.updateExportConfig",
+      "description": "Update a custom download field list, name, or type for an existing configuration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "PARSER | PARSER_FIELD"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "parser_field_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "PARSER | PARSER_FIELD"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "parser_field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parser_field_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "csv_download",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "xls_download",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.mailboxes.copyMailbox",
+      "shortPath": "mailboxes.copyMailbox",
+      "description": "Copy a mailbox (parser) in Parseur. Creates a duplicate of the mailbox with all its configuration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notification_set",
+            "optional": false,
+            "type": "{ info: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.mailboxes.createMailbox",
+      "shortPath": "mailboxes.createMailbox",
+      "description": "Create a new mailbox (parser) in Parseur. Use when you need to set up a new parser for document parsing with custom configuration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_engine",
+            "optional": true,
+            "type": "DISABLED | GCP_AI_2 | GCP_AI_2_5 | GCP_AI_3_TXT"
+          },
+          {
+            "key": "ai_instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachments_only_override",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disable_deskew",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_ocr",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "decimal_separator",
+            "optional": true,
+            "type": ". | ,"
+          },
+          {
+            "key": "input_date_format",
+            "optional": true,
+            "type": "MONTH_FIRST | DAY_FIRST"
+          },
+          {
+            "key": "retention_policy",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_engine",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "template_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webhook_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attachments_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_master",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_set",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "available_webhook_set",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.mailboxes.deleteMailbox",
+      "shortPath": "mailboxes.deleteMailbox",
+      "description": "Delete a mailbox (parser) by ID [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.mailboxes.getMailbox",
+      "shortPath": "mailboxes.getMailbox",
+      "description": "Retrieve full mailbox (parser) configuration by ID, including fields, webhooks, and settings.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_engine",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "template_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webhook_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attachments_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_master",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_set",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "available_webhook_set",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.mailboxes.getMailboxSchema",
+      "shortPath": "mailboxes.getMailboxSchema",
+      "description": "Retrieve the JSON schema for a mailbox's parsed fields. Use when you need the structure and types of data fields extracted by a parser.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.mailboxes.listMailboxes",
+      "shortPath": "mailboxes.listMailboxes",
+      "description": "List mailboxes (parsers) with full configuration details. Use when you need comprehensive mailbox information including field configurations, processing options, and webhook settings.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "name | -name | document_count | -document_count | template_count | -template_count | PARSEDOK_count | -PARSEDOK_count | PARSEDKO_count | -PARSEDKO_count | QUOTAEXC_count | -QUOTAEXC_count | EXPORTKO_count | -EXPORTKO_count | TRANSKO_count | -TRANSKO_count"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string | number, name?: string, account_uuid?: string, ai_engine?: string, ai_instructions?: string | null, email_prefix?: string, document_count?: number, template_count?: number, webhook_count?: number, attachments_only?: boolean, is_master?: boolean, webhook_set?: any[], available_webhook_set?: any[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.mailboxes.updateMailbox",
+      "shortPath": "mailboxes.updateMailbox",
+      "description": "Update a mailbox (parser) configuration such as name, AI engine, processing options, or document handling rules.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_engine",
+            "optional": true,
+            "type": "DISABLED | GCP_AI_2 | GCP_AI_2_5 | GCP_AI_3_TXT"
+          },
+          {
+            "key": "ai_instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachments_only_override",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disable_deskew",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_ocr",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "decimal_separator",
+            "optional": true,
+            "type": ". | ,"
+          },
+          {
+            "key": "input_date_format",
+            "optional": true,
+            "type": "MONTH_FIRST | DAY_FIRST"
+          },
+          {
+            "key": "retention_policy",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_engine",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "template_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webhook_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attachments_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_master",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_set",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "available_webhook_set",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.templates.copyTemplate",
+      "shortPath": "templates.copyTemplate",
+      "description": "Copy a template to another mailbox.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "target_mailbox_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notification_set",
+            "optional": false,
+            "type": "{ info: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.templates.deleteTemplate",
+      "shortPath": "templates.deleteTemplate",
+      "description": "Delete a template by ID [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.templates.getTemplate",
+      "shortPath": "templates.getTemplate",
+      "description": "Get a template by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parser",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "engine",
+            "optional": true,
+            "type": "TXT | OCR | string"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "DRAFT | PROD | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.templates.listTemplates",
+      "shortPath": "templates.listTemplates",
+      "description": "List all templates in a mailbox.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string | number, name?: string, parser?: number, engine?: TXT | OCR | string, action?: string, status?: DRAFT | PROD | string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.webhooks.createWebhook",
+      "shortPath": "webhooks.createWebhook",
+      "description": "Create a webhook. Official body uses target (URL), event, and category CUSTOM.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "CUSTOM | ZAPIER | MAKE | FLOW | N8N"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "parser",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parser_field",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "category",
+            "optional": false,
+            "type": "CUSTOM | ZAPIER | MAKE | FLOW | N8N | string"
+          },
+          {
+            "key": "parser_field_set",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.webhooks.deleteWebhook",
+      "shortPath": "webhooks.deleteWebhook",
+      "description": "Delete a webhook by ID [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.webhooks.disableWebhook",
+      "shortPath": "webhooks.disableWebhook",
+      "description": "Disable a webhook for a mailbox. Removes the webhook from webhook_set.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.webhooks.enableWebhook",
+      "shortPath": "webhooks.enableWebhook",
+      "description": "Enable a paused webhook for a mailbox. Only webhooks in available_webhook_set can be enabled.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_engine",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "template_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webhook_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attachments_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_master",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_set",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "available_webhook_set",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parseur.api.webhooks.listWebhooks",
+      "shortPath": "webhooks.listWebhooks",
+      "description": "List active (webhook_set) and paused (available_webhook_set) webhooks for a mailbox via GET /parser/{id}.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_set",
+            "optional": false,
+            "type": "{ id: number, event: document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string, target: string, name?: string, headers?: {} | null, category: CUSTOM | ZAPIER | MAKE | FLOW | N8N | string, parser_field_set?: string[] }[]"
+          },
+          {
+            "key": "available_webhook_set",
+            "optional": false,
+            "type": "{ id: number, event: document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string, target: string, name?: string, headers?: {} | null, category: CUSTOM | ZAPIER | MAKE | FLOW | N8N | string, parser_field_set?: string[] }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "parseur.db.documents.search",
+      "entityName": "documents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parser",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "received",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "processed",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "result",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "json_download_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "csv_download_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "xls_download_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "original_document_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "parseur.db.exportConfigs.search",
+      "entityName": "exportConfigs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parser_field_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parser_field_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "csv_download",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "xls_download",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "parseur.db.logs.search",
+      "entityName": "logs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "document",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "document_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parser",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "parser_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "template",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "template_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "parseur.db.parsers.search",
+      "entityName": "parsers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ai_engine",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ai_instructions",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email_prefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "document_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "template_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "webhook_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "attachments_only",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_master",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "last_activity",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "decimal_separator",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "csv_download",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "json_download",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "xls_download",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "secret",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ai_split_instructions",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workflow_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "parseur.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parser",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "engine",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "action",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "document_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_activity",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "parseur.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "event",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

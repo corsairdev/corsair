@@ -1,0 +1,1169 @@
+{
+  "id": "googlecloudvision",
+  "displayName": "Google Cloud Vision",
+  "description": "Image analysis API for labeling, OCR, face detection, and visual content understanding.",
+  "npmPackageName": "@corsair-dev/googlecloudvision",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googlecloudvision.api.files.annotate",
+      "shortPath": "files.annotate",
+      "description": "Annotate Files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ inputConfig: { gcsSource?: { uri: string }, content?: string, mimeType: string }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: {}, pages?: number[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responses",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.files.asyncBatchAnnotate",
+      "shortPath": "files.asyncBatchAnnotate",
+      "description": "Annotate Files Async",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ inputConfig: { gcsSource: { uri: string }, mimeType: string }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: {}, outputConfig: { gcsDestination: { uri: string }, batchSize?: number } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: number, message: string }"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.images.annotate",
+      "shortPath": "images.annotate",
+      "description": "Annotate Images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ image: { content?: string, source?: { gcsImageUri?: string, imageUri?: string } }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: {} }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responses",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.images.asyncBatchAnnotate",
+      "shortPath": "images.asyncBatchAnnotate",
+      "description": "Annotate Images Async",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ image: { source: { gcsImageUri: string } }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: {} }[]"
+          },
+          {
+            "key": "outputConfig",
+            "optional": false,
+            "type": "{ gcsDestination: { uri: string }, batchSize?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: number, message: string }"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.images.locationAnnotate",
+      "shortPath": "images.locationAnnotate",
+      "description": "Annotate Location Images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ image: { content?: string, source?: { gcsImageUri?: string, imageUri?: string } }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: {} }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responses",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "List Locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ name: string, locationId: string, displayName?: string, labels?: {} }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.operations.cancel",
+      "shortPath": "operations.cancel",
+      "description": "Cancel Operation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "googlecloudvision.api.operations.delete",
+      "shortPath": "operations.delete",
+      "description": "Delete Operation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "googlecloudvision.api.operations.get",
+      "shortPath": "operations.get",
+      "description": "Get Operation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: number, message: string }"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.operations.list",
+      "shortPath": "operations.list",
+      "description": "List Operations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "operations",
+            "optional": true,
+            "type": "{ name: string, metadata?: {}, done?: boolean, error?: { code: number, message: string }, response?: {} }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.products.create",
+      "shortPath": "products.create",
+      "description": "Create Product",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "productId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ name?: string, displayName: string, description?: string, productCategory: string, productLabels?: { key: string, value: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "productCategory",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "productLabels",
+            "optional": true,
+            "type": "{ key: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Delete Product",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "googlecloudvision.api.products.get",
+      "shortPath": "products.get",
+      "description": "Get Product",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "productCategory",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "productLabels",
+            "optional": true,
+            "type": "{ key: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.products.list",
+      "shortPath": "products.list",
+      "description": "List Products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ name?: string, displayName: string, description?: string, productCategory: string, productLabels?: { key: string, value: string }[] }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.products.purge",
+      "shortPath": "products.purge",
+      "description": "Purge Products",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "productSetPurgeConfig",
+            "optional": true,
+            "type": "{ productSetId: string }"
+          },
+          {
+            "key": "deleteOrphanProducts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: number, message: string }"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.products.update",
+      "shortPath": "products.update",
+      "description": "Update Product",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ name?: string, displayName: string, description?: string, productCategory: string, productLabels?: { key: string, value: string }[] }"
+          },
+          {
+            "key": "updateMask",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "productCategory",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "productLabels",
+            "optional": true,
+            "type": "{ key: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.productSets.addProduct",
+      "shortPath": "productSets.addProduct",
+      "description": "Add Product to Set",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "googlecloudvision.api.productSets.create",
+      "shortPath": "productSets.create",
+      "description": "Create Product Set",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "productSetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "productSet",
+            "optional": false,
+            "type": "{ name?: string, displayName: string, indexTime?: string, indexError?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "indexTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "indexError",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.productSets.delete",
+      "shortPath": "productSets.delete",
+      "description": "Delete Product Set",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "googlecloudvision.api.productSets.get",
+      "shortPath": "productSets.get",
+      "description": "Get Product Set",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "indexTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "indexError",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.productSets.import",
+      "shortPath": "productSets.import",
+      "description": "Import Product Sets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "inputConfig",
+            "optional": false,
+            "type": "{ gcsSource: { csvFileUri: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: number, message: string }"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.productSets.list",
+      "shortPath": "productSets.list",
+      "description": "List Product Sets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productSets",
+            "optional": true,
+            "type": "{ name?: string, displayName: string, indexTime?: string, indexError?: {} }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.productSets.listProducts",
+      "shortPath": "productSets.listProducts",
+      "description": "List Products in Set",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.productSets.removeProduct",
+      "shortPath": "productSets.removeProduct",
+      "description": "Remove Product from Set",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "googlecloudvision.api.productSets.update",
+      "shortPath": "productSets.update",
+      "description": "Update Product Set",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "productSet",
+            "optional": false,
+            "type": "{ name?: string, displayName: string, indexTime?: string, indexError?: {} }"
+          },
+          {
+            "key": "updateMask",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "indexTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "indexError",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.referenceImages.create",
+      "shortPath": "referenceImages.create",
+      "description": "Create Reference Image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "referenceImageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referenceImage",
+            "optional": false,
+            "type": "{ name?: string, uri: string, boundingPolys?: {}[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "boundingPolys",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.referenceImages.delete",
+      "shortPath": "referenceImages.delete",
+      "description": "Delete Reference Image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "googlecloudvision.api.referenceImages.get",
+      "shortPath": "referenceImages.get",
+      "description": "Get Reference Image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "boundingPolys",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecloudvision.api.referenceImages.list",
+      "shortPath": "referenceImages.list",
+      "description": "List Reference Images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "referenceImages",
+            "optional": true,
+            "type": "{ name?: string, uri: string, boundingPolys?: {}[] }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

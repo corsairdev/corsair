@@ -1,0 +1,1024 @@
+---
+title: API
+description: "API reference for Connecteam: every `connecteam.api.*` operation with input and output types."
+---
+
+Every `connecteam.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attachments
+
+### generateUploadUrl
+
+`attachments.generateUploadUrl`
+
+Generate a time-limited pre-signed file upload URL
+
+**Risk:** `write`
+
+```ts
+await corsair.connecteam.api.attachments.generateUploadUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | Yes | — |
+| `featureType` | `chat \| shiftscheduler \| users \| quicktasks` | Yes | — |
+| `fileTypeHint` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  fileId: string,
+  uploadFileUrl: string
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Chat
+
+### get
+
+`chat.get`
+
+List team chats and channels
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.chat.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  conversations?: {
+    id?: number | string,
+    conversationId?: number | string,
+    type?: string | null,
+    title?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Field Categories
+
+### get
+
+`customFieldCategories.get`
+
+List custom field categories
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.customFieldCategories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `ids` | `number[]` | No | — |
+| `names` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  categories: {
+    id: number,
+    name?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Fields
+
+### get
+
+`customFields.get`
+
+List custom fields with optional filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.customFields.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `customFieldTypes` | `string[]` | No | — |
+| `customFieldIds` | `number[]` | No | — |
+| `names` | `string[]` | No | — |
+| `categoryIds` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  customFields: {
+    id: number,
+    name?: string | null,
+    type?: string | null,
+    categoryId?: number | null,
+    isRequired?: boolean | null,
+    isVisibleToAllAdmins?: boolean | null,
+    isEditableForAllAdmins?: boolean | null,
+    isVisibleToUsers?: boolean | null,
+    isEditableForUsers?: boolean | null,
+    isMultiSelect?: boolean | null,
+    dropdownOptions?: any[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forms
+
+### get
+
+`forms.get`
+
+List form definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.forms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  forms: {
+    formId: number,
+    formName?: string | null,
+    createdAt?: number | null,
+    lastUpdatedAt?: number | null,
+    questions?: any[],
+    settings?: any
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### get
+
+`jobs.get`
+
+List jobs for a scheduler or time clock instance
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.jobs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceIds` | `number[]` | No | — |
+| `jobIds` | `string[]` | No | — |
+| `jobNames` | `string[]` | No | — |
+| `jobCodes` | `string[]` | No | — |
+| `includeDeleted` | `boolean` | No | — |
+| `sort` | `title` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  jobs: {
+    jobId: string,
+    title?: string | null,
+    code?: string | null,
+    color?: string | null,
+    description?: string | null,
+    gps?: any,
+    isDeleted?: boolean | null,
+    assign?: any,
+    useParentData?: boolean | null,
+    parentId?: string | null,
+    subJobs?: any[],
+    instanceIds?: number[],
+    customFields?: any[]
+  }[],
+  paging?: {
+    offset?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Me
+
+### list
+
+`me.list`
+
+Get Connecteam account company name and company ID
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.me.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  companyId: string,
+  companyName?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Performance Indicators
+
+### get
+
+`performanceIndicators.get`
+
+List performance metric indicators
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.performanceIndicators.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  indicators?: {
+    id?: string | number,
+    name?: string | null
+  }[],
+  performanceIndicators?: {
+    id?: string | number,
+    name?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Policy Types
+
+### get
+
+`policyTypes.get`
+
+List time-off policy types
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.policyTypes.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  policyTypes?: {
+    id?: string | number,
+    policyTypeId?: string | number,
+    name?: string | null,
+    policies?: {
+      id?: string | number,
+      name?: string | null,
+      unit?: string | null,
+      accrualType?: string | null
+    }[]
+  }[],
+  policies?: {
+    id?: string | number,
+    policyTypeId?: string | number,
+    name?: string | null,
+    policies?: {
+      id?: string | number,
+      name?: string | null,
+      unit?: string | null,
+      accrualType?: string | null
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Publishers
+
+### get
+
+`publishers.get`
+
+List custom publishers
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.publishers.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  publishers?: {
+    id?: number,
+    publisherId?: number | null,
+    name?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schedulers
+
+### get
+
+`schedulers.get`
+
+List job schedulers
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.schedulers.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  schedulers: {
+    schedulerId: number,
+    name?: string | null,
+    isArchived?: boolean | null,
+    timezone?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Smart Groups
+
+### get
+
+`smartGroups.get`
+
+List smart groups
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.smartGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  groups?: {
+    id?: number,
+    smartGroupId?: number | null,
+    name?: string | null,
+    groupSegmentId?: number | null,
+    description?: string | null
+  }[],
+  smartGroups?: {
+    id?: number,
+    smartGroupId?: number | null,
+    name?: string | null,
+    groupSegmentId?: number | null,
+    description?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Task Boards
+
+### get
+
+`taskBoards.get`
+
+List task boards
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.taskBoards.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  taskBoards?: {
+    id?: number | string,
+    taskBoardId?: number | null,
+    name?: string | null,
+    title?: string | null,
+    isArchived?: boolean | null
+  }[],
+  taskboards?: {
+    id?: number | string,
+    taskBoardId?: number | null,
+    name?: string | null,
+    title?: string | null,
+    isArchived?: boolean | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### archive
+
+`users.archive`
+
+Archive Connecteam users by ID without deleting records
+
+**Risk:** `write`
+
+```ts
+await corsair.connecteam.api.users.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userIds` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`users.create`
+
+Create users in Connecteam
+
+**Risk:** `write`
+
+```ts
+await corsair.connecteam.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `sendActivation` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  firstName: string,
+  lastName?: string,
+  phoneNumber: string,
+  email?: string,
+  userType?: user,
+  isArchived?: boolean,
+  customFields?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  results?: {
+    userId: number,
+    firstName?: string | null,
+    lastName?: string | null,
+    phoneNumber?: string | null,
+    userType?: string | null,
+    email?: string | null,
+    customFields?: any[],
+    isArchived?: boolean | null,
+    kioskCode?: string | null,
+    createdAt?: number | null,
+    modifiedAt?: number | null,
+    archivedAt?: number | null,
+    lastLogin?: number | null,
+    smartGroupsIds?: number[],
+    invitedToBeManager?: boolean | null,
+    profilePictureUrl?: string | null,
+    mobileDevice?: string | null,
+    osVersion?: string | null,
+    appVersion?: string | null,
+    mobileDeviceId?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`users.get`
+
+List Connecteam users with optional filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.connecteam.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `created_at` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `userIds` | `number[]` | No | — |
+| `userStatus` | `active \| archived \| all` | No | — |
+| `fullNames` | `string[]` | No | — |
+| `phoneNumbers` | `string[]` | No | — |
+| `emailAddresses` | `string[]` | No | — |
+| `createdAt` | `number` | No | — |
+| `modifiedAt` | `number` | No | — |
+| `lastLogin` | `number` | No | — |
+| `archivedAt` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  users: {
+    userId: number,
+    firstName?: string | null,
+    lastName?: string | null,
+    phoneNumber?: string | null,
+    userType?: string | null,
+    email?: string | null,
+    customFields?: any[],
+    isArchived?: boolean | null,
+    kioskCode?: string | null,
+    createdAt?: number | null,
+    modifiedAt?: number | null,
+    archivedAt?: number | null,
+    lastLogin?: number | null,
+    smartGroupsIds?: number[],
+    invitedToBeManager?: boolean | null,
+    profilePictureUrl?: string | null,
+    mobileDevice?: string | null,
+    osVersion?: string | null,
+    appVersion?: string | null,
+    mobileDeviceId?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

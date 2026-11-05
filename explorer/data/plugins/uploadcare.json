@@ -1,0 +1,1629 @@
+{
+  "id": "uploadcare",
+  "displayName": "Uploadcare",
+  "description": "Uploadcare plugin for Corsair",
+  "npmPackageName": "@corsair-dev/uploadcare",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 33,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "uploadcare.api.addons.clamavStatus",
+      "shortPath": "addons.clamavStatus",
+      "description": "Check ClamAV scan status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "in_progress | error | done | unknown"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.addons.executeClamav",
+      "shortPath": "addons.executeClamav",
+      "description": "Start a ClamAV virus scan",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.addons.rekognitionModerationStatus",
+      "shortPath": "addons.rekognitionModerationStatus",
+      "description": "Check AWS Rekognition moderation job status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "in_progress | error | done | unknown"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.addons.rekognitionStatus",
+      "shortPath": "addons.rekognitionStatus",
+      "description": "Check AWS Rekognition labels job status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "in_progress | error | done | unknown"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.addons.removeBgStatus",
+      "shortPath": "addons.removeBgStatus",
+      "description": "Check Remove.bg add-on status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "in_progress | error | done | unknown"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.cdn.mirror",
+      "shortPath": "cdn.mirror",
+      "description": "CDN URL for a horizontally mirrored image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.cdn.rotate",
+      "shortPath": "cdn.rotate",
+      "description": "CDN URL for a counterclockwise rotated image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "degrees",
+            "optional": false,
+            "type": "90 | 180 | 270"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.files.batchDelete",
+      "shortPath": "files.batchDelete",
+      "description": "Delete up to 100 files; problems lists invalid UUIDs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "problems",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: {} | null, content_info?: {}, metadata?: {}, appdata?: {}, tags?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.files.batchStore",
+      "shortPath": "files.batchStore",
+      "description": "Store up to 100 files in one request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "problems",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: {} | null, content_info?: {}, metadata?: {}, appdata?: {}, tags?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.files.copyLocal",
+      "shortPath": "files.copyLocal",
+      "description": "Copy a file to local storage in the same project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "store",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: {} | null, content_info?: {}, metadata?: {}, appdata?: {}, tags?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete a stored file by UUID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datetime_removed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datetime_stored",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datetime_uploaded",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_image",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_ready",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original_file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original_filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "content_info",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appdata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.files.deleteMetadataKey",
+      "shortPath": "files.deleteMetadataKey",
+      "description": "Delete a metadata key from a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.files.get",
+      "shortPath": "files.get",
+      "description": "Get file info by UUID (official REST v0.7)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datetime_removed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datetime_stored",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datetime_uploaded",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_image",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_ready",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original_file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original_filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "content_info",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appdata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.files.getMetadata",
+      "shortPath": "files.getMetadata",
+      "description": "Get all metadata key-value pairs for a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "uploadcare.api.files.getMetadataKey",
+      "shortPath": "files.getMetadataKey",
+      "description": "Get one metadata value by key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "uploadcare.api.files.list",
+      "shortPath": "files.list",
+      "description": "List files with pagination, stored/removed filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "removed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stored",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "datetime_uploaded | -datetime_uploaded"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totals",
+            "optional": true,
+            "type": "{ removed?: number, stored?: number, unstored?: number }"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: {} | null, content_info?: {}, metadata?: {}, appdata?: {}, tags?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.files.store",
+      "shortPath": "files.store",
+      "description": "Permanently store a file by UUID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datetime_removed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datetime_stored",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datetime_uploaded",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_image",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_ready",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original_file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original_filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "content_info",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appdata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.files.updateMetadataKey",
+      "shortPath": "files.updateMetadataKey",
+      "description": "Set a metadata key on a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "uploadcare.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a group (files are not deleted)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Get group info by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datetime_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cdn_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "lazy[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List file groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "datetime_created | -datetime_created"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, datetime_created?: string | null, files_count?: number, cdn_url?: string, url?: string, files?: lazy[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.project.get",
+      "shortPath": "project.get",
+      "description": "Get current project info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pub_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collaborators",
+            "optional": true,
+            "type": "{ email?: string, name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.upload.createGroup",
+      "shortPath": "upload.createGroup",
+      "description": "Create a file group via Upload API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datetime_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cdn_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "lazy[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.upload.fileInfo",
+      "shortPath": "upload.fileInfo",
+      "description": "Get uploaded file info from Upload API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "original_filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_image",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_stored",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.upload.fromUrl",
+      "shortPath": "upload.fromUrl",
+      "description": "Upload a file from a public URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "store",
+            "optional": true,
+            "type": "0 | 1 | auto"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "check_URL_duplicates",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "save_URL_duplicates",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.upload.fromUrlStatus",
+      "shortPath": "upload.fromUrlStatus",
+      "description": "Check from-URL upload status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.upload.groupInfo",
+      "shortPath": "upload.groupInfo",
+      "description": "Get file group info from Upload API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datetime_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cdn_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "lazy[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.upload.startMultipart",
+      "shortPath": "upload.startMultipart",
+      "description": "Start multipart upload for files over 100MB",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "store",
+            "optional": true,
+            "type": "0 | 1 | auto"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parts",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "signing_secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "signing_secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.webhooks.deleteByUrl",
+      "shortPath": "webhooks.deleteByUrl",
+      "description": "Unsubscribe a webhook by target URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uploadcare.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List project webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, created?: string, updated?: string, event?: string, target_url?: string, project?: number, is_active?: boolean, signing_secret?: string | null }[]"
+      }
+    },
+    {
+      "path": "uploadcare.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "target_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "signing_secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "signing_secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "uploadcare.db.UploadcareFile.search",
+      "entityName": "UploadcareFile",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "datetime_uploaded",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "datetime_stored",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "datetime_removed",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_image",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_ready",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "mime_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "original_filename",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "original_file_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "uploadcare.db.UploadcareGroup.search",
+      "entityName": "UploadcareGroup",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "datetime_created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "files_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cdn_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

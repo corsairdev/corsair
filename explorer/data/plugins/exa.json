@@ -1,0 +1,1159 @@
+{
+  "id": "exa",
+  "displayName": "Exa",
+  "description": "AI-native search API for finding high-quality web content and research results.",
+  "npmPackageName": "@corsair-dev/exa",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 4,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "exa.api.answer.get",
+      "shortPath": "answer.get",
+      "description": "Generate a direct, citation-backed answer to a natural language question",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "answer",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "citations",
+            "optional": true,
+            "type": "{ id: string, url: string, title?: string | null, publishedDate?: string | null, author?: string | null, score?: number, text?: string, highlights?: string[], highlightScores?: number[], summary?: string }[]"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.contents.get",
+      "shortPath": "contents.get",
+      "description": "Retrieve full text, highlights, or summaries from URLs or document IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "{ maxCharacters?: number, includeHtmlTags?: boolean } | boolean"
+          },
+          {
+            "key": "highlights",
+            "optional": true,
+            "type": "{ numSentences?: number, highlightsPerUrl?: number, query?: string } | boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{ query?: string } | boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, url: string, title?: string | null, publishedDate?: string | null, author?: string | null, score?: number, text?: string, highlights?: string[], highlightScores?: number[], summary?: string }[]"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get details of a specific webset event by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "websetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.events.list",
+      "shortPath": "events.list",
+      "description": "List all events that have occurred for a webset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "websetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: event, type: string, createdAt: string, data?: any }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.imports.create",
+      "shortPath": "imports.create",
+      "description": "Create a new import to upload data into a webset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "websetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "import"
+          },
+          {
+            "key": "websetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | processing | completed | failed"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.imports.delete",
+      "shortPath": "imports.delete",
+      "description": "Delete an existing import",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "websetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "importId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.imports.list",
+      "shortPath": "imports.list",
+      "description": "List all imports for a webset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "websetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: import, websetId: string, urls?: string[], status?: pending | processing | completed | failed, createdAt: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.monitors.create",
+      "shortPath": "monitors.create",
+      "description": "Create a new monitor to watch a webset for changes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "websetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cadence",
+            "optional": false,
+            "type": "{ type: realtime | hourly | daily | weekly }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "monitor"
+          },
+          {
+            "key": "websetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cadence",
+            "optional": false,
+            "type": "{ type: realtime | hourly | daily | weekly }"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.search.findSimilar",
+      "shortPath": "search.findSimilar",
+      "description": "Find web pages semantically similar to a given URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeDomains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludeDomains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "startCrawlDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCrawlDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startPublishedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endPublishedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeSourceDomain",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contents",
+            "optional": true,
+            "type": "{ text?: { maxCharacters?: number, includeHtmlTags?: boolean } | boolean, highlights?: { numSentences?: number, highlightsPerUrl?: number, query?: string } | boolean, summary?: { query?: string } | boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, url: string, title?: string | null, publishedDate?: string | null, author?: string | null, score?: number, text?: string, highlights?: string[], highlightScores?: number[], summary?: string }[]"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.search.search",
+      "shortPath": "search.search",
+      "description": "Search the web using neural or keyword search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeDomains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludeDomains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "startCrawlDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCrawlDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startPublishedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endPublishedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "useAutoprompt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "keyword | neural | auto"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contents",
+            "optional": true,
+            "type": "{ text?: { maxCharacters?: number, includeHtmlTags?: boolean } | boolean, highlights?: { numSentences?: number, highlightsPerUrl?: number, query?: string } | boolean, summary?: { query?: string } | boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, url: string, title?: string | null, publishedDate?: string | null, author?: string | null, score?: number, text?: string, highlights?: string[], highlightScores?: number[], summary?: string }[]"
+          },
+          {
+            "key": "autopromptString",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.webhooksApi.list",
+      "shortPath": "webhooksApi.list",
+      "description": "List all webhooks configured for websets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: webhook, url: string, events?: string[], status?: active | inactive, createdAt: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.websets.create",
+      "shortPath": "websets.create",
+      "description": "Create a new webset with search, import, and enrichment setup",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searches",
+            "optional": true,
+            "type": "{ query: string, count?: number, entity?: { type?: company | person | article | research paper | repository | event | product | video | job | podcast }, criteria?: { description: string, successRate?: string }[] }[]"
+          },
+          {
+            "key": "enrichments",
+            "optional": true,
+            "type": "{ description: string, format?: text | date | number | options | boolean, options?: string[] }[]"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "webset"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "idle | running | paused | done"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "searches",
+            "optional": true,
+            "type": "{ query: string, count?: number, entity?: { type?: company | person | article | research paper | repository | event | product | video | job | podcast }, criteria?: { description: string, successRate?: string }[] }[]"
+          },
+          {
+            "key": "enrichments",
+            "optional": true,
+            "type": "{ id: string, description: string, format: text | date | number | options | boolean, options?: string[], createdAt: string, updatedAt: string }[]"
+          },
+          {
+            "key": "imports",
+            "optional": true,
+            "type": "{ id: string, object: import, websetId: string, urls?: string[], status?: pending | processing | completed | failed, createdAt: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "monitors",
+            "optional": true,
+            "type": "{ id: string, object: monitor, websetId: string, cadence: { type: realtime | hourly | daily | weekly }, createdAt: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.websets.delete",
+      "shortPath": "websets.delete",
+      "description": "Delete a webset",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "webset"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exa.api.websets.get",
+      "shortPath": "websets.get",
+      "description": "Get details of a specific webset by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "webset"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "idle | running | paused | done"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "searches",
+            "optional": true,
+            "type": "{ query: string, count?: number, entity?: { type?: company | person | article | research paper | repository | event | product | video | job | podcast }, criteria?: { description: string, successRate?: string }[] }[]"
+          },
+          {
+            "key": "enrichments",
+            "optional": true,
+            "type": "{ id: string, description: string, format: text | date | number | options | boolean, options?: string[], createdAt: string, updatedAt: string }[]"
+          },
+          {
+            "key": "imports",
+            "optional": true,
+            "type": "{ id: string, object: import, websetId: string, urls?: string[], status?: pending | processing | completed | failed, createdAt: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "monitors",
+            "optional": true,
+            "type": "{ id: string, object: monitor, websetId: string, cadence: { type: realtime | hourly | daily | weekly }, createdAt: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "exa.webhooks.content.contentIndexed",
+      "shortPath": "content.contentIndexed",
+      "description": "A new web page has been indexed by Exa",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "content.indexed"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ url: string, title?: string | null, publishedDate?: string | null, author?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ url: string, title?: string | null, publishedDate?: string | null, author?: string | null, indexedAt: string }",
+      "usageExample": "exa({\n    webhookHooks: {\n        content: {\n            contentIndexed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "exa.webhooks.search.searchAlert",
+      "shortPath": "search.searchAlert",
+      "description": "A monitored search query has new matching results",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "search.alert"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ query: string, results: { id: string, url: string, title?: string | null, publishedDate?: string | null, author?: string | null, score?: number, text?: string, highlights?: string[], summary?: string }[] }"
+          }
+        ]
+      },
+      "responseType": "{ query: string, results: { id: string, url: string, title?: string | null, publishedDate?: string | null, author?: string | null, score?: number, text?: string, highlights?: string[], summary?: string }[], triggeredAt: string }",
+      "usageExample": "exa({\n    webhookHooks: {\n        search: {\n            searchAlert: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "exa.webhooks.webset.websetItemsFound",
+      "shortPath": "webset.websetItemsFound",
+      "description": "New items were found for a webset search",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webset.items_found"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ webset: { id: string, object: webset, status: idle | running | paused | done, externalId?: string, createdAt: string, updatedAt: string }, items: { id: string, url: string, title?: string | null, publishedDate?: string | null, author?: string | null, score?: number, text?: string, highlights?: string[], summary?: string }[], itemCount?: number }"
+          }
+        ]
+      },
+      "responseType": "{ webset: { id: string, object: webset, status: idle | running | paused | done, externalId?: string, createdAt: string, updatedAt: string }, items: { id: string, url: string, title?: string | null, publishedDate?: string | null, author?: string | null, score?: number, text?: string, highlights?: string[], summary?: string }[], itemCount?: number, triggeredAt: string }",
+      "usageExample": "exa({\n    webhookHooks: {\n        webset: {\n            websetItemsFound: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "exa.webhooks.webset.websetSearchCompleted",
+      "shortPath": "webset.websetSearchCompleted",
+      "description": "A webset search has completed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webset.search.completed"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ webset: { id: string, object: webset, status: idle | running | paused | done, externalId?: string, createdAt: string, updatedAt: string }, totalItems?: number }"
+          }
+        ]
+      },
+      "responseType": "{ webset: { id: string, object: webset, status: idle | running | paused | done, externalId?: string, createdAt: string, updatedAt: string }, totalItems?: number, completedAt: string }",
+      "usageExample": "exa({\n    webhookHooks: {\n        webset: {\n            websetSearchCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "exa.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "websetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "exa.db.imports.search",
+      "entityName": "imports",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "websetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "exa.db.monitors.search",
+      "entityName": "monitors",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "websetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "exa.db.searchResults.search",
+      "entityName": "searchResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "exa.db.webhookConfigs.search",
+      "entityName": "webhookConfigs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "exa.db.websets.search",
+      "entityName": "websets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "externalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

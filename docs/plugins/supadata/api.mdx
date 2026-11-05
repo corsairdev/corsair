@@ -1,0 +1,587 @@
+---
+title: API
+description: "API reference for Supadata: every `supadata.api.*` operation with input and output types."
+---
+
+Every `supadata.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### me
+
+`account.me`
+
+Retrieve organization details, plan information and credit usage
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.account.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+| `plan` | `string` | Yes | — |
+| `maxCredits` | `number` | Yes | — |
+| `usedCredits` | `number` | Yes | — |
+
+
+
+---
+
+## Metadata
+
+### get
+
+`metadata.get`
+
+Retrieve unified metadata for media from social platforms
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.metadata.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `platform` | `youtube \| tiktok \| instagram \| twitter \| facebook` | Yes | — |
+| `type` | `video \| image \| carousel \| post` | Yes | — |
+| `id` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `author` | `object` | No | — |
+| `stats` | `object` | No | — |
+| `media` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+| `createdAt` | `string` | No | — |
+| `additionalData` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  displayName: string,
+  username?: string,
+  avatarUrl?: string,
+  verified?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  likes?: number | null,
+  comments?: number | null,
+  shares?: number | null,
+  views?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="media full type">
+
+```ts
+{
+  type: video | image | carousel | post,
+  duration?: number,
+  thumbnailUrl?: string,
+  url?: string,
+  items?: any[]
+}
+```
+</Accordion>
+
+<Accordion title="additionalData full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transcript
+
+### get
+
+`transcript.get`
+
+Retrieve a transcript for a video or file URL
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.transcript.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `lang` | `string` | No | — |
+| `text` | `boolean` | No | — |
+| `chunkSize` | `number` | No | — |
+| `mode` | `native \| auto \| generate` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  content: string | {
+    text: string,
+    offset: number,
+    duration: number,
+    lang?: string
+  }[],
+  lang: string,
+  availableLangs: string[]
+} | {
+  jobId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getJob
+
+`transcript.getJob`
+
+Retrieve the status or result of an asynchronous transcript job
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.transcript.getJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `queued \| active \| completed \| failed` | Yes | — |
+| `error` | `object` | No | — |
+| `content` | `object[]` | No | — |
+| `lang` | `string` | No | — |
+| `availableLangs` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  error: string,
+  message: string,
+  details: string,
+  documentationUrl?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  text: string,
+  offset: number,
+  duration: number,
+  lang?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Web
+
+### map
+
+`web.map`
+
+Discover every URL on a website
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.web.map({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | — |
+
+
+
+---
+
+### scrape
+
+`web.scrape`
+
+Extract web page content as Markdown
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.web.scrape({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `noLinks` | `boolean` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `countCharacters` | `number` | Yes | — |
+| `urls` | `string[]` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `ogUrl` | `string` | No | — |
+
+
+
+---
+
+## Youtube
+
+### channel
+
+`youtube.channel`
+
+Retrieve metadata for a YouTube channel
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.youtube.channel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `handle` | `string` | No | — |
+| `description` | `string` | No | — |
+| `subscriberCount` | `number` | No | — |
+| `videoCount` | `number` | No | — |
+| `viewCount` | `number` | No | — |
+| `thumbnail` | `string` | No | — |
+| `banner` | `string` | No | — |
+
+
+
+---
+
+### channelVideos
+
+`youtube.channelVideos`
+
+List video, Shorts and live stream IDs for a YouTube channel
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.youtube.channelVideos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `type` | `all \| video \| short \| live` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videoIds` | `string[]` | Yes | — |
+| `shortIds` | `string[]` | Yes | — |
+| `liveIds` | `string[]` | Yes | — |
+
+
+
+---
+
+### playlist
+
+`youtube.playlist`
+
+Retrieve metadata for a YouTube playlist
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.youtube.playlist({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `videoCount` | `number` | Yes | — |
+| `channel` | `object` | Yes | — |
+| `description` | `string` | No | — |
+| `viewCount` | `number` | No | — |
+| `lastUpdated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  thumbnail?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### playlistVideos
+
+`youtube.playlistVideos`
+
+List video, Shorts and live stream IDs for a YouTube playlist
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.youtube.playlistVideos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videoIds` | `string[]` | Yes | — |
+| `shortIds` | `string[]` | Yes | — |
+| `liveIds` | `string[]` | Yes | — |
+
+
+
+---
+
+### search
+
+`youtube.search`
+
+Search YouTube for videos, channels or playlists
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.youtube.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `type` | `all \| video \| channel \| playlist \| movie` | No | — |
+| `limit` | `number` | No | — |
+| `uploadDate` | `all \| hour \| today \| week \| month \| year` | No | — |
+| `sortBy` | `relevance \| rating \| date \| views` | No | — |
+| `duration` | `all \| short \| medium \| long` | No | — |
+| `features` | `360 \| hd \| subtitles \| creative-commons \| 3d \| live \| 4k \| location \| hdr \| vr180[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `totalResults` | `number` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  type: video | channel | playlist,
+  id: string,
+  title: string,
+  description?: string,
+  thumbnail?: string,
+  duration?: number,
+  viewCount?: number,
+  uploadDate?: string,
+  channel?: {
+    id: string,
+    name: string,
+    thumbnail?: string
+  },
+  handle?: string,
+  videoCount?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### video
+
+`youtube.video`
+
+Retrieve metadata for a YouTube video
+
+**Risk:** `read`
+
+```ts
+await corsair.supadata.api.youtube.video({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `duration` | `number` | Yes | — |
+| `channel` | `object` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `transcriptLanguages` | `string[]` | Yes | — |
+| `thumbnail` | `string` | No | — |
+| `uploadDate` | `string` | No | — |
+| `viewCount` | `number` | No | — |
+| `likeCount` | `number` | No | — |
+| `isLive` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  thumbnail?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

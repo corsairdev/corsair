@@ -1,0 +1,684 @@
+{
+  "id": "zendesk",
+  "displayName": "Zendesk",
+  "description": "Customer support platform for tickets, help centers, chat, and service team workflows.",
+  "npmPackageName": "@corsair-dev/zendesk",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "subdomain",
+        "account_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "zendesk.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List comments for a specific ticket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id: number, type?: string | null, body?: string | null, html_body?: string | null, plain_body?: string | null, public?: boolean | null, author_id?: number | null, attachments?: any[] | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zendesk.api.tickets.create",
+      "shortPath": "tickets.create",
+      "description": "Create a new ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "{ body: string, public?: boolean, author_id?: number }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requester_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket",
+            "optional": false,
+            "type": "{ id: number, url?: string | null, external_id?: string | null, created_at?: string | null, updated_at?: string | null, type?: string | null, subject?: string | null, raw_subject?: string | null, description?: string | null, priority?: string | null, status?: string | null, recipient?: string | null, requester_id?: number | null, submitter_id?: number | null, assignee_id?: number | null, organization_id?: number | null, group_id?: number | null, collaborator_ids?: number[] | null, follower_ids?: number[] | null, email_cc_ids?: number[] | null, forum_topic_id?: number | null, problem_id?: number | null, has_incidents?: boolean | null, is_public?: boolean | null, due_at?: string | null, tags?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zendesk.api.tickets.delete",
+      "shortPath": "tickets.delete",
+      "description": "Delete a ticket by its ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zendesk.api.tickets.get",
+      "shortPath": "tickets.get",
+      "description": "Retrieve a ticket by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket",
+            "optional": false,
+            "type": "{ id: number, url?: string | null, external_id?: string | null, created_at?: string | null, updated_at?: string | null, type?: string | null, subject?: string | null, raw_subject?: string | null, description?: string | null, priority?: string | null, status?: string | null, recipient?: string | null, requester_id?: number | null, submitter_id?: number | null, assignee_id?: number | null, organization_id?: number | null, group_id?: number | null, collaborator_ids?: number[] | null, follower_ids?: number[] | null, email_cc_ids?: number[] | null, forum_topic_id?: number | null, problem_id?: number | null, has_incidents?: boolean | null, is_public?: boolean | null, due_at?: string | null, tags?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zendesk.api.tickets.list",
+      "shortPath": "tickets.list",
+      "description": "List tickets with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tickets",
+            "optional": false,
+            "type": "{ id: number, url?: string | null, external_id?: string | null, created_at?: string | null, updated_at?: string | null, type?: string | null, subject?: string | null, raw_subject?: string | null, description?: string | null, priority?: string | null, status?: string | null, recipient?: string | null, requester_id?: number | null, submitter_id?: number | null, assignee_id?: number | null, organization_id?: number | null, group_id?: number | null, collaborator_ids?: number[] | null, follower_ids?: number[] | null, email_cc_ids?: number[] | null, forum_topic_id?: number | null, problem_id?: number | null, has_incidents?: boolean | null, is_public?: boolean | null, due_at?: string | null, tags?: string[] | null }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zendesk.api.tickets.update",
+      "shortPath": "tickets.update",
+      "description": "Update an existing ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requester_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "{ body: string, public?: boolean, author_id?: number }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket",
+            "optional": false,
+            "type": "{ id: number, url?: string | null, external_id?: string | null, created_at?: string | null, updated_at?: string | null, type?: string | null, subject?: string | null, raw_subject?: string | null, description?: string | null, priority?: string | null, status?: string | null, recipient?: string | null, requester_id?: number | null, submitter_id?: number | null, assignee_id?: number | null, organization_id?: number | null, group_id?: number | null, collaborator_ids?: number[] | null, follower_ids?: number[] | null, email_cc_ids?: number[] | null, forum_topic_id?: number | null, problem_id?: number | null, has_incidents?: boolean | null, is_public?: boolean | null, due_at?: string | null, tags?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zendesk.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a new user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, url?: string | null, name: string, email?: string | null, created_at?: string | null, updated_at?: string | null, time_zone?: string | null, iana_time_zone?: string | null, phone?: string | null, shared_phone?: boolean | null, locale_id?: number | null, locale?: string | null, organization_id?: number | null, role?: string | null, verified?: boolean | null, external_id?: string | null, tags?: string[] | null, active?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zendesk.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a user by their ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zendesk.api.users.get",
+      "shortPath": "users.get",
+      "description": "Retrieve a user by their ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, url?: string | null, name: string, email?: string | null, created_at?: string | null, updated_at?: string | null, time_zone?: string | null, iana_time_zone?: string | null, phone?: string | null, shared_phone?: boolean | null, locale_id?: number | null, locale?: string | null, organization_id?: number | null, role?: string | null, verified?: boolean | null, external_id?: string | null, tags?: string[] | null, active?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zendesk.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, url?: string | null, name: string, email?: string | null, created_at?: string | null, updated_at?: string | null, time_zone?: string | null, iana_time_zone?: string | null, phone?: string | null, shared_phone?: boolean | null, locale_id?: number | null, locale?: string | null, organization_id?: number | null, role?: string | null, verified?: boolean | null, external_id?: string | null, tags?: string[] | null, active?: boolean | null }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zendesk.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update an existing user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, url?: string | null, name: string, email?: string | null, created_at?: string | null, updated_at?: string | null, time_zone?: string | null, iana_time_zone?: string | null, phone?: string | null, shared_phone?: boolean | null, locale_id?: number | null, locale?: string | null, organization_id?: number | null, role?: string | null, verified?: boolean | null, external_id?: string | null, tags?: string[] | null, active?: boolean | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "zendesk.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "ticketId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "public",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zendesk.db.tickets.search",
+      "entityName": "tickets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requesterId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "assigneeId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "organizationId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "groupId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zendesk.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "timeZone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locale",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

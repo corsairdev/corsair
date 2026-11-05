@@ -1,0 +1,1125 @@
+{
+  "id": "exist",
+  "displayName": "Exist",
+  "description": "Exist plugin for Corsair",
+  "npmPackageName": "@corsair-dev/exist",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "exist.api.attributes.acquire",
+      "shortPath": "attributes.acquire",
+      "description": "Take ownership of attributes so this client can write their values, creating templated attributes the user does not have yet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ template?: string, name?: string, manual?: boolean }[]"
+          },
+          {
+            "key": "success_objects",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "{ name: string }[]"
+          },
+          {
+            "key": "failed",
+            "optional": false,
+            "type": "{ error: string, error_code: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.attributes.increment",
+      "shortPath": "attributes.increment",
+      "description": "Add a delta to owned attributes' values for a given day",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ name: string, date?: string, value: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "{ name: string, value: number, current?: number }[]"
+          },
+          {
+            "key": "failed",
+            "optional": false,
+            "type": "{ error: string, error_code: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.attributes.list",
+      "shortPath": "attributes.list",
+      "description": "List the user's attributes without their values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_custom",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "manual",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_inactive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_low_priority",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owned",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ template?: string | null, name: string, label: string, group: { name: string, label: string, priority: number }, service?: { name: string, label: string } | null, active: boolean, priority: number, manual: boolean, value_type: number, value_type_description: string, available_services?: { name: string, label: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.attributes.listOwned",
+      "shortPath": "attributes.listOwned",
+      "description": "List the attributes currently owned by this client",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_custom",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "manual",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_inactive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_low_priority",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ template?: string | null, name: string, label: string, group: { name: string, label: string, priority: number }, service?: { name: string, label: string } | null, active: boolean, priority: number, manual: boolean, value_type: number, value_type_description: string, available_services?: { name: string, label: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.attributes.listTemplates",
+      "shortPath": "attributes.listTemplates",
+      "description": "List the attribute templates Exist supports",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_low_priority",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ name: string, label: string, group: { name: string, label: string, priority: number }, priority: number, value_type: number, value_type_description: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.attributes.listWithValues",
+      "shortPath": "attributes.listWithValues",
+      "description": "List the user's attributes along with recent day values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "manual",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ template?: string | null, name: string, label: string, group: { name: string, label: string, priority: number }, service?: { name: string, label: string } | null, active: boolean, priority: number, manual: boolean, value_type: number, value_type_description: string, available_services?: { name: string, label: string }[], values: { date: string, value?: string | number | boolean | null }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.attributes.release",
+      "shortPath": "attributes.release",
+      "description": "Release ownership of attributes, passing them to another service or making them inactive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ name: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "{ name: string }[]"
+          },
+          {
+            "key": "failed",
+            "optional": false,
+            "type": "{ error: string, error_code: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.attributes.update",
+      "shortPath": "attributes.update",
+      "description": "Overwrite owned attributes' total values for a given day, in batches of up to 35",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ name: string, date: string, value?: string | number | boolean | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "{ name: string, date: string, value?: string | number | boolean | null }[]"
+          },
+          {
+            "key": "failed",
+            "optional": false,
+            "type": "{ error: string, error_code: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.averages.list",
+      "shortPath": "averages.list",
+      "description": "List weekly average values per attribute",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_historical",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ attribute: string, date: string, overall?: number | null, monday?: number | null, tuesday?: number | null, wednesday?: number | null, thursday?: number | null, friday?: number | null, saturday?: number | null, sunday?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.correlations.list",
+      "shortPath": "correlations.list",
+      "description": "List correlations Exist computed between the user's attributes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "strong",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "confident",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "attribute",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ date: string, period: number, offset: number, attribute: string, attribute2: string, value: number, p: number, percentage: number, stars: number, second_person: string, second_person_elements: string[], attribute_category?: string | null, strength_description?: string | null, stars_description?: string | null, description?: string | null, occurrence?: string | null, rating?: { positive: boolean, rating_type: number, rating: string } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.insights.list",
+      "shortPath": "insights.list",
+      "description": "List insights Exist generated about the user's data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ created: string, target_date?: string | null, type: { name: string, period: number, priority: number, attribute?: { name: string, label: string, group: { name: string, label: string, priority: number }, priority: number, value_type: number, value_type_description: string } | null }, html: string, text: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.oauth.authorize",
+      "shortPath": "oauth.authorize",
+      "description": "Build the Exist OAuth2 authorisation URL a user visits to grant access, with a CSRF state value; makes no API call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scopes",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scopes",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "exist.api.users.getProfile",
+      "shortPath": "users.getProfile",
+      "description": "Get the authenticated Exist user profile and unit preferences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "local_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imperial_distance",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "imperial_weight",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "imperial_energy",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "imperial_liquid",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "imperial_temperature",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "trial",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "delinquent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "exist.db.attributes.search",
+      "entityName": "attributes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "template",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "group_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "group_label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "service_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "manual",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "value_type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "value_type_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "exist.db.attributeValues.search",
+      "entityName": "attributeValues",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attribute",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "exist.db.averages.search",
+      "entityName": "averages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attribute",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "overall",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "monday",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tuesday",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "wednesday",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "thursday",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "friday",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "saturday",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sunday",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "exist.db.correlations.search",
+      "entityName": "correlations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attribute",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attribute2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "offset",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "value",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "p",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "percentage",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "stars",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "second_person",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "strength_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "stars_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "exist.db.insights.search",
+      "entityName": "insights",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attribute",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "exist.db.profile.search",
+      "entityName": "profile",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "local_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "imperial_distance",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "imperial_weight",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "imperial_energy",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "imperial_liquid",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "imperial_temperature",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "trial",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "delinquent",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

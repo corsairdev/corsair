@@ -1,0 +1,123 @@
+---
+title: API
+description: "API reference for Docupost: every `docupost.api.*` operation with input and output types."
+---
+
+Every `docupost.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### balance
+
+`account.balance`
+
+Fetch the remaining DocuPost account balance
+
+**Risk:** `read`
+
+```ts
+await corsair.docupost.api.account.balance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `balance` | `any` | No | — |
+
+
+
+---
+
+## Send
+
+### letter
+
+`send.letter`
+
+Send a physical letter through DocuPost
+
+**Risk:** `write`
+
+```ts
+await corsair.docupost.api.send.letter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to_name` | `string` | Yes | — |
+| `to_address` | `string` | Yes | — |
+| `to_city` | `string` | Yes | — |
+| `to_state` | `string` | Yes | — |
+| `to_zip` | `string` | Yes | — |
+| `from_name` | `string` | Yes | — |
+| `from_address` | `string` | Yes | — |
+| `from_city` | `string` | Yes | — |
+| `from_state` | `string` | Yes | — |
+| `from_zip` | `string` | Yes | — |
+| `pdf_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### postcard
+
+`send.postcard`
+
+Send a physical postcard through DocuPost
+
+**Risk:** `write`
+
+```ts
+await corsair.docupost.api.send.postcard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to_name` | `string` | Yes | — |
+| `to_address` | `string` | Yes | — |
+| `to_city` | `string` | Yes | — |
+| `to_state` | `string` | Yes | — |
+| `to_zip` | `string` | Yes | — |
+| `from_name` | `string` | Yes | — |
+| `from_address` | `string` | Yes | — |
+| `from_city` | `string` | Yes | — |
+| `from_state` | `string` | Yes | — |
+| `from_zip` | `string` | Yes | — |
+| `front_image_url` | `string` | Yes | — |
+| `back_image_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+

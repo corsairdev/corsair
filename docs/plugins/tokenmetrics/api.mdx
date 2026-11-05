@@ -1,0 +1,291 @@
+---
+title: API
+description: "API reference for Token Metrics: every `tokenmetrics.api.*` operation with input and output types."
+---
+
+Every `tokenmetrics.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Market
+
+### getPrice
+
+`market.getPrice`
+
+Retrieve token price, volume, and market-cap data
+
+**Risk:** `read`
+
+```ts
+await corsair.tokenmetrics.api.market.getPrice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token_id` | `string \| number` | No | — |
+| `symbol` | `string` | No | — |
+| `interval` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token_id?: string | number,
+  symbol?: string,
+  name?: string,
+  price?: number,
+  market_cap?: number,
+  volume_24h?: number | null,
+  number_of_holders?: number | null,
+  token_creation_date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTopMarketCap
+
+`market.getTopMarketCap`
+
+List tokens ranked by market capitalization
+
+**Risk:** `read`
+
+```ts
+await corsair.tokenmetrics.api.market.getTopMarketCap({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top_k` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token_id?: string | number,
+  symbol?: string,
+  name?: string,
+  price?: number,
+  market_cap?: number,
+  volume_24h?: number | null,
+  number_of_holders?: number | null,
+  token_creation_date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Technical
+
+### getIndicators
+
+`technical.getIndicators`
+
+Retrieve a technical indicator for a token and interval
+
+**Risk:** `read`
+
+```ts
+await corsair.tokenmetrics.api.technical.getIndicators({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `indicator` | `string` | Yes | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  symbol?: string,
+  indicator?: string,
+  value?: number,
+  datetime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tokens
+
+### list
+
+`tokens.list`
+
+List supported tokens and their identifiers
+
+**Risk:** `read`
+
+```ts
+await corsair.tokenmetrics.api.tokens.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token_id` | `string \| number` | No | — |
+| `symbol` | `string` | No | — |
+| `category` | `string` | No | — |
+| `exchange` | `string` | No | — |
+| `marketcap` | `number` | No | — |
+| `volume` | `number` | No | — |
+| `fdv` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token_id?: string | number,
+  symbol?: string,
+  name?: string,
+  price?: number,
+  market_cap?: number,
+  volume_24h?: number | null,
+  number_of_holders?: number | null,
+  token_creation_date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Trading
+
+### getSignals
+
+`trading.getSignals`
+
+Retrieve AI-generated token entry and exit signals
+
+**Risk:** `read`
+
+```ts
+await corsair.tokenmetrics.api.trading.getSignals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token_id` | `string \| number` | No | — |
+| `symbol` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `category` | `string` | No | — |
+| `exchange` | `string` | No | — |
+| `marketcap` | `number` | No | — |
+| `volume` | `number` | No | — |
+| `fdv` | `number` | No | — |
+| `signal` | `-1 \| 0 \| 1` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token_id?: string | number,
+  symbol?: string,
+  signal?: number,
+  date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

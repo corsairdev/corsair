@@ -1,30 +1,37 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
+import { socialMetadata } from '@/lib/social-metadata';
+
 import { IntegrationListSkeleton } from './integration-list-skeleton';
 import { OssIntegrationsShell } from './oss-integrations-shell';
 import {
 	OssCategoryOnboardingSection,
 	OssHeroSection,
 	OssIntegrationsSection,
-	OssLeaderboardSection,
 	OssSidebarSection,
 	OssTagFilterSection,
 	OssUserSection,
 } from './oss-sections';
 import {
-	LeaderboardSkeleton,
 	OssHeroSkeleton,
 	OssSidebarSkeleton,
 	TagFilterSkeleton,
 } from './oss-skeletons';
 import { parseTagSlugs } from './oss-url';
-import type { OssIntegrationsView } from './view-tabs';
+
+const OSS_DESCRIPTION =
+	"Build integrations in the open and earn AI credits — 1 point = $1. Your code ships to thousands of developers via Corsair's open catalog.";
 
 export const metadata: Metadata = {
 	title: 'OSS Integrations',
-	description:
-		"Build integrations in the open and earn AI credits — 1 point = $1. Your code ships to thousands of developers via Corsair's open catalog.",
+	description: OSS_DESCRIPTION,
+	alternates: { canonical: '/oss' },
+	...socialMetadata({
+		title: 'OSS Integrations | Corsair',
+		description: OSS_DESCRIPTION,
+		path: '/oss',
+	}),
 };
 
 type PageProps = {
@@ -36,10 +43,6 @@ type PageProps = {
 	}>;
 };
 
-function parseView(view?: string): OssIntegrationsView {
-	return view === 'leaderboard' ? 'leaderboard' : 'integrations';
-}
-
 function normalizeQueryParam(
 	value: string | string[] | undefined,
 ): string | undefined {
@@ -50,8 +53,8 @@ function normalizeQueryParam(
 
 export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const view = parseView(params.view);
-	const page = Math.max(1, Number(params.page) || 1);
+	const page =
+		params.view === 'leaderboard' ? 1 : Math.max(1, Number(params.page) || 1);
 	const q = params.q?.trim() ?? '';
 	const selectedTags = parseTagSlugs(normalizeQueryParam(params.tags));
 
@@ -67,48 +70,31 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 						<OssUserSection />
 					</Suspense>
 
-					{view === 'integrations' ? (
-						<Suspense fallback={null}>
-							<OssCategoryOnboardingSection selectedTags={selectedTags} q={q} />
-						</Suspense>
-					) : null}
+					<Suspense fallback={null}>
+						<OssCategoryOnboardingSection selectedTags={selectedTags} q={q} />
+					</Suspense>
 
 					<OssIntegrationsShell
 						q={q}
-						selectedTags={selectedTags}
-						view={view}
 						tagFilter={
 							<Suspense fallback={<TagFilterSkeleton />}>
 								<OssTagFilterSection selectedTags={selectedTags} />
 							</Suspense>
 						}
 						integrationsContent={
-							view === 'integrations' ? (
-								<Suspense fallback={<IntegrationListSkeleton count={8} />}>
-									<OssIntegrationsSection
-										page={page}
-										q={q}
-										selectedTags={selectedTags}
-									/>
-								</Suspense>
-							) : null
-						}
-						leaderboardContent={
-							view === 'leaderboard' ? (
-								<Suspense fallback={<LeaderboardSkeleton />}>
-									<OssLeaderboardSection
-										page={page}
-										q={q}
-										selectedTags={selectedTags}
-									/>
-								</Suspense>
-							) : null
+							<Suspense fallback={<IntegrationListSkeleton count={8} />}>
+								<OssIntegrationsSection
+									page={page}
+									q={q}
+									selectedTags={selectedTags}
+								/>
+							</Suspense>
 						}
 					/>
 				</div>
 
 				<Suspense fallback={<OssSidebarSkeleton />}>
-					<OssSidebarSection view={view} />
+					<OssSidebarSection />
 				</Suspense>
 			</div>
 		</main>

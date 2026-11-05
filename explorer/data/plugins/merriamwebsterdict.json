@@ -1,0 +1,129 @@
+{
+  "id": "merriamwebsterdict",
+  "displayName": "Merriam-Webster",
+  "description": "Dictionary API for definitions, thesaurus entries, and English language reference data.",
+  "npmPackageName": "@corsair-dev/merriamwebsterdict",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "merriamwebsterdict.api.words.get",
+      "shortPath": "words.get",
+      "description": "Look up a word in Merriam-Webster (collegiate / sd2 / sd3 / sd4), returning definitions, part of speech, pronunciation, etymology, and audio — or spelling suggestions when no entry matches",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "word",
+            "optional": false,
+            "type": "string",
+            "description": "The word to look up"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "found",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id: string, headword: string, partOfSpeech?: string, pronunciation?: string, audioUrl?: string, shortDefinitions: string[], etymology?: string[], stems: string[], offensive: boolean }[]"
+          },
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "string[]",
+            "description": "Spelling suggestions when no entry matched"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "merriamwebsterdict.db.entries.search",
+      "entityName": "entries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "src",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "section",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "offensive",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hw",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mw",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "audioUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "captured_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

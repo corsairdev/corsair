@@ -58,6 +58,7 @@ export const DiscussionsEndpoints = {
 
 export const ForksEndpoints = {
 	list: Forks.list,
+	create: Forks.create,
 };
 
 export const CommentsEndpoints = {

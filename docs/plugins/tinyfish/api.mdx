@@ -1,0 +1,1992 @@
+---
+title: API
+description: "API reference for TinyFish: every `tinyfish.api.*` operation with input and output types."
+---
+
+Every `tinyfish.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agent
+
+### cancelRun
+
+`agent.cancelRun`
+
+Cancel a pending or running run
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.agent.cancelRun({ runId: 'run_...' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | Yes | — |
+| `status` | `CANCELLED \| COMPLETED \| FAILED` | Yes | — |
+| `cancelled_at` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### cancelRuns
+
+`agent.cancelRuns`
+
+Cancel up to 100 runs in one request
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.agent.cancelRuns({ run_ids: ['run_...'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `not_found` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  run_id: string,
+  status: CANCELLED | COMPLETED | FAILED,
+  cancelled_at?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRun
+
+`agent.getRun`
+
+Get one run with its steps, screenshots and HTML artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.agent.getRun({ runId: 'run_...', screenshots: 'url' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+| `screenshots` | `base64 \| url \| none` | No | — |
+| `html` | `url \| none` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | Yes | — |
+| `status` | `PENDING \| RUNNING \| COMPLETED \| FAILED \| CANCELLED` | Yes | — |
+| `goal` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `started_at` | `string` | No | — |
+| `finished_at` | `string` | No | — |
+| `num_of_steps` | `number` | No | — |
+| `result` | `object` | No | — |
+| `output_schema` | `object` | No | — |
+| `profile_attached` | `boolean` | Yes | — |
+| `profile_id` | `string` | No | — |
+| `error` | `object` | No | — |
+| `profile_hint` | `object` | No | — |
+| `streaming_url` | `string` | No | — |
+| `browser_config` | `object` | No | — |
+| `video_url` | `string` | No | — |
+| `steps` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="output_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code?: string | null,
+  message: string,
+  category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN,
+  retry_after?: number | null,
+  help_url?: string | null,
+  help_message?: string | null,
+  profile_hint?: {
+    message: string,
+    setup_url: string,
+    reason: auth_wall | bot_challenge
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="profile_hint full type">
+
+```ts
+{
+  message: string,
+  setup_url: string,
+  reason: auth_wall | bot_challenge
+}
+```
+</Accordion>
+
+<Accordion title="browser_config full type">
+
+```ts
+{
+  proxy_enabled?: boolean | null,
+  proxy_country_code?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  id: string,
+  timestamp: string,
+  status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED,
+  action?: string | null,
+  screenshot?: string | null,
+  html?: string | null,
+  duration?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRuns
+
+`agent.getRuns`
+
+Get up to 100 runs by ID in one request
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.agent.getRuns({ run_ids: ['run_...'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `not_found` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  run_id: string,
+  status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED,
+  goal: string,
+  created_at: string,
+  started_at?: string | null,
+  finished_at?: string | null,
+  num_of_steps?: number | null,
+  result?: {
+  } | null,
+  output_schema?: {
+  } | null,
+  profile_attached: boolean,
+  profile_id?: string | null,
+  error?: {
+    code?: string | null,
+    message: string,
+    category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN,
+    retry_after?: number | null,
+    help_url?: string | null,
+    help_message?: string | null,
+    profile_hint?: {
+      message: string,
+      setup_url: string,
+      reason: auth_wall | bot_challenge
+    } | null
+  } | null,
+  profile_hint?: {
+    message: string,
+    setup_url: string,
+    reason: auth_wall | bot_challenge
+  } | null,
+  streaming_url?: string | null,
+  browser_config?: {
+    proxy_enabled?: boolean | null,
+    proxy_country_code?: string | null
+  } | null,
+  video_url?: string | null,
+  steps: {
+    id: string,
+    timestamp: string,
+    status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED,
+    action?: string | null,
+    screenshot?: string | null,
+    html?: string | null,
+    duration?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStepHtml
+
+`agent.getStepHtml`
+
+Get the full-page HTML snapshot captured at one step
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.agent.getStepHtml({ runId: 'run_...', stepId: 'evt_...' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `html` | `string` | Yes | — |
+
+
+
+---
+
+### getStepScreenshot
+
+`agent.getStepScreenshot`
+
+Get the JPEG screenshot captured at one step of a run
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.agent.getStepScreenshot({ runId: 'run_...', stepId: 'evt_...' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `sizeBytes` | `number` | Yes | — |
+
+
+
+---
+
+### listRuns
+
+`agent.listRuns`
+
+List automation runs with status and date filters
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.agent.listRuns({ status: 'RUNNING', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `PENDING \| RUNNING \| COMPLETED \| FAILED \| CANCELLED` | No | — |
+| `goal` | `string` | No | — |
+| `created_after` | `string` | No | — |
+| `created_before` | `string` | No | — |
+| `sort_direction` | `asc \| desc` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  run_id: string,
+  status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED,
+  goal: string,
+  created_at: string,
+  started_at?: string | null,
+  finished_at?: string | null,
+  num_of_steps?: number | null,
+  result?: {
+  } | null,
+  output_schema?: {
+  } | null,
+  profile_attached: boolean,
+  profile_id?: string | null,
+  error?: {
+    code?: string | null,
+    message: string,
+    category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN,
+    retry_after?: number | null,
+    help_url?: string | null,
+    help_message?: string | null,
+    profile_hint?: {
+      message: string,
+      setup_url: string,
+      reason: auth_wall | bot_challenge
+    } | null
+  } | null,
+  profile_hint?: {
+    message: string,
+    setup_url: string,
+    reason: auth_wall | bot_challenge
+  } | null,
+  streaming_url?: string | null,
+  browser_config?: {
+    proxy_enabled?: boolean | null,
+    proxy_country_code?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total: number,
+  next_cursor?: string | null,
+  has_more: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### run
+
+`agent.run`
+
+Automate a goal on a live website and wait for the result (billed per step)
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.agent.run({ url: 'https://example.com', goal: 'Extract the page title' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `goal` | `string` | Yes | — |
+| `browser_profile` | `lite \| stealth` | No | — |
+| `api_integration` | `string` | No | — |
+| `agent_config` | `object` | No | — |
+| `capture_config` | `object` | No | — |
+| `webhook_url` | `string` | No | — |
+| `use_vault` | `boolean` | No | — |
+| `use_profile` | `boolean` | No | — |
+| `profile_id` | `string` | No | — |
+| `credential_item_ids` | `string[]` | No | — |
+| `proxy_config` | `object` | No | — |
+| `output_schema` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="agent_config full type">
+
+```ts
+{
+  mode?: default | strict,
+  cursor_style?: fish | standard | green-pointer,
+  max_steps?: number,
+  max_duration_seconds?: number
+}
+```
+</Accordion>
+
+<Accordion title="capture_config full type">
+
+```ts
+{
+  elements?: boolean,
+  snapshots?: boolean,
+  screenshots?: boolean,
+  recording?: boolean,
+  html?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="proxy_config full type">
+
+```ts
+{
+  enabled: boolean,
+  country_code?: US | GB | CA | DE | FR | JP | AU | null
+}
+```
+</Accordion>
+
+<Accordion title="output_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | No | — |
+| `status` | `COMPLETED \| FAILED` | Yes | — |
+| `started_at` | `string` | No | — |
+| `finished_at` | `string` | No | — |
+| `num_of_steps` | `number` | No | — |
+| `result` | `object` | No | — |
+| `error` | `object` | No | — |
+| `profile_hint` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code?: string | null,
+  message: string,
+  category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN,
+  retry_after?: number | null,
+  help_url?: string | null,
+  help_message?: string | null,
+  profile_hint?: {
+    message: string,
+    setup_url: string,
+    reason: auth_wall | bot_challenge
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="profile_hint full type">
+
+```ts
+{
+  message: string,
+  setup_url: string,
+  reason: auth_wall | bot_challenge
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runAsync
+
+`agent.runAsync`
+
+Queue a web automation run and return its run ID (billed per step)
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.agent.runAsync({ url: 'https://example.com', goal: 'Extract the page title', webhook_url: 'https://hooks.example.com/tinyfish' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `goal` | `string` | Yes | — |
+| `browser_profile` | `lite \| stealth` | No | — |
+| `api_integration` | `string` | No | — |
+| `agent_config` | `object` | No | — |
+| `capture_config` | `object` | No | — |
+| `webhook_url` | `string` | No | — |
+| `use_vault` | `boolean` | No | — |
+| `use_profile` | `boolean` | No | — |
+| `profile_id` | `string` | No | — |
+| `credential_item_ids` | `string[]` | No | — |
+| `proxy_config` | `object` | No | — |
+| `output_schema` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="agent_config full type">
+
+```ts
+{
+  mode?: default | strict,
+  cursor_style?: fish | standard | green-pointer,
+  max_steps?: number,
+  max_duration_seconds?: number
+}
+```
+</Accordion>
+
+<Accordion title="capture_config full type">
+
+```ts
+{
+  elements?: boolean,
+  snapshots?: boolean,
+  screenshots?: boolean,
+  recording?: boolean,
+  html?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="proxy_config full type">
+
+```ts
+{
+  enabled: boolean,
+  country_code?: US | GB | CA | DE | FR | JP | AU | null
+}
+```
+</Accordion>
+
+<Accordion title="output_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | No | — |
+| `error` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code: string,
+  message: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runBatch
+
+`agent.runBatch`
+
+Queue up to 100 automation runs in a single atomic request (billed per step)
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.agent.runBatch({ runs: [{ url: 'https://example.com', goal: 'Extract the page title' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runs` | `object[]` | Yes | — |
+| `profile_id` | `string` | No | — |
+| `output_schema` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="runs full type">
+
+```ts
+{
+  url: string,
+  goal: string,
+  browser_profile?: lite | stealth,
+  api_integration?: string,
+  agent_config?: {
+    mode?: default | strict,
+    cursor_style?: fish | standard | green-pointer,
+    max_steps?: number,
+    max_duration_seconds?: number
+  },
+  capture_config?: {
+    elements?: boolean,
+    snapshots?: boolean,
+    screenshots?: boolean,
+    recording?: boolean,
+    html?: boolean
+  },
+  webhook_url?: string,
+  use_vault?: boolean,
+  credential_item_ids?: string[],
+  proxy_config?: {
+    enabled: boolean,
+    country_code?: US | GB | CA | DE | FR | JP | AU | null
+  },
+  output_schema?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="output_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_ids` | `string[]` | No | — |
+| `error` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code: string,
+  message: string,
+  details?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Browser
+
+### createSession
+
+`browser.createSession`
+
+Start a cloud browser session and return its CDP connection URL
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.browser.createSession({ url: 'https://example.com', timeout_seconds: 600 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `timeout_seconds` | `number` | No | — |
+| `proxy_config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="proxy_config full type">
+
+```ts
+{
+  enabled?: boolean,
+  type?: tinyfish | custom,
+  country_code?: string,
+  url?: string,
+  username?: string,
+  password?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `cdp_url` | `string` | Yes | — |
+| `base_url` | `string` | Yes | — |
+
+
+
+---
+
+### terminateSession
+
+`browser.terminateSession`
+
+Terminate a cloud browser session
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.browser.terminateSession({ sessionId: 'sess_...' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `terminated` | `true` | Yes | — |
+| `session_id` | `string` | Yes | — |
+
+
+
+---
+
+### usage
+
+`browser.usage`
+
+List browser session usage and byte volumes
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.browser.usage({ status: 'ended', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | No | — |
+| `start_after` | `string` | No | — |
+| `end_before` | `string` | No | — |
+| `status` | `running \| ended` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `total_pages` | `number` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  session_id: string,
+  user_id: string,
+  sub_user_id?: string | null,
+  mode: light | stealth | tf-browser,
+  start_time: string,
+  end_time?: string | null,
+  duration_ms?: number | null,
+  proxy_trg_rx_bytes?: number | null,
+  proxy_trg_tx_bytes?: number | null,
+  status: running | ended | created,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fetch
+
+### fetch
+
+`fetch.fetch`
+
+Fetch up to 10 URLs as markdown, HTML or JSON with cache revalidation
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.fetch.fetch({ urls: ['https://example.com'], format: 'markdown', links: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | — |
+| `purpose` | `string` | No | — |
+| `format` | `markdown \| html \| json` | No | — |
+| `links` | `boolean` | No | — |
+| `image_links` | `boolean` | No | — |
+| `iframe_links` | `boolean` | No | — |
+| `page_metadata` | `boolean` | No | — |
+| `ttl` | `number` | No | — |
+| `per_url_timeout_ms` | `number` | No | — |
+| `if_none_match` | `string` | No | — |
+| `if_modified_since` | `string` | No | — |
+| `include_etag_and_last_modified` | `boolean` | No | — |
+| `include_selectors` | `string[]` | No | — |
+| `exclude_selectors` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `errors` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  final_url?: string | null,
+  title?: string | null,
+  description?: string | null,
+  language?: string | null,
+  format: markdown | html | json,
+  text?: string | {
+  } | null,
+  author?: string | null,
+  published_date?: string | null,
+  links?: string[],
+  image_links?: string[],
+  iframe_links?: string[],
+  page_metadata?: {
+  },
+  latency_ms?: number | null,
+  not_modified?: boolean,
+  etag?: string,
+  last_modified?: string,
+  unmatched_selectors?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  url: string,
+  error: string,
+  status?: number,
+  unmatched_selectors?: string[],
+  candidate_selectors?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usage
+
+`fetch.usage`
+
+List recent fetch requests and their outcomes
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.fetch.usage({ status: 'completed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_after` | `string` | No | — |
+| `end_before` | `string` | No | — |
+| `status` | `completed \| failed` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `total_pages` | `number` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  final_url: string,
+  title?: string | null,
+  description?: string | null,
+  language?: string | null,
+  author?: string | null,
+  published_date?: string | null,
+  format: markdown | html | json,
+  status: completed | failed,
+  request_origin: string,
+  request_id?: string | null,
+  text_length?: number | null,
+  links_count: number,
+  image_links_count: number,
+  latency_ms?: number | null,
+  not_modified?: boolean,
+  etag?: string,
+  last_modified?: string,
+  created_at: string,
+  error?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profiles
+
+### create
+
+`profiles.create`
+
+Create a Browser Context Profile
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.profiles.create({ name: 'Work', set_as_default: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `set_as_default` | `boolean` | No | — |
+| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN` | No | — |
+| `is_default` | `boolean` | No | — |
+| `fingerprint_seed` | `string` | No | — |
+| `domain_count` | `number` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`profiles.delete`
+
+Delete a profile and all of its saved cookies and sessions
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tinyfish.api.profiles.delete({ profileId: 'p_...' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`profiles.get`
+
+Get a profile with the domains it has saved state for
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.profiles.get({ profileId: 'p_...' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN` | No | — |
+| `is_default` | `boolean` | No | — |
+| `fingerprint_seed` | `string` | No | — |
+| `domain_count` | `number` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | No | — |
+| `domains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  domain: string,
+  cookie_count: number,
+  local_storage_origin_count: number,
+  last_accessed_at: string,
+  last_written_at: string,
+  last_written_by_run_id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`profiles.list`
+
+List Browser Context Profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.profiles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profiles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  proxy_country_code?: US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN | null,
+  is_default?: boolean,
+  fingerprint_seed?: string,
+  domain_count?: number,
+  created_at: string,
+  updated_at?: string,
+  signed_in_sites?: {
+    site: string,
+    claimed_at: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`profiles.update`
+
+Rename a profile or change its proxy country and default flag
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.profiles.update({ profileId: 'p_...', name: 'Work laptop' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `set_as_default` | `boolean` | No | — |
+| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN` | No | — |
+| `is_default` | `boolean` | No | — |
+| `fingerprint_seed` | `string` | No | — |
+| `domain_count` | `number` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | No | — |
+| `domains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  domain: string,
+  cookie_count: number,
+  local_storage_origin_count: number,
+  last_accessed_at: string,
+  last_written_at: string,
+  last_written_by_run_id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Research
+
+### cancel
+
+`research.cancel`
+
+Cancel a research run
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.research.cancel({ researchRunId: 'rr_...' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `researchRunId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `research_run_id` | `string` | Yes | — |
+| `status` | `RUNNING \| COMPLETED \| FAILED \| CANCELLED \| TIMED_OUT \| QUEUED` | Yes | — |
+| `cancelled` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`research.get`
+
+Get a research run with its plan, evidence and report
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.research.get({ researchRunId: 'rr_...' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `researchRunId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `research_run_id` | `string` | Yes | — |
+| `status` | `RUNNING \| COMPLETED \| FAILED \| CANCELLED \| TIMED_OUT \| QUEUED` | Yes | — |
+| `query` | `string` | Yes | — |
+| `quick_result` | `object` | No | — |
+| `quick_result_summary` | `string` | No | — |
+| `deep_result` | `object` | No | — |
+| `run_ids` | `string[]` | Yes | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `error` | `object` | No | — |
+| `research_plan` | `object` | No | — |
+| `evidence` | `object[]` | No | — |
+| `iterations` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="quick_result full type">
+
+```ts
+{
+  answer: string,
+  citations: string[],
+  actions?: {
+    id: string,
+    label: string,
+    status: running | done | error,
+    streamingUrl?: string,
+    kind?: plan | search | fetch | browse | map,
+    iteration?: number,
+    url?: string,
+    query?: string,
+    details?: string[]
+  }[],
+  stats?: {
+    iterations: number,
+    sources_searched: number,
+    sources_fetched: number,
+    agent_runs: number,
+    claims_extracted: number,
+    termination_reason: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort,
+    subquestions_covered: number,
+    subquestions_total: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="deep_result full type">
+
+```ts
+{
+  result: string,
+  citations: string[],
+  freshness_report?: {
+    filter_applied?: {
+      domain_type?: web | news | research_paper,
+      after_date?: string,
+      before_date?: string,
+      recency_minutes?: number
+    },
+    latest_published_date?: string,
+    sources_with_dates: number,
+    sources_without_dates: number,
+    sources_in_requested_window: number,
+    fetched_at_latest?: string
+  },
+  termination_reason?: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code: string,
+  message: string,
+  details?: any | null
+}
+```
+</Accordion>
+
+<Accordion title="research_plan full type">
+
+```ts
+{
+  summary: string,
+  subquestions: {
+    id: string,
+    question: string,
+    priority: high | medium | low
+  }[],
+  search_queries: string[],
+  done: boolean,
+  review?: {
+    id: string,
+    status: pending | approve | refine | timeout,
+    expiresAt: number,
+    feedback?: string,
+    resolvedAt?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="evidence full type">
+
+```ts
+{
+  url: string,
+  title: string,
+  language?: string | null,
+  published_date?: string | null,
+  fetched_at?: string,
+  live_fetch?: boolean,
+  access_method?: fetch | browser | social,
+  discovered_by_queries?: string[],
+  search_filters?: {
+    after_date?: string,
+    before_date?: string,
+    recency_minutes?: number
+  },
+  subquestions_covered: string[],
+  claims: {
+    claim: string,
+    snippet: string,
+    subquestion_id: string,
+    confidence: high | medium | low,
+    claim_type?: fact | official_statement | reported_claim | estimate | opinion | user_sentiment | unverified
+  }[],
+  source_quality: primary | secondary | low
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`research.list`
+
+List research runs with status and date filters
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.research.list({ status: 'RUNNING' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `RUNNING \| COMPLETED \| FAILED \| CANCELLED \| TIMED_OUT \| QUEUED` | No | — |
+| `query` | `string` | No | — |
+| `created_after` | `string` | No | — |
+| `created_before` | `string` | No | — |
+| `sort_direction` | `asc \| desc` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  research_run_id: string,
+  status: RUNNING | COMPLETED | FAILED | CANCELLED | TIMED_OUT | QUEUED,
+  query: string,
+  quick_result?: {
+    answer: string,
+    citations: string[],
+    actions?: {
+      id: string,
+      label: string,
+      status: running | done | error,
+      streamingUrl?: string,
+      kind?: plan | search | fetch | browse | map,
+      iteration?: number,
+      url?: string,
+      query?: string,
+      details?: string[]
+    }[],
+    stats?: {
+      iterations: number,
+      sources_searched: number,
+      sources_fetched: number,
+      agent_runs: number,
+      claims_extracted: number,
+      termination_reason: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort,
+      subquestions_covered: number,
+      subquestions_total: number
+    }
+  } | null,
+  quick_result_summary?: string | null,
+  deep_result?: {
+    result: string,
+    citations: string[],
+    freshness_report?: {
+      filter_applied?: {
+        domain_type?: web | news | research_paper,
+        after_date?: string,
+        before_date?: string,
+        recency_minutes?: number
+      },
+      latest_published_date?: string,
+      sources_with_dates: number,
+      sources_without_dates: number,
+      sources_in_requested_window: number,
+      fetched_at_latest?: string
+    },
+    termination_reason?: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort
+  } | null,
+  run_ids: string[],
+  created_at?: string | null,
+  completed_at?: string | null,
+  error?: {
+    code: string,
+    message: string,
+    details?: any | null
+  } | null,
+  research_plan?: {
+    summary: string,
+    subquestions: {
+      id: string,
+      question: string,
+      priority: high | medium | low
+    }[],
+    search_queries: string[],
+    done: boolean,
+    review?: {
+      id: string,
+      status: pending | approve | refine | timeout,
+      expiresAt: number,
+      feedback?: string,
+      resolvedAt?: number
+    }
+  } | null,
+  evidence?: {
+    url: string,
+    title: string,
+    language?: string | null,
+    published_date?: string | null,
+    fetched_at?: string,
+    live_fetch?: boolean,
+    access_method?: fetch | browser | social,
+    discovered_by_queries?: string[],
+    search_filters?: {
+      after_date?: string,
+      before_date?: string,
+      recency_minutes?: number
+    },
+    subquestions_covered: string[],
+    claims: {
+      claim: string,
+      snippet: string,
+      subquestion_id: string,
+      confidence: high | medium | low,
+      claim_type?: fact | official_statement | reported_claim | estimate | opinion | user_sentiment | unverified
+    }[],
+    source_quality: primary | secondary | low
+  }[] | null,
+  iterations?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total: number,
+  next_cursor?: string | null,
+  has_more: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`research.start`
+
+Start a cited research run and return its research run ID
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyfish.api.research.start({ query: 'state of browser agents in 2026', mode: 'deep' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `mode` | `deep \| max` | No | — |
+| `stream` | `boolean` | No | — |
+| `output_language` | `string` | No | — |
+| `weak_sources_enabled` | `boolean` | No | — |
+| `domain_type` | `web \| news \| research_paper` | No | — |
+| `after_date` | `string` | No | — |
+| `before_date` | `string` | No | — |
+| `recency_minutes` | `number` | No | — |
+| `domain_filter` | `object` | No | — |
+| `prior_run_id` | `string` | No | — |
+| `session_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="domain_filter full type">
+
+```ts
+{
+  mode: include | exclusive,
+  domains?: string[],
+  block?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `research_run_id` | `string` | Yes | — |
+| `error` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code: string,
+  message: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### search
+
+`search.search`
+
+Search the web with intent, date, domain and academic filters
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.search.search({ query: 'open source integration layer', domain_type: 'news', recency_minutes: 1440 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `purpose` | `string` | No | — |
+| `location` | `string` | No | — |
+| `language` | `string` | No | — |
+| `include_domains` | `string` | No | — |
+| `exclude_domains` | `string` | No | — |
+| `domain_type` | `web \| news \| research_paper` | No | — |
+| `after_date` | `string` | No | — |
+| `before_date` | `string` | No | — |
+| `recency_minutes` | `number` | No | — |
+| `pub_year_min` | `number` | No | — |
+| `pub_year_max` | `number` | No | — |
+| `page` | `number` | No | — |
+| `include_thumbnail` | `true \| false` | No | — |
+| `fetch` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `total_results` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  position: number,
+  site_name: string,
+  snippet: string,
+  title: string,
+  url: string,
+  thumbnail_url?: string | null,
+  fetch?: any | null,
+  fetch_error?: any | null,
+  date?: string | null,
+  publisher?: string | null,
+  authors?: string[],
+  venue?: string | null,
+  year?: number | null,
+  cited_by_count?: number | null,
+  pdf_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usage
+
+`search.usage`
+
+List recent search requests and their stored results
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.search.usage({ status: 'completed', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_after` | `string` | No | — |
+| `end_before` | `string` | No | — |
+| `status` | `completed \| failed` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `total_pages` | `number` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  request_id: string,
+  query: string,
+  status_code: number,
+  result_count: number,
+  results?: {
+    position: number,
+    site_name: string,
+    snippet: string,
+    title: string,
+    url: string,
+    thumbnail_url?: string | null,
+    fetch?: any | null,
+    fetch_error?: any | null,
+    date?: string | null,
+    publisher?: string | null,
+    authors?: string[],
+    venue?: string | null,
+    year?: number | null,
+    cited_by_count?: number | null,
+    pdf_url?: string | null
+  }[] | null,
+  cached?: boolean | null,
+  response_size_bytes?: number | null,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vault
+
+### list
+
+`vault.list`
+
+List vault items and the credential IDs a run body can reference
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.vault.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  itemId: string,
+  connectionId?: string | null,
+  label: string,
+  vaultName: string,
+  domains: string[],
+  fieldMetadata: {
+    fieldId: string,
+    label: string,
+    type: STRING | CONCEALED | OTP
+  }[],
+  hasTotp: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Wallet
+
+### get
+
+`wallet.get`
+
+Get the wallet balance, pending top-up and per-product rates
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyfish.api.wallet.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `available_balance` | `string` | Yes | — |
+| `currency` | `USD` | Yes | — |
+| `as_of` | `string` | Yes | — |
+| `auto_reload` | `any` | No | — |
+| `pending_top_up` | `object` | No | — |
+| `rates` | `object` | No | — |
+| `agent_top_up_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="pending_top_up full type">
+
+```ts
+{
+  amount: string,
+  started_at: string
+}
+```
+</Accordion>
+
+<Accordion title="rates full type">
+
+```ts
+{
+  meters: {
+    label: string,
+    unit_amount: string,
+    currency: USD,
+    per: string
+  }[],
+  as_of: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

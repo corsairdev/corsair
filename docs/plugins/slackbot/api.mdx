@@ -1,0 +1,5047 @@
+---
+title: API
+description: "API reference for Slackbot: every `slackbot.api.*` operation with input and output types."
+---
+
+Every `slackbot.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Calls
+
+### add
+
+`calls.add`
+
+Register a call with Slack
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.calls.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_unique_id` | `string` | Yes | — |
+| `join_url` | `string` | Yes | — |
+| `created_by` | `string` | No | — |
+| `date_start` | `number` | No | — |
+| `desktop_app_join_url` | `string` | No | — |
+| `external_display_id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `users` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  slack_id?: string,
+  external_id?: string,
+  display_name?: string,
+  avatar_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `call` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="call full type">
+
+```ts
+{
+  id: string,
+  date_start?: number,
+  external_unique_id?: string,
+  join_url?: string,
+  desktop_app_join_url?: string,
+  title?: string,
+  users?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### end
+
+`calls.end`
+
+End an in-progress call
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.calls.end({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `duration` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `call` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="call full type">
+
+```ts
+{
+  id: string,
+  date_start?: number,
+  external_unique_id?: string,
+  join_url?: string,
+  desktop_app_join_url?: string,
+  title?: string,
+  users?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`calls.info`
+
+Retrieve information about a call
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.calls.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `call` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="call full type">
+
+```ts
+{
+  id: string,
+  date_start?: number,
+  external_unique_id?: string,
+  join_url?: string,
+  desktop_app_join_url?: string,
+  title?: string,
+  users?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### participantsAdd
+
+`calls.participantsAdd`
+
+Add participants to a call
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.calls.participantsAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  slack_id?: string,
+  external_id?: string,
+  display_name?: string,
+  avatar_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `call` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="call full type">
+
+```ts
+{
+  id: string,
+  date_start?: number,
+  external_unique_id?: string,
+  join_url?: string,
+  desktop_app_join_url?: string,
+  title?: string,
+  users?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### participantsRemove
+
+`calls.participantsRemove`
+
+Remove participants from a call
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.calls.participantsRemove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  slack_id?: string,
+  external_id?: string,
+  display_name?: string,
+  avatar_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `call` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="call full type">
+
+```ts
+{
+  id: string,
+  date_start?: number,
+  external_unique_id?: string,
+  join_url?: string,
+  desktop_app_join_url?: string,
+  title?: string,
+  users?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`calls.update`
+
+Update a call title or join URLs
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.calls.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `join_url` | `string` | No | — |
+| `desktop_app_join_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `call` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="call full type">
+
+```ts
+{
+  id: string,
+  date_start?: number,
+  external_unique_id?: string,
+  join_url?: string,
+  desktop_app_join_url?: string,
+  title?: string,
+  users?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Canvases
+
+### create
+
+`canvases.create`
+
+Create a standalone or channel canvas
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.canvases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `document_content` | `object` | No | — |
+| `channel_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="document_content full type">
+
+```ts
+{
+  type: markdown,
+  markdown: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `canvas_id` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`canvases.delete`
+
+Delete a canvas
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.canvases.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canvas_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### edit
+
+`canvases.edit`
+
+Apply changes to a canvas
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.canvases.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canvas_id` | `string` | Yes | — |
+| `changes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="changes full type">
+
+```ts
+{
+  operation: insert_after | insert_before | insert_at_start | insert_at_end | replace | delete,
+  section_id?: string,
+  document_content?: {
+    type: markdown,
+    markdown: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`canvases.get`
+
+Retrieve a canvas and its content
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.canvases.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canvas_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `file` | `object` | No | — |
+| `content` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`canvases.list`
+
+List canvases in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.canvases.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | — |
+| `user` | `string` | No | — |
+| `team_id` | `string` | No | — |
+| `count` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `files` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sectionsLookup
+
+`canvases.sectionsLookup`
+
+Look up section ids within a canvas
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.canvases.sectionsLookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canvas_id` | `string` | Yes | — |
+| `criteria` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="criteria full type">
+
+```ts
+{
+  section_types?: any_header | h1 | h2 | h3[],
+  contains_text?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `sections` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="sections full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conversations
+
+### archive
+
+`conversations.archive`
+
+Archive a conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.conversations.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### close
+
+`conversations.close`
+
+Close a direct message or group conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.conversations.close({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `object` | No | — |
+| `no_op` | `boolean` | No | — |
+| `already_open` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`conversations.create`
+
+Create a public or private channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.conversations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `is_private` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### find
+
+`conversations.find`
+
+Search conversations by name
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.conversations.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `exclude_archived` | `boolean` | No | — |
+| `types` | `public_channel \| private_channel \| mpim \| im[]` | No | — |
+| `team_id` | `string` | No | — |
+| `match` | `contains \| exact \| prefix` | No | — |
+| `limit` | `number` | No | — |
+| `max_pages` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channels` | `object[]` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+| `pages_scanned` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`conversations.info`
+
+Retrieve information about a conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.conversations.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `include_locale` | `boolean` | No | — |
+| `include_num_members` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invite
+
+`conversations.invite`
+
+Invite users to a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.conversations.invite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `users` | `string[]` | Yes | — |
+| `force` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### join
+
+`conversations.join`
+
+Join a public channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.conversations.join({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### kick
+
+`conversations.kick`
+
+Remove a user from a conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.conversations.kick({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### leave
+
+`conversations.leave`
+
+Leave a conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.conversations.leave({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+List conversations in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exclude_archived` | `boolean` | No | — |
+| `types` | `public_channel \| private_channel \| mpim \| im[]` | No | — |
+| `team_id` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channels` | `object[]` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForUser
+
+`conversations.listForUser`
+
+List the conversations a user belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.conversations.listForUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `exclude_archived` | `boolean` | No | — |
+| `types` | `public_channel \| private_channel \| mpim \| im[]` | No | — |
+| `team_id` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channels` | `object[]` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mark
+
+`conversations.mark`
+
+Move a conversation read cursor
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.conversations.mark({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `ts` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### members
+
+`conversations.members`
+
+List the members of a conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.conversations.members({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `members` | `string[]` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rename
+
+`conversations.rename`
+
+Rename a conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.conversations.rename({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setPurpose
+
+`conversations.setPurpose`
+
+Set a conversation purpose
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.conversations.setPurpose({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `purpose` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `purpose` | `string` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setTopic
+
+`conversations.setTopic`
+
+Set a conversation topic
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.conversations.setTopic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `topic` | `string` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unarchive
+
+`conversations.unarchive`
+
+Unarchive a conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.conversations.unarchive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+## Files
+
+### commentsDelete
+
+`files.commentsDelete`
+
+Delete a comment on a file
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.files.commentsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`files.delete`
+
+Delete a file by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.files.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### download
+
+`files.download`
+
+Download the contents of a Slack file
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.files.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | — |
+| `max_bytes` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `file` | `object` | No | — |
+| `content` | `string` | Yes | — |
+| `content_type` | `string` | No | — |
+| `byte_size` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`files.info`
+
+Retrieve detailed information about a file
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.files.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `file` | `object` | No | — |
+| `content` | `string` | No | — |
+| `comments` | `object[]` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="comments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List files in the workspace, filtered by channel, user or type
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | — |
+| `user` | `string` | No | — |
+| `ts_from` | `number` | No | — |
+| `ts_to` | `number` | No | — |
+| `types` | `string` | No | — |
+| `show_files_hidden_by_limit` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+| `count` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `files` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remoteAdd
+
+`files.remoteAdd`
+
+Register an externally hosted file with Slack
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.files.remoteAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | — |
+| `external_url` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `filetype` | `string` | No | — |
+| `indexable_file_contents` | `string` | No | — |
+| `preview_image` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `file` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remoteInfo
+
+`files.remoteInfo`
+
+Retrieve a remote file metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.files.remoteInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `file` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remoteList
+
+`files.remoteList`
+
+List remote files
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.files.remoteList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | — |
+| `ts_from` | `number` | No | — |
+| `ts_to` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `files` | `object[]` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remoteRemove
+
+`files.remoteRemove`
+
+Remove a remote file
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.files.remoteRemove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### remoteShare
+
+`files.remoteShare`
+
+Share a remote file into one or more channels
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.files.remoteShare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `string` | Yes | — |
+| `file` | `string` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `file` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remoteUpdate
+
+`files.remoteUpdate`
+
+Update an existing remote file
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.files.remoteUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `external_url` | `string` | No | — |
+| `title` | `string` | No | — |
+| `filetype` | `string` | No | — |
+| `indexable_file_contents` | `string` | No | — |
+| `preview_image` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `file` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### revokePublicUrl
+
+`files.revokePublicUrl`
+
+Revoke a file public URL
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.files.revokePublicUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `file` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sharePublicUrl
+
+`files.sharePublicUrl`
+
+Create a public URL for a file
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.files.sharePublicUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `file` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file to Slack and optionally share it to a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.files.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `alt_txt` | `string` | No | — |
+| `snippet_type` | `string` | No | — |
+| `channel_id` | `string` | No | — |
+| `initial_comment` | `string` | No | — |
+| `thread_ts` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `files` | `object[]` | No | — |
+| `file` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### delete
+
+`messages.delete`
+
+Delete a message from a conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.messages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `ts` | `string` | Yes | — |
+| `as_user` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `string` | No | — |
+| `ts` | `string` | No | — |
+
+
+
+---
+
+### deleteScheduled
+
+`messages.deleteScheduled`
+
+Cancel a scheduled message before it sends
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.messages.deleteScheduled({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `scheduled_message_id` | `string` | Yes | — |
+| `as_user` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### history
+
+`messages.history`
+
+Fetch a conversation message history
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.messages.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `latest` | `string` | No | — |
+| `oldest` | `string` | No | — |
+| `inclusive` | `boolean` | No | — |
+| `include_all_metadata` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `messages` | `object[]` | No | — |
+| `has_more` | `boolean` | No | — |
+| `pin_count` | `number` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  ts?: string,
+  text?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  thread_ts?: string,
+  reply_count?: number,
+  blocks?: {
+  }[],
+  attachments?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pinAdd
+
+`messages.pinAdd`
+
+Pin a message to a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.messages.pinAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### pinRemove
+
+`messages.pinRemove`
+
+Unpin a message from a channel
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.messages.pinRemove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### pinsList
+
+`messages.pinsList`
+
+List the pinned items in a channel
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.messages.pinsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`messages.post`
+
+Send a message to a channel, DM or thread
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.messages.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `thread_ts` | `string` | No | — |
+| `mrkdwn` | `boolean` | No | — |
+| `parse` | `full \| none` | No | — |
+| `link_names` | `boolean` | No | — |
+| `unfurl_links` | `boolean` | No | — |
+| `unfurl_media` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `as_user` | `boolean` | No | — |
+| `icon_emoji` | `string` | No | — |
+| `icon_url` | `string` | No | — |
+| `username` | `string` | No | — |
+| `reply_broadcast` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `string` | No | — |
+| `ts` | `string` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  ts?: string,
+  text?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  thread_ts?: string,
+  reply_count?: number,
+  blocks?: {
+  }[],
+  attachments?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postEphemeral
+
+`messages.postEphemeral`
+
+Send a message visible only to a single user
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.messages.postEphemeral({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `thread_ts` | `string` | No | — |
+| `mrkdwn` | `boolean` | No | — |
+| `parse` | `full \| none` | No | — |
+| `link_names` | `boolean` | No | — |
+| `unfurl_links` | `boolean` | No | — |
+| `unfurl_media` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `as_user` | `boolean` | No | — |
+| `icon_emoji` | `string` | No | — |
+| `icon_url` | `string` | No | — |
+| `username` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `message_ts` | `string` | No | — |
+
+
+
+---
+
+### postMe
+
+`messages.postMe`
+
+Send a me-style message to a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.messages.postMe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `string` | No | — |
+| `ts` | `string` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  ts?: string,
+  text?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  thread_ts?: string,
+  reply_count?: number,
+  blocks?: {
+  }[],
+  attachments?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reactionAdd
+
+`messages.reactionAdd`
+
+Add an emoji reaction to a message
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.messages.reactionAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `channel` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### reactionRemove
+
+`messages.reactionRemove`
+
+Remove an emoji reaction from a message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.messages.reactionRemove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `channel` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### reactionsGet
+
+`messages.reactionsGet`
+
+Fetch the reactions on a message or file
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.messages.reactionsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+| `file` | `string` | No | — |
+| `file_comment` | `string` | No | — |
+| `full` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `type` | `string` | No | — |
+| `channel` | `string` | No | — |
+| `message` | `object` | No | — |
+| `file` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  ts?: string,
+  text?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  thread_ts?: string,
+  reply_count?: number,
+  blocks?: {
+  }[],
+  attachments?: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  size?: number,
+  user?: string,
+  created?: number,
+  is_external?: boolean,
+  is_public?: boolean,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  external_id?: string,
+  external_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reactionsList
+
+`messages.reactionsList`
+
+List the items a user has reacted to
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.messages.reactionsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `full` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replies
+
+`messages.replies`
+
+Fetch the replies in a message thread
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.messages.replies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `ts` | `string` | Yes | — |
+| `latest` | `string` | No | — |
+| `oldest` | `string` | No | — |
+| `inclusive` | `boolean` | No | — |
+| `include_all_metadata` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `messages` | `object[]` | No | — |
+| `has_more` | `boolean` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  ts?: string,
+  text?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  thread_ts?: string,
+  reply_count?: number,
+  blocks?: {
+  }[],
+  attachments?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### schedule
+
+`messages.schedule`
+
+Schedule a message to be sent at a future time
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.messages.schedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `post_at` | `number` | Yes | — |
+| `text` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `thread_ts` | `string` | No | — |
+| `mrkdwn` | `boolean` | No | — |
+| `parse` | `full \| none` | No | — |
+| `link_names` | `boolean` | No | — |
+| `unfurl_links` | `boolean` | No | — |
+| `unfurl_media` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `as_user` | `boolean` | No | — |
+| `reply_broadcast` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `string` | No | — |
+| `scheduled_message_id` | `string` | No | — |
+| `post_at` | `number` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  ts?: string,
+  text?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  thread_ts?: string,
+  reply_count?: number,
+  blocks?: {
+  }[],
+  attachments?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`messages.update`
+
+Update the text or blocks of an existing message
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.messages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `ts` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `as_user` | `boolean` | No | — |
+| `link_names` | `boolean` | No | — |
+| `parse` | `full \| none` | No | — |
+| `metadata` | `object` | No | — |
+| `reply_broadcast` | `boolean` | No | — |
+| `file_ids` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `string` | No | — |
+| `ts` | `string` | No | — |
+| `text` | `string` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  ts?: string,
+  text?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  thread_ts?: string,
+  reply_count?: number,
+  blocks?: {
+  }[],
+  attachments?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reminders
+
+### add
+
+`reminders.add`
+
+Create a reminder
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.reminders.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `time` | `number \| string` | Yes | — |
+| `user` | `string` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `reminder` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="reminder full type">
+
+```ts
+{
+  id: string,
+  creator?: string,
+  user?: string,
+  text?: string,
+  recurring?: boolean,
+  time?: number,
+  complete_ts?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### complete
+
+`reminders.complete`
+
+Mark a reminder complete (deprecated by Slack)
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.reminders.complete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reminder` | `string` | Yes | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`reminders.delete`
+
+Delete a reminder
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slackbot.api.reminders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reminder` | `string` | Yes | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### info
+
+`reminders.info`
+
+Retrieve information about a reminder
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.reminders.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reminder` | `string` | Yes | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `reminder` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="reminder full type">
+
+```ts
+{
+  id: string,
+  creator?: string,
+  user?: string,
+  text?: string,
+  recurring?: boolean,
+  time?: number,
+  complete_ts?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`reminders.list`
+
+List the reminders visible to the token
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.reminders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `reminders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reminders full type">
+
+```ts
+{
+  id: string,
+  creator?: string,
+  user?: string,
+  text?: string,
+  recurring?: boolean,
+  time?: number,
+  complete_ts?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Team
+
+### emojiList
+
+`team.emojiList`
+
+List the workspace custom emoji
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.team.emojiList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_categories` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `emoji` | `object` | No | — |
+| `categories` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emoji full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`team.info`
+
+Fetch workspace information
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.team.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `string` | No | — |
+| `domain` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `team` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="team full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  domain?: string,
+  email_domain?: string,
+  icon?: {
+  },
+  enterprise_id?: string,
+  enterprise_name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### openDm
+
+`team.openDm`
+
+Open a direct or multi-person direct message
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.team.openDm({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | — |
+| `users` | `string[]` | No | — |
+| `prevent_creation` | `boolean` | No | — |
+| `return_im` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `channel` | `object` | No | — |
+| `no_op` | `boolean` | No | — |
+| `already_open` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  is_archived?: boolean,
+  is_general?: boolean,
+  is_member?: boolean,
+  created?: number,
+  creator?: string,
+  num_members?: number,
+  topic?: {
+  },
+  purpose?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### profileGet
+
+`team.profileGet`
+
+Fetch the workspace profile field definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.team.profileGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `visibility` | `all \| visible \| hidden` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `profile` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unfurl
+
+`team.unfurl`
+
+Attach a custom preview to a link in a message
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.team.unfurl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `ts` | `string` | Yes | — |
+| `unfurls` | `object` | Yes | — |
+| `user_auth_message` | `string` | No | — |
+| `user_auth_required` | `boolean` | No | — |
+| `user_auth_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="unfurls full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+## User Groups
+
+### create
+
+`userGroups.create`
+
+Create a user group
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.userGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `handle` | `string` | No | — |
+| `description` | `string` | No | — |
+| `channels` | `string[]` | No | — |
+| `include_count` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `usergroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="usergroup full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  handle?: string,
+  description?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_delete?: number,
+  user_count?: number | string,
+  users?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disable
+
+`userGroups.disable`
+
+Disable a user group
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.userGroups.disable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usergroup` | `string` | Yes | — |
+| `include_count` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `usergroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="usergroup full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  handle?: string,
+  description?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_delete?: number,
+  user_count?: number | string,
+  users?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enable
+
+`userGroups.enable`
+
+Enable a user group
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.userGroups.enable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usergroup` | `string` | Yes | — |
+| `include_count` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `usergroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="usergroup full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  handle?: string,
+  description?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_delete?: number,
+  user_count?: number | string,
+  users?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`userGroups.list`
+
+List the workspace user groups
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.userGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_disabled` | `boolean` | No | — |
+| `include_count` | `boolean` | No | — |
+| `include_users` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `usergroups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="usergroups full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  handle?: string,
+  description?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_delete?: number,
+  user_count?: number | string,
+  users?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`userGroups.update`
+
+Update a user group name, handle or channels
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.userGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usergroup` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `handle` | `string` | No | — |
+| `description` | `string` | No | — |
+| `channels` | `string[]` | No | — |
+| `include_count` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `usergroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="usergroup full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  handle?: string,
+  description?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_delete?: number,
+  user_count?: number | string,
+  users?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usersList
+
+`userGroups.usersList`
+
+List the members of a user group
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.userGroups.usersList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usergroup` | `string` | Yes | — |
+| `include_disabled` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `users` | `string[]` | No | — |
+
+
+
+---
+
+### usersUpdate
+
+`userGroups.usersUpdate`
+
+Replace a user group membership
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.userGroups.usersUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usergroup` | `string` | Yes | — |
+| `users` | `string[]` | Yes | — |
+| `include_count` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `usergroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="usergroup full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  handle?: string,
+  description?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_delete?: number,
+  user_count?: number | string,
+  users?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### botsInfo
+
+`users.botsInfo`
+
+Retrieve information about a bot user
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.users.botsInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bot` | `string` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `bot` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="bot full type">
+
+```ts
+{
+  id?: string,
+  deleted?: boolean,
+  name?: string,
+  updated?: number,
+  app_id?: string,
+  user_id?: string,
+  icons?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### dndInfo
+
+`users.dndInfo`
+
+Retrieve a user do-not-disturb status
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.users.dndInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `dnd_enabled` | `boolean` | No | — |
+| `next_dnd_start_ts` | `number` | No | — |
+| `next_dnd_end_ts` | `number` | No | — |
+| `snooze_enabled` | `boolean` | No | — |
+| `snooze_endtime` | `number` | No | — |
+| `snooze_remaining` | `number` | No | — |
+
+
+
+---
+
+### dndTeamInfo
+
+`users.dndTeamInfo`
+
+Retrieve do-not-disturb status for several users
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.users.dndTeamInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `string[]` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `users` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### find
+
+`users.find`
+
+Search users by name, display name or email
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.users.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `include_deleted` | `boolean` | No | — |
+| `include_bots` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `max_pages` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `members` | `object[]` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+| `pages_scanned` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  real_name?: string,
+  deleted?: boolean,
+  is_bot?: boolean,
+  is_admin?: boolean,
+  is_owner?: boolean,
+  is_app_user?: boolean,
+  tz?: string,
+  updated?: number,
+  profile?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPresence
+
+`users.getPresence`
+
+Retrieve a user presence
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.users.getPresence({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `presence` | `string` | No | — |
+| `online` | `boolean` | No | — |
+| `auto_away` | `boolean` | No | — |
+| `manual_away` | `boolean` | No | — |
+| `connection_count` | `number` | No | — |
+| `last_activity` | `number` | No | — |
+
+
+
+---
+
+### getProfile
+
+`users.getProfile`
+
+Retrieve a user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.users.getProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `include_labels` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `profile` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`users.info`
+
+Retrieve detailed information about a user
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.users.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | — |
+| `include_locale` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  real_name?: string,
+  deleted?: boolean,
+  is_bot?: boolean,
+  is_admin?: boolean,
+  is_owner?: boolean,
+  is_app_user?: boolean,
+  tz?: string,
+  updated?: number,
+  profile?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List the users in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_locale` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `members` | `object[]` | No | — |
+| `cache_ts` | `number` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  real_name?: string,
+  deleted?: boolean,
+  is_bot?: boolean,
+  is_admin?: boolean,
+  is_owner?: boolean,
+  is_app_user?: boolean,
+  tz?: string,
+  updated?: number,
+  profile?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  warnings?: string[],
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### lookupByEmail
+
+`users.lookupByEmail`
+
+Look up a user by email address (deprecated by Slack)
+
+**Risk:** `read`
+
+```ts
+await corsair.slackbot.api.users.lookupByEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  real_name?: string,
+  deleted?: boolean,
+  is_bot?: boolean,
+  is_admin?: boolean,
+  is_owner?: boolean,
+  is_app_user?: boolean,
+  tz?: string,
+  updated?: number,
+  profile?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setActive
+
+`users.setActive`
+
+Mark the calling user as active
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.users.setActive({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+
+### setPresence
+
+`users.setPresence`
+
+Set the calling user presence
+
+**Risk:** `write`
+
+```ts
+await corsair.slackbot.api.users.setPresence({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presence` | `auto \| away` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `warning` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+
+
+
+---
+

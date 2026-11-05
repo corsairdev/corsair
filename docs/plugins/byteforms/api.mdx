@@ -1,0 +1,373 @@
+---
+title: API
+description: "API reference for ByteForms: every `byteforms.api.*` operation with input and output types."
+---
+
+Every `byteforms.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Forms
+
+### create
+
+`forms.create`
+
+Create a new ByteForms form with custom fields and options
+
+**Risk:** `write`
+
+```ts
+await corsair.byteforms.api.forms.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `object[]` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  component: string,
+  type?: string,
+  label?: string,
+  id?: string,
+  required?: boolean,
+  placeholder?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  one_submission_per_email?: boolean,
+  thank_you_message?: string,
+  max_submissions?: number,
+  stop_submissions_after?: string | null,
+  submit_button_text?: string,
+  form_width?: string,
+  redirect_url?: string,
+  password?: string,
+  theme?: string,
+  visibility?: string,
+  page_behaviour?: string,
+  custom_code?: string,
+  draft_submissions?: boolean,
+  remove_branding?: boolean,
+  email_notifications?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `status` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  public_id: string,
+  name: string,
+  body: {
+    component: string,
+    type?: string,
+    label?: string,
+    id?: string,
+    required?: boolean,
+    placeholder?: string
+  }[],
+  pages?: any | null,
+  is_custom: boolean,
+  options: {
+    one_submission_per_email?: boolean,
+    thank_you_message?: string,
+    max_submissions?: number,
+    stop_submissions_after?: string | null,
+    submit_button_text?: string,
+    form_width?: string,
+    redirect_url?: string,
+    password?: string,
+    theme?: string,
+    visibility?: string,
+    page_behaviour?: string,
+    custom_code?: string,
+    draft_submissions?: boolean,
+    remove_branding?: boolean,
+    email_notifications?: boolean
+  },
+  user_id: number,
+  created_at: string,
+  updated_at: string,
+  deleted_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`forms.delete`
+
+Delete a ByteForms form by its numeric or public ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.byteforms.api.forms.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `boolean` | No | — |
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`forms.get`
+
+Retrieve a single ByteForms form definition by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.byteforms.api.forms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `status` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  public_id: string,
+  name: string,
+  body: {
+    component: string,
+    type?: string,
+    label?: string,
+    id?: string,
+    required?: boolean,
+    placeholder?: string
+  }[],
+  pages?: any | null,
+  is_custom: boolean,
+  options: {
+    one_submission_per_email?: boolean,
+    thank_you_message?: string,
+    max_submissions?: number,
+    stop_submissions_after?: string | null,
+    submit_button_text?: string,
+    form_width?: string,
+    redirect_url?: string,
+    password?: string,
+    theme?: string,
+    visibility?: string,
+    page_behaviour?: string,
+    custom_code?: string,
+    draft_submissions?: boolean,
+    remove_branding?: boolean,
+    email_notifications?: boolean
+  },
+  user_id: number,
+  created_at: string,
+  updated_at: string,
+  deleted_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`forms.list`
+
+List all ByteForms forms created by the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.byteforms.api.forms.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `status` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  public_id: string,
+  name: string,
+  body: {
+    component: string,
+    type?: string,
+    label?: string,
+    id?: string,
+    required?: boolean,
+    placeholder?: string
+  }[],
+  pages?: any | null,
+  is_custom: boolean,
+  options: {
+    one_submission_per_email?: boolean,
+    thank_you_message?: string,
+    max_submissions?: number,
+    stop_submissions_after?: string | null,
+    submit_button_text?: string,
+    form_width?: string,
+    redirect_url?: string,
+    password?: string,
+    theme?: string,
+    visibility?: string,
+    page_behaviour?: string,
+    custom_code?: string,
+    draft_submissions?: boolean,
+    remove_branding?: boolean,
+    email_notifications?: boolean
+  },
+  user_id: number,
+  created_at: string,
+  updated_at: string,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### responses
+
+`forms.responses`
+
+Retrieve paginated responses submitted to a ByteForms form
+
+**Risk:** `read`
+
+```ts
+await corsair.byteforms.api.forms.responses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `query` | `string` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `cursor` | `object` | Yes | — |
+| `data` | `object` | Yes | — |
+| `status` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="cursor full type">
+
+```ts
+{
+  after?: string | null,
+  before?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  form_id: number,
+  response: {
+  },
+  options?: {
+    ip?: string
+  },
+  created_at: string,
+  updated_at: string,
+  deleted_at?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

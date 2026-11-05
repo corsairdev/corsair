@@ -5,7 +5,6 @@ import type {
 } from 'corsair/http';
 import { request } from 'corsair/http';
 
-const ATLASSIAN_TOKEN_URL = 'https://auth.atlassian.com/oauth/token';
 const ATLASSIAN_ACCESSIBLE_RESOURCES_URL =
 	'https://api.atlassian.com/oauth/token/accessible-resources';
 
@@ -19,94 +18,12 @@ const CONFLUENCE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
-type AtlassianTokenResponse = {
-	access_token: string;
-	refresh_token?: string;
-	expires_in: number;
-};
-
 export type ConfluenceCloudResource = {
 	id: string;
 	url: string;
 	name: string;
 	scopes: string[];
 };
-
-async function refreshConfluenceAccessToken(
-	clientId: string,
-	clientSecret: string,
-	refreshToken: string,
-): Promise<AtlassianTokenResponse> {
-	const response = await fetch(ATLASSIAN_TOKEN_URL, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			grant_type: 'refresh_token',
-			client_id: clientId,
-			client_secret: clientSecret,
-			refresh_token: refreshToken,
-		}),
-	});
-
-	if (!response.ok) {
-		throw new Error(
-			`Failed to refresh Confluence access token (${response.status}): ${await response.text()}`,
-		);
-	}
-
-	return (await response.json()) as AtlassianTokenResponse;
-}
-
-export async function getValidConfluenceAccessToken({
-	accessToken,
-	expiresAt,
-	clientId,
-	clientSecret,
-	refreshToken,
-	forceRefresh = false,
-}: {
-	accessToken?: string | null;
-	expiresAt?: string | null;
-	clientId: string;
-	clientSecret: string;
-	refreshToken: string;
-	forceRefresh?: boolean;
-}): Promise<{
-	accessToken: string;
-	refreshToken: string;
-	expiresAt: number;
-	refreshed: boolean;
-}> {
-	const now = Math.floor(Date.now() / 1000);
-	const bufferSeconds = 5 * 60;
-
-	if (
-		!forceRefresh &&
-		accessToken &&
-		expiresAt &&
-		Number(expiresAt) > now + bufferSeconds
-	) {
-		return {
-			accessToken,
-			refreshToken,
-			expiresAt: Number(expiresAt),
-			refreshed: false,
-		};
-	}
-
-	const tokenData = await refreshConfluenceAccessToken(
-		clientId,
-		clientSecret,
-		refreshToken,
-	);
-
-	return {
-		accessToken: tokenData.access_token,
-		refreshToken: tokenData.refresh_token ?? refreshToken,
-		expiresAt: now + tokenData.expires_in,
-		refreshed: true,
-	};
-}
 
 export function normalizeConfluenceCloudUrl(cloudUrl: string): string {
 	const trimmed = cloudUrl.trim();

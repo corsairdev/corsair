@@ -13,9 +13,17 @@ A plugin PR may only touch:
 - `packages/<plugin>/**` (exactly one plugin per PR)
 - the registration edit in `packages/corsair/core/constants.ts`
 - `pnpm-lock.yaml`
+- `docs/plugins/<plugin>/**` (generated docs for that same plugin)
+- `docs/docs.json` (Mintlify nav; `generate:docs` updates this)
 
 Anything else fails the gate. Use `pnpm generate:plugin` to scaffold — it
-produces exactly this footprint.
+produces exactly this footprint. Docs for a *different* plugin are still out
+of scope.
+
+PRs that only touch `packages/<plugin>/plugin-docs.yaml` and/or
+`docs/plugins/<plugin>/**` (and `docs/docs.json` if generate rewrote nav)
+are docs PRs: the plugin gate is skipped (no demo video / R2–R4), and CI
+uses the documentation skip-heavy lane.
 
 ## R2 — Tests required
 

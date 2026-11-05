@@ -1,0 +1,253 @@
+---
+title: API
+description: "API reference for Bolt IoT: every `boltiot.api.*` operation with input and output types."
+---
+
+Every `boltiot.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Device
+
+### analogRead
+
+`device.analogRead`
+
+Read the analog value (0-1023) from a specified pin on a Bolt device
+
+**Risk:** `read`
+
+```ts
+await corsair.boltiot.api.device.analogRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceName` | `string` | Yes | The ID/Name of the Bolt IoT device |
+| `pin` | `string` | Yes | Analog pin to read from (e.g. A0) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `value` | `number` | Yes | Analog value reading (0-1023) |
+| `rawValue` | `string` | Yes | — |
+| `pin` | `string` | Yes | — |
+| `deviceName` | `string` | Yes | — |
+
+
+
+---
+
+### checkStatus
+
+`device.checkStatus`
+
+Check whether a specified Bolt device is online
+
+**Risk:** `read`
+
+```ts
+await corsair.boltiot.api.device.checkStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceName` | `string` | Yes | The ID/Name of the Bolt IoT device (e.g. BOLT1234567) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `value` | `string` | Yes | Device status from isOnline: "online" or "offline" |
+| `time` | `string` | No | Official isOnline timestamp when that status last changed |
+| `deviceName` | `string` | Yes | — |
+
+
+
+---
+
+### digitalRead
+
+`device.digitalRead`
+
+Read the status of a digital pin on a specified Bolt device
+
+**Risk:** `read`
+
+```ts
+await corsair.boltiot.api.device.digitalRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceName` | `string` | Yes | The ID/Name of the Bolt IoT device |
+| `pin` | `string` | Yes | Digital pin to read from (e.g. "0", "1", "2", "3", "4") |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `value` | `string` | Yes | Digital pin state ("1" for HIGH, "0" for LOW) |
+| `pin` | `string` | Yes | — |
+| `deviceName` | `string` | Yes | — |
+
+
+
+---
+
+### digitalWrite
+
+`device.digitalWrite`
+
+Set a digital pin HIGH or LOW on a specified Bolt device
+
+**Risk:** `write`
+
+```ts
+await corsair.boltiot.api.device.digitalWrite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceName` | `string` | Yes | The ID/Name of the Bolt IoT device |
+| `pin` | `string` | Yes | Digital pin to write to (e.g. "0", "1", "2", "3", "4") |
+| `state` | `0 \| 1 \| HIGH \| LOW` | Yes | State to set pin to |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `value` | `string` | Yes | Response value from device |
+| `pin` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `deviceName` | `string` | Yes | — |
+
+
+
+---
+
+## Serial
+
+### read
+
+`serial.read`
+
+Read incoming serial data from a Bolt device UART
+
+**Risk:** `read`
+
+```ts
+await corsair.boltiot.api.serial.read({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceName` | `string` | Yes | The ID/Name of the Bolt IoT device |
+| `till` | `string` | No | ASCII character code to read until (e.g. "10" for newline) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `value` | `string` | Yes | Serial data read from device |
+| `deviceName` | `string` | Yes | — |
+
+
+
+---
+
+### write
+
+`serial.write`
+
+Send ASCII serial data to a Bolt device over UART
+
+**Risk:** `write`
+
+```ts
+await corsair.boltiot.api.serial.write({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceName` | `string` | Yes | The ID/Name of the Bolt IoT device |
+| `data` | `string` | Yes | ASCII data string to send over UART |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `value` | `string` | Yes | Response status from serial write |
+| `deviceName` | `string` | Yes | — |
+
+
+
+---
+
+### writeRead
+
+`serial.writeRead`
+
+Send serial data and read reply immediately on a Bolt device
+
+**Risk:** `write`
+
+```ts
+await corsair.boltiot.api.serial.writeRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceName` | `string` | Yes | The ID/Name of the Bolt IoT device |
+| `data` | `string` | Yes | ASCII data string to send over UART |
+| `till` | `string` | No | ASCII character code to read reply until |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `value` | `string` | Yes | Reply received from serial write & read command |
+| `deviceName` | `string` | Yes | — |
+
+
+
+---
+

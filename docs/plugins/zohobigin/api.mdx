@@ -1,0 +1,2612 @@
+---
+title: API
+description: "API reference for Zoho Bigin: every `zohobigin.api.*` operation with input and output types."
+---
+
+Every `zohobigin.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attachments
+
+### delete
+
+`attachments.delete`
+
+Delete attachment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohobigin.api.attachments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `attachmentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### download
+
+`attachments.download`
+
+Download attachment
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.attachments.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `attachmentId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`attachments.get`
+
+Get attachments
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.attachments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`attachments.upload`
+
+Upload attachment
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.attachments.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `file` | `any` | No | — |
+| `attachmentUrl` | `string` | No | — |
+| `attachment_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bulk
+
+### createReadJob
+
+`bulk.createReadJob`
+
+Create bulk read job
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.bulk.createReadJob({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### downloadReadResult
+
+`bulk.downloadReadResult`
+
+Download bulk read result
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.bulk.downloadReadResult({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getReadJobStatus
+
+`bulk.getReadJobStatus`
+
+Get bulk read job status
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.bulk.getReadJobStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Metadata
+
+### getCustomView
+
+`metadata.getCustomView`
+
+Get custom view
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.metadata.getCustomView({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `viewId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_views` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="custom_views full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCustomViews
+
+`metadata.getCustomViews`
+
+Get custom views
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.metadata.getCustomViews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_views` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="custom_views full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFields
+
+`metadata.getFields`
+
+Get fields
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.metadata.getFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLayout
+
+`metadata.getLayout`
+
+Get layout
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.metadata.getLayout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `layoutId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `layouts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="layouts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLayouts
+
+`metadata.getLayouts`
+
+Get layouts
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.metadata.getLayouts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `layouts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="layouts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getModule
+
+`metadata.getModule`
+
+Get module metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.metadata.getModule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modules` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="modules full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getModules
+
+`metadata.getModules`
+
+Get modules
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.metadata.getModules({});
+```
+
+**Input:** `void`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modules` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="modules full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRelatedLists
+
+`metadata.getRelatedLists`
+
+Get related lists
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.metadata.getRelatedLists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `related_lists` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="related_lists full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Create notes
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.notes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Note_Title?: string,
+  Note_Content: string,
+  Parent_Id?: string,
+  se_module?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createRecordNotes
+
+`notes.createRecordNotes`
+
+Create record notes
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.notes.createRecordNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Note_Title?: string,
+  Note_Content: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`notes.delete`
+
+Delete notes
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohobigin.api.notes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteRecordNote
+
+`notes.deleteRecordNote`
+
+Delete record note
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohobigin.api.notes.deleteRecordNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `noteId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAll
+
+`notes.getAll`
+
+Get all notes
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.notes.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecordNotes
+
+`notes.getRecordNotes`
+
+Get record notes
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.notes.getRecordNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`notes.update`
+
+Update note
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.notes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `noteId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Note_Title?: string,
+  Note_Content: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notifications
+
+### disable
+
+`notifications.disable`
+
+Disable notifications
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.notifications.disable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enable
+
+`notifications.enable`
+
+Enable notifications
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.notifications.enable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="watch full type">
+
+```ts
+{
+  channel_id: string,
+  events: string[],
+  token?: string,
+  notify_url: string,
+  channel_expiry?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDetails
+
+`notifications.getDetails`
+
+Get notification details
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.notifications.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | No | — |
+| `channel_id` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watch` | `object[]` | Yes | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="watch full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDetails
+
+`notifications.updateDetails`
+
+Update notification details
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.notifications.updateDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="watch full type">
+
+```ts
+{
+  channel_id: string,
+  events: string[],
+  token?: string,
+  notify_url: string,
+  channel_expiry?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateInfo
+
+`notifications.updateInfo`
+
+Update notification info
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.notifications.updateInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="watch full type">
+
+```ts
+{
+  channel_id: string,
+  events: string[],
+  token?: string,
+  notify_url: string,
+  channel_expiry?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Records
+
+### add
+
+`records.add`
+
+Add records to module
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.records.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | Target module API name e.g. Contacts, Pipelines, Accounts |
+| `data` | `object[]` | Yes | Array of record objects to insert |
+| `trigger` | `string[]` | No | Triggers such as approval, workflow, blueprint |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### count
+
+`records.count`
+
+Count records
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.records.count({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `cvid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `string \| number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`records.delete`
+
+Delete multiple records
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohobigin.api.records.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deletePhoto
+
+`records.deletePhoto`
+
+Delete record photo
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohobigin.api.records.deletePhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### deleteRecord
+
+`records.deleteRecord`
+
+Delete single record
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohobigin.api.records.deleteRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### downloadPhoto
+
+`records.downloadPhoto`
+
+Download record photo
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.records.downloadPhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`records.get`
+
+Get records from module
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.records.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `sort_by` | `string` | No | — |
+| `sort_order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+  per_page?: number,
+  count?: number,
+  page?: number,
+  more_records?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDeleted
+
+`records.getDeleted`
+
+Get deleted records
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.records.getDeleted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `type` | `all \| recycle \| permanent` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPipelines
+
+`records.getPipelines`
+
+Get team pipelines
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.records.getPipelines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+  per_page?: number,
+  count?: number,
+  page?: number,
+  more_records?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecord
+
+`records.getRecord`
+
+Get single record
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.records.getRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRelated
+
+`records.getRelated`
+
+Get related records
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.records.getRelated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `relatedList` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+  per_page?: number,
+  count?: number,
+  page?: number,
+  more_records?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`records.search`
+
+Search records
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.records.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `criteria` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `word` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+  per_page?: number,
+  count?: number,
+  page?: number,
+  more_records?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`records.update`
+
+Update multiple records
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.records.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}& {
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRecord
+
+`records.updateRecord`
+
+Update single record
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.records.updateRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRelated
+
+`records.updateRelated`
+
+Update related records
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.records.updateRelated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `relatedList` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadPhoto
+
+`records.uploadPhoto`
+
+Upload record photo
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.records.uploadPhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `file` | `any` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### upsert
+
+`records.upsert`
+
+Upsert records
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.records.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `duplicate_check_fields` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### addToRecords
+
+`tags.addToRecords`
+
+Add tags to records
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.tags.addToRecords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `tags` | `object[]` | Yes | — |
+| `overWrite` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`tags.create`
+
+Create tags
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.tags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `tags` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delinkRelated
+
+`tags.delinkRelated`
+
+Delink related records
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohobigin.api.tags.delinkRelated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `module` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `relatedList` | `string` | Yes | — |
+| `relatedRecordId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  details: {
+  },
+  message: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getOrganization
+
+`users.getOrganization`
+
+Get organization details
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.users.getOrganization({});
+```
+
+**Input:** `void`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="org full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProfiles
+
+`users.getProfiles`
+
+Get profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.users.getProfiles({});
+```
+
+**Input:** `void`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profiles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRoles
+
+`users.getRoles`
+
+Get roles
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.users.getRoles({});
+```
+
+**Input:** `void`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="roles full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUser
+
+`users.getUser`
+
+Get user
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.users.getUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUsers
+
+`users.getUsers`
+
+Get users
+
+**Risk:** `read`
+
+```ts
+await corsair.zohobigin.api.users.getUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `ActiveUsers \| DeactiveUsers \| AdminUsers \| AllUsers` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateUser
+
+`users.updateUser`
+
+Update user
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.users.updateUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateUsers
+
+`users.updateUsers`
+
+Update users
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.users.updateUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+}& {
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadOrgPhoto
+
+`users.uploadOrgPhoto`
+
+Upload organization photo
+
+**Risk:** `write`
+
+```ts
+await corsair.zohobigin.api.users.uploadOrgPhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `any` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+
+
+
+---
+

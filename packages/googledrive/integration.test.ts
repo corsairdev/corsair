@@ -9,6 +9,9 @@ async function createGoogleDriveClient() {
 	const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
 	const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
 	if (!clientId || !clientSecret || !accessToken || !refreshToken) {
+		console.warn(
+			'Skipping Google Drive integration tests: missing GOOGLE_* credentials',
+		);
 		return null;
 	}
 
@@ -180,6 +183,29 @@ describe('Google Drive plugin integration', () => {
 			.execute();
 
 		expect(searchEvents.length).toBeGreaterThan(0);
+
+		testDb.cleanup();
+	});
+
+	it('storage endpoints reach API', async () => {
+		const setup = await createGoogleDriveClient();
+		if (!setup) {
+			return;
+		}
+
+		const { corsair, testDb } = setup;
+
+		const quotaResponse = await corsair.googledrive.api.storage.getQuota({});
+
+		expect(quotaResponse).toBeDefined();
+		expect(quotaResponse.usage).toBeDefined();
+
+		const quotaEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googledrive.storage.getQuota')
+			.execute();
+
+		expect(quotaEvents.length).toBeGreaterThan(0);
 
 		testDb.cleanup();
 	});

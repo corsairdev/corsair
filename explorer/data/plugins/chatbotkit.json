@@ -1,0 +1,2954 @@
+{
+  "id": "chatbotkit",
+  "displayName": "ChatBotKit",
+  "description": "AI chatbot platform for building conversational agents with custom knowledge bases.",
+  "npmPackageName": "@corsair-dev/chatbotkit",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 43,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "chatbotkit.api.blueprints.create",
+      "shortPath": "blueprints.create",
+      "description": "Create a new blueprint configuration template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the blueprint template"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the blueprint template"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{}",
+            "description": "Configuration dictionary"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Visibility level"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.blueprints.delete",
+      "shortPath": "blueprints.delete",
+      "description": "Permanently delete a blueprint template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the blueprint to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.blueprints.get",
+      "shortPath": "blueprints.get",
+      "description": "Fetch a blueprint template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the blueprint to fetch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the blueprint"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string",
+            "description": "Custom alias for the blueprint"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Descriptive name of the blueprint"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Brief description of blueprint configuration"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{}",
+            "description": "Template configuration settings"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility setting"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number",
+            "description": "Creation timestamp in milliseconds"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number",
+            "description": "Last updated timestamp in milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.blueprints.list",
+      "shortPath": "blueprints.list",
+      "description": "List blueprint templates, cursor-paginated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of items to return"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort order by creation time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, config?: {} | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "description": "List of blueprints matching the query"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor for the next page of results"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.blueprints.update",
+      "shortPath": "blueprints.update",
+      "description": "Update an existing blueprint template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the blueprint to update"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Updated name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Updated description"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{}",
+            "description": "Updated configuration"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Updated visibility"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Updated metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.bots.create",
+      "shortPath": "bots.create",
+      "description": "Create a new AI bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the bot"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the bot"
+          },
+          {
+            "key": "backstory",
+            "optional": true,
+            "type": "string",
+            "description": "Instructions and persona for the bot"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string",
+            "description": "AI model to use for the bot"
+          },
+          {
+            "key": "datasetId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of the dataset to connect to the bot"
+          },
+          {
+            "key": "skillsetId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of the skillset to connect to the bot"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of the blueprint template to connect"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Enable PII protection and anonymization"
+          },
+          {
+            "key": "moderation",
+            "optional": true,
+            "type": "boolean",
+            "description": "Enable content safety and filtering"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Visibility level of the bot"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.bots.delete",
+      "shortPath": "bots.delete",
+      "description": "Permanently delete a bot",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the bot to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.bots.downvote",
+      "shortPath": "bots.downvote",
+      "description": "Register a downvote for a bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the bot to downvote"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.bots.get",
+      "shortPath": "bots.get",
+      "description": "Fetch a single bot by ID or alias",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier or alias of the bot to fetch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the bot"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string",
+            "description": "Custom alias for the bot"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Descriptive name of the bot"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Brief description of the bot purpose"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "Associated blueprint ID"
+          },
+          {
+            "key": "datasetId",
+            "optional": true,
+            "type": "string",
+            "description": "Associated dataset ID for knowledge retrieval"
+          },
+          {
+            "key": "skillsetId",
+            "optional": true,
+            "type": "string",
+            "description": "Associated skillset ID for tools and capabilities"
+          },
+          {
+            "key": "backstory",
+            "optional": true,
+            "type": "string",
+            "description": "Natural language instructions defining bot personality and behavior"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string",
+            "description": "AI model configured for the bot"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether PII protection and anonymization is enabled"
+          },
+          {
+            "key": "moderation",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether content safety and filtering is active"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility access setting (e.g. private, protected, public)"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata attached to the bot"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number",
+            "description": "Creation timestamp in milliseconds"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number",
+            "description": "Last updated timestamp in milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.bots.list",
+      "shortPath": "bots.list",
+      "description": "List bots on the ChatBotKit account, cursor-paginated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of items to return"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort order by creation time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, datasetId?: string | null, skillsetId?: string | null, backstory?: string | null, model?: string | null, privacy?: boolean | null, moderation?: boolean | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "description": "List of bots matching the query"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor for the next page of results"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.bots.update",
+      "shortPath": "bots.update",
+      "description": "Update an existing bot configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the bot to update"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Updated name of the bot"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Updated description of the bot"
+          },
+          {
+            "key": "backstory",
+            "optional": true,
+            "type": "string",
+            "description": "Updated persona instructions"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string",
+            "description": "Updated model"
+          },
+          {
+            "key": "datasetId",
+            "optional": true,
+            "type": "string",
+            "description": "Updated dataset ID"
+          },
+          {
+            "key": "skillsetId",
+            "optional": true,
+            "type": "string",
+            "description": "Updated skillset ID"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "Updated blueprint ID"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Updated visibility"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Updated metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.bots.upvote",
+      "shortPath": "bots.upvote",
+      "description": "Register an upvote for a bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the bot to upvote"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.conversations.complete",
+      "shortPath": "conversations.complete",
+      "description": "Send message to conversation and get AI response",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the conversation"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "User message text sent to the chatbot"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "AI response message text"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Completion status or error message if limits reached"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string",
+            "description": "Error code if completion failed"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ tokens?: number }",
+            "description": "Token usage breakdown"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.conversations.create",
+      "shortPath": "conversations.create",
+      "description": "Create a new conversation chat session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the conversation"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the conversation"
+          },
+          {
+            "key": "botId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of bot to associate"
+          },
+          {
+            "key": "datasetId",
+            "optional": true,
+            "type": "string",
+            "description": "Dataset ID override"
+          },
+          {
+            "key": "skillsetId",
+            "optional": true,
+            "type": "string",
+            "description": "Skillset ID override"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "Blueprint template ID"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Visibility level"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.conversations.delete",
+      "shortPath": "conversations.delete",
+      "description": "Permanently delete a conversation session",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the conversation to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.conversations.get",
+      "shortPath": "conversations.get",
+      "description": "Fetch a conversation by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the conversation to fetch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the conversation"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string",
+            "description": "Custom alias for the conversation"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the conversation"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the conversation"
+          },
+          {
+            "key": "botId",
+            "optional": true,
+            "type": "string",
+            "description": "Associated bot ID"
+          },
+          {
+            "key": "backstory",
+            "optional": true,
+            "type": "string",
+            "description": "Instructions override for the conversation"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string",
+            "description": "Model override"
+          },
+          {
+            "key": "datasetId",
+            "optional": true,
+            "type": "string",
+            "description": "Dataset ID override"
+          },
+          {
+            "key": "skillsetId",
+            "optional": true,
+            "type": "string",
+            "description": "Skillset ID override"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "Associated blueprint ID"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility setting"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number",
+            "description": "Creation timestamp in milliseconds"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number",
+            "description": "Last updated timestamp in milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List conversations, cursor-paginated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of items to return"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort order by creation time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, alias?: string | null, name?: string | null, description?: string | null, botId?: string | null, backstory?: string | null, model?: string | null, datasetId?: string | null, skillsetId?: string | null, blueprintId?: string | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "description": "List of conversations matching the query"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor for the next page of results"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.conversations.update",
+      "shortPath": "conversations.update",
+      "description": "Update conversation metadata or bot association",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the conversation to update"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Updated name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Updated description"
+          },
+          {
+            "key": "botId",
+            "optional": true,
+            "type": "string",
+            "description": "Updated bot ID"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Updated visibility"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Updated metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.datasets.create",
+      "shortPath": "datasets.create",
+      "description": "Create a new knowledge dataset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the dataset"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the dataset"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of blueprint template to connect"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Visibility level"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.datasets.delete",
+      "shortPath": "datasets.delete",
+      "description": "Permanently delete a dataset",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the dataset to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.datasets.get",
+      "shortPath": "datasets.get",
+      "description": "Fetch a dataset by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the dataset to fetch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the dataset"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string",
+            "description": "Custom alias for the dataset"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Descriptive name of the dataset"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Brief description of dataset contents"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "Associated blueprint ID"
+          },
+          {
+            "key": "reranker",
+            "optional": true,
+            "type": "string",
+            "description": "Configured reranker model"
+          },
+          {
+            "key": "recordMaxTokens",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum tokens per record"
+          },
+          {
+            "key": "searchMinScore",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum score for search retrieval"
+          },
+          {
+            "key": "searchMaxRecords",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum search records returned"
+          },
+          {
+            "key": "searchMaxTokens",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum search tokens returned"
+          },
+          {
+            "key": "matchInstruction",
+            "optional": true,
+            "type": "string",
+            "description": "Prompt instruction on search match"
+          },
+          {
+            "key": "mismatchInstruction",
+            "optional": true,
+            "type": "string",
+            "description": "Prompt instruction on search mismatch"
+          },
+          {
+            "key": "separators",
+            "optional": true,
+            "type": "string[]",
+            "description": "Text chunk separators"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility setting"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number",
+            "description": "Creation timestamp in milliseconds"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number",
+            "description": "Last updated timestamp in milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.datasets.list",
+      "shortPath": "datasets.list",
+      "description": "List knowledge datasets, cursor-paginated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of items to return"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort order by creation time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, reranker?: string | null, recordMaxTokens?: number | null, searchMinScore?: number | null, searchMaxRecords?: number | null, searchMaxTokens?: number | null, matchInstruction?: string | null, mismatchInstruction?: string | null, separators?: string[] | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "description": "List of datasets matching the query"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor for the next page of results"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.datasets.search",
+      "shortPath": "datasets.search",
+      "description": "Search a dataset for relevant knowledge records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the dataset to search"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Search query string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Max records to return"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, score?: number, text: string, meta?: {} | null }[]",
+            "description": "Array of search matches from the dataset"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.datasets.update",
+      "shortPath": "datasets.update",
+      "description": "Update dataset configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the dataset to update"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Updated name of the dataset"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Updated description of the dataset"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "Updated blueprint ID"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Updated visibility"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Updated metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.files.create",
+      "shortPath": "files.create",
+      "description": "Create a new file record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the file"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the file"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string",
+            "description": "MIME type of the file"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Visibility level"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Permanently delete a file resource",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the file to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.files.get",
+      "shortPath": "files.get",
+      "description": "Fetch file metadata by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the file to fetch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the file resource"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "File name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "File description"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string",
+            "description": "MIME type of the file"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "File size in bytes"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility setting"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number",
+            "description": "Creation timestamp in milliseconds"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number",
+            "description": "Last updated timestamp in milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.files.list",
+      "shortPath": "files.list",
+      "description": "List uploaded file resources, cursor-paginated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of items to return"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort order by creation time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, mimeType?: string | null, size?: number | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "description": "List of files matching query"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor for the next page of results"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.secrets.create",
+      "shortPath": "secrets.create",
+      "description": "Create a new integration secret credential",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the secret"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the secret"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "Blueprint template ID"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Secret type or provider template"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{}",
+            "description": "Secret configuration credentials"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Visibility level"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.secrets.delete",
+      "shortPath": "secrets.delete",
+      "description": "Permanently delete a secret credential",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the secret to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.secrets.get",
+      "shortPath": "secrets.get",
+      "description": "Fetch a secret credential by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the secret to fetch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the secret credential"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string",
+            "description": "Custom alias for the secret"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Descriptive name of the secret"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the secret or connected service"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "Associated blueprint ID"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string",
+            "description": "Kind of secret (e.g. personal, shared)"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Type of credential template"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{}",
+            "description": "Credential configuration"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility setting"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number",
+            "description": "Creation timestamp in milliseconds"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number",
+            "description": "Last updated timestamp in milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.secrets.list",
+      "shortPath": "secrets.list",
+      "description": "List integration secrets, cursor-paginated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of items to return"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort order by creation time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, kind?: string | null, type?: string | null, config?: {} | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "description": "List of secrets matching the query"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor for the next page of results"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.secrets.update",
+      "shortPath": "secrets.update",
+      "description": "Update an existing integration secret credential",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the secret to update"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Updated name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Updated description"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{}",
+            "description": "Updated configuration credentials"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Updated visibility"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Updated metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.skillsets.create",
+      "shortPath": "skillsets.create",
+      "description": "Create a new skillset container",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the skillset"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the skillset"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "Blueprint template ID"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Visibility level"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.skillsets.delete",
+      "shortPath": "skillsets.delete",
+      "description": "Permanently delete a skillset",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the skillset to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.skillsets.get",
+      "shortPath": "skillsets.get",
+      "description": "Fetch a skillset by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the skillset to fetch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the skillset"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string",
+            "description": "Custom alias for the skillset"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Descriptive name of the skillset"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Brief description of skillset capabilities"
+          },
+          {
+            "key": "blueprintId",
+            "optional": true,
+            "type": "string",
+            "description": "Associated blueprint ID"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility setting"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "Operational state (e.g. enabled, disabled)"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number",
+            "description": "Creation timestamp in milliseconds"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number",
+            "description": "Last updated timestamp in milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.skillsets.list",
+      "shortPath": "skillsets.list",
+      "description": "List skillsets on the account, cursor-paginated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of items to return"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort order by creation time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, alias?: string | null, name: string, description?: string | null, blueprintId?: string | null, visibility?: string | null, state?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "description": "List of skillsets matching the query"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor for the next page of results"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.skillsets.update",
+      "shortPath": "skillsets.update",
+      "description": "Update skillset configuration or state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the skillset to update"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Updated name of the skillset"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Updated description of the skillset"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Updated visibility"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "enabled | disabled",
+            "description": "Updated state"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Updated metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a new background execution task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the background task"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the task"
+          },
+          {
+            "key": "botId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of bot executing the task"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string",
+            "description": "Cron schedule expression for recurring runs"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Visibility level"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Permanently delete a background task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the task to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Fetch a task by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the task to fetch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the task"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Descriptive name of the task"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Brief description of the task"
+          },
+          {
+            "key": "botId",
+            "optional": true,
+            "type": "string",
+            "description": "Associated bot ID"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string",
+            "description": "Cron schedule string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Task execution status"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility setting"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Custom metadata"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number",
+            "description": "Creation timestamp in milliseconds"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "number",
+            "description": "Last updated timestamp in milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List background tasks, cursor-paginated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for pagination"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of items to return"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort order by creation time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, botId?: string | null, schedule?: string | null, status?: string | null, visibility?: string | null, meta?: {} | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "description": "List of tasks matching query"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor for next page of results"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatbotkit.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update task schedule or bot assignment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the task to update"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Updated name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Updated description"
+          },
+          {
+            "key": "botId",
+            "optional": true,
+            "type": "string",
+            "description": "Updated bot ID"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string",
+            "description": "Updated cron schedule"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | protected | public",
+            "description": "Updated visibility"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}",
+            "description": "Updated metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the resource"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "chatbotkit.db.blueprints.search",
+      "entityName": "blueprints",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatbotkit.db.bots.search",
+      "entityName": "bots",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blueprintId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "datasetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "skillsetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "backstory",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "privacy",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "moderation",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatbotkit.db.conversations.search",
+      "entityName": "conversations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "botId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "backstory",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "datasetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "skillsetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blueprintId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatbotkit.db.datasets.search",
+      "entityName": "datasets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blueprintId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reranker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recordMaxTokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "searchMinScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "searchMaxRecords",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "searchMaxTokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "matchInstruction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mismatchInstruction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatbotkit.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mimeType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatbotkit.db.secrets.search",
+      "entityName": "secrets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blueprintId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatbotkit.db.skillsets.search",
+      "entityName": "skillsets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blueprintId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatbotkit.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "botId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "schedule",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3087 @@
+{
+  "id": "vapi",
+  "displayName": "Vapi",
+  "description": "Voice AI platform for building phone call agents with LLMs and speech recognition.",
+  "npmPackageName": "@corsair-dev/vapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 34,
+    "webhooks": 6,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "org_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "vapi.api.assistants.create",
+      "shortPath": "assistants.create",
+      "description": "Create a new Vapi assistant",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "voice",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "transcriber",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "firstMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCallMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCallPhrases",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "serverUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serverUrlSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "analysisPlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "artifactPlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "messagePlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "startSpeakingPlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "stopSpeakingPlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "hipaaEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientMessages",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "serverMessages",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "silenceTimeoutSeconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxDurationSeconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "backgroundSound",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backchannelingEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "backgroundDenoisingEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "modelOutputInMessagesEnabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "voice",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "transcriber",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "firstMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCallMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCallPhrases",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "serverUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hipaaEnabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.assistants.delete",
+      "shortPath": "assistants.delete",
+      "description": "Delete a Vapi assistant",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.assistants.get",
+      "shortPath": "assistants.get",
+      "description": "Retrieve a Vapi assistant by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "voice",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "transcriber",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "firstMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCallMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCallPhrases",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "serverUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hipaaEnabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.assistants.list",
+      "shortPath": "assistants.list",
+      "description": "List all Vapi assistants",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLe",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, name?: string | null, model?: {}, voice?: {}, transcriber?: {}, firstMessage?: string | null, systemPrompt?: string | null, endCallMessage?: string | null, endCallPhrases?: string[], metadata?: {}, serverUrl?: string | null, hipaaEnabled?: boolean }[]"
+      }
+    },
+    {
+      "path": "vapi.api.assistants.update",
+      "shortPath": "assistants.update",
+      "description": "Update a Vapi assistant",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "voice",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "transcriber",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "firstMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCallMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCallPhrases",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "serverUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serverUrlSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "analysisPlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "artifactPlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "messagePlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "startSpeakingPlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "stopSpeakingPlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "hipaaEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientMessages",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "serverMessages",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "silenceTimeoutSeconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxDurationSeconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "backgroundSound",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backchannelingEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "backgroundDenoisingEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "modelOutputInMessagesEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "voice",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "transcriber",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "firstMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCallMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endCallPhrases",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "serverUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hipaaEnabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.calls.create",
+      "shortPath": "calls.create",
+      "description": "Create (initiate) a new Vapi call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistant",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "assistantOverrides",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "squadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squad",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "phoneNumberId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "scheduledAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endedReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumberId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "artifact",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "analysis",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.calls.delete",
+      "shortPath": "calls.delete",
+      "description": "Delete a Vapi call",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.calls.get",
+      "shortPath": "calls.get",
+      "description": "Retrieve a Vapi call by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endedReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumberId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "artifact",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "analysis",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.calls.list",
+      "shortPath": "calls.list",
+      "description": "List all Vapi calls with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumberId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, squadId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {}, metadata?: {} }[]"
+      }
+    },
+    {
+      "path": "vapi.api.calls.update",
+      "shortPath": "calls.update",
+      "description": "Update a Vapi call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistantOverrides",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endedReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumberId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "artifact",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "analysis",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete a Vapi file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.files.get",
+      "shortPath": "files.get",
+      "description": "Retrieve a Vapi file by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.files.list",
+      "shortPath": "files.list",
+      "description": "List all Vapi files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLe",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, name?: string, originalName?: string, mimeType?: string, size?: number, status?: string, url?: string, metadata?: {} }[]"
+      }
+    },
+    {
+      "path": "vapi.api.files.update",
+      "shortPath": "files.update",
+      "description": "Update a Vapi file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.knowledgeBases.create",
+      "shortPath": "knowledgeBases.create",
+      "description": "Create a new Vapi knowledge base",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "server",
+            "optional": true,
+            "type": "{ url: string }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.knowledgeBases.delete",
+      "shortPath": "knowledgeBases.delete",
+      "description": "Delete a Vapi knowledge base",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.knowledgeBases.get",
+      "shortPath": "knowledgeBases.get",
+      "description": "Retrieve a Vapi knowledge base by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.knowledgeBases.list",
+      "shortPath": "knowledgeBases.list",
+      "description": "List all Vapi knowledge bases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLe",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, provider?: string, name?: string | null, server?: {} }[]"
+      }
+    },
+    {
+      "path": "vapi.api.knowledgeBases.update",
+      "shortPath": "knowledgeBases.update",
+      "description": "Update a Vapi knowledge base",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.phoneNumbers.create",
+      "shortPath": "phoneNumbers.create",
+      "description": "Create a new Vapi phone number",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "twilio | vonage | vapi | telnyx"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twilioAccountSid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twilioAuthToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vonageApiKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vonageApiSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serverUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serverUrlSecret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serverUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.phoneNumbers.delete",
+      "shortPath": "phoneNumbers.delete",
+      "description": "Delete a Vapi phone number",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.phoneNumbers.get",
+      "shortPath": "phoneNumbers.get",
+      "description": "Retrieve a Vapi phone number by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serverUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.phoneNumbers.list",
+      "shortPath": "phoneNumbers.list",
+      "description": "List all Vapi phone numbers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLe",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, provider?: string, number?: string, name?: string | null, assistantId?: string | null, squadId?: string | null, serverUrl?: string | null }[]"
+      }
+    },
+    {
+      "path": "vapi.api.phoneNumbers.update",
+      "shortPath": "phoneNumbers.update",
+      "description": "Update a Vapi phone number",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serverUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serverUrlSecret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistantId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serverUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.squads.create",
+      "shortPath": "squads.create",
+      "description": "Create a new Vapi squad",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "membersOverrides",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.squads.delete",
+      "shortPath": "squads.delete",
+      "description": "Delete a Vapi squad",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.squads.get",
+      "shortPath": "squads.get",
+      "description": "Retrieve a Vapi squad by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.squads.list",
+      "shortPath": "squads.list",
+      "description": "List all Vapi squads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLe",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, name?: string | null, members?: {}[], metadata?: {} }[]"
+      }
+    },
+    {
+      "path": "vapi.api.squads.update",
+      "shortPath": "squads.update",
+      "description": "Update a Vapi squad",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "membersOverrides",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.tools.create",
+      "shortPath": "tools.create",
+      "description": "Create a new Vapi tool",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "function",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "server",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "function",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "server",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.tools.delete",
+      "shortPath": "tools.delete",
+      "description": "Delete a Vapi tool",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.tools.get",
+      "shortPath": "tools.get",
+      "description": "Retrieve a Vapi tool by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "function",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "server",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vapi.api.tools.list",
+      "shortPath": "tools.list",
+      "description": "List all Vapi tools",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAtLe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtGe",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAtLe",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, orgId?: string, createdAt?: string, updatedAt?: string, type?: string, function?: {}, server?: {}, metadata?: {} }[]"
+      }
+    },
+    {
+      "path": "vapi.api.tools.update",
+      "shortPath": "tools.update",
+      "description": "Update a Vapi tool",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "function",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "server",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "function",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "server",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "vapi.webhooks.client.workflowNodeStarted",
+      "shortPath": "client.workflowNodeStarted",
+      "description": "Sent when the active workflow node changes",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ type: workflow.node.started, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, node?: {}, timestamp?: string }"
+          }
+        ]
+      },
+      "responseType": "{}",
+      "usageExample": "vapi({\n    webhookHooks: {\n        client: {\n            workflowNodeStarted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "vapi.webhooks.server.assistantRequest",
+      "shortPath": "server.assistantRequest",
+      "description": "Sent to fetch assistant configuration for an incoming call",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ type: assistant-request, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, phoneNumber?: {}, customer?: {}, timestamp?: string }"
+          }
+        ]
+      },
+      "responseType": "{ assistant?: {}, assistantId?: string, error?: string }",
+      "usageExample": "vapi({\n    webhookHooks: {\n        server: {\n            assistantRequest: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "vapi.webhooks.server.endOfCallReport",
+      "shortPath": "server.endOfCallReport",
+      "description": "Sent at the end of a call with transcript, summary, and analysis",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ type: end-of-call-report, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, endedReason?: string, transcript?: string, summary?: string, messages?: {}[], analysis?: {}, artifact?: {}, timestamp?: string }"
+          }
+        ]
+      },
+      "responseType": "{}",
+      "usageExample": "vapi({\n    webhookHooks: {\n        server: {\n            endOfCallReport: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "vapi.webhooks.server.statusUpdate",
+      "shortPath": "server.statusUpdate",
+      "description": "Sent when the call status changes",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ type: status-update, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, status: string, timestamp?: string }"
+          }
+        ]
+      },
+      "responseType": "{}",
+      "usageExample": "vapi({\n    webhookHooks: {\n        server: {\n            statusUpdate: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "vapi.webhooks.server.toolCalls",
+      "shortPath": "server.toolCalls",
+      "description": "Triggered when the assistant makes tool calls during a call",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ type: tool-calls, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, toolCallList: { id: string, type: function, function: { name: string, arguments: string } }[], toolWithToolCallList?: {}[], timestamp?: string }"
+          }
+        ]
+      },
+      "responseType": "{ results: { toolCallId: string, result: string }[] }",
+      "usageExample": "vapi({\n    webhookHooks: {\n        server: {\n            toolCalls: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "vapi.webhooks.server.transferDestinationRequest",
+      "shortPath": "server.transferDestinationRequest",
+      "description": "Triggered when processing a transfer destination request",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ type: transfer-destination-request, call: { id: string, orgId?: string, type?: string, status?: string, endedReason?: string | null, assistantId?: string | null, phoneNumberId?: string | null, startedAt?: string | null, endedAt?: string | null, cost?: number, messages?: {}[], artifact?: {}, analysis?: {} }, timestamp?: string }"
+          }
+        ]
+      },
+      "responseType": "{ destination?: {}, error?: string }",
+      "usageExample": "vapi({\n    webhookHooks: {\n        server: {\n            transferDestinationRequest: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "vapi.db.assistants.search",
+      "entityName": "assistants",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstMessage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "serverUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hipaaEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "vapi.db.calls.search",
+      "entityName": "calls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endedReason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assistantId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phoneNumberId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "squadId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cost",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "startedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "endedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "vapi.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "originalName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mimeType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "vapi.db.knowledgeBases.search",
+      "entityName": "knowledgeBases",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "vapi.db.phoneNumbers.search",
+      "entityName": "phoneNumbers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assistantId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "squadId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "vapi.db.squads.search",
+      "entityName": "squads",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "vapi.db.tools.search",
+      "entityName": "tools",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

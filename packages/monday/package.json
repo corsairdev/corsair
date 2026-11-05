@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/monday",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Monday plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,9 +36,15 @@
     "monday",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/monday"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/monday"
 }

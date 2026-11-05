@@ -329,7 +329,7 @@ const zoomEndpointMeta = {
 	},
 	'recordings.deleteMeeting': {
 		riskLevel: 'destructive',
-		description: 'Delete cloud recordings for a meeting [DESTRUCTIVE]',
+		description: 'Delete cloud recordings for a meeting',
 	},
 	'recordings.listAll': {
 		riskLevel: 'read',

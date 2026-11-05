@@ -1,0 +1,1099 @@
+---
+title: API
+description: "API reference for Orbit: every `orbit.api.*` operation with input and output types."
+---
+
+Every `orbit.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bulk
+
+### cancel
+
+`bulk.cancel`
+
+Cancel undispatched bulk items
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.bulk.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `status` | `queued \| running \| waiting_for_credits \| needs_attention \| completed \| completed_with_errors \| canceled` | Yes | — |
+| `request_id` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `billing` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`bulk.get`
+
+Read bulk search progress
+
+**Risk:** `read`
+
+```ts
+await corsair.orbit.api.bulk.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `status` | `queued \| running \| waiting_for_credits \| needs_attention \| completed \| completed_with_errors \| canceled` | Yes | — |
+| `request_id` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `billing` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### results
+
+`bulk.results`
+
+Read bulk search results
+
+**Risk:** `read`
+
+```ts
+await corsair.orbit.api.bulk.results({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submit
+
+`bulk.submit`
+
+Submit a bulk search
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.bulk.submit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  query?: string,
+  intent?: {
+    names?: string[],
+    experiences?: {
+    }[],
+    semanticClauses?: {
+    }[],
+    schools?: {
+    }[],
+    geo?: {
+    } | null,
+    demographics?: {
+    } | null,
+    personalization?: {
+    } | null
+  },
+  signals?: {
+    address?: string,
+    email?: string,
+    phone?: string,
+    linkedin_url?: string,
+    urls?: string[],
+    usernames?: string[],
+    face_source?: {
+      image_url: string,
+      bbox?: number[]
+    }
+  },
+  candidate_discovery?: boolean,
+  candidate_discovery_limit?: number,
+  profile_depth?: partial | full,
+  include_profile?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `status` | `queued \| running \| waiting_for_credits \| needs_attention \| completed \| completed_with_errors \| canceled` | Yes | — |
+| `request_id` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `billing` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Enrich
+
+### batch
+
+`enrich.batch`
+
+Enrich up to 20 profiles
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.enrich.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile_ids` | `string[]` | Yes | — |
+| `operation` | `partial \| full \| regenerate` | Yes | — |
+| `request_id` | `string` | No | — |
+| `include_profile` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`enrich.get`
+
+Poll an enrichment
+
+**Risk:** `read`
+
+```ts
+await corsair.orbit.api.enrich.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `profile_id` | `string` | No | — |
+| `status` | `running \| completed \| failed` | Yes | — |
+| `billing` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### read
+
+`enrich.read`
+
+Read an enriched profile
+
+**Risk:** `read`
+
+```ts
+await corsair.orbit.api.enrich.read({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile_id` | `string` | Yes | — |
+| `format` | `json \| markdown` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+---
+
+### start
+
+`enrich.start`
+
+Enrich one profile
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.enrich.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile_id` | `string` | Yes | — |
+| `operation` | `partial \| full \| regenerate` | Yes | — |
+| `request_id` | `string` | No | — |
+| `include_profile` | `boolean` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `profile_id` | `string` | No | — |
+| `status` | `running \| completed \| failed` | Yes | — |
+| `billing` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Faces
+
+### detect
+
+`faces.detect`
+
+Detect faces in a photo
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.faces.detect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageBase64` | `string` | Yes | — |
+| `contentType` | `image/jpeg \| image/png \| image/webp` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image_url` | `string` | Yes | — |
+| `faces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="faces full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### index
+
+`faces.index`
+
+Search the face index
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.faces.index({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image_url` | `string` | Yes | — |
+| `bbox` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `matches` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="matches full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### get
+
+`search.get`
+
+Poll a people search
+
+**Risk:** `read`
+
+```ts
+await corsair.orbit.api.search.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_id` | `string` | Yes | — |
+| `status` | `running \| completed \| completed_with_errors \| failed` | Yes | — |
+| `request_id` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `billing` | `object` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### quotePopulation
+
+`search.quotePopulation`
+
+Price a population search
+
+**Risk:** `read`
+
+```ts
+await corsair.orbit.api.search.quotePopulation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `population` | `object` | Yes | — |
+| `size` | `number` | No | — |
+| `profile_depth` | `partial \| full` | No | — |
+
+<AccordionGroup>
+<Accordion title="population full type">
+
+```ts
+{
+  kind: company | school,
+  id: string,
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number` | No | — |
+
+
+
+---
+
+### start
+
+`search.start`
+
+Start a people search
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.search.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | No | — |
+| `query` | `string` | No | — |
+| `intent` | `object` | No | — |
+| `signals` | `object` | No | — |
+| `candidate_discovery` | `boolean` | No | — |
+| `candidate_discovery_limit` | `number` | No | — |
+| `profile_depth` | `partial \| full` | No | — |
+| `include_profile` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `webhooks` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="intent full type">
+
+```ts
+{
+  names?: string[],
+  experiences?: {
+  }[],
+  semanticClauses?: {
+  }[],
+  schools?: {
+  }[],
+  geo?: {
+  } | null,
+  demographics?: {
+  } | null,
+  personalization?: {
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="signals full type">
+
+```ts
+{
+  address?: string,
+  email?: string,
+  phone?: string,
+  linkedin_url?: string,
+  urls?: string[],
+  usernames?: string[],
+  face_source?: {
+    image_url: string,
+    bbox?: number[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_id` | `string` | Yes | — |
+| `status` | `running \| completed \| completed_with_errors \| failed` | Yes | — |
+| `request_id` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `billing` | `object` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### startPopulation
+
+`search.startPopulation`
+
+Search everyone at a company or school
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.search.startPopulation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `population` | `object` | Yes | — |
+| `size` | `number` | No | — |
+| `profile_depth` | `partial \| full` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="population full type">
+
+```ts
+{
+  kind: company | school,
+  id: string,
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_id` | `string` | Yes | — |
+| `status` | `running \| completed \| completed_with_errors \| failed` | Yes | — |
+| `request_id` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `billing` | `object` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Watchers
+
+### create
+
+`watchers.create`
+
+Watch a profile
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.watchers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orbit_id` | `string` | Yes | — |
+| `interval_seconds` | `number` | Yes | — |
+| `phases` | `existing_sources \| existing_socials \| new_sources[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orbit_id` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`watchers.delete`
+
+Delete a watcher
+
+**Risk:** `destructive`
+
+```ts
+await corsair.orbit.api.watchers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watcher_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`watchers.get`
+
+Get a watcher
+
+**Risk:** `read`
+
+```ts
+await corsair.orbit.api.watchers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watcher_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orbit_id` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`watchers.list`
+
+List watchers
+
+**Risk:** `read`
+
+```ts
+await corsair.orbit.api.watchers.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watchers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="watchers full type">
+
+```ts
+{
+  id: string,
+  orbit_id?: string,
+  enabled?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runs
+
+`watchers.runs`
+
+List watcher runs
+
+**Risk:** `read`
+
+```ts
+await corsair.orbit.api.watchers.runs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watcher_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runs` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="runs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`watchers.update`
+
+Update a watcher
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.watchers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watcher_id` | `string` | Yes | — |
+| `enabled` | `boolean` | No | — |
+| `interval_seconds` | `number` | No | — |
+| `phases` | `existing_sources \| existing_socials \| new_sources[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orbit_id` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a webhook endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `event_types` | `profile.updated \| company.thesis.changed \| company.alert \| portfolio.changed \| search.profile.updated \| search.completed[]` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `event_types` | `string[]` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `secret` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook endpoint
+
+**Risk:** `destructive`
+
+```ts
+await corsair.orbit.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.orbit.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  event_types: string[],
+  enabled: boolean,
+  secret?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### test
+
+`webhooks.test`
+
+Send a test webhook delivery
+
+**Risk:** `write`
+
+```ts
+await corsair.orbit.api.webhooks.test({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+| `event_type` | `profile.updated \| company.thesis.changed \| company.alert \| portfolio.changed \| search.profile.updated \| search.completed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delivered` | `boolean` | No | — |
+
+
+
+---
+

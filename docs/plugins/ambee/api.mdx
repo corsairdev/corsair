@@ -1,0 +1,1842 @@
+---
+title: API
+description: "API reference for Ambee: every `ambee.api.*` operation with input and output types."
+---
+
+Every `ambee.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Air Quality
+
+### getForecastByLatLng
+
+`airQuality.getForecastByLatLng`
+
+Get the hourly air quality forecast for a latitude/longitude (next 48 hours)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.airQuality.getForecastByLatLng({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `lat` | `number` | No | — |
+| `lng` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  CO?: number | null,
+  NO2?: number | null,
+  OZONE?: number | null,
+  PM10?: number | null,
+  PM25?: number | null,
+  SO2?: number | null,
+  NO?: number | null,
+  AQI?: number | null,
+  aqiInfo?: {
+    pollutant?: string | null,
+    concentration?: number | null,
+    category?: string | null
+  },
+  time?: number | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHistoryByLatLng
+
+`airQuality.getHistoryByLatLng`
+
+Get hourly historical air quality for a latitude/longitude over a time range
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.airQuality.getHistoryByLatLng({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+| `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `to` | `string` | Yes | End of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `lat` | `number` | No | — |
+| `lng` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  CO?: number | null,
+  NO2?: number | null,
+  OZONE?: number | null,
+  PM10?: number | null,
+  PM25?: number | null,
+  SO2?: number | null,
+  NO?: number | null,
+  AQI?: number | null,
+  aqiInfo?: {
+    pollutant?: string | null,
+    concentration?: number | null,
+    category?: string | null
+  },
+  time?: number | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHistoryByPostalCode
+
+`airQuality.getHistoryByPostalCode`
+
+Get hourly historical air quality for a postal code over a time range
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.airQuality.getHistoryByPostalCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postalCode` | `string` | Yes | Postal code, e.g. "560020" |
+| `countryCode` | `string` | Yes | Three-letter ISO country code, e.g. "IND" or "USA" |
+| `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `to` | `string` | Yes | End of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `lat` | `number` | No | — |
+| `lng` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  CO?: number | null,
+  NO2?: number | null,
+  OZONE?: number | null,
+  PM10?: number | null,
+  PM25?: number | null,
+  SO2?: number | null,
+  NO?: number | null,
+  AQI?: number | null,
+  aqiInfo?: {
+    pollutant?: string | null,
+    concentration?: number | null,
+    category?: string | null
+  },
+  time?: number | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatestByCity
+
+`airQuality.getLatestByCity`
+
+Get the latest air quality for the stations in a city
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.airQuality.getLatestByCity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `city` | `string` | Yes | City name, e.g. "Bengaluru" |
+| `limit` | `number` | No | Maximum number of stations to return (Ambee defaults to 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `stations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  CO?: number | null,
+  NO2?: number | null,
+  OZONE?: number | null,
+  PM10?: number | null,
+  PM25?: number | null,
+  SO2?: number | null,
+  NO?: number | null,
+  AQI?: number | null,
+  aqiInfo?: {
+    pollutant?: string | null,
+    concentration?: number | null,
+    category?: string | null
+  },
+  city?: string | null,
+  countryCode?: string | null,
+  division?: string | null,
+  state?: string | null,
+  placeName?: string | null,
+  postalCode?: string | number | null,
+  lat?: number | null,
+  lng?: number | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatestByCountryCode
+
+`airQuality.getLatestByCountryCode`
+
+Get the latest air quality for the monitoring stations across a country
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.airQuality.getLatestByCountryCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `countryCode` | `string` | Yes | Three-letter ISO country code, e.g. "IND" or "USA" |
+| `limit` | `number` | No | Maximum number of stations to return (Ambee defaults to 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `stations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  CO?: number | null,
+  NO2?: number | null,
+  OZONE?: number | null,
+  PM10?: number | null,
+  PM25?: number | null,
+  SO2?: number | null,
+  NO?: number | null,
+  AQI?: number | null,
+  aqiInfo?: {
+    pollutant?: string | null,
+    concentration?: number | null,
+    category?: string | null
+  },
+  city?: string | null,
+  countryCode?: string | null,
+  division?: string | null,
+  state?: string | null,
+  placeName?: string | null,
+  postalCode?: string | number | null,
+  lat?: number | null,
+  lng?: number | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatestByLatLng
+
+`airQuality.getLatestByLatLng`
+
+Get the latest air quality (AQI and pollutant concentrations) for a latitude/longitude
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.airQuality.getLatestByLatLng({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `stations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  CO?: number | null,
+  NO2?: number | null,
+  OZONE?: number | null,
+  PM10?: number | null,
+  PM25?: number | null,
+  SO2?: number | null,
+  NO?: number | null,
+  AQI?: number | null,
+  aqiInfo?: {
+    pollutant?: string | null,
+    concentration?: number | null,
+    category?: string | null
+  },
+  city?: string | null,
+  countryCode?: string | null,
+  division?: string | null,
+  state?: string | null,
+  placeName?: string | null,
+  postalCode?: string | number | null,
+  lat?: number | null,
+  lng?: number | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatestByPostalCode
+
+`airQuality.getLatestByPostalCode`
+
+Get the latest air quality for a postal code and country
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.airQuality.getLatestByPostalCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postalCode` | `string` | Yes | Postal code, e.g. "560020" |
+| `countryCode` | `string` | Yes | Three-letter ISO country code, e.g. "IND" or "USA" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `stations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  CO?: number | null,
+  NO2?: number | null,
+  OZONE?: number | null,
+  PM10?: number | null,
+  PM25?: number | null,
+  SO2?: number | null,
+  NO?: number | null,
+  AQI?: number | null,
+  aqiInfo?: {
+    pollutant?: string | null,
+    concentration?: number | null,
+    category?: string | null
+  },
+  city?: string | null,
+  countryCode?: string | null,
+  division?: string | null,
+  state?: string | null,
+  placeName?: string | null,
+  postalCode?: string | number | null,
+  lat?: number | null,
+  lng?: number | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Disasters
+
+### getHistoryByContinent
+
+`disasters.getHistoryByContinent`
+
+Get historical natural disasters on a continent over a date range (paginated)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.disasters.getHistoryByContinent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `continent` | `AFR \| ANT \| ASIA \| AUS \| EUR \| NAR \| SAR \| Ocean` | Yes | Continent code |
+| `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `to` | `string` | Yes | End of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
+| `limit` | `number` | No | Records per page (Ambee defaults to 1) |
+| `page` | `number` | No | Page number, 1-based (Ambee defaults to 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `result` | `object[]` | No | — |
+| `data` | `object[]` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHistoryByCountryCode
+
+`disasters.getHistoryByCountryCode`
+
+Get historical natural disasters in a country over a date range (paginated)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.disasters.getHistoryByCountryCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `countryCode` | `string` | Yes | Three-letter ISO country code, e.g. "IND" or "USA" |
+| `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `to` | `string` | Yes | End of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
+| `limit` | `number` | No | Records per page (Ambee defaults to 1) |
+| `page` | `number` | No | Page number, 1-based (Ambee defaults to 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `result` | `object[]` | No | — |
+| `data` | `object[]` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHistoryByDateRange
+
+`disasters.getHistoryByDateRange`
+
+Get historical natural disasters worldwide over a date range (paginated)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.disasters.getHistoryByDateRange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `to` | `string` | No | End of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
+| `limit` | `number` | No | Records per page (Ambee defaults to 1) |
+| `page` | `number` | No | Page number, 1-based (Ambee defaults to 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `result` | `object[]` | No | — |
+| `data` | `object[]` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHistoryByLatLng
+
+`disasters.getHistoryByLatLng`
+
+Get historical natural disasters near a latitude/longitude over a date range (paginated)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.disasters.getHistoryByLatLng({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+| `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `to` | `string` | Yes | End of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
+| `limit` | `number` | No | Records per page (Ambee defaults to 1) |
+| `page` | `number` | No | Page number, 1-based (Ambee defaults to 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `result` | `object[]` | No | — |
+| `data` | `object[]` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatestByContinent
+
+`disasters.getLatestByContinent`
+
+Get the latest natural disasters on a continent (paginated)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.disasters.getLatestByContinent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `continent` | `AFR \| ANT \| ASIA \| AUS \| EUR \| NAR \| SAR \| Ocean` | Yes | Continent code |
+| `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
+| `limit` | `number` | No | Records per page (Ambee defaults to 1) |
+| `page` | `number` | No | Page number, 1-based (Ambee defaults to 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `result` | `object[]` | No | — |
+| `data` | `object[]` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatestByCountryCode
+
+`disasters.getLatestByCountryCode`
+
+Get the latest natural disasters in a country (paginated)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.disasters.getLatestByCountryCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `countryCode` | `string` | Yes | Three-letter ISO country code, e.g. "IND" or "USA" |
+| `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
+| `limit` | `number` | No | Records per page (Ambee defaults to 1) |
+| `page` | `number` | No | Page number, 1-based (Ambee defaults to 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `result` | `object[]` | No | — |
+| `data` | `object[]` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatestByLatLng
+
+`disasters.getLatestByLatLng`
+
+Get the latest natural disasters near a latitude/longitude (paginated)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.disasters.getLatestByLatLng({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+| `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
+| `limit` | `number` | No | Records per page (Ambee defaults to 1) |
+| `page` | `number` | No | Page number, 1-based (Ambee defaults to 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `result` | `object[]` | No | — |
+| `data` | `object[]` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  event_id?: string | number | null,
+  event_type?: string | null,
+  event_name?: string | null,
+  lat?: number | null,
+  lng?: number | null,
+  country_code?: string | null,
+  continent?: string | null,
+  date?: string | number | null,
+  updated_at?: string | number | null,
+  severity?: string | number | null,
+  source?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Elevation
+
+### getByLatLng
+
+`elevation.getByLatLng`
+
+Get the ground elevation at a latitude/longitude
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.elevation.getByLatLng({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  lat?: number | null,
+  lng?: number | null,
+  elevation?: number | null,
+  minElevation?: number | null,
+  maxElevation?: number | null,
+  meanElevation?: number | null,
+  placeName?: string | null,
+  unit?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByPlace
+
+`elevation.getByPlace`
+
+Get the ground elevation for a named place
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.elevation.getByPlace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place` | `string` | Yes | Place name, e.g. "San Francisco, USA" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  lat?: number | null,
+  lng?: number | null,
+  elevation?: number | null,
+  minElevation?: number | null,
+  maxElevation?: number | null,
+  meanElevation?: number | null,
+  placeName?: string | null,
+  unit?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fire
+
+### getLatestByLatLng
+
+`fire.getLatestByLatLng`
+
+Get wildfires detected or reported near a latitude/longitude in the last 7 days
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.fire.getLatestByLatLng({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+| `type` | `reported \| detected` | No | Restrict results to reported or satellite-detected fires |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  fireId?: string | number | null,
+  lat?: number | null,
+  lng?: number | null,
+  detectedAt?: string | number | null,
+  detectedAtLocalTime?: string | null,
+  confidence?: string | number | null,
+  frp?: number | null,
+  satellite?: string | null,
+  instrument?: string | null,
+  fireType?: string | null,
+  fireName?: string | null,
+  locationName?: string | null,
+  area?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatestByPlace
+
+`fire.getLatestByPlace`
+
+Get wildfires detected or reported near a named place in the last 7 days
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.fire.getLatestByPlace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place` | `string` | Yes | Place name, e.g. "Virgin, UT" |
+| `type` | `reported \| detected` | No | Restrict results to reported or satellite-detected fires |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  fireId?: string | number | null,
+  lat?: number | null,
+  lng?: number | null,
+  detectedAt?: string | number | null,
+  detectedAtLocalTime?: string | null,
+  confidence?: string | number | null,
+  frp?: number | null,
+  satellite?: string | null,
+  instrument?: string | null,
+  fireType?: string | null,
+  fireName?: string | null,
+  locationName?: string | null,
+  area?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRiskByLatLng
+
+`fire.getRiskByLatLng`
+
+Get the wildfire risk forecast for a latitude/longitude (up to 4 weeks ahead)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.fire.getRiskByLatLng({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date?: string | null,
+  time?: number | null,
+  risk?: string | number | null,
+  riskCategory?: string | null,
+  lat?: number | null,
+  lng?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRiskByPlace
+
+`fire.getRiskByPlace`
+
+Get the wildfire risk forecast for a named place (up to 4 weeks ahead)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.fire.getRiskByPlace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place` | `string` | Yes | Place name, e.g. "Leon, Mexico" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date?: string | null,
+  time?: number | null,
+  risk?: string | number | null,
+  riskCategory?: string | null,
+  lat?: number | null,
+  lng?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geocode
+
+### byPlace
+
+`geocode.byPlace`
+
+Geocode a place name or address into coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.geocode.byPlace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place` | `string` | Yes | Address or place name to geocode |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  lat?: string | number | null,
+  lng?: string | number | null,
+  city?: string | null,
+  state?: string | null,
+  countryCode?: string | null,
+  countryName?: string | null,
+  postalCode?: string | number | null,
+  placeName?: string | null,
+  formattedAddress?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverseByLatLng
+
+`geocode.reverseByLatLng`
+
+Reverse-geocode a latitude/longitude into a human-readable address
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.geocode.reverseByLatLng({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  lat?: string | number | null,
+  lng?: string | number | null,
+  city?: string | null,
+  state?: string | null,
+  countryCode?: string | null,
+  countryName?: string | null,
+  postalCode?: string | number | null,
+  placeName?: string | null,
+  formattedAddress?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ili
+
+### getForecastByLatLng
+
+`ili.getForecastByLatLng`
+
+Get the daily influenza-like-illness risk forecast for a latitude/longitude
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.ili.getForecastByLatLng({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+| `details` | `boolean` | No | Include the supporting 28-day weather and pollen forecast (defaults to false) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `lat` | `number` | No | — |
+| `lng` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date?: string | null,
+  time?: number | null,
+  risk?: string | number | null,
+  riskCategory?: string | null,
+  details?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pollen
+
+### getForecast
+
+`pollen.getForecast`
+
+Get the pollen forecast for a location (48 hours hourly or 120 hours 3-hourly)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.pollen.getForecast({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  lat: number,
+  lng: number,
+  hours?: 48 | 120,
+  speciesRisk?: boolean
+} | {
+  place: string,
+  hours?: 48 | 120,
+  speciesRisk?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `lat` | `number` | No | — |
+| `lng` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  time?: number | null,
+  updatedAt?: string | null,
+  Count?: {
+    grass_pollen?: number | null,
+    tree_pollen?: number | null,
+    weed_pollen?: number | null
+  },
+  Risk?: {
+    grass_pollen?: string | null,
+    tree_pollen?: string | null,
+    weed_pollen?: string | null
+  },
+  Species?: {
+  },
+  Risks?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHistory
+
+`pollen.getHistory`
+
+Get historical pollen counts for a location over a time range
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.pollen.getHistory({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  lat: number,
+  lng: number,
+  from: string,
+  to: string,
+  speciesRisk?: boolean
+} | {
+  place: string,
+  from: string,
+  to: string,
+  speciesRisk?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `lat` | `number` | No | — |
+| `lng` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  time?: number | null,
+  updatedAt?: string | null,
+  Count?: {
+    grass_pollen?: number | null,
+    tree_pollen?: number | null,
+    weed_pollen?: number | null
+  },
+  Risk?: {
+    grass_pollen?: string | null,
+    tree_pollen?: string | null,
+    weed_pollen?: string | null
+  },
+  Species?: {
+  },
+  Risks?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatest
+
+`pollen.getLatest`
+
+Get the latest grass, tree and weed pollen counts and risk levels for a location
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.pollen.getLatest({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  lat: number,
+  lng: number,
+  speciesRisk?: boolean
+} | {
+  place: string,
+  speciesRisk?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `lat` | `number` | No | — |
+| `lng` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  time?: number | null,
+  updatedAt?: string | null,
+  Count?: {
+    grass_pollen?: number | null,
+    tree_pollen?: number | null,
+    weed_pollen?: number | null
+  },
+  Risk?: {
+    grass_pollen?: string | null,
+    tree_pollen?: string | null,
+    weed_pollen?: string | null
+  },
+  Species?: {
+  },
+  Risks?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Weather
+
+### getForecast
+
+`weather.getForecast`
+
+Get the hourly weather forecast for a latitude/longitude (next 72 hours)
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.weather.getForecast({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+| `units` | `si` | No | Pass "si" to receive SI units instead of the imperial default |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### getHistory
+
+`weather.getHistory`
+
+Get hourly historical weather for a latitude/longitude over a time range
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.weather.getHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+| `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `to` | `string` | Yes | End of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
+| `units` | `si` | No | Pass "si" to receive SI units instead of the imperial default |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### getLatest
+
+`weather.getLatest`
+
+Get current weather conditions (temperature, humidity, wind, UV) for a latitude/longitude
+
+**Risk:** `read`
+
+```ts
+await corsair.ambee.api.weather.getLatest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude, between -90 and 90 |
+| `lng` | `number` | Yes | Longitude, between -180 and 180 |
+| `units` | `si` | No | Pass "si" to receive SI units instead of the imperial default |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | Ambee status message, "success" on a successful call |
+| `lat` | `number` | No | — |
+| `lng` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `units` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  time?: number | null,
+  summary?: string | null,
+  icon?: string | null,
+  temperature?: number | null,
+  apparentTemperature?: number | null,
+  dewPoint?: number | null,
+  humidity?: number | null,
+  pressure?: number | null,
+  surfacePressure?: number | null,
+  windSpeed?: number | null,
+  windGust?: number | null,
+  windBearing?: number | null,
+  cloudCover?: number | null,
+  visibility?: number | null,
+  ozone?: number | null,
+  uvIndex?: number | null,
+  precipIntensity?: number | null,
+  precipProbability?: number | null,
+  precipType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

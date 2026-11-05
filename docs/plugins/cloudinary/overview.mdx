@@ -1,0 +1,129 @@
+---
+title: Overview
+description: "Media management API for uploading, transforming, optimizing, and delivering images and video."
+---
+
+Use **Cloudinary** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 110 typed API operations
+- 10 synced entities (`folders`, `liveStreams`, `metadataFields`, `metadataRules`, `resources`, `transformations`, and 4 more) for fast `.search()` / `.list()`
+- 13 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/cloudinary
+```
+```bash yarn
+yarn add corsair @corsair-dev/cloudinary
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/cloudinary
+```
+```bash bun
+bun add corsair @corsair-dev/cloudinary
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { cloudinary } from '@corsair-dev/cloudinary';
+
+export const corsair = createCorsair({
+	plugins: [
+		cloudinary(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+Auth methods depend on how you configure `cloudinary({ ... })` — check the plugin source `*PluginOptions` type.
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'cloudinary',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`adaptive.getAdaptiveStreamingProfiles`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.adaptive.getAdaptiveStreamingProfiles({});
+```
+
+
+**`asset.createAssetRelationsByAssetId`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.asset.createAssetRelationsByAssetId({});
+```
+
+
+See the full list on the [API](/plugins/cloudinary/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.cloudinary.db.<entity>.search()` and `.list()`: `folders`, `liveStreams`, `metadataFields`, `metadataRules`, `resources`, `transformations`, `triggers`, `uploadMappings`, `uploadPresets`, `usage`.
+
+See [Database](/plugins/cloudinary/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **13** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/cloudinary/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/cloudinary/api">
+    Every `cloudinary.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/cloudinary/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/cloudinary/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

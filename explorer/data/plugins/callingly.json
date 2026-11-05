@@ -1,0 +1,2968 @@
+{
+  "id": "callingly",
+  "displayName": "Callingly",
+  "description": "Callingly plugin for Corsair",
+  "npmPackageName": "@corsair-dev/callingly",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "callingly.api.agents.create",
+      "shortPath": "agents.create",
+      "description": "Register a new agent in Callingly",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "on_call_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "custom_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "fub_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "hubspot_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "donotdisturb",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "donotdisturb_until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_available",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.agents.delete",
+      "shortPath": "agents.delete",
+      "description": "Permanently delete an agent from a Callingly account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.agents.getSchedule",
+      "shortPath": "agents.getSchedule",
+      "description": "Retrieve the availability schedule for a specific agent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ label?: string, day: number, is_available: boolean, times: { start: string, end: string }[] }[]"
+      }
+    },
+    {
+      "path": "callingly.api.agents.list",
+      "shortPath": "agents.list",
+      "description": "List all agents and users under the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, account_id?: string | number, name?: string, fname?: string, lname?: string, email?: string | null, phone_number?: string, ext?: string | null, on_call_id?: string | number | null, custom_id?: string | number | null, fub_id?: string | number | null, hubspot_id?: string | number | null, donotdisturb?: boolean | number, donotdisturb_until?: string | null, priority?: number, timezone?: string, is_available?: boolean }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.agents.update",
+      "shortPath": "agents.update",
+      "description": "Update agent information",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "fname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "donotdisturb",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "donotdisturb_until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "on_call_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "custom_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "fub_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "hubspot_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "donotdisturb",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "donotdisturb_until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_available",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.agents.updateSchedule",
+      "shortPath": "agents.updateSchedule",
+      "description": "Update an agent availability schedule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "days",
+            "optional": false,
+            "type": "{ label?: string, day: number, is_available: boolean, times: { start: string, end: string }[] }[]"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ label?: string, day: number, is_available: boolean, times: { start: string, end: string }[] }[]"
+      }
+    },
+    {
+      "path": "callingly.api.calls.create",
+      "shortPath": "calls.create",
+      "description": "Initiate or trigger a new call to a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "phone_number",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crm_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "scheduled_at",
+            "optional": true,
+            "type": "string",
+            "description": "Schedule the call instead of dialing now (YYYY-MM-DD HH:MM:SS)"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_status_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ring_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lead_retry",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "waveform_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "human_result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[]"
+          },
+          {
+            "key": "member",
+            "optional": true,
+            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[]"
+          },
+          {
+            "key": "lead",
+            "optional": true,
+            "type": "{ id: string | number, name?: string | null, label?: string | null, fname?: string | null, lname?: string | null, email?: string | null, phone_number?: string | null, phone_number_formatted?: string | null, source?: string | null, crm?: string | null, source_id?: string | number | null, deleted_at?: string | null } | never[]"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string } | never[]"
+          },
+          {
+            "key": "is_voicemail",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_queue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_team_offline",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scheduled_call_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "old_lead_owner_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.calls.get",
+      "shortPath": "calls.get",
+      "description": "Retrieve call details, duration, and recording by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_status_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ring_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lead_retry",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "waveform_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "human_result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[]"
+          },
+          {
+            "key": "member",
+            "optional": true,
+            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[]"
+          },
+          {
+            "key": "lead",
+            "optional": true,
+            "type": "{ id: string | number, name?: string | null, label?: string | null, fname?: string | null, lname?: string | null, email?: string | null, phone_number?: string | null, phone_number_formatted?: string | null, source?: string | null, crm?: string | null, source_id?: string | number | null, deleted_at?: string | null } | never[]"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string } | never[]"
+          },
+          {
+            "key": "is_voicemail",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_queue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_team_offline",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scheduled_call_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "old_lead_owner_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.calls.list",
+      "shortPath": "calls.list",
+      "description": "List call history with optional date range, team, and paging filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, started_at?: string, direction?: string, status?: string | null, status_formatted?: string, lead_status?: string | null, lead_status_formatted?: string, ring_status?: string, seconds?: number, duration?: string, retry?: number, lead_retry?: number, time_formatted?: string, from_formatted?: string, source?: string | null, recording_url?: string | null, waveform_url?: string | null, error_message?: string | null, phone_number_formatted?: string, human_result?: string | null, user?: { id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[] | null, member?: { id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[] | null, lead?: { id: string | number, name?: string | null, label?: string | null, fname?: string | null, lname?: string | null, email?: string | null, phone_number?: string | null, phone_number_formatted?: string | null, source?: string | null, crm?: string | null, source_id?: string | number | null, deleted_at?: string | null } | never[] | null, profile?: { id?: string | number, name?: string } | never[] | null, is_voicemail?: number, is_queue?: number, is_team_offline?: number, scheduled_call_type?: string | null, old_lead_owner_id?: string | number | null, transcript?: string | null, is_error?: number, error_code?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.clients.activateDeactivate",
+      "shortPath": "clients.activateDeactivate",
+      "description": "Activate or deactivate a client account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "is_active",
+            "optional": false,
+            "type": "0 | 1",
+            "description": "1 activates calling for the client, 0 deactivates it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.clients.create",
+      "shortPath": "clients.create",
+      "description": "Create a new agency client account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "billed_users",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "billed_numbers",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.clients.delete",
+      "shortPath": "clients.delete",
+      "description": "Delete an agency client account by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.clients.list",
+      "shortPath": "clients.list",
+      "description": "List agency client accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, name?: string, email?: string, billing_email?: string, is_active?: boolean | number, billed_users?: number, billed_numbers?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.leads.delete",
+      "shortPath": "leads.delete",
+      "description": "Delete a lead by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.leads.get",
+      "shortPath": "leads.get",
+      "description": "Retrieve lead details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "lead_owner_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "fname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "(string | { id?: string | number, name?: string })[]"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calls",
+            "optional": true,
+            "type": "{ id: string | number, source?: string | null, seconds?: number, direction?: string, status?: string | null, result?: string | null, agent_retry?: number, lead_retry?: number, started_at?: string, recording_url?: string | null }[]"
+          },
+          {
+            "key": "scheduled_call_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_owner",
+            "optional": true,
+            "type": "{ name?: string | null, phone_number?: string | null, custom_id?: string | number | null }"
+          },
+          {
+            "key": "is_stopped",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_blocked",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.leads.list",
+      "shortPath": "leads.list",
+      "description": "List leads with optional date range and phone number filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string | number, account_id?: string | number, lead_owner_id?: string | number | null, fname?: string | null, lname?: string | null, email?: string | null, phone_number?: string | null, source?: string | null, source_id?: string | number | null, created_at?: string, company?: string | null, category?: string | null, status?: string | null, result?: string | null, team?: { id?: string | number, name?: string } | null, tags?: (string | { id?: string | number, name?: string })[], stage?: string | null, calls?: { id: string | number, source?: string | null, seconds?: number, direction?: string, status?: string | null, result?: string | null, agent_retry?: number, lead_retry?: number, started_at?: string, recording_url?: string | null }[], scheduled_call_at?: string | null, lead_owner?: { name?: string | null, phone_number?: string | null, custom_id?: string | number | null } | null, is_stopped?: number, is_blocked?: number }[]"
+      }
+    },
+    {
+      "path": "callingly.api.leads.update",
+      "shortPath": "leads.update",
+      "description": "Update lead contact details and assignments",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "fname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_stopped",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "is_blocked",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "lead_owner_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "fname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "(string | { id?: string | number, name?: string })[]"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calls",
+            "optional": true,
+            "type": "{ id: string | number, source?: string | null, seconds?: number, direction?: string, status?: string | null, result?: string | null, agent_retry?: number, lead_retry?: number, started_at?: string, recording_url?: string | null }[]"
+          },
+          {
+            "key": "scheduled_call_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_owner",
+            "optional": true,
+            "type": "{ name?: string | null, phone_number?: string | null, custom_id?: string | number | null }"
+          },
+          {
+            "key": "is_stopped",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_blocked",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a new team in Callingly",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_record",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "call_mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whispertext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_retry",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "retries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "retry_schedule",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "is_reschedule",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "is_retry_lead",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "lead_retries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lead_retry_schedule",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_record",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "call_mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whispertext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "post_whispertext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_retry",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "retries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "retry_schedule",
+            "optional": true,
+            "type": "(number | { unit: string, value: number })[]"
+          },
+          {
+            "key": "is_reschedule",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "is_retry_lead",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "lead_retries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lead_retry_schedule",
+            "optional": true,
+            "type": "(number | { unit: string, value: number })[]"
+          },
+          {
+            "key": "is_sms",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "sms_body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whispertext_voice",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_users_available_for_call",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Retrieve team details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_record",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "call_mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whispertext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "post_whispertext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_retry",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "retries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "retry_schedule",
+            "optional": true,
+            "type": "(number | { unit: string, value: number })[]"
+          },
+          {
+            "key": "is_reschedule",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "is_retry_lead",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "lead_retries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lead_retry_schedule",
+            "optional": true,
+            "type": "(number | { unit: string, value: number })[]"
+          },
+          {
+            "key": "is_sms",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "sms_body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whispertext_voice",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_users_available_for_call",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams in the Callingly account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, account_id?: string | number, name: string, is_record?: boolean | number, call_mode?: string, whispertext?: string, post_whispertext?: string, language?: string, delay?: number, is_retry?: boolean | number, retries?: number, retry_schedule?: (number | { unit: string, value: number })[], is_reschedule?: boolean | number, is_retry_lead?: boolean | number, lead_retries?: number, lead_retry_schedule?: (number | { unit: string, value: number })[], is_sms?: boolean | number, sms_body?: string, whispertext_voice?: string, is_users_available_for_call?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.teams.listUsers",
+      "shortPath": "teams.listUsers",
+      "description": "Retrieve all agents assigned to a specific team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agents",
+            "optional": false,
+            "type": "{ id: string | number, team_id?: string | number, name?: string, custom_id?: string | number | null, fub_id?: string | number | null, priority?: number, cap?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.teams.removeAgent",
+      "shortPath": "teams.removeAgent",
+      "description": "Remove a specific agent from a team",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.teams.updateAgentSettings",
+      "shortPath": "teams.updateAgentSettings",
+      "description": "Update priority and capacity settings for a team agent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cap",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "fub_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cap",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.teams.updateUsers",
+      "shortPath": "teams.updateUsers",
+      "description": "Update the list of agents assigned to a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "agents",
+            "optional": false,
+            "type": "(string | number)[]",
+            "description": "Agent ids that replace every current team assignment"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ agents: { id: string | number, team_id?: string | number, name?: string, custom_id?: string | number | null, fub_id?: string | number | null, priority?: number, cap?: number | null }[] } | { success?: boolean, message?: string }"
+      }
+    },
+    {
+      "path": "callingly.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a new webhook for call or lead events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "call_completed | lead_created | lead_updated"
+          },
+          {
+            "key": "target_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "call_direction",
+            "optional": true,
+            "type": "outbound | inbound",
+            "description": "call_completed only"
+          },
+          {
+            "key": "call_status",
+            "optional": true,
+            "type": "completed | missed | offline",
+            "description": "call_completed only"
+          },
+          {
+            "key": "call_lead_status",
+            "optional": true,
+            "type": "contacted | missed | removed | voicemail",
+            "description": "call_completed only"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string | number",
+            "description": "Outbound call_completed only"
+          },
+          {
+            "key": "number_id",
+            "optional": true,
+            "type": "string | number",
+            "description": "Inbound call_completed only"
+          },
+          {
+            "key": "field",
+            "optional": true,
+            "type": "lead_owner | result | stage | status | tags",
+            "description": "lead_created / lead_updated only: trigger when this field changes"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "lead_created / lead_updated only: required value of `field`"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_lead_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "number_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "consecutive_failures",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_failed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_auto_disabled",
+            "optional": true,
+            "type": "boolean | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Retrieve details of a specific webhook by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_lead_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "number_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "consecutive_failures",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_failed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_auto_disabled",
+            "optional": true,
+            "type": "boolean | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "callingly.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List configured webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string | number, account_id?: string | number, name?: string, event?: string, target_url?: string, direction?: string | null, call_direction?: string | null, call_status?: string | null, call_lead_status?: string | null, team_id?: string | number | null, number_id?: string | number | null, field?: string | null, filter?: string | null, is_active?: boolean | number, consecutive_failures?: number, last_failed_at?: string | null, is_auto_disabled?: boolean | number }[]"
+      }
+    },
+    {
+      "path": "callingly.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update an existing webhook configuration by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "call_completed | lead_created | lead_updated"
+          },
+          {
+            "key": "target_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_direction",
+            "optional": true,
+            "type": "outbound | inbound",
+            "description": "call_completed only"
+          },
+          {
+            "key": "call_status",
+            "optional": true,
+            "type": "completed | missed | offline",
+            "description": "call_completed only"
+          },
+          {
+            "key": "call_lead_status",
+            "optional": true,
+            "type": "contacted | missed | removed | voicemail",
+            "description": "call_completed only"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string | number",
+            "description": "Outbound call_completed only"
+          },
+          {
+            "key": "number_id",
+            "optional": true,
+            "type": "string | number",
+            "description": "Inbound call_completed only"
+          },
+          {
+            "key": "field",
+            "optional": true,
+            "type": "lead_owner | result | stage | status | tags",
+            "description": "lead_created / lead_updated only: trigger when this field changes"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "lead_created / lead_updated only: required value of `field`"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_lead_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "number_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "consecutive_failures",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_failed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_auto_disabled",
+            "optional": true,
+            "type": "boolean | number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "callingly.db.calls.search",
+      "entityName": "calls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "started_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "direction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status_formatted",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_status_formatted",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ring_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "seconds",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "retry",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lead_retry",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "time_formatted",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from_formatted",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recording_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "waveform_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "error_message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number_formatted",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "human_result",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_voicemail",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_queue",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_team_offline",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "scheduled_call_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "transcript",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_error",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "error_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "callingly.db.clients.search",
+      "entityName": "clients",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "billing_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "billed_users",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "billed_numbers",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "callingly.db.leads.search",
+      "entityName": "leads",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "result",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "stage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduled_call_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_stopped",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_blocked",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "callingly.db.schedules.search",
+      "entityName": "schedules",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "callingly.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "call_mode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "whispertext",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "post_whispertext",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "delay",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "retries",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lead_retries",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sms_body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "whispertext_voice",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_users_available_for_call",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "callingly.db.teamUsers.search",
+      "entityName": "teamUsers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cap",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "callingly.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ext",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "donotdisturb_until",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_available",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "callingly.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "direction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "call_direction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "call_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "call_lead_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "field",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filter",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "consecutive_failures",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_failed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

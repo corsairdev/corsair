@@ -1,0 +1,130 @@
+---
+title: Database
+description: "Cincopa local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Cincopa plugin syncs data locally. Use `corsair.cincopa.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Account
+
+Path: `cincopa.db.account.search`
+
+```ts
+const rows = await corsair.cincopa.db.account.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `accid` | `string` | equals, contains, startsWith, endsWith, in |
+| `accemail` | `string` | equals, contains, startsWith, endsWith, in |
+| `userid` | `string` | equals, contains, startsWith, endsWith, in |
+| `useremail` | `string` | equals, contains, startsWith, endsWith, in |
+| `permissions` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Assets
+
+Path: `cincopa.db.assets.search`
+
+```ts
+const rows = await corsair.cincopa.db.assets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `rid` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `filename` | `string` | equals, contains, startsWith, endsWith, in |
+| `caption` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `long_description` | `string` | equals, contains, startsWith, endsWith, in |
+| `filesize` | `number` | equals, gt, gte, lt, lte, in |
+| `tags` | `string` | equals, contains, startsWith, endsWith, in |
+| `uploaded_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `uploaded` | `string` | equals, contains, startsWith, endsWith, in |
+| `modified` | `string` | equals, contains, startsWith, endsWith, in |
+| `syncstatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `storage` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Galleries
+
+Path: `cincopa.db.galleries.search`
+
+```ts
+const rows = await corsair.cincopa.db.galleries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `fid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `upload_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `tags` | `string` | equals, contains, startsWith, endsWith, in |
+| `modified` | `string` | equals, contains, startsWith, endsWith, in |
+| `syncstatus` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Upload Status
+
+Path: `cincopa.db.uploadStatus.search`
+
+```ts
+const rows = await corsair.cincopa.db.uploadStatus.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `resid` | `string` | equals, contains, startsWith, endsWith, in |
+| `more` | `string` | equals, contains, startsWith, endsWith, in |
+| `debug` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

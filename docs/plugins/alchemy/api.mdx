@@ -1,0 +1,2048 @@
+---
+title: API
+description: "API reference for Alchemy: every `alchemy.api.*` operation with input and output types."
+---
+
+Every `alchemy.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Nft
+
+### computeRarityV3
+
+`nft.computeRarityV3`
+
+Compute rarity for each attribute of an NFT.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.computeRarityV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+| `tokenId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rarities` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rarities full type">
+
+```ts
+{
+  traitType?: string,
+  value?: string | number,
+  prevalence?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCollectionMetadata
+
+`nft.getCollectionMetadata`
+
+Get collection metadata by marketplace slug.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getCollectionMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `collectionSlug` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCollectionsForOwner
+
+`nft.getCollectionsForOwner`
+
+Get NFT collections held by an owner.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getCollectionsForOwner({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `owner` | `string` | Yes | — |
+| `withMetadata` | `boolean` | No | — |
+| `includeFilters` | `string[]` | No | — |
+| `excludeFilters` | `string[]` | No | — |
+| `pageKey` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collections` | `object[]` | No | — |
+| `totalCount` | `number` | No | — |
+| `pageKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="collections full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContractMetadataBatchV3
+
+`nft.getContractMetadataBatchV3`
+
+Batch-fetch NFT contract metadata.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getContractMetadataBatchV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddresses` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contracts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="contracts full type">
+
+```ts
+{
+  address: string,
+  name?: string | null,
+  symbol?: string | null,
+  totalSupply?: string | null,
+  tokenType?: string | null,
+  contractDeployer?: string | null,
+  deployedBlockNumber?: number | null,
+  openSeaMetadata?: {
+    collectionName?: string | null,
+    collectionSlug?: string | null,
+    safelistRequestStatus?: string | null,
+    imageUrl?: string | null,
+    description?: string | null,
+    externalUrl?: string | null,
+    twitterUsername?: string | null,
+    discordUrl?: string | null,
+    bannerImageUrl?: string | null,
+    floorPrice?: number | null
+  },
+  isSpam?: boolean | null,
+  spamClassifications?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContractMetadataV3
+
+`nft.getContractMetadataV3`
+
+Get metadata for an NFT contract.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getContractMetadataV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `symbol` | `string` | No | — |
+| `totalSupply` | `string` | No | — |
+| `tokenType` | `string` | No | — |
+| `contractDeployer` | `string` | No | — |
+| `deployedBlockNumber` | `number` | No | — |
+| `openSeaMetadata` | `object` | No | — |
+| `isSpam` | `boolean` | No | — |
+| `spamClassifications` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="openSeaMetadata full type">
+
+```ts
+{
+  collectionName?: string | null,
+  collectionSlug?: string | null,
+  safelistRequestStatus?: string | null,
+  imageUrl?: string | null,
+  description?: string | null,
+  externalUrl?: string | null,
+  twitterUsername?: string | null,
+  discordUrl?: string | null,
+  bannerImageUrl?: string | null,
+  floorPrice?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContractsForOwnerV3
+
+`nft.getContractsForOwnerV3`
+
+Get NFT contracts owned by an address.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getContractsForOwnerV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `owner` | `string` | Yes | — |
+| `withMetadata` | `boolean` | No | — |
+| `includeFilters` | `string[]` | No | — |
+| `excludeFilters` | `string[]` | No | — |
+| `pageKey` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contracts` | `object[]` | No | — |
+| `totalCount` | `number` | No | — |
+| `pageKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="contracts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFloorPriceV3
+
+`nft.getFloorPriceV3`
+
+Get floor price across marketplaces.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getFloorPriceV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+| `collectionSlug` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getNftMetadata
+
+`nft.getNftMetadata`
+
+Get metadata for a specific NFT.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getNftMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+| `tokenId` | `string` | Yes | — |
+| `tokenType` | `ERC721 \| ERC1155` | No | — |
+| `tokenUriTimeoutInMs` | `number` | No | — |
+| `refreshCache` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contract` | `object` | No | — |
+| `contractAddress` | `string` | No | — |
+| `tokenId` | `string` | Yes | — |
+| `tokenType` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `tokenUri` | `string` | No | — |
+| `image` | `object` | No | — |
+| `animation` | `object` | No | — |
+| `raw` | `object` | No | — |
+| `collection` | `object` | No | — |
+| `mint` | `object` | No | — |
+| `owners` | `string[]` | No | — |
+| `timeLastUpdated` | `string` | No | — |
+| `balance` | `string` | No | — |
+| `acquiredAt` | `object` | No | — |
+| `network` | `string` | No | — |
+| `address` | `string` | No | — |
+| `isSpam` | `boolean` | No | — |
+| `spamClassifications` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="contract full type">
+
+```ts
+{
+  address: string,
+  name?: string | null,
+  symbol?: string | null,
+  totalSupply?: string | null,
+  tokenType?: string | null,
+  contractDeployer?: string | null,
+  deployedBlockNumber?: number | null,
+  openSeaMetadata?: {
+    collectionName?: string | null,
+    collectionSlug?: string | null,
+    safelistRequestStatus?: string | null,
+    imageUrl?: string | null,
+    description?: string | null,
+    externalUrl?: string | null,
+    twitterUsername?: string | null,
+    discordUrl?: string | null,
+    bannerImageUrl?: string | null,
+    floorPrice?: number | null
+  },
+  isSpam?: boolean | null,
+  spamClassifications?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="image full type">
+
+```ts
+{
+  cachedUrl?: string | null,
+  thumbnailUrl?: string | null,
+  pngUrl?: string | null,
+  contentType?: string | null,
+  size?: number | null,
+  originalUrl?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="animation full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="raw full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="collection full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="mint full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="acquiredAt full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNftMetadataBatch
+
+`nft.getNftMetadataBatch`
+
+Batch-fetch NFT metadata (up to 100).
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getNftMetadataBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `tokens` | `object[]` | Yes | — |
+| `tokenUriTimeoutInMs` | `number` | No | — |
+| `refreshCache` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tokens full type">
+
+```ts
+{
+  contractAddress: string,
+  tokenId: string,
+  tokenType?: ERC721 | ERC1155
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nfts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="nfts full type">
+
+```ts
+{
+  contract?: {
+    address: string,
+    name?: string | null,
+    symbol?: string | null,
+    totalSupply?: string | null,
+    tokenType?: string | null,
+    contractDeployer?: string | null,
+    deployedBlockNumber?: number | null,
+    openSeaMetadata?: {
+      collectionName?: string | null,
+      collectionSlug?: string | null,
+      safelistRequestStatus?: string | null,
+      imageUrl?: string | null,
+      description?: string | null,
+      externalUrl?: string | null,
+      twitterUsername?: string | null,
+      discordUrl?: string | null,
+      bannerImageUrl?: string | null,
+      floorPrice?: number | null
+    },
+    isSpam?: boolean | null,
+    spamClassifications?: string[]
+  },
+  contractAddress?: string,
+  tokenId: string,
+  tokenType?: string | null,
+  name?: string | null,
+  description?: string | null,
+  tokenUri?: string | null,
+  image?: {
+    cachedUrl?: string | null,
+    thumbnailUrl?: string | null,
+    pngUrl?: string | null,
+    contentType?: string | null,
+    size?: number | null,
+    originalUrl?: string | null
+  },
+  animation?: {
+  } | null,
+  raw?: {
+  },
+  collection?: {
+  } | null,
+  mint?: {
+  } | null,
+  owners?: string[] | null,
+  timeLastUpdated?: string | null,
+  balance?: string | null,
+  acquiredAt?: {
+  } | null,
+  network?: string,
+  address?: string,
+  isSpam?: boolean | null,
+  spamClassifications?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNftSalesV3
+
+`nft.getNftSalesV3`
+
+Get NFT sales across marketplaces.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getNftSalesV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `fromBlock` | `string \| number` | No | — |
+| `toBlock` | `string \| number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `marketplace` | `string` | No | — |
+| `contractAddress` | `string` | No | — |
+| `tokenId` | `string` | No | — |
+| `buyerAddress` | `string` | No | — |
+| `sellerAddress` | `string` | No | — |
+| `taker` | `BUYER \| SELLER` | No | — |
+| `limit` | `number` | No | — |
+| `pageKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nftSales` | `object[]` | No | — |
+| `pageKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="nftSales full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNftsForCollectionV3
+
+`nft.getNftsForCollectionV3`
+
+Get NFTs for a collection slug or contract.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getNftsForCollectionV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `collectionSlug` | `string` | No | — |
+| `contractAddress` | `string` | No | — |
+| `withMetadata` | `boolean` | No | — |
+| `startToken` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `tokenUriTimeoutInMs` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nfts` | `object[]` | No | — |
+| `pageKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="nfts full type">
+
+```ts
+{
+  contract?: {
+    address: string,
+    name?: string | null,
+    symbol?: string | null,
+    totalSupply?: string | null,
+    tokenType?: string | null,
+    contractDeployer?: string | null,
+    deployedBlockNumber?: number | null,
+    openSeaMetadata?: {
+      collectionName?: string | null,
+      collectionSlug?: string | null,
+      safelistRequestStatus?: string | null,
+      imageUrl?: string | null,
+      description?: string | null,
+      externalUrl?: string | null,
+      twitterUsername?: string | null,
+      discordUrl?: string | null,
+      bannerImageUrl?: string | null,
+      floorPrice?: number | null
+    },
+    isSpam?: boolean | null,
+    spamClassifications?: string[]
+  },
+  contractAddress?: string,
+  tokenId: string,
+  tokenType?: string | null,
+  name?: string | null,
+  description?: string | null,
+  tokenUri?: string | null,
+  image?: {
+    cachedUrl?: string | null,
+    thumbnailUrl?: string | null,
+    pngUrl?: string | null,
+    contentType?: string | null,
+    size?: number | null,
+    originalUrl?: string | null
+  },
+  animation?: {
+  } | null,
+  raw?: {
+  },
+  collection?: {
+  } | null,
+  mint?: {
+  } | null,
+  owners?: string[] | null,
+  timeLastUpdated?: string | null,
+  balance?: string | null,
+  acquiredAt?: {
+  } | null,
+  network?: string,
+  address?: string,
+  isSpam?: boolean | null,
+  spamClassifications?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNftsForContract
+
+`nft.getNftsForContract`
+
+Get NFTs for a contract address.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getNftsForContract({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+| `withMetadata` | `boolean` | No | — |
+| `startToken` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `tokenUriTimeoutInMs` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nfts` | `object[]` | No | — |
+| `pageKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="nfts full type">
+
+```ts
+{
+  contract?: {
+    address: string,
+    name?: string | null,
+    symbol?: string | null,
+    totalSupply?: string | null,
+    tokenType?: string | null,
+    contractDeployer?: string | null,
+    deployedBlockNumber?: number | null,
+    openSeaMetadata?: {
+      collectionName?: string | null,
+      collectionSlug?: string | null,
+      safelistRequestStatus?: string | null,
+      imageUrl?: string | null,
+      description?: string | null,
+      externalUrl?: string | null,
+      twitterUsername?: string | null,
+      discordUrl?: string | null,
+      bannerImageUrl?: string | null,
+      floorPrice?: number | null
+    },
+    isSpam?: boolean | null,
+    spamClassifications?: string[]
+  },
+  contractAddress?: string,
+  tokenId: string,
+  tokenType?: string | null,
+  name?: string | null,
+  description?: string | null,
+  tokenUri?: string | null,
+  image?: {
+    cachedUrl?: string | null,
+    thumbnailUrl?: string | null,
+    pngUrl?: string | null,
+    contentType?: string | null,
+    size?: number | null,
+    originalUrl?: string | null
+  },
+  animation?: {
+  } | null,
+  raw?: {
+  },
+  collection?: {
+  } | null,
+  mint?: {
+  } | null,
+  owners?: string[] | null,
+  timeLastUpdated?: string | null,
+  balance?: string | null,
+  acquiredAt?: {
+  } | null,
+  network?: string,
+  address?: string,
+  isSpam?: boolean | null,
+  spamClassifications?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNftsForOwner
+
+`nft.getNftsForOwner`
+
+Get NFTs owned by an address.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getNftsForOwner({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `owner` | `string` | Yes | — |
+| `contractAddresses` | `string[]` | No | — |
+| `withMetadata` | `boolean` | No | — |
+| `orderBy` | `string` | No | — |
+| `excludeFilters` | `string[]` | No | — |
+| `includeFilters` | `string[]` | No | — |
+| `spamConfidenceLevel` | `string` | No | — |
+| `tokenUriTimeoutInMs` | `number` | No | — |
+| `pageKey` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownedNfts` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `validAt` | `object` | No | — |
+| `pageKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="ownedNfts full type">
+
+```ts
+{
+  contract?: {
+    address: string,
+    name?: string | null,
+    symbol?: string | null,
+    totalSupply?: string | null,
+    tokenType?: string | null,
+    contractDeployer?: string | null,
+    deployedBlockNumber?: number | null,
+    openSeaMetadata?: {
+      collectionName?: string | null,
+      collectionSlug?: string | null,
+      safelistRequestStatus?: string | null,
+      imageUrl?: string | null,
+      description?: string | null,
+      externalUrl?: string | null,
+      twitterUsername?: string | null,
+      discordUrl?: string | null,
+      bannerImageUrl?: string | null,
+      floorPrice?: number | null
+    },
+    isSpam?: boolean | null,
+    spamClassifications?: string[]
+  },
+  contractAddress?: string,
+  tokenId: string,
+  tokenType?: string | null,
+  name?: string | null,
+  description?: string | null,
+  tokenUri?: string | null,
+  image?: {
+    cachedUrl?: string | null,
+    thumbnailUrl?: string | null,
+    pngUrl?: string | null,
+    contentType?: string | null,
+    size?: number | null,
+    originalUrl?: string | null
+  },
+  animation?: {
+  } | null,
+  raw?: {
+  },
+  collection?: {
+  } | null,
+  mint?: {
+  } | null,
+  owners?: string[] | null,
+  timeLastUpdated?: string | null,
+  balance?: string | null,
+  acquiredAt?: {
+  } | null,
+  network?: string,
+  address?: string,
+  isSpam?: boolean | null,
+  spamClassifications?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="validAt full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOwnersForCollection
+
+`nft.getOwnersForCollection`
+
+Get owners for an NFT collection/contract.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getOwnersForCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+| `withTokenBalances` | `boolean` | No | — |
+| `block` | `string` | No | — |
+| `pageKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owners` | `object[]` | Yes | — |
+| `pageKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+(
+  string | {
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOwnersForContract
+
+`nft.getOwnersForContract`
+
+Get owners for an NFT contract.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getOwnersForContract({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+| `withTokenBalances` | `boolean` | No | — |
+| `block` | `string` | No | — |
+| `pageKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owners` | `object[]` | Yes | — |
+| `pageKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+(
+  string | {
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOwnersForNftV3
+
+`nft.getOwnersForNftV3`
+
+Get owners for a specific NFT.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.getOwnersForNftV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+| `tokenId` | `string` | Yes | — |
+| `pageKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owners` | `string[]` | Yes | — |
+| `pageKey` | `string` | No | — |
+
+
+
+---
+
+### invalidateContractV3
+
+`nft.invalidateContractV3`
+
+Invalidate cached metadata for an NFT contract.
+
+**Risk:** `write`
+
+```ts
+await corsair.alchemy.api.nft.invalidateContractV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | No | — |
+| `numTokensInvalidated` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### isAirdrop
+
+`nft.isAirdrop`
+
+Check if an NFT token is marked as an airdrop.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.isAirdrop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+| `tokenId` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### isAirdropNft
+
+`nft.isAirdropNft`
+
+Check whether an NFT was airdropped to its owner.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.isAirdropNft({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+| `tokenId` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### isHolderOfCollection
+
+`nft.isHolderOfCollection`
+
+Check if a wallet owns any NFT from a collection/contract.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.isHolderOfCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `wallet` | `string` | Yes | — |
+| `contractAddress` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isHolderOfContract` | `boolean` | Yes | — |
+
+
+
+---
+
+### isHolderOfContract
+
+`nft.isHolderOfContract`
+
+Check if a wallet holds any NFT from a contract.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.isHolderOfContract({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `wallet` | `string` | Yes | — |
+| `contractAddress` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isHolderOfContract` | `boolean` | Yes | — |
+
+
+
+---
+
+### isSpamContract
+
+`nft.isSpamContract`
+
+Check if an NFT contract is marked as spam.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.isSpamContract({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### isSpamContractV3
+
+`nft.isSpamContractV3`
+
+Check if an NFT contract is marked as spam (v3).
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.isSpamContractV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### searchContractMetadataV3
+
+`nft.searchContractMetadataV3`
+
+Search NFT contract metadata by keywords.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.searchContractMetadataV3({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `query` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contracts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="contracts full type">
+
+```ts
+{
+  address: string,
+  name?: string | null,
+  symbol?: string | null,
+  totalSupply?: string | null,
+  tokenType?: string | null,
+  contractDeployer?: string | null,
+  deployedBlockNumber?: number | null,
+  openSeaMetadata?: {
+    collectionName?: string | null,
+    collectionSlug?: string | null,
+    safelistRequestStatus?: string | null,
+    imageUrl?: string | null,
+    description?: string | null,
+    externalUrl?: string | null,
+    twitterUsername?: string | null,
+    discordUrl?: string | null,
+    bannerImageUrl?: string | null,
+    floorPrice?: number | null
+  },
+  isSpam?: boolean | null,
+  spamClassifications?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### summarizeNftAttributes
+
+`nft.summarizeNftAttributes`
+
+Summarize attribute distribution for a collection.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.nft.summarizeNftAttributes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Portfolio
+
+### getNftContractsByAddress
+
+`portfolio.getNftContractsByAddress`
+
+Get NFT contracts for wallets across networks.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.portfolio.getNftContractsByAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | — |
+| `withMetadata` | `boolean` | No | — |
+| `pageKey` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  address: string,
+  networks: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  contracts?: {
+  }[],
+  totalCount?: number,
+  pageKey?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPortfolioNftsByAddress
+
+`portfolio.getPortfolioNftsByAddress`
+
+Get portfolio NFTs for wallets across networks.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.portfolio.getPortfolioNftsByAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | — |
+| `withMetadata` | `boolean` | No | — |
+| `pageKey` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+| `excludeFilters` | `string[]` | No | — |
+| `includeFilters` | `string[]` | No | — |
+| `spamConfidenceLevel` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  address: string,
+  networks: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ownedNfts?: {
+    contract?: {
+      address: string,
+      name?: string | null,
+      symbol?: string | null,
+      totalSupply?: string | null,
+      tokenType?: string | null,
+      contractDeployer?: string | null,
+      deployedBlockNumber?: number | null,
+      openSeaMetadata?: {
+        collectionName?: string | null,
+        collectionSlug?: string | null,
+        safelistRequestStatus?: string | null,
+        imageUrl?: string | null,
+        description?: string | null,
+        externalUrl?: string | null,
+        twitterUsername?: string | null,
+        discordUrl?: string | null,
+        bannerImageUrl?: string | null,
+        floorPrice?: number | null
+      },
+      isSpam?: boolean | null,
+      spamClassifications?: string[]
+    },
+    contractAddress?: string,
+    tokenId: string,
+    tokenType?: string | null,
+    name?: string | null,
+    description?: string | null,
+    tokenUri?: string | null,
+    image?: {
+      cachedUrl?: string | null,
+      thumbnailUrl?: string | null,
+      pngUrl?: string | null,
+      contentType?: string | null,
+      size?: number | null,
+      originalUrl?: string | null
+    },
+    animation?: {
+    } | null,
+    raw?: {
+    },
+    collection?: {
+    } | null,
+    mint?: {
+    } | null,
+    owners?: string[] | null,
+    timeLastUpdated?: string | null,
+    balance?: string | null,
+    acquiredAt?: {
+    } | null,
+    network?: string,
+    address?: string,
+    isSpam?: boolean | null,
+    spamClassifications?: string[]
+  }[],
+  totalCount?: number,
+  pageKey?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTokenBalancesByAddress
+
+`portfolio.getTokenBalancesByAddress`
+
+Get lightweight token balances across networks.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.portfolio.getTokenBalancesByAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | — |
+| `includeNativeTokens` | `boolean` | No | — |
+| `includeErc20Tokens` | `boolean` | No | — |
+| `pageKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  address: string,
+  networks: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tokens?: {
+    network: string,
+    address: string,
+    tokenAddress?: string | null,
+    tokenBalance: string
+  }[],
+  pageKey?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTokensByAddress
+
+`portfolio.getTokensByAddress`
+
+Get fungible tokens with metadata and prices.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.portfolio.getTokensByAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | — |
+| `withMetadata` | `boolean` | No | — |
+| `withPrices` | `boolean` | No | — |
+| `includeNativeTokens` | `boolean` | No | — |
+| `includeErc20Tokens` | `boolean` | No | — |
+| `pageKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  address: string,
+  networks: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tokens?: {
+    network: string,
+    address: string,
+    tokenAddress?: string | null,
+    tokenBalance: string,
+    tokenMetadata?: {
+    },
+    tokenPrices?: {
+    }[],
+    error?: string | null
+  }[],
+  pageKey?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTransactionsHistoryByAddress
+
+`portfolio.getTransactionsHistoryByAddress`
+
+Get transaction history across networks.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.portfolio.getTransactionsHistoryByAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  address: string,
+  networks: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactions` | `object[]` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `totalCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="transactions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Prices
+
+### getHistoricalPrices
+
+`prices.getHistoricalPrices`
+
+Get historical token prices over a time range.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.prices.getHistoricalPrices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | — |
+| `network` | `string` | No | — |
+| `address` | `string` | No | — |
+| `startTime` | `string \| number` | Yes | — |
+| `endTime` | `string \| number` | Yes | — |
+| `interval` | `5m \| 1h \| 1d` | No | — |
+| `withMarketData` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | — |
+| `network` | `string` | No | — |
+| `address` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  value: string,
+  timestamp: string,
+  marketCap?: string,
+  totalVolume?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPricesBySymbol
+
+`prices.getPricesBySymbol`
+
+Get current token prices by symbol.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.prices.getPricesBySymbol({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbols` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  symbol: string,
+  prices?: {
+    currency: string,
+    value: string,
+    lastUpdatedAt: string
+  }[],
+  error?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTokenPricesByAddress
+
+`prices.getTokenPricesByAddress`
+
+Get current token prices by address/network.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.prices.getTokenPricesByAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  network: string,
+  address: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  network?: string,
+  address?: string,
+  prices?: {
+    currency: string,
+    value: string,
+    lastUpdatedAt: string
+  }[],
+  error?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Rpc
+
+### getTransactionCount
+
+`rpc.getTransactionCount`
+
+Get transaction count (nonce) for an address.
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.rpc.getTransactionCount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `address` | `string` | Yes | — |
+| `blockTag` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `hex` | `string` | Yes | — |
+
+
+
+---
+
+## Token
+
+### getTokenBalances
+
+`token.getTokenBalances`
+
+Get ERC-20 token balances for an address (JSON-RPC).
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.token.getTokenBalances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `address` | `string` | Yes | — |
+| `tokenAddresses` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `tokenBalances` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tokenBalances full type">
+
+```ts
+{
+  contractAddress: string,
+  tokenBalance?: string | null,
+  error?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTokenMetadata
+
+`token.getTokenMetadata`
+
+Get ERC-20 token metadata (JSON-RPC).
+
+**Risk:** `read`
+
+```ts
+await corsair.alchemy.api.token.getTokenMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
+| `contractAddress` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `decimals` | `number` | No | — |
+| `logo` | `string` | No | — |
+| `name` | `string` | No | — |
+| `symbol` | `string` | No | — |
+
+
+
+---
+

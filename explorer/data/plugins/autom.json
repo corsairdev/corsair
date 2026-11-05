@@ -1,0 +1,130 @@
+{
+  "id": "autom",
+  "displayName": "Autom",
+  "description": "Workflow automation platform for connecting apps and automating repetitive business tasks.",
+  "npmPackageName": "@corsair-dev/autom",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "generic_api_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "autom.api.google.countries",
+      "shortPath": "google.countries",
+      "description": "Retrieve Google-supported countries filtered by search term.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ country_code: string, country_name: string }[]"
+      }
+    },
+    {
+      "path": "autom.api.google.images",
+      "shortPath": "google.images",
+      "description": "Fetch image search results from Google Search.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ url: string, link: string, title: string, domain: string, source: string, position: number, image_width: number, image_height: number }[]"
+          },
+          {
+            "key": "search_parameters",
+            "optional": false,
+            "type": "{ q: string, gl?: string, hl?: string, page: number, engine: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "autom.api.google.languages",
+      "shortPath": "google.languages",
+      "description": "Retrieve Google-supported languages filtered by search term.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ language_code: string, language_name: string }[]"
+      }
+    },
+    {
+      "path": "autom.api.google.locations",
+      "shortPath": "google.locations",
+      "description": "Retrieve Google-supported locations filtered by search term.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, gps: number[], name: string, reach: number, google_id: number, target_type: string, country_code: string, canonical_name: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

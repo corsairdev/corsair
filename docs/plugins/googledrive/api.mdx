@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Google drive: every `googledrive.api.*` operation with input and output types."
+description: "API reference for Google Drive: every `googledrive.api.*` operation with input and output types."
 ---
 
 Every `googledrive.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -1458,6 +1458,36 @@ await corsair.googledrive.api.sharedDrives.update({});
 | `colorRgb` | `string` | No | — |
 | `createdTime` | `string` | No | — |
 | `hidden` | `boolean` | No | — |
+
+
+
+---
+
+## Storage
+
+### getQuota
+
+`storage.getQuota`
+
+Get the user's Google Drive storage quota and usage
+
+**Risk:** `read`
+
+```ts
+await corsair.googledrive.api.storage.getQuota({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `string` | No | — |
+| `usage` | `string` | Yes | — |
+| `usageInDrive` | `string` | Yes | — |
+| `usageInDriveTrash` | `string` | Yes | — |
 
 
 

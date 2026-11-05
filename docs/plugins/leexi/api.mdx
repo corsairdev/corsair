@@ -1,0 +1,860 @@
+---
+title: API
+description: "API reference for Leexi: every `leexi.api.*` operation with input and output types."
+---
+
+Every `leexi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Calls
+
+### get
+
+`calls.get`
+
+Get a specific call including topics and transcripts with paragraph and word-level timestamps
+
+**Risk:** `read`
+
+```ts
+await corsair.leexi.api.calls.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  title?: string | null,
+  description?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  performed_at?: string | null,
+  duration?: number | null,
+  direction?: string | null,
+  is_video?: boolean,
+  locale?: string | null,
+  source?: string | null,
+  source_id?: string | null,
+  visible?: boolean,
+  leexi_url?: string | null,
+  recording_url?: string | null,
+  transcript_url?: string | null,
+  simple_transcript?: string | null,
+  summary?: string | null,
+  custom_fields?: {
+  } | null,
+  customer_email_addresses?: string[],
+  customer_phone_numbers?: string[],
+  audio_archived_at?: string | null,
+  video_archived_at?: string | null,
+  transcript_archived_at?: string | null,
+  completions_archived_at?: string | null,
+  owner?: {
+    uuid: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  participating_users?: {
+    uuid: string,
+    name?: string | null,
+    email?: string | null
+  }[],
+  customers?: {
+    uuid: string,
+    name?: string | null,
+    email?: string | null,
+    phone_number?: string | null
+  }[],
+  speakers?: {
+    uuid: string,
+    name?: string | null,
+    index?: number,
+    is_user?: boolean,
+    email_address?: string | null,
+    phone_number?: string | null,
+    duration?: number | null,
+    longest_monologue?: number | null
+  }[],
+  chapters?: {
+    uuid: string,
+    index?: number,
+    title?: string | null,
+    text?: string | null,
+    start_time?: number | null
+  }[],
+  prompts?: {
+    uuid: string,
+    category?: string | null,
+    title?: string | null,
+    completions?: string[]
+  }[],
+  tasks?: {
+    uuid: string,
+    subject?: string | null,
+    description?: string | null,
+    done?: boolean,
+    active?: boolean,
+    created_at?: string | null,
+    updated_at?: string | null,
+    speaker?: {
+      uuid: string,
+      name?: string | null,
+      index?: number,
+      is_user?: boolean,
+      email_address?: string | null,
+      phone_number?: string | null,
+      duration?: number | null,
+      longest_monologue?: number | null
+    } | null,
+    last_editor?: {
+      uuid: string,
+      name?: string | null,
+      email?: string | null
+    } | null
+  }[],
+  conversation_type?: {
+    uuid: string,
+    slug?: string | null,
+    active?: boolean
+  } | null,
+  tags?: {
+    uuid: string,
+    name?: string | null,
+    color?: string | null
+  }[],
+  transcript?: {
+    speaker_index?: number | null,
+    start_time?: number | null,
+    end_time?: number | null,
+    items?: {
+      content: string,
+      start_time: number,
+      end_time: number
+    }[]
+  }[],
+  call_topics?: {
+    uuid: string,
+    topic_name?: string | null,
+    keyphrase?: string | null,
+    start_time?: number | null,
+    end_time?: number | null,
+    speaker?: {
+      uuid: string,
+      name?: string | null,
+      index?: number,
+      is_user?: boolean,
+      email_address?: string | null,
+      phone_number?: string | null,
+      duration?: number | null,
+      longest_monologue?: number | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[],
+  call_ai_topics?: {
+    uuid: string,
+    ai_topics?: {
+      uuid: string,
+      name?: string | null,
+      color?: string | null
+    }[],
+    sentence?: string | null,
+    start_time?: number | null,
+    end_time?: number | null,
+    speaker?: {
+      uuid: string,
+      name?: string | null,
+      index?: number | null,
+      is_user?: boolean,
+      email_address?: string | null,
+      phone_number?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[],
+  deal?: {
+  } | null,
+  meeting_event?: {
+  } | null,
+  feedbacks?: {
+  }[],
+  scorecards?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`calls.list`
+
+List call records with pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.leexi.api.calls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `items` | `number` | No | — |
+| `order` | `created_at desc \| created_at asc \| performed_at desc \| performed_at asc \| updated_at desc \| updated_at asc` | No | — |
+| `date_filter` | `created_at \| performed_at \| updated_at` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `source` | `string` | No | — |
+| `source_id` | `string[]` | No | — |
+| `owner_uuid` | `string[]` | No | — |
+| `participating_user_uuid` | `string[]` | No | — |
+| `conversation_type_uuid` | `string` | No | — |
+| `customer_phone_number` | `string[]` | No | — |
+| `customer_email_address` | `string[]` | No | — |
+| `with_simple_transcript` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  title?: string | null,
+  description?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  performed_at?: string | null,
+  duration?: number | null,
+  direction?: string | null,
+  is_video?: boolean,
+  locale?: string | null,
+  source?: string | null,
+  source_id?: string | null,
+  visible?: boolean,
+  leexi_url?: string | null,
+  recording_url?: string | null,
+  transcript_url?: string | null,
+  simple_transcript?: string | null,
+  summary?: string | null,
+  custom_fields?: {
+  } | null,
+  customer_email_addresses?: string[],
+  customer_phone_numbers?: string[],
+  audio_archived_at?: string | null,
+  video_archived_at?: string | null,
+  transcript_archived_at?: string | null,
+  completions_archived_at?: string | null,
+  owner?: {
+    uuid: string,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  participating_users?: {
+    uuid: string,
+    name?: string | null,
+    email?: string | null
+  }[],
+  customers?: {
+    uuid: string,
+    name?: string | null,
+    email?: string | null,
+    phone_number?: string | null
+  }[],
+  speakers?: {
+    uuid: string,
+    name?: string | null,
+    index?: number,
+    is_user?: boolean,
+    email_address?: string | null,
+    phone_number?: string | null,
+    duration?: number | null,
+    longest_monologue?: number | null
+  }[],
+  chapters?: {
+    uuid: string,
+    index?: number,
+    title?: string | null,
+    text?: string | null,
+    start_time?: number | null
+  }[],
+  prompts?: {
+    uuid: string,
+    category?: string | null,
+    title?: string | null,
+    completions?: string[]
+  }[],
+  tasks?: {
+    uuid: string,
+    subject?: string | null,
+    description?: string | null,
+    done?: boolean,
+    active?: boolean,
+    created_at?: string | null,
+    updated_at?: string | null,
+    speaker?: {
+      uuid: string,
+      name?: string | null,
+      index?: number,
+      is_user?: boolean,
+      email_address?: string | null,
+      phone_number?: string | null,
+      duration?: number | null,
+      longest_monologue?: number | null
+    } | null,
+    last_editor?: {
+      uuid: string,
+      name?: string | null,
+      email?: string | null
+    } | null
+  }[],
+  conversation_type?: {
+    uuid: string,
+    slug?: string | null,
+    active?: boolean
+  } | null,
+  tags?: {
+    uuid: string,
+    name?: string | null,
+    color?: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  items: number,
+  count: number,
+  pages?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### requestPresignedUrl
+
+`calls.requestPresignedUrl`
+
+Generate a presigned upload URL for a call recording (expires after 3 days if unused)
+
+**Risk:** `write`
+
+```ts
+await corsair.leexi.api.calls.requestPresignedUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `extension` | `.mp4 \| .mkv \| .avi \| .webm \| .mov \| .wmv \| .mpg \| .mpeg \| .m4v \| .mp3 \| .wav \| .aac \| .flac \| .ogg \| .m4a \| .wma \| .opus \| .aiff \| .alac \| .amr \| .ape \| .dts \| .ac3 \| .mid \| .mp2 \| .mpc \| .ra \| .tta \| .vox` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url: string,
+  recording_s3_key: string,
+  headers: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meeting Events
+
+### create
+
+`meetingEvents.create`
+
+Create a new meeting event in Leexi with timing, participants, and recording preferences
+
+**Risk:** `write`
+
+```ts
+await corsair.leexi.api.meetingEvents.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meeting_url` | `string` | Yes | — |
+| `user_uuid` | `string` | Yes | — |
+| `start_time` | `string` | Yes | — |
+| `end_time` | `string` | Yes | — |
+| `owned` | `boolean` | Yes | — |
+| `internal` | `boolean` | Yes | — |
+| `to_record` | `boolean` | Yes | — |
+| `organizer` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `attendees` | `string[]` | No | — |
+| `direction` | `inbound \| outbound` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  meeting_url?: string | null,
+  start_time?: string | null,
+  end_time?: string | null,
+  owned?: boolean,
+  internal?: boolean,
+  to_record?: boolean,
+  created_at?: string | null,
+  updated_at?: string | null,
+  active?: boolean,
+  bot_scheduled?: boolean,
+  bot_running?: boolean,
+  origin?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`meetingEvents.delete`
+
+Permanently delete a meeting event by UUID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.leexi.api.meetingEvents.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`meetingEvents.get`
+
+Get a specific meeting event by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.leexi.api.meetingEvents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  title?: string | null,
+  organizer?: {
+    email: string
+  } | null,
+  attendees?: {
+    email: string
+  }[],
+  meeting_url?: string | null,
+  meeting_provider?: string | null,
+  internal?: boolean,
+  direction?: string | null,
+  start_time?: string | null,
+  end_time?: string | null,
+  description?: string | null,
+  owned?: boolean,
+  to_record?: boolean,
+  bot_scheduled?: boolean,
+  bot_running?: boolean,
+  bot_runs?: {
+    uuid: string,
+    start_time?: string | null,
+    end_time?: string | null,
+    recording_start_time?: string | null,
+    end_reason?: string | null
+  }[],
+  origin?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  recording_notified?: boolean,
+  active?: boolean,
+  integration_user?: {
+    uuid: string,
+    name?: string | null,
+    email?: string | null,
+    active?: boolean,
+    user?: {
+      uuid: string,
+      name?: string | null,
+      email?: string | null
+    } | null,
+    integration?: {
+      uuid: string,
+      name?: string | null,
+      slug?: string | null,
+      category?: string | null,
+      active?: boolean,
+      url?: string | null,
+      logo?: string | null
+    } | null,
+    calls?: {
+      uuid: string,
+      source?: string | null,
+      source_id?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      performed_at?: string | null,
+      locale?: string | null,
+      duration?: number | null,
+      direction?: string | null,
+      is_video?: boolean,
+      visible?: boolean,
+      recording_url?: string | null,
+      transcript_url?: string | null,
+      leexi_url?: string | null
+    }[]
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`meetingEvents.list`
+
+List meeting events in the Leexi workspace with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.leexi.api.meetingEvents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `items` | `number` | No | — |
+| `order` | `created_at desc \| created_at asc \| start_time desc \| start_time asc \| end_time desc \| end_time asc` | No | — |
+| `origin` | `calendar \| manual \| api` | No | — |
+| `date_filter` | `start_time \| end_time` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  title?: string | null,
+  organizer?: {
+    email: string
+  } | null,
+  attendees?: {
+    email: string
+  }[],
+  meeting_url?: string | null,
+  meeting_provider?: string | null,
+  internal?: boolean,
+  direction?: string | null,
+  start_time?: string | null,
+  end_time?: string | null,
+  description?: string | null,
+  owned?: boolean,
+  to_record?: boolean,
+  bot_scheduled?: boolean,
+  bot_running?: boolean,
+  bot_runs?: {
+    uuid: string,
+    start_time?: string | null,
+    end_time?: string | null,
+    recording_start_time?: string | null,
+    end_reason?: string | null
+  }[],
+  origin?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  recording_notified?: boolean,
+  active?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  items: number,
+  count: number,
+  pages?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### list
+
+`teams.list`
+
+List teams in the Leexi workspace with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.leexi.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `items` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string | null,
+  active?: boolean,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  items: number,
+  count: number,
+  pages?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List users in the Leexi workspace with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.leexi.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `items` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string | null,
+  email?: string | null,
+  active?: boolean,
+  license?: string | null,
+  roles?: string[],
+  team?: {
+    uuid: string,
+    name?: string | null,
+    active?: boolean
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  items: number,
+  count: number,
+  pages?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

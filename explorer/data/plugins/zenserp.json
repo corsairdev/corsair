@@ -1,0 +1,592 @@
+{
+  "id": "zenserp",
+  "displayName": "Zenserp",
+  "description": "Zenserp plugin for Corsair",
+  "npmPackageName": "@corsair-dev/zenserp",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "zenserp.api.account.getStatus",
+      "shortPath": "account.getStatus",
+      "description": "Return the remaining request quota for the API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "remaining_requests",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zenserp.api.batches.list",
+      "shortPath": "batches.list",
+      "description": "List submitted Zenserp batches",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | { data: {}[] }"
+      }
+    },
+    {
+      "path": "zenserp.api.metadata.listCountries",
+      "shortPath": "metadata.listCountries",
+      "description": "List supported Google country parameters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string, value?: string, code?: string }[]"
+      }
+    },
+    {
+      "path": "zenserp.api.metadata.listLanguages",
+      "shortPath": "metadata.listLanguages",
+      "description": "List supported Google interface languages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string, value?: string, code?: string }[]"
+      }
+    },
+    {
+      "path": "zenserp.api.metadata.listLocations",
+      "shortPath": "metadata.listLocations",
+      "description": "List supported geolocation targets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string, canonical_name?: string, country_code?: string }[]"
+      }
+    },
+    {
+      "path": "zenserp.api.metadata.listSearchEngines",
+      "shortPath": "metadata.listSearchEngines",
+      "description": "List supported search-engine domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string, domain?: string }[]"
+      }
+    },
+    {
+      "path": "zenserp.api.search.bing",
+      "shortPath": "search.bing",
+      "description": "Search Bing and return structured SERP data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "organic",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "related_searches",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "number_of_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "knowledge_graph",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zenserp.api.search.google",
+      "shortPath": "search.google",
+      "description": "Search Google and return structured SERP data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "organic",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "related_searches",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "number_of_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "knowledge_graph",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zenserp.api.search.reverseImage",
+      "shortPath": "search.reverseImage",
+      "description": "Run a Google reverse-image search for a public image URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "organic",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "related_searches",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "number_of_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "knowledge_graph",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zenserp.api.search.yandex",
+      "shortPath": "search.yandex",
+      "description": "Search Yandex and return structured SERP data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "organic",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "related_searches",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "number_of_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "knowledge_graph",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zenserp.api.shopping.getProduct",
+      "shortPath": "shopping.getProduct",
+      "description": "Retrieve Google Shopping product details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reviews",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "specifications",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "sellers",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zenserp.api.trends.get",
+      "shortPath": "trends.get",
+      "description": "Retrieve Google Trends data for one or more keywords",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keywords",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "json",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

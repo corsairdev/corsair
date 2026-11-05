@@ -1,0 +1,944 @@
+{
+  "id": "emelia",
+  "displayName": "Emelia",
+  "description": "Emelia plugin for Corsair",
+  "npmPackageName": "@corsair-dev/emelia",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "emelia.api.account.me",
+      "shortPath": "account.me",
+      "description": "Retrieve authenticated Emelia account details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "me",
+            "optional": true,
+            "type": "{ uid?: string, name?: string, email?: string, showMailbox?: boolean, picture?: string, due_invoice?: boolean, joinedDate?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.blacklist.add",
+      "shortPath": "blacklist.add",
+      "description": "Add a contact to the email blacklist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.blacklist.remove",
+      "shortPath": "blacklist.remove",
+      "description": "Remove a contact from the email blacklist",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.campaigns.addContact",
+      "shortPath": "campaigns.addContact",
+      "description": "Add a contact to a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addContactToCampaignHook",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List all cold outreach campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "all_campaigns",
+            "optional": true,
+            "type": "{ _id: string, name?: string, status?: string, createdAt?: string, provider?: string, useManyProviders?: boolean, plannedStart?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.campaigns.removeContact",
+      "shortPath": "campaigns.removeContact",
+      "description": "Remove a contact from a campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "removeOneContactFromCampaign",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.contacts.addToList",
+      "shortPath": "contacts.addToList",
+      "description": "Add a contact to a contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addContactsToListHook",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.contacts.listLists",
+      "shortPath": "contacts.listLists",
+      "description": "List all contact lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_lists",
+            "optional": true,
+            "type": "{ _id: string, name?: string, contactCount?: number, fields?: string[], usedInCampaign?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.emailCampaigns.addContact",
+      "shortPath": "emailCampaigns.addContact",
+      "description": "Add a contact to an email campaign (legacy REST)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.emailCampaigns.deleteContact",
+      "shortPath": "emailCampaigns.deleteContact",
+      "description": "Remove a contact from an email campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.emailCampaigns.listContacts",
+      "shortPath": "emailCampaigns.listContacts",
+      "description": "List contacts in an email campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, email?: string, firstName?: string, lastName?: string, status?: string }[] | { contacts?: { id?: string, email?: string, firstName?: string, lastName?: string, status?: string }[], data?: { id?: string, email?: string, firstName?: string, lastName?: string, status?: string }[], total?: number }"
+      }
+    },
+    {
+      "path": "emelia.api.linkedin.createCampaign",
+      "shortPath": "linkedin.createCampaign",
+      "description": "Create a new LinkedIn campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.linkedin.deleteContact",
+      "shortPath": "linkedin.deleteContact",
+      "description": "Delete a contact from a LinkedIn campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactUrl",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.linkedin.getActivities",
+      "shortPath": "linkedin.getActivities",
+      "description": "Retrieve activities for a LinkedIn campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, type?: string, event?: string, date?: string, step?: number }[] | { activities?: { id?: string, type?: string, event?: string, date?: string, step?: number }[], data?: { id?: string, type?: string, event?: string, date?: string, step?: number }[], total?: number }"
+      }
+    },
+    {
+      "path": "emelia.api.linkedin.listCampaigns",
+      "shortPath": "linkedin.listCampaigns",
+      "description": "List all LinkedIn campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, campaignId?: string, name?: string, status?: string }[] | { campaigns?: { id?: string, campaignId?: string, name?: string, status?: string }[], data?: { id?: string, campaignId?: string, name?: string, status?: string }[], total?: number }"
+      }
+    },
+    {
+      "path": "emelia.api.providers.list",
+      "shortPath": "providers.list",
+      "description": "List all configured email providers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, name?: string, email?: string, type?: string, status?: string }[] | { providers?: { id?: string, name?: string, email?: string, type?: string, status?: string }[], data?: { id?: string, name?: string, email?: string, type?: string, status?: string }[] }"
+      }
+    },
+    {
+      "path": "emelia.api.restCampaigns.create",
+      "shortPath": "restCampaigns.create",
+      "description": "Create a new email campaign (REST)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.restCampaigns.getActivities",
+      "shortPath": "restCampaigns.getActivities",
+      "description": "Retrieve activities for an email campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, type?: string, event?: string, date?: string, step?: number }[] | { activities?: { id?: string, type?: string, event?: string, date?: string, step?: number }[], data?: { id?: string, type?: string, event?: string, date?: string, step?: number }[], total?: number }"
+      }
+    },
+    {
+      "path": "emelia.api.restCampaigns.list",
+      "shortPath": "restCampaigns.list",
+      "description": "List all email campaigns (REST)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, campaignId?: string, name?: string, status?: string }[] | { campaigns?: { id?: string, campaignId?: string, name?: string, status?: string }[], data?: { id?: string, campaignId?: string, name?: string, status?: string }[], total?: number, page?: number, limit?: number }"
+      }
+    },
+    {
+      "path": "emelia.api.tools.findEmailSingle",
+      "shortPath": "tools.findEmailSingle",
+      "description": "Initiate a find-email job for a single contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fullname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companyWebsite",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.tools.findPhoneSingle",
+      "shortPath": "tools.findPhoneSingle",
+      "description": "Initiate a phone-find job for a single contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkedinUrl",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.tools.getFindEmailResult",
+      "shortPath": "tools.getFindEmailResult",
+      "description": "Retrieve the result of a find-email job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ fullname?: string, companyName?: string, companyWebsite?: string, email: string, qualification?: valid | invalid, status: running | done | error, date?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.tools.getFindPhoneResult",
+      "shortPath": "tools.getFindPhoneResult",
+      "description": "Retrieve the result of a phone-find job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ linkedinUrl: string, phoneNumber?: string, country?: string, qualification?: found | not_found, status: running | done | error, date?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.tools.getVerifyEmailResult",
+      "shortPath": "tools.getVerifyEmailResult",
+      "description": "Retrieve the result of an email verification job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ email: string, qualification?: valid | invalid, status: running | done | error, date?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.tools.verifyEmailSingle",
+      "shortPath": "tools.verifyEmailSingle",
+      "description": "Initiate an email verification job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook for campaign events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emelia.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List all webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, url?: string, webhookUrl?: string, campaignId?: string, events?: string[] }[] | { webhooks?: { id?: string, url?: string, webhookUrl?: string, campaignId?: string, events?: string[] }[], data?: { id?: string, url?: string, webhookUrl?: string, campaignId?: string, events?: string[] }[] }"
+      }
+    },
+    {
+      "path": "emelia.api.webhooks.remove",
+      "shortPath": "webhooks.remove",
+      "description": "Delete a webhook by URL",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "emelia.db.campaign.search",
+      "entityName": "campaign",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "emelia.db.contactList.search",
+      "entityName": "contactList",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

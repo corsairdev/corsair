@@ -1,0 +1,155 @@
+---
+title: LlamaIndex
+icon: "/icons/llamaindex.svg"
+description: Expose Corsair's 200+ integrations to LlamaIndex.TS agents as tools.
+---
+
+`corsairTools` turns a Corsair instance into [LlamaIndex.TS](https://developers.llamaindex.ai/typescript) tools, one tool per API operation. Hand them to `agent({ tools })` and the model can call Slack, GitHub, Gmail, Linear, Stripe, and the rest of the [plugin catalog](/guides/plugins).
+
+The credentials never leave your database. Corsair runs OAuth server-side, stores the encrypted tokens under your own key, and the tool call reads them at execution time. The model sees tool names and results, never a token.
+
+## Install
+
+<CodeGroup>
+```bash npm
+npm install @corsair-dev/llamaindex @llamaindex/core corsair
+```
+```bash pnpm
+pnpm add @corsair-dev/llamaindex @llamaindex/core corsair
+```
+```bash yarn
+yarn add @corsair-dev/llamaindex @llamaindex/core corsair
+```
+</CodeGroup>
+
+Then add the agent runtime, an LLM binding, and one `@corsair-dev/*` package per service you connect:
+
+```bash
+npm install @llamaindex/workflow @llamaindex/openai
+npm install @corsair-dev/slack        # one per integration
+```
+
+<Note>
+`@llamaindex/core` is a peer dependency. npm marks it deprecated as a standalone install, but it stays the correct peer for LlamaIndex.TS tooling: the `llamaindex` meta-package itself depends on `@llamaindex/core`, and it exposes the tool API this adapter builds on. The adapter imports it lazily, so installing `@corsair-dev/llamaindex` alone never pulls LlamaIndex into a project that does not use this entrypoint.
+</Note>
+
+## Quickstart
+
+<Steps>
+<Step title="Create the Corsair instance">
+Build it once and reuse it. `authType: 'managed'` lets Corsair hold the OAuth connection; the tokens stay encrypted in your database under your `kek`.
+
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { slack } from '@corsair-dev/slack';
+import { database } from './db';
+
+export const corsair = createCorsair({
+  plugins: [slack({ authType: 'managed' })],
+  database,
+  kek: process.env.CORSAIR_KEK,
+  hub: { projectApiKey: process.env.CORSAIR_API_KEY },
+});
+```
+</Step>
+
+<Step title="Build the tools">
+`corsairTools` is async. It returns one LlamaIndex tool per operation, ready for any agent.
+
+```ts
+import { corsairTools } from '@corsair-dev/llamaindex';
+import { corsair } from './corsair';
+
+const tools = await corsairTools({ corsair, plugin: 'slack' });
+```
+</Step>
+
+<Step title="Give them to an agent">
+```ts agent.ts
+import { agent } from '@llamaindex/workflow';
+import { openai } from '@llamaindex/openai';
+import { corsairTools } from '@corsair-dev/llamaindex';
+import { corsair } from './corsair';
+
+const tools = await corsairTools({ corsair, plugin: 'slack' });
+
+const llm = openai({
+  model: 'gpt-4.1-mini',
+  additionalChatOptions: {
+    baseURL: 'https://llm.corsair.dev/v1',
+    apiKey: process.env.LITELLM_API_KEY,
+  },
+});
+
+const slackAgent = agent({ tools, llm });
+
+const response = await slackAgent.run('List the Slack channels.');
+console.log(response.data);
+```
+</Step>
+</Steps>
+
+<Tip>
+Route model calls through the Corsair LLM gateway (`llm.corsair.dev`, OpenAI-compatible) to keep spend on budget-limited keys. Point the `openai(...)` binding at it with `additionalChatOptions.baseURL` as shown. See [LLM gateway](/llm-gateway).
+</Tip>
+
+## Choosing which tools
+
+Scope the toolset so the model only sees what the task needs. Fewer tools means cleaner prompts and fewer wrong turns.
+
+```ts
+// A whole plugin, as a toolkit:
+await corsairTools({ corsair, plugin: 'slack' });
+
+// Specific operations only:
+await corsairTools({
+  corsair,
+  operations: ['slack.api.channels.list', 'slack.api.messages.post'],
+});
+
+// Every operation of every registered plugin (omit both):
+await corsairTools({ corsair });
+```
+
+## Multi-tenancy
+
+On a multi-tenant instance, pin the tenant whose stored credentials the tools should use. Each tenant owns its own connections, so the same code serves every user:
+
+```ts
+const tools = await corsairTools({
+  corsair,
+  plugin: 'slack',
+  tenantId: user.orgId,
+});
+```
+
+Single-tenant instances ignore `tenantId`.
+
+## API
+
+```ts
+function corsairTools(options: CorsairToolsOptions): Promise<BaseToolWithCall[]>
+```
+
+<ParamField path="corsair" type="CorsairInstance" required>
+  The value from `createCorsair()` (or `corsair.withTenant(...)`).
+</ParamField>
+<ParamField path="plugin" type="string">
+  Include every operation of one plugin. Omit `plugin` and `operations` to include all registered plugins.
+</ParamField>
+<ParamField path="operations" type="string[]">
+  Include only these operation paths, e.g. `slack.api.channels.list`.
+</ParamField>
+<ParamField path="tenantId" type="string">
+  Use the stored credentials of this tenant. Ignored on single-tenant instances.
+</ParamField>
+
+## Notes
+
+- **Tool names.** The operation path becomes the tool name with `.` replaced by `_` (`slack.api.channels.list` becomes `slack_api_channels_list`), so it satisfies the model's function-name constraint.
+- **Schemas.** Corsair is on Zod v4, which `@llamaindex/core` accepts directly as a tool's `parameters`. The adapter parses model-generated args through the schema before the operation runs, so invalid input is rejected early.
+- **Results.** String results pass through; anything else is JSON-encoded into the tool output the model reads.
+
+<Warning>
+The tool runs whatever operation the model picks with the tenant's real credentials. Scope with `plugin` or `operations` so an agent can only reach the APIs the task actually needs.
+</Warning>

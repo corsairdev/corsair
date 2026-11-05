@@ -1,0 +1,1089 @@
+{
+  "id": "canny",
+  "displayName": "Canny",
+  "description": "Canny plugin for Corsair",
+  "npmPackageName": "@corsair-dev/canny",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 4,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "canny.api.boards.list",
+      "shortPath": "boards.list",
+      "description": "List all boards for your company in Canny",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boards",
+            "optional": false,
+            "type": "{ id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canny.api.boards.retrieve",
+      "shortPath": "boards.retrieve",
+      "description": "Retrieve details of an existing Canny board by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isPrivate",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "postCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "privateComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canny.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Create a new comment on a Canny post",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "authorID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "postID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageURLs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "internal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parentID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canny.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Delete a comment in Canny [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commentID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "success | string"
+      }
+    },
+    {
+      "path": "canny.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List comments in Canny with optional filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "authorID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "boardID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "postID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, created: string, deleteStatus?: string | null, imageURLs?: string[], internal?: boolean, likeCount?: number, parentID?: string | null, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, value: string }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canny.api.posts.changeStatus",
+      "shortPath": "posts.changeStatus",
+      "description": "Change an existing Canny post's status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "changerID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shouldNotifyVoters",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": false,
+            "type": "{ id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }"
+          },
+          {
+            "key": "board",
+            "optional": false,
+            "type": "{ id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "{ id: string, name: string, url?: string, postCount?: number, parentID?: string | null }"
+          },
+          {
+            "key": "commentCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eta",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageURLs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "score",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id: string, name: string, url?: string, postCount?: number }[]"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canny.api.posts.create",
+      "shortPath": "posts.create",
+      "description": "Create a new post in Canny",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "authorID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "boardID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "byID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categoryID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "eta",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etaPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "imageURLs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "ownerID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canny.api.posts.delete",
+      "shortPath": "posts.delete",
+      "description": "Delete a post in Canny [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "success | string"
+      }
+    },
+    {
+      "path": "canny.api.posts.list",
+      "shortPath": "posts.list",
+      "description": "List posts in Canny with optional filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "authorID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "boardID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categoryID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "newest | oldest | relevance | score | statusChanged | trending"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | under review | planned | in progress | complete | closed"
+          },
+          {
+            "key": "tagID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canny.api.posts.retrieve",
+      "shortPath": "posts.retrieve",
+      "description": "Retrieve details of an existing Canny post by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "boardID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "urlName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": false,
+            "type": "{ id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }"
+          },
+          {
+            "key": "board",
+            "optional": false,
+            "type": "{ id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "{ id: string, name: string, url?: string, postCount?: number, parentID?: string | null }"
+          },
+          {
+            "key": "commentCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eta",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageURLs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "score",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id: string, name: string, url?: string, postCount?: number }[]"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canny.api.votes.create",
+      "shortPath": "votes.create",
+      "description": "Create a vote for a Canny post on behalf of a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voterID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "votePriority",
+            "optional": true,
+            "type": "0 | 10 | 20"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "success | string"
+      }
+    },
+    {
+      "path": "canny.api.votes.delete",
+      "shortPath": "votes.delete",
+      "description": "Delete a vote on a Canny post [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voterID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "success | string"
+      }
+    },
+    {
+      "path": "canny.api.votes.list",
+      "shortPath": "votes.list",
+      "description": "List votes in Canny with optional filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "postID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "userID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "votes",
+            "optional": false,
+            "type": "{ id: string, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, by?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, created: string, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, voter?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "canny.webhooks.comments.created",
+      "shortPath": "comments.created",
+      "description": "Occurs when a new comment is created in Canny",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "comment"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "comment.created"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, created: string, deleteStatus?: string | null, imageURLs?: string[], internal?: boolean, likeCount?: number, parentID?: string | null, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, value: string }"
+          }
+        ]
+      },
+      "responseType": "{ created: string, objectType: comment, type: comment.created, object: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, created: string, deleteStatus?: string | null, imageURLs?: string[], internal?: boolean, likeCount?: number, parentID?: string | null, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, value: string } }",
+      "usageExample": "canny({\n    webhookHooks: {\n        comments: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "canny.webhooks.posts.created",
+      "shortPath": "posts.created",
+      "description": "Occurs when a new post is created in Canny",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "post"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "post.created"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }"
+          }
+        ]
+      },
+      "responseType": "{ created: string, objectType: post, type: post.created, object: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} } }",
+      "usageExample": "canny({\n    webhookHooks: {\n        posts: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "canny.webhooks.posts.statusChanged",
+      "shortPath": "posts.statusChanged",
+      "description": "Occurs when a post's status is changed in Canny",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "post"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "post.status_changed"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "{ id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }"
+          }
+        ]
+      },
+      "responseType": "{ created: string, objectType: post, type: post.status_changed, object: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} } }",
+      "usageExample": "canny({\n    webhookHooks: {\n        posts: {\n            statusChanged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "canny.webhooks.votes.created",
+      "shortPath": "votes.created",
+      "description": "Occurs when a new vote is cast in Canny",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "vote"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "vote.created"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "{ id: string, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, by?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, created: string, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, voter?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } }"
+          }
+        ]
+      },
+      "responseType": "{ created: string, objectType: vote, type: vote.created, object: { id: string, board?: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, by?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, created: string, post?: { id: string, author: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null }, board: { id: string, created: string, isPrivate: boolean, name: string, postCount: number, privateComments?: boolean, token?: string, url: string }, category?: { id: string, name: string, url?: string, postCount?: number, parentID?: string | null } | null, commentCount: number, created: string, details?: string, eta?: string | null, imageURLs?: string[], score: number, status: string, tags?: { id: string, name: string, url?: string, postCount?: number }[], title: string, url: string, owner?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } | null, customFields?: {} }, voter?: { id: string, created: string, email?: string | null, name: string, userID?: string | null, url: string, isAdmin: boolean, avatarURL?: string | null } } }",
+      "usageExample": "canny({\n    webhookHooks: {\n        votes: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "canny.db.boards.search",
+      "entityName": "boards",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "isPrivate",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "postCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "privateComments",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "token",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "canny.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "postID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internal",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "likeCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "canny.db.posts.search",
+      "entityName": "posts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "details",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "commentCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "eta",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "boardID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "canny.db.votes.search",
+      "entityName": "votes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "postID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "voterID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "boardID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

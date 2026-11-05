@@ -1,0 +1,375 @@
+{
+  "id": "ocrspace",
+  "displayName": "OCR.space",
+  "description": "Optical character recognition API for extracting text from images and scanned documents.",
+  "npmPackageName": "@corsair-dev/ocrspace",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ocrspace.api.account.conversions",
+      "shortPath": "account.conversions",
+      "description": "Retrieve conversion counts for the current month per OCR engine, updated once a day",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "lastMonth"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count_total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count_engine1",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count_engine2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count_engine3",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ocrspace.api.ocr.parse",
+      "shortPath": "ocr.parse",
+      "description": "Extract text from an image or PDF supplied as exactly one of a URL, a file upload (pass a File so the filename is sent, or set filetype), or a base64 data URI",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "custom"
+          },
+          {
+            "key": "base64Image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OCREngine",
+            "optional": true,
+            "type": "1 | 2 | 3"
+          },
+          {
+            "key": "isOverlayRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "detectOrientation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isTable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCreateSearchablePdf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSearchablePdfHideTextLayer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filetype",
+            "optional": true,
+            "type": "PDF | GIF | PNG | JPG | TIF | BMP"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ParsedResults",
+            "optional": true,
+            "type": "{ ParsedText?: string | null, TextOrientation?: string | null, FileParseExitCode?: number | null, TextOverlay?: { Lines?: { LineText?: string | null, Words?: { WordText?: string | null, Left?: number | null, Top?: number | null, Height?: number | null, Width?: number | null }[] | null, MaxHeight?: number | null, MinTop?: number | null }[] | null, HasOverlay?: boolean | null, Message?: string | null } | null, ErrorMessage?: string | string[] | null, ErrorDetails?: string | null }[]"
+          },
+          {
+            "key": "OCRExitCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "IsErroredOnProcessing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "ErrorDetails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SearchablePDFURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ProcessingTimeInMilliseconds",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ocrspace.api.ocr.parseImageUrl",
+      "shortPath": "ocr.parseImageUrl",
+      "description": "Extract text from an image at a public URL using the simplified GET endpoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OCREngine",
+            "optional": true,
+            "type": "1 | 2 | 3"
+          },
+          {
+            "key": "isOverlayRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "detectOrientation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isTable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCreateSearchablePdf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSearchablePdfHideTextLayer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filetype",
+            "optional": true,
+            "type": "PDF | GIF | PNG | JPG | TIF | BMP"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ParsedResults",
+            "optional": true,
+            "type": "{ ParsedText?: string | null, TextOrientation?: string | null, FileParseExitCode?: number | null, TextOverlay?: { Lines?: { LineText?: string | null, Words?: { WordText?: string | null, Left?: number | null, Top?: number | null, Height?: number | null, Width?: number | null }[] | null, MaxHeight?: number | null, MinTop?: number | null }[] | null, HasOverlay?: boolean | null, Message?: string | null } | null, ErrorMessage?: string | string[] | null, ErrorDetails?: string | null }[]"
+          },
+          {
+            "key": "OCRExitCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "IsErroredOnProcessing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "ErrorDetails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SearchablePDFURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ProcessingTimeInMilliseconds",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "ocrspace.db.conversions.search",
+      "entityName": "conversions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "engine1",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "engine2",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "engine3",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "period",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ocrspace.db.ocrResults.search",
+      "entityName": "ocrResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "engine",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "exitCode",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isSearchablePdf",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "processingTimeMs",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

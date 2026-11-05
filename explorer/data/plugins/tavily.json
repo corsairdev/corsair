@@ -1,0 +1,583 @@
+{
+  "id": "tavily",
+  "displayName": "Tavily",
+  "description": "Search API optimized for AI agents needing fast, relevant web research results.",
+  "npmPackageName": "@corsair-dev/tavily",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tavily.api.crawl.crawl",
+      "shortPath": "crawl.crawl",
+      "description": "Crawl a website starting from a root URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_breadth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select_paths",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "select_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_paths",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "allow_external",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "Careers | Blog | Documentation | About | Pricing | Community | Developers | Contact | Media[]"
+          },
+          {
+            "key": "extract_depth",
+            "optional": true,
+            "type": "basic | advanced"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "markdown | text"
+          },
+          {
+            "key": "include_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_favicon",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ url: string, raw_content: string, images?: string[], favicon?: string }[]"
+          },
+          {
+            "key": "failed_results",
+            "optional": true,
+            "type": "{ url: string, error: string }[]"
+          },
+          {
+            "key": "response_time",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tavily.api.extract.extract",
+      "shortPath": "extract.extract",
+      "description": "Extract content from one or more URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string | string[]"
+          },
+          {
+            "key": "include_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extract_depth",
+            "optional": true,
+            "type": "basic | advanced"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "markdown | text"
+          },
+          {
+            "key": "include_favicon",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ url: string, raw_content: string, images?: string[], favicon?: string }[]"
+          },
+          {
+            "key": "failed_results",
+            "optional": false,
+            "type": "{ url: string, error: string }[]"
+          },
+          {
+            "key": "response_time",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tavily.api.map.map",
+      "shortPath": "map.map",
+      "description": "Map all URLs on a website starting from a root URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_breadth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select_paths",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "select_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_paths",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "allow_external",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "Careers | Blog | Documentation | About | Pricing | Community | Developers | Contact | Media[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "response_time",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tavily.api.search.search",
+      "shortPath": "search.search",
+      "description": "Search the web using Tavily",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "search_depth",
+            "optional": true,
+            "type": "advanced | basic | fast | ultra-fast"
+          },
+          {
+            "key": "chunks_per_source",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "general | news | finance"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "day | week | month | year | d | w | m | y"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_answer",
+            "optional": true,
+            "type": "boolean | basic | advanced"
+          },
+          {
+            "key": "include_raw_content",
+            "optional": true,
+            "type": "boolean | markdown | text"
+          },
+          {
+            "key": "include_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_image_descriptions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_favicon",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_parameters",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_usage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "answer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ url: string, description?: string | null }[]"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title: string, url: string, content: string, score: number, raw_content?: string | null, favicon?: string }[]"
+          },
+          {
+            "key": "response_time",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits: number }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_parameters",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "tavily.db.crawlResults.search",
+      "entityName": "crawlResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "raw_content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "favicon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "baseUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "crawledAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "tavily.db.extractResults.search",
+      "entityName": "extractResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "raw_content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "favicon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "tavily.db.mapResults.search",
+      "entityName": "mapResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "baseUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mappedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "tavily.db.searchResults.search",
+      "entityName": "searchResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "raw_content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "favicon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "searchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

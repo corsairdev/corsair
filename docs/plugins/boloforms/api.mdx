@@ -1,0 +1,84 @@
+---
+title: API
+description: "API reference for BoloForms: every `boloforms.api.*` operation with input and output types."
+---
+
+Every `boloforms.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Documents
+
+### list
+
+`documents.list`
+
+Retrieve a list of documents from a Boloforms workspace, with optional filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.boloforms.api.documents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `query` | `string` | No | — |
+| `sortOrder` | `string` | No | — |
+| `limit` | `string` | No | — |
+| `documentId` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `page` | `string` | No | — |
+| `sortBy` | `string` | No | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documents` | `object[]` | Yes | — |
+| `message` | `string` | No | — |
+| `formCount` | `number` | No | — |
+| `documentsCount` | `number` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  documentId: string,
+  name?: string,
+  documentName?: string,
+  status?: string,
+  signingType?: string,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  currentPage?: number,
+  totalPages?: number,
+  totalDocuments?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

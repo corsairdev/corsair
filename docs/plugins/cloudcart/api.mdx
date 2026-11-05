@@ -1,0 +1,7970 @@
+---
+title: API
+description: "API reference for Cloudcart: every `cloudcart.api.*` operation with input and output types."
+---
+
+Every `cloudcart.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Blogs
+
+### createBlogCategory
+
+`blogs.createBlogCategory`
+
+Create blog category
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.blogs.createBlogCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createBlogPost
+
+`blogs.createBlogPost`
+
+Create blog post
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.blogs.createBlogPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createBlogTag
+
+`blogs.createBlogTag`
+
+Create blog tag
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.blogs.createBlogTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteBlogCategory
+
+`blogs.deleteBlogCategory`
+
+Delete blog category
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.blogs.deleteBlogCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteBlogPost
+
+`blogs.deleteBlogPost`
+
+Delete blog post
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.blogs.deleteBlogPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteBlogTag
+
+`blogs.deleteBlogTag`
+
+Delete blog tag
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.blogs.deleteBlogTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getBlogAuthor
+
+`blogs.getBlogAuthor`
+
+Get blog author
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.blogs.getBlogAuthor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getBlogCategory
+
+`blogs.getBlogCategory`
+
+Get blog category
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.blogs.getBlogCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getBlogPost
+
+`blogs.getBlogPost`
+
+Get blog post
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.blogs.getBlogPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getBlogTag
+
+`blogs.getBlogTag`
+
+Get blog tag
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.blogs.getBlogTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listBlogCategories
+
+`blogs.listBlogCategories`
+
+List blog categories
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.blogs.listBlogCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listBlogPosts
+
+`blogs.listBlogPosts`
+
+List blog posts
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.blogs.listBlogPosts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listBlogTags
+
+`blogs.listBlogTags`
+
+List blog tags
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.blogs.listBlogTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateBlogCategory
+
+`blogs.updateBlogCategory`
+
+Update blog category
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.blogs.updateBlogCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateBlogPost
+
+`blogs.updateBlogPost`
+
+Update blog post
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.blogs.updateBlogPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateBlogTag
+
+`blogs.updateBlogTag`
+
+Update blog tag
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.blogs.updateBlogTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Carts
+
+### addToCart
+
+`carts.addToCart`
+
+Add to cart
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.carts.addToCart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | Yes | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+| `quantity` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### clearCart
+
+`carts.clearCart`
+
+Clear cart
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.carts.clearCart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCart
+
+`carts.getCart`
+
+Get cart
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.carts.getCart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+| `cart_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### removeFromCart
+
+`carts.removeFromCart`
+
+Remove from cart
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.carts.removeFromCart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | Yes | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateCartItem
+
+`carts.updateCartItem`
+
+Update cart item
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.carts.updateCartItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | Yes | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+| `quantity` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Categories
+
+### addCategoryProperties
+
+`categories.addCategoryProperties`
+
+Add category properties
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.categories.addCategoryProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createCategory
+
+`categories.createCategory`
+
+Create category
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.categories.createCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteCategory
+
+`categories.deleteCategory`
+
+Delete category
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.categories.deleteCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCategory
+
+`categories.getCategory`
+
+Get category
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.categories.getCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getCategoryProperties
+
+`categories.getCategoryProperties`
+
+Get category properties
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.categories.getCategoryProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listCategories
+
+`categories.listCategories`
+
+List categories
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.categories.listCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateCategory
+
+`categories.updateCategory`
+
+Update category
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.categories.updateCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Customers
+
+### createCustomer
+
+`customers.createCustomer`
+
+Create customer
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.customers.createCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createCustomerBillingAddress
+
+`customers.createCustomerBillingAddress`
+
+Create customer billing address
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.customers.createCustomerBillingAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | Yes | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createCustomerGroup
+
+`customers.createCustomerGroup`
+
+Create customer group
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.customers.createCustomerGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createCustomerShippingAddress
+
+`customers.createCustomerShippingAddress`
+
+Create customer shipping address
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.customers.createCustomerShippingAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | Yes | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createCustomerTag
+
+`customers.createCustomerTag`
+
+Create customer tag
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.customers.createCustomerTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteCustomer
+
+`customers.deleteCustomer`
+
+Delete customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.customers.deleteCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteCustomerBillingAddress
+
+`customers.deleteCustomerBillingAddress`
+
+Delete customer billing address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.customers.deleteCustomerBillingAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteCustomerGroup
+
+`customers.deleteCustomerGroup`
+
+Delete customer group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.customers.deleteCustomerGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteCustomerShippingAddress
+
+`customers.deleteCustomerShippingAddress`
+
+Delete customer shipping address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.customers.deleteCustomerShippingAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteCustomerTag
+
+`customers.deleteCustomerTag`
+
+Delete customer tag
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.customers.deleteCustomerTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCustomer
+
+`customers.getCustomer`
+
+Get customer
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.getCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getCustomerBillingAddress
+
+`customers.getCustomerBillingAddress`
+
+Get customer billing address
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.getCustomerBillingAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getCustomerGroup
+
+`customers.getCustomerGroup`
+
+Get customer group
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.getCustomerGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getCustomerGroupsCustomers
+
+`customers.getCustomerGroupsCustomers`
+
+Get customer group customers
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.getCustomerGroupsCustomers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getCustomerShippingAddress
+
+`customers.getCustomerShippingAddress`
+
+Get customer shipping address
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.getCustomerShippingAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getCustomerTag
+
+`customers.getCustomerTag`
+
+Get customer tag
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.getCustomerTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listCustomerBillingAddresses
+
+`customers.listCustomerBillingAddresses`
+
+List customer billing addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.listCustomerBillingAddresses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listCustomerGroups
+
+`customers.listCustomerGroups`
+
+List customer groups
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.listCustomerGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listCustomers
+
+`customers.listCustomers`
+
+List customers
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.listCustomers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listCustomerShippingAddresses
+
+`customers.listCustomerShippingAddresses`
+
+List customer shipping addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.listCustomerShippingAddresses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listCustomerTags
+
+`customers.listCustomerTags`
+
+List customer tags
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.customers.listCustomerTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateCustomer
+
+`customers.updateCustomer`
+
+Update customer
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.customers.updateCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateCustomerBillingAddress
+
+`customers.updateCustomerBillingAddress`
+
+Update customer billing address
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.customers.updateCustomerBillingAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateCustomerGroup
+
+`customers.updateCustomerGroup`
+
+Update customer group
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.customers.updateCustomerGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateCustomerShippingAddress
+
+`customers.updateCustomerShippingAddress`
+
+Update customer shipping address
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.customers.updateCustomerShippingAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateCustomerTag
+
+`customers.updateCustomerTag`
+
+Update customer tag
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.customers.updateCustomerTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Discounts
+
+### createDiscount
+
+`discounts.createDiscount`
+
+Create discount
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.discounts.createDiscount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createDiscountCode
+
+`discounts.createDiscountCode`
+
+Create discount code
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.discounts.createDiscountCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createProductToDiscount
+
+`discounts.createProductToDiscount`
+
+Create product to discount
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.discounts.createProductToDiscount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteDiscount
+
+`discounts.deleteDiscount`
+
+Delete discount
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.discounts.deleteDiscount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteDiscountCode
+
+`discounts.deleteDiscountCode`
+
+Delete discount code
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.discounts.deleteDiscountCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteProductToDiscount
+
+`discounts.deleteProductToDiscount`
+
+Delete product to discount
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.discounts.deleteProductToDiscount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | Yes | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### generateDiscountCodes
+
+`discounts.generateDiscountCodes`
+
+Generate discount codes
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.discounts.generateDiscountCodes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listDiscountCodes
+
+`discounts.listDiscountCodes`
+
+List discount codes
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.discounts.listDiscountCodes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateDiscountCode
+
+`discounts.updateDiscountCode`
+
+Update discount code
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.discounts.updateDiscountCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Misc
+
+### createRedirect
+
+`misc.createRedirect`
+
+Create redirect
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.misc.createRedirect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createVendor
+
+`misc.createVendor`
+
+Create vendor
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.misc.createVendor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteRedirect
+
+`misc.deleteRedirect`
+
+Delete redirect
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.misc.deleteRedirect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteVendor
+
+`misc.deleteVendor`
+
+Delete vendor
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.misc.deleteVendor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPaymentMethods
+
+`misc.getPaymentMethods`
+
+Get payment methods
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.misc.getPaymentMethods({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getShippingMethods
+
+`misc.getShippingMethods`
+
+Get shipping methods
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.misc.getShippingMethods({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getVendor
+
+`misc.getVendor`
+
+Get vendor
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.misc.getVendor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listPaymentProviders
+
+`misc.listPaymentProviders`
+
+List payment providers
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.misc.listPaymentProviders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listRedirects
+
+`misc.listRedirects`
+
+List redirects
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.misc.listRedirects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listShippingProviders
+
+`misc.listShippingProviders`
+
+List shipping providers
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.misc.listShippingProviders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listVendors
+
+`misc.listVendors`
+
+List vendors
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.misc.listVendors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateVendor
+
+`misc.updateVendor`
+
+Update vendor
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.misc.updateVendor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Orders
+
+### createOrder
+
+`orders.createOrder`
+
+Create order
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.orders.createOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteOrder
+
+`orders.deleteOrder`
+
+Delete order
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.orders.deleteOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOrder
+
+`orders.getOrder`
+
+Get order
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.orders.getOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listOrderBillingAddresses
+
+`orders.listOrderBillingAddresses`
+
+List order billing addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.orders.listOrderBillingAddresses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listOrderPayments
+
+`orders.listOrderPayments`
+
+List order payments
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.orders.listOrderPayments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listOrderProducts
+
+`orders.listOrderProducts`
+
+List order products
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.orders.listOrderProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listOrderProductsOptions
+
+`orders.listOrderProductsOptions`
+
+List order products options
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.orders.listOrderProductsOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listOrders
+
+`orders.listOrders`
+
+List orders
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.orders.listOrders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listOrderShipping
+
+`orders.listOrderShipping`
+
+List order shipping
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.orders.listOrderShipping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listOrderShippingAddresses
+
+`orders.listOrderShippingAddresses`
+
+List order shipping addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.orders.listOrderShippingAddresses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listOrderStatus
+
+`orders.listOrderStatus`
+
+List order statuses
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.orders.listOrderStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateOrder
+
+`orders.updateOrder`
+
+Update order
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.orders.updateOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Products
+
+### createImage
+
+`products.createImage`
+
+Create image
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.products.createImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createLinkedProducts
+
+`products.createLinkedProducts`
+
+Create linked products
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.products.createLinkedProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createProduct
+
+`products.createProduct`
+
+Create product
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.products.createProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteImage
+
+`products.deleteImage`
+
+Delete image
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.products.deleteImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteLinkedProducts
+
+`products.deleteLinkedProducts`
+
+Delete linked products
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.products.deleteLinkedProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteProduct
+
+`products.deleteProduct`
+
+Delete product
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.products.deleteProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getImage
+
+`products.getImage`
+
+Get image
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.products.getImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getProduct
+
+`products.getProduct`
+
+Get product
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.products.getProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getProductsLinkedProduct
+
+`products.getProductsLinkedProduct`
+
+Get product linked product
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.products.getProductsLinkedProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getProductsLinkedProducts
+
+`products.getProductsLinkedProducts`
+
+Get products linked products
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.products.getProductsLinkedProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getProductWithRelations
+
+`products.getProductWithRelations`
+
+Get product with relations. Pass documented include params (e.g. include=category) to sideload related resources.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.products.getProductWithRelations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listImages
+
+`products.listImages`
+
+List images
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.products.listImages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listProducts
+
+`products.listProducts`
+
+List products
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.products.listProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateLinkedProduct
+
+`products.updateLinkedProduct`
+
+Update linked product
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.products.updateLinkedProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateProduct
+
+`products.updateProduct`
+
+Update product
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.products.updateProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Properties
+
+### createProductsPropertyOptions
+
+`properties.createProductsPropertyOptions`
+
+Create product property options
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.properties.createProductsPropertyOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createProperty
+
+`properties.createProperty`
+
+Create property
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.properties.createProperty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createPropertyOption
+
+`properties.createPropertyOption`
+
+Create property option
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.properties.createPropertyOption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | Yes | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteProperty
+
+`properties.deleteProperty`
+
+Delete property
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.properties.deleteProperty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deletePropertyOption
+
+`properties.deletePropertyOption`
+
+Delete property option
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.properties.deletePropertyOption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getProperty
+
+`properties.getProperty`
+
+Get property
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.properties.getProperty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getPropertyOption
+
+`properties.getPropertyOption`
+
+Get property option
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.properties.getPropertyOption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getPropertyOptionsRelationship
+
+`properties.getPropertyOptionsRelationship`
+
+Get property options relationship
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.properties.getPropertyOptionsRelationship({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listProperties
+
+`properties.listProperties`
+
+List properties
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.properties.listProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listPropertyOptions
+
+`properties.listPropertyOptions`
+
+List property options
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.properties.listPropertyOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateProperty
+
+`properties.updateProperty`
+
+Update property
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.properties.updateProperty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updatePropertyOption
+
+`properties.updatePropertyOption`
+
+Update property option
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.properties.updatePropertyOption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Subscribers
+
+### createSubscriber
+
+`subscribers.createSubscriber`
+
+Create subscriber
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.subscribers.createSubscriber({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createSubscriberChannel
+
+`subscribers.createSubscriberChannel`
+
+Create subscriber channel
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.subscribers.createSubscriberChannel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createSubscriberTag
+
+`subscribers.createSubscriberTag`
+
+Create subscriber tag
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.subscribers.createSubscriberTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteSubscriber
+
+`subscribers.deleteSubscriber`
+
+Delete subscriber
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.subscribers.deleteSubscriber({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteSubscribersChannel
+
+`subscribers.deleteSubscribersChannel`
+
+Delete subscriber channel
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.subscribers.deleteSubscribersChannel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteSubscriberTag
+
+`subscribers.deleteSubscriberTag`
+
+Delete subscriber tag
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.subscribers.deleteSubscriberTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSubscriber
+
+`subscribers.getSubscriber`
+
+Get subscriber
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.subscribers.getSubscriber({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getSubscribersChannel
+
+`subscribers.getSubscribersChannel`
+
+Get subscriber channel
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.subscribers.getSubscribersChannel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getSubscriberTag
+
+`subscribers.getSubscriberTag`
+
+Get subscriber tag
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.subscribers.getSubscriberTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listSubscribers
+
+`subscribers.listSubscribers`
+
+List subscribers
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.subscribers.listSubscribers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listSubscribersChannels
+
+`subscribers.listSubscribersChannels`
+
+List subscriber channels
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.subscribers.listSubscribersChannels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listSubscribersTags
+
+`subscribers.listSubscribersTags`
+
+List subscriber tags
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.subscribers.listSubscribersTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateSubscriber
+
+`subscribers.updateSubscriber`
+
+Update subscriber
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.subscribers.updateSubscriber({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateSubscribersChannel
+
+`subscribers.updateSubscribersChannel`
+
+Update subscriber channel
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.subscribers.updateSubscribersChannel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateSubscriberTag
+
+`subscribers.updateSubscriberTag`
+
+Update subscriber tag
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.subscribers.updateSubscriberTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Variants
+
+### createVariant
+
+`variants.createVariant`
+
+Create variant
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.variants.createVariant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | Yes | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createVariantOption
+
+`variants.createVariantOption`
+
+Create variant option
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.variants.createVariantOption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | Yes | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createVariantOptions
+
+`variants.createVariantOptions`
+
+Create variant options
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.variants.createVariantOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | Yes | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createVariantParameter
+
+`variants.createVariantParameter`
+
+Create variant parameter
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.variants.createVariantParameter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### createVariantParameterForVariant
+
+`variants.createVariantParameterForVariant`
+
+Create variant parameter for variant
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.variants.createVariantParameterForVariant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteVariant
+
+`variants.deleteVariant`
+
+Delete variant
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.variants.deleteVariant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteVariantOption
+
+`variants.deleteVariantOption`
+
+Delete variant option
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.variants.deleteVariantOption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteVariantParameter
+
+`variants.deleteVariantParameter`
+
+Delete variant parameter
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.variants.deleteVariantParameter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getVariant
+
+`variants.getVariant`
+
+Get variant
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.variants.getVariant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getVariantOption
+
+`variants.getVariantOption`
+
+Get variant option
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.variants.getVariantOption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### getVariantParameter
+
+`variants.getVariantParameter`
+
+Get variant parameter
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.variants.getVariantParameter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listVariantOptions
+
+`variants.listVariantOptions`
+
+List variant options
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.variants.listVariantOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listVariantParameters
+
+`variants.listVariantParameters`
+
+List variant parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.variants.listVariantParameters({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listVariants
+
+`variants.listVariants`
+
+List variants
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.variants.listVariants({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateVariant
+
+`variants.updateVariant`
+
+Update variant
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.variants.updateVariant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateVariantOption
+
+`variants.updateVariantOption`
+
+Update variant option
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.variants.updateVariantOption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateVariantParameter
+
+`variants.updateVariantParameter`
+
+Update variant parameter
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.variants.updateVariantParameter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+## Webhooks
+
+### createWebhook
+
+`webhooks.createWebhook`
+
+Create webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.webhooks.createWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### deleteWebhook
+
+`webhooks.deleteWebhook`
+
+Delete webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudcart.api.webhooks.deleteWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: any
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWebhook
+
+`webhooks.getWebhook`
+
+Get webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.webhooks.getWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### listWebhooks
+
+`webhooks.listWebhooks`
+
+List webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudcart.api.webhooks.listWebhooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+
+### updateWebhook
+
+`webhooks.updateWebhook`
+
+Update webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudcart.api.webhooks.updateWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product_id` | `string \| number` | No | — |
+| `customer_id` | `string \| number` | No | — |
+| `property_id` | `string \| number` | No | — |
+| `discount_id` | `string \| number` | No | — |
+| `variant_id` | `string \| number` | No | — |
+| `parameter_id` | `string \| number` | No | — |
+| `page[number]` | `number` | No | — |
+| `page[size]` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `include` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+
+
+
+---
+

@@ -1,0 +1,111 @@
+---
+title: Astro
+sidebarTitle: Astro
+description: Mount Corsair as an Astro API route, then read synced data straight from .astro frontmatter, server-rendered per request.
+icon: "/icons/astro.svg"
+---
+
+import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
+import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
+
+Astro sites are mostly static, but the interesting pages pull live data at request time. Corsair suits that well. The handler is one API route, and any page that should show integration data flips to server rendering and reads Corsair's synced tables right in its frontmatter. No client fetch, no loading spinner, just HTML with the data already in it.
+
+## Install
+
+The adapter ships in core. Each integration is its own package. Add one per service you connect.
+
+<Install />
+
+Every service is its own `@corsair-dev/*` package. The full catalog with exact ids is in [Plugins](/guides/plugins).
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
+
+## Mount the handler
+
+```ts src/pages/api/corsair/[...path].ts
+import { toAstroHandler } from 'corsair';
+import { corsair } from '../../../server/corsair';
+
+export const { GET, POST, OPTIONS } = toAstroHandler(corsair, { basePath: '/api/corsair' });
+export const prerender = false;
+```
+
+`../../../server/corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/quick-start) if you haven't built it yet.
+
+<Warning>`export const prerender = false` is required. The route must run on the server per request, not be frozen at build time. Any page that reads live Corsair data needs the same line.</Warning>
+
+## Resolve the tenant
+
+Every read and write is scoped to a tenant id, whatever stable id identifies the current user or org. A server-rendered page has `Astro.request` and, if you use one, your session, so resolve the id there (however your auth works) and pass it to `withTenant`.
+
+```astro
+---
+export const prerender = false;
+const tenantId = await getTenantId(Astro.request); // getTenantId is YOUR code
+const tenant = corsair.withTenant(tenantId);
+---
+```
+
+## Read and write
+
+The `.db` namespace reads your own database, so a server-rendered page can query it in the frontmatter fence and the results land in the initial HTML. Because the page ran on the server, no token or query ever reaches the browser.
+
+```astro src/pages/issues.astro
+---
+export const prerender = false;
+import { corsair } from '../server/corsair';
+
+const tenantId = await getTenantId(Astro.request);
+const tenant = corsair.withTenant(tenantId);
+const issues = await tenant.github.db.issues.search({
+    data: { state: 'open' },
+    limit: 50,
+});
+---
+
+<ul>
+  {issues.map((i) => <li>{i.data.title} — {i.data.user?.login}</li>)}
+</ul>
+```
+
+Writes go through `.api`. From a form POST or an API route, call e.g. `await tenant.github.api.issues.create({ owner: 'acme', repo: 'app', title: '…' })`. Corsair upserts the response, so the next server render already shows it. Entity fields live on `.data` in camelCase.
+
+## Connect a tenant
+
+Connecting is interactive, but it doesn't need a UI framework. Use the framework-agnostic [vanilla client](/adapters/client) from a small `<script>` in an `.astro` page. It mints the connect link and reports status, no island required.
+
+<ClientVanilla />
+
+## Go green
+
+```bash
+npm run dev
+```
+
+The first request to `/api/corsair` registers your delivery URL with Hub and turns the **App sync** dot in the dashboard header green.
+
+## Deploy
+
+Deploy with your usual Astro adapter (`@astrojs/node`, `@astrojs/vercel`, and so on). The route and any `prerender = false` page run on the server. In production, `/api/corsair` at your deployed origin is the delivery URL Hub calls.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">
+    The full read-`.db`, write-`.api` pattern behind the example above.
+  </Card>
+  <Card title="Connect / OAuth" icon="link" href="/management/connect">
+    The full connect flow, error codes, and retry.
+  </Card>
+  <Card title="Use with an agent" icon="robot" href="/mcp-adapters/vercel-ai">
+    Give an agent the Corsair tools and let it call any endpoint.
+  </Card>
+  <Card title="Multi-tenancy" icon="users" href="/concepts/multi-tenancy">
+    One flag and every user gets their own data and credentials.
+  </Card>
+</CardGroup>

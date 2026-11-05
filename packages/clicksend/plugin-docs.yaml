@@ -1,0 +1,18 @@
+displayName: ClickSend
+domain: clicksend.com
+description: Multi-channel communications platform for SMS, MMS, Voice, Fax, Email, Post, contacts, numbers, and billing.
+examples:
+  read:
+    path: sms.history
+    title: List SMS history
+  write:
+    path: sms.send
+    title: Send an SMS message
+    args:
+      messages:
+        - to: '+15555550100'
+          body: Hello from Corsair!
+dbExample:
+  entity: messages
+  note: Search synced SMS messages without hitting ClickSend API.
+  limit: 50

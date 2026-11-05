@@ -12,8 +12,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import { getValidAccessToken } from './client';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { Files, Folders, Search } from './endpoints';
 import type {
 	DropboxEndpointInputs,
@@ -152,7 +152,7 @@ const dropboxEndpointMeta = {
 	},
 	'files.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a file [DESTRUCTIVE]',
+		description: 'Delete a file',
 	},
 	'files.download': { riskLevel: 'read', description: 'Download a file' },
 	'files.move': {
@@ -167,7 +167,7 @@ const dropboxEndpointMeta = {
 	'folders.create': { riskLevel: 'write', description: 'Create a new folder' },
 	'folders.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a folder and all its contents [DESTRUCTIVE]',
+		description: 'Delete a folder and all its contents',
 	},
 	'folders.list': {
 		riskLevel: 'read',
@@ -188,7 +188,7 @@ const dropboxEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof dropboxEndpointsNested>;
 
 export type DropboxPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalDropboxPlugin['hooks'];
@@ -228,6 +228,9 @@ export type DropboxBoundWebhooks = BindWebhooks<DropboxWebhooks>;
 
 export const dropboxAuthConfig = {
 	oauth_2: {
+		account: ['account_id', 'user_id'] as const,
+	},
+	managed: {
 		account: ['account_id', 'user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -297,6 +300,14 @@ export function dropbox<const T extends DropboxPluginOptions>(
 			// See https://www.dropbox.com/developers/reference/webhooks
 			if (source === 'webhook') {
 				if (options.webhookSecret) return options.webhookSecret;
+				if (ctx.authType === 'managed') {
+					throw new Error(
+						'[auth-missing:dropbox:managed]: webhook signature is not available in managed mode',
+					);
+				}
+				if (ctx.authType !== 'oauth_2') {
+					throw new AuthMissingError('dropbox', 'oauth_2');
+				}
 				const creds = await ctx.keys.get_integration_credentials();
 				if (!creds.client_secret) {
 					throw new Error(
@@ -311,67 +322,28 @@ export function dropbox<const T extends DropboxPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'dropbox',
+					tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
+				});
+			}
 
-				if (!refreshToken) {
-					throw new AuthMissingError('dropbox', 'oauth_2');
-				}
-
-				const creds = await ctx.keys.get_integration_credentials();
-				if (!creds.client_id || !creds.client_secret) {
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
 					throw new Error(
-						'[auth-missing:dropbox:client_credentials]: Dropbox client credentials are missing',
+						'[auth-missing:dropbox:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
 					);
 				}
 
-				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
-				try {
-					result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: creds.client_id,
-						clientSecret: creds.client_secret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:dropbox] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await Promise.all([
-							ctx.keys.set_access_token(result.accessToken),
-							ctx.keys.set_expires_at(String(result.expiresAt)),
-						]);
-					} catch (error) {
-						throw new Error(
-							`[corsair:dropbox] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				// Expose a force-refresh function on the context so endpoints can
-				// retry on 401 without waiting for `expires_at` to lapse.
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientId: creds.client_id!,
-						clientSecret: creds.client_secret!,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					return freshResult.accessToken;
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'dropbox',
+					tenantId: ctx.tenantId,
 				};
 
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 

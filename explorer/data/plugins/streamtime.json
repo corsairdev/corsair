@@ -1,0 +1,144 @@
+{
+  "id": "streamtime",
+  "displayName": "Streamtime",
+  "description": "Job management software for creative agencies tracking projects, schedules, and profitability.",
+  "npmPackageName": "@corsair-dev/streamtime",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "streamtime.api.organisation.get",
+      "shortPath": "organisation.get",
+      "description": "Retrieve the organisation's details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Organisation name"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Organisation domain"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "{ id: string, name: string, symbol: string }",
+            "description": "Default customer currency"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "Organisation address (default branch)"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "{ id: string, name: string }",
+            "description": "Organisation country"
+          }
+        ]
+      }
+    },
+    {
+      "path": "streamtime.api.roles.get",
+      "shortPath": "roles.get",
+      "description": "Retrieve a role by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role_id",
+            "optional": false,
+            "type": "number",
+            "description": "Role ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the role"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the role"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the role is active or archived"
+          }
+        ]
+      }
+    },
+    {
+      "path": "streamtime.api.roles.list",
+      "shortPath": "roles.list",
+      "description": "Retrieve all roles in the organisation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, active: boolean }[]"
+      }
+    },
+    {
+      "path": "streamtime.api.users.listSavedSegments",
+      "shortPath": "users.listSavedSegments",
+      "description": "Retrieve saved segments for a specific user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number",
+            "description": "User ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | null, userId: number, savedSegmentType: { id: number, name?: string }, name: string, value: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

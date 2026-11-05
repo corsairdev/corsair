@@ -4,6 +4,7 @@ import {
 	completeOAuthCallback,
 	createConnectLink,
 	createTenant,
+	disconnectConnection,
 	getConnectionStatus,
 	getPlugin,
 	getTenant,
@@ -18,6 +19,8 @@ import type {
 	ConnectLink,
 	CreateConnectLinkInput,
 	CreateTenantInput,
+	DisconnectInput,
+	DisconnectResult,
 	ManagementOk,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
@@ -56,6 +59,8 @@ export type CorsairManageNamespace = {
 		resolve: (state: string) => Promise<ResolvedConnectLink>;
 		oauthCallback: (input: OAuthCallbackInput) => Promise<OAuthCallbackResult>;
 	};
+	/** Remove a tenant's stored connection (credentials) for a plugin. */
+	disconnect: (input: DisconnectInput) => Promise<DisconnectResult>;
 };
 
 export function buildManagementNamespace(
@@ -89,15 +94,38 @@ export function buildManagementNamespace(
 			oauthCallback: (input) =>
 				completeOAuthCallback(corsairShim, internal, input),
 		},
+		disconnect: (input) => disconnectConnection(internal, input),
 	};
 }
 
-export type { ExpressHandler, HonoHandler } from './adapters';
+export type {
+	ExpressHandler,
+	FastifyHandler,
+	HonoHandler,
+	NodeHandler,
+	NodeLikeRequest,
+	NodeLikeResponse,
+} from './adapters';
 export {
+	registerCorsairRawBodyParser,
+	toAstroHandler,
 	toExpressHandler,
+	toFastifyHandler,
 	toHonoHandler,
 	toNextJsHandler,
+	toNodeHandler,
+	toNuxtHandler,
+	toRemixHandler,
+	toSvelteKitHandler,
+	toTanStackHandler,
+	toWebHandler,
 } from './adapters';
+export {
+	DEFAULT_BODY_STALL_TIMEOUT_MS,
+	DEFAULT_MAX_BODY_BYTES,
+	resolveBodyStallTimeoutMs,
+	resolveMaxBodyBytes,
+} from './body-limit';
 export type { ManagementHandlerOptions } from './handler';
 export { managementHandler } from './handler';
 export type {
