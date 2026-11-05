@@ -2731,6 +2731,14 @@
                 ]
               },
               {
+                "group": "Render",
+                "pages": [
+                  "plugins/render/overview",
+                  "plugins/render/api",
+                  "plugins/render/database"
+                ]
+              },
+              {
                 "group": "Replicate",
                 "pages": [
                   "plugins/replicate/overview",

@@ -2164,7 +2164,11 @@ const renderEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete a Render webhook',
 	},
-	'final.addHeaders': { riskLevel: 'write', description: 'Render addHeaders' },
+	'final.addHeaders': {
+		riskLevel: 'write',
+		description:
+			'Add a response header rule to a Render service (id: service ID)',
+	},
 	'final.addOrUpdateSecretFile': {
 		riskLevel: 'write',
 		description:
@@ -2175,7 +2179,11 @@ const renderEndpointMeta = {
 		description:
 			'Move services, databases or env groups into a Render environment (id: environment ID)',
 	},
-	'final.addRoute': { riskLevel: 'write', description: 'Render addRoute' },
+	'final.addRoute': {
+		riskLevel: 'write',
+		description:
+			'Add a redirect or rewrite rule to a Render service (id: service ID)',
+	},
 	'final.createCustomDomain': {
 		riskLevel: 'write',
 		description: 'Add a custom domain to a Render service (id: service ID)',
@@ -2257,7 +2265,11 @@ const renderEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List users of a Render Postgres database (id: Postgres ID)',
 	},
-	'final.listRoutes': { riskLevel: 'read', description: 'Render listRoutes' },
+	'final.listRoutes': {
+		riskLevel: 'read',
+		description:
+			'List the redirect and rewrite rules of a Render service (id: service ID)',
+	},
 	'final.listSecretFiles': {
 		riskLevel: 'read',
 		description:
