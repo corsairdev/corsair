@@ -1384,6 +1384,14 @@
                 ]
               },
               {
+                "group": "Codacy",
+                "pages": [
+                  "plugins/codacy/overview",
+                  "plugins/codacy/api",
+                  "plugins/codacy/database"
+                ]
+              },
+              {
                 "group": "CodeInterpreter",
                 "pages": [
                   "plugins/codeinterpreter/overview",
@@ -1653,6 +1661,14 @@
                 ]
               },
               {
+                "group": "DNSFilter",
+                "pages": [
+                  "plugins/dnsfilter/overview",
+                  "plugins/dnsfilter/api",
+                  "plugins/dnsfilter/database"
+                ]
+              },
+              {
                 "group": "Docker Hub",
                 "pages": [
                   "plugins/dockerhub/overview",
@@ -1789,6 +1805,14 @@
                   "plugins/epicgames/overview",
                   "plugins/epicgames/api",
                   "plugins/epicgames/database"
+                ]
+              },
+              {
+                "group": "eSputnik",
+                "pages": [
+                  "plugins/esputnik/overview",
+                  "plugins/esputnik/api",
+                  "plugins/esputnik/database"
                 ]
               },
               {
@@ -2325,6 +2349,14 @@
                 ]
               },
               {
+                "group": "Lever",
+                "pages": [
+                  "plugins/lever/overview",
+                  "plugins/lever/api",
+                  "plugins/lever/database"
+                ]
+              },
+              {
                 "group": "Linear",
                 "pages": [
                   "plugins/linear/overview",
@@ -2697,6 +2729,14 @@
                 ]
               },
               {
+                "group": "Qdrant",
+                "pages": [
+                  "plugins/qdrant/overview",
+                  "plugins/qdrant/api",
+                  "plugins/qdrant/database"
+                ]
+              },
+              {
                 "group": "Razorpay",
                 "pages": [
                   "plugins/razorpay/overview",
@@ -2739,6 +2779,14 @@
                 ]
               },
               {
+                "group": "Render",
+                "pages": [
+                  "plugins/render/overview",
+                  "plugins/render/api",
+                  "plugins/render/database"
+                ]
+              },
+              {
                 "group": "Replicate",
                 "pages": [
                   "plugins/replicate/overview",
@@ -2770,6 +2818,14 @@
                   "plugins/retailed/overview",
                   "plugins/retailed/api",
                   "plugins/retailed/database"
+                ]
+              },
+              {
+                "group": "Retell AI",
+                "pages": [
+                  "plugins/retellai/overview",
+                  "plugins/retellai/api",
+                  "plugins/retellai/database"
                 ]
               },
               {
@@ -3444,6 +3500,14 @@
                   "plugins/woodpeckerco/overview",
                   "plugins/woodpeckerco/api",
                   "plugins/woodpeckerco/database"
+                ]
+              },
+              {
+                "group": "Workable",
+                "pages": [
+                  "plugins/workable/overview",
+                  "plugins/workable/api",
+                  "plugins/workable/database"
                 ]
               },
               {
