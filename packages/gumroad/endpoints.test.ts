@@ -1321,6 +1321,29 @@ describe('endpoint dispatch', () => {
 		);
 	});
 
+	it('products.update clears tags and cover_ids when passed empty arrays', async () => {
+		respond({ success: true, product });
+
+		await invoke(Products.update, {
+			id: PRODUCT_ID,
+			tags: [],
+			cover_ids: [],
+		});
+
+		expect(String(lastRequest().init.body)).toBe('tags=&cover_ids=');
+	});
+
+	it('products.update omits tags and cover_ids entirely when not passed', async () => {
+		respond({ success: true, product });
+
+		await invoke(Products.update, { id: PRODUCT_ID, name: 'New name' });
+
+		const body = String(lastRequest().init.body);
+		expect(body).toBe('name=New%20name');
+		expect(body).not.toContain('tags=');
+		expect(body).not.toContain('cover_ids=');
+	});
+
 	it('offerCodes.updateForProduct clears a date with an empty string', async () => {
 		respond({ success: true, offer_code: offerCode });
 

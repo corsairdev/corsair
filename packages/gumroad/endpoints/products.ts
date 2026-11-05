@@ -50,7 +50,7 @@ export const create: GumroadEndpoints['productsCreate'] = (ctx, input) =>
 				max_purchase_count: parsed.max_purchase_count,
 				category: parsed.category,
 				taxonomy_id: parsed.taxonomy_id,
-				tags: parsed.tags?.length ? parsed.tags.join(',') : undefined,
+				tags: parsed.tags !== undefined ? parsed.tags.join(',') : undefined,
 				custom_summary: parsed.custom_summary,
 				refund_period: parsed.refund_period,
 				refund_fine_print: parsed.refund_fine_print,
@@ -87,15 +87,18 @@ export const update: GumroadEndpoints['productsUpdate'] = (ctx, input) =>
 					should_show_sales_count: parsed.should_show_sales_count,
 					category: parsed.category,
 					taxonomy_id: parsed.taxonomy_id,
-					tags: parsed.tags?.length ? parsed.tags.join(',') : undefined,
+					// tags and cover_ids are full-replacement params: [] must send
+					// an empty value to clear them, not drop the field entirely.
+					tags: parsed.tags !== undefined ? parsed.tags.join(',') : undefined,
 					custom_receipt: parsed.custom_receipt,
 					custom_summary: parsed.custom_summary,
 					refund_period: parsed.refund_period,
 					refund_fine_print: parsed.refund_fine_print,
 					custom_html: parsed.custom_html,
-					cover_ids: parsed.cover_ids?.length
-						? parsed.cover_ids.join(',')
-						: undefined,
+					cover_ids:
+						parsed.cover_ids !== undefined
+							? parsed.cover_ids.join(',')
+							: undefined,
 					rich_content: parsed.rich_content
 						? JSON.stringify(parsed.rich_content)
 						: undefined,
