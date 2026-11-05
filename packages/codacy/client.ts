@@ -1,5 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 /**
@@ -90,6 +94,20 @@ export async function getCodacyCredentials(
 }
 
 /**
+ * The HTTP client does not retry 429s itself: `RATE_LIMIT_ERROR` in
+ * error-handlers.ts owns those retries, so one rate-limited call makes at
+ * most four requests rather than four per plugin retry. The client still
+ * reads `Retry-After` so the handler can wait as long as Codacy asks.
+ */
+const CODACY_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
+
+/**
  * Performs a request against the Codacy API v3.
  *
  * Auth: account API token sent in the `api-token` request header, as
@@ -130,7 +148,9 @@ export async function makeCodacyRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: CODACY_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new CodacyAPIError(error.message, error.status, { cause: error });

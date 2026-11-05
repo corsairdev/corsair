@@ -120,6 +120,7 @@ describe('makeCodacyRequest', () => {
 				method: 'GET',
 				url: '/user',
 			}),
+			expect.anything(),
 		);
 	});
 
@@ -137,6 +138,27 @@ describe('makeCodacyRequest', () => {
 				method: 'GET',
 				url: '/user/organizations',
 			}),
+			expect.anything(),
+		);
+	});
+
+	it('leaves 429 retries to RATE_LIMIT_ERROR but still reads Retry-After', async () => {
+		mockRequest.mockResolvedValueOnce({ data: [] });
+
+		await makeCodacyRequest('/tools', 'token');
+
+		// One retry owner: the HTTP client makes a single attempt, and the
+		// plugin's error handler retries up to three times (four requests).
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.any(Object),
+			expect.any(Object),
+			{
+				rateLimitConfig: expect.objectContaining({
+					enabled: true,
+					maxRetries: 0,
+					headerNames: { retryAfter: 'retry-after' },
+				}),
+			},
 		);
 	});
 
