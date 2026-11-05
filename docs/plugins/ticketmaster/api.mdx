@@ -1380,11 +1380,10 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `attractions` | `object[] \| null` | No | — |
-| `events` | `object[] \| null` | No | — |
-| `venues` | `object[] \| null` | No | — |
-| `products` | `object[] \| null` | No | — |
-| `_links` | `object \| null` | No | — |
+| `attractions` | `object[]` | Yes | — |
+| `events` | `object[]` | Yes | — |
+| `venues` | `object[]` | Yes | — |
+| `products` | `object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="attractions full type">
@@ -1734,15 +1733,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
 <Accordion title="products full type">
 
 ```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="_links full type">
-
-```ts
-Record<string, unknown>
+Record<string, unknown>[]
 ```
 </Accordion>
 </AccordionGroup>
