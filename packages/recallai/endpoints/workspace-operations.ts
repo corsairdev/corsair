@@ -61,8 +61,12 @@ export const CreateMeetingDirectConnectInputSchema = z
 	})
 	.passthrough();
 
+// Response enums below stay open (`.or(z.string())`) so a value Recall adds
+// later does not fail a call that succeeded; inputs keep the documented values.
 const DirectConnectStatusSchema = z.object({
-	code: z.enum(['pending', 'connecting', 'processing', 'complete', 'failed']),
+	code: z
+		.enum(['pending', 'connecting', 'processing', 'complete', 'failed'])
+		.or(z.string()),
 	sub_code: z.string().nullable(),
 	updated_at: dateTime,
 });
@@ -136,7 +140,7 @@ const OAuthAppKindSchema = z.enum(['user_level', 'account_level']);
 const OAuthAppSchema = z
 	.object({
 		id: uuid,
-		kind: OAuthAppKindSchema,
+		kind: OAuthAppKindSchema.or(z.string()),
 		client_id: z.string().max(200),
 		client_secret: z.string().max(200),
 		webhook_secret: z.string().max(200),
@@ -199,12 +203,12 @@ const ZoomOAuthCredentialSchema = z
 	.object({
 		id: uuid,
 		oauth_app: uuid,
-		status: CredentialStatusSchema,
+		status: CredentialStatusSchema.or(z.string()),
 		user_id: z.string().nullable(),
 		account_id: z.string().nullable(),
 		access_token_callback_url: z.string().max(200).nullable(),
 		created_at: dateTime,
-		meeting_sync_status: MeetingSyncStatusSchema,
+		meeting_sync_status: MeetingSyncStatusSchema.or(z.string()),
 	})
 	.passthrough();
 export const ListZoomOAuthCredentialsInputSchema = z.object({

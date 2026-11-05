@@ -25,7 +25,8 @@ const GoogleLoginGroupSchema = z
 	.object({
 		id: idSchema,
 		name: z.string().max(2000),
-		login_mode: loginModeSchema,
+		// Open on output so a mode Recall adds later does not fail the call.
+		login_mode: loginModeSchema.or(z.string()),
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 		logins: z.array(GoogleLoginSchema),

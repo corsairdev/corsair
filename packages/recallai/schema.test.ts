@@ -256,4 +256,57 @@ describe('Recall.ai schema', () => {
 		).rejects.toThrow();
 		expect(request).not.toHaveBeenCalled();
 	});
+
+	it('keeps response enums open to values Recall adds later', async () => {
+		const request = jest.mocked(makeRecallaiRequest);
+		const plugin = recallai({ key: 'recall-key' });
+		if (!plugin.endpoints) throw new Error('Recall.ai endpoints are missing');
+		const ctx = recallaiTestContext;
+		const uuid = '550e8400-e29b-41d4-a716-446655440000';
+		const stamp = '2026-01-01T00:00:00Z';
+
+		request.mockResolvedValueOnce({
+			id: uuid,
+			name: 'Group',
+			login_mode: 'round_robin',
+			created_at: stamp,
+			updated_at: stamp,
+			logins: [],
+		});
+		await expect(
+			plugin.endpoints.googleLoginGroups.retrieve(ctx, { id: uuid }),
+		).resolves.toMatchObject({ login_mode: 'round_robin' });
+
+		request.mockResolvedValueOnce({
+			id: uuid,
+			oauth_app: uuid,
+			status: 'revoked',
+			user_id: null,
+			account_id: null,
+			access_token_callback_url: null,
+			created_at: stamp,
+			meeting_sync_status: 'queued',
+		});
+		await expect(
+			plugin.endpoints.zoomOAuthCredentials.retrieve(ctx, { id: uuid }),
+		).resolves.toMatchObject({
+			status: 'revoked',
+			meeting_sync_status: 'queued',
+		});
+
+		request.mockResolvedValueOnce({
+			id: uuid,
+			oauth_client_id: 'client',
+			oauth_refresh_token: 'refresh',
+			platform: 'zoho_calendar',
+			platform_email: null,
+			status: 'paused',
+			status_changes: [{ status: 'paused', created_at: stamp, reason: 'x' }],
+			created_at: stamp,
+			updated_at: stamp,
+		});
+		await expect(
+			plugin.endpoints.calendars.retrieve(ctx, { id: uuid }),
+		).resolves.toMatchObject({ platform: 'zoho_calendar' });
+	});
 });

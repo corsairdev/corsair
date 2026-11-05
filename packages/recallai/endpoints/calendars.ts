@@ -8,8 +8,10 @@ const calendarId = z.string().uuid();
 const platform = z.enum(['google_calendar', 'microsoft_outlook']);
 const status = z.enum(['connected', 'connecting', 'disconnected']);
 
+// Response enums stay open so a value Recall adds later does not fail the
+// call; inputs keep the documented values.
 const CalendarStatusChangeSchema = z.object({
-	status,
+	status: status.or(z.string()),
 	created_at: z.string().datetime(),
 	reason: z.string(),
 });
@@ -21,7 +23,7 @@ export const CalendarResponseSchema = z
 		oauth_client_id: z.string().max(2000),
 		oauth_client_secret: z.string().max(2000).nullable().optional(),
 		oauth_refresh_token: z.string().max(10000),
-		platform,
+		platform: platform.or(z.string()),
 		oauth_email: z.string().email().max(2000).optional(),
 		platform_email: z.string().nullable(),
 		status: z.string(),
