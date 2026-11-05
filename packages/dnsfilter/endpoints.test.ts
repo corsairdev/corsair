@@ -333,7 +333,10 @@ describe('DNSFilter request wiring', () => {
 
 	it('persists JSON:API rows returned by an endpoint', async () => {
 		const upsertByEntityId = jest.fn();
-		const ctx = createContext({ networks: { upsertByEntityId } });
+		const findByEntityId = jest.fn(async () => null);
+		const ctx = createContext({
+			networks: { findByEntityId, upsertByEntityId },
+		});
 		requestMock.mockResolvedValueOnce({
 			data: {
 				id: '7',
@@ -474,8 +477,14 @@ describe('DNSFilter CSV exports', () => {
 	});
 });
 
+// A stored row's data differs per entity, so the double keeps it untyped.
+type StoredRow = { data: Record<string, unknown> } | null;
+
 function entityClient() {
-	return { upsertByEntityId: jest.fn() };
+	return {
+		findByEntityId: jest.fn(async (_id: string): Promise<StoredRow> => null),
+		upsertByEntityId: jest.fn(),
+	};
 }
 
 describe('DNSFilter persistence', () => {
@@ -591,9 +600,49 @@ describe('DNSFilter persistence', () => {
 		);
 	});
 
+	it('keeps stored fields that a partial response leaves out', async () => {
+		const unblockRequests = entityClient();
+		unblockRequests.findByEntityId.mockResolvedValueOnce({
+			data: {
+				id: 'req-1',
+				domain: 'example.com',
+				status: 'pending',
+				organizationId: '12',
+				createdAt: new Date('2026-01-01T00:00:00Z'),
+			},
+		});
+		const ctx = createContext({ unblockRequests });
+		requestMock.mockResolvedValueOnce({
+			data: {
+				id: 'req-1',
+				attributes: {
+					domain: 'example.com',
+					status: 'allowed',
+					decided_at: '2026-01-02T00:00:00Z',
+				},
+			},
+		});
+
+		await UnblockRequests.unblockRequestsDecision(ctx, {
+			id: 'req-1',
+			decision: 'allow',
+		});
+
+		expect(unblockRequests.findByEntityId).toHaveBeenCalledWith('req-1');
+		expect(unblockRequests.upsertByEntityId).toHaveBeenCalledWith('req-1', {
+			id: 'req-1',
+			domain: 'example.com',
+			status: 'allowed',
+			organizationId: '12',
+			createdAt: new Date('2026-01-01T00:00:00Z'),
+			resolvedAt: new Date('2026-01-02T00:00:00Z'),
+		});
+	});
+
 	it('never throws when the database write fails', async () => {
 		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 		const networks = {
+			findByEntityId: jest.fn(async () => null),
 			upsertByEntityId: jest.fn(async () => {
 				throw new Error('database offline');
 			}),
