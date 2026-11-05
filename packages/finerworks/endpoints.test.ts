@@ -144,12 +144,15 @@ describe('account endpoints', () => {
 		expect(res.user_account.account_username).toBe('bob_ross');
 	});
 
-	it('getUser omits the query entirely when no account_key is given', async () => {
+	it('getUser reads the own profile from test_my_credentials when no account_key is given', async () => {
 		makeFinerWorksRequest.mockResolvedValue({ status: okStatus });
 
 		await endpoint('account', 'getUser')(makeCtx(), {});
 
-		expect(lastCall()[2].query).toBeUndefined();
+		const [path, , opts] = lastCall();
+		expect(path).toBe('v3/test_my_credentials');
+		expect(opts.method).toBe('GET');
+		expect(opts.query).toBeUndefined();
 	});
 
 	it('getUser strips the echoed web_api_key and app keys', async () => {

@@ -69,12 +69,21 @@ export const getUser: FinerWorksEndpoint<'account.getUser'> = async (
 	const validated = AccountGetUserInputSchema.parse(input);
 	const credentials = await resolveCredentials(ctx);
 
-	const res = await makeFinerWorksRequest<unknown>('v3/get_user', credentials, {
-		method: 'GET',
-		query: validated.account_key
-			? { account_key: validated.account_key }
-			: undefined,
-	});
+	// `v3/get_user?account_key=...` requires the key: without it FinerWorks
+	// answers 404, and an empty value is rejected as missing. The caller's own
+	// profile comes from `v3/test_my_credentials`, which returns the same
+	// `{ status, user_account }` shape.
+	// https://v2.api.finerworks.com/Help/Api/GET-v3-test_my_credentials
+	const res = validated.account_key
+		? await makeFinerWorksRequest<unknown>('v3/get_user', credentials, {
+				method: 'GET',
+				query: { account_key: validated.account_key },
+			})
+		: await makeFinerWorksRequest<unknown>(
+				'v3/test_my_credentials',
+				credentials,
+				{ method: 'GET' },
+			);
 
 	await logEventFromContext(ctx, 'finerworks.account.getUser', {}, 'completed');
 	return redactUserCredentials(AccountGetUserOutputSchema.parse(res));
