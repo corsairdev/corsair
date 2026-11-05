@@ -1,4 +1,5 @@
 import type { RawWebhookRequest } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { makeRetellRequest } from './client';
 import { Calls, Chats } from './endpoints';
 import {
@@ -241,6 +242,35 @@ describe('Retell plugin', () => {
 		expect(plugin.endpoints?.calls.list).toBeDefined();
 		expect(plugin.endpoints?.chats.get).toBeDefined();
 		expect(plugin.pluginWebhookMatcher?.(webhookRequest)).toBe(false);
+	});
+
+	it.each([null, undefined, ''])(
+		'raises AuthMissingError when the stored key is %p',
+		async (empty) => {
+			const plugin = retellai();
+			await expect(
+				plugin.keyBuilder!(
+					{
+						authType: 'api_key',
+						keys: { get_api_key: async () => empty },
+					} as never,
+					'endpoint',
+				),
+			).rejects.toBeInstanceOf(AuthMissingError);
+		},
+	);
+
+	it('returns the stored API key when present', async () => {
+		const plugin = retellai();
+		await expect(
+			plugin.keyBuilder!(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => 'key_test' },
+				} as never,
+				'endpoint',
+			),
+		).resolves.toBe('key_test');
 	});
 
 	it('stops retries for authentication failures', async () => {
