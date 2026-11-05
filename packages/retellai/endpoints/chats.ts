@@ -2,10 +2,18 @@ import { logEventFromContext } from 'corsair/core';
 import { makeRetellRequest } from '../client';
 import type { RetellEndpoints } from '../index';
 import { cacheChat } from './persist';
+import { parseEndpointInput } from './shared';
 import type { RetellEndpointOutputs } from './types';
-import { RetellEndpointOutputSchemas } from './types';
+import {
+	RetellEndpointInputSchemas,
+	RetellEndpointOutputSchemas,
+} from './types';
 
-export const list: RetellEndpoints['chatsList'] = async (ctx, input) => {
+export const list: RetellEndpoints['chatsList'] = async (ctx, rawInput) => {
+	const input = parseEndpointInput(
+		RetellEndpointInputSchemas.chatsList,
+		rawInput,
+	);
 	const response = await makeRetellRequest<RetellEndpointOutputs['chatsList']>(
 		'/v3/list-chats',
 		ctx.key,
@@ -30,7 +38,11 @@ export const list: RetellEndpoints['chatsList'] = async (ctx, input) => {
 	return parsed;
 };
 
-export const get: RetellEndpoints['chatsGet'] = async (ctx, input) => {
+export const get: RetellEndpoints['chatsGet'] = async (ctx, rawInput) => {
+	const input = parseEndpointInput(
+		RetellEndpointInputSchemas.chatsGet,
+		rawInput,
+	);
 	const response = await makeRetellRequest<RetellEndpointOutputs['chatsGet']>(
 		`/get-chat/${encodeURIComponent(input.id)}`,
 		ctx.key,

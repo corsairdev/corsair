@@ -112,6 +112,16 @@ describe('Retell endpoints', () => {
 		expect(chats.total).toBe(3);
 	});
 
+	it.each([
+		['calls.list', () => Calls.list(ctx, { limit: 0 })],
+		['chats.list', () => Chats.list(ctx, { limit: 1001 })],
+		['calls.get', () => Calls.get(ctx, { id: '' })],
+		['chats.get', () => Chats.get(ctx, { id: '' })],
+	])('%s rejects invalid input before any request', async (_path, run) => {
+		await expect(run()).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+	});
+
 	it('validates call list responses before returning them', async () => {
 		request.mockResolvedValue({ items: [{ call_id: 42 }] });
 		await expect(Calls.list(ctx, {})).rejects.toThrow();
