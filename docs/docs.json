@@ -3013,6 +3013,14 @@
                 ]
               },
               {
+                "group": "Snowflake",
+                "pages": [
+                  "plugins/snowflake/overview",
+                  "plugins/snowflake/api",
+                  "plugins/snowflake/database"
+                ]
+              },
+              {
                 "group": "Sourcegraph",
                 "pages": [
                   "plugins/sourcegraph/overview",
