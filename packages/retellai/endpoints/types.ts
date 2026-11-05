@@ -62,17 +62,18 @@ const PaginationResponse = <T extends z.ZodType>(item: T) =>
 			items: z.array(item),
 			pagination_key: z.string().nullable().optional(),
 			has_more: z.boolean().optional(),
-			total_count: z.number().optional(),
+			// Present only when the request set include_total.
+			total: z.number().optional(),
 		})
 		.loose();
 
 const FilterSchema = OpaqueObjectSchema;
 const ListInputSchema = z.object({
 	filterCriteria: FilterSchema.optional(),
-	limit: z.number().int().min(1).max(100).optional(),
+	limit: z.number().int().min(1).max(1000).optional(),
 	paginationKey: z.string().optional(),
 	sortOrder: z.enum(['ascending', 'descending']).optional(),
-	enableTotal: z.boolean().optional(),
+	includeTotal: z.boolean().optional(),
 });
 
 const GetInputSchema = z.object({ id: z.string().min(1) });

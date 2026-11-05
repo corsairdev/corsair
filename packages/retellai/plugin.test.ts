@@ -41,6 +41,15 @@ describe('Retell schemas', () => {
 		).toBe(true);
 	});
 
+	it('accepts list limits up to the documented maximum of 1000', () => {
+		expect(
+			RetellEndpointInputSchemas.callsList.safeParse({ limit: 1000 }).success,
+		).toBe(true);
+		expect(
+			RetellEndpointInputSchemas.chatsList.safeParse({ limit: 1001 }).success,
+		).toBe(false);
+	});
+
 	it('accepts transcript and analysis detail fields', () => {
 		const result = RetellEndpointOutputSchemas.callsGet.safeParse({
 			call_id: 'call-1',
@@ -75,6 +84,30 @@ describe('Retell endpoints', () => {
 				body: expect.objectContaining({ pagination_key: 'next', limit: 25 }),
 			}),
 		);
+	});
+
+	it('sends include_total and returns the total count', async () => {
+		request.mockResolvedValue({ items: [], has_more: false, total: 7 });
+		const result = await Calls.list(ctx, { includeTotal: true });
+		expect(request).toHaveBeenCalledWith(
+			'/v3/list-calls',
+			'retell_test_key',
+			expect.objectContaining({
+				body: expect.objectContaining({ include_total: true }),
+			}),
+		);
+		expect(result.total).toBe(7);
+
+		request.mockResolvedValue({ items: [], has_more: false, total: 3 });
+		const chats = await Chats.list(ctx, { includeTotal: true });
+		expect(request).toHaveBeenLastCalledWith(
+			'/v3/list-chats',
+			'retell_test_key',
+			expect.objectContaining({
+				body: expect.objectContaining({ include_total: true }),
+			}),
+		);
+		expect(chats.total).toBe(3);
 	});
 
 	it('validates call list responses before returning them', async () => {

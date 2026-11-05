@@ -16,7 +16,7 @@ export const list: RetellEndpoints['chatsList'] = async (ctx, input) => {
 				limit: input.limit,
 				pagination_key: input.paginationKey,
 				sort_order: input.sortOrder,
-				enable_total: input.enableTotal,
+				include_total: input.includeTotal,
 			},
 		},
 	);
