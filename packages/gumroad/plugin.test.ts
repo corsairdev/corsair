@@ -22,11 +22,148 @@ function buildKey(
 const operations = [
 	'products.list',
 	'products.get',
+	'products.create',
+	'products.update',
+	'products.delete',
+	'products.enable',
+	'products.disable',
+	'products.reviewsList',
+	'products.categoriesList',
+	'products.coversAdd',
+	'products.coversDelete',
+	'products.thumbnailSet',
+	'products.thumbnailDelete',
+	'offerCodes.list',
+	'offerCodes.get',
+	'offerCodes.update',
+	'offerCodes.listForProduct',
+	'offerCodes.getForProduct',
+	'offerCodes.createForProduct',
+	'offerCodes.updateForProduct',
+	'offerCodes.deleteForProduct',
+	'variantCategories.list',
+	'variantCategories.create',
+	'variantCategories.get',
+	'variantCategories.update',
+	'variantCategories.delete',
+	'variantCategories.variantsList',
+	'variantCategories.variantsCreate',
+	'variantCategories.variantsGet',
+	'variantCategories.variantsUpdate',
+	'variantCategories.variantsDelete',
+	'customFields.list',
+	'customFields.create',
+	'customFields.update',
+	'customFields.delete',
+	'user.get',
+	'user.customHtmlGet',
+	'user.customHtmlUpdate',
+	'user.customHtmlPreview',
+	'user.refundPolicyGet',
+	'user.refundPolicyUpdate',
+	'public.product',
+	'public.profile',
+	'media.list',
+	'media.create',
+	'media.delete',
+	'files.presign',
+	'files.complete',
+	'files.abort',
+	'emails.list',
+	'emails.get',
+	'emails.create',
+	'emails.preview',
+	'emails.send',
+	'emails.schedule',
+	'emails.unschedule',
+	'emails.delete',
+	'workflows.list',
+	'workflows.get',
+	'workflows.emailsAdd',
+	'workflows.emailsUpdate',
+	'resourceSubscriptions.subscribe',
+	'resourceSubscriptions.list',
+	'resourceSubscriptions.testEvent',
+	'resourceSubscriptions.unsubscribe',
 	'sales.list',
 	'sales.get',
+	'sales.markAsShipped',
+	'sales.refund',
+	'sales.revokeAccess',
+	'sales.undoRevokeAccess',
+	'sales.resendReceipt',
 	'subscribers.list',
+	'subscribers.get',
 	'licenses.verify',
-];
+	'licenses.enable',
+	'licenses.disable',
+	'licenses.decrementUsesCount',
+	'licenses.rotate',
+	'payouts.list',
+	'payouts.get',
+	'payouts.upcoming',
+	'taxForms.list',
+	'taxForms.download',
+	'earnings.get',
+] as const;
+
+// Every write or destructive operation; everything else must be read.
+const writeOperations = new Set([
+	'products.create',
+	'products.update',
+	'products.enable',
+	'products.disable',
+	'products.coversAdd',
+	'products.thumbnailSet',
+	'offerCodes.update',
+	'offerCodes.createForProduct',
+	'offerCodes.updateForProduct',
+	'variantCategories.create',
+	'variantCategories.update',
+	'variantCategories.variantsCreate',
+	'variantCategories.variantsUpdate',
+	'customFields.create',
+	'customFields.update',
+	'user.customHtmlUpdate',
+	'user.customHtmlPreview',
+	'user.refundPolicyUpdate',
+	'media.create',
+	'files.presign',
+	'files.complete',
+	'files.abort',
+	'emails.create',
+	'emails.preview',
+	'emails.send',
+	'emails.schedule',
+	'emails.unschedule',
+	'workflows.emailsAdd',
+	'workflows.emailsUpdate',
+	'resourceSubscriptions.subscribe',
+	'resourceSubscriptions.testEvent',
+	'sales.markAsShipped',
+	'sales.refund',
+	'sales.revokeAccess',
+	'sales.undoRevokeAccess',
+	'sales.resendReceipt',
+	'licenses.verify',
+	'licenses.enable',
+	'licenses.disable',
+	'licenses.decrementUsesCount',
+	'licenses.rotate',
+]);
+
+const destructiveOperations = new Set([
+	'products.delete',
+	'products.coversDelete',
+	'products.thumbnailDelete',
+	'offerCodes.deleteForProduct',
+	'variantCategories.delete',
+	'variantCategories.variantsDelete',
+	'customFields.delete',
+	'media.delete',
+	'emails.delete',
+	'resourceSubscriptions.unsubscribe',
+]);
 
 describe('gumroad plugin definition', () => {
 	const plugin = gumroad();
@@ -47,14 +184,26 @@ describe('gumroad plugin definition', () => {
 		expect(nested.sort()).toEqual([...operations].sort());
 	});
 
-	it('marks the reads read-only, the license verify write, all described', () => {
+	it('marks every read, write and destructive operation correctly, all described', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual([...operations].sort());
-		for (const [operation, entry] of Object.entries(meta)) {
-			expect(entry.riskLevel).toBe(
-				operation === 'licenses.verify' ? 'write' : 'read',
+		expect(operations).toHaveLength(85);
+		for (const operation of operations) {
+			// expect(entry).toBeDefined() does not narrow for the template
+			// below, so the risk level is read through optional chaining and
+			// the description length assertion pins presence.
+			const entry = meta[operation];
+			expect(entry).toBeDefined();
+			expect(`${operation}: ${entry?.riskLevel}`).toBe(
+				`${operation}: ${
+					destructiveOperations.has(operation)
+						? 'destructive'
+						: writeOperations.has(operation)
+							? 'write'
+							: 'read'
+				}`,
 			);
-			expect(entry.description?.length).toBeGreaterThan(10);
+			expect(entry?.description?.length).toBeGreaterThan(10);
 		}
 	});
 

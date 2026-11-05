@@ -1,4 +1,5 @@
 import {
+	downloadGumroadFile,
 	errorFromEnvelope,
 	GUMROAD_API_BASE,
 	GumroadAPIError,
@@ -87,11 +88,11 @@ describe('makeGumroadRequest', () => {
 
 		await makeGumroadRequest('/licenses/verify', 'gr-key', {
 			method: 'POST',
-			form: {
-				product_id: '32-nPAicqbLj8B_WswVlMw==',
-				license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD',
-				increment_uses_count: 'false',
-			},
+			form: [
+				['product_id', '32-nPAicqbLj8B_WswVlMw=='],
+				['license_key', 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD'],
+				['increment_uses_count', 'false'],
+			],
 		});
 
 		const [url, init] = lastCall();
@@ -107,6 +108,61 @@ describe('makeGumroadRequest', () => {
 		);
 	});
 
+	it('sends PUTs with form bodies and numbers as strings', async () => {
+		respond({ success: true, product: {} }, 200);
+
+		await makeGumroadRequest('/products/x%3D%3D', 'gr-key', {
+			method: 'PUT',
+			form: [
+				['name', 'v2'],
+				['max_purchase_count', 100],
+			],
+		});
+
+		const [url, init] = lastCall();
+		expect(url).toBe(`${GUMROAD_API_BASE}/products/x%3D%3D`);
+		expect(init.method).toBe('PUT');
+		expect(init.body).toBe('name=v2&max_purchase_count=100');
+	});
+
+	it('sends DELETEs with no body', async () => {
+		respond({ success: true, message: 'deleted' }, 200);
+
+		await makeGumroadRequest('/products/x%3D%3D', 'gr-key', {
+			method: 'DELETE',
+		});
+
+		const [, init] = lastCall();
+		expect(init.method).toBe('DELETE');
+		expect(init.body).toBeUndefined();
+	});
+
+	it('sends JSON bodies with the json option', async () => {
+		respond({ success: true, custom_html: null }, 200);
+
+		await makeGumroadRequest('/user/custom_html', 'gr-key', {
+			method: 'PUT',
+			json: { custom_html: null },
+		});
+
+		const [, init] = lastCall();
+		expect(init.body).toBe('{"custom_html":null}');
+		expect(new Headers(init.headers).get('content-type')).toBe(
+			'application/json',
+		);
+	});
+
+	it('overrides the base URL for public subdomain reads', async () => {
+		respond({ api_version: 1 }, 200);
+
+		await makeGumroadRequest('/l/pencil.json', 'gr-key', {
+			baseUrl: 'https://sahil.gumroad.com',
+		});
+
+		const [url] = lastCall();
+		expect(url).toBe('https://sahil.gumroad.com/l/pencil.json');
+	});
+
 	it('turns the documented 404 JSON body into GumroadAPIError with its message', async () => {
 		respond(
 			errorBody('That license does not exist for the provided product.'),
@@ -116,7 +172,10 @@ describe('makeGumroadRequest', () => {
 		const error = await failure(
 			makeGumroadRequest('/licenses/verify', 'gr-key', {
 				method: 'POST',
-				form: { product_id: 'x', license_key: 'y' },
+				form: [
+					['product_id', 'x'],
+					['license_key', 'y'],
+				],
 			}),
 		);
 
@@ -166,6 +225,71 @@ describe('makeGumroadRequest', () => {
 		expect(error.status).toBeUndefined();
 		expect(error.message).toBe('fetch failed');
 		expect(error.cause).toBeInstanceOf(TypeError);
+	});
+});
+
+describe('downloadGumroadFile', () => {
+	it('returns the raw file base64-encoded with its metadata', async () => {
+		const pdf = Buffer.from('%PDF-1.4 fake');
+		fetchMock.mockResolvedValueOnce(
+			new Response(new Uint8Array(pdf), {
+				status: 200,
+				headers: {
+					'Content-Type': 'application/pdf',
+					'Content-Disposition': 'attachment; filename="1099-K.pdf"',
+				},
+			}),
+		);
+
+		const file = await downloadGumroadFile(
+			'/tax_forms/2025/us_1099_k/download',
+			'gr-key',
+		);
+
+		expect(file).toEqual({
+			filename: '1099-K.pdf',
+			contentType: 'application/pdf',
+			contentBase64: pdf.toString('base64'),
+		});
+		const [url, init] = lastCall();
+		expect(url).toBe(`${GUMROAD_API_BASE}/tax_forms/2025/us_1099_k/download`);
+		expect(init.method).toBe('GET');
+		expect(new Headers(init.headers).get('authorization')).toBe(
+			'Bearer gr-key',
+		);
+	});
+
+	it('reads Retry-After on a 429 into the error without retrying', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('Too many requests', {
+				status: 429,
+				headers: { 'Retry-After': '3' },
+			}),
+		);
+
+		const error = await failure(
+			downloadGumroadFile('/tax_forms/2025/us_1099_k/download', 'gr-key'),
+		);
+
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBe(3000);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('maps the documented JSON error envelope on failure', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(errorBody('Tax form not found.')), {
+				status: 404,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+
+		const error = await failure(
+			downloadGumroadFile('/tax_forms/2025/us_1099_k/download', 'gr-key'),
+		);
+
+		expect(error.status).toBe(404);
+		expect(error.message).toBe('Gumroad 404: Tax form not found.');
 	});
 });
 

@@ -17,8 +17,24 @@ const GUMROAD_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	headerNames: { retryAfter: 'Retry-After' },
 };
 
+export type GumroadMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export type GumroadQuery = Record<string, string | undefined>;
-export type GumroadForm = Record<string, string | undefined>;
+// The docs' attach flows repeat bracket keys in document order
+// (`files[][id]=A&files[][url]=B&files[][id]=C...`), which a record cannot
+// express, so a form body is an ordered entry list.
+export type GumroadFormEntry = readonly [key: string, value: string | number];
+export type GumroadForm = GumroadFormEntry[];
+// The two JSON-body endpoints (user custom HTML) send a string or null.
+export type GumroadJsonBody = Record<string, string | null>;
+
+// Drops undefined values so unset fields never reach the wire.
+export function formEntries(
+	record: Record<string, string | number | undefined>,
+): GumroadForm {
+	return Object.entries(record).filter(
+		(entry): entry is [string, string | number] => entry[1] !== undefined,
+	);
+}
 
 /**
  * Gumroad documents JSON error bodies of `{ success: false, message }`, but
@@ -91,15 +107,17 @@ export async function makeGumroadRequest(
 	path: string,
 	apiKey: string,
 	options: {
-		method?: 'GET' | 'POST';
+		method?: GumroadMethod;
 		query?: GumroadQuery;
 		form?: GumroadForm;
+		json?: GumroadJsonBody;
+		baseUrl?: string;
 	} = {},
 ): Promise<unknown> {
-	const { method = 'GET', query, form } = options;
+	const { method = 'GET', query, form, json, baseUrl } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: GUMROAD_API_BASE,
+		BASE: baseUrl ?? GUMROAD_API_BASE,
 		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -107,23 +125,32 @@ export async function makeGumroadRequest(
 		TOKEN: apiKey,
 	};
 
-	// The licenses endpoints take form-encoded bodies per the docs' cURL;
-	// values are pre-encoded here so the shared client sends the string
-	// verbatim. Undefined (unset) fields never reach the wire.
+	// The docs' cURL sends form-encoded bodies for POSTs and PUTs (the `-d`
+	// params); entries are pre-encoded here so the shared client sends the
+	// string verbatim, in order.
 	const bodyParts: string[] = [];
-	for (const [key, value] of Object.entries(form ?? {})) {
-		if (value !== undefined) {
-			bodyParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-		}
+	for (const [key, value] of form ?? []) {
+		bodyParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
 	}
-	const body = bodyParts.length > 0 ? bodyParts.join('&') : undefined;
+	const hasForm = bodyParts.length > 0;
+	// The shared client JSON-encodes a non-string body itself when the media
+	// type is JSON, so the object is passed through, not pre-stringified.
+	const body: unknown = hasForm
+		? bodyParts.join('&')
+		: json !== undefined
+			? json
+			: undefined;
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
 		query: method === 'GET' ? query : undefined,
 		body,
-		mediaType: form ? 'application/x-www-form-urlencoded' : undefined,
+		mediaType: hasForm
+			? 'application/x-www-form-urlencoded'
+			: json !== undefined
+				? 'application/json'
+				: undefined,
 	};
 
 	try {
@@ -146,4 +173,92 @@ export async function makeGumroadRequest(
 		}
 		throw new GumroadAPIError('Unknown Gumroad API error', { method });
 	}
+}
+
+// A downloaded file, base64-encoded so it survives the JSON plugin boundary.
+export type GumroadDownload = {
+	filename?: string;
+	contentType: string;
+	contentBase64: string;
+};
+
+function filenameFrom(res: Response): string | undefined {
+	const raw = res.headers.get('content-disposition');
+	const match = raw?.match(/filename\*?=(?:UTF-8''|"?)([^";]+)/i);
+	return match?.[1]
+		? decodeURIComponent(match[1].replace(/"/g, ''))
+		: undefined;
+}
+
+// Retry-After as ms; the docs never document it, so both the delay-seconds
+// and HTTP-date forms are honored (browserless precedent).
+function retryAfterMs(res: Response): number | undefined {
+	const raw = res.headers.get('retry-after');
+	if (!raw) return undefined;
+	const seconds = Number(raw);
+	if (Number.isFinite(seconds)) return seconds * 1000;
+	const at = Date.parse(raw);
+	return Number.isFinite(at) ? Math.max(0, at - Date.now()) : undefined;
+}
+
+/**
+ * Raw fetch for the one documented binary response (tax form PDFs: "Response
+ * is the raw PDF on success ... a JSON error envelope on failure"). The shared
+ * client only parses JSON, so this path keeps its own error mapping; retries
+ * stay owned by error-handlers.ts.
+ */
+export async function downloadGumroadFile(
+	path: string,
+	apiKey: string,
+): Promise<GumroadDownload> {
+	let res: Response;
+	try {
+		res = await fetch(`${GUMROAD_API_BASE}${path}`, {
+			method: 'GET',
+			headers: { authorization: `Bearer ${apiKey}` },
+			signal: AbortSignal.timeout(20_000),
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			throw new GumroadAPIError(error.message, { cause: error, method: 'GET' });
+		}
+		throw new GumroadAPIError('Unknown Gumroad download error', {
+			method: 'GET',
+		});
+	}
+
+	if (res.status === 429) {
+		const retryAfter = retryAfterMs(res);
+		await res.body?.cancel();
+		throw new GumroadAPIError('Gumroad 429: Too many requests', {
+			status: 429,
+			retryAfter,
+			method: 'GET',
+		});
+	}
+
+	if (!res.ok) {
+		const text = await res.text();
+		let message = `Gumroad ${res.status}`;
+		try {
+			const parsed = JSON.parse(text) as { message?: unknown };
+			if (typeof parsed.message === 'string' && parsed.message.length > 0) {
+				message = `Gumroad ${res.status}: ${parsed.message}`;
+			}
+		} catch {
+			// Not JSON; keep the status-only message.
+		}
+		throw new GumroadAPIError(message, {
+			status: res.status,
+			body: text.length > 0 ? text : undefined,
+			method: 'GET',
+		});
+	}
+
+	const buffer = await res.arrayBuffer();
+	return {
+		filename: filenameFrom(res),
+		contentType: res.headers.get('content-type') ?? 'application/octet-stream',
+		contentBase64: Buffer.from(buffer).toString('base64'),
+	};
 }

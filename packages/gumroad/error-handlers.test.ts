@@ -112,6 +112,14 @@ describe('Gumroad error handlers', () => {
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
+	it('never replays a 5xx on PUT or DELETE writes either', async () => {
+		for (const method of ['PUT', 'DELETE']) {
+			const error = apiError(503, { method });
+			expect(classify(error)).toBe('SERVER_ERROR');
+			expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		}
+	});
+
 	it('falls through unknown errors to DEFAULT without retrying', async () => {
 		const error = new GumroadAPIError('Gumroad request failed: unknown');
 		expect(classify(error)).toBe('DEFAULT');

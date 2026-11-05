@@ -16,3 +16,12 @@ export const list: GumroadEndpoints['subscribersList'] = (ctx, input) =>
 			}),
 		},
 	);
+
+export const get: GumroadEndpoints['subscribersGet'] = (ctx, input) =>
+	call(
+		ctx,
+		'subscribersGet',
+		'subscribers.get',
+		`/subscribers/${encodeURIComponent(input.id)}`,
+		input,
+	);

@@ -126,3 +126,255 @@ export const purchase = {
 export function errorBody(message: string) {
 	return { success: false, message };
 }
+
+export const offerCode = {
+	id: 'mN7CdHiwHaR9FlxKvF-n-g==',
+	name: '1OFF',
+	amount_cents: 100,
+	max_purchase_count: null,
+	minimum_amount_cents: null,
+	universal: false,
+	currency_type: 'usd',
+	auto_apply: false,
+	sale_label: null,
+	valid_at: null,
+	expires_at: null,
+	times_used: 1,
+};
+
+export const variantCategory = {
+	id: 'mN7CdHiwHaR9FlxKvF-n-g==',
+	title: 'colors',
+};
+
+export const variant = {
+	id: 'lSC1XVfr2TC3WoCGY7YrUg==',
+	max_purchase_count: null,
+	name: 'red',
+	price_difference_cents: 100,
+};
+
+export const customField = {
+	name: 'phone number',
+	required: 'false',
+};
+
+export const email = {
+	id: 'bfi_30HLgGWL8H2wo_Gzlg==',
+	subject: 'Launch update',
+	message: '<p>Hello, world!</p>',
+	audience_type: 'audience',
+	product_id: null,
+	state: 'draft',
+	published_at: null,
+	scheduled_at: null,
+	send_emails: true,
+	shown_on_profile: false,
+	audience_count: null,
+	recipients_count: null,
+	url: null,
+	created_at: '2026-06-17T12:00:00.000Z',
+	updated_at: '2026-06-17T12:00:00.000Z',
+};
+
+export const workflowEmail = {
+	...email,
+	delay: { amount: 1, unit: 'day' },
+	sent_count: 100,
+	open_count: 42,
+	open_rate: 42.0,
+	click_count: 8,
+	click_rate: 8.0,
+};
+
+export const workflow = {
+	id: '0ssD7B0cF6B5XQd3J7lY2A==',
+	name: 'Customer onboarding',
+	audience_type: 'product',
+	trigger: null,
+	product_id: 'A-m3CDDC5dlrSdKZp0RFhA==',
+	variant_id: null,
+	state: 'published',
+	published_at: '2026-07-10T12:00:00.000Z',
+	first_published_at: '2026-07-10T12:00:00.000Z',
+	send_to_past_customers: true,
+	emails_count: 2,
+	filters: { paid_more_than: '20' },
+	created_at: '2026-07-10T11:45:00.000Z',
+	updated_at: '2026-07-10T12:00:00.000Z',
+	emails: [workflowEmail],
+};
+
+export const mediaFile = {
+	id: 'k7m2q9x4tb1zn6dw',
+	name: 'logo',
+	extension: 'PNG',
+	file_size: 18422,
+	url: 'https://public-files.gumroad.com/abc123/logo.png',
+	status: { type: 'saved' },
+	file_group: 'image',
+	created_at: '2026-03-01T12:00:00Z',
+};
+
+export const resourceSubscription = {
+	id: 'G_-mnBf9b1j9A7a4ub4nFQ==',
+	resource_name: 'sale',
+	post_url: 'https://postatmebro.com',
+};
+
+export const payout = {
+	id: 'fEGTaEpuKDsnDvf_MfecTA==',
+	amount: '150.00',
+	currency: 'USD',
+	status: 'completed',
+	created_at: '2021-01-15T19:38:56Z',
+	processed_at: '2021-01-16T10:15:30Z',
+	payment_processor: 'stripe',
+	bank_account_visual: '******1234',
+	paypal_email: null,
+	sales: ['A-m3CDDC5dlrSdKZp0RFhA=='],
+	refunded_sales: [],
+	disputed_sales: [],
+	transactions: [
+		{
+			type: 'Sale',
+			date: '2021-01-04',
+			purchase_id: 'A-m3CDDC5dlrSdKZp0RFhA==',
+			item_name: 'Beautiful widget',
+			buyer_name: 'Jane Doe',
+			buyer_email: 'jane@example.com',
+			taxes: 0.0,
+			shipping: 0.0,
+			sale_price: 200.0,
+			gumroad_fees: 26.6,
+			net_total: 173.4,
+		},
+	],
+};
+
+export const taxForm = {
+	tax_year: 2025,
+	tax_form_type: 'us_1099_k',
+	filed_at: '2026-01-31T00:00:00Z',
+};
+
+export const category = {
+	id: 123,
+	name: 'figma',
+	label: 'Figma',
+	path: 'design/ui-and-web/figma',
+	parent_id: 122,
+};
+
+export const review = {
+	id: 'sJ8Yx3d6mUL1kQpVbHnZ2g==',
+	rating: 5,
+	message: 'Exactly what I needed for my workflow.',
+	created_at: '2026-03-01T12:00:00Z',
+	purchase_id: 'kL9nR2sTvW4xY7zA1bC3dE==',
+	rater_name: 'Avery',
+	response: { message: 'Thank you!', created_at: '2026-03-02T09:14:00Z' },
+};
+
+export const user = {
+	bio: 'a sailor, a tailor',
+	name: 'John Smith',
+	twitter_handle: null,
+	user_id: 'G_-mnBf9b1j9A7a4ub4nFQ==',
+	email: 'johnsmith@gumroad.com',
+	url: 'https://gumroad.com/sailorjohn',
+	profile_picture_url: 'https://assets.gumroad.com/user/abc/avatar',
+};
+
+export const refundPolicy = {
+	refund_period: '30',
+	title: '30-day money back guarantee',
+	fine_print: 'Refund requests are reviewed within 2 business days.',
+	in_effect: true,
+};
+
+export const cover = {
+	id: 'abc123',
+	url: 'https://www.youtube.com/embed/qKebcV1jv3A?feature=oembed&enablejsapi=1',
+	original_url:
+		'https://www.youtube.com/embed/qKebcV1jv3A?feature=oembed&enablejsapi=1',
+	thumbnail: 'https://i.ytimg.com/vi/qKebcV1jv3A/hqdefault.jpg',
+	type: 'oembed',
+	filetype: null,
+	width: 670,
+	height: 377,
+	native_width: 1280,
+	native_height: 720,
+};
+
+export const publicProduct = {
+	api_version: 1,
+	id: 'A-m3CDDC5dlrSdKZp0RFhA==',
+	permalink: 'pencil',
+	name: 'Pencil Icon PSD',
+	native_type: 'digital',
+	url: 'https://sahil.gumroad.com/l/pencil',
+	thumbnail_url: 'https://public-files.gumroad.com/variants/abc/def',
+	created_at: '2024-01-01T00:00:00Z',
+	updated_at: '2024-02-01T00:00:00Z',
+	seller: {
+		id: 'G_-mnBf9b1j9A7a4ub4nFQ==',
+		name: 'Sahil',
+		avatar_url: 'https://public-files.gumroad.com/user/abc/avatar',
+		profile_url: 'https://sahil.gumroad.com',
+		is_verified: true,
+	},
+	price_cents: 100,
+	currency_code: 'usd',
+	price_formatted: '$1',
+	is_pay_what_you_want: false,
+	suggested_price_cents: null,
+	is_recurring_billing: false,
+	is_tiered_membership: false,
+	recurrences: null,
+	free_trial: null,
+	description_html: '<p>I made this for fun.</p>',
+	summary: "You'll get one PSD file.",
+	covers: [],
+	attributes: [{ name: 'Format', value: 'PSD' }],
+	ratings: { count: 12, average: 4.5, percentages: [0, 0, 8, 34, 58] },
+	reviews: [
+		{
+			id: 'rev_abc123',
+			rating: 5,
+			message: 'Exactly what I needed.',
+			rater: {
+				name: 'Alex',
+				avatar_url: 'https://public-files.gumroad.com/user/xyz/avatar',
+			},
+			created_at: '2024-01-15T12:00:00Z',
+			response: { message: 'Thanks Alex!' },
+		},
+	],
+	sales_count: null,
+	options: [],
+	quantity_remaining: null,
+	is_quantity_enabled: false,
+	is_sales_limited: false,
+	is_published: true,
+	is_physical: false,
+	refund_policy: {
+		title: '30-day money back guarantee',
+		fine_print: null,
+		updated_at: '2024-01-01',
+	},
+};
+
+export const publicProfile = {
+	api_version: 1,
+	id: 'G_-mnBf9b1j9A7a4ub4nFQ==',
+	username: 'sahil',
+	name: 'Sahil',
+	bio: 'I make tools for creators.',
+	avatar_url: 'https://public-files.gumroad.com/user/abc/avatar',
+	profile_url: 'https://sahil.gumroad.com',
+	subdomain: 'sahil.gumroad.com',
+	twitter_handle: 'shl',
+	is_verified: true,
+	products: [publicProduct],
+};

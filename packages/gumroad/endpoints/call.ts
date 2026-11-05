@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GumroadContext } from '..';
-import type { GumroadForm, GumroadQuery } from '../client';
+import type {
+	GumroadForm,
+	GumroadJsonBody,
+	GumroadMethod,
+	GumroadQuery,
+} from '../client';
 import { errorFromEnvelope, makeGumroadRequest } from '../client';
 import type {
 	GumroadEndpointInputs,
@@ -13,14 +18,17 @@ import {
 } from './types';
 
 type CallOptions<K extends GumroadOperation> = {
-	method?: 'GET' | 'POST';
+	method?: GumroadMethod;
+	baseUrl?: (parsed: GumroadEndpointInputs[K]) => string;
 	toQuery?: (parsed: GumroadEndpointInputs[K]) => GumroadQuery;
 	toForm?: (parsed: GumroadEndpointInputs[K]) => GumroadForm;
+	toJson?: (parsed: GumroadEndpointInputs[K]) => GumroadJsonBody;
 };
 
 /**
- * Validates the input, sends it as the query string or form body, rejects
- * envelopes that report a failure, validates the response and logs the call.
+ * Validates the input, sends it as the query string, form body or JSON body,
+ * rejects envelopes that report a failure, validates the response and logs
+ * the call.
  */
 export async function call<K extends GumroadOperation>(
 	ctx: GumroadContext,
@@ -39,10 +47,14 @@ export async function call<K extends GumroadOperation>(
 	) as GumroadEndpointInputs[K];
 	const query = options.toQuery ? options.toQuery(parsed) : undefined;
 	const form = options.toForm ? options.toForm(parsed) : undefined;
+	const json = options.toJson ? options.toJson(parsed) : undefined;
+	const baseUrl = options.baseUrl ? options.baseUrl(parsed) : undefined;
 	const raw = await makeGumroadRequest(path, ctx.key, {
 		method: options.method ?? 'GET',
 		query,
 		form,
+		json,
+		baseUrl,
 	});
 
 	const envelopeError = errorFromEnvelope(raw);
