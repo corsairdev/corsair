@@ -158,13 +158,20 @@ export const updateOrgServiceAccount: TurbotPipesEndpoints['updateOrgServiceAcco
 
 export const updateOrgServiceAccountToken: TurbotPipesEndpoints['updateOrgServiceAccountToken'] =
 	async (ctx, input) => {
-		const { org_handle, service_account_handle, token_id, ...body } = input;
+		const {
+			org_handle,
+			service_account_handle,
+			token_id,
+			status,
+			title,
+			description,
+		} = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['updateOrgServiceAccountToken']
 		>(
 			`org/${pathSegment(org_handle)}/service_account/${pathSegment(service_account_handle)}/token/${pathSegment(token_id)}`,
 			ctx.key,
-			{ method: 'PATCH', body },
+			{ method: 'PATCH', body: { status, title, description } },
 		);
 		await logEventFromContext(
 			ctx,

@@ -52,7 +52,8 @@ export const getOrgWorkspaceQueryData: TurbotPipesEndpoints['getOrgWorkspaceQuer
 
 export const createOrgWorkspaceSnapshot: TurbotPipesEndpoints['createOrgWorkspaceSnapshot'] =
 	async (ctx, input) => {
-		const { org_handle, workspace_handle, title } = input;
+		const { org_handle, workspace_handle, data, title, visibility, tags } =
+			input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgWorkspaceSnapshot']
 		>(
@@ -60,7 +61,7 @@ export const createOrgWorkspaceSnapshot: TurbotPipesEndpoints['createOrgWorkspac
 			ctx.key,
 			{
 				method: 'POST',
-				body: { title },
+				body: { data, title, visibility, tags },
 			},
 		);
 		await logEventFromContext(

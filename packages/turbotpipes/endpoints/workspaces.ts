@@ -6,7 +6,8 @@ import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserWorkspaceConnection: TurbotPipesEndpoints['createUserWorkspaceConnection'] =
 	async (ctx, input) => {
-		const { user_handle, workspace_handle, connection_handle } = input;
+		const { user_handle, workspace_handle, handle, plugin, config, parent_id } =
+			input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserWorkspaceConnection']
 		>(
@@ -14,7 +15,7 @@ export const createUserWorkspaceConnection: TurbotPipesEndpoints['createUserWork
 			ctx.key,
 			{
 				method: 'POST',
-				body: { connection_handle },
+				body: { handle, plugin, config, parent_id },
 			},
 		);
 		await logEventFromContext(
@@ -111,7 +112,10 @@ export const testUserWorkspaceConnection: TurbotPipesEndpoints['testUserWorkspac
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection/${pathSegment(input.connection_handle)}/test`,
 			ctx.key,
-			{ method: 'POST' },
+			{
+				method: 'POST',
+				body: { plugin: input.plugin, config: input.config },
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -179,7 +183,8 @@ export const listUserWorkspaceConnectionFolders: TurbotPipesEndpoints['listUserW
 
 export const createOrgWorkspaceConnection: TurbotPipesEndpoints['createOrgWorkspaceConnection'] =
 	async (ctx, input) => {
-		const { org_handle, workspace_handle, connection_handle } = input;
+		const { org_handle, workspace_handle, handle, plugin, config, parent_id } =
+			input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgWorkspaceConnection']
 		>(
@@ -187,7 +192,7 @@ export const createOrgWorkspaceConnection: TurbotPipesEndpoints['createOrgWorksp
 			ctx.key,
 			{
 				method: 'POST',
-				body: { connection_handle },
+				body: { handle, plugin, config, parent_id },
 			},
 		);
 		await logEventFromContext(
@@ -256,7 +261,14 @@ export const getOrgWorkspaceConnectionFolder: TurbotPipesEndpoints['getOrgWorksp
 
 export const createOrgWorkspaceAggregator: TurbotPipesEndpoints['createOrgWorkspaceAggregator'] =
 	async (ctx, input) => {
-		const { org_handle, workspace_handle, handle, connections } = input;
+		const {
+			org_handle,
+			workspace_handle,
+			handle,
+			plugin,
+			connections,
+			config,
+		} = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgWorkspaceAggregator']
 		>(
@@ -264,7 +276,7 @@ export const createOrgWorkspaceAggregator: TurbotPipesEndpoints['createOrgWorksp
 			ctx.key,
 			{
 				method: 'POST',
-				body: { handle, connections },
+				body: { handle, plugin, connections, config },
 			},
 		);
 		await logEventFromContext(

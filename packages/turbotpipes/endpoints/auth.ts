@@ -5,14 +5,14 @@ import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserPassword: TurbotPipesEndpoints['createUserPassword'] =
 	async (ctx, input) => {
-		const { user_handle, password } = input;
+		const { user_handle, expires_in_minutes } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserPassword']
 		>(`user/${pathSegment(user_handle)}/password`, ctx.key, {
 			method: 'POST',
-			body: { password },
+			body: { expires_in_minutes },
 		});
-		// Log only the identifier; the password must never persist in event storage.
+		// Log only the identifier; the response carries a database password.
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.auth.create_user_password',
@@ -88,7 +88,7 @@ export const updateUserToken: TurbotPipesEndpoints['updateUserToken'] = async (
 	ctx,
 	input,
 ) => {
-	const { user_handle, token_id, status } = input;
+	const { user_handle, token_id, status, title, description } = input;
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['updateUserToken']
 	>(
@@ -96,7 +96,7 @@ export const updateUserToken: TurbotPipesEndpoints['updateUserToken'] = async (
 		ctx.key,
 		{
 			method: 'PATCH',
-			body: { status },
+			body: { status, title, description },
 		},
 	);
 	await logEventFromContext(

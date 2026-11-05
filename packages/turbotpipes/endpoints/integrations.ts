@@ -5,12 +5,12 @@ import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserIntegration: TurbotPipesEndpoints['createUserIntegration'] =
 	async (ctx, input) => {
-		const { user_handle, ...body } = input;
+		const { user_handle, handle, type, config } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserIntegration']
 		>(`user/${pathSegment(user_handle)}/integration`, ctx.key, {
 			method: 'POST',
-			body,
+			body: { handle, type, config },
 		});
 		await logEventFromContext(
 			ctx,
@@ -98,16 +98,14 @@ export const updateUserIntegration: TurbotPipesEndpoints['updateUserIntegration'
 
 export const testUserIntegration: TurbotPipesEndpoints['testUserIntegration'] =
 	async (ctx, input) => {
-		const { user_handle, integration_handle, ...body } = input;
+		const { user_handle, integration_handle } = input;
+		// The test route takes no body: Pipes tests the stored integration.
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['testUserIntegration']
 		>(
 			`user/${pathSegment(user_handle)}/integration/${pathSegment(integration_handle)}/test`,
 			ctx.key,
-			{
-				method: 'POST',
-				body,
-			},
+			{ method: 'POST' },
 		);
 		await logEventFromContext(
 			ctx,

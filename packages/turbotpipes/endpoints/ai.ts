@@ -14,7 +14,7 @@ export const createUserAiKey: TurbotPipesEndpoints['createUserAiKey'] = async (
 		TurbotPipesEndpointOutputs['createUserAiKey']
 	>(`user/${pathSegment(user_handle)}/ai/key`, ctx.key, {
 		method: 'POST',
-		body: { provider, key },
+		body: { provider, api_key: key },
 	});
 	// Log only identifiers; the AI provider key must never persist in event storage.
 	await logEventFromContext(
@@ -79,7 +79,7 @@ export const updateUserAiKey: TurbotPipesEndpoints['updateUserAiKey'] = async (
 		ctx.key,
 		{
 			method: 'PATCH',
-			body: { key },
+			body: { api_key: key },
 		},
 	);
 	// Log only identifiers; the AI provider key must never persist in event storage.
@@ -104,7 +104,7 @@ export const testUserAiKey: TurbotPipesEndpoints['testUserAiKey'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: { key },
+			body: { api_key: key },
 		},
 	);
 	// Log only identifiers; the AI provider key must never persist in event storage.

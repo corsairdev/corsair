@@ -79,9 +79,11 @@ export type GetUserWorkspaceInput = z.infer<typeof GetUserWorkspaceInputSchema>;
 export const UpdateUserWorkspaceInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
-	desired_state: z.string().optional(),
-	instance_type: z.string().optional(),
-	db_volume_size: z.number().optional(),
+	handle: z.string().optional(),
+	desired_state: z.enum(['enabled', 'disabled']).optional(),
+	instance_type: z.enum(['db1.shared', 'db1.small', 'db1.medium']).optional(),
+	db_volume_size_bytes: z.number().int().optional(),
+	search_path_prefix: z.array(z.string()).optional(),
 });
 export type UpdateUserWorkspaceInput = z.infer<
 	typeof UpdateUserWorkspaceInputSchema
@@ -158,12 +160,13 @@ export type GetUserPreferencesInput = z.infer<
 	typeof GetUserPreferencesInputSchema
 >;
 
-// unknown: subscription toggles are a provider-defined map of channel to preference.
-export const EmailSubscriptionsSchema = z.record(z.string(), z.unknown());
+const communicationPreference = z.enum(['enabled', 'disabled']).optional();
 
 export const UpdateUserPreferencesInputSchema = z.object({
 	user_handle: z.string(),
-	email_subscriptions: EmailSubscriptionsSchema.optional(),
+	communication_community_updates: communicationPreference,
+	communication_product_updates: communicationPreference,
+	communication_tips_and_tricks: communicationPreference,
 });
 export type UpdateUserPreferencesInput = z.infer<
 	typeof UpdateUserPreferencesInputSchema
@@ -239,7 +242,9 @@ export const UpdateOrgServiceAccountTokenInputSchema = z.object({
 	org_handle: z.string(),
 	service_account_handle: z.string(),
 	token_id: z.string(),
-	status: z.string().optional(),
+	status: z.string(),
+	title: z.string().optional(),
+	description: z.string().optional(),
 });
 export type UpdateOrgServiceAccountTokenInput = z.infer<
 	typeof UpdateOrgServiceAccountTokenInputSchema
@@ -392,7 +397,10 @@ export type UpdateOrgConnectionFolderInput = z.infer<
 export const CreateUserWorkspaceConnectionInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
-	connection_handle: z.string(),
+	handle: z.string(),
+	plugin: z.string(),
+	config: ProviderConfigSchema.optional(),
+	parent_id: z.string().optional(),
 });
 export type CreateUserWorkspaceConnectionInput = z.infer<
 	typeof CreateUserWorkspaceConnectionInputSchema
@@ -443,6 +451,8 @@ export const TestUserWorkspaceConnectionInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
 	connection_handle: z.string(),
+	plugin: z.string(),
+	config: ProviderConfigSchema.optional(),
 });
 export type TestUserWorkspaceConnectionInput = z.infer<
 	typeof TestUserWorkspaceConnectionInputSchema
@@ -479,7 +489,10 @@ export type ListUserWorkspaceConnectionFoldersInput = z.infer<
 export const CreateOrgWorkspaceConnectionInputSchema = z.object({
 	org_handle: z.string(),
 	workspace_handle: z.string(),
-	connection_handle: z.string(),
+	handle: z.string(),
+	plugin: z.string(),
+	config: ProviderConfigSchema.optional(),
+	parent_id: z.string().optional(),
 });
 export type CreateOrgWorkspaceConnectionInput = z.infer<
 	typeof CreateOrgWorkspaceConnectionInputSchema
@@ -516,7 +529,9 @@ export const CreateOrgWorkspaceAggregatorInputSchema = z.object({
 	org_handle: z.string(),
 	workspace_handle: z.string(),
 	handle: z.string(),
-	connections: z.array(z.string()),
+	plugin: z.string(),
+	connections: z.array(z.string()).optional(),
+	config: ProviderConfigSchema.optional(),
 });
 export type CreateOrgWorkspaceAggregatorInput = z.infer<
 	typeof CreateOrgWorkspaceAggregatorInputSchema
@@ -644,10 +659,34 @@ export type GetOrgWorkspaceQueryDataInput = z.infer<
 	typeof GetOrgWorkspaceQueryDataInputSchema
 >;
 
+// unknown: snapshot data is Powerpipe dashboard output. Panels, inputs,
+// variables, metadata and layout children are open-ended JSON, and loose()
+// keeps fields this schema does not list, so the snapshot reaches Pipes intact.
+export const WorkspaceSnapshotLayoutSchema = z
+	.object({ name: z.string(), panel_type: z.string() })
+	.loose();
+export const WorkspaceSnapshotDataSchema = z
+	.object({
+		schema_version: z.string(),
+		start_time: z.string(),
+		end_time: z.string(),
+		layout: WorkspaceSnapshotLayoutSchema,
+		panels: z.record(z.string(), z.unknown()),
+		inputs: z.record(z.string(), z.unknown()).optional(),
+		variables: z.record(z.string(), z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
+	})
+	.loose();
+// unknown: Pipes leaves snapshot tags untyped (a nullable free-form value).
+export const SnapshotTagsSchema = z.unknown();
+
 export const CreateOrgWorkspaceSnapshotInputSchema = z.object({
 	org_handle: z.string(),
 	workspace_handle: z.string(),
+	data: WorkspaceSnapshotDataSchema,
 	title: z.string().optional(),
+	visibility: z.enum(['workspace', 'anyone_with_link']).optional(),
+	tags: SnapshotTagsSchema.optional(),
 });
 export type CreateOrgWorkspaceSnapshotInput = z.infer<
 	typeof CreateOrgWorkspaceSnapshotInputSchema
@@ -787,8 +826,9 @@ export type SendUserWorkspaceChatMessageInput = z.infer<
 // ── Integrations Schemas ─────────────────────────────────────────────────────
 export const CreateUserIntegrationInputSchema = z.object({
 	user_handle: z.string(),
-	integration_handle: z.string(),
-	type: z.string(),
+	handle: z.string(),
+	type: z.enum(['aws', 'azure', 'gcp', 'github', 'slack', 'gitlab']),
+	config: ProviderConfigSchema.optional(),
 });
 export type CreateUserIntegrationInput = z.infer<
 	typeof CreateUserIntegrationInputSchema
@@ -831,7 +871,6 @@ export type UpdateUserIntegrationInput = z.infer<
 export const TestUserIntegrationInputSchema = z.object({
 	user_handle: z.string(),
 	integration_handle: z.string(),
-	type: z.string(),
 });
 export type TestUserIntegrationInput = z.infer<
 	typeof TestUserIntegrationInputSchema
@@ -882,10 +921,15 @@ export type InstallUserSlackIntegrationInput = z.infer<
 >;
 
 // ── Notifiers Schemas ────────────────────────────────────────────────────────
+// unknown: each notify target is a provider-defined object (integration,
+// channel, webhook settings); Pipes documents no fixed shape for it.
+export const NotifierTargetsSchema = z.array(z.record(z.string(), z.unknown()));
+
 export const CreateUserNotifierInputSchema = z.object({
 	user_handle: z.string(),
-	handle: z.string(),
-	type: z.string(),
+	name: z.string(),
+	notifies: NotifierTargetsSchema,
+	state: z.enum(['enabled', 'disabled']).optional(),
 });
 export type CreateUserNotifierInput = z.infer<
 	typeof CreateUserNotifierInputSchema
@@ -913,8 +957,9 @@ export type GetOrgWorkspaceNotifierInput = z.infer<
 export const CreateUserWorkspaceNotifierInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
-	handle: z.string(),
-	type: z.string(),
+	name: z.string(),
+	notifies: NotifierTargetsSchema,
+	state: z.enum(['enabled', 'disabled']).optional(),
 });
 export type CreateUserWorkspaceNotifierInput = z.infer<
 	typeof CreateUserWorkspaceNotifierInputSchema
@@ -1002,7 +1047,21 @@ export const CreateUserWorkspaceDatatankTableInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
 	datatank_handle: z.string(),
-	table_name: z.string(),
+	name: z.string(),
+	type: z.enum(['table', 'query']),
+	description: z.string().optional(),
+	desired_state: z.enum(['enabled', 'disabled']).optional(),
+	frequency: z
+		.object({
+			type: z.enum(['interval', 'cron', 'manual']),
+			schedule: z.string().optional(),
+		})
+		.optional(),
+	part_per: z.enum(['connection']).optional(),
+	skip_initial_refresh: z.boolean().optional(),
+	source_query: z.string().optional(),
+	source_schema: z.string().optional(),
+	source_table: z.string().optional(),
 });
 export type CreateUserWorkspaceDatatankTableInput = z.infer<
 	typeof CreateUserWorkspaceDatatankTableInputSchema
@@ -1122,7 +1181,10 @@ export const CreateUserWorkspaceModVariableSettingInputSchema = z.object({
 	workspace_handle: z.string(),
 	mod_alias: z.string(),
 	variable_name: z.string(),
-	value: z.unknown(),
+	// Sent as the setting. z.unknown() lets a key be absent, so presence is checked.
+	value: z.unknown().refine((value) => value !== undefined, {
+		message: 'value is required: it is the setting Pipes stores',
+	}),
 });
 export type CreateUserWorkspaceModVariableSettingInput = z.infer<
 	typeof CreateUserWorkspaceModVariableSettingInputSchema
@@ -1423,7 +1485,7 @@ export type ListUserBillingSubscriptionsInput = z.infer<
 // ── Auth Schemas ─────────────────────────────────────────────────────────────
 export const CreateUserPasswordInputSchema = z.object({
 	user_handle: z.string(),
-	password: z.string().optional(),
+	expires_in_minutes: z.number().int().optional(),
 });
 export type CreateUserPasswordInput = z.infer<
 	typeof CreateUserPasswordInputSchema
@@ -1447,7 +1509,9 @@ export type DeleteUserTokenInput = z.infer<typeof DeleteUserTokenInputSchema>;
 export const UpdateUserTokenInputSchema = z.object({
 	user_handle: z.string(),
 	token_id: z.string(),
-	status: z.string().optional(),
+	status: z.string(),
+	title: z.string().optional(),
+	description: z.string().optional(),
 });
 export type UpdateUserTokenInput = z.infer<typeof UpdateUserTokenInputSchema>;
 

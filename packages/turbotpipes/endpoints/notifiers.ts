@@ -5,12 +5,12 @@ import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserNotifier: TurbotPipesEndpoints['createUserNotifier'] =
 	async (ctx, input) => {
-		const { user_handle, ...body } = input;
+		const { user_handle, name, notifies, state } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserNotifier']
 		>(`user/${pathSegment(user_handle)}/notifier`, ctx.key, {
 			method: 'POST',
-			body,
+			body: { name, notifies, state },
 		});
 		await logEventFromContext(
 			ctx,
@@ -58,7 +58,7 @@ export const getOrgWorkspaceNotifier: TurbotPipesEndpoints['getOrgWorkspaceNotif
 
 export const createUserWorkspaceNotifier: TurbotPipesEndpoints['createUserWorkspaceNotifier'] =
 	async (ctx, input) => {
-		const { user_handle, workspace_handle, ...body } = input;
+		const { user_handle, workspace_handle, name, notifies, state } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserWorkspaceNotifier']
 		>(
@@ -66,7 +66,7 @@ export const createUserWorkspaceNotifier: TurbotPipesEndpoints['createUserWorksp
 			ctx.key,
 			{
 				method: 'POST',
-				body,
+				body: { name, notifies, state },
 			},
 		);
 		await logEventFromContext(

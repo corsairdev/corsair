@@ -90,14 +90,13 @@ export const listOrgWorkspaceDatatanks: TurbotPipesEndpoints['listOrgWorkspaceDa
 
 export const createUserWorkspaceDatatankTable: TurbotPipesEndpoints['createUserWorkspaceDatatankTable'] =
 	async (ctx, input) => {
-		const { user_handle, workspace_handle, datatank_handle, table_name } =
-			input;
+		const { user_handle, workspace_handle, datatank_handle, ...body } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserWorkspaceDatatankTable']
 		>(
 			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/datatank/${pathSegment(datatank_handle)}/table`,
 			ctx.key,
-			{ method: 'POST', body: { table_name } },
+			{ method: 'POST', body },
 		);
 		await logEventFromContext(
 			ctx,

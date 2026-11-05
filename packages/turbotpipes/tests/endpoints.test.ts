@@ -223,15 +223,20 @@ describe('TurbotPipes Plugin Integration & API Tests', () => {
 			mockRequest.mockResolvedValueOnce({
 				id: 'w_1',
 				handle: 'prod',
-				state: 'running',
+				state: 'enabled',
 			});
 			const ctx = createMockContext();
 			const res = await UsersEndpoints.updateUserWorkspace(ctx, {
 				user_handle: 'bob',
 				workspace_handle: 'prod',
-				desired_state: 'running',
+				desired_state: 'enabled',
+				db_volume_size_bytes: 10737418240,
 			});
-			expect(res.state).toBe('running');
+			expect(res.state).toBe('enabled');
+			expect(mockRequest.mock.calls[0]?.[1].body).toEqual({
+				desired_state: 'enabled',
+				db_volume_size_bytes: 10737418240,
+			});
 		});
 
 		it('runUserWorkspaceCommand sends workspace command', async () => {
@@ -334,14 +339,17 @@ describe('TurbotPipes Plugin Integration & API Tests', () => {
 
 		it('updateUserPreferences updates preferences', async () => {
 			mockRequest.mockResolvedValueOnce({
-				email_subscriptions: { updates: false },
+				communication_product_updates: 'disabled',
 			});
 			const ctx = createMockContext();
 			const res = await UsersEndpoints.updateUserPreferences(ctx, {
 				user_handle: 'bob',
-				email_subscriptions: { updates: false },
+				communication_product_updates: 'disabled',
 			});
-			expect(res.email_subscriptions).toBeDefined();
+			expect(res.communication_product_updates).toBe('disabled');
+			expect(mockRequest.mock.calls[0]?.[1].body).toEqual({
+				communication_product_updates: 'disabled',
+			});
 		});
 
 		it('deleteUserAvatar deletes user avatar', async () => {
@@ -686,12 +694,26 @@ describe('TurbotPipes Plugin Integration & API Tests', () => {
 		it('createOrgWorkspaceSnapshot creates a snapshot', async () => {
 			mockRequest.mockResolvedValueOnce({ id: 'snap_1' });
 			const ctx = createMockContext();
+			const data = {
+				schema_version: '20240607',
+				start_time: '2026-11-05T00:00:00Z',
+				end_time: '2026-11-05T00:00:05Z',
+				layout: { name: 'aws.dashboard.cost', panel_type: 'dashboard' },
+				panels: { 'aws.dashboard.cost': { status: 'complete' } },
+				// Fields the schema does not list still reach Pipes.
+				search_path: ['aws'],
+			};
 			const res = await QueryEndpoints.createOrgWorkspaceSnapshot(ctx, {
 				org_handle: 'acme',
 				workspace_handle: 'main',
+				data,
 				title: 'Weekly Backup',
 			});
 			expect(res.id).toBe('snap_1');
+			expect(mockRequest.mock.calls[0]?.[1].body).toEqual({
+				data,
+				title: 'Weekly Backup',
+			});
 		});
 
 		it('runUserWorkspaceQuery runs user SQL query', async () => {
@@ -726,6 +748,11 @@ describe('TurbotPipes Plugin Integration & API Tests', () => {
 				key: 'sk-123',
 			});
 			expect(res.provider).toBe('openai');
+			// Pipes names the field api_key.
+			expect(mockRequest.mock.calls[0]?.[1].body).toEqual({
+				provider: 'openai',
+				api_key: 'sk-123',
+			});
 		});
 
 		it('listUserAiKeys lists user AI keys', async () => {
@@ -760,21 +787,30 @@ describe('TurbotPipes Plugin Integration & API Tests', () => {
 			const ctx = createMockContext();
 			const res = await IntegrationsEndpoints.createUserIntegration(ctx, {
 				user_handle: 'bob',
-				integration_handle: 'my_slack',
+				handle: 'my_slack',
 				type: 'slack',
 			});
 			expect(res.handle).toBe('my_slack');
+			expect(mockRequest.mock.calls[0]?.[1].body).toEqual({
+				handle: 'my_slack',
+				type: 'slack',
+			});
 		});
 
 		it('createUserNotifier creates user notifier', async () => {
-			mockRequest.mockResolvedValueOnce({ handle: 'email_notif' });
+			mockRequest.mockResolvedValueOnce({ name: 'ops_alerts' });
 			const ctx = createMockContext();
+			const notifies = [{ integration: 'my_slack', channel: '#ops' }];
 			const res = await NotifiersEndpoints.createUserNotifier(ctx, {
 				user_handle: 'bob',
-				handle: 'email_notif',
-				type: 'email',
+				name: 'ops_alerts',
+				notifies,
 			});
-			expect(res.handle).toBe('email_notif');
+			expect(res.name).toBe('ops_alerts');
+			expect(mockRequest.mock.calls[0]?.[1].body).toEqual({
+				name: 'ops_alerts',
+				notifies,
+			});
 		});
 
 		it('createUserWorkspaceDatatank creates Datatank', async () => {
