@@ -24,7 +24,9 @@ const ENTITY_KEYS = ['user_id', 'agent_id', 'app_id', 'run_id'] as const;
 function carriesEntityId(entry: unknown): boolean {
 	const record = asRecord(entry);
 	if (!record) return false;
-	if (ENTITY_KEYS.some((key) => key in record)) return true;
+	// A key present with an undefined value is not a filter: the query builder
+	// drops it and Mem0 sees no entity scope.
+	if (ENTITY_KEYS.some((key) => record[key] !== undefined)) return true;
 	return ['AND', 'OR', 'NOT'].some((operator) => {
 		const branches = record[operator];
 		return Array.isArray(branches) && branches.some(carriesEntityId);
@@ -424,7 +426,7 @@ const MemoriesDeleteAllInputSchema = z
 			'Only memories in this project.',
 		),
 		metadata: JsonRecordSchema.optional().describe(
-			'Only memories whose metadata matches these keys.',
+			'Only memories whose metadata matches these keys. Values must be strings, numbers or booleans, because null and undefined reach the wire as no key at all.',
 		),
 	})
 	.refine(
@@ -443,6 +445,20 @@ const MemoriesDeleteAllInputSchema = z
 		{
 			message:
 				'At least one filter is required. Mem0 rejects an unfiltered delete.',
+		},
+	)
+	.refine(
+		(value) =>
+			value.metadata === undefined ||
+			Object.values(value.metadata).every(
+				(entry) =>
+					typeof entry === 'string' ||
+					typeof entry === 'number' ||
+					typeof entry === 'boolean',
+			),
+		{
+			message:
+				'metadata values must be strings, numbers or booleans. null and undefined are dropped from the query, so they match every memory.',
 		},
 	);
 
@@ -515,8 +531,12 @@ export type MemoriesHistoryResponse = z.infer<
 
 const BatchUpdateEntrySchema = z.object({
 	memory_id: z.string().min(1),
-	text: z.string().min(1).optional().describe('The new memory text.'),
-	metadata: JsonRecordSchema.optional(),
+	// Mem0 requires text on every PUT /v1/batch/ entry and answers 400
+	// otherwise: "Each memory must include 'text' field for PUT operations".
+	text: z.string().min(1).describe('The new memory text. Required by Mem0.'),
+	// No metadata here: Mem0 documents it on PUT /v1/batch/ but ignores it, and
+	// a live call left the stored metadata unchanged. Use memories.update for
+	// metadata.
 });
 
 const MemoriesBatchUpdateInputSchema = z.object({
@@ -524,7 +544,9 @@ const MemoriesBatchUpdateInputSchema = z.object({
 		.array(BatchUpdateEntrySchema)
 		.min(1)
 		.max(1000)
-		.describe('The memories to update, up to 1000 per call.'),
+		.describe(
+			'The memories to update, up to 1000 per call. Text is applied; use memories.update when metadata also has to change.',
+		),
 });
 
 export type MemoriesBatchUpdateInput = z.input<
