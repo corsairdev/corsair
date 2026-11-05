@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import { z } from 'zod';
 
 // Inputs use Mem0's own snake_case parameter names. Outputs are `.loose()` and
@@ -14,12 +15,28 @@ const JsonRecordSchema = z.record(z.string(), z.unknown());
 const JsonValueSchema = z.unknown();
 
 // The filters object is AND/OR/NOT plus comparison operators, which Mem0 does
-// not fully enumerate. It is passed through unchanged after a shallow check
-// that it carries at least one entity key, which every documented filters
-// example does at the top level or inside AND/OR.
+// not fully enumerate, so its values are passed through unchanged. Mem0 rejects
+// a search or list whose filters carry no entity ID, so that is checked here
+// rather than spending a request to learn it.
+const ENTITY_KEYS = ['user_id', 'agent_id', 'app_id', 'run_id'] as const;
+
+// unknown: one branch of a nested AND/OR/NOT list.
+function carriesEntityId(entry: unknown): boolean {
+	const record = asRecord(entry);
+	if (!record) return false;
+	if (ENTITY_KEYS.some((key) => key in record)) return true;
+	return ['AND', 'OR', 'NOT'].some((operator) => {
+		const branches = record[operator];
+		return Array.isArray(branches) && branches.some(carriesEntityId);
+	});
+}
+
 const FiltersSchema = JsonRecordSchema.describe(
-	'Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard.',
-);
+	'Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard.',
+).refine(carriesEntityId, {
+	message:
+		'filters must include at least one of user_id, agent_id, app_id or run_id.',
+});
 
 const DateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD.');
 
