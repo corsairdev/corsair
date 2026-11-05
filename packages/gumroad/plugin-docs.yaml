@@ -1,5 +1,5 @@
 displayName: Gumroad
-description: "Sell and manage digital products: list products and sales, read subscribers, and verify license keys."
+description: "Sell and manage digital products: products, sales, subscribers, licenses, offer codes, variants, emails, workflows, payouts and tax forms."
 domain: gumroad.com
 recommendedAuth: api_key
 examples:
@@ -7,15 +7,30 @@ examples:
     path: products.list
     title: List your Gumroad products
     args: {}
+  write:
+    path: products.create
+    title: Create a product
+    args:
+      name: Pencil Icon PSD
+      price: 100
 apiExamples:
   products.list: {}
   products.get:
     call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+  products.create:
+    call: "{ name: 'Pencil Icon PSD', price: 100, native_type: 'digital' }"
   sales.list:
     call: "{ after: '2020-09-03', before: '2021-09-03' }"
-  sales.get:
-    call: "{ id: 'B28UKN-dvxYabdavG97Y-Q==' }"
+  sales.refund:
+    call: "{ id: 'B28UKN-dvxYabdavG97Y-Q==', amount_cents: 200 }"
   subscribers.list:
     call: "{ product_id: '0ssD7adjRklGBjS5cwlWPq==', paginated: 'true' }"
   licenses.verify:
     call: "{ product_id: '32-nPAicqbLj8B_WswVlMw==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD', increment_uses_count: 'false' }"
+  offerCodes.createForProduct:
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: '1OFF', amount_off: 100 }"
+  user.get: {}
+  taxForms.download:
+    call: "{ year: '2025', tax_form_type: 'us_1099_k' }"
+  public.product:
+    call: "{ seller: 'sahil', permalink: 'pencil' }"
