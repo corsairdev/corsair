@@ -5,10 +5,16 @@
     "types": ["node", "jest"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "strict": true,
-    "noEmit": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "composite": true,
+    "incremental": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": true,
     "skipLibCheck": true
   },
   "include": ["./**/*"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules"],
+  "references": []
 }
