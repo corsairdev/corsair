@@ -256,8 +256,10 @@ export const history: Mem0Endpoints['memoriesHistory'] = (ctx, input) =>
 			path: `/v1/memories/${segment(memory_id)}/history/`,
 		}),
 		{
-			// Mem0 answers with a bare array.
-			shape: (raw) => ({ history: Array.isArray(raw) ? raw : [] }),
+			// Mem0 answers with a bare array, so it is wrapped for the schema. A
+			// body that is not an array is left for the schema to reject rather
+			// than being reported as an empty history.
+			shape: (raw) => ({ history: raw }),
 			log: (_, result) => ({ entries: result.history.length }),
 		},
 	);

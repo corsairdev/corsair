@@ -21,8 +21,10 @@ export const list: Mem0Endpoints['webhooksList'] = (ctx, input) =>
 			path: `/api/v1/webhooks/projects/${segment(project_id)}/`,
 		}),
 		{
-			// Mem0 answers with a bare array.
-			shape: (raw) => ({ webhooks: Array.isArray(raw) ? raw : [] }),
+			// Mem0 answers with a bare array, so it is wrapped for the schema. A
+			// body that is not an array is left for the schema to reject rather
+			// than being reported as no webhooks.
+			shape: (raw) => ({ webhooks: raw }),
 			log: (_, result) => ({ count: result.webhooks.length }),
 		},
 	);
