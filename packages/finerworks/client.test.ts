@@ -174,8 +174,35 @@ describe('errorHandlers', () => {
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(false);
 		expect(errorHandlers.SERVER_ERROR.match(err)).toBe(true);
-		await expect(errorHandlers.SERVER_ERROR.handler()).resolves.toEqual({
-			maxRetries: 3,
+		const ctx = (operation: string) => ({
+			pluginId: 'finerworks',
+			operation,
+			input: {},
+			originalError: err,
+		});
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(err, ctx('images.list')),
+		).resolves.toEqual({ maxRetries: 3 });
+	});
+
+	it('does not retry a 5xx on writes, which FinerWorks may already have applied', async () => {
+		const err = await wrappedError(500, { message: 'Internal Server Error' });
+		for (const operation of [
+			'orders.savePending',
+			'images.add',
+			'inventory.update',
+		]) {
+			await expect(
+				errorHandlers.SERVER_ERROR.handler(err, {
+					pluginId: 'finerworks',
+					operation,
+					input: {},
+					originalError: err,
+				}),
+			).resolves.toEqual({ maxRetries: 0 });
+		}
+		await expect(errorHandlers.SERVER_ERROR.handler(err)).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 

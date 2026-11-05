@@ -1,5 +1,6 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { finerworksEndpointMeta } from './endpoints';
 
 /**
  * FinerWorks reports credential problems as HTTP 400 carrying an ASP.NET
@@ -48,6 +49,13 @@ function retryAfterOf(error: Error): number | undefined {
 	return undefined;
 }
 
+function isReadOperation(operation: string | undefined): boolean {
+	if (!operation) return false;
+	const meta: Record<string, { riskLevel?: string } | undefined> =
+		finerworksEndpointMeta;
+	return meta[operation]?.riskLevel === 'read';
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
@@ -73,7 +81,12 @@ export const errorHandlers = {
 			const status = statusOf(error);
 			return status !== undefined && status >= 500 && status < 600;
 		},
-		handler: async () => ({ maxRetries: 3 }),
+		// A 5xx can arrive after FinerWorks has already applied a write, so only
+		// reads are retried: replaying `orders.savePending` or `images.add` could
+		// create duplicates. Unknown operations get no retry.
+		handler: async (_error: Error, context?: ErrorContext) => ({
+			maxRetries: isReadOperation(context?.operation) ? 3 : 0,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,
