@@ -32,10 +32,11 @@ const image = await corsair.placid.api.images.get({ id: started.id });
 if (image.status === 'finished') console.log(image.image_url);
 ```
 
-Three things catch callers out:
+Four things catch callers out, each checked against the live API:
 
 - A render that fails still returns 200 from the create call. Read `status`, then `error_code`.
-- `polling_url` and the file URL are null until the render finishes.
+- `polling_url` and the file URL are null until the render finishes. Images with `create_now: true` often finish inline; PDFs and videos usually queue.
+- Deleting a generated file answers 204 and clears its URL, but a later `get` still returns 200 with an empty URL, not a 404.
 - The API token is project-scoped. A token from another project returns 401, not an empty list.
 
 ## Endpoints

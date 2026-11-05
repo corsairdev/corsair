@@ -49,7 +49,8 @@ string | Record<string, unknown>
 | `id` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
 | `custom_data` | `object \| null` | No | — |
-| `template_uuids` | `string[] \| null` | No | — |
+| `templates` | `string[] \| null` | No | The UUIDs of the templates in this collection. |
+| `template_uuids` | `string[] \| null` | No | Deprecated alias. The API returns `templates`. |
 
 <AccordionGroup>
 <Accordion title="custom_data full type">
@@ -122,7 +123,8 @@ await corsair.placid.api.collections.get({ collection_id: 'col_1234' });
 | `id` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
 | `custom_data` | `object \| null` | No | — |
-| `template_uuids` | `string[] \| null` | No | — |
+| `templates` | `string[] \| null` | No | The UUIDs of the templates in this collection. |
+| `template_uuids` | `string[] \| null` | No | Deprecated alias. The API returns `templates`. |
 
 <AccordionGroup>
 <Accordion title="custom_data full type">
@@ -175,6 +177,7 @@ await corsair.placid.api.collections.list({ per_page: 20 });
   title?: string | null,
   custom_data?: string | {
   } | unknown[] | null,
+  templates?: string[] | null,
   template_uuids?: string[] | null
 }[]
 ```
@@ -248,7 +251,8 @@ string | Record<string, unknown> | null
 | `id` | `string` | Yes | — |
 | `title` | `string \| null` | No | — |
 | `custom_data` | `object \| null` | No | — |
-| `template_uuids` | `string[] \| null` | No | — |
+| `templates` | `string[] \| null` | No | The UUIDs of the templates in this collection. |
+| `template_uuids` | `string[] \| null` | No | Deprecated alias. The API returns `templates`. |
 
 <AccordionGroup>
 <Accordion title="custom_data full type">
