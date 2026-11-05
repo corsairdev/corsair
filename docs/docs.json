@@ -1792,6 +1792,14 @@
                 ]
               },
               {
+                "group": "Enginemailer",
+                "pages": [
+                  "plugins/enginemailer/overview",
+                  "plugins/enginemailer/api",
+                  "plugins/enginemailer/database"
+                ]
+              },
+              {
                 "group": "Epic Games",
                 "pages": [
                   "plugins/epicgames/overview",
