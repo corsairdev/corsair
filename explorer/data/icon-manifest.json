@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-05T08:59:52.142Z",
+  "generatedAt": "2026-11-05T16:32:41.124Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
   "format": "png",
-  "total": 414,
-  "succeeded": 414,
+  "total": 419,
+  "succeeded": 419,
   "failed": 0,
   "domains": {
     "ably": "ably.io",
@@ -191,6 +191,7 @@
     "diffbot": "diffbot.com",
     "digitalocean": "digitalocean.com",
     "discord": "discord.com",
+    "dnsfilter": "dnsfilter.com",
     "dockerhub": "dockerhub.com",
     "docmosis": "docmosis.com",
     "docsumo": "docsumo.com",
@@ -206,6 +207,7 @@
     "dynapictures": "dynapictures.com",
     "emelia": "emelia.io",
     "epicgames": "epicgames.com",
+    "esputnik": "esputnik.com",
     "everhour": "everhour.com",
     "exa": "exa.ai",
     "excel": "graph.microsoft.com",
@@ -270,6 +272,7 @@
     "kibana": "elastic.co",
     "kling": "kling.ai",
     "leexi": "leexi.com",
+    "lever": "lever.co",
     "linear": "linear.app",
     "linkedin": "linkedin.com",
     "litescrape": "litescrape.com",
@@ -319,6 +322,7 @@
     "reducto": "reducto.ai",
     "remoet": "remoet.dev",
     "removebg": "remove.bg",
+    "render": "render.com",
     "replicate": "replicate.com",
     "replyio": "reply.io",
     "resend": "resend.com",
@@ -406,6 +410,7 @@
     "wix": "wix.com",
     "wiza": "wiza.com",
     "woodpeckerco": "woodpecker.co",
+    "workable": "workable.com",
     "workday": "workday.com",
     "workiom": "workiom.com",
     "worldnewsapi": "worldnewsapi.com",
@@ -837,7 +842,12 @@
     "finerworks": "twenty-icons",
     "turbotpipes": "twenty-icons",
     "woodpeckerco": "twenty-icons",
-    "zohodesk": "url-override"
+    "zohodesk": "url-override",
+    "dnsfilter": "url-override",
+    "esputnik": "twenty-icons",
+    "lever": "twenty-icons",
+    "render": "twenty-icons",
+    "workable": "twenty-icons"
   },
   "failures": []
 }
