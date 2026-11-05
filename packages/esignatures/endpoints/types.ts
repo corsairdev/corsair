@@ -303,7 +303,10 @@ const ContractActionInputSchema = z.object({
 export type ContractActionInput = z.infer<typeof ContractActionInputSchema>;
 
 const ContractsWithdrawResponseSchema = z.object({
-	status: z.literal('withdrawn'),
+	// Seen live as 'withdrawn'. Optional and any string: a completed write whose
+	// body omits or renames the status must not throw after the request,
+	// or a retry repeats the write.
+	status: z.string().optional(),
 });
 
 export type ContractsWithdrawResponse = z.infer<
@@ -311,7 +314,10 @@ export type ContractsWithdrawResponse = z.infer<
 >;
 
 const ContractsSendDraftResponseSchema = z.object({
-	status: z.literal('queued'),
+	// Seen live as 'queued'. Optional and any string: a completed write whose
+	// body omits or renames the status must not throw after the request,
+	// or a retry repeats the write.
+	status: z.string().optional(),
 });
 
 export type ContractsSendDraftResponse = z.infer<
@@ -334,7 +340,10 @@ export type ContractsAddSignerInput = z.infer<
 >;
 
 const ContractsAddSignerResponseSchema = z.object({
-	status: z.literal('success'),
+	// Seen live as 'success'. Optional and any string: a completed write whose
+	// body omits or renames the status must not throw after the request,
+	// or a retry repeats the write.
+	status: z.string().optional(),
 });
 
 export type ContractsAddSignerResponse = z.infer<
@@ -357,7 +366,10 @@ export type ContractsUpdateSignerInput = z.infer<
 >;
 
 const ContractsUpdateSignerResponseSchema = z.object({
-	status: z.literal('updated'),
+	// Seen live as 'updated'. Optional and any string: a completed write whose
+	// body omits or renames the status must not throw after the request,
+	// or a retry repeats the write.
+	status: z.string().optional(),
 });
 
 export type ContractsUpdateSignerResponse = z.infer<
@@ -377,7 +389,10 @@ const SignerActionInputSchema = z.object({
 export type SignerActionInput = z.infer<typeof SignerActionInputSchema>;
 
 const SignerActionResponseSchema = z.object({
-	status: z.literal('queued'),
+	// Seen live as 'queued'. Optional and any string: a completed write whose
+	// body omits or renames the status must not throw after the request,
+	// or a retry repeats the write.
+	status: z.string().optional(),
 });
 
 export type SignerActionResponse = z.infer<typeof SignerActionResponseSchema>;
@@ -441,7 +456,10 @@ const TemplatesDeleteInputSchema = z.object({ template_id: TemplateIdSchema });
 export type TemplatesDeleteInput = z.infer<typeof TemplatesDeleteInputSchema>;
 
 const TemplatesDeleteResponseSchema = z.object({
-	status: z.literal('deleted'),
+	// Seen live as 'deleted'. Optional and any string: a completed write whose
+	// body omits or renames the status must not throw after the request,
+	// or a retry repeats the write.
+	status: z.string().optional(),
 });
 
 export type TemplatesDeleteResponse = z.infer<
