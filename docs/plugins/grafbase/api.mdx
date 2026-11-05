@@ -1,0 +1,649 @@
+---
+title: API
+description: "API reference for Grafbase: every `grafbase.api.*` operation with input and output types."
+---
+
+Every `grafbase.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Access Tokens
+
+### create
+
+`accessTokens.create`
+
+Create a USER or ACCOUNT access token; the jwt value is returned only in this response, so store it right away
+
+**Risk:** `write`
+
+```ts
+await corsair.grafbase.api.accessTokens.create({ name: 'ci-token', kind: 'USER' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A name to recognize the token by. |
+| `kind` | `'USER' \| 'ACCOUNT'` | Yes | USER acts as you. ACCOUNT acts as an organization and needs accountId. |
+| `accountId` | `string` | No | The organization ID; required for ACCOUNT tokens. |
+| `expiresAt` | `string` | No | When the token expires, as ISO 8601 such as 2026-12-31T23:59:59Z. Omit for no expiry. |
+| `graphScopes` | `string[]` | No | Organization graph IDs the token may use; omit to allow all of them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `__typename` | `string` | Yes | — |
+| `jwt` | `string \| null` | No | — |
+| `token` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="token full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  accountId?: string | null,
+  createdAt?: string | null,
+  expiresAt?: string | null,
+  graphScopes?: {
+    id: string,
+    slug?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`accessTokens.delete`
+
+Revoke an access token by ID; requests using it stop working immediately
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grafbase.api.accessTokens.delete({ id: 'QWNjZXNzVG9rZW46Nw' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The token ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `__typename` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`accessTokens.list`
+
+List your access tokens with their expiry and graph scopes, paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.grafbase.api.accessTokens.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | Page size, up to 100. |
+| `after` | `string` | No | Cursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokens` | `object[]` | Yes | — |
+| `hasNextPage` | `boolean` | Yes | — |
+| `nextCursor` | `string \| null` | No | Cursor for the next page; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="tokens full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  accountId?: string | null,
+  createdAt?: string | null,
+  expiresAt?: string | null,
+  graphScopes?: {
+    id: string,
+    slug?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Deployments
+
+### get
+
+`deployments.get`
+
+Get one deployment's status, timing, schema change counts and the subgraph that triggered it
+
+**Risk:** `read`
+
+```ts
+await corsair.grafbase.api.deployments.get({ id: 'RGVwbG95bWVudDox' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The deployment ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deployment` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="deployment full type">
+
+```ts
+{
+  id: string,
+  status?: string | null,
+  createdAt?: string | null,
+  startedAt?: string | null,
+  finishedAt?: string | null,
+  duration?: number | null,
+  message?: string | null,
+  isRedeployable?: boolean | null,
+  changeCounts?: {
+    addedFields?: number | null,
+    addedTypes?: number | null,
+    changedFields?: number | null,
+    changedTypes?: number | null,
+    removedFields?: number | null,
+    removedTypes?: number | null
+  } | null,
+  subgraph?: {
+    name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Graphs
+
+### create
+
+`graphs.create`
+
+Create an empty graph in an organization; it gets a schema when a subgraph is published to it
+
+**Risk:** `write`
+
+```ts
+await corsair.grafbase.api.graphs.create({ accountId: 'QWNjb3VudDo1MA', graphSlug: 'analytics-api' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The organization to create the graph in. |
+| `graphSlug` | `string` | Yes | Slug for the new graph. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `__typename` | `string` | Yes | — |
+| `graph` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="graph full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  createdAt?: string | null,
+  account?: {
+    id: string,
+    slug?: string | null,
+    name?: string | null,
+    plan?: string | null
+  } | null,
+  productionBranch?: {
+    id?: string | null,
+    name?: string | null,
+    environment?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`graphs.delete`
+
+Permanently delete a graph by ID, removing every branch and its schema history
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grafbase.api.graphs.delete({ id: 'R3JhcGg6MTIz' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The graph ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `__typename` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`graphs.get`
+
+Get one graph by organization and graph slug, including its production branch
+
+**Risk:** `read`
+
+```ts
+await corsair.grafbase.api.graphs.get({ accountSlug: 'fieldkit', graphSlug: 'analytics-api' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountSlug` | `string` | Yes | The organization slug. |
+| `graphSlug` | `string` | Yes | The graph slug. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graph` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="graph full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  createdAt?: string | null,
+  account?: {
+    id: string,
+    slug?: string | null,
+    name?: string | null,
+    plan?: string | null
+  } | null,
+  productionBranch?: {
+    id?: string | null,
+    name?: string | null,
+    environment?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`graphs.list`
+
+List the graphs in an organization with their production branch, paginated; the response also carries the account id that graphs.create needs
+
+**Risk:** `read`
+
+```ts
+await corsair.grafbase.api.graphs.list({ accountSlug: 'fieldkit' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountSlug` | `string` | Yes | The organization slug. |
+| `first` | `number` | No | Page size, up to 100. |
+| `after` | `string` | No | Cursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object \| null` | No | — |
+| `graphs` | `object[]` | Yes | — |
+| `hasNextPage` | `boolean` | Yes | — |
+| `nextCursor` | `string \| null` | No | Cursor for the next page; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  id: string,
+  slug?: string | null,
+  name?: string | null,
+  plan?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="graphs full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  createdAt?: string | null,
+  account?: {
+    id: string,
+    slug?: string | null,
+    name?: string | null,
+    plan?: string | null
+  } | null,
+  productionBranch?: {
+    id?: string | null,
+    name?: string | null,
+    environment?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schema Versions
+
+### list
+
+`schemaVersions.list`
+
+List a graph's schema versions, the deploy history with change messages, paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.grafbase.api.schemaVersions.list({ accountSlug: 'fieldkit', graphSlug: 'analytics-api' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountSlug` | `string` | Yes | The organization slug. |
+| `graphSlug` | `string` | Yes | The graph slug. |
+| `branch` | `string` | No | Only versions on this branch. |
+| `subgraphName` | `string` | No | Only versions of this subgraph. |
+| `populated` | `boolean` | Yes | Only versions with changes. Default true. |
+| `first` | `number` | No | Page size, up to 100. |
+| `after` | `string` | No | Cursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `versions` | `object[]` | Yes | — |
+| `hasNextPage` | `boolean` | Yes | — |
+| `nextCursor` | `string \| null` | No | Cursor for the next page; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="versions full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string | null,
+  message?: string | null,
+  schema?: string | null,
+  subgraph?: {
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subgraphs
+
+### delete
+
+`subgraphs.delete`
+
+Remove a subgraph from a branch and redeploy; dry run first to preview the composition result
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grafbase.api.subgraphs.delete({ accountSlug: 'fieldkit', graphSlug: 'analytics-api', branch: 'main', subgraph: 'products', dryRun: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountSlug` | `string` | Yes | The organization slug. |
+| `graphSlug` | `string` | Yes | The graph slug. |
+| `branch` | `string` | Yes | The branch the subgraph is on. |
+| `subgraph` | `string` | Yes | The subgraph name. |
+| `dryRun` | `boolean` | Yes | Validate the removal without deploying it. |
+| `message` | `string` | No | A note kept in the deploy history. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `__typename` | `string` | Yes | — |
+| `deploymentError` | `string \| null` | No | — |
+| `messages` | `string[] \| null` | No | — |
+
+
+
+---
+
+### get
+
+`subgraphs.get`
+
+Get one subgraph's routing URL and SDL from a graph branch
+
+**Risk:** `read`
+
+```ts
+await corsair.grafbase.api.subgraphs.get({ accountSlug: 'fieldkit', graphSlug: 'analytics-api', subgraphName: 'products' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountSlug` | `string` | Yes | The organization slug. |
+| `graphSlug` | `string` | Yes | The graph slug. |
+| `subgraphName` | `string` | Yes | The subgraph name. |
+| `branch` | `string` | No | The branch to read from; defaults to the production branch. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subgraph` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="subgraph full type">
+
+```ts
+{
+  name: string,
+  url?: string | null,
+  schema?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`subgraphs.publish`
+
+Publish a subgraph SDL to a graph branch, which runs composition and can trigger a gateway deployment; the outcome names the result, and composition failures carry their messages
+
+**Risk:** `write`
+
+```ts
+await corsair.grafbase.api.subgraphs.publish({ accountSlug: 'fieldkit', graphSlug: 'analytics-api', subgraph: 'products', schema: 'type Product { id: ID! name: String }', url: 'https://products.fieldkit.example/graphql', message: 'Add Product.name' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountSlug` | `string` | Yes | The organization slug. |
+| `graphSlug` | `string` | Yes | The graph slug. |
+| `subgraph` | `string` | Yes | The subgraph name. |
+| `schema` | `string` | Yes | The subgraph SDL to publish. |
+| `url` | `string` | No | The subgraph routing URL. Omit it for an existing subgraph or a virtual one. |
+| `branch` | `string` | No | The branch to publish to; defaults to the production branch. |
+| `message` | `string` | No | A note kept in the deploy history. |
+| `virtual` | `boolean` | No | True publishes a virtual subgraph with no routing URL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `__typename` | `string` | Yes | — |
+| `messages` | `string[] \| null` | No | — |
+| `deploymentError` | `string \| null` | No | — |
+
+
+
+---
+
+## Viewer
+
+### get
+
+`viewer.get`
+
+Return the user the access token belongs to; useful to check that a token works
+
+**Risk:** `read`
+
+```ts
+await corsair.grafbase.api.viewer.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `viewer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="viewer full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  name?: string | null,
+  createdAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,56 @@
+displayName: Grafbase
+description: Manage Grafbase graphs over the platform GraphQL API - list and create graphs, publish subgraph schemas, watch deployments and schema versions, and manage access tokens.
+domain: grafbase.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a token in the Grafbase dashboard on the Access Tokens page (account settings for a personal token, organization settings for an organization token) and pass it as `GRAFBASE_API_KEY`. The value is shown only once, right after creation. Things to know before you call:
+
+  - **One GraphQL endpoint.** Every operation posts to `https://api.grafbase.com/graphql` with `Authorization: Bearer <token>`.
+  - **Mutations return outcomes, not errors.** A mutation that fails in an expected way comes back as data with a `__typename`: `graphs.create` can answer `SlugAlreadyExistsError`, `subgraphs.publish` answers `PublishNoChange` or `FederatedGraphCompositionError` with its `messages`, and the deletes answer `GraphDoesNotExistError` and friends. Check `__typename` before treating a result as a success.
+  - **Publishing deploys.** `subgraphs.publish` runs composition and can trigger a gateway deployment; follow it with `deployments.get`, whose status is `QUEUED`, `IN_PROGRESS`, `SUCCEEDED` or `FAILED`. `subgraphs.delete` accepts `dryRun: true` to validate the removal without deploying it.
+  - **Token management.** `accessTokens.create` returns the `jwt` value only in that response, so store it right away. `kind` is `USER`, which acts as you, or `ACCOUNT`, which acts as the organization and needs `accountId`. The dashboard does not expire tokens, but the API accepts an ISO 8601 `expiresAt`. `accessTokens.delete` revokes a token immediately.
+  - **IDs versus slugs.** `graphs.delete` and `accessTokens.delete` take IDs, which `graphs.list` and `accessTokens.list` return; everything else works with slugs.
+  - **Paging.** The list operations return `hasNextPage` and `nextCursor`; pass `nextCursor` back as `after`.
+  - **Retries.** A 429 is retried up to three times with backoff, honoring Retry-After when sent. GraphQL-level failures (unknown field, bad variables, unauthorized) are not retried, and a mutation is never replayed on a 5xx because it may have executed.
+  - **The API moves.** Grafbase states this API can introduce breaking changes at any point; the plugin keeps output parsing tolerant, and field names follow the schema published at grafbase.com/api-docs.
+examples:
+  read:
+    path: graphs.list
+    title: List the graphs in an organization
+    args:
+      accountSlug: fieldkit
+  write:
+    path: subgraphs.publish
+    title: Publish a subgraph schema
+    args:
+      accountSlug: fieldkit
+      graphSlug: analytics-api
+      subgraph: products
+      schema: 'type Product { id: ID! name: String }'
+      url: https://products.fieldkit.example/graphql
+      message: Add Product.name
+apiExamples:
+  viewer.get: {}
+  graphs.list:
+    call: "{ accountSlug: 'fieldkit' }"
+  graphs.get:
+    call: "{ accountSlug: 'fieldkit', graphSlug: 'analytics-api' }"
+  graphs.create:
+    call: "{ accountId: 'QWNjb3VudDo1MA', graphSlug: 'analytics-api' }"
+  graphs.delete:
+    call: "{ id: 'R3JhcGg6MTIz' }"
+  subgraphs.get:
+    call: "{ accountSlug: 'fieldkit', graphSlug: 'analytics-api', subgraphName: 'products' }"
+  subgraphs.publish:
+    call: "{ accountSlug: 'fieldkit', graphSlug: 'analytics-api', subgraph: 'products', schema: 'type Product { id: ID! name: String }', url: 'https://products.fieldkit.example/graphql', message: 'Add Product.name' }"
+  subgraphs.delete:
+    call: "{ accountSlug: 'fieldkit', graphSlug: 'analytics-api', branch: 'main', subgraph: 'products', dryRun: true }"
+  schemaVersions.list:
+    call: "{ accountSlug: 'fieldkit', graphSlug: 'analytics-api' }"
+  deployments.get:
+    call: "{ id: 'RGVwbG95bWVudDox' }"
+  accessTokens.list: {}
+  accessTokens.create:
+    call: "{ name: 'ci-token', kind: 'USER' }"
+  accessTokens.delete:
+    call: "{ id: 'QWNjZXNzVG9rZW46Nw' }"

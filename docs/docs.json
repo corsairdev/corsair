@@ -2100,6 +2100,14 @@
                 ]
               },
               {
+                "group": "Grafbase",
+                "pages": [
+                  "plugins/grafbase/overview",
+                  "plugins/grafbase/api",
+                  "plugins/grafbase/database"
+                ]
+              },
+              {
                 "group": "Griptape",
                 "pages": [
                   "plugins/griptape/overview",

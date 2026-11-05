@@ -1,0 +1,140 @@
+---
+title: Overview
+description: "Manage Grafbase graphs over the platform GraphQL API - list and create graphs, publish subgraph schemas, watch deployments and schema versions, and manage access tokens."
+---
+
+Use **Grafbase** through Corsair: one client, typed API calls.
+
+Create a token in the Grafbase dashboard on the Access Tokens page (account settings for a personal token, organization settings for an organization token) and pass it as `GRAFBASE_API_KEY`. The value is shown only once, right after creation. Things to know before you call:
+
+- **One GraphQL endpoint.** Every operation posts to `https://api.grafbase.com/graphql` with `Authorization: Bearer <token>`.
+- **Mutations return outcomes, not errors.** A mutation that fails in an expected way comes back as data with a `__typename`: `graphs.create` can answer `SlugAlreadyExistsError`, `subgraphs.publish` answers `PublishNoChange` or `FederatedGraphCompositionError` with its `messages`, and the deletes answer `GraphDoesNotExistError` and friends. Check `__typename` before treating a result as a success.
+- **Publishing deploys.** `subgraphs.publish` runs composition and can trigger a gateway deployment; follow it with `deployments.get`, whose status is `QUEUED`, `IN_PROGRESS`, `SUCCEEDED` or `FAILED`. `subgraphs.delete` accepts `dryRun: true` to validate the removal without deploying it.
+- **Token management.** `accessTokens.create` returns the `jwt` value only in that response, so store it right away. `kind` is `USER`, which acts as you, or `ACCOUNT`, which acts as the organization and needs `accountId`. The dashboard does not expire tokens, but the API accepts an ISO 8601 `expiresAt`. `accessTokens.delete` revokes a token immediately.
+- **IDs versus slugs.** `graphs.delete` and `accessTokens.delete` take IDs, which `graphs.list` and `accessTokens.list` return; everything else works with slugs.
+- **Paging.** The list operations return `hasNextPage` and `nextCursor`; pass `nextCursor` back as `after`.
+- **Retries.** A 429 is retried up to three times with backoff, honoring Retry-After when sent. GraphQL-level failures (unknown field, bad variables, unauthorized) are not retried, and a mutation is never replayed on a 5xx because it may have executed.
+- **The API moves.** Grafbase states this API can introduce breaking changes at any point; the plugin keeps output parsing tolerant, and field names follow the schema published at grafbase.com/api-docs.
+
+**What you get:**
+
+- 13 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/grafbase
+```
+```bash yarn
+yarn add corsair @corsair-dev/grafbase
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/grafbase
+```
+```bash bun
+bun add corsair @corsair-dev/grafbase
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { grafbase } from '@corsair-dev/grafbase';
+
+export const corsair = createCorsair({
+	plugins: [
+		grafbase(),
+	],
+	multiTenancy: true,
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Nothing to configure up front. The first call reads the key saved for the tenant, and with no key saved it throws `AuthMissingError`, which may carry a `connectUrl` you can send the tenant to.
+
+```ts
+grafbase()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'grafbase',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the graphs in an organization**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.grafbase.api.graphs.list({ accountSlug: 'fieldkit' });
+```
+
+
+**Publish a subgraph schema**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.grafbase.api.subgraphs.publish({
+	accountSlug: 'fieldkit',
+	graphSlug: 'analytics-api',
+	subgraph: 'products',
+	schema: 'type Product { id: ID! name: String }',
+	url: 'https://products.fieldkit.example/graphql',
+	message: 'Add Product.name',
+});
+```
+
+
+See the full list on the [API](/plugins/grafbase/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/grafbase/api">
+    Every `grafbase.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
