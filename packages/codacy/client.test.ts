@@ -1,5 +1,5 @@
-import type { CodacyAPIError } from './client';
 import {
+	CodacyAPIError,
 	getCodacyBaseUrl,
 	getCodacyCredentials,
 	makeCodacyRequest,
@@ -68,14 +68,16 @@ jest.mock('corsair/http', () => ({
 	ApiError: class MockApiError extends Error {
 		public status: number;
 		public statusText: string;
+		// unknown: mirrors ApiError.body, the provider's raw error payload.
 		public body: unknown;
 		public retryAfter?: number;
 
 		constructor(
-			request: any,
+			_request: { method: string; url: string },
 			response: {
 				status: number;
 				statusText: string;
+				// unknown: mirrors ApiResult.body, the raw response payload.
 				body: unknown;
 				url: string;
 			},
@@ -95,9 +97,20 @@ jest.mock('corsair/http', () => ({
 	},
 }));
 
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
-const mockRequest = request as unknown as jest.Mock;
+const mockRequest = jest.mocked(request);
+
+/** Awaits a call that should fail and returns its CodacyAPIError. */
+async function rejectionOf(promise: Promise<unknown>): Promise<CodacyAPIError> {
+	try {
+		await promise;
+	} catch (error) {
+		if (error instanceof CodacyAPIError) return error;
+		throw error;
+	}
+	throw new Error('expected the request to fail');
+}
 
 describe('makeCodacyRequest', () => {
 	beforeEach(() => {
@@ -163,7 +176,6 @@ describe('makeCodacyRequest', () => {
 	});
 
 	it('wraps ApiError into CodacyAPIError preserving status and body', async () => {
-		const { ApiError } = require('corsair/http');
 		const apiError = new ApiError(
 			{ method: 'GET', url: '/user' },
 			{
@@ -178,11 +190,8 @@ describe('makeCodacyRequest', () => {
 		);
 		mockRequest.mockRejectedValueOnce(apiError);
 
-		const error = (await makeCodacyRequest('/user', 'token', {}).catch(
-			(e) => e,
-		)) as CodacyAPIError;
+		const error = await rejectionOf(makeCodacyRequest('/user', 'token', {}));
 
-		expect(error).toBeInstanceOf(require('./client').CodacyAPIError);
 		expect(error.status).toBe(429);
 		expect(error.statusText).toBe('Too Many Requests');
 		expect(error.body).toEqual({ error: 'rate limit' });
@@ -191,11 +200,8 @@ describe('makeCodacyRequest', () => {
 	it('wraps non-ApiError failures too', async () => {
 		mockRequest.mockRejectedValueOnce(new Error('network down'));
 
-		const error = (await makeCodacyRequest('/user', 'token', {}).catch(
-			(e) => e,
-		)) as CodacyAPIError;
+		const error = await rejectionOf(makeCodacyRequest('/user', 'token', {}));
 
-		expect(error).toBeInstanceOf(require('./client').CodacyAPIError);
 		expect(error.message).toContain('network down');
 	});
 });

@@ -11,8 +11,8 @@ jest.mock('../client', () => {
 	};
 });
 
-const mockGetCredentials = getCodacyCredentials as unknown as jest.Mock;
-const mockRequest = makeCodacyRequest as unknown as jest.Mock;
+const mockGetCredentials = jest.mocked(getCodacyCredentials);
+const mockRequest = jest.mocked(makeCodacyRequest);
 
 const ORGANIZATION = {
 	remoteIdentifier: '123',
@@ -56,6 +56,8 @@ function makeCtx() {
 	for (const [key, fn] of Object.entries(upserts)) {
 		db[key] = { upsertByEntityId: fn };
 	}
+	// Cast: a real CodacyContext carries the ORM, key manager and options;
+	// the handlers only touch `key` and `db.<entity>.upsertByEntityId`.
 	const ctx = {
 		key: 'test-token',
 		db,
