@@ -1,3 +1,4 @@
+import * as zlib from 'node:zlib';
 import type { DownloadDeps } from './endpoints/download';
 import {
 	DOWNLOAD_MAX_BYTES,
@@ -385,5 +386,166 @@ describe('downloadAsFile', () => {
 				transport,
 			}),
 		).rejects.toThrow(/publicly reachable/);
+	});
+
+	// node:http hands back the bytes as sent, unlike fetch. Without decoding,
+	// Placid would receive gzip bytes named logo.png.
+	it('decodes a gzip body before building the file', async () => {
+		const original = Buffer.from('the real image bytes');
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-type': 'image/png', 'content-encoding': 'gzip' },
+				body: body(new Uint8Array(zlib.gzipSync(original))),
+			})),
+		);
+
+		const file = await downloadAsFile(
+			'https://example.com/logo.png',
+			undefined,
+			'f',
+			{
+				resolve: publicResolve,
+				transport,
+			},
+		);
+
+		expect(Buffer.from(await file.arrayBuffer())).toEqual(original);
+	});
+
+	it('decodes a deflate body', async () => {
+		const original = Buffer.from('deflated font bytes');
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: {
+					'content-type': 'font/ttf',
+					'content-encoding': 'deflate',
+				},
+				body: body(new Uint8Array(zlib.deflateSync(original))),
+			})),
+		);
+
+		const file = await downloadAsFile(
+			'https://example.com/f.ttf',
+			'f.ttf',
+			'f',
+			{
+				resolve: publicResolve,
+				transport,
+			},
+		);
+
+		expect(Buffer.from(await file.arrayBuffer())).toEqual(original);
+	});
+
+	it('decodes a brotli body', async () => {
+		const original = Buffer.from('brotli bytes');
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-encoding': 'br' },
+				body: body(new Uint8Array(zlib.brotliCompressSync(original))),
+			})),
+		);
+
+		const file = await downloadAsFile(
+			'https://example.com/a.bin',
+			'a.bin',
+			'f',
+			{
+				resolve: publicResolve,
+				transport,
+			},
+		);
+
+		expect(Buffer.from(await file.arrayBuffer())).toEqual(original);
+	});
+
+	it('passes an identity body through untouched', async () => {
+		const original = Buffer.from('plain bytes');
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-encoding': 'identity' },
+				body: body(new Uint8Array(original)),
+			})),
+		);
+
+		const file = await downloadAsFile(
+			'https://example.com/a.bin',
+			'a.bin',
+			'f',
+			{
+				resolve: publicResolve,
+				transport,
+			},
+		);
+
+		expect(Buffer.from(await file.arrayBuffer())).toEqual(original);
+	});
+
+	it('refuses an encoding it cannot decode', async () => {
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-encoding': 'compress' },
+				body: body(new Uint8Array([1, 2])),
+			})),
+		);
+
+		await expect(
+			downloadAsFile('https://example.com/a.bin', 'a.bin', 'f', {
+				resolve: publicResolve,
+				transport,
+			}),
+		).rejects.toThrow(/unsupported Content-Encoding/);
+	});
+
+	it('applies the cap to the decoded size, not the compressed one', async () => {
+		// 26 MB of zeros compresses to a few KB; the decoded size must trip it.
+		const big = Buffer.alloc(DOWNLOAD_MAX_BYTES + 1024, 0);
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-encoding': 'gzip' },
+				body: body(new Uint8Array(zlib.gzipSync(big))),
+			})),
+		);
+
+		await expect(
+			downloadAsFile('https://example.com/a.bin', 'a.bin', 'f', {
+				resolve: publicResolve,
+				transport,
+			}),
+		).rejects.toThrow(/larger than/);
+	});
+
+	it('rejects a declared Content-Length over the cap without reading', async () => {
+		let pulled = false;
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-length': String(DOWNLOAD_MAX_BYTES + 1) },
+				body: {
+					[Symbol.asyncIterator]() {
+						return {
+							next: async () => {
+								pulled = true;
+								return { done: true, value: undefined };
+							},
+						};
+					},
+				},
+			})),
+		);
+
+		await expect(
+			downloadAsFile('https://example.com/a.bin', 'a.bin', 'f', {
+				resolve: publicResolve,
+				transport,
+			}),
+		).rejects.toThrow(/larger than/);
+		expect(pulled).toBe(false);
 	});
 });

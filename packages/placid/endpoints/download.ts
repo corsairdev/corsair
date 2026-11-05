@@ -2,6 +2,8 @@ import { lookup } from 'node:dns/promises';
 import * as http from 'node:http';
 import * as https from 'node:https';
 import type { LookupFunction } from 'node:net';
+import { Readable } from 'node:stream';
+import * as zlib from 'node:zlib';
 
 /**
  * Downloads a caller-supplied URL for a multipart upload without letting the
@@ -253,6 +255,11 @@ export function pinnedLookup(addresses: readonly string[]): LookupFunction {
 /**
  * The real transport: one HTTP(S) GET to a pinned address, honouring the
  * abort signal and reporting the raw response for the caller to read.
+ *
+ * `Accept-Encoding: identity` asks for the bytes as stored. `fetch` decoded
+ * compressed responses for us; `node:http` does not, so a gzip body would
+ * otherwise be uploaded to Placid as compressed bytes under the original
+ * filename and type. `decodeBody` below covers a server that compresses anyway.
  */
 const httpTransport: NonNullable<DownloadDeps['transport']> = (
 	url,
@@ -268,7 +275,7 @@ const httpTransport: NonNullable<DownloadDeps['transport']> = (
 		// The URL's port, falling back to the scheme default.
 		port: url.port === '' ? undefined : Number(url.port),
 		path: `${url.pathname}${url.search}`,
-		headers: { Accept: '*/*' },
+		headers: { Accept: '*/*', 'Accept-Encoding': 'identity' },
 		// Connect to the vetted address while keeping the hostname for TLS SNI
 		// and the Host header.
 		lookup: pinnedLookup(addresses),
@@ -381,6 +388,44 @@ async function readCapped(
 }
 
 /**
+ * Decompresses a body the server squeezed despite `Accept-Encoding: identity`.
+ *
+ * `node:http` hands back the bytes as sent, so an image or font served with
+ * `Content-Encoding: gzip` would otherwise reach Placid compressed while still
+ * carrying its original name and type. `fetch` used to hide this.
+ *
+ * Both byte counts are capped: the compressed input guards against buffering a
+ * huge transfer, and the caller then caps the decoded output, which is what
+ * stops a small compressed body from expanding without bound.
+ */
+async function decodeBody(
+	body: AsyncIterable<Uint8Array>,
+	encoding: string | undefined,
+): Promise<AsyncIterable<Uint8Array>> {
+	const name = encoding?.trim().toLowerCase();
+	if (!name || name === 'identity') return body;
+
+	const decoder =
+		name === 'gzip' || name === 'x-gzip'
+			? zlib.createGunzip()
+			: name === 'deflate'
+				? zlib.createInflate()
+				: name === 'br'
+					? zlib.createBrotliDecompress()
+					: undefined;
+
+	// An encoding we cannot decode is reported rather than uploaded as-is.
+	if (!decoder) {
+		throw new UnsafeUrlError(
+			`file_url was served with an unsupported Content-Encoding (${name}).`,
+		);
+	}
+
+	const source = Readable.from(body);
+	return source.pipe(decoder) as AsyncIterable<Uint8Array>;
+}
+
+/**
  * Fetches `fileUrl` and wraps it as a `File` for the multipart body. Each
  * redirect hop is resolved and vetted again, the connection is pinned to a
  * checked address, the whole download shares one deadline, and the body is
@@ -420,7 +465,22 @@ export async function downloadAsFile(
 			);
 		}
 
-		const bytes = await readCapped(response.body, DOWNLOAD_MAX_BYTES);
+		// A declared length over the cap needs no reading at all. It is only a
+		// hint, so the streaming cap below still applies.
+		const declared = Number(headerValue(response.headers, 'content-length'));
+		if (Number.isFinite(declared) && declared > DOWNLOAD_MAX_BYTES) {
+			throw new UnsafeUrlError(
+				`file_url is larger than the ${Math.round(DOWNLOAD_MAX_BYTES / (1024 * 1024))} MB limit.`,
+			);
+		}
+
+		const bytes = await readCapped(
+			await decodeBody(
+				response.body,
+				headerValue(response.headers, 'content-encoding'),
+			),
+			DOWNLOAD_MAX_BYTES,
+		);
 		const mime =
 			headerValue(response.headers, 'content-type')?.split(';')[0] ||
 			'application/octet-stream';
