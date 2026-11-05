@@ -27,7 +27,10 @@ export async function GET(
 	return new Response(body, {
 		headers: {
 			'Content-Type': 'image/png',
-			'Cache-Control': 'public, max-age=31536000, immutable',
+			// Not immutable: an icon can be replaced under the same URL (a wrong
+			// domain fixed in explorer/icons), and a year-long immutable copy would
+			// keep the old mark in every browser that loaded it.
+			'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800',
 		},
 	});
 }

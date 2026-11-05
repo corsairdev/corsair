@@ -1,0 +1,540 @@
+displayName: Turbot Pipes
+description: Cloud intelligence and DevOps data platform for managing workspaces, connections, and queries.
+domain: pipes.turbot.com
+apiExamples:
+  ai.createUserAiKey:
+    user_handle: "my-user"
+    provider: "openai"
+    key: "<openai-api-key>"
+  ai.deleteOrgWorkspaceConversation:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    conversation_id: "<conversation-id>"
+  ai.getUserAiKey:
+    user_handle: "my-user"
+    provider: "openai"
+  ai.getUserWorkspaceConversation:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    conversation_id: "<conversation-id>"
+  ai.listUserAiKeys:
+    user_handle: "my-user"
+  ai.listUserWorkspaceConversations:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  ai.sendUserWorkspaceChatMessage:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    message: "Which S3 buckets are public?"
+  ai.testUserAiKey:
+    user_handle: "my-user"
+    provider: "openai"
+    key: "<openai-api-key>"
+  ai.updateUserAiKey:
+    user_handle: "my-user"
+    provider: "openai"
+    key: "<openai-api-key>"
+  ai.updateUserWorkspaceConversation:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    conversation_id: "<conversation-id>"
+    title: "Weekly cost review"
+  auth.createLoginTokenEmail:
+    email: "you@example.com"
+  auth.createSignup:
+    email: "you@example.com"
+  auth.createUserPassword:
+    user_handle: "my-user"
+  auth.deleteUserToken:
+    user_handle: "my-user"
+    token_id: "<token-id>"
+  auth.getAuthProvider:
+    provider: "openai"
+  auth.getUserPassword:
+    user_handle: "my-user"
+  auth.getUserToken:
+    user_handle: "my-user"
+    token_id: "<token-id>"
+  auth.initiateLogin:
+    email: "you@example.com"
+  auth.updateUserToken:
+    user_handle: "my-user"
+    token_id: "<token-id>"
+    status: "inactive"
+  billing.deleteOrgBillingSubscription:
+    org_handle: "my-org"
+    subscription_id: "<subscription-id>"
+  billing.getOrgBillingInvoice:
+    org_handle: "my-org"
+    invoice_id: "<invoice-id>"
+  billing.getUserBillingPlan:
+    user_handle: "my-user"
+  billing.getUserBillingUpcomingInvoice:
+    user_handle: "my-user"
+  billing.listUserBillingInvoices:
+    user_handle: "my-user"
+  billing.listUserBillingPaymentMethods:
+    user_handle: "my-user"
+  billing.listUserBillingSubscriptions:
+    user_handle: "my-user"
+  billing.updateOrgBillingSubscription:
+    org_handle: "my-org"
+    subscription_id: "<subscription-id>"
+  connections.createOrgConnection:
+    org_handle: "my-org"
+    handle: "aws_prod"
+    plugin: "aws"
+  connections.createOrgConnectionFolder:
+    org_handle: "my-org"
+    title: "Production"
+  connections.createUserConnection:
+    user_handle: "my-user"
+    handle: "aws_prod"
+    plugin: "aws"
+  connections.deleteOrgConnectionPermission:
+    org_handle: "my-org"
+    connection_handle: "aws_prod"
+    permission_id: "<permission-id>"
+  connections.deleteUserConnectionDeprecated:
+    user_handle: "my-user"
+    connection_handle: "aws_prod"
+  connections.getOrgConnectionPermission:
+    org_handle: "my-org"
+    connection_handle: "aws_prod"
+  connections.getUserConnection:
+    user_handle: "my-user"
+    connection_handle: "aws_prod"
+  connections.listUserConnections:
+    user_handle: "my-user"
+  connections.testUserConnection:
+    user_handle: "my-user"
+    plugin: "aws"
+    config: {"regions": ["us-east-1"]}
+  connections.updateOrgConnection:
+    org_handle: "my-org"
+    connection_handle: "aws_prod"
+  connections.updateOrgConnectionFolder:
+    org_handle: "my-org"
+    folder_id: "<folder-id>"
+  connections.updateUserConnection:
+    user_handle: "my-user"
+    connection_handle: "aws_prod"
+  datatanks.createUserWorkspaceDatatank:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    handle: "logs"
+  datatanks.createUserWorkspaceDatatankTable:
+    call: "{ user_handle: 'my-user', workspace_handle: 'dev', datatank_handle: 'logs', name: 'aws_buckets', type: 'table' }"
+  datatanks.getDatatankTable:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    datatank_handle: "logs"
+    table_name: "aws_s3_bucket"
+  datatanks.getUserWorkspaceDatatank:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    datatank_handle: "logs"
+  datatanks.getUserWorkspaceSchema:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    schema_name: "aws"
+  datatanks.getUserWorkspaceSchemaTable:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    schema_name: "aws"
+    table_name: "aws_s3_bucket"
+  datatanks.listOrgWorkspaceDatatanks:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+  datatanks.listUserWorkspaceDatatankPartitions:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    datatank_handle: "logs"
+    table_name: "aws_s3_bucket"
+  datatanks.listUserWorkspaceDatatankTables:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    datatank_handle: "logs"
+  datatanks.listUserWorkspaceDatatanks:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  datatanks.listUserWorkspaceSchemaTables:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    schema_name: "aws"
+  datatanks.listUserWorkspaceSchemas:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  identities.getIdentity:
+    identity_handle: "my-user"
+  identities.getIdentityAvatar:
+    identity_handle: "my-user"
+  integrations.createUserIntegration:
+    call: "{ user_handle: 'my-user', handle: 'my_slack', type: 'slack' }"
+  integrations.deleteUserIntegration:
+    user_handle: "my-user"
+    integration_handle: "my_slack"
+  integrations.getOrgIntegration:
+    org_handle: "my-org"
+    integration_handle: "my_slack"
+  integrations.getOrgWorkspaceIntegration:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    integration_handle: "my_slack"
+  integrations.getUserIntegration:
+    user_handle: "my-user"
+    integration_handle: "my_slack"
+  integrations.getUserWorkspaceIntegration:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    integration_handle: "my_slack"
+  integrations.installUserSlackIntegration:
+    user_handle: "my-user"
+    integration_handle: "my_slack"
+  integrations.listUserIntegrations:
+    user_handle: "my-user"
+  integrations.listUserWorkspaceIntegrations:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  integrations.testUserIntegration:
+    user_handle: "my-user"
+    integration_handle: "my_slack"
+  integrations.updateUserIntegration:
+    user_handle: "my-user"
+    integration_handle: "my_slack"
+  mods.createUserWorkspaceModVariableSetting:
+    call: "{ user_handle: 'my-user', workspace_handle: 'dev', mod_alias: 'aws_compliance', variable_name: 'regions', value: ['us-east-1'] }"
+  mods.deleteOrgWorkspaceModVariableSetting:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+    variable_name: "regions"
+  mods.deleteUserWorkspaceModVariableSetting:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+    variable_name: "regions"
+  mods.getOrgWorkspaceModVariableSetting:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+    variable_name: "regions"
+  mods.getUserWorkspaceMod:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+  mods.getUserWorkspaceModVariableSetting:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+    variable_name: "regions"
+  mods.installUserWorkspaceMod:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    path: "github.com/turbot/steampipe-mod-aws-compliance"
+  mods.listOrgWorkspaceMods:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+  mods.listUserWorkspaceModVariables:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+  mods.listUserWorkspaceMods:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  notifiers.createUserNotifier:
+    user_handle: "my-user"
+    name: "ops_alerts"
+    notifies: [{"integration": "slack.default", "channel": "#ops"}]
+  notifiers.createUserWorkspaceNotifier:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    name: "ops_alerts"
+    notifies: [{"integration": "slack.default", "channel": "#ops"}]
+  notifiers.deleteUserWorkspaceNotifier:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    notifier_handle: "ops_alerts"
+  notifiers.getOrgWorkspaceNotifier:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    notifier_handle: "ops_alerts"
+  notifiers.getUserWorkspaceNotifier:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    notifier_handle: "ops_alerts"
+  notifiers.listUserNotifiers:
+    user_handle: "my-user"
+  notifiers.listUserWorkspaceNotifiers:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  notifiers.postUserWorkspaceNotifierCommand:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    notifier_handle: "ops_alerts"
+    command: "set_default"
+  orgs.delete:
+    org_handle: "my-org"
+  orgs.deleteWorkspace:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+  orgs.get:
+    org_handle: "my-org"
+  orgs.getMember:
+    org_handle: "my-org"
+    user_handle: "my-user"
+  orgs.listProcesses:
+    org_handle: "my-org"
+  orgs.listServiceAccounts:
+    org_handle: "my-org"
+  orgs.listUsage:
+    org_handle: "my-org"
+  orgs.listWorkspaces:
+    org_handle: "my-org"
+  orgs.runWorkspaceCommand:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    command: "reboot"
+  orgs.updateMemberRole:
+    org_handle: "my-org"
+    user_handle: "my-user"
+    role: "member"
+  orgs.updateServiceAccount:
+    org_handle: "my-org"
+    service_account_handle: "ci-bot"
+  orgs.updateServiceAccountToken:
+    org_handle: "my-org"
+    service_account_handle: "ci-bot"
+    token_id: "<token-id>"
+    status: "inactive"
+  pipelines.deleteUserWorkspacePipeline:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    pipeline_id: "<pipeline-id>"
+  pipelines.getOrgWorkspaceFlowpipeTrigger:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    trigger_name: "daily_check"
+  pipelines.getUserWorkspaceFlowpipeMod:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+  pipelines.getUserWorkspaceFlowpipePipeline:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    pipeline_id: "<pipeline-id>"
+  pipelines.getUserWorkspacePipeline:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    pipeline_id: "<pipeline-id>"
+  pipelines.installUserWorkspaceFlowpipeMod:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    path: "github.com/turbot/steampipe-mod-aws-compliance"
+  pipelines.listOrgWorkspaceFlowpipeModVariables:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+  pipelines.listOrgWorkspacePipelines:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+  pipelines.listUserWorkspaceFlowpipeInputs:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  pipelines.listUserWorkspaceFlowpipeModVariables:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+  pipelines.listUserWorkspaceFlowpipePipelines:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  pipelines.listUserWorkspaceFlowpipeTriggers:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  pipelines.listUserWorkspacePipelineTriggers:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    pipeline_id: "<pipeline-id>"
+  pipelines.listUserWorkspacePipelines:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  pipelines.runUserWorkspaceFlowpipePipelineCommand:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    pipeline_id: "<pipeline-id>"
+    command: "run"
+  pipelines.runUserWorkspaceFlowpipeTriggerCommand:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    trigger_name: "daily_check"
+    command: "run"
+  pipelines.uninstallFlowpipeMod:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+  pipelines.uninstallOrgWorkspaceFlowpipeMod:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    mod_alias: "aws_compliance"
+  query.createOrgWorkspaceQuery:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    sql: "select name, region from aws_s3_bucket"
+  query.createOrgWorkspaceSnapshot:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    data: {"schema_version": "20240607", "start_time": "2026-11-05T09:00:00Z", "end_time": "2026-11-05T09:00:04Z", "layout": {"name": "aws_compliance.benchmark.cis_v300", "panel_type": "benchmark"}, "panels": {}}
+  query.getOrgWorkspaceQueryData:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    sql: "select name, region from aws_s3_bucket"
+  query.getUserWorkspaceQuery:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    sql: "select name, region from aws_s3_bucket"
+  query.getUserWorkspaceQueryData:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    sql: "select name, region from aws_s3_bucket"
+  query.listUserWorkspaceSnapshots:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  query.postUserWorkspaceQuery:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    sql: "select name, region from aws_s3_bucket"
+  query.runUserWorkspaceQuery:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    sql: "select name, region from aws_s3_bucket"
+  tenants.getTenant:
+    tenant_handle: "turbot-pipes"
+  tenants.getTenantAvatar:
+    tenant_handle: "turbot-pipes"
+  users.deleteUserAvatar:
+    user_handle: "my-user"
+  users.get:
+    user_handle: "my-user"
+  users.getUserEmail:
+    user_handle: "my-user"
+    email_id: "<email-id>"
+  users.getUserPreferences:
+    user_handle: "my-user"
+  users.getUserProcess:
+    user_handle: "my-user"
+    process_id: "<process-id>"
+  users.getUserWorkspace:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  users.listAuditLogs:
+    user_handle: "my-user"
+  users.listConstraints:
+    user_handle: "my-user"
+  users.listProcesses:
+    user_handle: "my-user"
+  users.listUsage:
+    user_handle: "my-user"
+  users.listUserEmails:
+    user_handle: "my-user"
+  users.listWorkspaces:
+    user_handle: "my-user"
+  users.runUserWorkspaceCommand:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    command: "reboot"
+  users.update:
+    user_handle: "my-user"
+  users.updateUserPreferences:
+    user_handle: "my-user"
+  users.updateUserWorkspace:
+    call: "{ user_handle: 'my-user', workspace_handle: 'dev', desired_state: 'disabled' }"
+  workspaces.createOrgWorkspaceAggregator:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    handle: "aws_all"
+    plugin: "aws"
+  workspaces.createOrgWorkspaceConnection:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    handle: "aws_prod"
+    plugin: "aws"
+  workspaces.createOrgWorkspaceConnectionFolder:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    title: "Production"
+  workspaces.createUserWorkspaceConnection:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    handle: "aws_prod"
+    plugin: "aws"
+  workspaces.createUserWorkspaceConnectionFolder:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    title: "Production"
+  workspaces.getOrgWorkspaceConnection:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    connection_handle: "aws_prod"
+  workspaces.getOrgWorkspaceConnectionFolder:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+    folder_id: "<folder-id>"
+  workspaces.getUserWorkspaceAggregator:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    aggregator_handle: "aws_all"
+  workspaces.getUserWorkspaceConnection:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    connection_handle: "aws_prod"
+  workspaces.getUserWorkspaceConnectionFolder:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    folder_id: "<folder-id>"
+  workspaces.getUserWorkspaceProcess:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    process_id: "<process-id>"
+  workspaces.getUserWorkspaceProcessLog:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    process_id: "<process-id>"
+  workspaces.listOrgWorkspaceProcesses:
+    org_handle: "my-org"
+    workspace_handle: "dev"
+  workspaces.listUserWorkspaceAggregatorConnections:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    aggregator_handle: "aws_all"
+  workspaces.listUserWorkspaceAggregators:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  workspaces.listUserWorkspaceAuditLogs:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  workspaces.listUserWorkspaceConnectionAssociations:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  workspaces.listUserWorkspaceConnectionFolders:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  workspaces.listUserWorkspaceConnectionTree:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  workspaces.listUserWorkspaceConnections:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  workspaces.listUserWorkspaceDatabaseLogs:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  workspaces.listUserWorkspaceProcesses:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  workspaces.listUserWorkspaceUsage:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+  workspaces.testUserWorkspaceConnection:
+    user_handle: "my-user"
+    workspace_handle: "dev"
+    connection_handle: "aws_prod"
+    plugin: "aws"

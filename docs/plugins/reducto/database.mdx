@@ -9,6 +9,165 @@ The Reducto plugin syncs data locally. Use `corsair.reducto.db.<entity>.search({
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
 
+## Classify Outputs
+
+Path: `reducto.db.classifyOutputs.search`
+
+```ts
+const rows = await corsair.reducto.db.classifyOutputs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
+| `resultUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resultId` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Edit Form Fields
+
+Path: `reducto.db.editFormFields.search`
+
+```ts
+const rows = await corsair.reducto.db.editFormFields.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `fieldIndex` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Edit Outputs
+
+Path: `reducto.db.editOutputs.search`
+
+```ts
+const rows = await corsair.reducto.db.editOutputs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `documentUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Extract Citations
+
+Path: `reducto.db.extractCitations.search`
+
+```ts
+const rows = await corsair.reducto.db.extractCitations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `citationIndex` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Extract Outputs
+
+Path: `reducto.db.extractOutputs.search`
+
+```ts
+const rows = await corsair.reducto.db.extractOutputs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `resultUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resultId` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Extract Records
+
+Path: `reducto.db.extractRecords.search`
+
+```ts
+const rows = await corsair.reducto.db.extractRecords.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `recordIndex` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
 ## Jobs
 
 Path: `reducto.db.jobs.search`
@@ -32,6 +191,162 @@ const rows = await corsair.reducto.db.jobs.search({
 | `duration` | `number` | equals, gt, gte, lt, lte, in |
 | `providerCreatedAt` | `string` | equals, contains, startsWith, endsWith, in |
 | `studioLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `responseType` | `string` | equals, contains, startsWith, endsWith, in |
+| `pdfUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `parseResultUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `parseResultId` | `string` | equals, contains, startsWith, endsWith, in |
+| `splitResultUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `splitResultId` | `string` | equals, contains, startsWith, endsWith, in |
+| `pipelineResultUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `pipelineResultId` | `string` | equals, contains, startsWith, endsWith, in |
+| `progress` | `number` | equals, gt, gte, lt, lte, in |
+| `reason` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Parse Blocks
+
+Path: `reducto.db.parseBlocks.search`
+
+```ts
+const rows = await corsair.reducto.db.parseBlocks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `chunkIndex` | `number` | equals, gt, gte, lt, lte, in |
+| `blockIndex` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `confidence` | `string` | equals, contains, startsWith, endsWith, in |
+| `imageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Parse Chunks
+
+Path: `reducto.db.parseChunks.search`
+
+```ts
+const rows = await corsair.reducto.db.parseChunks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `chunkIndex` | `number` | equals, gt, gte, lt, lte, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `embed` | `string` | equals, contains, startsWith, endsWith, in |
+| `enriched` | `string` | equals, contains, startsWith, endsWith, in |
+| `enrichmentSuccess` | `boolean` | equals |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Parse Ocr Items
+
+Path: `reducto.db.parseOcrItems.search`
+
+```ts
+const rows = await corsair.reducto.db.parseOcrItems.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ocrIndex` | `number` | equals, gt, gte, lt, lte, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `confidence` | `number` | equals, gt, gte, lt, lte, in |
+| `chunkIndex` | `number` | equals, gt, gte, lt, lte, in |
+| `rotation` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Pipeline Outputs
+
+Path: `reducto.db.pipelineOutputs.search`
+
+```ts
+const rows = await corsair.reducto.db.pipelineOutputs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `resultUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resultId` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Split Segments
+
+Path: `reducto.db.splitSegments.search`
+
+```ts
+const rows = await corsair.reducto.db.splitSegments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `splitIndex` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `partitionKey` | `string` | equals, contains, startsWith, endsWith, in |
 | `updatedAt` | `date` | equals, before, after, between |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._

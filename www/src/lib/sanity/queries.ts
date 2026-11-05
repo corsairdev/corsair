@@ -18,7 +18,15 @@ export const allPostsQuery = defineQuery(/* groq */ `
 
 export const postBySlugQuery = defineQuery(/* groq */ `
   *[_type == "post" && slug.current == $slug][0] {
-    ${postFields}
+    ${postFields},
+    "updatedAt": _updatedAt,
+    metaTitle,
+    metaDescription,
+    targetKeywords,
+    coverImage,
+    socialShareImage,
+    faqs[]{ _key, question, answer },
+    jsonLd
   }
 `);
 

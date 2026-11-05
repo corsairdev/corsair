@@ -1,0 +1,445 @@
+{
+  "id": "ploid",
+  "displayName": "Ploid",
+  "description": "Agent-native people API for evidence-backed people search, identity resolution, deep profiles, and contact enrichment.",
+  "npmPackageName": "@corsair-dev/ploid",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ploid.api.account.credits",
+      "shortPath": "account.credits",
+      "description": "Read the workspace ACU balance and API key budget state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ plan?: string, acu?: { included: number, purchased: number, used: number, available: number, overage: number } }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ploid.api.account.usage",
+      "shortPath": "account.usage",
+      "description": "Read workspace ACU usage plus the calling key id and active key count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ credits?: { plan?: string, acu?: { included: number, purchased: number, used: number, available: number, overage: number } }, api_key?: { id?: string, active_keys?: number } }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ploid.api.contacts.enrich",
+      "shortPath": "contacts.enrich",
+      "description": "Resolve contact fields (work_email 1, personal_email 3, phone 10 ACU per hit) from a person_id, LinkedIn URL, email, or name plus company domain",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "{ linkedin_url: string } | { person_id: string } | { email: string } | { name: string, company_domain: string }"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "work_email | personal_email | phone[]"
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "standard"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ work_email?: { value?: string | null, status: found | not_found | unavailable, confidence?: guess | strong | verified | null, source?: contact_network | linked_profile | public_code | public_web | null, last_seen?: string | null }, personal_email?: { value?: string | null, status: found | not_found | unavailable, confidence?: guess | strong | verified | null, source?: contact_network | linked_profile | public_code | public_web | null, last_seen?: string | null }, phone?: { value?: string | null, status: found | not_found | unavailable, confidence?: guess | strong | verified | null, source?: contact_network | linked_profile | public_code | public_web | null, last_seen?: string | null } }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ploid.api.person.cancelRun",
+      "shortPath": "person.cancelRun",
+      "description": "Cancel a queued or running person research run",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ run_id: string, status: queued | running | cancelled, poll_url?: string }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ploid.api.person.get",
+      "shortPath": "person.get",
+      "description": "Fetch a reviewed deep person profile (25 ACU first profile) or start a durable research run (202)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "{ person_id: string } | { linkedin_url: string } | { name: string, company_domain: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { run_id: string, status: queued | running | cancelled, poll_url?: string }, meta: { request_id: string } } | { data?: { person_id?: string, summary?: string | null, identity?: { name?: string, linkedin_url?: string | null, headline?: string | null, company?: string | null, location?: string | null, confidence?: number } | null } | null, meta: { request_id: string } }"
+      }
+    },
+    {
+      "path": "ploid.api.person.getRun",
+      "shortPath": "person.getRun",
+      "description": "Poll a person research run by id; returns run state or, once finished, the reviewed profile. 404 unknown, 410 expired",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { run_id: string, status: queued | running | cancelled, poll_url?: string }, meta: { request_id: string } } | { data?: { person_id?: string, summary?: string | null, identity?: { name?: string, linkedin_url?: string | null, headline?: string | null, company?: string | null, location?: string | null, confidence?: number } | null } | null, meta: { request_id: string } }"
+      }
+    },
+    {
+      "path": "ploid.api.person.resolve",
+      "shortPath": "person.resolve",
+      "description": "Identify one person from a name plus a clue and return the permanent person_id; 2 ACU when found, free when not",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "work_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personal_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ found: boolean, person?: { person_id: string, name: string, headline?: string | null, company?: string | null, location?: string | null, profiles?: { linkedin?: string, github?: string, x?: string }, identity_verified?: boolean } | null, confidence: number, summary?: string, sources?: string[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ploid.api.search.candidates",
+      "shortPath": "search.candidates",
+      "description": "Find candidate identities in the people index for 1 ACU, including zero matches",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ matches: { person_id: string, name: string, title?: string | null, company?: string | null, location?: string | null, linkedin_url?: string | null, profile_url?: string | null }[], returned: number }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ploid.api.search.search",
+      "shortPath": "search.search",
+      "description": "Search people by semantic query and hard filters; synchronous, at most 150 results",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "instant | fast | auto | deep"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "people"
+          },
+          {
+            "key": "num_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "criteria",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ title?: string | { any_of?: string[], none_of?: string[] }, seniority?: string | { any_of?: string[], none_of?: string[] }, company?: string | { any_of?: string[], none_of?: string[], employee_count?: { gte?: number, lte?: number }, funding_stage?: { in: pre_seed | seed | series_a | series_b | series_c | series_d_plus | public | bootstrapped[] } }, industry?: string | { any_of?: string[], none_of?: string[] }, location?: string | { any_of?: string[], none_of?: string[], countries?: string[], cities?: string[] }, company_size?: { min?: number, max?: number }, experience?: { past_companies: { any_of: string[] } }, education?: { schools: { any_of: string[] } } }"
+          },
+          {
+            "key": "freshness",
+            "optional": true,
+            "type": "{ max_age_days: number }"
+          },
+          {
+            "key": "contents",
+            "optional": true,
+            "type": "{ fields?: linkedin | title | company | location | name[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { results: { url?: string | null, title?: string | null, score?: number | null, person: { person_id: string, name?: string | null, title?: string | null, company?: string | null, location?: string | null, linkedin_url?: string | null, profile_url?: string | null, confidence?: number | null, identity_verified?: boolean } }[] }, meta: { request_id: string } } | { data: { mode: async, set_id: string, status?: string, items_url?: string, events_url?: string }, meta: { request_id: string } }"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "ploid.db.people.search",
+      "entityName": "people",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "personId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "headline",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedinUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profileUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "githubUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "xUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "identityVerified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "confidence",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

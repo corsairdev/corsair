@@ -1,0 +1,4822 @@
+---
+title: API
+description: "API reference for Celigo: every `celigo.api.*` operation with input and output types."
+---
+
+Every `celigo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getTokenInfo
+
+`account.getTokenInfo`
+
+Get the user id behind the current API token
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.account.getTokenInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_userId` | `string` | Yes | — |
+
+
+
+---
+
+### listLicenses
+
+`account.listLicenses`
+
+List the account licenses and subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.account.listLicenses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `io` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  type?: string,
+  tier?: string,
+  expires?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Audit
+
+### list
+
+`audit.list`
+
+List account audit log entries, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.audit.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+| `from` | `string` | No | ISO timestamp lower bound |
+| `to` | `string` | No | ISO timestamp upper bound |
+| `action` | `create \| update \| delete \| view \| restore \| purge \| signin \| signout \| purgelogs` | No | — |
+| `source` | `ui \| api \| system \| connector \| script \| stack \| sso \| cli \| mcp \| ora` | No | — |
+| `_byUserId` | `string` | No | — |
+| `resourceType` | `string` | No | Singular resource type, e.g. flow, export, connection |
+| `_resourceId` | `string` | No | — |
+| `fieldPath` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  resourceType?: string,
+  _resourceId?: string,
+  source?: string,
+  action?: string,
+  time?: string,
+  byUser?: {
+    _id?: string,
+    email?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Connections
+
+### create
+
+`connections.create`
+
+Create a connection
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.connections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | Connection type, e.g. http, netsuite, salesforce, ftp, s3, rdbms, mongodb, wrapper |
+| `externalId` | `string` | No | — |
+| `assistant` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`connections.delete`
+
+Delete a connection
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.connections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### evaluateVirtualImportMap
+
+`connections.evaluateVirtualImportMap`
+
+Run only the mapping step of an unsaved import and return the mapped records
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.connections.evaluateVirtualImportMap({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `import` | `object` | Yes | Import definition to run without saving it |
+| `data` | `object[]` | Yes | Records to send through the import |
+
+<AccordionGroup>
+<Accordion title="import full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### executeVirtualExport
+
+`connections.executeVirtualExport`
+
+Run an unsaved export definition through a connection
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.connections.executeVirtualExport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `export` | `object` | Yes | Export definition to run without saving it |
+
+<AccordionGroup>
+<Accordion title="export full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `dataURIs` | `string \| null[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### executeVirtualExportPaged
+
+`connections.executeVirtualExportPaged`
+
+Run an unsaved export one page at a time. Pass back pagedExportState for the next page
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.connections.executeVirtualExportPaged({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `export` | `object` | Yes | Export definition to run without saving it |
+| `pagedExportState` | `object` | No | pagedExportState from the previous page; omit for the first page |
+
+<AccordionGroup>
+<Accordion title="export full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="pagedExportState full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `dataURIs` | `string \| null[]` | No | — |
+| `pagedExportState` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagedExportState full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### executeVirtualImport
+
+`connections.executeVirtualImport`
+
+Send records through an unsaved import definition
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.connections.executeVirtualImport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `import` | `object` | Yes | Import definition to run without saving it |
+| `data` | `object[]` | Yes | Records to send through the import |
+
+<AccordionGroup>
+<Accordion title="import full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  statusCode?: number,
+  id?: string,
+  _json?: {
+  },
+  ignored?: boolean,
+  stage?: string,
+  errors?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`connections.get`
+
+Get a connection by id
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.connections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### getAudit
+
+`connections.getAudit`
+
+List audit log entries for a connection
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.connections.getAudit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+| `from` | `string` | No | ISO timestamp lower bound |
+| `to` | `string` | No | ISO timestamp upper bound |
+| `action` | `create \| update \| delete \| view \| restore \| purge \| signin \| signout \| purgelogs` | No | — |
+| `source` | `ui \| api \| system \| connector \| script \| stack \| sso \| cli \| mcp \| ora` | No | — |
+| `_byUserId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  resourceType?: string,
+  _resourceId?: string,
+  source?: string,
+  action?: string,
+  time?: string,
+  byUser?: {
+    _id?: string,
+    email?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDebugLogs
+
+`connections.getDebugLogs`
+
+Get the debug log text recorded for a connection
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.connections.getDebugLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `string` | Yes | — |
+
+
+
+---
+
+### getDependencies
+
+`connections.getDependencies`
+
+List resources that depend on a connection
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.connections.getDependencies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`connections.list`
+
+List connections in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.connections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+| `include` | `string` | No | Comma-separated fields to return |
+| `exclude` | `string` | No | Comma-separated fields to omit |
+| `fetchQueueSize` | `boolean` | No | — |
+| `externalId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### patch
+
+`connections.patch`
+
+Apply JSON Patch operations to a connection
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.connections.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  op: replace | add | remove,
+  path: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### ping
+
+`connections.ping`
+
+Test that a saved connection can reach its application
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.connections.ping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  code: number
+} | {
+  errors: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### testVirtual
+
+`connections.testVirtual`
+
+Test an unsaved connection document without storing it
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.connections.testVirtual({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | Connection type, e.g. http, netsuite, salesforce, ftp, s3, rdbms, mongodb, wrapper |
+| `externalId` | `string` | No | — |
+| `assistant` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  code: number
+} | {
+  errors: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`connections.update`
+
+Replace a connection document
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.connections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | Connection type, e.g. http, netsuite, salesforce, ftp, s3, rdbms, mongodb, wrapper |
+| `externalId` | `string` | No | — |
+| `assistant` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+## Edi Profiles
+
+### list
+
+`ediProfiles.list`
+
+List EDI trading partner profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.ediProfiles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Errors
+
+### assign
+
+`errors.assign`
+
+Assign flow step errors to a user by email
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.errors.assign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `stepId` | `string` | Yes | _id of the export or import step in the flow |
+| `errorIds` | `string[]` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errorsToReturn` | `string[]` | No | — |
+
+
+
+---
+
+### deleteResolved
+
+`errors.deleteResolved`
+
+Purge resolved errors from a flow step
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.errors.deleteResolved({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `stepId` | `string` | Yes | _id of the export or import step in the flow |
+| `errors` | `string[]` | No | errorIds to act on |
+| `selectAll` | `boolean` | No | — |
+| `lastErrorAt` | `string` | No | With selectAll, only errors at or before this timestamp |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`errors.list`
+
+List open errors for one export or import step of a flow
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.errors.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `stepId` | `string` | Yes | _id of the export or import step in the flow |
+| `_flowJobId` | `string` | No | — |
+| `occurredAt_gte` | `string` | No | — |
+| `occurredAt_lte` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `nextPageURL` | `string` | No | nextPageURL from the previous response; when set, it replaces the filters |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errors` | `object[]` | Yes | — |
+| `nextPageURL` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  errorId: string,
+  occurredAt?: string,
+  source?: string,
+  code?: string,
+  message?: string,
+  _flowJobId?: string,
+  traceKey?: string,
+  retryDataKey?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listResolved
+
+`errors.listResolved`
+
+List resolved errors for one step of a flow
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.errors.listResolved({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `stepId` | `string` | Yes | _id of the export or import step in the flow |
+| `_flowJobId` | `string` | No | — |
+| `occurredAt_gte` | `string` | No | — |
+| `occurredAt_lte` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `nextPageURL` | `string` | No | nextPageURL from the previous response; when set, it replaces the filters |
+| `resolvedAt_gte` | `string` | No | — |
+| `resolvedAt_lte` | `string` | No | — |
+| `resolvedBy` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resolved` | `object[]` | Yes | — |
+| `nextPageURL` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="resolved full type">
+
+```ts
+{
+  errorId: string,
+  occurredAt?: string,
+  source?: string,
+  code?: string,
+  message?: string,
+  _flowJobId?: string,
+  traceKey?: string,
+  retryDataKey?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resolve
+
+`errors.resolve`
+
+Mark errors on a flow step as resolved
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.errors.resolve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `stepId` | `string` | Yes | _id of the export or import step in the flow |
+| `errors` | `string[]` | No | errorIds to act on |
+| `selectAll` | `boolean` | No | — |
+| `lastErrorAt` | `string` | No | With selectAll, only errors at or before this timestamp |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### retry
+
+`errors.retry`
+
+Retry failed records on a flow step
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.errors.retry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `stepId` | `string` | Yes | _id of the export or import step in the flow |
+| `retryDataKeys` | `string[]` | No | — |
+| `selectAll` | `boolean` | No | — |
+| `lastErrorAt` | `string` | No | With selectAll, only errors at or before this timestamp |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `retryErrorCount` | `number` | No | — |
+
+
+
+---
+
+### updateTags
+
+`errors.updateTags`
+
+Set tags on flow step errors
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.errors.updateTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `stepId` | `string` | Yes | _id of the export or import step in the flow |
+| `errors` | `object[]` | Yes | — |
+| `tagIds` | `string[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  id?: string,
+  rdk?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errorsToReturn` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="errorsToReturn full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Exports
+
+### clone
+
+`exports.clone`
+
+Clone a export, optionally remapping connections
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.exports.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | No | — |
+| `connectionMap` | `object` | No | Maps source connection _id to target connection _id |
+
+<AccordionGroup>
+<Accordion title="connectionMap full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+} | {
+  model: string,
+  _id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`exports.create`
+
+Create a export
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.exports.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`exports.delete`
+
+Delete a export
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.exports.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`exports.get`
+
+Get a export by id
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.exports.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### getAudit
+
+`exports.getAudit`
+
+List audit log entries for a export
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.exports.getAudit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+| `from` | `string` | No | ISO timestamp lower bound |
+| `to` | `string` | No | ISO timestamp upper bound |
+| `action` | `create \| update \| delete \| view \| restore \| purge \| signin \| signout \| purgelogs` | No | — |
+| `source` | `ui \| api \| system \| connector \| script \| stack \| sso \| cli \| mcp \| ora` | No | — |
+| `_byUserId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  resourceType?: string,
+  _resourceId?: string,
+  source?: string,
+  action?: string,
+  time?: string,
+  byUser?: {
+    _id?: string,
+    email?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`exports.list`
+
+List exports in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.exports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+| `include` | `string` | No | Comma-separated fields to return |
+| `exclude` | `string` | No | Comma-separated fields to omit |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### patch
+
+`exports.patch`
+
+Apply JSON Patch operations to a export
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.exports.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  op: replace | add | remove,
+  path: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`exports.update`
+
+Replace a export document. Send the full document; omitted fields are cleared
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.exports.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+## File Definitions
+
+### create
+
+`fileDefinitions.create`
+
+Create a file definition
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.fileDefinitions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`fileDefinitions.get`
+
+Get a file definition by id
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.fileDefinitions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`fileDefinitions.list`
+
+List EDI and fixed-width file definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.fileDefinitions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include` | `string` | No | Comma-separated fields to return |
+| `exclude` | `string` | No | Comma-separated fields to omit |
+| `externalId` | `string` | No | — |
+| `limit` | `number` | No | Maximum number of results per page |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Flows
+
+### clone
+
+`flows.clone`
+
+Clone a flow, optionally remapping connections
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.flows.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | No | — |
+| `connectionMap` | `object` | No | Maps source connection _id to target connection _id |
+| `_integrationId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="connectionMap full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+} | {
+  model: string,
+  _id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`flows.create`
+
+Create a flow
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.flows.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`flows.delete`
+
+Delete a flow
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.flows.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`flows.get`
+
+Get a flow by id
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.flows.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `mergeInstance` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### getAudit
+
+`flows.getAudit`
+
+List audit log entries for a flow
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.flows.getAudit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+| `from` | `string` | No | ISO timestamp lower bound |
+| `to` | `string` | No | ISO timestamp upper bound |
+| `action` | `create \| update \| delete \| view \| restore \| purge \| signin \| signout \| purgelogs` | No | — |
+| `source` | `ui \| api \| system \| connector \| script \| stack \| sso \| cli \| mcp \| ora` | No | — |
+| `_byUserId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  resourceType?: string,
+  _resourceId?: string,
+  source?: string,
+  action?: string,
+  time?: string,
+  byUser?: {
+    _id?: string,
+    email?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDependencies
+
+`flows.getDependencies`
+
+List resources that depend on a flow
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.flows.getDependencies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDescendants
+
+`flows.getDescendants`
+
+List the exports, imports and tools a flow uses
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.flows.getDescendants({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exports` | `object[]` | No | — |
+| `imports` | `object[]` | No | — |
+| `tools` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="exports full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="imports full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLastExportDateTime
+
+`flows.getLastExportDateTime`
+
+Get when a flow last exported data
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.flows.getLastExportDateTime({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lastExportDateTime` | `string` | No | — |
+
+
+
+---
+
+### getLatestJobs
+
+`flows.getLatestJobs`
+
+Get the most recent jobs for a flow
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.flows.getLatestJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `include` | `string` | No | Comma-separated fields to return |
+| `exclude` | `string` | No | Comma-separated fields to omit |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  type?: string,
+  status?: string,
+  _flowId?: string,
+  numError?: number,
+  numSuccess?: number,
+  startedAt?: string,
+  endedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTemplate
+
+`flows.getTemplate`
+
+Get a signed URL to download a flow as a template zip
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.flows.getTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signedURL` | `string` | Yes | — |
+| `key` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`flows.list`
+
+List flows in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.flows.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_abstractFlowId` | `string` | No | — |
+| `externalId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `disabled` | `boolean` | No | — |
+| `_integrationId` | `string` | No | — |
+| `sort_by` | `lastExecutedAt` | No | — |
+| `includeInstances` | `boolean` | No | — |
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+| `include` | `string` | No | Comma-separated fields to return |
+| `exclude` | `string` | No | Comma-separated fields to omit |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### patch
+
+`flows.patch`
+
+Apply JSON Patch operations to a flow
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.flows.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  op: replace | add | remove,
+  path: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`flows.update`
+
+Replace a flow document. Send the full document; omitted fields are cleared
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.flows.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+## I Clients
+
+### create
+
+`iClients.create`
+
+Create an iClient
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.iClients.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`iClients.delete`
+
+Delete an iClient
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.iClients.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`iClients.get`
+
+Get an iClient by id
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.iClients.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`iClients.list`
+
+List iClients (stored OAuth app credentials)
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.iClients.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### patch
+
+`iClients.patch`
+
+Patch an iClient. Celigo only allows replacing /oauth2/failPath
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.iClients.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  op: replace | add | remove,
+  path: /oauth2/failPath,
+  value?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`iClients.update`
+
+Replace an iClient document
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.iClients.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+## Imports
+
+### clone
+
+`imports.clone`
+
+Clone a import, optionally remapping connections
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.imports.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | No | — |
+| `connectionMap` | `object` | No | Maps source connection _id to target connection _id |
+
+<AccordionGroup>
+<Accordion title="connectionMap full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+} | {
+  model: string,
+  _id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`imports.create`
+
+Create a import
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.imports.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`imports.delete`
+
+Delete a import
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.imports.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`imports.get`
+
+Get a import by id
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.imports.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### getAudit
+
+`imports.getAudit`
+
+List audit log entries for a import
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.imports.getAudit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+| `from` | `string` | No | ISO timestamp lower bound |
+| `to` | `string` | No | ISO timestamp upper bound |
+| `action` | `create \| update \| delete \| view \| restore \| purge \| signin \| signout \| purgelogs` | No | — |
+| `source` | `ui \| api \| system \| connector \| script \| stack \| sso \| cli \| mcp \| ora` | No | — |
+| `_byUserId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  resourceType?: string,
+  _resourceId?: string,
+  source?: string,
+  action?: string,
+  time?: string,
+  byUser?: {
+    _id?: string,
+    email?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDependencies
+
+`imports.getDependencies`
+
+List resources that depend on a import
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.imports.getDependencies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### invoke
+
+`imports.invoke`
+
+Run a saved import against the given records
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.imports.invoke({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  statusCode?: number,
+  id?: string,
+  _json?: {
+  },
+  ignored?: boolean,
+  stage?: string,
+  errors?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`imports.list`
+
+List imports in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.imports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `include` | `string` | No | Comma-separated fields to return |
+| `exclude` | `string` | No | Comma-separated fields to omit |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### patch
+
+`imports.patch`
+
+Apply JSON Patch operations to a import
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.imports.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  op: replace | add | remove,
+  path: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`imports.update`
+
+Replace a import document. Send the full document; omitted fields are cleared
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.imports.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+## Integrations
+
+### clone
+
+`integrations.clone`
+
+Clone a integration, optionally remapping connections
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.integrations.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `envId` | `string` | No | — |
+| `connectionMap` | `object` | Yes | Maps source connection _id to target connection _id |
+
+<AccordionGroup>
+<Accordion title="connectionMap full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+} | {
+  model: string,
+  _id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`integrations.create`
+
+Create a integration
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.integrations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### createRevision
+
+`integrations.createRevision`
+
+Snapshot an integration as a new revision
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.integrations.createRevision({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `description` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `_integrationId` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`integrations.delete`
+
+Delete a integration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.integrations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`integrations.get`
+
+Get a integration by id
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+### getAudit
+
+`integrations.getAudit`
+
+List audit log entries for a integration
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.getAudit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+| `from` | `string` | No | ISO timestamp lower bound |
+| `to` | `string` | No | ISO timestamp upper bound |
+| `action` | `create \| update \| delete \| view \| restore \| purge \| signin \| signout \| purgelogs` | No | — |
+| `source` | `ui \| api \| system \| connector \| script \| stack \| sso \| cli \| mcp \| ora` | No | — |
+| `_byUserId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  resourceType?: string,
+  _resourceId?: string,
+  source?: string,
+  action?: string,
+  time?: string,
+  byUser?: {
+    _id?: string,
+    email?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDependencies
+
+`integrations.getDependencies`
+
+List resources that depend on a integration
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.getDependencies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTemplate
+
+`integrations.getTemplate`
+
+Get a signed URL to download an integration as a template zip
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.getTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signedURL` | `string` | Yes | — |
+| `key` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`integrations.list`
+
+List integrations in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include` | `string` | No | Comma-separated fields to return |
+| `exclude` | `string` | No | Comma-separated fields to omit |
+| `limit` | `number` | No | Maximum number of results per page |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listConnections
+
+`integrations.listConnections`
+
+List the connections registered to an integration
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.listConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `limit` | `number` | No | Maximum number of results per page |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listErrors
+
+`integrations.listErrors`
+
+Get open error counts per flow in an integration
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.listErrors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _flowId: string,
+  numError?: number,
+  lastErrorAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listExports
+
+`integrations.listExports`
+
+List the exports in an integration
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.listExports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `limit` | `number` | No | Maximum number of results per page |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listFlows
+
+`integrations.listFlows`
+
+List the flows in an integration
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.listFlows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `limit` | `number` | No | Maximum number of results per page |
+| `includeInstances` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listImports
+
+`integrations.listImports`
+
+List the imports in an integration
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.listImports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `limit` | `number` | No | Maximum number of results per page |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUsers
+
+`integrations.listUsers`
+
+List the users shared on an integration
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.integrations.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  createdAt?: string,
+  lastModified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### patch
+
+`integrations.patch`
+
+Apply JSON Patch operations to a integration
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.integrations.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  op: replace | add | remove,
+  path: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### registerConnection
+
+`integrations.registerConnection`
+
+Register a connection to an integration
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.integrations.registerConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `connectionId` | `string` | Yes | Connection _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### registerConnections
+
+`integrations.registerConnections`
+
+Register connections to an integration, one per request body (_connectionId)
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.integrations.registerConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `_connectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### unregisterConnection
+
+`integrations.unregisterConnection`
+
+Unregister a connection from an integration
+
+**Risk:** `destructive`
+
+```ts
+await corsair.celigo.api.integrations.unregisterConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `connectionId` | `string` | Yes | Connection _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`integrations.update`
+
+Replace a integration document. Send the full document; omitted fields are cleared
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.integrations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+
+
+
+---
+
+## Jobs
+
+### getErrors
+
+`jobs.getErrors`
+
+Get the errors of a job (up to 1000)
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.jobs.getErrors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  code?: string,
+  message?: string,
+  source?: string,
+  createdAt?: string,
+  _jobId?: string,
+  _retryId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`jobs.list`
+
+List jobs filtered by flow, integration, status, type or date
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.jobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_integrationId` | `string` | No | — |
+| `_exportId` | `string` | No | — |
+| `_importId` | `string` | No | — |
+| `_flowId` | `string` | No | — |
+| `_flowJobId` | `string` | No | — |
+| `_flowId_in` | `string` | No | Comma-separated flow ids |
+| `status_in` | `string` | No | Comma-separated statuses |
+| `createdAt_lte` | `string` | No | — |
+| `createdAt_gte` | `string` | No | — |
+| `status` | `queued \| running \| completed \| failed \| canceled \| canceling \| retrying` | No | — |
+| `numSuccess_lte` | `number` | No | — |
+| `numSuccess_gte` | `number` | No | — |
+| `numIgnore_lte` | `number` | No | — |
+| `numIgnore_gte` | `number` | No | — |
+| `numError_gte` | `number` | No | — |
+| `numError_lte` | `number` | No | — |
+| `type` | `flow \| export \| import \| retry \| bulk_retry` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  type?: string,
+  status?: string,
+  _flowId?: string,
+  numError?: number,
+  numSuccess?: number,
+  startedAt?: string,
+  endedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Processors
+
+### generateStructuredFile
+
+`processors.generateStructuredFile`
+
+Render JSON records as delimited or fixed-width text
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.processors.generateStructuredFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `rules` | `object` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="rules full type">
+
+```ts
+{
+  name: string,
+  version: 1 | 2,
+  format: delimited | delimited/x12 | delimited/edifact | fixed,
+  rules: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaType` | `string` | No | — |
+| `data` | `string` | Yes | — |
+| `duration` | `number` | No | — |
+
+
+
+---
+
+### parseCsv
+
+`processors.parseCsv`
+
+Parse CSV text into JSON records
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.processors.parseCsv({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | — |
+| `rules` | `object` | No | columnDelimiter, rowDelimiter, hasHeaderRow, rowsToSkip, keyColumns, ... |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includeEmptyValues?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaType` | `string` | No | — |
+| `data` | `any[]` | Yes | — |
+| `duration` | `number` | No | — |
+
+
+
+---
+
+### parseStructuredFile
+
+`processors.parseStructuredFile`
+
+Parse EDI or fixed-width text into JSON using a file definition
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.processors.parseStructuredFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | — |
+| `rules` | `object` | Yes | fileDefinition or _fileDefinitionId, resourcePath |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaType` | `string` | No | — |
+| `data` | `any[]` | Yes | — |
+| `duration` | `number` | No | — |
+
+
+
+---
+
+### parseXml
+
+`processors.parseXml`
+
+Parse XML text into JSON records
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.processors.parseXml({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | — |
+| `rules` | `object` | No | resourcePath, groupByFields, sortByFields, doc |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaType` | `string` | No | — |
+| `data` | `any[]` | Yes | — |
+| `duration` | `number` | No | — |
+
+
+
+---
+
+## Scripts
+
+### create
+
+`scripts.create`
+
+Create a JavaScript hook script
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.scripts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `content` | `string` | No | JavaScript source |
+| `postResponseHookToProcessOnChildRecord` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `content` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `lastModified` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`scripts.delete`
+
+Delete a script
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.scripts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`scripts.get`
+
+Get a script by id
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.scripts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `content` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `lastModified` | `string` | Yes | — |
+
+
+
+---
+
+### getLogs
+
+`scripts.getLogs`
+
+Get execution logs written by a script
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.scripts.getLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `time_lte` | `number` | No | Epoch milliseconds |
+| `time_gt` | `number` | No | Epoch milliseconds |
+| `_flowId` | `string` | No | — |
+| `_resourceId` | `string` | No | — |
+| `functionType` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[]` | Yes | — |
+| `nextPageURL` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`scripts.update`
+
+Replace a script
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.scripts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `content` | `string` | No | JavaScript source |
+| `postResponseHookToProcessOnChildRecord` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `content` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `lastModified` | `string` | Yes | — |
+
+
+
+---
+
+## State
+
+### delete
+
+`state.delete`
+
+Delete a global state key
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.state.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | State key |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### deleteAll
+
+`state.deleteAll`
+
+Delete every global state key
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.state.deleteAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### deleteAllForResource
+
+`state.deleteAllForResource`
+
+Delete every state key on an export, import or integration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.state.deleteAllForResource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceType` | `exports \| imports \| integrations` | Yes | — |
+| `resourceId` | `string` | Yes | _id of the export, import or integration |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### deleteForResource
+
+`state.deleteForResource`
+
+Delete a state key on an export, import or integration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.state.deleteForResource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceType` | `exports \| imports \| integrations` | Yes | — |
+| `resourceId` | `string` | Yes | _id of the export, import or integration |
+| `key` | `string` | Yes | State key |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`state.get`
+
+Get the value stored under a global state key
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.state.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | State key |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getForResource
+
+`state.getForResource`
+
+Get a state value stored on an export, import or integration
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.state.getForResource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceType` | `exports \| imports \| integrations` | Yes | — |
+| `resourceId` | `string` | Yes | _id of the export, import or integration |
+| `key` | `string` | Yes | State key |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`state.list`
+
+List global state keys
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.state.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keys` | `string[]` | Yes | — |
+
+
+
+---
+
+### listForResource
+
+`state.listForResource`
+
+List state keys stored on an export, import or integration
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.state.listForResource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceType` | `exports \| imports \| integrations` | Yes | — |
+| `resourceId` | `string` | Yes | _id of the export, import or integration |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keys` | `string[]` | Yes | — |
+
+
+
+---
+
+### set
+
+`state.set`
+
+Create or replace the value under a global state key
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.state.set({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | State key |
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | OK when replaced, Created when new |
+
+
+
+---
+
+### setForResource
+
+`state.setForResource`
+
+Create or replace a state value on an export, import or integration
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.state.setForResource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceType` | `exports \| imports \| integrations` | Yes | — |
+| `resourceId` | `string` | Yes | _id of the export, import or integration |
+| `key` | `string` | Yes | State key |
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | OK when replaced, Created when new |
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create an error tag
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.tags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `tag` | `string` | No | — |
+| `tagId` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete an error tag
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`tags.get`
+
+Get an error tag by id
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.tags.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `tag` | `string` | No | — |
+| `tagId` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List error tags
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum number of results per page |
+| `after` | `string` | No | Return results after this _id (cursor from the Link header) |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  tag?: string,
+  tagId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`tags.update`
+
+Rename an error tag
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.tags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `tag` | `string` | No | — |
+| `tagId` | `string` | No | — |
+
+
+
+---
+
+## Users
+
+### delete
+
+`users.delete`
+
+Remove a user from the account
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.celigo.api.users.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`users.get`
+
+Get a user share by id
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `accessLevel` | `string` | No | — |
+| `accepted` | `boolean` | No | — |
+| `disabled` | `boolean` | No | — |
+| `sharedWithUser` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sharedWithUser full type">
+
+```ts
+{
+  _id?: string,
+  email?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invite
+
+`users.invite`
+
+Invite one user by email with account or integration access
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.users.invite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `accessLevel` | `monitor \| manage \| administrator \| none` | No | Account-wide access level |
+| `integrationAccessLevel` | `object[]` | No | — |
+| `accountSSORequired` | `boolean` | No | — |
+| `accountMFARequired` | `boolean` | No | — |
+| `allowAccessToAPIM` | `boolean` | No | — |
+| `allowToEditRetryData` | `boolean` | No | — |
+| `allowIntegrationWorkspaceCreation` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="integrationAccessLevel full type">
+
+```ts
+{
+  _integrationId: string,
+  accessLevel: monitor | manage | administrator | none
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `accessLevel` | `string` | No | — |
+| `accepted` | `boolean` | No | — |
+| `disabled` | `boolean` | No | — |
+| `sharedWithUser` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sharedWithUser full type">
+
+```ts
+{
+  _id?: string,
+  email?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### inviteMultiple
+
+`users.inviteMultiple`
+
+Invite several users by email with the same access
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.users.inviteMultiple({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+| `accessLevel` | `monitor \| manage \| administrator \| none` | No | Account-wide access level |
+| `integrationAccessLevel` | `object[]` | No | — |
+| `accountSSORequired` | `boolean` | No | — |
+| `accountMFARequired` | `boolean` | No | — |
+| `allowAccessToAPIM` | `boolean` | No | — |
+| `allowToEditRetryData` | `boolean` | No | — |
+| `allowIntegrationWorkspaceCreation` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="integrationAccessLevel full type">
+
+```ts
+{
+  _integrationId: string,
+  accessLevel: monitor | manage | administrator | none
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  statusCode?: number,
+  doc?: {
+    _id: string,
+    accessLevel?: string,
+    accepted?: boolean,
+    disabled?: boolean,
+    sharedWithUser?: {
+      _id?: string,
+      email?: string,
+      name?: string
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`users.list`
+
+List users the account is shared with
+
+**Risk:** `read`
+
+```ts
+await corsair.celigo.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userType` | `workspace \| end-user` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  accessLevel?: string,
+  accepted?: boolean,
+  disabled?: boolean,
+  sharedWithUser?: {
+    _id?: string,
+    email?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`users.update`
+
+Change a user share access level
+
+**Risk:** `write`
+
+```ts
+await corsair.celigo.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Celigo resource _id |
+| `accessLevel` | `monitor \| manage \| administrator \| none` | No | Account-wide access level |
+| `integrationAccessLevel` | `object[]` | No | — |
+| `accountSSORequired` | `boolean` | No | — |
+| `accountMFARequired` | `boolean` | No | — |
+| `allowAccessToAPIM` | `boolean` | No | — |
+| `allowToEditRetryData` | `boolean` | No | — |
+| `allowIntegrationWorkspaceCreation` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="integrationAccessLevel full type">
+
+```ts
+{
+  _integrationId: string,
+  accessLevel: monitor | manage | administrator | none
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+

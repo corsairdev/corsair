@@ -1,4 +1,4 @@
-export const MAX_USER_BUILT_INTEGRATIONS = 1;
+export const MAX_USER_BUILT_INTEGRATIONS = 5;
 
 export type ClaimBlockReason = 'limit_reached';
 

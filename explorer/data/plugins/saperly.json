@@ -1,0 +1,2413 @@
+{
+  "id": "saperly",
+  "displayName": "Saperly",
+  "description": "Phone numbers, voice, and SMS for AI agents. The workspace is resolved from a bearer API key.",
+  "npmPackageName": "@corsair-dev/saperly",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 39,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "saperly.api.assistant.answer",
+      "shortPath": "assistant.answer",
+      "description": "Ask the workspace assistant a question",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "question",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "answer",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "workers-ai | openai-compatible | mock"
+          },
+          {
+            "key": "modelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "usedTools",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "assistantConfigured",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.calls.end",
+      "shortPath": "calls.end",
+      "description": "Hang up a live call",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "inbound | outbound"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rateCentsPerMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "durationSec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "costCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasRecording",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "hasTranscript",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.calls.get",
+      "shortPath": "calls.get",
+      "description": "Get a call by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "inbound | outbound"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rateCentsPerMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "durationSec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "costCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasRecording",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "hasTranscript",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.calls.list",
+      "shortPath": "calls.list",
+      "description": "List calls",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, numberId: string, direction: inbound | outbound, to: string, from: string, status: string, rateCentsPerMin?: number | null, durationSec?: number | null, costCents?: number | null, hasRecording: boolean, hasTranscript: boolean, createdAt: string }[]"
+      }
+    },
+    {
+      "path": "saperly.api.calls.place",
+      "shortPath": "calls.place",
+      "description": "Place an outbound call. Reserves prepaid balance",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fromNumberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "inbound | outbound"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rateCentsPerMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "durationSec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "costCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasRecording",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "hasTranscript",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.calls.recording",
+      "shortPath": "calls.recording",
+      "description": "Read the call recording download URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.calls.transcript",
+      "shortPath": "calls.transcript",
+      "description": "Read a call transcript",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "saperly.api.calls.transfer",
+      "shortPath": "calls.transfer",
+      "description": "Blind-transfer a live call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "inbound | outbound"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rateCentsPerMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "durationSec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "costCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasRecording",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "hasTranscript",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.connections.create",
+      "shortPath": "connections.create",
+      "description": "Create a hosted or manual connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "hosted | manual"
+          },
+          {
+            "key": "backend",
+            "optional": true,
+            "type": "network | openai_realtime"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "llm",
+            "optional": true,
+            "type": "{ kind: managed, model: string } | null"
+          },
+          {
+            "key": "tts",
+            "optional": true,
+            "type": "{ provider?: string | null, voiceId: string } | null"
+          },
+          {
+            "key": "backgroundAudio",
+            "optional": true,
+            "type": "{ type: off } | { type: office, volume: number } | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcpServers",
+            "optional": true,
+            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[] | null"
+          },
+          {
+            "key": "callControl",
+            "optional": true,
+            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null } | null"
+          },
+          {
+            "key": "complianceEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "smsAutoReply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disclosure",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "openaiRealtime",
+            "optional": true,
+            "type": "{ model: string, voice?: string | null } | null"
+          },
+          {
+            "key": "manualWebhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "hosted | manual"
+          },
+          {
+            "key": "instructions",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "llm",
+            "optional": true,
+            "type": "{ kind: managed, model: string }"
+          },
+          {
+            "key": "backgroundAudio",
+            "optional": true,
+            "type": "{ type: off } | { type: office, volume: number }"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcpServers",
+            "optional": true,
+            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[]"
+          },
+          {
+            "key": "callControl",
+            "optional": true,
+            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null }"
+          },
+          {
+            "key": "complianceEnabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "smsAutoReply",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "disclosure",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordingEnabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "openaiRealtime",
+            "optional": true,
+            "type": "{ model: string, voice?: string | null }"
+          },
+          {
+            "key": "manualSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manualWebhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "backend",
+            "optional": false,
+            "type": "network | openai_realtime"
+          },
+          {
+            "key": "tts",
+            "optional": true,
+            "type": "{ voiceId: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.connections.delete",
+      "shortPath": "connections.delete",
+      "description": "Delete a connection",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.connections.get",
+      "shortPath": "connections.get",
+      "description": "Get a connection by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "hosted | manual"
+          },
+          {
+            "key": "instructions",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "llm",
+            "optional": true,
+            "type": "{ kind: managed, model: string }"
+          },
+          {
+            "key": "backgroundAudio",
+            "optional": true,
+            "type": "{ type: off } | { type: office, volume: number }"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcpServers",
+            "optional": true,
+            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[]"
+          },
+          {
+            "key": "callControl",
+            "optional": true,
+            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null }"
+          },
+          {
+            "key": "complianceEnabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "smsAutoReply",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "disclosure",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordingEnabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "openaiRealtime",
+            "optional": true,
+            "type": "{ model: string, voice?: string | null }"
+          },
+          {
+            "key": "manualSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manualWebhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "backend",
+            "optional": false,
+            "type": "network | openai_realtime"
+          },
+          {
+            "key": "tts",
+            "optional": true,
+            "type": "{ voiceId: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.connections.list",
+      "shortPath": "connections.list",
+      "description": "List connections in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, mode: hosted | manual, instructions: string, llm?: { kind: managed, model: string } | null, backgroundAudio?: { type: off } | { type: office, volume: number } | null, language?: string | null, mcpServers?: { url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[] | null, callControl?: { endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null } | null, complianceEnabled: boolean, smsAutoReply: boolean, disclosure: string, recordingEnabled: boolean, openaiRealtime?: { model: string, voice?: string | null } | null, manualSecret?: string | null, manualWebhookUrl?: string | null, createdAt: string, backend: network | openai_realtime, tts?: { voiceId: string } | null }[]"
+      }
+    },
+    {
+      "path": "saperly.api.connections.update",
+      "shortPath": "connections.update",
+      "description": "Update a connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "hosted | manual"
+          },
+          {
+            "key": "backend",
+            "optional": true,
+            "type": "network | openai_realtime"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "llm",
+            "optional": true,
+            "type": "{ kind: managed, model: string } | null"
+          },
+          {
+            "key": "tts",
+            "optional": true,
+            "type": "{ provider?: string | null, voiceId: string } | null"
+          },
+          {
+            "key": "backgroundAudio",
+            "optional": true,
+            "type": "{ type: off } | { type: office, volume: number } | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcpServers",
+            "optional": true,
+            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[] | null"
+          },
+          {
+            "key": "callControl",
+            "optional": true,
+            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null } | null"
+          },
+          {
+            "key": "complianceEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "smsAutoReply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disclosure",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "openaiRealtime",
+            "optional": true,
+            "type": "{ model: string, voice?: string | null } | null"
+          },
+          {
+            "key": "manualWebhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "hosted | manual"
+          },
+          {
+            "key": "instructions",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "llm",
+            "optional": true,
+            "type": "{ kind: managed, model: string }"
+          },
+          {
+            "key": "backgroundAudio",
+            "optional": true,
+            "type": "{ type: off } | { type: office, volume: number }"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcpServers",
+            "optional": true,
+            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[]"
+          },
+          {
+            "key": "callControl",
+            "optional": true,
+            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null }"
+          },
+          {
+            "key": "complianceEnabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "smsAutoReply",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "disclosure",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordingEnabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "openaiRealtime",
+            "optional": true,
+            "type": "{ model: string, voice?: string | null }"
+          },
+          {
+            "key": "manualSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manualWebhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "backend",
+            "optional": false,
+            "type": "network | openai_realtime"
+          },
+          {
+            "key": "tts",
+            "optional": true,
+            "type": "{ voiceId: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.consent.check",
+      "shortPath": "consent.check",
+      "description": "Check whether a contact has active consent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "peerNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hasConsent",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "implied_inbound | explicit_outbound"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.consent.list",
+      "shortPath": "consent.list",
+      "description": "List consent records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, numberId: string, peerNumber: string, consentType: implied_inbound | explicit_outbound, source: string, grantedAt: string, revokedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "saperly.api.consent.record",
+      "shortPath": "consent.record",
+      "description": "Record consent for a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "peerNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "consentType",
+            "optional": false,
+            "type": "implied_inbound | explicit_outbound"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "peerNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "consentType",
+            "optional": false,
+            "type": "implied_inbound | explicit_outbound"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "grantedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revokedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.consent.revoke",
+      "shortPath": "consent.revoke",
+      "description": "Revoke consent for a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "peerNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.customVoices.create",
+      "shortPath": "customVoices.create",
+      "description": "Upload a custom voice sample",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": false,
+            "type": "male | female | neutral"
+          },
+          {
+            "key": "audio",
+            "optional": false,
+            "type": "custom"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": false,
+            "type": "male | female | neutral"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | active | failed | expired"
+          },
+          {
+            "key": "failureReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deletionPending",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.customVoices.delete",
+      "shortPath": "customVoices.delete",
+      "description": "Delete a custom voice",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.customVoices.get",
+      "shortPath": "customVoices.get",
+      "description": "Get a custom voice by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": false,
+            "type": "male | female | neutral"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | active | failed | expired"
+          },
+          {
+            "key": "failureReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deletionPending",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.customVoices.list",
+      "shortPath": "customVoices.list",
+      "description": "List custom voices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, language: string, gender: male | female | neutral, status: pending | active | failed | expired, failureReason?: string | null, deletionPending?: boolean | null, createdAt: string, updatedAt: string }[]"
+      }
+    },
+    {
+      "path": "saperly.api.health.check",
+      "shortPath": "health.check",
+      "description": "Liveness probe",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.keys.list",
+      "shortPath": "keys.list",
+      "description": "List API keys. Requires the admin scope",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, token: string, prefix: string, scopes: read | write | admin[], lastUsedAt?: string | null, createdAt: string, numberScope?: string[] | null, spendLimitCents?: number | null, spendLimitResetPeriod?: monthly | null, spentThisPeriodCents?: number | null, canProvisionKeys?: boolean | null, permissions?: string[] | null, mintedByTokenId?: string | null }[]"
+      }
+    },
+    {
+      "path": "saperly.api.keys.mint",
+      "shortPath": "keys.mint",
+      "description": "Mint a child API key. The plaintext token is returned once",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scopes",
+            "optional": false,
+            "type": "read | write | admin[]"
+          },
+          {
+            "key": "numberScope",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "spendLimitCents",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "spendLimitResetPeriod",
+            "optional": true,
+            "type": "monthly | null"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prefix",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scopes",
+            "optional": false,
+            "type": "read | write | admin[]"
+          },
+          {
+            "key": "lastUsedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.keys.revoke",
+      "shortPath": "keys.revoke",
+      "description": "Revoke an API key",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.languages.list",
+      "shortPath": "languages.list",
+      "description": "List supported spoken languages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ code: string, name: string }[]"
+      }
+    },
+    {
+      "path": "saperly.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List SMS messages, optionally for one number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "numberId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, numberId: string, direction: inbound | outbound, to: string, from: string, body: string, segments: number, status: string, createdAt: string }[]"
+      }
+    },
+    {
+      "path": "saperly.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send an SMS. Billed per segment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fromNumberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "inbound | outbound"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segments",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.numbers.assignConnection",
+      "shortPath": "numbers.assignConnection",
+      "description": "Bind a connection to a phone number",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smsSenderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callerIdName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monthlyPriceCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextChargeAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "releasedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.numbers.get",
+      "shortPath": "numbers.get",
+      "description": "Get a phone number by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smsSenderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callerIdName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monthlyPriceCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextChargeAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "releasedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.numbers.list",
+      "shortPath": "numbers.list",
+      "description": "List phone numbers in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, phoneNumber: string, connectionId?: string | null, webhookUrl?: string | null, smsSenderId?: string | null, callerIdName?: string | null, country?: string | null, numberType?: string | null, monthlyPriceCents?: number | null, currency?: string | null, nextChargeAt?: string | null, releasedAt?: string | null, createdAt: string }[]"
+      }
+    },
+    {
+      "path": "saperly.api.numbers.provision",
+      "shortPath": "numbers.provision",
+      "description": "Provision a phone number. Reserves prepaid balance",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "areaCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expectedMonthlyPriceCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expectedUpfrontPriceCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "approveHigherPrice",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smsSenderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callerIdName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monthlyPriceCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextChargeAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "releasedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.numbers.release",
+      "shortPath": "numbers.release",
+      "description": "Release a phone number",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.numbers.setCallerId",
+      "shortPath": "numbers.setCallerId",
+      "description": "Set or clear the outbound caller ID name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "callerIdName",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smsSenderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callerIdName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monthlyPriceCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextChargeAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "releasedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.numbers.setSmsSender",
+      "shortPath": "numbers.setSmsSender",
+      "description": "Set or clear the alphanumeric SMS sender id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "smsSenderId",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smsSenderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callerIdName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monthlyPriceCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextChargeAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "releasedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.numbers.setWebhook",
+      "shortPath": "numbers.setWebhook",
+      "description": "Set the per-number manual-mode brain URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smsSenderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callerIdName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monthlyPriceCents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextChargeAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "releasedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.pricing.quote",
+      "shortPath": "pricing.quote",
+      "description": "Quote the monthly and upfront price of a number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numberType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerMonthlyCents",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "customerUpfrontCents",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.usage.summary",
+      "shortPath": "usage.summary",
+      "description": "Read usage and the prepaid balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calls",
+            "optional": false,
+            "type": "{ count: number, totalCostCents: number, totalDurationSec: number }"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ count: number }"
+          },
+          {
+            "key": "balanceCents",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "saperly.api.voices.list",
+      "shortPath": "voices.list",
+      "description": "List in-network voices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, gender: string, language: string }[]"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "saperly.webhooks.events.delivery",
+      "shortPath": "events.delivery",
+      "description": "Signed call and SMS deliveries. The handler confirms the resource with the API before returning success.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deliveryId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ callId?: string, messageId?: string, numberId?: string }"
+          }
+        ]
+      },
+      "responseType": "{ eventType: string, deliveryId: string, resource: {} }",
+      "usageExample": "saperly({\n    webhookHooks: {\n        events: {\n            delivery: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

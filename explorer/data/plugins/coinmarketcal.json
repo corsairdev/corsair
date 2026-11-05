@@ -1,0 +1,507 @@
+{
+  "id": "coinmarketcal",
+  "displayName": "CoinMarketCal",
+  "description": "Curated calendar of cryptocurrency events with impacted coins, dates, sources, and impact scores.",
+  "npmPackageName": "@corsair-dev/coinmarketcal",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "coinmarketcal.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List event categories from CoinMarketCal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string | number, name?: string, slug?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcal.api.coins.get",
+      "shortPath": "coins.get",
+      "description": "Get a cryptocurrency by slug from CoinMarketCal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tracked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "iconUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upcomingCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "majorCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "peakImpact",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcal.api.coins.list",
+      "shortPath": "coins.list",
+      "description": "List available cryptocurrencies from CoinMarketCal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tracked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ slug: string, symbol?: string, name?: string, rank?: number | null, tracked?: boolean, iconUrl?: string | null, upcomingCount?: number | null, majorCount?: number | null, peakImpact?: number | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, limit?: number, cursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcal.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get a cryptocurrency event by id from CoinMarketCal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateEnd",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isEstimated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "coins",
+            "optional": true,
+            "type": "{ slug: string, symbol: string, name: string }[]"
+          },
+          {
+            "key": "impact",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "impactSummary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snapshotUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastVerifiedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcal.api.events.list",
+      "shortPath": "events.list",
+      "description": "List cryptocurrency events from CoinMarketCal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coins",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "impactMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "date_asc | date_desc | created_desc | created_desc_and_updated_desc | impact_desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, slug?: string, title?: string, description?: string | null, date?: string, dateEnd?: string | null, dateType?: string, isEstimated?: boolean, displayedDate?: string, categories?: string[], coins?: { slug: string, symbol: string, name: string }[], impact?: number | string | null, impactSummary?: string | null, sourceUrl?: string | null, snapshotUrl?: string | null, lastVerifiedAt?: string | null, createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, limit?: number, cursor?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "coinmarketcal.db.categories.search",
+      "entityName": "categories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "coinmarketcal.db.coins.search",
+      "entityName": "coins",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tracked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "iconUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "upcomingCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "majorCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "peakImpact",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "coinmarketcal.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateEnd",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isEstimated",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "displayedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "impactSummary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sourceUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "snapshotUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastVerifiedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

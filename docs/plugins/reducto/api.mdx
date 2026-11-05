@@ -1138,8 +1138,10 @@ string | string[] | {
 | `duration` | `number` | Yes | — |
 | `usage` | `object` | Yes | — |
 | `result` | `object` | Yes | — |
+| `response_type` | `string` | No | — |
 | `pdf_url` | `string` | No | — |
 | `studio_link` | `string` | No | — |
+| `document_properties` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="usage full type">
@@ -1160,12 +1162,83 @@ string | string[] | {
   chunks: {
     content: string,
     embed?: string,
-    blocks?: any[]
-  }[]
+    blocks?: {
+      type: string,
+      content?: string,
+      bbox?: {
+        left: number,
+        top: number,
+        width: number,
+        height: number,
+        page: number,
+        original_page?: number
+      },
+      confidence?: string,
+      granular_confidence?: {
+        parse_confidence?: number | null,
+        extract_confidence?: number | null
+      },
+      image_url?: string | null,
+      chart_data?: string[],
+      merged_tables?: any[],
+      extra?: {
+      }
+    }[],
+    enriched?: string | null,
+    enrichment_success?: boolean
+  }[],
+  ocr?: {
+    words?: {
+      text: string,
+      bbox: {
+        left: number,
+        top: number,
+        width: number,
+        height: number,
+        page: number,
+        original_page?: number
+      },
+      confidence?: number,
+      chunk_index?: number,
+      rotation?: number
+    }[],
+    lines?: {
+      text: string,
+      bbox: {
+        left: number,
+        top: number,
+        width: number,
+        height: number,
+        page: number,
+        original_page?: number
+      },
+      confidence?: number,
+      chunk_index?: number,
+      rotation?: number
+    }[]
+  },
+  custom?: any | null
 } | {
   type: url,
   url: string,
   result_id: string
+}
+```
+</Accordion>
+
+<Accordion title="document_properties full type">
+
+```ts
+{
+  title?: string | null,
+  author?: string | null,
+  subject?: string | null,
+  keywords?: string | null,
+  creator?: string | null,
+  producer?: string | null,
+  last_modified_by?: string | null,
+  created_at?: string | null,
+  modified_at?: string | null
 }
 ```
 </Accordion>

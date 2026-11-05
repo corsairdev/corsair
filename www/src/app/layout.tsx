@@ -42,9 +42,6 @@ export const metadata: Metadata = {
 	},
 	description:
 		'Corsair helps AI products add secure, multi-tenant integrations with OAuth, permissions, MCP, webhooks, and hosted or self-hosted execution.',
-	alternates: {
-		canonical: '/',
-	},
 	icons: {
 		icon: '/corsair-logo.ico',
 		shortcut: '/corsair-logo.ico',

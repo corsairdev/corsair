@@ -1,0 +1,184 @@
+---
+title: Database
+description: "CallPage local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The CallPage plugin syncs data locally. Use `corsair.callpage.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Calls
+
+Path: `callpage.db.calls.search`
+
+```ts
+const rows = await corsair.callpage.db.calls.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `to` | `string` | equals, contains, startsWith, endsWith, in |
+| `to_formatted` | `string` | equals, contains, startsWith, endsWith, in |
+| `human_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `scheduled_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `cancelled_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `scheduled_success` | `boolean` | equals |
+| `leadable_id` | `number` | equals, gt, gte, lt, lte, in |
+| `leadable_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `leadable_description` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Managers
+
+Path: `callpage.db.managers.search`
+
+```ts
+const rows = await corsair.callpage.db.managers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `widget_id` | `number` | equals, gt, gte, lt, lte, in |
+| `user_id` | `number` | equals, gt, gte, lt, lte, in |
+| `enabled` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sms Messages
+
+Path: `callpage.db.smsMessages.search`
+
+```ts
+const rows = await corsair.callpage.db.smsMessages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `widget_id` | `number` | equals, gt, gte, lt, lte, in |
+| `message_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `callpage.db.users.search`
+
+```ts
+const rows = await corsair.callpage.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `tel` | `string` | equals, contains, startsWith, endsWith, in |
+| `tel_formatted` | `string` | equals, contains, startsWith, endsWith, in |
+| `tel_extension` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_online` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent_id` | `number` | equals, gt, gte, lt, lte, in |
+| `activated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatar` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Voice Messages
+
+Path: `callpage.db.voiceMessages.search`
+
+```ts
+const rows = await corsair.callpage.db.voiceMessages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `widget_id` | `number` | equals, gt, gte, lt, lte, in |
+| `message_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Widgets
+
+Path: `callpage.db.widgets.search`
+
+```ts
+const rows = await corsair.callpage.db.widgets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `enabled` | `boolean` | equals |
+| `locale_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `installation_status` | `number` | equals, gt, gte, lt, lte, in |
+| `installed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `company_sms_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `call_requests_count` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

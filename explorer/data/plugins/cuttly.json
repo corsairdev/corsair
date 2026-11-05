@@ -1,0 +1,195 @@
+{
+  "id": "cuttly",
+  "displayName": "Cutt.ly",
+  "description": "Create branded short links, access QR code URLs, and retrieve click analytics.",
+  "npmPackageName": "@corsair-dev/cuttly",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "cuttly.api.links.analytics",
+      "shortPath": "links.analytics",
+      "description": "Retrieve click analytics for a Cutt.ly short link.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shortUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Short link to retrieve analytics for"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Start date filter YYYY-MM-DD (Team plan)"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string",
+            "description": "End date filter YYYY-MM-DD (Team plan)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stats",
+            "optional": false,
+            "type": "{ status: number, date?: string, clicks?: number, title?: string, fullLink?: string, shortLink?: string, qrCode?: string, facebook?: number, twitter?: number, linkedin?: number, rest?: number, bots?: number | string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cuttly.api.links.shorten",
+      "shortPath": "links.shorten",
+      "description": "Create a Cutt.ly short URL with an optional custom alias and QR code.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Destination URL to shorten"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string",
+            "description": "Preferred custom alias when not already taken"
+          },
+          {
+            "key": "useCustomDomain",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the active branded domain from the account (paid plan)"
+          },
+          {
+            "key": "publicStats",
+            "optional": true,
+            "type": "boolean",
+            "description": "Make click stats public for this link (Single plan and above)"
+          },
+          {
+            "key": "noTitle",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip destination title lookup for a faster response (Team Enterprise)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "{ status: number, date?: string, shortLink?: string, fullLink?: string, title?: string, qrCode?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cuttly.api.links.update",
+      "shortPath": "links.update",
+      "description": "Update the destination URL and/or custom alias for an existing Cutt.ly short link.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shortUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Existing Cutt.ly short link to edit"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "New destination URL for the short link"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string",
+            "description": "New custom alias when not already taken"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "{ status: number, date?: string, shortLink?: string, fullLink?: string, title?: string, qrCode?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "cuttly.db.links.search",
+      "entityName": "links",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fullLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "qrCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7079 @@
+---
+title: API
+description: "API reference for ClickSend: every `clicksend.api.*` operation with input and output types."
+---
+
+Every `clicksend.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Retrieve ClickSend account details and credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | Yes | — |
+| `username` | `string` | Yes | — |
+| `user_email` | `string` | Yes | — |
+| `user_first_name` | `string` | No | — |
+| `user_last_name` | `string` | No | — |
+| `balance` | `number` | Yes | — |
+| `currency` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`account.update`
+
+Update ClickSend account profile fields
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.account.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_email` | `string` | No | — |
+| `user_first_name` | `string` | No | — |
+| `user_last_name` | `string` | No | — |
+| `user_phone` | `string` | No | — |
+| `account_name` | `string` | No | — |
+| `country` | `string` | No | — |
+| `timezone` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | No | — |
+| `username` | `string` | No | — |
+| `user_email` | `string` | No | — |
+| `user_first_name` | `string` | No | — |
+| `user_last_name` | `string` | No | — |
+| `balance` | `number` | No | — |
+| `currency` | `string` | No | — |
+
+
+
+---
+
+## Campaigns
+
+### mms.cancel
+
+`campaigns.mms.cancel`
+
+Cancel a scheduled MMS campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.campaigns.mms.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mms_campaign_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  mms_campaign_id?: number,
+  name?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  list_id?: number,
+  from?: string,
+  subject?: string,
+  file_name?: string,
+  body?: string,
+  schedule?: number,
+  status?: string,
+  date_added?: number,
+  _total_count?: number,
+  _list_name?: string,
+  _media_file_url?: string
+} | never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### mms.list
+
+`campaigns.mms.list`
+
+List MMS campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.campaigns.mms.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  mms_campaign_id?: number,
+  name?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  list_id?: number,
+  from?: string,
+  subject?: string,
+  file_name?: string,
+  body?: string,
+  schedule?: number,
+  status?: string,
+  date_added?: number,
+  _total_count?: number,
+  _list_name?: string,
+  _media_file_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mms.price
+
+`campaigns.mms.price`
+
+Calculate the price of an MMS campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.campaigns.mms.price({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `media_file` | `string` | Yes | — |
+| `schedule` | `number` | No | — |
+| `url_to_shorten` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mms.send
+
+`campaigns.mms.send`
+
+Create and send an MMS campaign to a contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.campaigns.mms.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `media_file` | `string` | Yes | — |
+| `schedule` | `number` | No | — |
+| `url_to_shorten` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mms.update
+
+`campaigns.mms.update`
+
+Update a scheduled MMS campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.campaigns.mms.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mms_campaign_id` | `number` | Yes | — |
+| `list_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `from` | `string` | No | — |
+| `body` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `media_file` | `string` | No | — |
+| `schedule` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mms_campaign_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `subaccount_id` | `number` | No | — |
+| `list_id` | `number` | No | — |
+| `from` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `file_name` | `string` | No | — |
+| `body` | `string` | No | — |
+| `schedule` | `number` | No | — |
+| `status` | `string` | No | — |
+| `date_added` | `number` | No | — |
+| `_total_count` | `number` | No | — |
+| `_list_name` | `string` | No | — |
+| `_media_file_url` | `string` | No | — |
+
+
+
+---
+
+### sms.cancel
+
+`campaigns.sms.cancel`
+
+Cancel a scheduled SMS campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.campaigns.sms.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sms_campaign_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  sms_campaign_id?: number,
+  name?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  list_id?: number,
+  from?: string,
+  body?: string,
+  schedule?: number,
+  status?: string,
+  date_added?: number,
+  custom_string?: string,
+  url_to_shorten?: string,
+  _total_count?: number,
+  _list_name?: string
+} | never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sms.get
+
+`campaigns.sms.get`
+
+Retrieve a single SMS campaign by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.campaigns.sms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sms_campaign_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sms_campaign_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `subaccount_id` | `number` | No | — |
+| `list_id` | `number` | No | — |
+| `from` | `string` | No | — |
+| `body` | `string` | No | — |
+| `schedule` | `number` | No | — |
+| `status` | `string` | No | — |
+| `date_added` | `number` | No | — |
+| `custom_string` | `string` | No | — |
+| `url_to_shorten` | `string` | No | — |
+| `_total_count` | `number` | No | — |
+| `_list_name` | `string` | No | — |
+
+
+
+---
+
+### sms.list
+
+`campaigns.sms.list`
+
+List SMS campaigns with pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.campaigns.sms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `q` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `date_from` | `number` | No | — |
+| `date_to` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sms_campaign_id?: number,
+  name?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  list_id?: number,
+  from?: string,
+  body?: string,
+  schedule?: number,
+  status?: string,
+  date_added?: number,
+  custom_string?: string,
+  url_to_shorten?: string,
+  _total_count?: number,
+  _list_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sms.price
+
+`campaigns.sms.price`
+
+Calculate the price of an SMS campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.campaigns.sms.price({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `schedule` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sms.send
+
+`campaigns.sms.send`
+
+Create and send an SMS campaign to a contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.campaigns.sms.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `senders` | `object[]` | Yes | — |
+| `source` | `string` | No | — |
+| `schedule` | `number` | No | — |
+| `url_to_shorten` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="senders full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sms.update
+
+`campaigns.sms.update`
+
+Update a scheduled SMS campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.campaigns.sms.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sms_campaign_id` | `number` | Yes | — |
+| `list_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `schedule` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sms_campaign_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `subaccount_id` | `number` | No | — |
+| `list_id` | `number` | No | — |
+| `from` | `string` | No | — |
+| `body` | `string` | No | — |
+| `schedule` | `number` | No | — |
+| `status` | `string` | No | — |
+| `date_added` | `number` | No | — |
+| `custom_string` | `string` | No | — |
+| `url_to_shorten` | `string` | No | — |
+| `_total_count` | `number` | No | — |
+| `_list_name` | `string` | No | — |
+
+
+
+---
+
+## Contact Lists
+
+### create
+
+`contactLists.create`
+
+Create a new contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contactLists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_name` | `string` | Yes | Name for the contact list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `list_name` | `string` | Yes | — |
+| `contact_count` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`contactLists.delete`
+
+Delete a contact list by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contactLists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`contactLists.get`
+
+Retrieve a single contact list by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.contactLists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | No | — |
+| `list_name` | `string` | No | — |
+| `contact_count` | `number` | No | — |
+
+
+
+---
+
+### getAll
+
+`contactLists.getAll`
+
+Retrieve all contact lists with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.contactLists.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  list_id: number,
+  list_name: string,
+  contact_count?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contactLists.update`
+
+Rename a contact list by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contactLists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `list_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | No | — |
+| `list_name` | `string` | No | — |
+| `contact_count` | `number` | No | — |
+
+
+
+---
+
+## Contacts
+
+### copy
+
+`contacts.copy`
+
+Copy a contact from one list to another
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contacts.copy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_list_id` | `number` | Yes | — |
+| `contact_id` | `number` | Yes | — |
+| `to_list_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `number` | No | — |
+| `list_id` | `number` | No | — |
+| `phone_number` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `custom_1` | `string` | No | — |
+| `custom_2` | `string` | No | — |
+| `custom_3` | `string` | No | — |
+| `custom_4` | `string` | No | — |
+| `date_added` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+| `fax_number` | `string` | No | — |
+| `organization_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `address_line_1` | `string` | No | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | No | — |
+| `address_country` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`contacts.create`
+
+Add a new contact to a specific list
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | Target contact list ID |
+| `phone_number` | `string` | Yes | Phone number of the contact |
+| `first_name` | `string` | No | First name |
+| `last_name` | `string` | No | Last name |
+| `email` | `string` | No | Email address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `number` | Yes | — |
+| `list_id` | `number` | Yes | — |
+| `phone_number` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact from a list
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `contact_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`contacts.get`
+
+Retrieve a single contact from a list
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `contact_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `number` | No | — |
+| `list_id` | `number` | No | — |
+| `phone_number` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `custom_1` | `string` | No | — |
+| `custom_2` | `string` | No | — |
+| `custom_3` | `string` | No | — |
+| `custom_4` | `string` | No | — |
+| `date_added` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+| `fax_number` | `string` | No | — |
+| `organization_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `address_line_1` | `string` | No | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | No | — |
+| `address_country` | `string` | No | — |
+
+
+
+---
+
+### import
+
+`contacts.import`
+
+Bulk-import contacts into a list from a file URL
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contacts.import({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `file_url` | `string` | Yes | — |
+| `field_order` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `msg` | `string` | No | — |
+| `ids` | `string[]` | No | — |
+| `id` | `string \| number` | No | — |
+
+
+
+---
+
+### importFields
+
+`contacts.importFields`
+
+List valid import field mappings for a list
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.contacts.importFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  field: string,
+  label: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### importPreview
+
+`contacts.importPreview`
+
+Preview the first row of a CSV import file
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contacts.importPreview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `file_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `row` | `string[]` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts within a specific contact list
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | List ID to fetch contacts from |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  contact_id: number,
+  list_id: number,
+  phone_number: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeOptedOut
+
+`contacts.removeOptedOut`
+
+Remove opted-out contacts from a list
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contacts.removeOptedOut({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `opt_out_list_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `number` | No | — |
+
+
+
+---
+
+### search
+
+`contacts.search`
+
+Search contact lists and contacts by keyword
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.contacts.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  contact?: string,
+  contacts_count?: number,
+  id?: number | string,
+  name?: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### suggestions
+
+`contacts.suggestions`
+
+List suggested contacts across lists
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.contacts.suggestions({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  contact_id?: number,
+  list_id?: number,
+  phone_number?: string,
+  first_name?: string,
+  last_name?: string,
+  custom_1?: string,
+  custom_2?: string,
+  custom_3?: string,
+  custom_4?: string,
+  date_added?: string,
+  date_updated?: string,
+  fax_number?: string,
+  organization_name?: string,
+  email?: string,
+  address_line_1?: string,
+  address_line_2?: string,
+  address_city?: string,
+  address_state?: string,
+  address_postal_code?: string,
+  address_country?: string,
+  _list_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### transfer
+
+`contacts.transfer`
+
+Move a contact from one list to another
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contacts.transfer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_list_id` | `number` | Yes | — |
+| `contact_id` | `number` | Yes | — |
+| `to_list_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `number` | No | — |
+| `list_id` | `number` | No | — |
+| `phone_number` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `custom_1` | `string` | No | — |
+| `custom_2` | `string` | No | — |
+| `custom_3` | `string` | No | — |
+| `custom_4` | `string` | No | — |
+| `date_added` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+| `fax_number` | `string` | No | — |
+| `organization_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `address_line_1` | `string` | No | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | No | — |
+| `address_country` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update contact fields within a list
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `contact_id` | `number` | Yes | — |
+| `phone_number` | `string` | No | — |
+| `email` | `string` | No | — |
+| `fax_number` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `organization_name` | `string` | No | — |
+| `address_line_1` | `string` | No | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | No | — |
+| `address_country` | `string` | No | — |
+| `custom_1` | `string` | No | — |
+| `custom_2` | `string` | No | — |
+| `custom_3` | `string` | No | — |
+| `custom_4` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `number` | No | — |
+| `list_id` | `number` | No | — |
+| `phone_number` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `custom_1` | `string` | No | — |
+| `custom_2` | `string` | No | — |
+| `custom_3` | `string` | No | — |
+| `custom_4` | `string` | No | — |
+| `date_added` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+| `fax_number` | `string` | No | — |
+| `organization_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `address_line_1` | `string` | No | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | No | — |
+| `address_country` | `string` | No | — |
+
+
+
+---
+
+## Countries
+
+### globalList
+
+`countries.globalList`
+
+List global sending destination countries
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.countries.globalList({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  code?: string,
+  region?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`countries.list`
+
+List supported countries as code/value pairs
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.countries.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  code: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### pricing
+
+`countries.pricing`
+
+Retrieve per-country pricing for a currency
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.countries.pricing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `currency` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `_currency` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_currency full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### userCountriesAgree
+
+`countries.userCountriesAgree`
+
+Agree to sending-country compliance rules
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.countries.userCountriesAgree({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### userCountriesGet
+
+`countries.userCountriesGet`
+
+List enabled global-sending countries
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.countries.userCountriesGet({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### userCountriesSelect
+
+`countries.userCountriesSelect`
+
+Select enabled global-sending countries
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.countries.userCountriesSelect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_list_ids` | `number[]` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Delivery Issues
+
+### create
+
+`deliveryIssues.create`
+
+Report a message delivery issue
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.deliveryIssues.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | No | — |
+| `type` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `email_address` | `string` | Yes | — |
+| `client_comments` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id` | `number \| string` | No | — |
+| `user_id` | `number \| string` | No | — |
+| `message_id` | `string` | No | — |
+| `type` | `string` | No | — |
+| `description` | `string` | No | — |
+| `date_added` | `string` | No | — |
+| `email_address` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`deliveryIssues.list`
+
+List delivery issues with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.deliveryIssues.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  issue_id?: number | string,
+  user_id?: number | string,
+  message_id?: string,
+  type?: string,
+  description?: string,
+  status?: string,
+  date_added?: string,
+  resolved?: number | string | boolean,
+  email_address?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Addresses
+
+### create
+
+`emailAddresses.create`
+
+Register a new allowed sender email address
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.emailAddresses.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address_id` | `number` | No | — |
+| `email_address` | `string` | No | — |
+| `verified` | `boolean \| number` | No | — |
+| `date_added` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`emailAddresses.delete`
+
+Delete an allowed email address by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.emailAddresses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`emailAddresses.get`
+
+Retrieve a single allowed email address by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailAddresses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address_id` | `number` | No | — |
+| `email_address` | `string` | No | — |
+| `verified` | `boolean \| number` | No | — |
+| `date_added` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`emailAddresses.list`
+
+List allowed sender email addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailAddresses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_address_id?: number,
+  email_address?: string,
+  verified?: boolean | number,
+  date_added?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendToken
+
+`emailAddresses.sendToken`
+
+Send a verification token to an allowed email address
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.emailAddresses.sendToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### verify
+
+`emailAddresses.verify`
+
+Verify an allowed email address with its activation token
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.emailAddresses.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address_id` | `number` | Yes | — |
+| `activation_token` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address_id` | `number` | No | — |
+| `email_address` | `string` | No | — |
+| `verified` | `boolean \| number` | No | — |
+| `date_added` | `string` | No | — |
+
+
+
+---
+
+## Email Campaigns
+
+### get
+
+`emailCampaigns.get`
+
+Retrieve a single email campaign by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailCampaigns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_campaign_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_campaign_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `subaccount_id` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `list_id` | `number` | No | — |
+| `from_email_address_id` | `number` | No | — |
+| `from_name` | `string` | No | — |
+| `template_id` | `number` | No | — |
+| `schedule` | `number \| string` | No | — |
+| `status` | `string` | No | — |
+| `date_added` | `string` | No | — |
+| `custom_string` | `string` | No | — |
+| `send_count` | `number` | No | — |
+
+
+
+---
+
+## Email Master Categories
+
+### get
+
+`emailMasterCategories.get`
+
+Retrieve a single master template category by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailMasterCategories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`emailMasterCategories.list`
+
+List master email template categories
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailMasterCategories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  category_id?: number,
+  category_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Email Master Templates
+
+### get
+
+`emailMasterTemplates.get`
+
+Retrieve a single master email template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailMasterTemplates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id_master` | `number` | No | — |
+| `template_name` | `string` | No | — |
+| `date_added` | `string` | No | — |
+| `body` | `string` | No | — |
+| `category_id` | `number` | No | — |
+| `thumbnail` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="thumbnail full type">
+
+```ts
+{
+  small?: string,
+  large?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`emailMasterTemplates.list`
+
+List ClickSend master email templates
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailMasterTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  template_id_master?: number,
+  template_name?: string,
+  date_added?: string,
+  body?: string,
+  category_id?: number,
+  thumbnail?: {
+    small?: string,
+    large?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listInCategory
+
+`emailMasterTemplates.listInCategory`
+
+List master email templates within a category
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailMasterTemplates.listInCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  template_id_master?: number,
+  template_name?: string,
+  date_added?: string,
+  body?: string,
+  category_id?: number,
+  thumbnail?: {
+    small?: string,
+    large?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Receipt Rules
+
+### create
+
+`emailReceiptRules.create`
+
+Create an email delivery receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.emailReceiptRules.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_name` | `string` | Yes | — |
+| `match_type` | `number` | Yes | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`emailReceiptRules.delete`
+
+Delete an email delivery receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.emailReceiptRules.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`emailReceiptRules.get`
+
+Retrieve a single email receipt automation rule
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailReceiptRules.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`emailReceiptRules.list`
+
+List email delivery receipt automation rules
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailReceiptRules.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  receipt_rule_id?: number,
+  rule_name?: string,
+  match_type?: number,
+  action?: string,
+  action_address?: string,
+  enabled?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`emailReceiptRules.update`
+
+Update an email delivery receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.emailReceiptRules.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+| `rule_name` | `string` | Yes | — |
+| `match_type` | `number` | Yes | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+## Email Templates
+
+### create
+
+`emailTemplates.create`
+
+Create a user email template from a master template
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.emailTemplates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id_master` | `number` | Yes | — |
+| `template_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | No | — |
+| `template_id_master` | `number` | No | — |
+| `template_name` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`emailTemplates.delete`
+
+Delete a user email template by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.emailTemplates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`emailTemplates.get`
+
+Retrieve a single user email template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailTemplates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | No | — |
+| `template_id_master` | `number` | No | — |
+| `template_name` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`emailTemplates.list`
+
+List user email templates
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.emailTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  template_id?: number,
+  template_id_master?: number,
+  template_name?: string,
+  body?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`emailTemplates.update`
+
+Update a user email template
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.emailTemplates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+| `template_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | No | — |
+| `template_id_master` | `number` | No | — |
+| `template_name` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## Fax Inbound Rules
+
+### create
+
+`faxInboundRules.create`
+
+Create a fax inbound automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.faxInboundRules.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dedicated_number` | `string` | Yes | — |
+| `rule_name` | `string` | Yes | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | No | — |
+| `dedicated_number` | `string` | No | — |
+| `rule_name` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`faxInboundRules.delete`
+
+Delete a fax inbound automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.faxInboundRules.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`faxInboundRules.get`
+
+Retrieve a single fax inbound automation rule
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.faxInboundRules.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | No | — |
+| `dedicated_number` | `string` | No | — |
+| `rule_name` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`faxInboundRules.list`
+
+List fax inbound automation rules
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.faxInboundRules.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  inbound_rule_id?: number,
+  dedicated_number?: string,
+  rule_name?: string,
+  user_id?: number,
+  action?: string,
+  action_address?: string,
+  enabled?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`faxInboundRules.update`
+
+Update a fax inbound automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.faxInboundRules.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | Yes | — |
+| `dedicated_number` | `string` | Yes | — |
+| `rule_name` | `string` | Yes | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | No | — |
+| `dedicated_number` | `string` | No | — |
+| `rule_name` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+## Fax Receipt Rules
+
+### create
+
+`faxReceiptRules.create`
+
+Create a fax receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.faxReceiptRules.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_name` | `string` | Yes | — |
+| `match_type` | `number` | Yes | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`faxReceiptRules.delete`
+
+Delete a fax receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.faxReceiptRules.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`faxReceiptRules.get`
+
+Retrieve a single fax receipt automation rule
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.faxReceiptRules.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`faxReceiptRules.list`
+
+List fax receipt automation rules
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.faxReceiptRules.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  receipt_rule_id?: number,
+  rule_name?: string,
+  match_type?: number,
+  action?: string,
+  action_address?: string,
+  enabled?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`faxReceiptRules.update`
+
+Update a fax receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.faxReceiptRules.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+| `rule_name` | `string` | Yes | — |
+| `match_type` | `number` | Yes | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+## Fax Receipts
+
+### createTest
+
+`faxReceipts.createTest`
+
+Create a test fax delivery receipt for a callback URL
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.faxReceipts.createTest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp_send` | `number` | No | — |
+| `timestamp` | `number` | No | — |
+| `message_id` | `string` | No | — |
+| `status_code` | `string` | No | — |
+| `status_text` | `string` | No | — |
+| `error_code` | `string` | No | — |
+| `error_text` | `string` | No | — |
+| `custom_string` | `string` | No | — |
+| `subaccount_id` | `number` | No | — |
+| `message_type` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`faxReceipts.get`
+
+Retrieve a single fax receipt by message ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.faxReceipts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | No | — |
+| `subaccount_id` | `number` | No | — |
+| `list_id` | `number` | No | — |
+| `message_id` | `string` | No | — |
+| `to` | `string` | No | — |
+| `from` | `string` | No | — |
+| `carrier` | `string` | No | — |
+| `country` | `string` | No | — |
+| `custom_string` | `string` | No | — |
+| `schedule` | `number` | No | — |
+| `message_pages` | `number` | No | — |
+| `message_price` | `string` | No | — |
+| `status_code` | `string` | No | — |
+| `status_text` | `string` | No | — |
+| `date_added` | `string` | No | — |
+| `from_email` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`faxReceipts.list`
+
+List fax delivery receipts with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.faxReceipts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  timestamp_send?: number,
+  timestamp?: number,
+  message_id?: string,
+  status_code?: string,
+  status_text?: string,
+  error_code?: string,
+  error_text?: string,
+  custom_string?: string,
+  subaccount_id?: number,
+  message_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markRead
+
+`faxReceipts.markRead`
+
+Mark fax delivery receipts as read
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.faxReceipts.markRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_before` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Mms
+
+### history
+
+`mms.history`
+
+List MMS message history with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.mms.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `date_from` | `number` | No | — |
+| `date_to` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  direction?: string,
+  date?: number,
+  to?: string,
+  body?: string,
+  subject?: string,
+  from?: string,
+  schedule?: number,
+  message_id?: string,
+  message_parts?: number,
+  message_price?: string,
+  custom_string?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  country?: string,
+  carrier?: string,
+  currency?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### historyExport
+
+`mms.historyExport`
+
+Export MMS history to a downloadable file
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.mms.historyExport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | No | — |
+| `q` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `date_from` | `number` | No | — |
+| `date_to` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+
+
+
+---
+
+### price
+
+`mms.price`
+
+Calculate the price of MMS messages without sending
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.mms.price({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_file` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  subject: string,
+  from: string,
+  source?: string,
+  schedule?: number,
+  country?: string,
+  list_id?: number,
+  custom_string?: string,
+  from_email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  direction?: string,
+  date?: number,
+  to?: string,
+  body?: string,
+  subject?: string,
+  from?: string,
+  schedule?: number,
+  message_id?: string,
+  message_parts?: number,
+  message_price?: string,
+  custom_string?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  country?: string,
+  carrier?: string,
+  currency?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### receipts
+
+`mms.receipts`
+
+List MMS delivery receipts with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.mms.receipts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message_id?: string,
+  status?: string,
+  status_code?: string,
+  status_text?: string,
+  timestamp?: number,
+  original_message_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### receiptsMarkRead
+
+`mms.receiptsMarkRead`
+
+Mark MMS delivery receipts as read
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.mms.receiptsMarkRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_before` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### send
+
+`mms.send`
+
+Send one or more MMS messages with media
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.mms.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_file` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  subject: string,
+  from: string,
+  source?: string,
+  schedule?: number,
+  country?: string,
+  list_id?: number,
+  custom_string?: string,
+  from_email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  direction?: string,
+  date?: number,
+  to?: string,
+  body?: string,
+  subject?: string,
+  from?: string,
+  schedule?: number,
+  message_id?: string,
+  message_parts?: number,
+  message_price?: string,
+  custom_string?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  country?: string,
+  carrier?: string,
+  currency?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Numbers
+
+### buy
+
+`numbers.buy`
+
+Purchase a dedicated number
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.numbers.buy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dedicated_number` | `string` | Yes | — |
+| `type` | `sms \| mms` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dedicated_number` | `string` | No | — |
+| `country` | `string` | No | — |
+| `price_total` | `number \| string` | No | — |
+
+
+
+---
+
+### list
+
+`numbers.list`
+
+List owned dedicated numbers
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.numbers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  dedicated_number?: string,
+  country?: string,
+  price?: number | string,
+  type?: string,
+  number_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`numbers.search`
+
+Search available dedicated numbers by country
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.numbers.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `search` | `string` | No | — |
+| `search_type` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  country?: string,
+  country_name?: string,
+  dedicated_number?: string,
+  price_setup?: number | string,
+  price_monthly?: number | string,
+  price_total?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Post Direct Mail
+
+### searchLocations
+
+`postDirectMail.searchLocations`
+
+Search direct mail delivery locations by country
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.postDirectMail.searchLocations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `q` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`postDirectMail.send`
+
+Send a direct mail campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.postDirectMail.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `size` | `A5 \| DL` | Yes | — |
+| `file_urls` | `string[]` | Yes | — |
+| `areas` | `object[]` | No | — |
+| `schedule` | `number` | No | — |
+| `source` | `string` | No | — |
+| `custom_string` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="areas full type">
+
+```ts
+{
+  location_id?: number,
+  quantity?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Post Letters
+
+### detectAddress
+
+`postLetters.detectAddress`
+
+Detect a structured address from PDF content or text
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.postLetters.detectAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | Letter content to detect the address from; at least one of content or address is expected |
+| `address` | `string` | No | Address text to parse; at least one of content or address is expected |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address_name` | `string` | No | — |
+| `address_line_1` | `string` | No | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | No | — |
+| `address_country` | `string` | No | — |
+
+
+
+---
+
+### history
+
+`postLetters.history`
+
+List post letter history with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.postLetters.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message_id?: string,
+  address_name?: string,
+  address_line_1?: string,
+  address_line_2?: string,
+  address_city?: string,
+  address_state?: string,
+  address_postal_code?: string,
+  address_country?: string,
+  return_address_id?: number,
+  custom_string?: string,
+  schedule?: number,
+  source?: string,
+  colour?: number,
+  duplex?: number,
+  post_pages?: number,
+  post_price?: number,
+  priority_post?: number,
+  date_added?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### historyExport
+
+`postLetters.historyExport`
+
+Export post letter history to a downloadable file
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.postLetters.historyExport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+| `q` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+
+
+
+---
+
+### price
+
+`postLetters.price`
+
+Calculate post letter price without sending
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.postLetters.price({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | Yes | — |
+| `recipients` | `object[]` | Yes | — |
+| `template_used` | `number` | No | — |
+| `colour` | `number` | No | — |
+| `duplex` | `number` | No | — |
+| `priority_post` | `number` | No | — |
+| `schedule` | `number` | No | — |
+| `source` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  address_name: string,
+  address_line_1: string,
+  address_line_2?: string,
+  address_city: string,
+  address_state?: string,
+  address_postal_code: string,
+  address_country: string,
+  return_address_id: number,
+  custom_string?: string,
+  schedule?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_cost` | `number` | No | — |
+| `recipients` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  message_id?: string,
+  address_name?: string,
+  address_line_1?: string,
+  address_line_2?: string,
+  address_city?: string,
+  address_state?: string,
+  address_postal_code?: string,
+  address_country?: string,
+  return_address_id?: number,
+  custom_string?: string,
+  schedule?: number,
+  source?: string,
+  colour?: number,
+  duplex?: number,
+  post_pages?: number,
+  post_price?: number,
+  priority_post?: number,
+  date_added?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`postLetters.send`
+
+Send a physical post letter to recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.postLetters.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | Yes | — |
+| `recipients` | `object[]` | Yes | — |
+| `template_used` | `number` | No | — |
+| `colour` | `number` | No | — |
+| `duplex` | `number` | No | — |
+| `priority_post` | `number` | No | — |
+| `schedule` | `number` | No | — |
+| `source` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  address_name: string,
+  address_line_1: string,
+  address_line_2?: string,
+  address_city: string,
+  address_state?: string,
+  address_postal_code: string,
+  address_country: string,
+  return_address_id: number,
+  custom_string?: string,
+  schedule?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_cost` | `number` | No | — |
+| `recipients` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  message_id?: string,
+  address_name?: string,
+  address_line_1?: string,
+  address_line_2?: string,
+  address_city?: string,
+  address_state?: string,
+  address_postal_code?: string,
+  address_country?: string,
+  return_address_id?: number,
+  custom_string?: string,
+  schedule?: number,
+  source?: string,
+  colour?: number,
+  duplex?: number,
+  post_pages?: number,
+  post_price?: number,
+  priority_post?: number,
+  date_added?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Post Return Addresses
+
+### create
+
+`postReturnAddresses.create`
+
+Create a post return address
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.postReturnAddresses.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address_name` | `string` | Yes | — |
+| `address_line_1` | `string` | Yes | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | Yes | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | Yes | — |
+| `address_country` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_address_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `address_name` | `string` | No | — |
+| `address_line_1` | `string` | No | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | No | — |
+| `address_country` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`postReturnAddresses.delete`
+
+Delete a post return address by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.postReturnAddresses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_address_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`postReturnAddresses.get`
+
+Retrieve a single post return address by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.postReturnAddresses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_address_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_address_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `address_name` | `string` | No | — |
+| `address_line_1` | `string` | No | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | No | — |
+| `address_country` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`postReturnAddresses.list`
+
+List post return addresses with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.postReturnAddresses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  return_address_id?: number,
+  user_id?: number,
+  address_name?: string,
+  address_line_1?: string,
+  address_line_2?: string,
+  address_city?: string,
+  address_state?: string,
+  address_postal_code?: string,
+  address_country?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`postReturnAddresses.update`
+
+Update a post return address by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.postReturnAddresses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_address_id` | `number` | Yes | — |
+| `address_name` | `string` | Yes | — |
+| `address_line_1` | `string` | Yes | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | Yes | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | Yes | — |
+| `address_country` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_address_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `address_name` | `string` | No | — |
+| `address_line_1` | `string` | No | — |
+| `address_line_2` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state` | `string` | No | — |
+| `address_postal_code` | `string` | No | — |
+| `address_country` | `string` | No | — |
+
+
+
+---
+
+## Recharge
+
+### creditCardGet
+
+`recharge.creditCardGet`
+
+Retrieve the stored recharge credit card
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.recharge.creditCardGet({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `display_number` | `string` | No | — |
+| `expiry_month` | `number \| string` | No | — |
+| `expiry_year` | `number \| string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### creditCardUpdate
+
+`recharge.creditCardUpdate`
+
+Replace the stored recharge credit card
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.recharge.creditCardUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | — |
+| `expiry_month` | `number \| string` | Yes | — |
+| `expiry_year` | `number \| string` | Yes | — |
+| `cvc` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `bank_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+
+
+
+---
+
+### packages
+
+`recharge.packages`
+
+List available recharge packages and currency
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.recharge.packages({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `packages` | `object[]` | No | — |
+| `currency` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="packages full type">
+
+```ts
+{
+  package_id?: number | string,
+  package_price?: number | string,
+  price_rate?: number | string,
+  sms_price?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### purchase
+
+`recharge.purchase`
+
+Purchase a recharge package by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.recharge.purchase({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `package_id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | No | — |
+| `amount` | `number \| string` | No | — |
+| `currency` | `string` | No | — |
+| `amount_aud` | `number \| string` | No | — |
+| `date` | `string` | No | — |
+
+
+
+---
+
+### transactionGet
+
+`recharge.transactionGet`
+
+Retrieve a single recharge transaction
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.recharge.transactionGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_number` | `string \| number` | No | — |
+| `amount` | `number \| string` | No | — |
+| `currency` | `string` | No | — |
+| `date` | `string` | No | — |
+
+
+
+---
+
+### transactions
+
+`recharge.transactions`
+
+List recharge transactions with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.recharge.transactions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  invoice_number?: string | number,
+  amount?: number | string,
+  currency?: string,
+  date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Referral
+
+### accountsList
+
+`referral.accountsList`
+
+List referral accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.referral.accountsList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  referral_rule_id?: number | string,
+  refered_user_id?: number | string,
+  date_referred?: string,
+  percentage_referral?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reseller
+
+### accountsList
+
+`reseller.accountsList`
+
+List reseller child accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.reseller.accountsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### settingsGet
+
+`reseller.settingsGet`
+
+Retrieve reseller settings
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.reseller.settingsGet({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### settingsUpdate
+
+`reseller.settingsUpdate`
+
+Update reseller settings
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.reseller.settingsUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allow_public_signups` | `boolean` | No | — |
+| `company_name` | `string` | No | — |
+| `default_margin` | `number` | No | — |
+| `subdomain` | `string` | No | — |
+| `trial_balance` | `number \| string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Sms
+
+### cancel
+
+`sms.cancel`
+
+Cancel a scheduled SMS message
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.sms.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `direction` | `string` | No | — |
+| `date` | `number` | No | — |
+| `to` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `schedule` | `number` | No | — |
+| `message_id` | `string` | Yes | — |
+| `message_parts` | `number` | No | — |
+| `message_price` | `string` | No | — |
+| `custom_string` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `subaccount_id` | `number` | No | — |
+| `country` | `string` | No | — |
+| `carrier` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### cancelAll
+
+`sms.cancelAll`
+
+Cancel all scheduled SMS messages
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.sms.cancelAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_string` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+
+
+
+---
+
+### history
+
+`sms.history`
+
+List sent SMS message history with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.sms.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `date_from` | `number` | No | Start epoch timestamp |
+| `date_to` | `number` | No | End epoch timestamp |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  direction?: string,
+  date?: number,
+  to: string,
+  body: string,
+  from?: string,
+  schedule?: number,
+  message_id: string,
+  message_parts?: number,
+  message_price?: string,
+  custom_string?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  country?: string,
+  carrier?: string,
+  currency?: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### historyExport
+
+`sms.historyExport`
+
+Export SMS history to a downloadable file
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.sms.historyExport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `date_from` | `number` | No | — |
+| `date_to` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+
+
+
+---
+
+### inbound
+
+`sms.inbound`
+
+List received inbound SMS messages with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.sms.inbound({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message_id: string,
+  to: string,
+  from: string,
+  body: string,
+  timestamp?: number,
+  original_message_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### inboundCreateTest
+
+`sms.inboundCreateTest`
+
+Create a test inbound SMS message
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.sms.inboundCreateTest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | No | — |
+| `to` | `string` | No | — |
+| `from` | `string` | No | — |
+| `body` | `string` | No | — |
+| `timestamp` | `number` | No | — |
+| `original_message_id` | `string` | No | — |
+
+
+
+---
+
+### inboundMarkRead
+
+`sms.inboundMarkRead`
+
+Mark inbound SMS messages as read
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.sms.inboundMarkRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_before` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### inboundMarkReadOne
+
+`sms.inboundMarkReadOne`
+
+Mark a single inbound SMS message as read
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.sms.inboundMarkReadOne({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### price
+
+`sms.price`
+
+Calculate the price of SMS messages without sending
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.sms.price({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  from?: string,
+  schedule?: number,
+  source?: string,
+  custom_string?: string,
+  country?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `blocked_count` | `number` | No | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  direction?: string,
+  date?: number,
+  to: string,
+  body: string,
+  from?: string,
+  schedule?: number,
+  message_id: string,
+  message_parts?: number,
+  message_price?: string,
+  custom_string?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  country?: string,
+  carrier?: string,
+  currency?: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### receiptCreateTest
+
+`sms.receiptCreateTest`
+
+Create a test SMS delivery receipt for a webhook URL
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.sms.receiptCreateTest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `status_code` | `string` | No | — |
+| `status_text` | `string` | No | — |
+| `timestamp` | `number` | No | — |
+| `original_message_id` | `string` | No | — |
+
+
+
+---
+
+### receiptGet
+
+`sms.receiptGet`
+
+Retrieve a single SMS delivery receipt by message ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.sms.receiptGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `status_code` | `string` | No | — |
+| `status_text` | `string` | No | — |
+| `timestamp` | `number` | No | — |
+| `original_message_id` | `string` | No | — |
+
+
+
+---
+
+### receipts
+
+`sms.receipts`
+
+List SMS delivery receipts with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.sms.receipts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message_id: string,
+  status: string,
+  status_code?: string,
+  status_text?: string,
+  timestamp?: number,
+  original_message_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### receiptsMarkRead
+
+`sms.receiptsMarkRead`
+
+Mark SMS delivery receipts as read
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.sms.receiptsMarkRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_before` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### send
+
+`sms.send`
+
+Send one or more SMS messages
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.sms.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | Array of SMS messages to send |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  from?: string,
+  schedule?: number,
+  source?: string,
+  custom_string?: string,
+  country?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `blocked_count` | `number` | No | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  direction?: string,
+  date?: number,
+  to: string,
+  body: string,
+  from?: string,
+  schedule?: number,
+  message_id: string,
+  message_parts?: number,
+  message_price?: string,
+  custom_string?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  country?: string,
+  carrier?: string,
+  currency?: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### statistics
+
+`sms.statistics`
+
+Retrieve SMS usage statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.sms.statistics({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `object` | No | — |
+| `inbound` | `object` | No | — |
+| `outbound` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="inbound full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="outbound full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sms Email Sms
+
+### create
+
+`smsEmailSms.create`
+
+Allow an email address for email-to-SMS
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsEmailSms.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `from_fax` | `string` | No | — |
+| `subaccount_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address_id` | `number` | No | — |
+| `email_address` | `string` | No | — |
+| `from` | `string` | No | — |
+| `subaccount_id` | `number` | No | — |
+| `from_fax` | `string` | No | — |
+| `voice` | `string` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`smsEmailSms.list`
+
+List allowed email-to-SMS addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.smsEmailSms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_address_id?: number,
+  email_address?: string,
+  from?: string,
+  subaccount_id?: number,
+  from_fax?: string,
+  voice?: string,
+  lang?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sms Inbound Rules
+
+### create
+
+`smsInboundRules.create`
+
+Create an SMS inbound automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsInboundRules.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dedicated_number` | `string` | Yes | — |
+| `rule_name` | `string` | Yes | — |
+| `message_search_type` | `number` | Yes | — |
+| `message_search_term` | `string` | No | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | No | — |
+| `dedicated_number` | `string` | No | — |
+| `rule_name` | `string` | No | — |
+| `message_search_type` | `number` | No | — |
+| `message_search_term` | `string` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `body` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`smsInboundRules.delete`
+
+Delete an SMS inbound automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsInboundRules.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`smsInboundRules.get`
+
+Retrieve an SMS inbound automation rule
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.smsInboundRules.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | No | — |
+| `dedicated_number` | `string` | No | — |
+| `rule_name` | `string` | No | — |
+| `message_search_type` | `number` | No | — |
+| `message_search_term` | `string` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `body` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`smsInboundRules.list`
+
+List SMS inbound automation rules
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.smsInboundRules.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  inbound_rule_id?: number,
+  dedicated_number?: string,
+  rule_name?: string,
+  message_search_type?: number,
+  message_search_term?: string,
+  action?: string,
+  action_address?: string,
+  body?: string,
+  enabled?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`smsInboundRules.update`
+
+Update an SMS inbound automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsInboundRules.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | Yes | — |
+| `dedicated_number` | `string` | Yes | — |
+| `rule_name` | `string` | Yes | — |
+| `message_search_type` | `number` | Yes | — |
+| `message_search_term` | `string` | No | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbound_rule_id` | `number` | No | — |
+| `dedicated_number` | `string` | No | — |
+| `rule_name` | `string` | No | — |
+| `message_search_type` | `number` | No | — |
+| `message_search_term` | `string` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `body` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+## Sms Receipt Rules
+
+### create
+
+`smsReceiptRules.create`
+
+Create an SMS receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsReceiptRules.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_name` | `string` | Yes | — |
+| `match_type` | `number` | Yes | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`smsReceiptRules.delete`
+
+Delete an SMS receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsReceiptRules.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`smsReceiptRules.get`
+
+Retrieve an SMS receipt automation rule
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.smsReceiptRules.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`smsReceiptRules.list`
+
+List SMS receipt automation rules
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.smsReceiptRules.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  receipt_rule_id?: number,
+  rule_name?: string,
+  match_type?: number,
+  action?: string,
+  action_address?: string,
+  enabled?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`smsReceiptRules.update`
+
+Update an SMS receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsReceiptRules.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+| `rule_name` | `string` | Yes | — |
+| `match_type` | `number` | Yes | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+## Sms Stripped Strings
+
+### create
+
+`smsStrippedStrings.create`
+
+Create an email-to-SMS stripped-string rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsStrippedStrings.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `strip_string` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `number` | No | — |
+| `strip_string` | `string` | No | — |
+| `stripped_string` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`smsStrippedStrings.delete`
+
+Delete an email-to-SMS stripped-string rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsStrippedStrings.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`smsStrippedStrings.get`
+
+Retrieve a single stripped-string rule
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.smsStrippedStrings.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `number` | No | — |
+| `strip_string` | `string` | No | — |
+| `stripped_string` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`smsStrippedStrings.list`
+
+List email-to-SMS stripped-string rules
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.smsStrippedStrings.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  rule_id?: number,
+  strip_string?: string,
+  stripped_string?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`smsStrippedStrings.update`
+
+Update an email-to-SMS stripped-string rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsStrippedStrings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `number` | Yes | — |
+| `strip_string` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `number` | No | — |
+| `strip_string` | `string` | No | — |
+| `stripped_string` | `string` | No | — |
+
+
+
+---
+
+## Sms Templates
+
+### create
+
+`smsTemplates.create`
+
+Create an SMS message template
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsTemplates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_name` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | No | — |
+| `template_name` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`smsTemplates.delete`
+
+Delete an SMS template
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsTemplates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`smsTemplates.get`
+
+Retrieve a single SMS template
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.smsTemplates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | No | — |
+| `template_name` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`smsTemplates.list`
+
+List SMS templates with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.smsTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  template_id?: number,
+  template_name?: string,
+  body?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`smsTemplates.update`
+
+Update an SMS template
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.smsTemplates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+| `template_name` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | No | — |
+| `template_name` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
+## Subaccounts
+
+### create
+
+`subaccounts.create`
+
+Create a new subaccount
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.subaccounts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_username` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `phone_number` | `string` | Yes | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `notes` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subaccount_id` | `number \| string` | No | — |
+| `api_username` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `api_key` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`subaccounts.delete`
+
+Delete a subaccount
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.subaccounts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subaccount_id` | `number \| string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`subaccounts.get`
+
+Retrieve a single subaccount
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.subaccounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subaccount_id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subaccount_id` | `number \| string` | No | — |
+| `api_username` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `api_key` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`subaccounts.list`
+
+List subaccounts with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.subaccounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  subaccount_id?: number | string,
+  api_username?: string,
+  email?: string,
+  phone_number?: string,
+  first_name?: string,
+  last_name?: string,
+  api_key?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### regenKey
+
+`subaccounts.regenKey`
+
+Regenerate a subaccount API key
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.subaccounts.regenKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subaccount_id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_key` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`subaccounts.update`
+
+Update subaccount contact fields
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.subaccounts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subaccount_id` | `number \| string` | Yes | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `notes` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subaccount_id` | `number \| string` | No | — |
+| `api_username` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `api_key` | `string` | No | — |
+
+
+
+---
+
+## Timezones
+
+### list
+
+`timezones.list`
+
+List supported timezone names
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.timezones.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+
+## Uploads
+
+### upload
+
+`uploads.upload`
+
+Upload and convert a file for messaging services
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.uploads.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `convert` | `fax \| mms \| csv \| post \| postcard` | Yes | — |
+| `content` | `string` | Yes | Base64-encoded file content |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_name` | `string` | No | — |
+| `upload_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `date_added` | `string` | No | — |
+| `date_delete` | `string` | No | — |
+| `_url` | `string` | No | — |
+
+
+
+---
+
+### uploadDocument
+
+`uploads.uploadDocument`
+
+Upload a document for fax and post services
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.uploads.uploadDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `convert` | `fax \| post \| postcard` | Yes | — |
+| `content` | `string` | Yes | Base64-encoded file content |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_name` | `string` | No | — |
+| `upload_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `date_added` | `string` | No | — |
+| `date_delete` | `string` | No | — |
+| `_url` | `string` | No | — |
+
+
+
+---
+
+## Voice
+
+### cancelAll
+
+`voice.cancelAll`
+
+Cancel all scheduled voice calls
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.voice.cancelAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+
+
+
+---
+
+### history
+
+`voice.history`
+
+List voice call history with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.voice.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  voice?: string,
+  lang?: string,
+  message_id: string,
+  status: string,
+  date?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### historyExport
+
+`voice.historyExport`
+
+Export voice history to a downloadable file
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.voice.historyExport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | No | — |
+| `q` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `date_from` | `number` | No | — |
+| `date_to` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+
+
+
+---
+
+### languages
+
+`voice.languages`
+
+List available voice-call languages
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.voice.languages({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  code: string,
+  country?: string,
+  gender?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### receiptsMarkRead
+
+`voice.receiptsMarkRead`
+
+Mark voice delivery receipts as read
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.voice.receiptsMarkRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_before` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### send
+
+`voice.send`
+
+Initiate outbound text-to-speech voice call
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.voice.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  voice?: female | male,
+  lang?: string,
+  schedule?: number,
+  require_input?: number,
+  machine_detection?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  voice?: string,
+  lang?: string,
+  message_id: string,
+  status: string,
+  date?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### statistics
+
+`voice.statistics`
+
+Retrieve voice usage statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.voice.statistics({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `object` | No | — |
+| `inbound` | `object` | No | — |
+| `outbound` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="inbound full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="outbound full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Voice Receipt Rules
+
+### create
+
+`voiceReceiptRules.create`
+
+Create a voice receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.voiceReceiptRules.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_name` | `string` | Yes | — |
+| `match_type` | `number` | Yes | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`voiceReceiptRules.delete`
+
+Delete a voice receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.voiceReceiptRules.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+never[] | {
+} | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`voiceReceiptRules.get`
+
+Retrieve a voice receipt automation rule
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.voiceReceiptRules.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`voiceReceiptRules.list`
+
+List voice receipt automation rules
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.voiceReceiptRules.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  receipt_rule_id?: number,
+  rule_name?: string,
+  match_type?: number,
+  action?: string,
+  action_address?: string,
+  enabled?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`voiceReceiptRules.update`
+
+Update a voice receipt automation rule
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.voiceReceiptRules.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | Yes | — |
+| `rule_name` | `string` | Yes | — |
+| `match_type` | `number` | Yes | — |
+| `action` | `string` | Yes | — |
+| `action_address` | `string` | Yes | — |
+| `enabled` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_rule_id` | `number` | No | — |
+| `rule_name` | `string` | No | — |
+| `match_type` | `number` | No | — |
+| `action` | `string` | No | — |
+| `action_address` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+---
+

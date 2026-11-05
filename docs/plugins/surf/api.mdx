@@ -1,0 +1,9179 @@
+---
+title: API
+description: "API reference for Surf: every `surf.api.*` operation with input and output types."
+---
+
+Every `surf.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Dex
+
+### tokenPrice
+
+`dex.tokenPrice`
+
+DEX Token OHLCV Price
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.dex.tokenPrice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chain` | `ethereum \| base \| bsc \| arbitrum \| optimism \| polygon \| avalanche \| solana` | Yes | — |
+| `address` | `string` | Yes | — |
+| `interval` | `1m \| 5m \| 15m \| 30m \| 1h \| 4h \| 12h \| 1d \| 7d` | No | — |
+| `time_range` | `1h \| 6h \| 12h \| 24h \| 7d \| 30d \| 90d \| 180d \| 365d \| max` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  close: number,
+  high: number,
+  low: number,
+  open: number,
+  timestamp: number,
+  volume_usd: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Equity
+
+### balanceSheet
+
+`equity.balanceSheet`
+
+Equity Balance Sheet
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.balanceSheet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `period` | `quarterly \| annual` | No | — |
+| `end_date` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accumulated_oci: {
+  },
+  calculated_at?: number,
+  cash_and_equivalents: {
+  },
+  currency: string,
+  current_assets: {
+  },
+  current_debt: {
+  },
+  current_investments: {
+  },
+  current_liabilities: {
+  },
+  deferred_revenue: {
+  },
+  deposit_liabilities: {
+  },
+  duration_days?: number,
+  duration_months?: number,
+  fiscal_period?: string | null,
+  fiscal_quarter?: number,
+  fiscal_year?: number,
+  formula_version?: string,
+  goodwill_and_intangible_assets: {
+  },
+  inventory: {
+  },
+  liabilities_and_equity: {
+  },
+  net_debt: {
+  },
+  non_current_assets: {
+  },
+  non_current_debt: {
+  },
+  non_current_investments: {
+  },
+  non_current_liabilities: {
+  },
+  other_current_liabilities: {
+  },
+  other_non_current_assets: {
+  },
+  other_non_current_liabilities: {
+  },
+  outstanding_shares: {
+  },
+  payables: {
+  },
+  period: quarterly | ytd | annual | ttm,
+  period_start?: string,
+  property_plant_and_equipment: {
+  },
+  receivables: {
+  },
+  report_period: string,
+  retained_earnings: {
+  },
+  shareholders_equity: {
+  },
+  source_updated_at?: number,
+  symbol: string,
+  tax_assets: {
+  },
+  tax_liabilities: {
+  },
+  total_assets: {
+  },
+  total_debt: {
+  },
+  total_liabilities: {
+  },
+  working_capital: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### candles
+
+`equity.candles`
+
+Equity Price Candles
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.candles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `day \| week \| month \| year` | No | — |
+| `interval_multiplier` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  candles?: {
+  }[] | null,
+  end_date?: string,
+  interval: string,
+  interval_multiplier: number,
+  latest_price: {
+    day_change?: number,
+    day_change_percent?: number,
+    price: number,
+    timestamp: number
+  },
+  latest_price_available: boolean,
+  start_date?: string,
+  symbol: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cashFlow
+
+`equity.cashFlow`
+
+Equity Cash Flow
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.cashFlow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `period` | `quarterly \| ytd \| annual \| ttm` | No | — |
+| `end_date` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  beginning_cash: {
+  },
+  business_acquisitions_and_disposals: {
+  },
+  calculated_at?: number,
+  capital_expenditure: {
+  },
+  change_in_cash: {
+  },
+  currency: string,
+  debt_issuance_repayment: {
+  },
+  depreciation_and_amortization: {
+  },
+  dividends_and_distributions: {
+  },
+  duration_days?: number,
+  duration_months?: number,
+  ending_cash: {
+  },
+  equity_issuance_purchase: {
+  },
+  financing_cash_flow: {
+  },
+  fiscal_period?: string | null,
+  fiscal_quarter?: number,
+  fiscal_year?: number,
+  formula_version?: string,
+  free_cash_flow: {
+  },
+  fx_effect: {
+  },
+  investing_cash_flow: {
+  },
+  investment_acquisitions_and_disposals: {
+  },
+  net_income: {
+  },
+  operating_cash_flow: {
+  },
+  period: quarterly | ytd | annual | ttm,
+  period_start?: string,
+  report_period: string,
+  share_based_compensation: {
+  },
+  source_updated_at?: number,
+  symbol: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### etfHoldings
+
+`equity.etfHoldings`
+
+ETF Holdings
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.etfHoldings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `as_of` | `string` | No | — |
+| `asset_class` | `equity \| bond` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  available_periods?: {
+  }[] | null,
+  snapshots?: {
+  }[] | null,
+  symbol: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filings
+
+`equity.filings`
+
+Equity SEC Filings
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.filings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accepted_at?: number,
+  accession: string,
+  filed_on: string,
+  financial_metric_count: number,
+  form_type: string,
+  normalized_statement_field_count: number,
+  report_periods?: string[] | null,
+  sec_url: string,
+  source_observed_at?: number,
+  source_revision_ids?: string[] | null,
+  source_statement_ids?: string[] | null,
+  statement_types?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### incomeStatement
+
+`equity.incomeStatement`
+
+Equity Income Statement
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.incomeStatement({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `period` | `quarterly \| ytd \| annual \| ttm` | No | — |
+| `end_date` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  calculated_at?: number,
+  cost_of_revenue: {
+  },
+  currency: string,
+  dividends_per_common_share: {
+  },
+  duration_days?: number,
+  duration_months?: number,
+  ebit: {
+  },
+  ebitda: {
+  },
+  eps_basic: {
+  },
+  eps_calculation_method?: string,
+  eps_diluted: {
+  },
+  fiscal_period?: string | null,
+  fiscal_quarter?: number,
+  fiscal_year?: number,
+  formula_version?: string,
+  gross_profit: {
+  },
+  income_tax_expense: {
+  },
+  interest_expense: {
+  },
+  net_income: {
+  },
+  net_income_common_stock: {
+  },
+  net_income_discontinued_operations: {
+  },
+  net_income_non_controlling_interests: {
+  },
+  net_income_yoy: {
+  },
+  operating_expense: {
+  },
+  operating_income: {
+  },
+  operating_income_yoy: {
+  },
+  period: quarterly | ytd | annual | ttm,
+  period_start?: string,
+  report_period: string,
+  research_and_development: {
+  },
+  revenue: {
+  },
+  revenue_yoy: {
+  },
+  sga_expense: {
+  },
+  source_updated_at?: number,
+  symbol: string,
+  total_operating_costs: {
+  },
+  weighted_average_shares: {
+  },
+  weighted_average_shares_diluted: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### latestFilings
+
+`equity.latestFilings`
+
+Latest Equity Filings
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.latestFilings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accepted_at?: number,
+  company_name: string,
+  coverage_fields: number,
+  filed_on: string,
+  financial_metric_count: number,
+  form_type: string,
+  logo_url: string,
+  report_period: string,
+  sec_url: string,
+  symbol: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### latestFinancials
+
+`equity.latestFinancials`
+
+Latest Equity Financials
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.latestFinancials({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `market_cap_min` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  company_name: string,
+  duration_days?: number,
+  duration_months?: number,
+  filed_on: string,
+  free_cash_flow: {
+  },
+  gross_margin: {
+  },
+  logo_url: string,
+  operating_margin: {
+  },
+  pe_ttm: {
+  },
+  period_start?: string,
+  report_period: string,
+  return_on_equity: {
+  },
+  revenue_growth: {
+  },
+  source_updated_at?: number,
+  symbol: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listings
+
+`equity.listings`
+
+Equity Listings
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.listings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  financial_serving_reason?: reporting_series_missing | publication_missing | publication_terminal_excluded,
+  financial_serving_status: string,
+  is_current: boolean,
+  is_primary: boolean,
+  issuer_cik: string,
+  issuer_company_id: string,
+  issuer_legal_name: string,
+  listing_currency?: string,
+  listing_exchange_code?: string,
+  listing_id: string,
+  listing_lifecycle_status: string,
+  listing_symbol_id: string,
+  reporting_series_display_name?: string,
+  reporting_series_id?: string,
+  security_id: string,
+  security_name?: string,
+  security_type: string,
+  share_class?: string,
+  stock_type: string,
+  symbol_exchange_code?: string,
+  symbol_identity_status: string,
+  ticker: string,
+  valid_from?: string,
+  valid_to?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### meta
+
+`equity.meta`
+
+Equity Metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.meta({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `include_tokenized` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  currency: string,
+  day_change?: number,
+  day_change_percent?: number,
+  logo_url: string,
+  name: string,
+  price: number,
+  price_timestamp: number,
+  symbol: string,
+  tokenized?: {
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metrics
+
+`equity.metrics`
+
+Equity Financial Metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.metrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `period` | `quarterly \| annual \| ttm` | No | — |
+| `end_date` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  asset_turnover: {
+  },
+  book_value_growth: {
+  },
+  book_value_per_share: {
+  },
+  calculated_at?: number,
+  cash_ratio: {
+  },
+  change_in_cash_per_share: {
+  },
+  currency: string,
+  current_ratio: {
+  },
+  days_sales_outstanding: {
+  },
+  debt_to_assets: {
+  },
+  debt_to_equity: {
+  },
+  duration_days?: number,
+  duration_months?: number,
+  earnings_growth: {
+  },
+  earnings_per_share: {
+  },
+  earnings_per_share_growth: {
+  },
+  ebit_margin: {
+  },
+  ebitda: {
+  },
+  ebitda_growth: {
+  },
+  ebitda_margin: {
+  },
+  enterprise_value: {
+  },
+  enterprise_value_to_ebitda_ratio: {
+  },
+  enterprise_value_to_revenue_ratio: {
+  },
+  fiscal_period?: string | null,
+  fiscal_quarter?: number,
+  fiscal_year?: number,
+  free_cash_flow_growth: {
+  },
+  free_cash_flow_margin: {
+  },
+  free_cash_flow_per_share: {
+  },
+  free_cash_flow_yield: {
+  },
+  gross_margin: {
+  },
+  interest_coverage: {
+  },
+  inventory_turnover: {
+  },
+  liabilities_to_assets: {
+  },
+  market_cap: {
+  },
+  net_debt: {
+  },
+  net_margin: {
+  },
+  operating_cash_flow_per_share: {
+  },
+  operating_cash_flow_ratio: {
+  },
+  operating_cycle: {
+  },
+  operating_income_growth: {
+  },
+  operating_margin: {
+  },
+  payout_ratio: {
+  },
+  peg_ratio: {
+  },
+  period: quarterly | annual | ttm,
+  period_start?: string,
+  price_to_book_ratio: {
+  },
+  price_to_earnings_ratio: {
+  },
+  price_to_sales_ratio: {
+  },
+  quick_ratio: {
+  },
+  receivables_turnover: {
+  },
+  report_period: string,
+  return_on_assets: {
+  },
+  return_on_equity: {
+  },
+  return_on_invested_capital: {
+  },
+  revenue_growth: {
+  },
+  source_updated_at?: number,
+  symbol: string,
+  working_capital_turnover: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### overview
+
+`equity.overview`
+
+Equity Financial Overview
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.overview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `period` | `quarterly \| ytd \| annual \| ttm` | No | — |
+| `end_date` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  calculated_at?: number,
+  cash_and_equivalents: {
+  },
+  company_name: string,
+  currency: string,
+  current_ratio: {
+  },
+  debt_to_equity: {
+  },
+  duration_days?: number,
+  duration_months?: number,
+  ebit: {
+  },
+  ebit_margin: {
+  },
+  ebitda: {
+  },
+  ebitda_margin: {
+  },
+  eps_basic: {
+  },
+  eps_diluted: {
+  },
+  exchange: string,
+  fiscal_period?: string | null,
+  fiscal_quarter?: number,
+  fiscal_year?: number,
+  formula_version?: string,
+  free_cash_flow: {
+  },
+  gross_margin: {
+  },
+  gross_profit: {
+  },
+  industry?: string,
+  liabilities_to_assets: {
+  },
+  net_debt: {
+  },
+  net_income: {
+  },
+  net_margin: {
+  },
+  operating_cash_flow: {
+  },
+  operating_income: {
+  },
+  operating_margin: {
+  },
+  pb_mrq: {
+  },
+  pe_lyr: {
+  },
+  pe_ttm: {
+  },
+  period: quarterly | ytd | annual | ttm,
+  period_start?: string,
+  ps_ttm: {
+  },
+  report_period: string,
+  return_on_assets: {
+  },
+  return_on_equity: {
+  },
+  return_on_invested_capital: {
+  },
+  revenue: {
+  },
+  revenue_yoy: {
+  },
+  sector?: string,
+  shareholders_equity: {
+  },
+  source_updated_at?: number,
+  symbol: string,
+  total_assets: {
+  },
+  total_debt: {
+  },
+  total_liabilities: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### profile
+
+`equity.profile`
+
+Equity Profile
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.profile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  cik?: string,
+  company_name: string,
+  description?: string,
+  employee_count?: number,
+  exchange: string,
+  industry?: string,
+  is_active: boolean,
+  listing_date?: string,
+  location?: string,
+  sec_filings_url?: string,
+  sector?: string,
+  sic_code?: string,
+  sic_industry?: string,
+  sic_sector?: string,
+  source_updated_at?: number,
+  symbol: string,
+  website_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### segments
+
+`equity.segments`
+
+Equity Segment Financials
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.equity.segments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `period` | `quarterly \| annual` | No | — |
+| `statement_type` | `income \| balance_sheet \| cash_flow` | No | — |
+| `metric_code` | `string` | No | — |
+| `dimension_type` | `string` | No | — |
+| `label` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  calculated_at?: number,
+  currency?: string,
+  dimension_type: product | segment,
+  fiscal_quarter?: number,
+  fiscal_year?: number,
+  label: string,
+  label_key: string,
+  materialized_at?: number,
+  metric_code: string,
+  period: quarterly | annual,
+  presentation_period: single_quarter | annual,
+  reason_code?: string,
+  report_period: string,
+  source_accessions?: string[] | null,
+  source_observed_at?: number,
+  source_provider_tickers?: string[] | null,
+  statement_type: income | balance_sheet | cash_flow,
+  status: reported | source_null | source_missing,
+  symbol: string,
+  unit?: string,
+  value?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Exchange
+
+### candles
+
+`exchange.candles`
+
+Exchange Historical Candles
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.exchange.candles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exchange` | `bithumb \| upbit \| hashkey \| bitflyer \| coinone \| korbit` | Yes | — |
+| `pair` | `string` | Yes | — |
+| `interval` | `5m \| 4h \| 1w` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `include_synthetic` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  close: number,
+  close_time: number,
+  exchange: string,
+  high: number,
+  interval: string,
+  is_synthetic: boolean,
+  low: number,
+  open: number,
+  pair: string,
+  region: string,
+  timestamp: number,
+  trade_count?: number,
+  volume_base?: number,
+  volume_quote?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### coverage
+
+`exchange.coverage`
+
+Exchange Market Coverage
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.exchange.coverage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exchange` | `bithumb \| upbit \| hashkey \| bitflyer \| coinone \| korbit` | No | — |
+| `q` | `string` | No | — |
+| `quote` | `string` | No | — |
+| `type` | `spot` | No | — |
+| `status` | `active \| inactive` | No | — |
+| `data_status` | `covered \| official_empty_all \| official_empty_ticker \| official_empty_5m \| official_empty_weekly \| stale_gt_7d \| stale_30m_to_7d \| recent_but_lt_min_ta_candles \| missing_4h \| missing_latest_ta` | No | — |
+| `sort_by` | `pair \| price \| change_24h \| volume_24h \| technical_score \| latest_candle_at \| status` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  active: boolean,
+  base: string,
+  change_24h_abs?: number,
+  change_24h_pct?: number,
+  data_actionability?: string,
+  data_status?: string,
+  exchange: string,
+  high_24h?: number,
+  latest_4h_candle_at?: number,
+  latest_5m_candle_at?: number,
+  latest_candle_at?: number,
+  latest_price?: number,
+  latest_ticker_at?: number,
+  latest_weekly_candle_at?: number,
+  listing_date?: number,
+  low_24h?: number,
+  open_24h?: number,
+  pair: string,
+  prev_close?: number,
+  quote: string,
+  region: string,
+  status: string,
+  technical_score?: number,
+  technical_score_at?: number,
+  technical_score_label?: string,
+  type: string,
+  volume_24h_base?: number,
+  volume_24h_quote?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### depth
+
+`exchange.depth`
+
+Exchange Order Book Depth
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.exchange.depth({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pair` | `string` | Yes | — |
+| `type` | `spot \| swap \| perpetual \| perp` | No | — |
+| `limit` | `number` | No | — |
+| `exchange` | `binance \| okx \| bybit \| bitget \| coinbase \| kraken \| gate \| mexc \| upbit \| bitstamp \| deribit \| bitmex \| bithumb \| hyperliquid` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ask_depth?: number | null,
+  asks?: {
+  }[] | null,
+  bid_depth?: number | null,
+  bids?: {
+  }[] | null,
+  exchange: string,
+  mid_price?: number | null,
+  pair: string,
+  spread?: number | null,
+  spread_pct?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fundingHistory
+
+`exchange.fundingHistory`
+
+Exchange Funding Rate History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.exchange.fundingHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pair` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `exchange` | `binance \| okx \| bybit \| bitget \| gate \| htx \| mexc \| bitfinex \| bitmex \| hyperliquid` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  exchange: string,
+  funding_interval_hours?: number | null,
+  funding_rate?: number | null,
+  funding_rate_1h?: number,
+  funding_rate_8h?: number,
+  funding_rate_annualized?: number,
+  funding_rate_raw?: number,
+  pair: string,
+  timestamp?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### klines
+
+`exchange.klines`
+
+Exchange OHLCV Candlesticks
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.exchange.klines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pair` | `string` | Yes | — |
+| `type` | `spot \| swap \| perpetual \| perp` | No | — |
+| `interval` | `1m \| 3m \| 5m \| 15m \| 30m \| 1h \| 2h \| 4h \| 6h \| 8h \| 12h \| 1d \| 3d \| 1w \| 1M` | No | — |
+| `from` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `exchange` | `binance \| okx \| bybit \| bitget \| coinbase \| kraken \| gate \| htx \| kucoin \| mexc \| upbit \| bitfinex \| bitstamp \| deribit \| bitmex \| bithumb \| hyperliquid` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  candles?: {
+  }[] | null,
+  count: number,
+  exchange: string,
+  interval: string,
+  pair: string,
+  period_end?: string | null,
+  period_high?: number | null,
+  period_low?: number | null,
+  period_start?: string | null,
+  period_volume?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### longShortRatio
+
+`exchange.longShortRatio`
+
+Exchange Long/Short Ratio History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.exchange.longShortRatio({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pair` | `string` | Yes | — |
+| `interval` | `1h \| 4h \| 1d` | No | — |
+| `from` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `exchange` | `binance \| okx \| bybit \| bitget` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  exchange: string,
+  long_short_ratio?: number | null,
+  pair: string,
+  timestamp?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markets
+
+`exchange.markets`
+
+Exchange Trading Pairs
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.exchange.markets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exchange` | `binance \| okx \| bybit \| bitget \| coinbase \| kraken \| gate \| htx \| kucoin \| mexc \| upbit \| bitfinex \| bitstamp \| deribit \| bitmex \| bithumb \| hyperliquid` | No | — |
+| `type` | `spot \| swap \| future \| option \| perpetual \| perp` | No | — |
+| `base` | `string` | No | — |
+| `quote` | `string` | No | — |
+| `search` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  active?: boolean | null,
+  base?: string | null,
+  exchange: string,
+  maker_fee?: number | null,
+  pair: string,
+  quote?: string | null,
+  taker_fee?: number | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### perp
+
+`exchange.perp`
+
+Exchange Perpetual Contract Snapshot
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.exchange.perp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pair` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `exchange` | `binance \| okx \| bybit \| bitget \| htx \| bitfinex \| bitmex \| hyperliquid` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  exchange: string,
+  funding: {
+    exchange: string,
+    funding_interval_hours?: number | null,
+    funding_rate?: number | null,
+    funding_rate_1h?: number,
+    funding_rate_8h?: number,
+    funding_rate_annualized?: number,
+    funding_rate_raw?: number,
+    index_price?: number | null,
+    interval?: string | null,
+    mark_price?: number | null,
+    next_funding?: string | null,
+    pair: string
+  },
+  open_interest: {
+    exchange: string,
+    open_interest_amount?: number | null,
+    open_interest_usd?: number | null,
+    pair: string,
+    timestamp?: number | null
+  },
+  pair: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### price
+
+`exchange.price`
+
+Exchange Ticker Price
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.exchange.price({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pair` | `string` | Yes | — |
+| `type` | `spot \| swap \| perpetual \| perp` | No | — |
+| `exchange` | `binance \| okx \| bybit \| bitget \| coinbase \| kraken \| gate \| htx \| kucoin \| mexc \| upbit \| bitfinex \| bitstamp \| deribit \| bitmex \| bithumb \| hyperliquid` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ask?: number | null,
+  bid?: number | null,
+  change_24h_pct?: number | null,
+  exchange: string,
+  high_24h?: number | null,
+  last?: number | null,
+  low_24h?: number | null,
+  pair: string,
+  timestamp?: number | null,
+  volume_24h_base?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fund
+
+### detail
+
+`fund.detail`
+
+Fund Profile Detail
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.fund.detail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  description?: string,
+  id: string,
+  image?: string,
+  invested_projects_count: number,
+  jurisdiction?: string,
+  links?: {
+  }[] | null,
+  members?: {
+  }[] | null,
+  name: string,
+  recent_researches?: {
+  }[] | null,
+  tier: number,
+  type?: string,
+  x_accounts?: {
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### portfolio
+
+`fund.portfolio`
+
+Fund Portfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.fund.portfolio({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `is_lead` | `true \| false \| ` | No | — |
+| `invested_after` | `number` | No | — |
+| `invested_before` | `number` | No | — |
+| `sort_by` | `invested_at \| recent_raise \| total_raise` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  invested_at?: number,
+  is_lead: boolean,
+  project_id: string,
+  project_logo?: string,
+  project_name: string,
+  project_slug?: string,
+  recent_raise?: number,
+  total_raise?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ranking
+
+`fund.ranking`
+
+Fund Ranking
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.fund.ranking({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric` | `tier \| portfolio_count` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  image?: string,
+  invested_projects_count: number,
+  name: string,
+  tier: number,
+  top_projects?: {
+  }[] | null,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Heatscore
+
+### detail
+
+`heatscore.detail`
+
+Signal Detail
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.heatscore.detail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `project_slug` | `string` | No | — |
+| `time_range` | `24h \| 7d` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ai_summary?: {
+  },
+  baseline?: number,
+  change_percent?: number,
+  change_vs_previous_percent?: number,
+  computed_hour?: number,
+  core_state: {
+    driver?: string,
+    priority?: number,
+    reason?: string,
+    state?: string,
+    state_type?: string,
+    strength?: string
+  },
+  driver?: string,
+  evidence_score?: number,
+  heat_dimensions: {
+    derivative?: number,
+    derivative_components?: {
+    }[] | null,
+    flow?: number,
+    movement?: number,
+    social?: number
+  },
+  heat_score?: number,
+  heat_score_by_range?: {
+  },
+  heat_score_change_vs_previous_percent_by_range?: {
+  },
+  heat_score_previous_by_range?: {
+  },
+  liquidation_long_24h?: number,
+  liquidation_long_short_ratio_24h?: number,
+  liquidation_short_24h?: number,
+  logo?: string,
+  market_relevance?: number,
+  metric?: string,
+  name?: string,
+  open_interest?: number,
+  points_used?: number,
+  previous_value?: number,
+  price?: number,
+  price_change_percent: {
+    1h?: number,
+    24h?: number,
+    7d?: number
+  },
+  project_id?: string,
+  project_slug?: string,
+  rank?: number,
+  score?: number,
+  signed_z?: number,
+  symbol?: string,
+  time_range?: string,
+  token_id?: string,
+  token_signals?: {
+  },
+  updated_at?: number,
+  value?: number,
+  volume_24h?: number,
+  volume_24h_change_percent?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### projects
+
+`heatscore.projects`
+
+Signal Projects
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.heatscore.projects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_range` | `24h \| 7d` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ai_summary?: {
+  },
+  baseline?: number,
+  change_percent?: number,
+  change_vs_previous_percent?: number,
+  computed_hour?: number,
+  core_state: {
+  },
+  driver?: string,
+  evidence_score?: number,
+  heat_dimensions: {
+  },
+  heat_score?: number,
+  heat_score_by_range?: {
+  },
+  heat_score_change_vs_previous_percent_by_range?: {
+  },
+  heat_score_previous_by_range?: {
+  },
+  liquidation_long_24h?: number,
+  liquidation_long_short_ratio_24h?: number,
+  liquidation_short_24h?: number,
+  logo?: string,
+  market_relevance?: number,
+  metric?: string,
+  name?: string,
+  open_interest?: number,
+  points_used?: number,
+  previous_value?: number,
+  price?: number,
+  price_change_percent: {
+  },
+  project_id?: string,
+  project_slug?: string,
+  rank?: number,
+  score?: number,
+  signed_z?: number,
+  symbol?: string,
+  time_range?: string,
+  token_id?: string,
+  token_signals?: {
+  },
+  updated_at?: number,
+  value?: number,
+  volume_24h?: number,
+  volume_24h_change_percent?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tokenOfTheDay
+
+`heatscore.tokenOfTheDay`
+
+Signal Token Of The Day
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.heatscore.tokenOfTheDay({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ai_summary?: {
+  },
+  baseline?: number,
+  change_percent?: number,
+  change_vs_previous_percent?: number,
+  computed_hour?: number,
+  core_state: {
+  },
+  driver?: string,
+  evidence_score?: number,
+  heat_dimensions: {
+  },
+  heat_score?: number,
+  heat_score_by_range?: {
+  },
+  heat_score_change_vs_previous_percent_by_range?: {
+  },
+  heat_score_previous_by_range?: {
+  },
+  liquidation_long_24h?: number,
+  liquidation_long_short_ratio_24h?: number,
+  liquidation_short_24h?: number,
+  logo?: string,
+  market_relevance?: number,
+  metric?: string,
+  name?: string,
+  open_interest?: number,
+  points_used?: number,
+  previous_value?: number,
+  price?: number,
+  price_change_percent: {
+  },
+  project_id?: string,
+  project_slug?: string,
+  rank?: number,
+  score?: number,
+  signed_z?: number,
+  symbol?: string,
+  time_range?: string,
+  token_id?: string,
+  token_signals?: {
+  },
+  updated_at?: number,
+  value?: number,
+  volume_24h?: number,
+  volume_24h_change_percent?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tokenOfWeek
+
+`heatscore.tokenOfWeek`
+
+Signal Token Of The Week
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.heatscore.tokenOfWeek({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ai_summary?: {
+  },
+  baseline?: number,
+  change_percent?: number,
+  change_vs_previous_percent?: number,
+  computed_hour?: number,
+  core_state: {
+  },
+  driver?: string,
+  evidence_score?: number,
+  heat_dimensions: {
+  },
+  heat_score?: number,
+  heat_score_by_range?: {
+  },
+  heat_score_change_vs_previous_percent_by_range?: {
+  },
+  heat_score_previous_by_range?: {
+  },
+  liquidation_long_24h?: number,
+  liquidation_long_short_ratio_24h?: number,
+  liquidation_short_24h?: number,
+  logo?: string,
+  market_relevance?: number,
+  metric?: string,
+  name?: string,
+  open_interest?: number,
+  points_used?: number,
+  previous_value?: number,
+  price?: number,
+  price_change_percent: {
+  },
+  project_id?: string,
+  project_slug?: string,
+  rank?: number,
+  score?: number,
+  signed_z?: number,
+  symbol?: string,
+  time_range?: string,
+  token_id?: string,
+  token_signals?: {
+  },
+  updated_at?: number,
+  value?: number,
+  volume_24h?: number,
+  volume_24h_change_percent?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Hyperliquid
+
+### account
+
+`hyperliquid.account`
+
+Account Portfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.hyperliquid.account({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  address: string,
+  as_of: number,
+  errors?: {
+  }[] | null,
+  perp?: {
+    account_value: number,
+    open_position_count: number,
+    total_margin_used: number,
+    withdrawable: number
+  },
+  spot?: {
+    balances?: {
+    }[] | null
+  },
+  staking?: {
+    delegated_hype: number,
+    pending_withdrawal_count: number,
+    total_pending_withdrawal_hype: number,
+    undelegated_hype: number
+  },
+  total_value_usd?: number,
+  unpriced_token_count: number,
+  vaults?: {
+    positions?: {
+    }[] | null,
+    total_equity: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### candles
+
+`hyperliquid.candles`
+
+Market Candles
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.hyperliquid.candles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1m \| 3m \| 5m \| 15m \| 30m \| 1h \| 2h \| 4h \| 8h \| 12h \| 1d \| 3d \| 1w \| 1M` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  close: number,
+  close_time: number,
+  closed: boolean,
+  high: number,
+  interval: string,
+  low: number,
+  open: number,
+  open_time: number,
+  quote?: number | null,
+  symbol: string,
+  trades: number,
+  volume: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fills
+
+`hyperliquid.fills`
+
+Fills
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.hyperliquid.fills({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `to_ms` | `number` | No | — |
+| `to_fill_id` | `string` | No | — |
+| `order` | `desc \| asc` | No | — |
+| `cursor` | `string` | No | — |
+| `symbol` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  closed_pnl: number,
+  crossed: boolean,
+  direction: string,
+  fee: number,
+  fee_token: string,
+  fill_id: string,
+  hash: string,
+  is_internal: boolean,
+  price: number,
+  side: string,
+  size: number,
+  start_position: number,
+  symbol: string,
+  time: number,
+  time_ms: number,
+  tx_index: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more: boolean,
+  limit: number,
+  next_cursor?: string,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### leaderboard
+
+`hyperliquid.leaderboard`
+
+Trader Leaderboard
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.hyperliquid.leaderboard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_range` | `1d \| 7d \| 30d \| 90d \| all` | No | — |
+| `sort_by` | `total_pnl \| win_rate \| volume_traded` | No | — |
+| `min_trades` | `number` | No | — |
+| `min_days_active` | `number` | No | — |
+| `min_account_age_days` | `number` | No | — |
+| `min_human_score` | `number` | No | — |
+| `dex` | `main_dex \| xyz \| flx \| vntl \| hyna \| km \| abcd \| cash \| para \| mkts` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account_age_days?: number,
+  address: string,
+  days_active: number,
+  human_score: number,
+  rank: number,
+  total_fees: number,
+  total_funding: number,
+  total_pnl: number,
+  total_trades: number,
+  traded_pairs?: string[] | null,
+  volume_traded: number,
+  win_rate: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### orders
+
+`hyperliquid.orders`
+
+Open & Recent Orders
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.hyperliquid.orders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `open_limit` | `number` | No | — |
+| `historical_limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  address: string,
+  as_of: number,
+  errors?: {
+  }[] | null,
+  historical?: {
+  }[] | null,
+  historical_total: number,
+  open?: {
+  }[] | null,
+  open_total: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### performance
+
+`hyperliquid.performance`
+
+Trading Performance
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.hyperliquid.performance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `dex` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account_value?: number,
+  address: string,
+  errors?: {
+  }[] | null,
+  open_positions?: {
+  }[] | null,
+  partial: boolean,
+  performance?: {
+    avg_loss?: number,
+    avg_win?: number,
+    fees: number,
+    first_trade: number,
+    gross_pnl: number,
+    last_trade: number,
+    losses: number,
+    net_pnl: number,
+    profit_factor?: number,
+    scratches: number,
+    trades: number,
+    volume_usd: number,
+    win_rate: number,
+    wins: number
+  },
+  total_unrealized_pnl?: number,
+  traded_pairs: number,
+  watermark: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### positions
+
+`hyperliquid.positions`
+
+Open Positions
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.hyperliquid.positions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `dex` | `main_dex \| xyz \| flx \| vntl \| hyna \| km \| abcd \| cash \| para \| mkts` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account_value: number,
+  address: string,
+  cross_maintenance_margin_used: number,
+  margin_ratio: number,
+  positions?: {
+  }[] | null,
+  timestamp: number,
+  total_margin_used: number,
+  total_notional_pos: number,
+  total_raw_usd: number,
+  withdrawable: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trades
+
+`hyperliquid.trades`
+
+Closed Trades
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.hyperliquid.trades({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `symbol` | `string` | No | — |
+| `direction` | `long \| short` | No | — |
+| `dex` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  close_time: number,
+  direction: string,
+  entry_px: number,
+  episode_id?: string,
+  exit_px: number,
+  fees: number,
+  funding_pnl: number,
+  funding_status: complete | partial | unavailable,
+  gross_pnl: number,
+  hold_seconds: number,
+  is_win: boolean,
+  leverage?: number,
+  leverage_semantics?: completed_trade_reported,
+  leverage_type?: cross | isolated,
+  net_pnl: number,
+  notional_usd: number,
+  open_time: number,
+  opened_sz: number,
+  reported_leverage?: number,
+  reported_leverage_type?: cross | isolated,
+  source: string,
+  symbol: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more: boolean,
+  limit: number,
+  next_cursor?: string,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tradesAggregate
+
+`hyperliquid.tradesAggregate`
+
+Closed Trades Aggregate
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.hyperliquid.tradesAggregate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `group_by` | `day \| symbol \| direction \| size_bucket \| hold_bucket` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `dex` | `main_dex \| xyz \| flx \| vntl \| hyna \| km \| abcd \| cash \| para \| mkts` | No | — |
+| `fill_gaps` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  avg_loss?: number,
+  avg_win?: number,
+  fees: number,
+  funding_pnl: number,
+  funding_status: complete | partial | unavailable,
+  gross_pnl: number,
+  key: string,
+  net_pnl: number,
+  trade_count: number,
+  volume_usd: number,
+  win_rate: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tradesContext
+
+`hyperliquid.tradesContext`
+
+Closed Trade Funding and Leverage
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.hyperliquid.tradesContext({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `symbol` | `string` | Yes | — |
+| `direction` | `long \| short` | Yes | — |
+| `open_time` | `number` | Yes | — |
+| `close_time` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  funding_pnl?: number,
+  funding_status: complete | partial | unavailable,
+  leverage?: number,
+  leverage_semantics?: completed_trade_reported,
+  leverage_type?: cross | isolated,
+  reported_leverage?: number,
+  reported_leverage_type?: cross | isolated
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Market
+
+### etf
+
+`market.etf`
+
+ETF Flow History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.etf({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `BTC \| ETH \| XRP \| SOL \| HYPE` | Yes | — |
+| `sort_by` | `flow_usd \| timestamp` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  etfs?: {
+  }[] | null,
+  flow_usd: number,
+  price_usd: number,
+  project_id?: string,
+  settled: boolean,
+  symbol?: string,
+  timestamp: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### exchangeFlowExchanges
+
+`market.exchangeFlowExchanges`
+
+Exchange Flow Exchanges
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.exchangeFlowExchanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `BTC \| ETH` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  supported_flow_filter: boolean,
+  symbol: string,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fearGreed
+
+`market.fearGreed`
+
+Fear & Greed Index History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.fearGreed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  classification: string,
+  price: number,
+  timestamp: number,
+  value: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### futures
+
+`market.futures`
+
+Futures Market Overview
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.futures({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort_by` | `open_interest \| funding_rate \| volume_24h \| long_short_ratio` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  funding_rate: number,
+  long_short_ratio: number,
+  open_interest: number,
+  project_id?: string,
+  symbol: string,
+  updated_at: number,
+  volume_24h: number,
+  volume_change_24h: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### liquidationChart
+
+`market.liquidationChart`
+
+Liquidation Chart
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.liquidationChart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1m \| 3m \| 5m \| 15m \| 30m \| 1h \| 4h \| 6h \| 8h \| 12h \| 1d \| 1w` | No | — |
+| `exchange` | `Binance \| OKX \| Bybit \| Bitget \| Hyperliquid \| Gate \| HTX \| Bitmex \| Bitfinex \| CoinEx \| Aster \| Lighter` | No | — |
+| `limit` | `number` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  contributing_exchanges?: string[] | null,
+  excluded_exchanges?: string[] | null,
+  long_liquidation_usd: number,
+  short_liquidation_usd: number,
+  timestamp: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### liquidationExchangeList
+
+`market.liquidationExchangeList`
+
+Liquidation by Exchange
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.liquidationExchangeList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | — |
+| `time_range` | `1h \| 4h \| 12h \| 24h` | No | — |
+| `sort_by` | `liquidation_usd \| long_liquidation_usd \| short_liquidation_usd` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  exchange: string,
+  liquidation_usd: number,
+  long_liquidation_usd: number,
+  short_liquidation_usd: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### liquidationOrder
+
+`market.liquidationOrder`
+
+Large Liquidation Orders
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.liquidationOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exchange` | `Binance \| OKX \| Bybit \| Bitget \| Hyperliquid \| Gate \| HTX \| Bitmex \| Bitfinex \| CoinEx \| Aster \| Lighter` | No | — |
+| `symbol` | `string` | No | — |
+| `min_amount` | `string` | No | — |
+| `side` | `long \| short` | No | — |
+| `sort_by` | `usd_value \| timestamp \| price` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  base_asset: string,
+  exchange: string,
+  order_id: string,
+  price: number,
+  side: string,
+  symbol: string,
+  timestamp: number,
+  usd_value: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listing
+
+`market.listing`
+
+Exchange Listing Events
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.listing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | No | — |
+| `symbol` | `string` | No | — |
+| `exchange` | `string` | No | — |
+| `product` | `spot \| margin \| perp \| pre_market_perp \| all` | No | — |
+| `type` | `listing \| delisting \| cancelled \| advanced \| postponed` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  base_symbol?: string,
+  effective_at: number,
+  event_type: string,
+  exchange_name: string,
+  product: string,
+  published_at?: number,
+  quote_symbol?: string,
+  trading_pair: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### onchainIndicator
+
+`market.onchainIndicator`
+
+On-Chain Indicator
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.onchainIndicator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `BTC \| ETH` | Yes | — |
+| `metric` | `nupl \| sopr \| mvrv \| puell-multiple \| nvm \| nvt \| nvt-golden-cross \| exchange-flows/inflow \| exchange-flows/outflow \| exchange-flows/netflow \| exchange-flows/reserve` | Yes | — |
+| `granularity` | `day` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `exchange` | `all_exchange \| spot_exchange \| derivative_exchange \| coinbase_prime \| binance \| coinbase_advanced \| okx \| kraken \| bybit \| bitstamp \| gemini \| bitget \| kucoin \| bitfinex \| gate_io \| deribit \| mexc \| htx_global \| bitflyer \| coinone \| bithumb \| upbit \| hashkey_exchange` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  exchange?: string,
+  exchange_name?: string,
+  metric?: string,
+  project_id?: string,
+  symbol?: string,
+  timestamp: number,
+  value: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### options
+
+`market.options`
+
+Options Market Data
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.options({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `BTC \| ETH \| SOL \| XRP \| BNB \| DOGE \| ADA \| AVAX` | Yes | — |
+| `sort_by` | `open_interest \| volume_24h` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  exchange: string,
+  max_pain_price?: number,
+  open_interest: number,
+  project_id?: string,
+  put_call_ratio?: number,
+  symbol: string,
+  updated_at: number,
+  volume_24h: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### price
+
+`market.price`
+
+Token Price History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.price({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `time_range` | `1d \| 7d \| 14d \| 30d \| 90d \| 180d \| 365d \| max` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `currency` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+| `project_id` | `string` | No | — |
+| `summary` | `object` | Yes | — |
+| `symbol` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  exchange?: string,
+  exchange_name?: string,
+  metric?: string,
+  project_id?: string,
+  symbol?: string,
+  timestamp: number,
+  value: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  change_abs: number,
+  change_pct: number,
+  first: number,
+  high: number,
+  last: number,
+  latest_dt: number,
+  low: number,
+  n_points: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### priceIndicator
+
+`market.priceIndicator`
+
+Technical Indicator
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.priceIndicator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `indicator` | `rsi \| macd \| ema \| sma \| bbands \| stoch \| adx \| atr \| cci \| obv \| vwap \| dmi \| ichimoku \| supertrend` | Yes | — |
+| `symbol` | `string` | Yes | — |
+| `interval` | `1m \| 5m \| 15m \| 30m \| 1h \| 2h \| 4h \| 12h \| 1d \| 1w` | No | — |
+| `exchange` | `binance \| bybit \| coinbase \| kraken` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `options` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  interval: string,
+  name: string,
+  project_id?: string,
+  symbol: string,
+  timestamp?: number,
+  updated_at?: number,
+  value: number,
+  values?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publicSale
+
+`market.publicSale`
+
+Public Sale / Crowdsale
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.publicSale({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  allocation_of_supply?: number,
+  ath_roi?: number,
+  crowdsale_end_date?: number,
+  crowdsale_price?: number,
+  crowdsale_raise?: number,
+  crowdsale_start_date?: number,
+  crowdsale_status?: string,
+  crowdsale_type?: string,
+  launchpad_name?: string,
+  name?: string,
+  project_id?: string,
+  symbol?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ranking
+
+`market.ranking`
+
+Token Rankings
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.ranking({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort_by` | `market_cap \| change_24h \| volume_24h` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `category` | `MEME \| AI \| AI_AGENTS \| L1 \| L2 \| DEFI \| GAMING \| STABLECOIN \| RWA \| DEPIN \| SOL_ECO \| BASE_ECO \| LST` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ath?: number,
+  ath_date?: number,
+  atl?: number,
+  atl_date?: number,
+  change_24h_pct: number,
+  circulating_supply?: number,
+  fdv?: number,
+  high_24h: number,
+  id?: string,
+  image?: string,
+  low_24h: number,
+  market_cap_usd: number,
+  max_supply?: number,
+  name: string,
+  price_usd: number,
+  rank: number,
+  slug?: string,
+  symbol: string,
+  total_supply?: number,
+  volume_24h_usd: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tge
+
+`market.tge`
+
+Token Generation Event
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.market.tge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  current_status: string,
+  exchanges?: string[] | null,
+  last_event_time?: number,
+  project_id: string,
+  project_name?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## News
+
+### detail
+
+`news.detail`
+
+News Article Detail
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.news.detail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  content: string,
+  id: string,
+  project_id?: string,
+  project_name?: string,
+  published_at: number,
+  source?: string,
+  summary?: string,
+  title: string,
+  url?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### feed
+
+`news.feed`
+
+Crypto News Feed
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.news.feed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source` | `coindesk \| cointelegraph \| theblock \| decrypt \| dlnews \| blockbeats \| bitcoincom \| coinpedia \| ambcrypto \| cryptodaily \| cryptopotato \| phemex \| panews \| odaily \| tradingview \| chaincatcher \| techflow` | No | — |
+| `project` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `sort_by` | `recency \| trending` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  highlights?: {
+  },
+  id: string,
+  project_id?: string,
+  project_name?: string,
+  published_at: number,
+  source?: string,
+  summary?: string,
+  title: string,
+  url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Onchain
+
+### bridgeRanking
+
+`onchain.bridgeRanking`
+
+Bridge Protocol Ranking
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.onchain.bridgeRanking({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_range` | `7d \| 30d \| 90d \| 180d \| 1y \| all` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  project: string,
+  tx_count: number,
+  volume_usd: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### dexActivity
+
+`onchain.dexActivity`
+
+DEX Protocol Activity
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.onchain.dexActivity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chain` | `ethereum \| base \| bsc \| arbitrum \| tron` | Yes | — |
+| `project` | `string` | No | — |
+| `address` | `string` | No | — |
+| `time_range` | `1d \| 7d \| 30d \| 90d` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `group_by` | `total \| day` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  active_traders: number,
+  enriched_ratio?: number,
+  timestamp?: number,
+  trades: number,
+  volume_usd?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### gasPrice
+
+`onchain.gasPrice`
+
+Current Gas Price
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.onchain.gasPrice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chain` | `ethereum \| polygon \| bsc \| arbitrum \| optimism \| base \| avalanche \| fantom \| linea \| cyber` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  chain: string,
+  gas_price: string,
+  gas_price_gwei: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSqlJobsJobId
+
+`onchain.getSqlJobsJobId`
+
+Get Asynchronous Blockchain SQL Job
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.onchain.getSqlJobsJobId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  cancellation_requested: boolean,
+  created_at: number,
+  csv_url?: string,
+  elapsed_ms: number,
+  error?: {
+    code: string,
+    message: string
+  },
+  estimated_bytes?: number,
+  estimated_rows?: number,
+  executed_sql: string,
+  expires_at: number,
+  external_request_id?: string,
+  finished_at?: number,
+  job_id: string,
+  max_rows: number,
+  parameters: {
+  },
+  poll_url?: string,
+  processed_bytes: number,
+  processed_rows: number,
+  progress_percent?: number,
+  query_id: string,
+  recommended_action: string,
+  request_id: string,
+  result_url?: string,
+  retry_after_ms?: number,
+  retryable: boolean,
+  row_count?: number,
+  sql: string,
+  started_at?: number,
+  status: queued | running | succeeded | failed | canceled
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`onchain.query`
+
+Blockchain Structured Query
+
+**Risk:** `write`
+
+```ts
+await corsair.surf.api.onchain.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string[]` | No | — |
+| `filters` | `object[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `object[]` | No | — |
+| `source` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  field: string,
+  op: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  field: string,
+  order?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### schema
+
+`onchain.schema`
+
+On-Chain Table Schema
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.onchain.schema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  columns?: {
+  }[] | null,
+  database: string,
+  engine?: string,
+  partition_key?: string,
+  physical_sources?: {
+  }[] | null,
+  primary_key?: string,
+  sorting_key?: string,
+  table: string,
+  total_bytes?: number,
+  total_rows?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sql
+
+`onchain.sql`
+
+Blockchain SQL Query
+
+**Risk:** `write`
+
+```ts
+await corsair.surf.api.onchain.sql({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max_rows` | `number` | No | — |
+| `sql` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sqlJobs
+
+`onchain.sqlJobs`
+
+Submit Asynchronous Blockchain SQL Job
+
+**Risk:** `write`
+
+```ts
+await corsair.surf.api.onchain.sqlJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max_rows` | `number` | No | — |
+| `sql` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  cancellation_requested: boolean,
+  created_at: number,
+  csv_url?: string,
+  elapsed_ms: number,
+  error?: {
+    code: string,
+    message: string
+  },
+  estimated_bytes?: number,
+  estimated_rows?: number,
+  executed_sql: string,
+  expires_at: number,
+  external_request_id?: string,
+  finished_at?: number,
+  job_id: string,
+  max_rows: number,
+  parameters: {
+  },
+  poll_url?: string,
+  processed_bytes: number,
+  processed_rows: number,
+  progress_percent?: number,
+  query_id: string,
+  recommended_action: string,
+  request_id: string,
+  result_url?: string,
+  retry_after_ms?: number,
+  retryable: boolean,
+  row_count?: number,
+  sql: string,
+  started_at?: number,
+  status: queued | running | succeeded | failed | canceled
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sqlJobsJobId
+
+`onchain.sqlJobsJobId`
+
+Cancel Asynchronous Blockchain SQL Job
+
+**Risk:** `destructive`
+
+```ts
+await corsair.surf.api.onchain.sqlJobsJobId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  cancellation_requested: boolean,
+  created_at: number,
+  csv_url?: string,
+  elapsed_ms: number,
+  error?: {
+    code: string,
+    message: string
+  },
+  estimated_bytes?: number,
+  estimated_rows?: number,
+  executed_sql: string,
+  expires_at: number,
+  external_request_id?: string,
+  finished_at?: number,
+  job_id: string,
+  max_rows: number,
+  parameters: {
+  },
+  poll_url?: string,
+  processed_bytes: number,
+  processed_rows: number,
+  progress_percent?: number,
+  query_id: string,
+  recommended_action: string,
+  request_id: string,
+  result_url?: string,
+  retry_after_ms?: number,
+  retryable: boolean,
+  row_count?: number,
+  sql: string,
+  started_at?: number,
+  status: queued | running | succeeded | failed | canceled
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sqlJobsJobIdResults
+
+`onchain.sqlJobsJobIdResults`
+
+Download Asynchronous Blockchain SQL Results
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.onchain.sqlJobsJobIdResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `format` | `json \| csv` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data?: {
+  }[] | null,
+  meta: {
+    cached: boolean,
+    credits_used: number,
+    empty_reason?: string,
+    has_more?: boolean,
+    limit: number,
+    offset: number,
+    total?: number,
+    watermark?: number
+  }
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sqlPreflight
+
+`onchain.sqlPreflight`
+
+Preflight Blockchain SQL Query
+
+**Risk:** `write`
+
+```ts
+await corsair.surf.api.onchain.sqlPreflight({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max_rows` | `number` | No | — |
+| `sql` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accepted: boolean,
+  budget: {
+    max_bytes_to_read: number,
+    max_execution_time_seconds: number,
+    max_rows_to_read: number
+  },
+  estimate: {
+    by_table?: {
+    }[] | null,
+    bytes: number,
+    marks: number,
+    parts: number,
+    rows: number
+  },
+  executed_sql: string,
+  query_id: string,
+  request_id: string,
+  sql: string,
+  tables?: {
+  }[] | null,
+  warnings?: {
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tx
+
+`onchain.tx`
+
+Transaction Details by Hash
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.onchain.tx({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hash` | `string` | Yes | — |
+| `chain` | `ethereum \| polygon \| bsc \| arbitrum \| optimism \| base \| avalanche \| fantom \| linea \| cyber` | Yes | — |
+| `include` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accessList?: {
+  }[] | null,
+  blobVersionedHashes?: string[] | null,
+  blockHash?: string | null,
+  blockNumber?: string | null,
+  chainId?: string,
+  from: string,
+  from_label?: {
+  },
+  gas: string,
+  gasPrice?: string,
+  hash: string,
+  input: string,
+  maxFeePerBlobGas?: string,
+  maxFeePerGas?: string,
+  maxPriorityFeePerGas?: string,
+  nonce: string,
+  r: string,
+  s: string,
+  to?: string | null,
+  to_label?: {
+  },
+  transactionIndex?: string | null,
+  type: string,
+  v: string,
+  value: string,
+  yParity?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### yieldRanking
+
+`onchain.yieldRanking`
+
+Yield Pool Ranking
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.onchain.yieldRanking({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `sort_by` | `apy \| tvl_usd` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  apy: number,
+  apy_base: number,
+  apy_reward: number,
+  pool_address: string,
+  project: string,
+  symbol: string,
+  token_address: string,
+  tvl_usd: number,
+  version: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Portfolio
+
+### wallets
+
+`portfolio.wallets`
+
+Current User Portfolio Wallets
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.portfolio.wallets({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  wallets?: {
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Prediction Market
+
+### analytics
+
+`predictionMarket.analytics`
+
+Prediction Market Analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.analytics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `crypto \| culture \| economics \| financials \| politics \| stem \| sports` | No | — |
+| `platform` | `polymarket \| kalshi` | No | — |
+| `time_range` | `7d \| 30d \| 90d \| 180d \| 1y` | No | — |
+| `top_n` | `number` | No | — |
+| `sort_by` | `volume_7d \| whale_flow_net_7d \| price_change_7d \| oi_change_7d` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category_trends?: {
+  }[] | null,
+  momentum_markets?: {
+  }[] | null,
+  momentum_summary: {
+    confirming_down: number,
+    confirming_up: number,
+    diverging_down: number,
+    diverging_up: number,
+    neutral: number,
+    total_active: number,
+    volume_decreasing: number,
+    volume_increasing: number
+  },
+  top_markets?: {
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### correlations
+
+`predictionMarket.correlations`
+
+Market Correlations
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.correlations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `crypto \| culture \| economics \| financials \| politics \| stem \| sports` | Yes | — |
+| `condition_id` | `string` | No | — |
+| `min_correlation` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category: string,
+  correlation: number,
+  market_a_condition_id: string,
+  market_a_question?: string,
+  market_b_condition_id: string,
+  market_b_question?: string,
+  overlapping_days: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### kalshiEvents
+
+`predictionMarket.kalshiEvents`
+
+Kalshi Events
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.kalshiEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_ticker` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  event_subtitle?: string,
+  event_ticker: string,
+  event_title: string,
+  market_count: number,
+  markets?: {
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### kalshiMarkets
+
+`predictionMarket.kalshiMarkets`
+
+Kalshi Markets
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.kalshiMarkets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `market_ticker` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category?: string,
+  close_time?: number,
+  end_time?: number,
+  event_ticker: string,
+  event_title?: string,
+  last_day_open_interest: number,
+  market_ticker: string,
+  notional_volume_usd: number,
+  open_interest: number,
+  payout_type: string,
+  result?: string,
+  start_time?: number,
+  status: string,
+  subcategory?: string,
+  title: string,
+  total_volume: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### kalshiOpenInterest
+
+`predictionMarket.kalshiOpenInterest`
+
+Kalshi Open Interest History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.kalshiOpenInterest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `time_range` | `7d \| 30d \| 90d \| 180d \| 1y` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  open_interest: number,
+  timestamp: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### kalshiOrderbooks
+
+`predictionMarket.kalshiOrderbooks`
+
+Kalshi Orderbook History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.kalshiOrderbooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `pagination_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `snapshots` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  has_more: boolean,
+  limit: number,
+  pagination_key?: string
+}
+```
+</Accordion>
+
+<Accordion title="snapshots full type">
+
+```ts
+{
+  ask_depth: number,
+  best_ask: number,
+  best_bid: number,
+  bid_depth: number,
+  sequence: number,
+  ticker: string,
+  timestamp: number,
+  yes_asks?: {
+  }[] | null,
+  yes_bids?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### kalshiPrices
+
+`predictionMarket.kalshiPrices`
+
+Kalshi Price History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.kalshiPrices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `time_range` | `7d \| 30d \| 90d \| 180d \| 1y` | No | — |
+| `interval` | `1h \| 1d \| latest` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  high: number,
+  low: number,
+  open?: number,
+  side_a: {
+  },
+  side_b: {
+  },
+  timestamp: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### kalshiTrades
+
+`predictionMarket.kalshiTrades`
+
+Kalshi Trades
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.kalshiTrades({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `taker_side` | `yes \| no` | No | — |
+| `min_amount` | `number` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `sort_by` | `timestamp \| notional_volume_usd` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  market_ticker: string,
+  no_price: number,
+  notional_volume_usd: number,
+  taker_side: string,
+  timestamp: number,
+  trade_id: string,
+  yes_price: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### kalshiVolumes
+
+`predictionMarket.kalshiVolumes`
+
+Kalshi Volume History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.kalshiVolumes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `time_range` | `7d \| 30d \| 90d \| 180d \| 1y` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  notional_volume_usd: number,
+  timestamp: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### matchingDaily
+
+`predictionMarket.matchingDaily`
+
+Cross-Platform Daily Comparison (Polymarket &lt;&gt; Kalshi)
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.matchingDaily({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `polymarket_condition_id` | `string` | Yes | — |
+| `kalshi_market_ticker` | `string` | Yes | — |
+| `time_range` | `1d \| 7d \| 30d \| 90d \| 180d \| 1y \| all` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  kalshi_oi_contracts: number,
+  kalshi_volume_contracts: number,
+  polymarket_oi_usd: number,
+  polymarket_volume_usd: number,
+  timestamp: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### matchingPairs
+
+`predictionMarket.matchingPairs`
+
+Cross-Platform Prediction Market Matcher (Polymarket &lt;&gt; Kalshi)
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.matchingPairs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `crypto \| culture \| economics \| financials \| politics \| stem \| sports` | No | — |
+| `match_type` | `exact \| related` | No | — |
+| `active_only` | `boolean` | No | — |
+| `min_confidence` | `number` | No | — |
+| `polymarket_condition_id` | `string` | No | — |
+| `kalshi_market_ticker` | `string` | No | — |
+| `sort_by` | `confidence \| polymarket_volume \| kalshi_volume \| spread_pct` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category: string,
+  confidence: number,
+  kalshi: {
+  },
+  kalshi_price?: number,
+  match_type: string,
+  polymarket: {
+  },
+  polymarket_price?: number,
+  spread_pct?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketEvents
+
+`predictionMarket.polymarketEvents`
+
+Polymarket Events
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_slug` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category?: string,
+  description?: string,
+  end_time?: number,
+  event_slug: string,
+  image?: string,
+  market_count: number,
+  markets?: {
+  }[] | null,
+  settlement_sources?: string,
+  start_time?: number,
+  status: string,
+  subcategory?: string,
+  tags?: string[] | null,
+  title: string,
+  volume_total: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketLeaderboard
+
+`predictionMarket.polymarketLeaderboard`
+
+Polymarket Leaderboard
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketLeaderboard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort_by` | `pnl \| volume \| trade_count` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  address: string,
+  pnl: number,
+  positions: number,
+  positions_lost: number,
+  positions_open: number,
+  positions_won: number,
+  trade_count: number,
+  volume: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketMarkets
+
+`predictionMarket.polymarketMarkets`
+
+Polymarket Markets
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketMarkets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `market_slug` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category?: string,
+  close_time?: number,
+  completed_time?: number,
+  condition_id: string,
+  description?: string,
+  end_time?: number,
+  event_slug?: string,
+  game_start_time?: number,
+  image?: string,
+  market_slug: string,
+  negative_risk_id?: string,
+  polymarket_link?: string,
+  resolution_source?: string,
+  side_a?: {
+  },
+  side_b?: {
+  },
+  start_time?: number,
+  status: string,
+  subcategory?: string,
+  tags?: string[] | null,
+  title: string,
+  volume_1_month: number,
+  volume_1_week: number,
+  volume_1_year: number,
+  volume_total: number,
+  winning_side?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketOpenInterest
+
+`predictionMarket.polymarketOpenInterest`
+
+Polymarket Open Interest History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketOpenInterest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `condition_id` | `string` | Yes | — |
+| `time_range` | `7d \| 30d \| 90d \| 180d \| 1y` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  daily_net_change_usd: number,
+  open_interest_usd: number,
+  timestamp: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketOrderbooks
+
+`predictionMarket.polymarketOrderbooks`
+
+Polymarket Orderbook History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketOrderbooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token_id` | `string` | Yes | — |
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `pagination_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `snapshots` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  has_more: boolean,
+  limit: number,
+  pagination_key?: string
+}
+```
+</Accordion>
+
+<Accordion title="snapshots full type">
+
+```ts
+{
+  asks?: {
+  }[] | null,
+  assetId: string,
+  bids?: {
+  }[] | null,
+  hash: string,
+  indexedAt: number,
+  market: string,
+  tickSize: string,
+  timestamp: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketPositions
+
+`predictionMarket.polymarketPositions`
+
+Polymarket Wallet Positions
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketPositions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  avg_price: number,
+  cash_pnl: number,
+  condition_id: string,
+  cur_price: number,
+  current_value: number,
+  outcome_label: string,
+  question: string,
+  realized_pnl: number,
+  redeemable: boolean,
+  size: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketPriceOhlcvConditionId
+
+`predictionMarket.polymarketPriceOhlcvConditionId`
+
+Polymarket OHLCV Candlesticks
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketPriceOhlcvConditionId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `condition_id` | `string` | Yes | — |
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `interval` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candles` | `object[]` | No | — |
+| `condition_id` | `string` | Yes | — |
+| `interval` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="candles full type">
+
+```ts
+{
+  close: number,
+  end_period_ts: number,
+  high: number,
+  low: number,
+  open: number,
+  timestamp: number,
+  trades_count: number,
+  volume: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketPrices
+
+`predictionMarket.polymarketPrices`
+
+Polymarket Price History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketPrices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `condition_id` | `string` | Yes | — |
+| `time_range` | `7d \| 30d \| 90d \| 180d \| 1y` | No | — |
+| `interval` | `1h \| 1d \| latest` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  side_a?: {
+  },
+  side_b?: {
+  },
+  timestamp: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketSmartMoney
+
+`predictionMarket.polymarketSmartMoney`
+
+Polymarket Smart Money
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketSmartMoney({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `view` | `positioning \| trades` | No | — |
+| `condition_id` | `string` | No | — |
+| `category` | `crypto \| culture \| economics \| financials \| politics \| stem \| sports` | No | — |
+| `direction` | `bullish \| bearish \| neutral` | No | — |
+| `whale_tier` | `whale \| large \| mega` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `sort_by` | `smart_wallets_involved \| smart_buy_volume_usd \| smart_sell_volume_usd \| amount_usd \| block_time` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketTrades
+
+`predictionMarket.polymarketTrades`
+
+Polymarket Trades
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketTrades({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `condition_id` | `string` | No | — |
+| `address` | `string` | No | — |
+| `type` | `trade \| redemption \| all` | No | — |
+| `outcome_label` | `Yes \| No` | No | — |
+| `min_amount` | `number` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `sort_by` | `timestamp \| notional_volume_usd` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketVolumes
+
+`predictionMarket.polymarketVolumes`
+
+Polymarket Volume History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketVolumes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `condition_id` | `string` | No | — |
+| `token_id` | `string` | No | — |
+| `time_range` | `7d \| 30d \| 90d \| 180d \| 1y` | No | — |
+| `interval` | `1h \| 1d` | No | — |
+| `granularity` | `day \| week \| month \| year \| all` | No | — |
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  buy_volume?: number,
+  notional_volume_usd: number,
+  sell_volume?: number,
+  timestamp: number,
+  trade_count: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### polymarketVolumeSplitConditionId
+
+`predictionMarket.polymarketVolumeSplitConditionId`
+
+Polymarket Volume Split (YES/NO)
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.predictionMarket.polymarketVolumeSplitConditionId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `condition_id` | `string` | Yes | — |
+| `granularity` | `hour \| day \| week` | No | — |
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `condition_id` | `string` | Yes | — |
+| `data_points` | `object[]` | No | — |
+| `end_time` | `number` | Yes | — |
+| `granularity` | `string` | Yes | — |
+| `start_time` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data_points full type">
+
+```ts
+{
+  no_volume: number,
+  timestamp: number,
+  total_volume: number,
+  trades_count: number,
+  yes_volume: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Project
+
+### aiNews
+
+`project.aiNews`
+
+Project AI News
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.project.aiNews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `lang` | `en \| zh \| ja \| kr` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  signal_type: string,
+  slug?: string,
+  sources?: string[] | null,
+  subtitle?: string,
+  timestamp: number,
+  title: string,
+  tldr?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### defiMetrics
+
+`project.defiMetrics`
+
+Project DeFi Metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.project.defiMetrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `q` | `string` | No | — |
+| `metric` | `volume \| fee \| fees \| revenue \| tvl \| users` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `chain` | `ethereum \| polygon \| bsc \| arbitrum \| optimism \| base \| avalanche \| fantom \| solana` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  timestamp: number,
+  value: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### defiRanking
+
+`project.defiRanking`
+
+DeFi Protocol Ranking
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.project.defiRanking({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric` | `tvl \| revenue \| fees \| volume \| users` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  fees?: number,
+  id?: string,
+  logo_url?: string,
+  name: string,
+  revenue?: number,
+  slug?: string,
+  symbol?: string,
+  tvl?: number,
+  users?: number,
+  volume?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### detail
+
+`project.detail`
+
+Aggregated Project Detail
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.project.detail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `x_id` | `string` | No | — |
+| `handle` | `string` | No | — |
+| `q` | `string` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  contracts?: {
+    contracts?: {
+    }[] | null
+  },
+  funding?: {
+    rounds?: {
+    }[] | null,
+    total_raise?: number
+  },
+  overview?: {
+    chains?: string[] | null,
+    description?: string,
+    exchanges?: string[] | null,
+    id: string,
+    logo_url?: string,
+    name: string,
+    slug?: string,
+    tags?: string[] | null,
+    tge_status?: string,
+    token_symbol?: string,
+    website?: string,
+    x_followers: number,
+    x_handle?: string,
+    x_id?: string
+  },
+  social?: {
+    discord?: {
+    },
+    github?: {
+    },
+    telegram?: {
+    },
+    twitter?: {
+    }
+  },
+  team?: {
+    members?: {
+    }[] | null
+  },
+  tge_status?: {
+    current_status?: string,
+    exchanges?: string[] | null,
+    last_event_time?: number
+  },
+  token_info?: {
+    all_time_high?: number,
+    all_time_high_date?: number,
+    all_time_low?: number,
+    all_time_low_date?: number,
+    circulating_supply?: number,
+    fdv?: number,
+    high_24h?: number,
+    image?: string,
+    low_24h?: number,
+    market_cap_usd?: number,
+    name: string,
+    price_change_24h?: number,
+    price_change_30d?: number,
+    price_change_7d?: number,
+    price_usd?: number,
+    symbol: string,
+    total_supply?: number,
+    volume_24h?: number
+  },
+  tokenomics?: {
+    circulating_supply?: number,
+    fdv?: number,
+    market_cap_usd?: number,
+    total_supply?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### airdrop
+
+`search.airdrop`
+
+Airdrop Search
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.airdrop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `phase` | `string` | No | — |
+| `reward_type` | `airdrop \| points \| whitelist \| nft \| role \| ambassador` | No | — |
+| `task_type` | `social \| bounty-platforms \| testnet \| mainnet \| role \| form \| liquidity \| mint-nft \| game \| trading \| staking \| depin \| node \| ambassador \| hold \| check-wallet \| mint-domain \| predictions \| deploy` | No | — |
+| `has_open` | `boolean` | No | — |
+| `sort_by` | `total_raise \| xscore \| last_status_update` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `include_tasks` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  coin_symbol?: string,
+  followers_count: number,
+  last_status_update: number,
+  logo_url?: string,
+  project_id?: string,
+  project_name: string,
+  reward_date: number,
+  reward_type?: string,
+  status: string,
+  task_summary?: {
+  },
+  tasks?: {
+  }[] | null,
+  total_raise: number,
+  xscore: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### airdropActivities
+
+`search.airdropActivities`
+
+Airdrop Activities
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.airdropActivities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  coin_name: string,
+  coin_symbol?: string,
+  created_at: number,
+  followers_count?: string,
+  id: string,
+  reward: string,
+  reward_date?: string,
+  reward_type: string,
+  status: string,
+  total_raise?: number,
+  updated_at: number,
+  xscore?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### events
+
+`search.events`
+
+Project Event Search
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.events({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `q` | `string` | No | — |
+| `type` | `launch \| upgrade \| partnership \| news \| airdrop \| listing \| twitter` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date?: string,
+  description?: string,
+  logo_url?: string,
+  title: string,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fund
+
+`search.fund`
+
+Fund Search
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.fund({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  image?: string,
+  invested_projects_count: number,
+  name: string,
+  tier: number,
+  top_projects?: {
+  }[] | null,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fundraising
+
+`search.fundraising`
+
+Fundraising Event Search
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.fundraising({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `source` | `social \| news` | No | — |
+| `lang` | `en \| zh \| ja \| kr \| ko` | No | — |
+| `min_importance` | `number` | No | — |
+| `sort_by` | `recency \| relevance \| importance` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  event_at: number,
+  id: string,
+  importance?: number,
+  published_at: number,
+  source: {
+  },
+  source_count: number,
+  summary: string,
+  title: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### news
+
+`search.news`
+
+News Article Search
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.news({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  highlights?: {
+  },
+  id: string,
+  project_id?: string,
+  project_name?: string,
+  published_at: number,
+  source?: string,
+  summary?: string,
+  title: string,
+  url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### predictionMarket
+
+`search.predictionMarket`
+
+Search Prediction Markets
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.predictionMarket({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `condition_id` | `string` | No | — |
+| `market_ticker` | `string` | No | — |
+| `platform` | `polymarket \| kalshi` | No | — |
+| `category` | `crypto \| culture \| economics \| financials \| politics \| stem \| sports` | No | — |
+| `status` | `active \| closed \| finalized` | No | — |
+| `sort_by` | `volume_1d \| volume_7d \| volume_30d \| open_interest \| trade_count_7d \| days_to_resolution` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `smart_money` | `bullish \| bearish` | No | — |
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category: string,
+  condition_id?: string,
+  days_to_resolution?: number,
+  event_group_slug?: string,
+  event_slug?: string,
+  event_ticker?: string,
+  event_title?: string,
+  latest_price?: number,
+  market_link?: string,
+  market_slug?: string,
+  market_ticker?: string,
+  matched_counterpart?: string,
+  open_interest_usd: number,
+  outcome_label?: string,
+  platform: string,
+  question: string,
+  smart_money_direction?: string,
+  status: string,
+  subcategory?: string,
+  token_id?: string,
+  trade_count_7d: number,
+  volume_1d: number,
+  volume_30d: number,
+  volume_7d: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### project
+
+`search.project`
+
+Project Search
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.project({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  chains?: string[] | null,
+  description?: string,
+  id: string,
+  logo_url?: string,
+  name: string,
+  slug?: string,
+  symbol?: string,
+  tags?: string[] | null,
+  tokens?: {
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### token
+
+`search.token`
+
+Token Symbol Resolution
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.token({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `chain` | `ethereum \| base \| bsc \| arbitrum \| solana \| polygon \| optimism \| avalanche \| fantom \| tron \| linea \| mantle \| blast \| gnosis \| zksync \| scroll` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  address: string,
+  chain: string,
+  decimals: number,
+  symbol: string,
+  volume_usd: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### wallet
+
+`search.wallet`
+
+Wallet Search
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.wallet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  address?: string,
+  addresses?: {
+  }[] | null,
+  chain?: string,
+  entity_name?: string,
+  entity_type?: string,
+  label?: string,
+  num_addresses?: number,
+  twitter?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### web
+
+`search.web`
+
+Web Search
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.search.web({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `site` | `string` | No | — |
+| `include_content` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  content: string,
+  description: string,
+  title: string,
+  url: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Token
+
+### dexTrades
+
+`token.dexTrades`
+
+Token DEX Trade History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.token.dexTrades({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `chain` | `ethereum \| base \| bsc \| arbitrum \| tron` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `include` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  amount_usd: number,
+  block_time: number,
+  project: string,
+  taker: string,
+  taker_label?: {
+  },
+  token_bought_address?: string,
+  token_bought_amount: number,
+  token_bought_symbol: string,
+  token_pair: string,
+  token_sold_address?: string,
+  token_sold_amount: number,
+  token_sold_symbol: string,
+  tx_hash: string,
+  version: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### holders
+
+`token.holders`
+
+Token Holders
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.token.holders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `chain` | `ethereum \| polygon \| bsc \| solana \| avalanche \| arbitrum \| optimism \| base` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `include` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  address: string,
+  balance: string,
+  entity_name?: string,
+  entity_type?: string,
+  label?: {
+  },
+  percentage?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tokenomics
+
+`token.tokenomics`
+
+Token Unlock Schedule
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.token.tokenomics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `symbol` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  allocations?: {
+  }[] | null,
+  cumulative_unlocked_amount: number,
+  timestamp: number,
+  total_supply?: number,
+  unlock_amount: number,
+  unlocked_percentage_of_total_supply?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transferCounterparties
+
+`token.transferCounterparties`
+
+Top Transfer Counterparties
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.token.transferCounterparties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `chain` | `ethereum \| base \| bsc \| arbitrum \| tron` | Yes | — |
+| `direction` | `to \| from` | Yes | — |
+| `metric` | `count \| amount \| amount_usd` | No | — |
+| `time_range` | `1d \| 7d \| 30d \| 90d` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `include` | `string` | No | — |
+| `exclude_labels` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  amount: string,
+  amount_usd?: number,
+  counterparty_address: string,
+  first_transfer_at: number,
+  label?: {
+  },
+  last_transfer_at: number,
+  transfer_count: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transfers
+
+`token.transfers`
+
+Token Transfer History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.token.transfers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `chain` | `ethereum \| base \| solana \| tron \| bsc \| arbitrum` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `include` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  amount: string,
+  amount_usd?: number,
+  block_number: number,
+  from_address: string,
+  from_label?: {
+  },
+  symbol?: string,
+  timestamp: number,
+  to_address: string,
+  to_label?: {
+  },
+  tx_hash: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transferStats
+
+`token.transferStats`
+
+Token Transfer Activity Summary
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.token.transferStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `chain` | `ethereum \| base \| bsc \| arbitrum \| tron` | Yes | — |
+| `time_range` | `1d \| 7d \| 30d \| 90d` | No | — |
+| `include` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  enriched_ratio?: number,
+  first_transfer_at: number,
+  last_transfer_at: number,
+  series?: {
+  }[] | null,
+  total_amount: string,
+  total_amount_usd?: number,
+  total_transfers: number,
+  unique_receivers: number,
+  unique_senders: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  enriched_ratio?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Wallet
+
+### detail
+
+`wallet.detail`
+
+Aggregated Wallet Detail
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.wallet.detail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `chain` | `ethereum \| polygon \| bsc \| avalanche \| arbitrum \| optimism \| fantom \| base \| solana` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  active_chains?: {
+  }[] | null,
+  approvals?: {
+  }[] | null,
+  errors?: {
+  }[] | null,
+  evm_balance?: {
+    address: string,
+    chain_balances?: {
+    }[] | null,
+    total_usd: number
+  },
+  evm_tokens?: {
+  }[] | null,
+  labels?: {
+    address: string,
+    entity_name?: string,
+    entity_type?: string,
+    labels?: {
+    }[] | null
+  },
+  nft?: {
+  }[] | null,
+  sol_balance?: {
+    address: string,
+    sol_balance: string
+  },
+  sol_tokens?: {
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`wallet.history`
+
+Wallet Transaction History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.wallet.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `chain` | `ethereum \| polygon \| bsc \| avalanche \| arbitrum \| optimism \| fantom \| base` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `before` | `number` | No | — |
+| `sort_by` | `timestamp \| value` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `include` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  from_address: string,
+  from_label?: {
+  },
+  timestamp: number,
+  to_address: string,
+  to_label?: {
+  },
+  tx_hash: string,
+  tx_type?: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### labelsBatch
+
+`wallet.labelsBatch`
+
+Wallet Labels (Batch)
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.wallet.labelsBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  address: string,
+  entity_name?: string,
+  entity_type?: string,
+  labels?: {
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### netWorth
+
+`wallet.netWorth`
+
+Wallet Net Worth History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.wallet.netWorth({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  timestamp: number,
+  usd_value: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### protocols
+
+`wallet.protocols`
+
+Wallet DeFi Protocol Positions
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.wallet.protocols({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  chain: string,
+  logo_url?: string,
+  positions?: {
+  }[] | null,
+  protocol_name: string,
+  site_url?: string,
+  total_usd: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transfers
+
+`wallet.transfers`
+
+Wallet Transfer History
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.wallet.transfers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `chain` | `ethereum \| base \| solana \| tron \| bsc \| arbitrum` | No | — |
+| `flow` | `in \| out` | No | — |
+| `token` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `include` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  activity_type?: string,
+  amount: string,
+  amount_usd?: number,
+  flow?: string,
+  from_address: string,
+  from_label?: {
+  },
+  timestamp: number,
+  to_address: string,
+  to_label?: {
+  },
+  token_address?: string,
+  token_symbol?: string,
+  tx_hash: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Web
+
+### fetch
+
+`web.fetch`
+
+Web Page Fetch
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.web.fetch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `target_selector` | `string` | No | — |
+| `remove_selector` | `string` | No | — |
+| `wait_for_selector` | `string` | No | — |
+| `timeout` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  content: string,
+  title?: string,
+  url: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## X
+
+### tweets
+
+`x.tweets`
+
+X Tweets by IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.surf.api.x.tweets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  author: {
+  },
+  cover_image_url?: string,
+  created_at: number,
+  lang?: string,
+  media?: {
+  }[] | null,
+  stats: {
+  },
+  text: string,
+  title?: string,
+  tweet_id: string,
+  type?: string,
+  url: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  cached: boolean,
+  credits_used: number,
+  empty_reason?: string,
+  has_more?: boolean,
+  limit: number,
+  offset: number,
+  total?: number,
+  watermark?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

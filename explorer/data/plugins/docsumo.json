@@ -1,0 +1,667 @@
+{
+  "id": "docsumo",
+  "displayName": "Docsumo",
+  "description": "Docsumo plugin for Corsair",
+  "npmPackageName": "@corsair-dev/docsumo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "docsumo.api.agents.listCases",
+      "shortPath": "agents.listCases",
+      "description": "List cases for an external agent case type with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "casetype_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "created_date.asc | created_date.desc | modified_date.asc | modified_date.desc"
+          },
+          {
+            "key": "stage_id",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "workflow_state",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_date_to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ cases?: {}[], pagination?: { limit?: number, offset?: number, total?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsumo.api.agents.listExternal",
+      "shortPath": "agents.listExternal",
+      "description": "List external agents configured in the Docsumo account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "all | doctype | casetype"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ agents?: {}[], disabled_agents?: any[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsumo.api.analytics.mcaAnalysis",
+      "shortPath": "analytics.mcaAnalysis",
+      "description": "Run MCA analysis on uploaded bank statement documents",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "mca_list_db_table",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "non_mca_list_db_table",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allow_partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_summaries",
+            "optional": true,
+            "type": "{}[][]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsumo.api.documents.listAll",
+      "shortPath": "documents.listAll",
+      "description": "List documents with optional filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "view",
+            "optional": true,
+            "type": "files | folder | all_files"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "doc_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "reviewing | processed | erred"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "created_date.asc | created_date.desc"
+          },
+          {
+            "key": "created_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ documents?: {}[], limit?: number, offset?: number, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsumo.api.documentTypes.getEnabled",
+      "shortPath": "documentTypes.getEnabled",
+      "description": "Get a summary of enabled and disabled document types for the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsumo.api.documentTypes.listEnabled",
+      "shortPath": "documentTypes.listEnabled",
+      "description": "List document types currently enabled for the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ document?: { title?: string, doc_type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsumo.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a folder for organizing Docsumo documents",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsumo.api.tables.addRow",
+      "shortPath": "tables.addRow",
+      "description": "Add a new empty row to a Docsumo database table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ddid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsumo.api.tables.delete",
+      "shortPath": "tables.delete",
+      "description": "Delete one or more Docsumo database tables",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dd_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsumo.api.tables.getData",
+      "shortPath": "tables.getData",
+      "description": "Retrieve all rows from a Docsumo database table",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ddid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ data?: {}[], limit?: number, offset?: number, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsumo.api.user.getDocumentTypes",
+      "shortPath": "user.getDocumentTypes",
+      "description": "Get user account details and available document types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ document_types?: { title?: string, value?: string }[], email?: string, full_name?: string, monthly_doc_current?: number, monthly_doc_limit?: number, user_id?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

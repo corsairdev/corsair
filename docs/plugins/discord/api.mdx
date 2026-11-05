@@ -355,6 +355,8 @@ await corsair.discord.api.messages.edit({});
 | `message_id` | `string` | Yes | — |
 | `content` | `string` | No | — |
 | `embeds` | `object[]` | No | — |
+| `components` | `object[]` | No | — |
+| `allowed_mentions` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="embeds full type">
@@ -389,6 +391,69 @@ await corsair.discord.api.messages.edit({});
 }[]
 ```
 </Accordion>
+
+<Accordion title="components full type">
+
+```ts
+{
+  type: 1,
+  components: (
+    {
+      type: 2,
+      style: number,
+      label?: string,
+      emoji?: {
+        id?: string,
+        name?: string,
+        animated?: boolean
+      },
+      custom_id?: string,
+      url?: string,
+      sku_id?: string,
+      disabled?: boolean
+    } | {
+      type: 3,
+      custom_id: string,
+      options: {
+        label: string,
+        value: string,
+        description?: string,
+        emoji?: {
+          id?: string,
+          name?: string,
+          animated?: boolean
+        },
+        default?: boolean
+      }[],
+      placeholder?: string,
+      min_values?: number,
+      max_values?: number,
+      disabled?: boolean
+    } | {
+      type: 5 | 6 | 7 | 8,
+      custom_id: string,
+      placeholder?: string,
+      min_values?: number,
+      max_values?: number,
+      channel_types?: number[],
+      disabled?: boolean
+    }
+  )[]
+}[]
+```
+</Accordion>
+
+<Accordion title="allowed_mentions full type">
+
+```ts
+{
+  parse?: ('roles' | 'users' | 'everyone')[],
+  roles?: string[],
+  users?: string[],
+  replied_user?: boolean
+}
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -413,6 +478,7 @@ await corsair.discord.api.messages.edit({});
 | `pinned` | `boolean` | Yes | — |
 | `type` | `number` | Yes | — |
 | `flags` | `number` | No | — |
+| `components` | `object[]` | No | — |
 | `message_reference` | `object` | No | — |
 | `thread` | `object` | No | — |
 | `nonce` | `string \| number` | No | — |
@@ -521,6 +587,15 @@ await corsair.discord.api.messages.edit({});
     id?: string | null,
     name: string
   }
+}[]
+```
+</Accordion>
+
+<Accordion title="components full type">
+
+```ts
+{
+  type: number
 }[]
 ```
 </Accordion>
@@ -606,6 +681,7 @@ await corsair.discord.api.messages.get({});
 | `pinned` | `boolean` | Yes | — |
 | `type` | `number` | Yes | — |
 | `flags` | `number` | No | — |
+| `components` | `object[]` | No | — |
 | `message_reference` | `object` | No | — |
 | `thread` | `object` | No | — |
 | `nonce` | `string \| number` | No | — |
@@ -714,6 +790,15 @@ await corsair.discord.api.messages.get({});
     id?: string | null,
     name: string
   }
+}[]
+```
+</Accordion>
+
+<Accordion title="components full type">
+
+```ts
+{
+  type: number
 }[]
 ```
 </Accordion>
@@ -876,6 +961,9 @@ await corsair.discord.api.messages.list({});
   pinned: boolean,
   type: number,
   flags?: number,
+  components?: {
+    type: number
+  }[],
   message_reference?: {
     message_id?: string,
     channel_id?: string,
@@ -929,6 +1017,8 @@ await corsair.discord.api.messages.reply({});
 | `message_id` | `string` | Yes | — |
 | `content` | `string` | No | — |
 | `embeds` | `object[]` | No | — |
+| `components` | `object[]` | No | — |
+| `allowed_mentions` | `object` | No | — |
 | `fail_if_not_exists` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -964,6 +1054,69 @@ await corsair.discord.api.messages.reply({});
 }[]
 ```
 </Accordion>
+
+<Accordion title="components full type">
+
+```ts
+{
+  type: 1,
+  components: (
+    {
+      type: 2,
+      style: number,
+      label?: string,
+      emoji?: {
+        id?: string,
+        name?: string,
+        animated?: boolean
+      },
+      custom_id?: string,
+      url?: string,
+      sku_id?: string,
+      disabled?: boolean
+    } | {
+      type: 3,
+      custom_id: string,
+      options: {
+        label: string,
+        value: string,
+        description?: string,
+        emoji?: {
+          id?: string,
+          name?: string,
+          animated?: boolean
+        },
+        default?: boolean
+      }[],
+      placeholder?: string,
+      min_values?: number,
+      max_values?: number,
+      disabled?: boolean
+    } | {
+      type: 5 | 6 | 7 | 8,
+      custom_id: string,
+      placeholder?: string,
+      min_values?: number,
+      max_values?: number,
+      channel_types?: number[],
+      disabled?: boolean
+    }
+  )[]
+}[]
+```
+</Accordion>
+
+<Accordion title="allowed_mentions full type">
+
+```ts
+{
+  parse?: ('roles' | 'users' | 'everyone')[],
+  roles?: string[],
+  users?: string[],
+  replied_user?: boolean
+}
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -988,6 +1141,7 @@ await corsair.discord.api.messages.reply({});
 | `pinned` | `boolean` | Yes | — |
 | `type` | `number` | Yes | — |
 | `flags` | `number` | No | — |
+| `components` | `object[]` | No | — |
 | `message_reference` | `object` | No | — |
 | `thread` | `object` | No | — |
 | `nonce` | `string \| number` | No | — |
@@ -1096,6 +1250,15 @@ await corsair.discord.api.messages.reply({});
     id?: string | null,
     name: string
   }
+}[]
+```
+</Accordion>
+
+<Accordion title="components full type">
+
+```ts
+{
+  type: number
 }[]
 ```
 </Accordion>
@@ -1159,6 +1322,8 @@ await corsair.discord.api.messages.send({});
 | `channel_id` | `string` | Yes | — |
 | `content` | `string` | No | — |
 | `embeds` | `object[]` | No | — |
+| `components` | `object[]` | No | — |
+| `allowed_mentions` | `object` | No | — |
 | `tts` | `boolean` | No | — |
 | `nonce` | `string \| number` | No | — |
 
@@ -1195,6 +1360,69 @@ await corsair.discord.api.messages.send({});
 }[]
 ```
 </Accordion>
+
+<Accordion title="components full type">
+
+```ts
+{
+  type: 1,
+  components: (
+    {
+      type: 2,
+      style: number,
+      label?: string,
+      emoji?: {
+        id?: string,
+        name?: string,
+        animated?: boolean
+      },
+      custom_id?: string,
+      url?: string,
+      sku_id?: string,
+      disabled?: boolean
+    } | {
+      type: 3,
+      custom_id: string,
+      options: {
+        label: string,
+        value: string,
+        description?: string,
+        emoji?: {
+          id?: string,
+          name?: string,
+          animated?: boolean
+        },
+        default?: boolean
+      }[],
+      placeholder?: string,
+      min_values?: number,
+      max_values?: number,
+      disabled?: boolean
+    } | {
+      type: 5 | 6 | 7 | 8,
+      custom_id: string,
+      placeholder?: string,
+      min_values?: number,
+      max_values?: number,
+      channel_types?: number[],
+      disabled?: boolean
+    }
+  )[]
+}[]
+```
+</Accordion>
+
+<Accordion title="allowed_mentions full type">
+
+```ts
+{
+  parse?: ('roles' | 'users' | 'everyone')[],
+  roles?: string[],
+  users?: string[],
+  replied_user?: boolean
+}
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -1219,6 +1447,7 @@ await corsair.discord.api.messages.send({});
 | `pinned` | `boolean` | Yes | — |
 | `type` | `number` | Yes | — |
 | `flags` | `number` | No | — |
+| `components` | `object[]` | No | — |
 | `message_reference` | `object` | No | — |
 | `thread` | `object` | No | — |
 | `nonce` | `string \| number` | No | — |
@@ -1327,6 +1556,15 @@ await corsair.discord.api.messages.send({});
     id?: string | null,
     name: string
   }
+}[]
+```
+</Accordion>
+
+<Accordion title="components full type">
+
+```ts
+{
+  type: number
 }[]
 ```
 </Accordion>
