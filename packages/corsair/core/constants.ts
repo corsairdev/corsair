@@ -322,6 +322,7 @@ export const BaseProviders = [
 	'postman',
 	'prisma',
 	'pushbullet',
+	'qdrant',
 	'razorpay',
 	'reddit',
 	'reducto',
@@ -746,6 +747,7 @@ export const ProviderDisplayNames = {
 	postman: 'Postman',
 	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
+	qdrant: 'Qdrant',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
@@ -1174,6 +1176,7 @@ export type AllProviders =
 	| 'postman'
 	| 'prisma'
 	| 'pushbullet'
+	| 'qdrant'
 	| 'razorpay'
 	| 'reddit'
 	| 'reducto'
