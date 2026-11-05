@@ -169,3 +169,72 @@ describe('Render list filters', () => {
 		]);
 	});
 });
+
+describe('Render documented response shapes', () => {
+	it('returns the outbound IP object Render sends for a service', async () => {
+		const ips = { type: 'shared', ips: ['203.0.113.10', '203.0.113.11'] };
+		replies.push({ status: 200, body: ips });
+
+		await expect(
+			(api.services.listOutboundIps as unknown as Call)(ctx, {
+				serviceId: 'srv-1',
+			}),
+		).resolves.toEqual(ips);
+		expect(sent[0]?.url.pathname).toBe('/v1/services/srv-1/outbound-ips');
+	});
+
+	it.each([
+		['postgres.processes', api.postgres.processes, 'processes'],
+		['postgres.topQueries', api.postgres.topQueries, 'topQueries'],
+		['postgres.sizes', api.postgres.sizes, 'sizes'],
+		['postgres.tableScans', api.postgres.tableScans, 'tableScans'],
+	] as const)(
+		'%s returns the wrapped rows object',
+		async (_name, endpoint, field) => {
+			const body = { [field]: [{ databaseName: 'app' }] };
+			replies.push({ status: 200, body });
+
+			await expect(
+				(endpoint as unknown as Call)(ctx, { id: 'dpg-1' }),
+			).resolves.toEqual(body);
+		},
+	);
+
+	it.each([
+		[
+			'postgres.createExport',
+			api.postgres.createExport,
+			{ id: 'dpg-1' },
+			'/v1/postgres/dpg-1/export',
+		],
+		[
+			'postgres.createUser',
+			api.postgres.createUser,
+			{ id: 'dpg-1', body: { username: 'reporting' } },
+			'/v1/postgres/dpg-1/credentials',
+		],
+		[
+			'automation.createWorkflowVersion',
+			api.automation.createWorkflowVersion,
+			{ workflowId: 'wfl-1', commit: 'abc123' },
+			'/v1/workflowversions',
+		],
+		[
+			'final.verifyCustomDomain',
+			api.final.verifyCustomDomain,
+			{ id: 'srv-1', key: 'www.example.com' },
+			'/v1/services/srv-1/custom-domains/www.example.com/verify',
+		],
+	] as const)(
+		'%s accepts the empty 202 Accepted reply',
+		async (_name, endpoint, input, path) => {
+			replies.push({ status: 202 });
+
+			await expect(
+				(endpoint as unknown as Call)(ctx, input),
+			).resolves.toBeUndefined();
+			expect(sent[0]?.method).toBe('POST');
+			expect(sent[0]?.url.pathname).toBe(path);
+		},
+	);
+});

@@ -140,6 +140,26 @@ const ResourceOutputSchema = z.union([
 	z.array(ResourceRecordSchema),
 ]);
 const ResourceListOutputSchema = z.array(ResourceRecordSchema);
+// Render answers these POSTs with 202 Accepted and no body.
+const AcceptedOutputSchema = ResourceOutputSchema.optional();
+const OutboundIpsOutputSchema = z
+	.object({
+		type: z.enum(['shared', 'dedicated']),
+		dedicatedIpId: z.string().optional(),
+		ips: z.array(z.string()),
+	})
+	.passthrough();
+// Postgres query insights wrap their rows in a single named field.
+const PostgresProcessesOutputSchema = z.object({
+	processes: ResourceListOutputSchema,
+});
+const PostgresTopQueriesOutputSchema = z.object({
+	topQueries: ResourceListOutputSchema,
+});
+const PostgresSizesOutputSchema = z.object({ sizes: ResourceListOutputSchema });
+const PostgresTableScansOutputSchema = z.object({
+	tableScans: ResourceListOutputSchema,
+});
 const ServiceJobStartInputSchema = ServiceIdInputSchema.extend({
 	startCommand: z.string().min(1),
 	planId: z.string().min(1).optional(),
@@ -365,6 +385,7 @@ export type ListServicesInput = z.infer<typeof ListServicesInputSchema>;
 export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
 export type ServiceIdInput = z.infer<typeof ServiceIdInputSchema>;
 export type ServiceOutput = z.infer<typeof ServiceOutputSchema>;
+export type OutboundIpsOutput = z.infer<typeof OutboundIpsOutputSchema>;
 type ResourceInput = z.infer<typeof ResourceInputSchema>;
 type ResourceIdInput = z.infer<typeof ResourceIdInputSchema>;
 type ResourceIdKeyInput = z.infer<typeof ResourceIdKeyInputSchema>;
@@ -622,7 +643,7 @@ export type RenderEndpointOutputs = {
 	cancelDeploy: unknown;
 	rollbackDeploy: unknown;
 	listServiceEvents: z.infer<typeof ResourceListOutputSchema>;
-	listOutboundIps: z.infer<typeof ResourceListOutputSchema>;
+	listOutboundIps: z.infer<typeof OutboundIpsOutputSchema>;
 	listServiceJobs: z.infer<typeof ResourceListOutputSchema>;
 	retrieveServiceJob: z.infer<typeof ResourceOutputSchema>;
 	createServiceJob: z.infer<typeof ResourceOutputSchema>;
@@ -778,7 +799,7 @@ export type RenderEndpointOutputs = {
 	updateHeaders: z.infer<typeof ResourceOutputSchema>;
 	updateResourceLogStream: z.infer<typeof ResourceOutputSchema>;
 	updateSecretFilesForService: z.infer<typeof ResourceOutputSchema>;
-	verifyCustomDomain: z.infer<typeof ResourceOutputSchema>;
+	verifyCustomDomain: z.infer<typeof AcceptedOutputSchema>;
 	deleteOwnerMetricsStream: z.infer<typeof EmptyOutputSchema>;
 	retrieveOwnerMetricsStream: z.infer<typeof ResourceOutputSchema>;
 	upsertOwnerMetricsStream: z.infer<typeof ResourceOutputSchema>;
@@ -813,17 +834,17 @@ export type RenderEndpointOutputs = {
 	updateDedicatedIp: z.infer<typeof ResourceOutputSchema>;
 	deleteDedicatedIp: z.infer<typeof EmptyOutputSchema>;
 	deletePostgres: z.infer<typeof EmptyOutputSchema>;
-	createPostgresExport: z.infer<typeof ResourceOutputSchema>;
-	createPostgresUser: z.infer<typeof ResourceOutputSchema>;
-	listPostgresProcesses: z.infer<typeof ResourceListOutputSchema>;
-	listPostgresTopQueries: z.infer<typeof ResourceListOutputSchema>;
-	listPostgresSizes: z.infer<typeof ResourceListOutputSchema>;
-	listPostgresTableScans: z.infer<typeof ResourceListOutputSchema>;
+	createPostgresExport: z.infer<typeof AcceptedOutputSchema>;
+	createPostgresUser: z.infer<typeof AcceptedOutputSchema>;
+	listPostgresProcesses: z.infer<typeof PostgresProcessesOutputSchema>;
+	listPostgresTopQueries: z.infer<typeof PostgresTopQueriesOutputSchema>;
+	listPostgresSizes: z.infer<typeof PostgresSizesOutputSchema>;
+	listPostgresTableScans: z.infer<typeof PostgresTableScansOutputSchema>;
 	createWorkflow: z.infer<typeof ResourceOutputSchema>;
 	retrieveWorkflow: z.infer<typeof ResourceOutputSchema>;
 	updateWorkflow: z.infer<typeof ResourceOutputSchema>;
 	deleteWorkflow: z.infer<typeof EmptyOutputSchema>;
-	createWorkflowVersion: z.infer<typeof ResourceOutputSchema>;
+	createWorkflowVersion: z.infer<typeof AcceptedOutputSchema>;
 	retrieveWorkflowVersion: z.infer<typeof ResourceOutputSchema>;
 	retrieveTask: z.infer<typeof ResourceOutputSchema>;
 	createTaskRun: z.infer<typeof ResourceOutputSchema>;
@@ -1070,7 +1091,7 @@ export const RenderEndpointOutputSchemas = {
 	cancelDeploy: z.unknown(),
 	rollbackDeploy: z.unknown(),
 	listServiceEvents: ResourceListOutputSchema,
-	listOutboundIps: ResourceListOutputSchema,
+	listOutboundIps: OutboundIpsOutputSchema,
 	listServiceJobs: ResourceListOutputSchema,
 	retrieveServiceJob: ResourceOutputSchema,
 	createServiceJob: ResourceOutputSchema,
@@ -1239,7 +1260,7 @@ export const RenderEndpointOutputSchemas = {
 	updateHeaders: ResourceOutputSchema,
 	updateResourceLogStream: ResourceOutputSchema,
 	updateSecretFilesForService: ResourceOutputSchema,
-	verifyCustomDomain: ResourceOutputSchema,
+	verifyCustomDomain: AcceptedOutputSchema,
 	deleteOwnerMetricsStream: EmptyOutputSchema,
 	retrieveOwnerMetricsStream: ResourceOutputSchema,
 	upsertOwnerMetricsStream: ResourceOutputSchema,
@@ -1274,17 +1295,17 @@ export const RenderEndpointOutputSchemas = {
 	updateDedicatedIp: ResourceOutputSchema,
 	deleteDedicatedIp: EmptyOutputSchema,
 	deletePostgres: EmptyOutputSchema,
-	createPostgresExport: ResourceOutputSchema,
-	createPostgresUser: ResourceOutputSchema,
-	listPostgresProcesses: ResourceListOutputSchema,
-	listPostgresTopQueries: ResourceListOutputSchema,
-	listPostgresSizes: ResourceListOutputSchema,
-	listPostgresTableScans: ResourceListOutputSchema,
+	createPostgresExport: AcceptedOutputSchema,
+	createPostgresUser: AcceptedOutputSchema,
+	listPostgresProcesses: PostgresProcessesOutputSchema,
+	listPostgresTopQueries: PostgresTopQueriesOutputSchema,
+	listPostgresSizes: PostgresSizesOutputSchema,
+	listPostgresTableScans: PostgresTableScansOutputSchema,
 	createWorkflow: ResourceOutputSchema,
 	retrieveWorkflow: ResourceOutputSchema,
 	updateWorkflow: ResourceOutputSchema,
 	deleteWorkflow: EmptyOutputSchema,
-	createWorkflowVersion: ResourceOutputSchema,
+	createWorkflowVersion: AcceptedOutputSchema,
 	retrieveWorkflowVersion: ResourceOutputSchema,
 	retrieveTask: ResourceOutputSchema,
 	createTaskRun: ResourceOutputSchema,

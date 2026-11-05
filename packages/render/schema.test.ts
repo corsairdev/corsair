@@ -386,6 +386,11 @@ describe('Render schema', () => {
 					ownerId: 'owner-1',
 				},
 			},
+			{ type: 'shared', ips: ['203.0.113.10'] },
+			{ processes: [] },
+			{ topQueries: [] },
+			{ sizes: [] },
+			{ tableScans: [] },
 			{},
 			undefined,
 		];

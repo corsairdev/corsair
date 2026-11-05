@@ -1,7 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeRenderRequest } from '../client';
 import type { RenderEndpoints } from '../index';
-import type { ListServicesOutput, ServiceOutput } from './types';
+import type {
+	ListServicesOutput,
+	OutboundIpsOutput,
+	ServiceOutput,
+} from './types';
 
 type RenderResourceList = Record<string, unknown>[];
 
@@ -141,7 +145,7 @@ export const listOutboundIps: RenderEndpoints['listOutboundIps'] = (
 	ctx,
 	input,
 ) =>
-	serviceRequest<RenderResourceList>(
+	serviceRequest<OutboundIpsOutput>(
 		ctx,
 		input.serviceId,
 		'/outbound-ips',
