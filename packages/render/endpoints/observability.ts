@@ -1,5 +1,6 @@
 import { makeRenderRequest } from '../client';
-import type { RenderEndpoints } from '../index';
+import type { RenderContext, RenderEndpoints } from '../index';
+import { RenderOwnerSchema } from '../schema/database';
 import { renderPathParameter } from './path';
 
 type Context = { key: string };
@@ -33,10 +34,45 @@ const call = <T>(
 	});
 };
 
+/**
+ * Keeps a local copy of each workspace (owner) the API key can see, keyed by
+ * owner ID. Render returns the full owner on both list and retrieve, so a
+ * save replaces the row. A failed save never fails the API call.
+ */
+const saveOwners = async (ctx: RenderContext, owners: unknown[]) => {
+	if (!ctx.database) return;
+	try {
+		for (const owner of owners) {
+			const parsed = RenderOwnerSchema.safeParse(owner);
+			if (!parsed.success) continue;
+			await ctx.db.renderOwner.upsertByEntityId(parsed.data.id, parsed.data);
+		}
+	} catch (error) {
+		console.warn('Failed to save Render owners to database:', error);
+	}
+};
+
+// Path checks in call() throw synchronously, like every other operation;
+// the save runs once Render answers.
 export const listOwners: RenderEndpoints['listOwners'] = (ctx, input) =>
-	call(ctx, '/v1/owners', 'GET', input);
+	call<Record<string, unknown>[]>(ctx, '/v1/owners', 'GET', input).then(
+		async (response) => {
+			if (Array.isArray(response)) {
+				await saveOwners(
+					ctx,
+					response.map((entry) => entry.owner),
+				);
+			}
+			return response;
+		},
+	);
 export const retrieveOwner: RenderEndpoints['retrieveOwner'] = (ctx, input) =>
-	call(ctx, '/v1/owners/{id}', 'GET', input);
+	call<Record<string, unknown>>(ctx, '/v1/owners/{id}', 'GET', input).then(
+		async (response) => {
+			await saveOwners(ctx, [response]);
+			return response;
+		},
+	);
 export const listOwnerMembers: RenderEndpoints['listOwnerMembers'] = (
 	ctx,
 	input,
