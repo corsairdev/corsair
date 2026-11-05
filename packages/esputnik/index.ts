@@ -15,17 +15,20 @@ import type {
 import { AuthMissingError } from 'corsair/core';
 import {
 	accountEndpoints,
-	accountExtendedEndpoints,
+	appEndpoints,
 	appInboxEndpoints,
-	batchTwoRemainderEndpoints,
 	broadcastEndpoints,
 	contactEndpoints,
 	emailEndpoints,
 	eventEndpoints,
-	finalBatchEndpoints,
 	interfaceEndpoints,
+	messageEndpoints,
 	mobilePushEndpoints,
 	orderEndpoints,
+	preprocessorEndpoints,
+	productFeedEndpoints,
+	promocodeEndpoints,
+	siteEndpoints,
 	smsEndpoints,
 	telegramBotEndpoints,
 	viberEndpoints,
@@ -33,6 +36,7 @@ import {
 import type {
 	EsputnikEndpointInputs,
 	EsputnikEndpointOutputs,
+	EsputnikOperation,
 } from './endpoints/types';
 import {
 	EsputnikEndpointInputSchemas,
@@ -59,609 +63,185 @@ export type EsputnikBoundEndpoints = BindEndpoints<
 	typeof esputnikEndpointsNested
 >;
 
-type EsputnikEndpoint<
-	K extends keyof EsputnikEndpointOutputs & keyof EsputnikEndpointInputs,
-> = CorsairEndpoint<
-	EsputnikContext,
-	EsputnikEndpointInputs[K],
-	EsputnikEndpointOutputs[K]
->;
-
 export type EsputnikEndpoints = {
-	getAccountInfo: EsputnikEndpoint<'getAccountInfo'>;
-	getBalance: EsputnikEndpoint<'getBalance'>;
-	addContact: EsputnikEndpoint<'addContact'>;
-	getContact: EsputnikEndpoint<'getContact'>;
-	updateContact: EsputnikEndpoint<'updateContact'>;
-	deleteContactById: EsputnikEndpoint<'deleteContactById'>;
-	searchContacts: EsputnikEndpoint<'searchContacts'>;
-	subscribeContact: EsputnikEndpoint<'subscribeContact'>;
-	contactsBulkUpdate: EsputnikEndpoint<'contactsBulkUpdate'>;
-	fileContactsBulkUpdate: EsputnikEndpoint<'fileContactsBulkUpdate'>;
-	getImportSessionStatus: EsputnikEndpoint<'getImportSessionStatus'>;
-	getContactEmails: EsputnikEndpoint<'getContactEmails'>;
-	addToUnsubscribed: EsputnikEndpoint<'addToUnsubscribed'>;
-	deleteFromUnsubscribed: EsputnikEndpoint<'deleteFromUnsubscribed'>;
-	getGroupContacts: EsputnikEndpoint<'getGroupContacts'>;
-	detachContactsFromGroup: EsputnikEndpoint<'detachContactsFromGroup'>;
-	attachContactsToGroup: EsputnikEndpoint<'attachContactsToGroup'>;
-	searchGroups: EsputnikEndpoint<'searchGroups'>;
-	searchWorkflows: EsputnikEndpoint<'searchWorkflows'>;
-	getContactIdByToken: EsputnikEndpoint<'getContactIdByToken'>;
-	getContactSubscriptionCategories: EsputnikEndpoint<'getContactSubscriptionCategories'>;
-	changeContactSubscriptionCategories: EsputnikEndpoint<'changeContactSubscriptionCategories'>;
-	deleteContactByExternalCustomerId: EsputnikEndpoint<'deleteContactByExternalCustomerId'>;
-	contactRecoms: EsputnikEndpoint<'contactRecoms'>;
-	getAdditionalFields: EsputnikEndpoint<'getAdditionalFields'>;
-	getOrganisationBalanceHistory: EsputnikEndpoint<'getOrganisationBalanceHistory'>;
-	ordersBulkInsert: EsputnikEndpoint<'ordersBulkInsert'>;
-	registerEvent: EsputnikEndpoint<'registerEvent'>;
-	sendHistoryEvents: EsputnikEndpoint<'sendHistoryEvents'>;
-	removeHistoryEvents: EsputnikEndpoint<'removeHistoryEvents'>;
-	searchEmails: EsputnikEndpoint<'searchEmails'>;
-	getEmailMessageViewLink: EsputnikEndpoint<'getEmailMessageViewLink'>;
-	sendPreparedMessage: EsputnikEndpoint<'sendPreparedMessage'>;
-	addEmail: EsputnikEndpoint<'addEmail'>;
-	getEmail: EsputnikEndpoint<'getEmail'>;
-	updateMessage: EsputnikEndpoint<'updateMessage'>;
-	deleteEmail: EsputnikEndpoint<'deleteEmail'>;
-	updateTranslatedMessage: EsputnikEndpoint<'updateTranslatedMessage'>;
-	deleteTranslatedEmail: EsputnikEndpoint<'deleteTranslatedEmail'>;
-	sendEmail: EsputnikEndpoint<'sendEmail'>;
-	searchMobilePushMessages: EsputnikEndpoint<'searchMobilePushMessages'>;
-	addMobilePushMessage: EsputnikEndpoint<'addMobilePushMessage'>;
-	getMobilePushMessage: EsputnikEndpoint<'getMobilePushMessage'>;
-	updateBaseMobilePushMessage: EsputnikEndpoint<'updateBaseMobilePushMessage'>;
-	deleteMobilePushMessage: EsputnikEndpoint<'deleteMobilePushMessage'>;
-	updateTranslatedMobilePushMessage: EsputnikEndpoint<'updateTranslatedMobilePushMessage'>;
-	deleteTranslatedMobilePushMessage: EsputnikEndpoint<'deleteTranslatedMobilePushMessage'>;
-	searchViberMessages: EsputnikEndpoint<'searchViberMessages'>;
-	addViberMessage: EsputnikEndpoint<'addViberMessage'>;
-	getViberMessage: EsputnikEndpoint<'getViberMessage'>;
-	updateBaseViberMessage: EsputnikEndpoint<'updateBaseViberMessage'>;
-	deleteViberMessage: EsputnikEndpoint<'deleteViberMessage'>;
-	searchAppInboxMessages: EsputnikEndpoint<'searchAppInboxMessages'>;
-	addAppInboxMessage: EsputnikEndpoint<'addAppInboxMessage'>;
-	getAppInboxMessage: EsputnikEndpoint<'getAppInboxMessage'>;
-	updateBaseAppInboxMessage: EsputnikEndpoint<'updateBaseAppInboxMessage'>;
-	deleteAppInboxMessage: EsputnikEndpoint<'deleteAppInboxMessage'>;
-	searchTelegramBotMessages: EsputnikEndpoint<'searchTelegramBotMessages'>;
-	addTelegramBotMessage: EsputnikEndpoint<'addTelegramBotMessage'>;
-	getTelegramBotMessage: EsputnikEndpoint<'getTelegramBotMessage'>;
-	updateBaseTelegramBotMessage: EsputnikEndpoint<'updateBaseTelegramBotMessage'>;
-	deleteTelegramBotMessage: EsputnikEndpoint<'deleteTelegramBotMessage'>;
-	searchSmsMessages: EsputnikEndpoint<'searchSmsMessages'>;
-	getSms: EsputnikEndpoint<'getSms'>;
-	updateBaseSmsMessage: EsputnikEndpoint<'updateBaseSmsMessage'>;
-	deleteSmsMessage: EsputnikEndpoint<'deleteSmsMessage'>;
-	getBroadcasts: EsputnikEndpoint<'getBroadcasts'>;
-	createBroadcast: EsputnikEndpoint<'createBroadcast'>;
-	getBroadcast: EsputnikEndpoint<'getBroadcast'>;
-	getSmsInterfaces: EsputnikEndpoint<'getSmsInterfaces'>;
-	getEmailInterfaces: EsputnikEndpoint<'getEmailInterfaces'>;
-	updateTranslatedViberMessage: EsputnikEndpoint<'updateTranslatedViberMessage'>;
-	deleteTranslatedViberMessage: EsputnikEndpoint<'deleteTranslatedViberMessage'>;
-	updateTranslatedAppInboxMessage: EsputnikEndpoint<'updateTranslatedAppInboxMessage'>;
-	deleteTranslatedAppInboxMessage: EsputnikEndpoint<'deleteTranslatedAppInboxMessage'>;
-	updateTranslatedTelegramMessage: EsputnikEndpoint<'updateTranslatedTelegramMessage'>;
-	deleteTranslatedTelegramMessage: EsputnikEndpoint<'deleteTranslatedTelegramMessage'>;
-	addSmsMessage: EsputnikEndpoint<'addSmsMessage'>;
-	sendSms: EsputnikEndpoint<'sendSms'>;
-	cancelBroadcast: EsputnikEndpoint<'cancelBroadcast'>;
-	contactActivity: EsputnikEndpoint<'contactActivity'>;
-	contactMessages: EsputnikEndpoint<'contactMessages'>;
-	getTokenActivated: EsputnikEndpoint<'getTokenActivated'>;
-	changeTokenActivated: EsputnikEndpoint<'changeTokenActivated'>;
-	getDomains: EsputnikEndpoint<'getDomains'>;
-	createDomain: EsputnikEndpoint<'createDomain'>;
-	getScript: EsputnikEndpoint<'getScript'>;
-	getWebPushDomains: EsputnikEndpoint<'getWebPushDomains'>;
-	addWebPushDomain: EsputnikEndpoint<'addWebPushDomain'>;
-	deleteWebPushDomain: EsputnikEndpoint<'deleteWebPushDomain'>;
-	getWebPushScript: EsputnikEndpoint<'getWebPushScript'>;
-	getProductFeedsConfiguration: EsputnikEndpoint<'getProductFeedsConfiguration'>;
-	configureProductFeeds: EsputnikEndpoint<'configureProductFeeds'>;
-	addAppTokens: EsputnikEndpoint<'addAppTokens'>;
-	muteAppToken: EsputnikEndpoint<'muteAppToken'>;
-	unmuteAppToken: EsputnikEndpoint<'unmuteAppToken'>;
-	getSubscriptionCategories: EsputnikEndpoint<'getSubscriptionCategories'>;
-	getPromocodes: EsputnikEndpoint<'getPromocodes'>;
-	getPromocodesCount: EsputnikEndpoint<'getPromocodesCount'>;
-	insertPromocodes: EsputnikEndpoint<'insertPromocodes'>;
-	getPreprocessorFileStatus: EsputnikEndpoint<'getPreprocessorFileStatus'>;
-	updatePreprocessorFile: EsputnikEndpoint<'updatePreprocessorFile'>;
-	uploadPreprocessorFile: EsputnikEndpoint<'uploadPreprocessorFile'>;
-	generateApiToken: EsputnikEndpoint<'generateApiToken'>;
-	getInteractionStatus: EsputnikEndpoint<'getInteractionStatus'>;
-	sendViber: EsputnikEndpoint<'sendViber'>;
-	sendAppInbox: EsputnikEndpoint<'sendAppInbox'>;
-	sendTelegramBot: EsputnikEndpoint<'sendTelegramBot'>;
-	updateTranslatedSmsMessage: EsputnikEndpoint<'updateTranslatedSmsMessage'>;
-	deleteTranslatedSmsMessage: EsputnikEndpoint<'deleteTranslatedSmsMessage'>;
+	[K in EsputnikOperation]: CorsairEndpoint<
+		EsputnikContext,
+		EsputnikEndpointInputs[K],
+		EsputnikEndpointOutputs[K]
+	>;
 };
 
 export const esputnikEndpointsNested = {
 	account: accountEndpoints,
 	contacts: contactEndpoints,
-	accountExtended: accountExtendedEndpoints,
 	orders: orderEndpoints,
 	events: eventEndpoints,
 	emails: emailEndpoints,
 	mobilePush: mobilePushEndpoints,
-	viber: {
-		searchViberMessages: viberEndpoints.search,
-		addViberMessage: viberEndpoints.add,
-		getViberMessage: viberEndpoints.get,
-		updateBaseViberMessage: viberEndpoints.update,
-		deleteViberMessage: viberEndpoints.delete,
-	},
-	appInbox: {
-		searchAppInboxMessages: appInboxEndpoints.search,
-		addAppInboxMessage: appInboxEndpoints.add,
-		getAppInboxMessage: appInboxEndpoints.get,
-		updateBaseAppInboxMessage: appInboxEndpoints.update,
-		deleteAppInboxMessage: appInboxEndpoints.delete,
-	},
-	telegramBot: {
-		searchTelegramBotMessages: telegramBotEndpoints.search,
-		addTelegramBotMessage: telegramBotEndpoints.add,
-		getTelegramBotMessage: telegramBotEndpoints.get,
-		updateBaseTelegramBotMessage: telegramBotEndpoints.update,
-		deleteTelegramBotMessage: telegramBotEndpoints.delete,
-	},
-	sms: {
-		searchSmsMessages: smsEndpoints.search,
-		getSms: smsEndpoints.get,
-		updateBaseSmsMessage: smsEndpoints.update,
-		deleteSmsMessage: smsEndpoints.delete,
-	},
+	viber: viberEndpoints,
+	appInbox: appInboxEndpoints,
+	telegramBot: telegramBotEndpoints,
+	sms: smsEndpoints,
 	broadcasts: broadcastEndpoints,
 	interfaces: interfaceEndpoints,
-	batchTwoRemainder: batchTwoRemainderEndpoints,
-	finalBatch: finalBatchEndpoints,
+	messages: messageEndpoints,
+	site: siteEndpoints,
+	productFeeds: productFeedEndpoints,
+	apps: appEndpoints,
+	promocodes: promocodeEndpoints,
+	preprocessor: preprocessorEndpoints,
 } as const;
 
+const schemasFor = <K extends EsputnikOperation>(operation: K) => ({
+	input: EsputnikEndpointInputSchemas[operation],
+	output: EsputnikEndpointOutputSchemas[operation],
+});
+
 export const esputnikEndpointSchemas = {
-	'account.getAccountInfo': {
-		input: EsputnikEndpointInputSchemas.getAccountInfo,
-		output: EsputnikEndpointOutputSchemas.getAccountInfo,
-	},
-	'account.getBalance': {
-		input: EsputnikEndpointInputSchemas.getBalance,
-		output: EsputnikEndpointOutputSchemas.getBalance,
-	},
-	'contacts.addContact': {
-		input: EsputnikEndpointInputSchemas.addContact,
-		output: EsputnikEndpointOutputSchemas.addContact,
-	},
-	'contacts.getContact': {
-		input: EsputnikEndpointInputSchemas.getContact,
-		output: EsputnikEndpointOutputSchemas.getContact,
-	},
-	'contacts.updateContact': {
-		input: EsputnikEndpointInputSchemas.updateContact,
-		output: EsputnikEndpointOutputSchemas.updateContact,
-	},
-	'contacts.searchContacts': {
-		input: EsputnikEndpointInputSchemas.searchContacts,
-		output: EsputnikEndpointOutputSchemas.searchContacts,
-	},
-	'contacts.subscribeContact': {
-		input: EsputnikEndpointInputSchemas.subscribeContact,
-		output: EsputnikEndpointOutputSchemas.subscribeContact,
-	},
-	'contacts.contactsBulkUpdate': {
-		input: EsputnikEndpointInputSchemas.contactsBulkUpdate,
-		output: EsputnikEndpointOutputSchemas.contactsBulkUpdate,
-	},
-	'contacts.fileContactsBulkUpdate': {
-		input: EsputnikEndpointInputSchemas.fileContactsBulkUpdate,
-		output: EsputnikEndpointOutputSchemas.fileContactsBulkUpdate,
-	},
-	'contacts.getImportSessionStatus': {
-		input: EsputnikEndpointInputSchemas.getImportSessionStatus,
-		output: EsputnikEndpointOutputSchemas.getImportSessionStatus,
-	},
-	'contacts.getContactEmails': {
-		input: EsputnikEndpointInputSchemas.getContactEmails,
-		output: EsputnikEndpointOutputSchemas.getContactEmails,
-	},
-	'contacts.addToUnsubscribed': {
-		input: EsputnikEndpointInputSchemas.addToUnsubscribed,
-		output: EsputnikEndpointOutputSchemas.addToUnsubscribed,
-	},
-	'contacts.deleteFromUnsubscribed': {
-		input: EsputnikEndpointInputSchemas.deleteFromUnsubscribed,
-		output: EsputnikEndpointOutputSchemas.deleteFromUnsubscribed,
-	},
-	'contacts.getGroupContacts': {
-		input: EsputnikEndpointInputSchemas.getGroupContacts,
-		output: EsputnikEndpointOutputSchemas.getGroupContacts,
-	},
-	'contacts.detachContactsFromGroup': {
-		input: EsputnikEndpointInputSchemas.detachContactsFromGroup,
-		output: EsputnikEndpointOutputSchemas.detachContactsFromGroup,
-	},
-	'contacts.attachContactsToGroup': {
-		input: EsputnikEndpointInputSchemas.attachContactsToGroup,
-		output: EsputnikEndpointOutputSchemas.attachContactsToGroup,
-	},
-	'contacts.searchGroups': {
-		input: EsputnikEndpointInputSchemas.searchGroups,
-		output: EsputnikEndpointOutputSchemas.searchGroups,
-	},
-	'contacts.searchWorkflows': {
-		input: EsputnikEndpointInputSchemas.searchWorkflows,
-		output: EsputnikEndpointOutputSchemas.searchWorkflows,
-	},
-	'contacts.getContactIdByToken': {
-		input: EsputnikEndpointInputSchemas.getContactIdByToken,
-		output: EsputnikEndpointOutputSchemas.getContactIdByToken,
-	},
-	'contacts.getContactSubscriptionCategories': {
-		input: EsputnikEndpointInputSchemas.getContactSubscriptionCategories,
-		output: EsputnikEndpointOutputSchemas.getContactSubscriptionCategories,
-	},
-	'contacts.changeContactSubscriptionCategories': {
-		input: EsputnikEndpointInputSchemas.changeContactSubscriptionCategories,
-		output: EsputnikEndpointOutputSchemas.changeContactSubscriptionCategories,
-	},
-	'contacts.deleteContactById': {
-		input: EsputnikEndpointInputSchemas.deleteContactById,
-		output: EsputnikEndpointOutputSchemas.deleteContactById,
-	},
-	'contacts.deleteContactByExternalCustomerId': {
-		input: EsputnikEndpointInputSchemas.deleteContactByExternalCustomerId,
-		output: EsputnikEndpointOutputSchemas.deleteContactByExternalCustomerId,
-	},
-	'contacts.contactRecoms': {
-		input: EsputnikEndpointInputSchemas.contactRecoms,
-		output: EsputnikEndpointOutputSchemas.contactRecoms,
-	},
-	'contacts.getAdditionalFields': {
-		input: EsputnikEndpointInputSchemas.getAdditionalFields,
-		output: EsputnikEndpointOutputSchemas.getAdditionalFields,
-	},
-	'accountExtended.getOrganisationBalanceHistory': {
-		input: EsputnikEndpointInputSchemas.getOrganisationBalanceHistory,
-		output: EsputnikEndpointOutputSchemas.getOrganisationBalanceHistory,
-	},
-	'orders.ordersBulkInsert': {
-		input: EsputnikEndpointInputSchemas.ordersBulkInsert,
-		output: EsputnikEndpointOutputSchemas.ordersBulkInsert,
-	},
-	'events.registerEvent': {
-		input: EsputnikEndpointInputSchemas.registerEvent,
-		output: EsputnikEndpointOutputSchemas.registerEvent,
-	},
-	'events.sendHistoryEvents': {
-		input: EsputnikEndpointInputSchemas.sendHistoryEvents,
-		output: EsputnikEndpointOutputSchemas.sendHistoryEvents,
-	},
-	'events.removeHistoryEvents': {
-		input: EsputnikEndpointInputSchemas.removeHistoryEvents,
-		output: EsputnikEndpointOutputSchemas.removeHistoryEvents,
-	},
-	'emails.searchEmails': {
-		input: EsputnikEndpointInputSchemas.searchEmails,
-		output: EsputnikEndpointOutputSchemas.searchEmails,
-	},
-	'emails.getEmailMessageViewLink': {
-		input: EsputnikEndpointInputSchemas.getEmailMessageViewLink,
-		output: EsputnikEndpointOutputSchemas.getEmailMessageViewLink,
-	},
-	'emails.sendPreparedMessage': {
-		input: EsputnikEndpointInputSchemas.sendPreparedMessage,
-		output: EsputnikEndpointOutputSchemas.sendPreparedMessage,
-	},
-	'emails.addEmail': {
-		input: EsputnikEndpointInputSchemas.addEmail,
-		output: EsputnikEndpointOutputSchemas.addEmail,
-	},
-	'emails.getEmail': {
-		input: EsputnikEndpointInputSchemas.getEmail,
-		output: EsputnikEndpointOutputSchemas.getEmail,
-	},
-	'emails.updateMessage': {
-		input: EsputnikEndpointInputSchemas.updateMessage,
-		output: EsputnikEndpointOutputSchemas.updateMessage,
-	},
-	'emails.deleteEmail': {
-		input: EsputnikEndpointInputSchemas.deleteEmail,
-		output: EsputnikEndpointOutputSchemas.deleteEmail,
-	},
-	'emails.updateTranslatedMessage': {
-		input: EsputnikEndpointInputSchemas.updateTranslatedMessage,
-		output: EsputnikEndpointOutputSchemas.updateTranslatedMessage,
-	},
-	'emails.deleteTranslatedEmail': {
-		input: EsputnikEndpointInputSchemas.deleteTranslatedEmail,
-		output: EsputnikEndpointOutputSchemas.deleteTranslatedEmail,
-	},
-	'emails.sendEmail': {
-		input: EsputnikEndpointInputSchemas.sendEmail,
-		output: EsputnikEndpointOutputSchemas.sendEmail,
-	},
-	'mobilePush.searchMobilePushMessages': {
-		input: EsputnikEndpointInputSchemas.searchMobilePushMessages,
-		output: EsputnikEndpointOutputSchemas.searchMobilePushMessages,
-	},
-	'mobilePush.addMobilePushMessage': {
-		input: EsputnikEndpointInputSchemas.addMobilePushMessage,
-		output: EsputnikEndpointOutputSchemas.addMobilePushMessage,
-	},
-	'mobilePush.getMobilePushMessage': {
-		input: EsputnikEndpointInputSchemas.getMobilePushMessage,
-		output: EsputnikEndpointOutputSchemas.getMobilePushMessage,
-	},
-	'mobilePush.updateBaseMobilePushMessage': {
-		input: EsputnikEndpointInputSchemas.updateBaseMobilePushMessage,
-		output: EsputnikEndpointOutputSchemas.updateBaseMobilePushMessage,
-	},
-	'mobilePush.deleteMobilePushMessage': {
-		input: EsputnikEndpointInputSchemas.deleteMobilePushMessage,
-		output: EsputnikEndpointOutputSchemas.deleteMobilePushMessage,
-	},
-	'mobilePush.updateTranslatedMobilePushMessage': {
-		input: EsputnikEndpointInputSchemas.updateTranslatedMobilePushMessage,
-		output: EsputnikEndpointOutputSchemas.updateTranslatedMobilePushMessage,
-	},
-	'mobilePush.deleteTranslatedMobilePushMessage': {
-		input: EsputnikEndpointInputSchemas.deleteTranslatedMobilePushMessage,
-		output: EsputnikEndpointOutputSchemas.deleteTranslatedMobilePushMessage,
-	},
-	'viber.searchViberMessages': {
-		input: EsputnikEndpointInputSchemas.searchViberMessages,
-		output: EsputnikEndpointOutputSchemas.searchViberMessages,
-	},
-	'viber.addViberMessage': {
-		input: EsputnikEndpointInputSchemas.addViberMessage,
-		output: EsputnikEndpointOutputSchemas.addViberMessage,
-	},
-	'viber.getViberMessage': {
-		input: EsputnikEndpointInputSchemas.getViberMessage,
-		output: EsputnikEndpointOutputSchemas.getViberMessage,
-	},
-	'viber.updateBaseViberMessage': {
-		input: EsputnikEndpointInputSchemas.updateBaseViberMessage,
-		output: EsputnikEndpointOutputSchemas.updateBaseViberMessage,
-	},
-	'viber.deleteViberMessage': {
-		input: EsputnikEndpointInputSchemas.deleteViberMessage,
-		output: EsputnikEndpointOutputSchemas.deleteViberMessage,
-	},
-	'appInbox.searchAppInboxMessages': {
-		input: EsputnikEndpointInputSchemas.searchAppInboxMessages,
-		output: EsputnikEndpointOutputSchemas.searchAppInboxMessages,
-	},
-	'appInbox.addAppInboxMessage': {
-		input: EsputnikEndpointInputSchemas.addAppInboxMessage,
-		output: EsputnikEndpointOutputSchemas.addAppInboxMessage,
-	},
-	'appInbox.getAppInboxMessage': {
-		input: EsputnikEndpointInputSchemas.getAppInboxMessage,
-		output: EsputnikEndpointOutputSchemas.getAppInboxMessage,
-	},
-	'appInbox.updateBaseAppInboxMessage': {
-		input: EsputnikEndpointInputSchemas.updateBaseAppInboxMessage,
-		output: EsputnikEndpointOutputSchemas.updateBaseAppInboxMessage,
-	},
-	'appInbox.deleteAppInboxMessage': {
-		input: EsputnikEndpointInputSchemas.deleteAppInboxMessage,
-		output: EsputnikEndpointOutputSchemas.deleteAppInboxMessage,
-	},
-	'telegramBot.searchTelegramBotMessages': {
-		input: EsputnikEndpointInputSchemas.searchTelegramBotMessages,
-		output: EsputnikEndpointOutputSchemas.searchTelegramBotMessages,
-	},
-	'telegramBot.addTelegramBotMessage': {
-		input: EsputnikEndpointInputSchemas.addTelegramBotMessage,
-		output: EsputnikEndpointOutputSchemas.addTelegramBotMessage,
-	},
-	'telegramBot.getTelegramBotMessage': {
-		input: EsputnikEndpointInputSchemas.getTelegramBotMessage,
-		output: EsputnikEndpointOutputSchemas.getTelegramBotMessage,
-	},
-	'telegramBot.updateBaseTelegramBotMessage': {
-		input: EsputnikEndpointInputSchemas.updateBaseTelegramBotMessage,
-		output: EsputnikEndpointOutputSchemas.updateBaseTelegramBotMessage,
-	},
-	'telegramBot.deleteTelegramBotMessage': {
-		input: EsputnikEndpointInputSchemas.deleteTelegramBotMessage,
-		output: EsputnikEndpointOutputSchemas.deleteTelegramBotMessage,
-	},
-	'sms.searchSmsMessages': {
-		input: EsputnikEndpointInputSchemas.searchSmsMessages,
-		output: EsputnikEndpointOutputSchemas.searchSmsMessages,
-	},
-	'sms.getSms': {
-		input: EsputnikEndpointInputSchemas.getSms,
-		output: EsputnikEndpointOutputSchemas.getSms,
-	},
-	'sms.updateBaseSmsMessage': {
-		input: EsputnikEndpointInputSchemas.updateBaseSmsMessage,
-		output: EsputnikEndpointOutputSchemas.updateBaseSmsMessage,
-	},
-	'sms.deleteSmsMessage': {
-		input: EsputnikEndpointInputSchemas.deleteSmsMessage,
-		output: EsputnikEndpointOutputSchemas.deleteSmsMessage,
-	},
-	'broadcasts.getBroadcasts': {
-		input: EsputnikEndpointInputSchemas.getBroadcasts,
-		output: EsputnikEndpointOutputSchemas.getBroadcasts,
-	},
-	'broadcasts.createBroadcast': {
-		input: EsputnikEndpointInputSchemas.createBroadcast,
-		output: EsputnikEndpointOutputSchemas.createBroadcast,
-	},
-	'broadcasts.getBroadcast': {
-		input: EsputnikEndpointInputSchemas.getBroadcast,
-		output: EsputnikEndpointOutputSchemas.getBroadcast,
-	},
-	'interfaces.getSmsInterfaces': {
-		input: EsputnikEndpointInputSchemas.getSmsInterfaces,
-		output: EsputnikEndpointOutputSchemas.getSmsInterfaces,
-	},
-	'interfaces.getEmailInterfaces': {
-		input: EsputnikEndpointInputSchemas.getEmailInterfaces,
-		output: EsputnikEndpointOutputSchemas.getEmailInterfaces,
-	},
-	'batchTwoRemainder.updateTranslatedViberMessage': {
-		input: EsputnikEndpointInputSchemas.updateTranslatedViberMessage,
-		output: EsputnikEndpointOutputSchemas.updateTranslatedViberMessage,
-	},
-	'batchTwoRemainder.deleteTranslatedViberMessage': {
-		input: EsputnikEndpointInputSchemas.deleteTranslatedViberMessage,
-		output: EsputnikEndpointOutputSchemas.deleteTranslatedViberMessage,
-	},
-	'batchTwoRemainder.updateTranslatedAppInboxMessage': {
-		input: EsputnikEndpointInputSchemas.updateTranslatedAppInboxMessage,
-		output: EsputnikEndpointOutputSchemas.updateTranslatedAppInboxMessage,
-	},
-	'batchTwoRemainder.deleteTranslatedAppInboxMessage': {
-		input: EsputnikEndpointInputSchemas.deleteTranslatedAppInboxMessage,
-		output: EsputnikEndpointOutputSchemas.deleteTranslatedAppInboxMessage,
-	},
-	'batchTwoRemainder.updateTranslatedTelegramMessage': {
-		input: EsputnikEndpointInputSchemas.updateTranslatedTelegramMessage,
-		output: EsputnikEndpointOutputSchemas.updateTranslatedTelegramMessage,
-	},
-	'batchTwoRemainder.deleteTranslatedTelegramMessage': {
-		input: EsputnikEndpointInputSchemas.deleteTranslatedTelegramMessage,
-		output: EsputnikEndpointOutputSchemas.deleteTranslatedTelegramMessage,
-	},
-	'batchTwoRemainder.addSmsMessage': {
-		input: EsputnikEndpointInputSchemas.addSmsMessage,
-		output: EsputnikEndpointOutputSchemas.addSmsMessage,
-	},
-	'batchTwoRemainder.sendSms': {
-		input: EsputnikEndpointInputSchemas.sendSms,
-		output: EsputnikEndpointOutputSchemas.sendSms,
-	},
-	'batchTwoRemainder.cancelBroadcast': {
-		input: EsputnikEndpointInputSchemas.cancelBroadcast,
-		output: EsputnikEndpointOutputSchemas.cancelBroadcast,
-	},
-	'finalBatch.contactActivity': {
-		input: EsputnikEndpointInputSchemas.contactActivity,
-		output: EsputnikEndpointOutputSchemas.contactActivity,
-	},
-	'finalBatch.contactMessages': {
-		input: EsputnikEndpointInputSchemas.contactMessages,
-		output: EsputnikEndpointOutputSchemas.contactMessages,
-	},
-	'finalBatch.getTokenActivated': {
-		input: EsputnikEndpointInputSchemas.getTokenActivated,
-		output: EsputnikEndpointOutputSchemas.getTokenActivated,
-	},
-	'finalBatch.changeTokenActivated': {
-		input: EsputnikEndpointInputSchemas.changeTokenActivated,
-		output: EsputnikEndpointOutputSchemas.changeTokenActivated,
-	},
-	'finalBatch.getDomains': {
-		input: EsputnikEndpointInputSchemas.getDomains,
-		output: EsputnikEndpointOutputSchemas.getDomains,
-	},
-	'finalBatch.createDomain': {
-		input: EsputnikEndpointInputSchemas.createDomain,
-		output: EsputnikEndpointOutputSchemas.createDomain,
-	},
-	'finalBatch.getScript': {
-		input: EsputnikEndpointInputSchemas.getScript,
-		output: EsputnikEndpointOutputSchemas.getScript,
-	},
-	'finalBatch.getWebPushDomains': {
-		input: EsputnikEndpointInputSchemas.getWebPushDomains,
-		output: EsputnikEndpointOutputSchemas.getWebPushDomains,
-	},
-	'finalBatch.addWebPushDomain': {
-		input: EsputnikEndpointInputSchemas.addWebPushDomain,
-		output: EsputnikEndpointOutputSchemas.addWebPushDomain,
-	},
-	'finalBatch.deleteWebPushDomain': {
-		input: EsputnikEndpointInputSchemas.deleteWebPushDomain,
-		output: EsputnikEndpointOutputSchemas.deleteWebPushDomain,
-	},
-	'finalBatch.getWebPushScript': {
-		input: EsputnikEndpointInputSchemas.getWebPushScript,
-		output: EsputnikEndpointOutputSchemas.getWebPushScript,
-	},
-	'finalBatch.getProductFeedsConfiguration': {
-		input: EsputnikEndpointInputSchemas.getProductFeedsConfiguration,
-		output: EsputnikEndpointOutputSchemas.getProductFeedsConfiguration,
-	},
-	'finalBatch.configureProductFeeds': {
-		input: EsputnikEndpointInputSchemas.configureProductFeeds,
-		output: EsputnikEndpointOutputSchemas.configureProductFeeds,
-	},
-	'finalBatch.addAppTokens': {
-		input: EsputnikEndpointInputSchemas.addAppTokens,
-		output: EsputnikEndpointOutputSchemas.addAppTokens,
-	},
-	'finalBatch.muteAppToken': {
-		input: EsputnikEndpointInputSchemas.muteAppToken,
-		output: EsputnikEndpointOutputSchemas.muteAppToken,
-	},
-	'finalBatch.unmuteAppToken': {
-		input: EsputnikEndpointInputSchemas.unmuteAppToken,
-		output: EsputnikEndpointOutputSchemas.unmuteAppToken,
-	},
-	'finalBatch.getSubscriptionCategories': {
-		input: EsputnikEndpointInputSchemas.getSubscriptionCategories,
-		output: EsputnikEndpointOutputSchemas.getSubscriptionCategories,
-	},
-	'finalBatch.getPromocodes': {
-		input: EsputnikEndpointInputSchemas.getPromocodes,
-		output: EsputnikEndpointOutputSchemas.getPromocodes,
-	},
-	'finalBatch.getPromocodesCount': {
-		input: EsputnikEndpointInputSchemas.getPromocodesCount,
-		output: EsputnikEndpointOutputSchemas.getPromocodesCount,
-	},
-	'finalBatch.insertPromocodes': {
-		input: EsputnikEndpointInputSchemas.insertPromocodes,
-		output: EsputnikEndpointOutputSchemas.insertPromocodes,
-	},
-	'finalBatch.getPreprocessorFileStatus': {
-		input: EsputnikEndpointInputSchemas.getPreprocessorFileStatus,
-		output: EsputnikEndpointOutputSchemas.getPreprocessorFileStatus,
-	},
-	'finalBatch.updatePreprocessorFile': {
-		input: EsputnikEndpointInputSchemas.updatePreprocessorFile,
-		output: EsputnikEndpointOutputSchemas.updatePreprocessorFile,
-	},
-	'finalBatch.uploadPreprocessorFile': {
-		input: EsputnikEndpointInputSchemas.uploadPreprocessorFile,
-		output: EsputnikEndpointOutputSchemas.uploadPreprocessorFile,
-	},
-	'finalBatch.generateApiToken': {
-		input: EsputnikEndpointInputSchemas.generateApiToken,
-		output: EsputnikEndpointOutputSchemas.generateApiToken,
-	},
-	'finalBatch.getInteractionStatus': {
-		input: EsputnikEndpointInputSchemas.getInteractionStatus,
-		output: EsputnikEndpointOutputSchemas.getInteractionStatus,
-	},
-	'finalBatch.sendViber': {
-		input: EsputnikEndpointInputSchemas.sendViber,
-		output: EsputnikEndpointOutputSchemas.sendViber,
-	},
-	'finalBatch.sendAppInbox': {
-		input: EsputnikEndpointInputSchemas.sendAppInbox,
-		output: EsputnikEndpointOutputSchemas.sendAppInbox,
-	},
-	'finalBatch.sendTelegramBot': {
-		input: EsputnikEndpointInputSchemas.sendTelegramBot,
-		output: EsputnikEndpointOutputSchemas.sendTelegramBot,
-	},
-	'finalBatch.updateTranslatedSmsMessage': {
-		input: EsputnikEndpointInputSchemas.updateTranslatedSmsMessage,
-		output: EsputnikEndpointOutputSchemas.updateTranslatedSmsMessage,
-	},
-	'finalBatch.deleteTranslatedSmsMessage': {
-		input: EsputnikEndpointInputSchemas.deleteTranslatedSmsMessage,
-		output: EsputnikEndpointOutputSchemas.deleteTranslatedSmsMessage,
-	},
+	'account.getAccountInfo': schemasFor('getAccountInfo'),
+	'account.getBalance': schemasFor('getBalance'),
+	'account.getOrganisationBalanceHistory': schemasFor(
+		'getOrganisationBalanceHistory',
+	),
+	'account.generateApiToken': schemasFor('generateApiToken'),
+	'contacts.addContact': schemasFor('addContact'),
+	'contacts.getContact': schemasFor('getContact'),
+	'contacts.updateContact': schemasFor('updateContact'),
+	'contacts.deleteContactById': schemasFor('deleteContactById'),
+	'contacts.deleteContactByExternalCustomerId': schemasFor(
+		'deleteContactByExternalCustomerId',
+	),
+	'contacts.searchContacts': schemasFor('searchContacts'),
+	'contacts.subscribeContact': schemasFor('subscribeContact'),
+	'contacts.contactsBulkUpdate': schemasFor('contactsBulkUpdate'),
+	'contacts.fileContactsBulkUpdate': schemasFor('fileContactsBulkUpdate'),
+	'contacts.getImportSessionStatus': schemasFor('getImportSessionStatus'),
+	'contacts.getContactEmails': schemasFor('getContactEmails'),
+	'contacts.addToUnsubscribed': schemasFor('addToUnsubscribed'),
+	'contacts.deleteFromUnsubscribed': schemasFor('deleteFromUnsubscribed'),
+	'contacts.getGroupContacts': schemasFor('getGroupContacts'),
+	'contacts.detachContactsFromGroup': schemasFor('detachContactsFromGroup'),
+	'contacts.attachContactsToGroup': schemasFor('attachContactsToGroup'),
+	'contacts.searchGroups': schemasFor('searchGroups'),
+	'contacts.searchWorkflows': schemasFor('searchWorkflows'),
+	'contacts.getContactIdByToken': schemasFor('getContactIdByToken'),
+	'contacts.getContactSubscriptionCategories': schemasFor(
+		'getContactSubscriptionCategories',
+	),
+	'contacts.changeContactSubscriptionCategories': schemasFor(
+		'changeContactSubscriptionCategories',
+	),
+	'contacts.contactRecoms': schemasFor('contactRecoms'),
+	'contacts.getAdditionalFields': schemasFor('getAdditionalFields'),
+	'contacts.getSubscriptionCategories': schemasFor('getSubscriptionCategories'),
+	'contacts.contactActivity': schemasFor('contactActivity'),
+	'contacts.contactMessages': schemasFor('contactMessages'),
+	'contacts.getTokenActivated': schemasFor('getTokenActivated'),
+	'contacts.changeTokenActivated': schemasFor('changeTokenActivated'),
+	'orders.ordersBulkInsert': schemasFor('ordersBulkInsert'),
+	'events.registerEvent': schemasFor('registerEvent'),
+	'events.sendHistoryEvents': schemasFor('sendHistoryEvents'),
+	'events.removeHistoryEvents': schemasFor('removeHistoryEvents'),
+	'emails.searchEmails': schemasFor('searchEmails'),
+	'emails.getEmailMessageViewLink': schemasFor('getEmailMessageViewLink'),
+	'emails.addEmail': schemasFor('addEmail'),
+	'emails.getEmail': schemasFor('getEmail'),
+	'emails.updateMessage': schemasFor('updateMessage'),
+	'emails.deleteEmail': schemasFor('deleteEmail'),
+	'emails.updateTranslatedMessage': schemasFor('updateTranslatedMessage'),
+	'emails.deleteTranslatedEmail': schemasFor('deleteTranslatedEmail'),
+	'emails.sendEmail': schemasFor('sendEmail'),
+	'mobilePush.searchMobilePushMessages': schemasFor('searchMobilePushMessages'),
+	'mobilePush.addMobilePushMessage': schemasFor('addMobilePushMessage'),
+	'mobilePush.getMobilePushMessage': schemasFor('getMobilePushMessage'),
+	'mobilePush.updateBaseMobilePushMessage': schemasFor(
+		'updateBaseMobilePushMessage',
+	),
+	'mobilePush.deleteMobilePushMessage': schemasFor('deleteMobilePushMessage'),
+	'mobilePush.updateTranslatedMobilePushMessage': schemasFor(
+		'updateTranslatedMobilePushMessage',
+	),
+	'mobilePush.deleteTranslatedMobilePushMessage': schemasFor(
+		'deleteTranslatedMobilePushMessage',
+	),
+	'viber.searchViberMessages': schemasFor('searchViberMessages'),
+	'viber.addViberMessage': schemasFor('addViberMessage'),
+	'viber.getViberMessage': schemasFor('getViberMessage'),
+	'viber.updateBaseViberMessage': schemasFor('updateBaseViberMessage'),
+	'viber.deleteViberMessage': schemasFor('deleteViberMessage'),
+	'viber.updateTranslatedViberMessage': schemasFor(
+		'updateTranslatedViberMessage',
+	),
+	'viber.deleteTranslatedViberMessage': schemasFor(
+		'deleteTranslatedViberMessage',
+	),
+	'viber.sendViber': schemasFor('sendViber'),
+	'appInbox.searchAppInboxMessages': schemasFor('searchAppInboxMessages'),
+	'appInbox.addAppInboxMessage': schemasFor('addAppInboxMessage'),
+	'appInbox.getAppInboxMessage': schemasFor('getAppInboxMessage'),
+	'appInbox.updateBaseAppInboxMessage': schemasFor('updateBaseAppInboxMessage'),
+	'appInbox.deleteAppInboxMessage': schemasFor('deleteAppInboxMessage'),
+	'appInbox.updateTranslatedAppInboxMessage': schemasFor(
+		'updateTranslatedAppInboxMessage',
+	),
+	'appInbox.deleteTranslatedAppInboxMessage': schemasFor(
+		'deleteTranslatedAppInboxMessage',
+	),
+	'telegramBot.searchTelegramBotMessages': schemasFor(
+		'searchTelegramBotMessages',
+	),
+	'telegramBot.addTelegramBotMessage': schemasFor('addTelegramBotMessage'),
+	'telegramBot.getTelegramBotMessage': schemasFor('getTelegramBotMessage'),
+	'telegramBot.updateBaseTelegramBotMessage': schemasFor(
+		'updateBaseTelegramBotMessage',
+	),
+	'telegramBot.deleteTelegramBotMessage': schemasFor(
+		'deleteTelegramBotMessage',
+	),
+	'telegramBot.updateTranslatedTelegramMessage': schemasFor(
+		'updateTranslatedTelegramMessage',
+	),
+	'telegramBot.deleteTranslatedTelegramMessage': schemasFor(
+		'deleteTranslatedTelegramMessage',
+	),
+	'sms.searchSmsMessages': schemasFor('searchSmsMessages'),
+	'sms.addSmsMessage': schemasFor('addSmsMessage'),
+	'sms.getSms': schemasFor('getSms'),
+	'sms.updateBaseSmsMessage': schemasFor('updateBaseSmsMessage'),
+	'sms.deleteSmsMessage': schemasFor('deleteSmsMessage'),
+	'sms.updateTranslatedSmsMessage': schemasFor('updateTranslatedSmsMessage'),
+	'sms.deleteTranslatedSmsMessage': schemasFor('deleteTranslatedSmsMessage'),
+	'sms.sendSms': schemasFor('sendSms'),
+	'broadcasts.getBroadcasts': schemasFor('getBroadcasts'),
+	'broadcasts.createBroadcast': schemasFor('createBroadcast'),
+	'broadcasts.getBroadcast': schemasFor('getBroadcast'),
+	'broadcasts.cancelBroadcast': schemasFor('cancelBroadcast'),
+	'interfaces.getSmsInterfaces': schemasFor('getSmsInterfaces'),
+	'interfaces.getEmailInterfaces': schemasFor('getEmailInterfaces'),
+	'messages.sendPreparedMessage': schemasFor('sendPreparedMessage'),
+	'messages.updateInteractionStatus': schemasFor('updateInteractionStatus'),
+	'site.getDomains': schemasFor('getDomains'),
+	'site.createDomain': schemasFor('createDomain'),
+	'site.getScript': schemasFor('getScript'),
+	'site.getWebPushDomains': schemasFor('getWebPushDomains'),
+	'site.addWebPushDomain': schemasFor('addWebPushDomain'),
+	'site.deleteWebPushDomain': schemasFor('deleteWebPushDomain'),
+	'site.getWebPushScript': schemasFor('getWebPushScript'),
+	'productFeeds.getProductFeedsConfiguration': schemasFor(
+		'getProductFeedsConfiguration',
+	),
+	'productFeeds.configureProductFeeds': schemasFor('configureProductFeeds'),
+	'apps.addAppTokens': schemasFor('addAppTokens'),
+	'apps.muteAppToken': schemasFor('muteAppToken'),
+	'apps.unmuteAppToken': schemasFor('unmuteAppToken'),
+	'promocodes.getPromocodes': schemasFor('getPromocodes'),
+	'promocodes.getPromocodesCount': schemasFor('getPromocodesCount'),
+	'promocodes.insertPromocodes': schemasFor('insertPromocodes'),
+	'preprocessor.getPreprocessorFileStatus': schemasFor(
+		'getPreprocessorFileStatus',
+	),
+	'preprocessor.updatePreprocessorFile': schemasFor('updatePreprocessorFile'),
+	'preprocessor.uploadPreprocessorFile': schemasFor('uploadPreprocessorFile'),
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof esputnikEndpointsNested
 >;
@@ -702,11 +282,21 @@ function withEsputnikSchemas<T extends EndpointTree>(tree: T, prefix = ''): T {
 const esputnikEndpointMeta = {
 	'account.getAccountInfo': {
 		riskLevel: 'read',
-		description: 'Get eSputnik account information',
+		description: 'Get the eSputnik account name and organisation ID',
 	},
 	'account.getBalance': {
 		riskLevel: 'read',
-		description: 'Get the eSputnik organization balance',
+		description: 'Get the eSputnik organisation balance',
+	},
+	'account.getOrganisationBalanceHistory': {
+		riskLevel: 'read',
+		description:
+			'Get daily eSputnik billing costs for a period of up to 90 days',
+	},
+	'account.generateApiToken': {
+		riskLevel: 'write',
+		description:
+			'Generate a bearer token for the eSputnik event endpoints (returns a secret)',
 	},
 	'contacts.addContact': {
 		riskLevel: 'write',
@@ -720,9 +310,17 @@ const esputnikEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Update an eSputnik contact by ID',
 	},
+	'contacts.deleteContactById': {
+		riskLevel: 'destructive',
+		description: 'Delete an eSputnik contact by ID',
+	},
+	'contacts.deleteContactByExternalCustomerId': {
+		riskLevel: 'destructive',
+		description: 'Delete an eSputnik contact by external customer ID',
+	},
 	'contacts.searchContacts': {
 		riskLevel: 'read',
-		description: 'Search eSputnik contacts',
+		description: 'Search eSputnik contacts (up to 500 per page)',
 	},
 	'contacts.subscribeContact': {
 		riskLevel: 'write',
@@ -734,7 +332,7 @@ const esputnikEndpointMeta = {
 	},
 	'contacts.fileContactsBulkUpdate': {
 		riskLevel: 'write',
-		description: 'Import eSputnik contacts from an external file',
+		description: 'Import eSputnik contacts from a file link',
 	},
 	'contacts.getImportSessionStatus': {
 		riskLevel: 'read',
@@ -742,7 +340,7 @@ const esputnikEndpointMeta = {
 	},
 	'contacts.getContactEmails': {
 		riskLevel: 'read',
-		description: 'Get email addresses for eSputnik contacts',
+		description: 'Get email addresses for eSputnik contact IDs',
 	},
 	'contacts.addToUnsubscribed': {
 		riskLevel: 'write',
@@ -754,7 +352,7 @@ const esputnikEndpointMeta = {
 	},
 	'contacts.getGroupContacts': {
 		riskLevel: 'read',
-		description: 'Get contacts from an eSputnik segment',
+		description: 'Get contacts in an eSputnik segment',
 	},
 	'contacts.detachContactsFromGroup': {
 		riskLevel: 'destructive',
@@ -762,7 +360,7 @@ const esputnikEndpointMeta = {
 	},
 	'contacts.attachContactsToGroup': {
 		riskLevel: 'write',
-		description: 'Attach contacts to an eSputnik static segment',
+		description: 'Add contacts to an eSputnik static segment',
 	},
 	'contacts.searchGroups': {
 		riskLevel: 'read',
@@ -778,31 +376,40 @@ const esputnikEndpointMeta = {
 	},
 	'contacts.getContactSubscriptionCategories': {
 		riskLevel: 'read',
-		description: 'Get an eSputnik contact subscription categories',
+		description: "Get an eSputnik contact's subscription categories",
 	},
 	'contacts.changeContactSubscriptionCategories': {
 		riskLevel: 'write',
-		description: 'Update eSputnik contact subscription categories',
-	},
-	'contacts.deleteContactById': {
-		riskLevel: 'destructive',
-		description: 'Delete an eSputnik contact by ID',
-	},
-	'contacts.deleteContactByExternalCustomerId': {
-		riskLevel: 'destructive',
-		description: 'Delete an eSputnik contact by external ID',
+		description: "Replace an eSputnik contact's subscription categories",
 	},
 	'contacts.contactRecoms': {
 		riskLevel: 'read',
-		description: 'Get eSputnik contact product recommendations',
+		description: 'Get product recommendations for an eSputnik contact',
 	},
 	'contacts.getAdditionalFields': {
 		riskLevel: 'read',
-		description: 'Get eSputnik contact additional fields',
+		description: 'List eSputnik contact additional fields',
 	},
-	'accountExtended.getOrganisationBalanceHistory': {
+	'contacts.getSubscriptionCategories': {
 		riskLevel: 'read',
-		description: 'Get eSputnik organization billing history',
+		description: "List the organisation's eSputnik subscription categories",
+	},
+	'contacts.contactActivity': {
+		riskLevel: 'read',
+		description:
+			'Get delivery, read and click activity for messages sent to eSputnik contacts',
+	},
+	'contacts.contactMessages': {
+		riskLevel: 'read',
+		description: "Get an eSputnik contact's message history",
+	},
+	'contacts.getTokenActivated': {
+		riskLevel: 'read',
+		description: 'Get whether an eSputnik mobile push token is active',
+	},
+	'contacts.changeTokenActivated': {
+		riskLevel: 'write',
+		description: 'Activate or deactivate an eSputnik mobile push token',
 	},
 	'orders.ordersBulkInsert': {
 		riskLevel: 'write',
@@ -810,11 +417,11 @@ const esputnikEndpointMeta = {
 	},
 	'events.registerEvent': {
 		riskLevel: 'write',
-		description: 'Generate a current eSputnik event',
+		description: 'Send an eSputnik event',
 	},
 	'events.sendHistoryEvents': {
 		riskLevel: 'write',
-		description: 'Generate historical eSputnik events',
+		description: 'Send past eSputnik events',
 	},
 	'events.removeHistoryEvents': {
 		riskLevel: 'destructive',
@@ -822,15 +429,11 @@ const esputnikEndpointMeta = {
 	},
 	'emails.searchEmails': {
 		riskLevel: 'read',
-		description: 'Search eSputnik email messages',
+		description: 'Search eSputnik email messages by name or tag',
 	},
 	'emails.getEmailMessageViewLink': {
 		riskLevel: 'read',
-		description: 'Get an eSputnik email message view link',
-	},
-	'emails.sendPreparedMessage': {
-		riskLevel: 'write',
-		description: 'Send a prepared eSputnik message',
+		description: 'Get a link to view an eSputnik email message',
 	},
 	'emails.addEmail': {
 		riskLevel: 'write',
@@ -850,119 +453,169 @@ const esputnikEndpointMeta = {
 	},
 	'emails.updateTranslatedMessage': {
 		riskLevel: 'write',
-		description: 'Update a translated eSputnik email message',
+		description:
+			'Add or update a language version of an eSputnik email message',
 	},
 	'emails.deleteTranslatedEmail': {
 		riskLevel: 'destructive',
-		description: 'Delete a translated eSputnik email message',
+		description: 'Delete a language version of an eSputnik email message',
 	},
 	'emails.sendEmail': {
 		riskLevel: 'write',
-		description: 'Send an eSputnik email message',
+		description: 'Send an email to eSputnik recipients',
 	},
 	'mobilePush.searchMobilePushMessages': {
 		riskLevel: 'read',
-		description: 'Search eSputnik mobile push messages',
+		description: 'Search eSputnik mobile push messages by name',
 	},
 	'mobilePush.addMobilePushMessage': {
 		riskLevel: 'write',
-		description: 'Create an eSputnik mobile push message',
+		description: 'Create a eSputnik mobile push message',
 	},
 	'mobilePush.getMobilePushMessage': {
 		riskLevel: 'read',
-		description: 'Get an eSputnik mobile push message',
+		description:
+			'Get a eSputnik mobile push message with its language versions',
 	},
 	'mobilePush.updateBaseMobilePushMessage': {
 		riskLevel: 'write',
-		description: 'Update an eSputnik mobile push message',
+		description: 'Update a eSputnik mobile push message',
 	},
 	'mobilePush.deleteMobilePushMessage': {
 		riskLevel: 'destructive',
-		description: 'Delete an eSputnik mobile push message',
+		description: 'Delete a eSputnik mobile push message',
 	},
 	'mobilePush.updateTranslatedMobilePushMessage': {
 		riskLevel: 'write',
-		description: 'Update a translated eSputnik mobile push message',
+		description:
+			'Add or update a language version of a eSputnik mobile push message',
 	},
 	'mobilePush.deleteTranslatedMobilePushMessage': {
 		riskLevel: 'destructive',
-		description: 'Delete a translated eSputnik mobile push message',
+		description: 'Delete a language version of a eSputnik mobile push message',
 	},
 	'viber.searchViberMessages': {
 		riskLevel: 'read',
-		description: 'Search eSputnik Viber messages',
+		description: 'Search eSputnik Viber messages by name',
 	},
 	'viber.addViberMessage': {
 		riskLevel: 'write',
-		description: 'Create an eSputnik Viber message',
+		description: 'Create a eSputnik Viber message',
 	},
 	'viber.getViberMessage': {
 		riskLevel: 'read',
-		description: 'Get an eSputnik Viber message',
+		description: 'Get a eSputnik Viber message with its language versions',
 	},
 	'viber.updateBaseViberMessage': {
 		riskLevel: 'write',
-		description: 'Update an eSputnik Viber message',
+		description: 'Update a eSputnik Viber message',
 	},
 	'viber.deleteViberMessage': {
 		riskLevel: 'destructive',
-		description: 'Delete an eSputnik Viber message',
+		description: 'Delete a eSputnik Viber message',
+	},
+	'viber.updateTranslatedViberMessage': {
+		riskLevel: 'write',
+		description: 'Add or update a language version of a eSputnik Viber message',
+	},
+	'viber.deleteTranslatedViberMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete a language version of a eSputnik Viber message',
+	},
+	'viber.sendViber': {
+		riskLevel: 'write',
+		description: 'Send a Viber message to eSputnik recipients',
 	},
 	'appInbox.searchAppInboxMessages': {
 		riskLevel: 'read',
-		description: 'Search eSputnik App Inbox messages',
+		description: 'Search eSputnik App Inbox messages by name',
 	},
 	'appInbox.addAppInboxMessage': {
 		riskLevel: 'write',
-		description: 'Create an eSputnik App Inbox message',
+		description: 'Create a eSputnik App Inbox message',
 	},
 	'appInbox.getAppInboxMessage': {
 		riskLevel: 'read',
-		description: 'Get an eSputnik App Inbox message',
+		description: 'Get a eSputnik App Inbox message with its language versions',
 	},
 	'appInbox.updateBaseAppInboxMessage': {
 		riskLevel: 'write',
-		description: 'Update an eSputnik App Inbox message',
+		description: 'Update a eSputnik App Inbox message',
 	},
 	'appInbox.deleteAppInboxMessage': {
 		riskLevel: 'destructive',
-		description: 'Delete an eSputnik App Inbox message',
+		description: 'Delete a eSputnik App Inbox message',
+	},
+	'appInbox.updateTranslatedAppInboxMessage': {
+		riskLevel: 'write',
+		description:
+			'Add or update a language version of a eSputnik App Inbox message',
+	},
+	'appInbox.deleteTranslatedAppInboxMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete a language version of a eSputnik App Inbox message',
 	},
 	'telegramBot.searchTelegramBotMessages': {
 		riskLevel: 'read',
-		description: 'Search eSputnik Telegram bot messages',
+		description: 'Search eSputnik Telegram bot messages by name',
 	},
 	'telegramBot.addTelegramBotMessage': {
 		riskLevel: 'write',
-		description: 'Create an eSputnik Telegram bot message',
+		description: 'Create a eSputnik Telegram bot message',
 	},
 	'telegramBot.getTelegramBotMessage': {
 		riskLevel: 'read',
-		description: 'Get an eSputnik Telegram bot message',
+		description:
+			'Get a eSputnik Telegram bot message with its language versions',
 	},
 	'telegramBot.updateBaseTelegramBotMessage': {
 		riskLevel: 'write',
-		description: 'Update an eSputnik Telegram bot message',
+		description: 'Update a eSputnik Telegram bot message',
 	},
 	'telegramBot.deleteTelegramBotMessage': {
 		riskLevel: 'destructive',
-		description: 'Delete an eSputnik Telegram bot message',
+		description: 'Delete a eSputnik Telegram bot message',
+	},
+	'telegramBot.updateTranslatedTelegramMessage': {
+		riskLevel: 'write',
+		description:
+			'Add or update a language version of a eSputnik Telegram bot message',
+	},
+	'telegramBot.deleteTranslatedTelegramMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete a language version of a eSputnik Telegram bot message',
 	},
 	'sms.searchSmsMessages': {
 		riskLevel: 'read',
-		description: 'Search eSputnik SMS messages',
+		description: 'Search eSputnik SMS messages by name',
+	},
+	'sms.addSmsMessage': {
+		riskLevel: 'write',
+		description: 'Create a eSputnik SMS message',
 	},
 	'sms.getSms': {
 		riskLevel: 'read',
-		description: 'Get an eSputnik SMS message',
+		description: 'Get a eSputnik SMS message with its language versions',
 	},
 	'sms.updateBaseSmsMessage': {
 		riskLevel: 'write',
-		description: 'Update an eSputnik SMS message',
+		description: 'Update a eSputnik SMS message',
 	},
 	'sms.deleteSmsMessage': {
 		riskLevel: 'destructive',
-		description: 'Delete an eSputnik SMS message',
+		description: 'Delete a eSputnik SMS message',
+	},
+	'sms.updateTranslatedSmsMessage': {
+		riskLevel: 'write',
+		description: 'Add or update a language version of a eSputnik SMS message',
+	},
+	'sms.deleteTranslatedSmsMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete a language version of a eSputnik SMS message',
+	},
+	'sms.sendSms': {
+		riskLevel: 'write',
+		description: 'Send an SMS to eSputnik recipients',
 	},
 	'broadcasts.getBroadcasts': {
 		riskLevel: 'read',
@@ -970,175 +623,105 @@ const esputnikEndpointMeta = {
 	},
 	'broadcasts.createBroadcast': {
 		riskLevel: 'write',
-		description: 'Create an eSputnik broadcast',
+		description:
+			'Create an eSputnik broadcast for a prepared message and segments',
 	},
 	'broadcasts.getBroadcast': {
 		riskLevel: 'read',
 		description: 'Get an eSputnik broadcast',
 	},
+	'broadcasts.cancelBroadcast': {
+		riskLevel: 'destructive',
+		description: 'Cancel a scheduled eSputnik broadcast',
+	},
 	'interfaces.getSmsInterfaces': {
 		riskLevel: 'read',
-		description: 'List eSputnik SMS interfaces',
+		description: 'List eSputnik SMS sender names',
 	},
 	'interfaces.getEmailInterfaces': {
 		riskLevel: 'read',
-		description: 'List eSputnik email interfaces',
+		description: 'List eSputnik email sender addresses',
 	},
-	'batchTwoRemainder.updateTranslatedViberMessage': {
+	'messages.sendPreparedMessage': {
 		riskLevel: 'write',
-		description: 'Update a translated eSputnik Viber message',
+		description: 'Send a prepared eSputnik message to one or more contacts',
 	},
-	'batchTwoRemainder.deleteTranslatedViberMessage': {
-		riskLevel: 'destructive',
-		description: 'Delete a translated eSputnik Viber message',
-	},
-	'batchTwoRemainder.updateTranslatedAppInboxMessage': {
+	'messages.updateInteractionStatus': {
 		riskLevel: 'write',
-		description: 'Update a translated eSputnik App Inbox message',
+		description:
+			'Report a delivery, open or click status for an eSputnik message interaction',
 	},
-	'batchTwoRemainder.deleteTranslatedAppInboxMessage': {
-		riskLevel: 'destructive',
-		description: 'Delete a translated eSputnik App Inbox message',
-	},
-	'batchTwoRemainder.updateTranslatedTelegramMessage': {
-		riskLevel: 'write',
-		description: 'Update a translated eSputnik Telegram bot message',
-	},
-	'batchTwoRemainder.deleteTranslatedTelegramMessage': {
-		riskLevel: 'destructive',
-		description: 'Delete a translated eSputnik Telegram bot message',
-	},
-	'batchTwoRemainder.addSmsMessage': {
-		riskLevel: 'write',
-		description: 'Create an eSputnik SMS message',
-	},
-	'batchTwoRemainder.sendSms': {
-		riskLevel: 'write',
-		description: 'Send an eSputnik SMS message',
-	},
-	'batchTwoRemainder.cancelBroadcast': {
-		riskLevel: 'destructive',
-		description: 'Cancel an eSputnik scheduled broadcast',
-	},
-	'finalBatch.contactActivity': {
+	'site.getDomains': {
 		riskLevel: 'read',
-		description: 'Get eSputnik contact activity records',
+		description: "Get the organisation's eSputnik web tracking domain",
 	},
-	'finalBatch.contactMessages': {
-		riskLevel: 'read',
-		description: 'Get eSputnik contact message history',
-	},
-	'finalBatch.getTokenActivated': {
-		riskLevel: 'read',
-		description: 'Get eSputnik mobile token activity',
-	},
-	'finalBatch.changeTokenActivated': {
+	'site.createDomain': {
 		riskLevel: 'write',
-		description: 'Change eSputnik mobile token activity',
+		description: 'Register a domain for eSputnik web tracking',
 	},
-	'finalBatch.getDomains': {
+	'site.getScript': {
 		riskLevel: 'read',
-		description: 'List eSputnik organization domains',
+		description: 'Get the eSputnik web tracking script',
 	},
-	'finalBatch.createDomain': {
-		riskLevel: 'write',
-		description: 'Register an eSputnik domain',
-	},
-	'finalBatch.getScript': {
-		riskLevel: 'read',
-		description: 'Get the eSputnik tracking script',
-	},
-	'finalBatch.getWebPushDomains': {
+	'site.getWebPushDomains': {
 		riskLevel: 'read',
 		description: 'List eSputnik web push domains',
 	},
-	'finalBatch.addWebPushDomain': {
+	'site.addWebPushDomain': {
 		riskLevel: 'write',
 		description: 'Register an eSputnik web push domain',
 	},
-	'finalBatch.deleteWebPushDomain': {
+	'site.deleteWebPushDomain': {
 		riskLevel: 'destructive',
 		description: 'Delete an eSputnik web push domain',
 	},
-	'finalBatch.getWebPushScript': {
+	'site.getWebPushScript': {
 		riskLevel: 'read',
-		description: 'Get an eSputnik web push script',
+		description: 'Get the eSputnik web push script for a domain',
 	},
-	'finalBatch.getProductFeedsConfiguration': {
+	'productFeeds.getProductFeedsConfiguration': {
 		riskLevel: 'read',
 		description: 'Get eSputnik product feed configuration',
 	},
-	'finalBatch.configureProductFeeds': {
+	'productFeeds.configureProductFeeds': {
 		riskLevel: 'write',
 		description: 'Configure eSputnik product feeds',
 	},
-	'finalBatch.addAppTokens': {
+	'apps.addAppTokens': {
 		riskLevel: 'write',
-		description: 'Add eSputnik application tokens',
+		description: 'Add Telegram application tokens to eSputnik',
 	},
-	'finalBatch.muteAppToken': {
+	'apps.muteAppToken': {
 		riskLevel: 'write',
-		description: 'Mute eSputnik application tokens',
+		description: 'Mute eSputnik notifications for an application token',
 	},
-	'finalBatch.unmuteAppToken': {
+	'apps.unmuteAppToken': {
 		riskLevel: 'write',
-		description: 'Unmute eSputnik application tokens',
+		description: 'Unmute eSputnik notifications for an application token',
 	},
-	'finalBatch.getSubscriptionCategories': {
+	'promocodes.getPromocodes': {
 		riskLevel: 'read',
-		description: 'List eSputnik subscription categories',
+		description: 'Get available eSputnik promotional codes',
 	},
-	'finalBatch.getPromocodes': {
+	'promocodes.getPromocodesCount': {
 		riskLevel: 'read',
-		description: 'Get eSputnik promotional codes',
+		description: 'Count available eSputnik promotional codes',
 	},
-	'finalBatch.getPromocodesCount': {
-		riskLevel: 'read',
-		description: 'Get the eSputnik promotional code count',
-	},
-	'finalBatch.insertPromocodes': {
+	'promocodes.insertPromocodes': {
 		riskLevel: 'write',
 		description: 'Upload eSputnik promotional codes',
 	},
-	'finalBatch.getPreprocessorFileStatus': {
+	'preprocessor.getPreprocessorFileStatus': {
 		riskLevel: 'read',
-		description: 'Get eSputnik preprocessor file status',
+		description: 'Get the status of an eSputnik preprocessor file upload',
 	},
-	'finalBatch.updatePreprocessorFile': {
+	'preprocessor.updatePreprocessorFile': {
 		riskLevel: 'write',
-		description: 'Update an eSputnik preprocessor file',
+		description: 'Replace the data of an eSputnik preprocessor file',
 	},
-	'finalBatch.uploadPreprocessorFile': {
+	'preprocessor.uploadPreprocessorFile': {
 		riskLevel: 'write',
-		description: 'Upload an eSputnik preprocessor file',
-	},
-	'finalBatch.generateApiToken': {
-		riskLevel: 'write',
-		description: 'Generate an eSputnik API token',
-	},
-	'finalBatch.getInteractionStatus': {
-		riskLevel: 'read',
-		description: 'Get an eSputnik interaction status',
-	},
-	'finalBatch.sendViber': {
-		riskLevel: 'write',
-		description: 'Send an eSputnik Viber message',
-	},
-	'finalBatch.sendAppInbox': {
-		riskLevel: 'write',
-		description: 'Send an eSputnik App Inbox message',
-	},
-	'finalBatch.sendTelegramBot': {
-		riskLevel: 'write',
-		description: 'Send an eSputnik Telegram bot message',
-	},
-	'finalBatch.updateTranslatedSmsMessage': {
-		riskLevel: 'write',
-		description: 'Update a translated eSputnik SMS message',
-	},
-	'finalBatch.deleteTranslatedSmsMessage': {
-		riskLevel: 'destructive',
-		description: 'Delete a translated eSputnik SMS message',
+		description: 'Upload an eSputnik preprocessor file from a link',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof esputnikEndpointsNested>;
 

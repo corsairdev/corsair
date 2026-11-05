@@ -13,11 +13,11 @@ function operationNames(tree: EndpointTree, prefix = ''): string[] {
 }
 
 describe('eSputnik endpoint registry', () => {
-	it('registers all 110 operations with schema contracts', () => {
+	it('registers all 108 operations with schema contracts', () => {
 		const operations = operationNames(esputnikEndpointsNested).sort();
 		const schemaOperations = Object.keys(esputnikEndpointSchemas).sort();
 
-		expect(operations).toHaveLength(110);
+		expect(operations).toHaveLength(108);
 		expect(schemaOperations).toEqual(operations);
 	});
 

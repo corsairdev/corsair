@@ -1,20 +1,15 @@
 import { makeEsputnikRequest } from './client';
 import {
 	accountEndpoints,
-	accountExtendedEndpoints,
-	appInboxEndpoints,
-	batchTwoRemainderEndpoints,
+	appEndpoints,
 	broadcastEndpoints,
 	contactEndpoints,
 	emailEndpoints,
-	eventEndpoints,
-	finalBatchEndpoints,
-	interfaceEndpoints,
-	mobilePushEndpoints,
-	orderEndpoints,
-	smsEndpoints,
+	messageEndpoints,
+	preprocessorEndpoints,
+	productFeedEndpoints,
+	siteEndpoints,
 	telegramBotEndpoints,
-	viberEndpoints,
 } from './endpoints';
 import type { EsputnikContext } from './index';
 
@@ -28,26 +23,30 @@ beforeEach(() => {
 });
 afterEach(() => jest.clearAllMocks());
 
+function lastCall() {
+	const call = request.mock.calls.at(-1);
+	if (!call) throw new Error('makeEsputnikRequest was not called');
+	const [path, key, options] = call;
+	expect(key).toBe('test-api-key');
+	return { path, options };
+}
+
 describe('eSputnik routes', () => {
 	it('gets account information', async () => {
 		await accountEndpoints.getAccountInfo(ctx, {});
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/account/info',
-			'test-api-key',
-			{},
-		);
+		expect(lastCall()).toEqual({ path: '/api/v1/account/info', options: {} });
 	});
 
-	it('creates contacts with a JSON body', async () => {
+	it('creates contacts with id/value additional fields', async () => {
 		const input = {
 			channels: [{ type: 'email', value: 'person@example.com' }],
-			address: { city: 'London' },
-			fields: { customerTier: 'gold' },
+			address: { town: 'Toulouse' },
+			fields: [{ id: 79814, value: 'gold' }],
 		};
 		await contactEndpoints.addContact(ctx, input);
-		expect(request).toHaveBeenCalledWith('/api/v1/contact', 'test-api-key', {
-			method: 'POST',
-			body: input,
+		expect(lastCall()).toEqual({
+			path: '/api/v1/contact',
+			options: { method: 'POST', body: input },
 		});
 	});
 
@@ -55,15 +54,12 @@ describe('eSputnik routes', () => {
 		await contactEndpoints.updateContact(ctx, {
 			id: 42,
 			channels: [{ type: 'email', value: 'person@example.com' }],
-			address: { city: 'London' },
-			fields: { customerTier: 'gold' },
 		});
-		expect(request).toHaveBeenCalledWith('/api/v1/contact/42', 'test-api-key', {
-			method: 'PUT',
-			body: {
-				channels: [{ type: 'email', value: 'person@example.com' }],
-				address: { city: 'London' },
-				fields: { customerTier: 'gold' },
+		expect(lastCall()).toEqual({
+			path: '/api/v1/contact/42',
+			options: {
+				method: 'PUT',
+				body: { channels: [{ type: 'email', value: 'person@example.com' }] },
 			},
 		});
 	});
@@ -73,216 +69,174 @@ describe('eSputnik routes', () => {
 			email: 'person@example.com',
 			maxrows: 100,
 		});
-		expect(request).toHaveBeenCalledWith('/api/v1/contacts', 'test-api-key', {
-			query: { email: 'person@example.com', maxrows: 100 },
+		expect(lastCall()).toEqual({
+			path: '/api/v1/contacts',
+			options: { query: { email: 'person@example.com', maxrows: 100 } },
 		});
 	});
 
-	it('routes the remaining batch families to documented paths', async () => {
-		await contactEndpoints.getContactIdByToken(ctx, {
-			app_uuid: 'app',
-			token_id: 'token',
+	it('searches email messages with the documented search parameter', async () => {
+		await emailEndpoints.searchEmails(ctx, { search: 'welcome', maxrows: 5 });
+		expect(lastCall()).toEqual({
+			path: '/api/v1/messages/email',
+			options: { query: { search: 'welcome', maxrows: 5 } },
 		});
-		await accountExtendedEndpoints.getOrganisationBalanceHistory(ctx, {});
-		await orderEndpoints.ordersBulkInsert(ctx, {});
-		await eventEndpoints.registerEvent(ctx, {});
-		await eventEndpoints.sendHistoryEvents(ctx, {});
-		await eventEndpoints.removeHistoryEvents(ctx, {});
-		await emailEndpoints.searchEmails(ctx, {});
-		await emailEndpoints.getEmailMessageViewLink(ctx, { id: 1 });
-		await emailEndpoints.sendPreparedMessage(ctx, {});
-		await emailEndpoints.addEmail(ctx, {
-			name: 'Welcome',
-			from: 'sender@example.com',
-			subject: 'Hi',
-			htmlText: '<p>Hi</p>',
-		});
-		await emailEndpoints.getEmail(ctx, { id: 1 });
-		await emailEndpoints.updateMessage(ctx, {
-			id: 1,
-			name: 'Welcome',
-			from: 'sender@example.com',
-			subject: 'Hi',
-			htmlText: '<p>Hi</p>',
-		});
-		await emailEndpoints.deleteEmail(ctx, { id: 1 });
-		await emailEndpoints.updateTranslatedMessage(ctx, {
-			id: 1,
-			language: 'en',
-			name: 'Welcome',
-			from: 'sender@example.com',
-			subject: 'Hi',
-			htmlText: '<p>Hi</p>',
-		});
-		await emailEndpoints.deleteTranslatedEmail(ctx, { id: 1, language: 'en' });
-		await emailEndpoints.sendEmail(ctx, {});
-
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/contact/token/app/token/contactId',
-			'test-api-key',
-			{},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/balance/history',
-			'test-api-key',
-			{ query: {} },
-		);
-		expect(request).toHaveBeenCalledWith('/api/v1/orders', 'test-api-key', {
-			method: 'POST',
-			body: {},
-		});
-		expect(request).toHaveBeenCalledWith('/api/v3/event', 'test-api-key', {
-			method: 'POST',
-			body: {},
-		});
-		expect(request).toHaveBeenCalledWith(
-			'/api/v3/past_events',
-			'test-api-key',
-			{
-				method: 'POST',
-				body: {},
-			},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/email',
-			'test-api-key',
-			{
-				method: 'POST',
-				body: {
-					name: 'Welcome',
-					from: 'sender@example.com',
-					subject: 'Hi',
-					htmlText: '<p>Hi</p>',
-				},
-			},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/email/1',
-			'test-api-key',
-			{},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/email/1',
-			'test-api-key',
-			{
-				method: 'PUT',
-				body: {
-					name: 'Welcome',
-					from: 'sender@example.com',
-					subject: 'Hi',
-					htmlText: '<p>Hi</p>',
-				},
-			},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/email/1',
-			'test-api-key',
-			{ method: 'DELETE' },
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/email/1/en',
-			'test-api-key',
-			{
-				method: 'PUT',
-				body: {
-					name: 'Welcome',
-					from: 'sender@example.com',
-					subject: 'Hi',
-					htmlText: '<p>Hi</p>',
-				},
-			},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/email/1/en',
-			'test-api-key',
-			{ method: 'DELETE' },
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/message/email',
-			'test-api-key',
-			{
-				method: 'POST',
-				body: {},
-			},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/past_events',
-			'test-api-key',
-			{
-				method: 'DELETE',
-				body: {},
-			},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/email',
-			'test-api-key',
-			{
-				query: {},
-			},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/email/1/view',
-			'test-api-key',
-			{},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/send',
-			'test-api-key',
-			{
-				method: 'POST',
-				body: {},
-			},
-		);
 	});
 
-	it('routes Batch 2 message families to their documented resources', async () => {
-		await mobilePushEndpoints.searchMobilePushMessages(ctx, {});
-		await viberEndpoints.search(ctx, {});
-		await appInboxEndpoints.search(ctx, {});
-		await telegramBotEndpoints.search(ctx, {});
-		await smsEndpoints.search(ctx, {});
-		await broadcastEndpoints.getBroadcasts(ctx, {});
-		await interfaceEndpoints.getSmsInterfaces(ctx);
-		await interfaceEndpoints.getEmailInterfaces(ctx);
-
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/mobilepush',
-			'test-api-key',
-			{ query: {} },
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/viber',
-			'test-api-key',
-			{ query: {} },
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/appinbox',
-			'test-api-key',
-			{ query: {} },
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/telegrambot',
-			'test-api-key',
-			{ query: {} },
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/messages/sms',
-			'test-api-key',
-			{ query: {} },
-		);
-		expect(request).toHaveBeenCalledWith('/api/v1/broadcasts', 'test-api-key', {
-			query: {},
+	it('gets the email view link from /viewLink', async () => {
+		await emailEndpoints.getEmailMessageViewLink(ctx, { id: 5 });
+		expect(lastCall()).toEqual({
+			path: '/api/v1/messages/email/5/viewLink',
+			options: {},
 		});
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/interfaces/sms',
-			'test-api-key',
-			{},
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/interfaces/email',
-			'test-api-key',
-			{},
-		);
+	});
+
+	it('sends prepared messages through /message/{id}/smartsend', async () => {
+		await messageEndpoints.sendPreparedMessage(ctx, {
+			id: 7,
+			recipients: [{ locator: 'person@example.com' }],
+			email: true,
+		});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/message/7/smartsend',
+			options: {
+				method: 'POST',
+				body: { recipients: [{ locator: 'person@example.com' }], email: true },
+			},
+		});
+	});
+
+	it('reports interaction status with PUT /interactions/{id}/status', async () => {
+		await messageEndpoints.updateInteractionStatus(ctx, {
+			interactionId: '2E2E831C/486C',
+			status: 'OPENED',
+		});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/interactions/2E2E831C%2F486C/status',
+			options: { method: 'PUT', body: { status: 'OPENED' } },
+		});
+	});
+
+	it('uses /messages/telegram for Telegram bot messages', async () => {
+		await telegramBotEndpoints.searchTelegramBotMessages(ctx, {});
+		expect(lastCall().path).toBe('/api/v1/messages/telegram');
+		await telegramBotEndpoints.getTelegramBotMessage(ctx, { id: 3 });
+		expect(lastCall().path).toBe('/api/v1/messages/telegram/3');
+		await telegramBotEndpoints.deleteTranslatedTelegramMessage(ctx, {
+			id: 3,
+			language: 'uk',
+		});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/messages/telegram/3/uk',
+			options: { method: 'DELETE' },
+		});
+	});
+
+	it('uses the singular /broadcast route for one broadcast', async () => {
+		await broadcastEndpoints.createBroadcast(ctx, {
+			messageId: '123',
+			groups: [5],
+		});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/broadcast',
+			options: { method: 'POST', body: { messageId: '123', groups: [5] } },
+		});
+		await broadcastEndpoints.getBroadcast(ctx, { id: 'b/1' });
+		expect(lastCall()).toEqual({
+			path: '/api/v1/broadcast/b%2F1',
+			options: {},
+		});
+		await broadcastEndpoints.cancelBroadcast(ctx, { id: 9 });
+		expect(lastCall()).toEqual({
+			path: '/api/v1/broadcast/9',
+			options: { method: 'DELETE' },
+		});
+		await broadcastEndpoints.getBroadcasts(ctx, { maxrows: 10 });
+		expect(lastCall()).toEqual({
+			path: '/api/v1/broadcasts',
+			options: { query: { maxrows: 10 } },
+		});
+	});
+
+	it('reads and writes product feeds at /products/config', async () => {
+		await productFeedEndpoints.getProductFeedsConfiguration(ctx, {});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/products/config',
+			options: {},
+		});
+		const feeds = [{ url: 'https://example.com/feed.xml', default: true }];
+		await productFeedEndpoints.configureProductFeeds(ctx, { feeds });
+		expect(lastCall()).toEqual({
+			path: '/api/v1/products/config',
+			options: { method: 'POST', body: { feeds } },
+		});
+	});
+
+	it('scopes application tokens to the app UUID in the path', async () => {
+		await appEndpoints.addAppTokens(ctx, {
+			app_uuid: 'app/1',
+			tokens: [{ token: 't1' }],
+		});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/apps/app%2F1/tokens',
+			options: { method: 'POST', body: { tokens: [{ token: 't1' }] } },
+		});
+		await appEndpoints.muteAppToken(ctx, {
+			app_uuid: 'app-1',
+			token: 't1',
+			duration: 60,
+		});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/apps/app-1/token/mute',
+			options: { method: 'POST', body: { token: 't1', duration: 60 } },
+		});
+		await appEndpoints.unmuteAppToken(ctx, { app_uuid: 'app-1', token: 't1' });
+		expect(lastCall()).toEqual({
+			path: '/api/v1/apps/app-1/token/unmute',
+			options: { method: 'POST', body: { token: 't1' } },
+		});
+	});
+
+	it('uses the documented preprocessor file routes', async () => {
+		await preprocessorEndpoints.uploadPreprocessorFile(ctx, {
+			link: 'https://example.com/data.csv',
+			preprocessorType: 'Key',
+		});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/preprocessor/file/upload',
+			options: {
+				method: 'POST',
+				body: { link: 'https://example.com/data.csv', preprocessorType: 'Key' },
+			},
+		});
+		await preprocessorEndpoints.updatePreprocessorFile(ctx, {
+			fileId: 'f-1',
+			link: 'https://example.com/data.csv',
+		});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/preprocessor/file/f-1',
+			options: {
+				method: 'POST',
+				body: { link: 'https://example.com/data.csv' },
+			},
+		});
+		await preprocessorEndpoints.getPreprocessorFileStatus(ctx, {
+			sessionId: 's-1',
+		});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/preprocessor/file/s-1/status',
+			options: {},
+		});
+	});
+
+	it('lists subscription categories and generates tokens at the documented routes', async () => {
+		await contactEndpoints.getSubscriptionCategories(ctx, {});
+		expect(lastCall()).toEqual({ path: '/api/v1/subscriptions', options: {} });
+		await accountEndpoints.generateApiToken(ctx, {});
+		expect(lastCall()).toEqual({
+			path: '/api/v1/auth/token',
+			options: { method: 'POST' },
+		});
 	});
 
 	it('encodes mobile push token path segments', async () => {
@@ -290,113 +244,18 @@ describe('eSputnik routes', () => {
 			app_uuid: 'app/id',
 			token_id: 'token?fragment',
 		});
-
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/contact/token/app%2Fid/token%3Ffragment/contactId',
-			'test-api-key',
-			{},
-		);
+		expect(lastCall()).toEqual({
+			path: '/api/v1/contact/token/app%2Fid/token%3Ffragment/contactId',
+			options: {},
+		});
 	});
 
-	it('asserts every final-batch request contract', async () => {
-		await batchTwoRemainderEndpoints.updateTranslatedViberMessage(ctx, {
-			id: 1,
-			language: 'en',
-		});
-		await batchTwoRemainderEndpoints.deleteTranslatedViberMessage(ctx, {
-			id: 1,
-			language: 'en',
-		});
-		await batchTwoRemainderEndpoints.updateTranslatedAppInboxMessage(ctx, {
-			id: 1,
-			language: 'en',
-		});
-		await batchTwoRemainderEndpoints.deleteTranslatedAppInboxMessage(ctx, {
-			id: 1,
-			language: 'en',
-		});
-		await batchTwoRemainderEndpoints.updateTranslatedTelegramMessage(ctx, {
-			id: 1,
-			language: 'en',
-		});
-		await batchTwoRemainderEndpoints.deleteTranslatedTelegramMessage(ctx, {
-			id: 1,
-			language: 'en',
-		});
-		await batchTwoRemainderEndpoints.addSmsMessage(ctx, {});
-		await batchTwoRemainderEndpoints.sendSms(ctx, {});
-		await batchTwoRemainderEndpoints.cancelBroadcast(ctx, { id: 1 });
-		await finalBatchEndpoints.contactActivity(ctx, { dateFrom: '2024-01-01' });
-		await finalBatchEndpoints.contactMessages(ctx, { dateFrom: '2024-01-01' });
-		await finalBatchEndpoints.getTokenActivated(ctx, {
-			app_uuid: 'app',
-			token_id: 'token',
-		});
-		await finalBatchEndpoints.changeTokenActivated(ctx, {
-			app_uuid: 'app',
-			token_id: 'token',
-			active: true,
-		});
-		await finalBatchEndpoints.getDomains(ctx);
-		await finalBatchEndpoints.createDomain(ctx, { domain: 'example.com' });
-		await finalBatchEndpoints.getScript(ctx);
-		await finalBatchEndpoints.getWebPushDomains(ctx);
-		await finalBatchEndpoints.addWebPushDomain(ctx, {});
-		await finalBatchEndpoints.deleteWebPushDomain(ctx, {
-			domain: 'example.com',
-		});
-		await finalBatchEndpoints.getWebPushScript(ctx, { domain: 'example.com' });
-		await finalBatchEndpoints.getProductFeedsConfiguration(ctx);
-		await finalBatchEndpoints.configureProductFeeds(ctx, {});
-		await finalBatchEndpoints.addAppTokens(ctx, {});
-		await finalBatchEndpoints.muteAppToken(ctx, {});
-		await finalBatchEndpoints.unmuteAppToken(ctx, {});
-		await finalBatchEndpoints.getSubscriptionCategories(ctx);
-		await finalBatchEndpoints.getPromocodes(ctx, {});
-		await finalBatchEndpoints.getPromocodesCount(ctx);
-		await finalBatchEndpoints.insertPromocodes(ctx, {});
-		await finalBatchEndpoints.getPreprocessorFileStatus(ctx, {
-			sessionId: 'session',
-		});
-		await finalBatchEndpoints.updatePreprocessorFile(ctx, {});
-		await finalBatchEndpoints.uploadPreprocessorFile(ctx, {});
-		await finalBatchEndpoints.generateApiToken(ctx, {});
-		await finalBatchEndpoints.getInteractionStatus(ctx, {});
-		await finalBatchEndpoints.sendViber(ctx, {});
-		await finalBatchEndpoints.sendAppInbox(ctx, {});
-		await finalBatchEndpoints.sendTelegramBot(ctx, {});
-		await finalBatchEndpoints.updateTranslatedSmsMessage(ctx, {
-			id: 1,
-			language: 'en',
-		});
-		await finalBatchEndpoints.deleteTranslatedSmsMessage(ctx, {
-			id: 1,
-			language: 'en',
-		});
-
-		const paths = request.mock.calls.map(([path]) => path);
-		expect(paths).toEqual(
-			expect.arrayContaining([
-				'/api/v1/messages/viber/1/en',
-				'/api/v1/messages/appinbox/1/en',
-				'/api/v1/messages/telegrambot/1/en',
-				'/api/v1/contact/token/activated/app/token',
-				'/api/v1/site/domains',
-				'/api/v1/site/webpush/domains',
-				'/api/v2/contacts/activity',
-				'/api/v2/contacts/messages',
-				'/api/v1/message/viber',
-				'/api/v1/message/appinbox',
-				'/api/v1/message/telegrambot',
-				'/api/v1/messages/sms/1/en',
-			]),
-		);
-		expect(request).toHaveBeenCalledWith(
-			'/api/v1/broadcasts/1',
-			'test-api-key',
-			{
-				method: 'DELETE',
-			},
-		);
+	it('returns no domains when eSputnik sends an empty body', async () => {
+		request.mockResolvedValueOnce(undefined);
+		await expect(siteEndpoints.getDomains(ctx, {})).resolves.toEqual([]);
+		request.mockResolvedValueOnce([{ domain: 'example.com' }]);
+		await expect(siteEndpoints.getDomains(ctx, {})).resolves.toEqual([
+			{ domain: 'example.com' },
+		]);
 	});
 });

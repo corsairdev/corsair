@@ -7,6 +7,21 @@
     "path": "/api/v1/balance",
     "options": {}
   },
+  "account.getOrganisationBalanceHistory": {
+    "path": "/api/v1/balance/history",
+    "options": {
+      "query": {
+        "dateFrom": "2026-01-01",
+        "dateTo": "2026-01-31"
+      }
+    }
+  },
+  "account.generateApiToken": {
+    "path": "/api/v1/auth/token",
+    "options": {
+      "method": "POST"
+    }
+  },
   "contacts.addContact": {
     "path": "/api/v1/contact",
     "options": {
@@ -17,7 +32,16 @@
             "type": "email",
             "value": "person@example.com"
           }
-        ]
+        ],
+        "fields": [
+          {
+            "id": 79814,
+            "value": "gold"
+          }
+        ],
+        "address": {
+          "town": "Toulouse"
+        }
       }
     }
   },
@@ -30,6 +54,7 @@
     "options": {
       "method": "PUT",
       "body": {
+        "firstName": "Ada",
         "channels": [
           {
             "type": "email",
@@ -43,7 +68,9 @@
     "path": "/api/v1/contact/1",
     "options": {
       "method": "DELETE",
-      "query": {}
+      "query": {
+        "erase": true
+      }
     }
   },
   "contacts.deleteContactByExternalCustomerId": {
@@ -51,7 +78,7 @@
     "options": {
       "method": "DELETE",
       "query": {
-        "externalCustomerId": "customer-1"
+        "externalCustomerId": "AB12770"
       }
     }
   },
@@ -59,7 +86,8 @@
     "path": "/api/v1/contacts",
     "options": {
       "query": {
-        "startindex": 1
+        "email": "person@example.com",
+        "maxrows": 100
       }
     }
   },
@@ -75,7 +103,8 @@
               "value": "person@example.com"
             }
           ]
-        }
+        },
+        "groups": ["Newsletter"]
       }
     }
   },
@@ -84,7 +113,8 @@
     "options": {
       "method": "POST",
       "body": {
-        "contacts": []
+        "contacts": [],
+        "dedupeOn": "email"
       }
     }
   },
@@ -93,12 +123,13 @@
     "options": {
       "method": "POST",
       "body": {
-        "contacts": []
+        "dedupeOn": "email",
+        "link": "https://example.com/contacts.csv"
       }
     }
   },
   "contacts.getImportSessionStatus": {
-    "path": "/api/v1/importstatus/session-1",
+    "path": "/api/v1/importstatus/session%2F1",
     "options": {}
   },
   "contacts.getContactEmails": {
@@ -130,7 +161,9 @@
   "contacts.getGroupContacts": {
     "path": "/api/v1/group/1/contacts",
     "options": {
-      "query": {}
+      "query": {
+        "maxrows": 50
+      }
     }
   },
   "contacts.detachContactsFromGroup": {
@@ -138,7 +171,7 @@
     "options": {
       "method": "POST",
       "body": {
-        "emails": ["person@example.com"]
+        "contactIds": [2]
       }
     }
   },
@@ -147,24 +180,28 @@
     "options": {
       "method": "POST",
       "body": {
-        "emails": ["person@example.com"]
+        "externalCustomerIds": ["AB12770"]
       }
     }
   },
   "contacts.searchGroups": {
     "path": "/api/v1/groups",
     "options": {
-      "query": {}
+      "query": {
+        "name": "VIP"
+      }
     }
   },
   "contacts.searchWorkflows": {
     "path": "/api/v1/workflows",
     "options": {
-      "query": {}
+      "query": {
+        "name": "Welcome"
+      }
     }
   },
   "contacts.getContactIdByToken": {
-    "path": "/api/v1/contact/token/app-uuid/token-id/contactId",
+    "path": "/api/v1/contact/token/app%2Fid/token%3Fx/contactId",
     "options": {}
   },
   "contacts.getContactSubscriptionCategories": {
@@ -176,12 +213,12 @@
     "options": {
       "method": "PUT",
       "body": {
-        "subscriptions": ["newsletter"]
+        "subscriptions": ["news"]
       }
     }
   },
   "contacts.contactRecoms": {
-    "path": "/api/v2/contacts/recoms/1",
+    "path": "/api/v2/contacts/recoms/3",
     "options": {
       "query": {
         "contactId": 1
@@ -192,11 +229,40 @@
     "path": "/api/v1/additionalfields",
     "options": {}
   },
-  "accountExtended.getOrganisationBalanceHistory": {
-    "path": "/api/v1/balance/history",
+  "contacts.getSubscriptionCategories": {
+    "path": "/api/v1/subscriptions",
+    "options": {}
+  },
+  "contacts.contactActivity": {
+    "path": "/api/v2/contacts/activity",
     "options": {
       "query": {
-        "dateFrom": "2026-01-01"
+        "dateFrom": "2026-01-01",
+        "dateTo": "2026-01-31",
+        "email": "person@example.com"
+      }
+    }
+  },
+  "contacts.contactMessages": {
+    "path": "/api/v2/contacts/messages",
+    "options": {
+      "query": {
+        "dateFrom": "2026-01-01",
+        "dateTo": "2026-01-31",
+        "contactId": 1
+      }
+    }
+  },
+  "contacts.getTokenActivated": {
+    "path": "/api/v1/contact/token/activated/app/token",
+    "options": {}
+  },
+  "contacts.changeTokenActivated": {
+    "path": "/api/v1/contact/token/activated/app/token",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "active": false
       }
     }
   },
@@ -214,7 +280,8 @@
     "options": {
       "method": "POST",
       "body": {
-        "name": "event-name"
+        "eventTypeKey": "cart_abandoned",
+        "params": {}
       }
     }
   },
@@ -232,7 +299,8 @@
     "options": {
       "method": "DELETE",
       "body": {
-        "events": []
+        "from": "2026-01-01",
+        "to": "2026-01-02"
       }
     }
   },
@@ -240,32 +308,23 @@
     "path": "/api/v1/messages/email",
     "options": {
       "query": {
-        "name": "welcome"
+        "search": "welcome"
       }
     }
   },
   "emails.getEmailMessageViewLink": {
-    "path": "/api/v1/messages/email/1/view",
+    "path": "/api/v1/messages/email/1/viewLink",
     "options": {}
-  },
-  "emails.sendPreparedMessage": {
-    "path": "/api/v1/messages/send",
-    "options": {
-      "method": "POST",
-      "body": {
-        "id": 1
-      }
-    }
   },
   "emails.addEmail": {
     "path": "/api/v1/messages/email",
     "options": {
       "method": "POST",
       "body": {
-        "name": "email-name",
+        "name": "Welcome",
         "from": "sender@example.com",
-        "subject": "Subject",
-        "htmlText": "<p>Body</p>"
+        "subject": "Hi",
+        "htmlText": "<p>Hi</p>"
       }
     }
   },
@@ -278,10 +337,10 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-email",
+        "name": "Welcome",
         "from": "sender@example.com",
-        "subject": "Subject",
-        "htmlText": "<p>Body</p>"
+        "subject": "Hi",
+        "htmlText": "<p>Hi</p>"
       }
     }
   },
@@ -296,10 +355,10 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-email",
+        "name": "Welcome",
         "from": "sender@example.com",
-        "subject": "Subject",
-        "htmlText": "<p>Body</p>"
+        "subject": "Hi",
+        "htmlText": "<p>Hi</p>"
       }
     }
   },
@@ -314,7 +373,10 @@
     "options": {
       "method": "POST",
       "body": {
-        "name": "email-name"
+        "from": "sender@example.com",
+        "subject": "Hi",
+        "htmlText": "<p>Hi</p>",
+        "emails": ["person@example.com"]
       }
     }
   },
@@ -331,9 +393,9 @@
     "options": {
       "method": "POST",
       "body": {
-        "name": "push-name",
+        "name": "Push",
         "title": "Title",
-        "text": "Body"
+        "text": "Text"
       }
     }
   },
@@ -346,9 +408,9 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-push",
+        "name": "Push",
         "title": "Title",
-        "text": "Body"
+        "text": "Text"
       }
     }
   },
@@ -363,9 +425,9 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-push",
+        "name": "Push",
         "title": "Title",
-        "text": "Body"
+        "text": "Text"
       }
     }
   },
@@ -388,7 +450,9 @@
     "options": {
       "method": "POST",
       "body": {
-        "name": "viber-name"
+        "name": "Promo",
+        "from": "Shop",
+        "text": "Hi"
       }
     }
   },
@@ -401,7 +465,9 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-viber"
+        "name": "Promo",
+        "from": "Shop",
+        "text": "Hi"
       }
     }
   },
@@ -409,6 +475,33 @@
     "path": "/api/v1/messages/viber/1",
     "options": {
       "method": "DELETE"
+    }
+  },
+  "viber.updateTranslatedViberMessage": {
+    "path": "/api/v1/messages/viber/1/en",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Promo",
+        "from": "Shop",
+        "text": "Hi"
+      }
+    }
+  },
+  "viber.deleteTranslatedViberMessage": {
+    "path": "/api/v1/messages/viber/1/en",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "viber.sendViber": {
+    "path": "/api/v1/message/viber",
+    "options": {
+      "method": "POST",
+      "body": {
+        "text": "Hi",
+        "phoneNumbers": ["380501234567"]
+      }
     }
   },
   "appInbox.searchAppInboxMessages": {
@@ -424,7 +517,9 @@
     "options": {
       "method": "POST",
       "body": {
-        "name": "appinbox-name"
+        "name": "Inbox",
+        "title": "Title",
+        "text": "Text"
       }
     }
   },
@@ -437,7 +532,9 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-appinbox"
+        "name": "Inbox",
+        "title": "Title",
+        "text": "Text"
       }
     }
   },
@@ -447,8 +544,25 @@
       "method": "DELETE"
     }
   },
+  "appInbox.updateTranslatedAppInboxMessage": {
+    "path": "/api/v1/messages/appinbox/1/en",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Inbox",
+        "title": "Title",
+        "text": "Text"
+      }
+    }
+  },
+  "appInbox.deleteTranslatedAppInboxMessage": {
+    "path": "/api/v1/messages/appinbox/1/en",
+    "options": {
+      "method": "DELETE"
+    }
+  },
   "telegramBot.searchTelegramBotMessages": {
-    "path": "/api/v1/messages/telegrambot",
+    "path": "/api/v1/messages/telegram",
     "options": {
       "query": {
         "search": "welcome"
@@ -456,29 +570,47 @@
     }
   },
   "telegramBot.addTelegramBotMessage": {
-    "path": "/api/v1/messages/telegrambot",
+    "path": "/api/v1/messages/telegram",
     "options": {
       "method": "POST",
       "body": {
-        "name": "telegram-name"
+        "name": "Bot",
+        "text": "Hi"
       }
     }
   },
   "telegramBot.getTelegramBotMessage": {
-    "path": "/api/v1/messages/telegrambot/1",
+    "path": "/api/v1/messages/telegram/1",
     "options": {}
   },
   "telegramBot.updateBaseTelegramBotMessage": {
-    "path": "/api/v1/messages/telegrambot/1",
+    "path": "/api/v1/messages/telegram/1",
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-telegram"
+        "name": "Bot",
+        "text": "Hi"
       }
     }
   },
   "telegramBot.deleteTelegramBotMessage": {
-    "path": "/api/v1/messages/telegrambot/1",
+    "path": "/api/v1/messages/telegram/1",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "telegramBot.updateTranslatedTelegramMessage": {
+    "path": "/api/v1/messages/telegram/1/en",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Bot",
+        "text": "Hi"
+      }
+    }
+  },
+  "telegramBot.deleteTranslatedTelegramMessage": {
+    "path": "/api/v1/messages/telegram/1/en",
     "options": {
       "method": "DELETE"
     }
@@ -491,6 +623,17 @@
       }
     }
   },
+  "sms.addSmsMessage": {
+    "path": "/api/v1/messages/sms",
+    "options": {
+      "method": "POST",
+      "body": {
+        "name": "Sms",
+        "from": "Shop",
+        "text": "Hi"
+      }
+    }
+  },
   "sms.getSms": {
     "path": "/api/v1/messages/sms/1",
     "options": {}
@@ -500,7 +643,9 @@
     "options": {
       "method": "PUT",
       "body": {
-        "name": "updated-sms"
+        "name": "Sms",
+        "from": "Shop",
+        "text": "Hi"
       }
     }
   },
@@ -510,26 +655,61 @@
       "method": "DELETE"
     }
   },
+  "sms.updateTranslatedSmsMessage": {
+    "path": "/api/v1/messages/sms/1/en",
+    "options": {
+      "method": "PUT",
+      "body": {
+        "name": "Sms",
+        "from": "Shop",
+        "text": "Hi"
+      }
+    }
+  },
+  "sms.deleteTranslatedSmsMessage": {
+    "path": "/api/v1/messages/sms/1/en",
+    "options": {
+      "method": "DELETE"
+    }
+  },
+  "sms.sendSms": {
+    "path": "/api/v1/message/sms",
+    "options": {
+      "method": "POST",
+      "body": {
+        "from": "Shop",
+        "text": "Hi",
+        "phoneNumbers": ["380501234567"]
+      }
+    }
+  },
   "broadcasts.getBroadcasts": {
     "path": "/api/v1/broadcasts",
     "options": {
       "query": {
-        "startindex": 1
+        "maxrows": 10
       }
     }
   },
   "broadcasts.createBroadcast": {
-    "path": "/api/v1/broadcasts",
+    "path": "/api/v1/broadcast",
     "options": {
       "method": "POST",
       "body": {
-        "name": "broadcast-name"
+        "messageId": "123",
+        "groups": [5]
       }
     }
   },
   "broadcasts.getBroadcast": {
-    "path": "/api/v1/broadcasts/1",
+    "path": "/api/v1/broadcast/b-1",
     "options": {}
+  },
+  "broadcasts.cancelBroadcast": {
+    "path": "/api/v1/broadcast/b-1",
+    "options": {
+      "method": "DELETE"
+    }
   },
   "interfaces.getSmsInterfaces": {
     "path": "/api/v1/interfaces/sms",
@@ -539,109 +719,36 @@
     "path": "/api/v1/interfaces/email",
     "options": {}
   },
-  "batchTwoRemainder.updateTranslatedViberMessage": {
-    "path": "/api/v1/messages/viber/1/en",
-    "options": {
-      "method": "PUT",
-      "body": {
-        "name": "updated-viber"
-      }
-    }
-  },
-  "batchTwoRemainder.deleteTranslatedViberMessage": {
-    "path": "/api/v1/messages/viber/1/en",
-    "options": {
-      "method": "DELETE"
-    }
-  },
-  "batchTwoRemainder.updateTranslatedAppInboxMessage": {
-    "path": "/api/v1/messages/appinbox/1/en",
-    "options": {
-      "method": "PUT",
-      "body": {
-        "name": "updated-appinbox"
-      }
-    }
-  },
-  "batchTwoRemainder.deleteTranslatedAppInboxMessage": {
-    "path": "/api/v1/messages/appinbox/1/en",
-    "options": {
-      "method": "DELETE"
-    }
-  },
-  "batchTwoRemainder.updateTranslatedTelegramMessage": {
-    "path": "/api/v1/messages/telegrambot/1/en",
-    "options": {
-      "method": "PUT",
-      "body": {
-        "name": "updated-telegram"
-      }
-    }
-  },
-  "batchTwoRemainder.deleteTranslatedTelegramMessage": {
-    "path": "/api/v1/messages/telegrambot/1/en",
-    "options": {
-      "method": "DELETE"
-    }
-  },
-  "batchTwoRemainder.addSmsMessage": {
-    "path": "/api/v1/messages/sms",
+  "messages.sendPreparedMessage": {
+    "path": "/api/v1/message/7/smartsend",
     "options": {
       "method": "POST",
       "body": {
-        "name": "sms-name"
+        "recipients": [
+          {
+            "locator": "person@example.com",
+            "jsonParam": "{\"name\":\"Ada\"}"
+          }
+        ],
+        "email": true
       }
     }
   },
-  "batchTwoRemainder.sendSms": {
-    "path": "/api/v1/message/sms",
-    "options": {
-      "method": "POST",
-      "body": {
-        "name": "sms-name"
-      }
-    }
-  },
-  "batchTwoRemainder.cancelBroadcast": {
-    "path": "/api/v1/broadcasts/1",
-    "options": {
-      "method": "DELETE"
-    }
-  },
-  "finalBatch.contactActivity": {
-    "path": "/api/v2/contacts/activity",
-    "options": {
-      "query": {
-        "startindex": 1
-      }
-    }
-  },
-  "finalBatch.contactMessages": {
-    "path": "/api/v2/contacts/messages",
-    "options": {
-      "query": {
-        "startindex": 1
-      }
-    }
-  },
-  "finalBatch.getTokenActivated": {
-    "path": "/api/v1/contact/token/activated/app-uuid/token-id",
-    "options": {}
-  },
-  "finalBatch.changeTokenActivated": {
-    "path": "/api/v1/contact/token/activated/app-uuid/token-id",
+  "messages.updateInteractionStatus": {
+    "path": "/api/v1/interactions/2E2E831C-486C/status",
     "options": {
       "method": "PUT",
       "body": {
-        "active": true
+        "status": "DELIVERED",
+        "time": "2026-01-01T10:00:00Z"
       }
     }
   },
-  "finalBatch.getDomains": {
+  "site.getDomains": {
     "path": "/api/v1/site/domains",
     "options": {}
   },
-  "finalBatch.createDomain": {
+  "site.createDomain": {
     "path": "/api/v1/site/domains",
     "options": {
       "method": "POST",
@@ -650,15 +757,15 @@
       }
     }
   },
-  "finalBatch.getScript": {
+  "site.getScript": {
     "path": "/api/v1/site/script",
     "options": {}
   },
-  "finalBatch.getWebPushDomains": {
+  "site.getWebPushDomains": {
     "path": "/api/v1/site/webpush/domains",
     "options": {}
   },
-  "finalBatch.addWebPushDomain": {
+  "site.addWebPushDomain": {
     "path": "/api/v1/site/webpush/domain",
     "options": {
       "method": "POST",
@@ -670,7 +777,7 @@
       }
     }
   },
-  "finalBatch.deleteWebPushDomain": {
+  "site.deleteWebPushDomain": {
     "path": "/api/v1/site/webpush/domains",
     "options": {
       "method": "DELETE",
@@ -679,7 +786,7 @@
       }
     }
   },
-  "finalBatch.getWebPushScript": {
+  "site.getWebPushScript": {
     "path": "/api/v1/site/webpush/script",
     "options": {
       "query": {
@@ -687,148 +794,107 @@
       }
     }
   },
-  "finalBatch.getProductFeedsConfiguration": {
-    "path": "/api/v1/productfeeds/configuration",
+  "productFeeds.getProductFeedsConfiguration": {
+    "path": "/api/v1/products/config",
     "options": {}
   },
-  "finalBatch.configureProductFeeds": {
-    "path": "/api/v1/productfeeds/configuration",
-    "options": {
-      "method": "PUT",
-      "body": {
-        "feedUrl": "https://example.com/feed.xml"
-      }
-    }
-  },
-  "finalBatch.addAppTokens": {
-    "path": "/api/v1/apptokens",
+  "productFeeds.configureProductFeeds": {
+    "path": "/api/v1/products/config",
     "options": {
       "method": "POST",
       "body": {
-        "tokens": ["token"]
+        "feeds": [
+          {
+            "url": "https://example.com/feed.xml",
+            "language": "en",
+            "default": true
+          }
+        ]
       }
     }
   },
-  "finalBatch.muteAppToken": {
-    "path": "/api/v1/apptokens/mute",
+  "apps.addAppTokens": {
+    "path": "/api/v1/apps/app-1/tokens",
     "options": {
       "method": "POST",
       "body": {
-        "tokens": ["token"]
+        "tokens": [
+          {
+            "token": "t1",
+            "contactId": 1
+          }
+        ]
       }
     }
   },
-  "finalBatch.unmuteAppToken": {
-    "path": "/api/v1/apptokens/unmute",
+  "apps.muteAppToken": {
+    "path": "/api/v1/apps/app-1/token/mute",
     "options": {
       "method": "POST",
       "body": {
-        "tokens": ["token"]
+        "token": "t1",
+        "duration": 60
       }
     }
   },
-  "finalBatch.getSubscriptionCategories": {
-    "path": "/api/v1/subscriptioncategories",
-    "options": {}
+  "apps.unmuteAppToken": {
+    "path": "/api/v1/apps/app-1/token/unmute",
+    "options": {
+      "method": "POST",
+      "body": {
+        "token": "t1"
+      }
+    }
   },
-  "finalBatch.getPromocodes": {
+  "promocodes.getPromocodes": {
     "path": "/api/v1/promocodes",
     "options": {
       "query": {
-        "limit": 1
+        "type": "SUMMER",
+        "inUse": false
       }
     }
   },
-  "finalBatch.getPromocodesCount": {
+  "promocodes.getPromocodesCount": {
     "path": "/api/v1/promocodes/count",
-    "options": {}
+    "options": {
+      "query": {
+        "type": "SUMMER"
+      }
+    }
   },
-  "finalBatch.insertPromocodes": {
+  "promocodes.insertPromocodes": {
     "path": "/api/v1/promocodes",
     "options": {
       "method": "POST",
       "body": {
-        "promocodes": []
+        "promocodes": ["A1"],
+        "expirationDate": "2026-12-31",
+        "discount": 10
       }
     }
   },
-  "finalBatch.getPreprocessorFileStatus": {
-    "path": "/api/v1/preprocessor/file/session-1",
+  "preprocessor.getPreprocessorFileStatus": {
+    "path": "/api/v1/preprocessor/file/s-1/status",
     "options": {}
   },
-  "finalBatch.updatePreprocessorFile": {
-    "path": "/api/v1/preprocessor/file",
-    "options": {
-      "method": "PUT",
-      "body": {
-        "columns": []
-      }
-    }
-  },
-  "finalBatch.uploadPreprocessorFile": {
-    "path": "/api/v1/preprocessor/file",
+  "preprocessor.updatePreprocessorFile": {
+    "path": "/api/v1/preprocessor/file/f-1",
     "options": {
       "method": "POST",
       "body": {
-        "columns": []
+        "link": "https://example.com/data.csv"
       }
     }
   },
-  "finalBatch.generateApiToken": {
-    "path": "/api/v1/apikey",
+  "preprocessor.uploadPreprocessorFile": {
+    "path": "/api/v1/preprocessor/file/upload",
     "options": {
       "method": "POST",
       "body": {
-        "name": "token-name"
+        "link": "https://example.com/data.csv",
+        "preprocessorType": "Key"
       }
-    }
-  },
-  "finalBatch.getInteractionStatus": {
-    "path": "/api/v1/interactions/status",
-    "options": {
-      "query": {}
-    }
-  },
-  "finalBatch.sendViber": {
-    "path": "/api/v1/message/viber",
-    "options": {
-      "method": "POST",
-      "body": {
-        "name": "viber-send"
-      }
-    }
-  },
-  "finalBatch.sendAppInbox": {
-    "path": "/api/v1/message/appinbox",
-    "options": {
-      "method": "POST",
-      "body": {
-        "name": "appinbox-send"
-      }
-    }
-  },
-  "finalBatch.sendTelegramBot": {
-    "path": "/api/v1/message/telegrambot",
-    "options": {
-      "method": "POST",
-      "body": {
-        "name": "telegram-send"
-      }
-    }
-  },
-  "finalBatch.updateTranslatedSmsMessage": {
-    "path": "/api/v1/messages/sms/1/en",
-    "options": {
-      "method": "PUT",
-      "body": {
-        "name": "updated-sms"
-      }
-    }
-  },
-  "finalBatch.deleteTranslatedSmsMessage": {
-    "path": "/api/v1/messages/sms/1/en",
-    "options": {
-      "method": "DELETE"
     }
   }
 }
