@@ -113,7 +113,11 @@ export type PlacidRequest = {
 	query?: PlacidQuery;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
-	/** Multipart uploads (media and fonts) send this instead of `body`. */
+	/**
+	 * Multipart uploads (media and fonts) send this instead of `body`.
+	 * unknown: parts are a File plus caller-chosen string keys, and the
+	 * request builder stringifies whatever else it finds.
+	 */
 	formData?: Record<string, unknown>;
 };
 
@@ -122,9 +126,23 @@ export function segment(value: string | number): string {
 	return encodeURIComponent(String(value));
 }
 
+/**
+ * Placid pages by opaque cursor and hands back a whole URL in `links.next`.
+ * A caller may pass that URL or just its `cursor` value, so both are accepted
+ * and reduced to the token the endpoint sends.
+ */
+export function cursorParam(value: string): string {
+	const marker = 'cursor=';
+	const at = value.indexOf(marker);
+	if (at === -1) return value;
+	const rest = value.slice(at + marker.length);
+	const end = rest.search(/[&#]/);
+	return end === -1 ? rest : rest.slice(0, end);
+}
+
 // unknown: callers parse the body with the endpoint's zod output schema. It is
 // undefined for the 204 that deleting an image, PDF, video, font or collection
-// returns.
+// returns, which is why the return type is not narrowed here.
 export async function makePlacidRequest(
 	apiKey: string,
 	{ method, path, query, body, formData }: PlacidRequest,
@@ -155,6 +173,8 @@ export async function makePlacidRequest(
 	};
 
 	try {
+		// unknown: the response is untyped until the caller's output schema
+		// parses it; the same line as the return type above.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: PLACID_RATE_LIMIT_CONFIG,
 		});

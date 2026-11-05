@@ -1,5 +1,5 @@
 import type { PlacidEndpoints } from '..';
-import { segment } from '../client';
+import { cursorParam, segment } from '../client';
 import { call, callDelete } from './call';
 import {
 	PlacidEndpointInputSchemas as Inputs,
@@ -15,7 +15,14 @@ export const list: PlacidEndpoints['collectionsList'] = (ctx, input) =>
 			output: Outputs.collectionsList,
 		},
 		input,
-		(parsed) => ({ method: 'GET', path: '/collections', query: parsed }),
+		({ cursor, ...rest }) => ({
+			method: 'GET',
+			path: '/collections',
+			query: {
+				...rest,
+				cursor: cursor === undefined ? undefined : cursorParam(cursor),
+			},
+		}),
 		{
 			log: (_, result) => ({ count: result.data.length }),
 		},

@@ -52,6 +52,8 @@ export async function callDelete<
 	// unknown: raw caller input, parsed by the input schema.
 	rawInput: unknown,
 	toRequest: (parsed: z.output<Input>) => PlacidRequest,
+	// unknown: the delete reply is built from the input, and the output schema
+	// validates it, so the shape is only known after that parse.
 	toResult: (parsed: z.output<Input>) => unknown,
 	log: (parsed: z.output<Input>) => LogFields,
 ): Promise<z.output<Output>> {

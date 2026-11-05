@@ -40,7 +40,7 @@ const LayerSchema = z
 			.string()
 			.optional()
 			.describe(
-				'A font family name, or the `uuid` of a font uploaded with `fonts.create`.',
+				'A font family name, or the `uuid` returned by `fonts.create`. That uuid is the value Placid resolves as the font for this layer.',
 			),
 		alt_text_color: z.string().optional(),
 		alt_font: z.string().optional(),
@@ -108,8 +108,23 @@ const TransferSchema = z
 		'Copies the finished file to your own S3 bucket. Placid does not store the credentials.',
 	);
 
+/**
+ * Free-form JSON the caller owns.
+ *
+ * Placid stores `passthrough` and `custom_data` verbatim and hands them back
+ * unchanged, so their contents are decided by the caller, not by Placid. A
+ * stricter shape would reject values the API accepts and could only be a
+ * guess; `unknown` here means "not inspected", and the plugin never reads
+ * inside. Reference: https://placid.app/docs/2.0/rest/images
+ */
+// unknown: caller-owned JSON, deliberately not inspected or constrained.
+const CallerJsonValueSchema = z.unknown();
+
+// unknown: caller-owned JSON array, one element per entry, contents unread.
+const CallerJsonArraySchema = z.array(z.unknown());
+
 const PassthroughSchema = z
-	.union([z.string().max(1024), z.array(z.unknown())])
+	.union([z.string().max(1024), CallerJsonArraySchema])
 	.describe(
 		'Saved with the file and returned in the webhook and polling replies. At most 1024 characters.',
 	);
@@ -384,8 +399,8 @@ const TemplateSchema = z
 		custom_data: z
 			.union([
 				z.string(),
-				z.record(z.string(), z.unknown()),
-				z.array(z.unknown()),
+				z.record(z.string(), CallerJsonValueSchema),
+				CallerJsonArraySchema,
 			])
 			.nullish()
 			.describe('The reference value set on the template, if any.'),
@@ -419,6 +434,16 @@ const TemplatesListInputSchema = z.object({
 		.describe(
 			'`<field>-<direction>`, where field is `created_at`, `updated_at` or `title` and direction is `asc` or `desc`.',
 		),
+	// Placid pages by opaque cursor, not by page number, and its own reply
+	// carries the next one. Verified live: the list is 20 per page with no
+	// `per_page` parameter, and `links.next` holds a `?cursor=<token>` URL.
+	cursor: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Pass `links.next` from the previous page (the whole URL or just its `cursor` value) to read the next 20 templates. Null on the last page.',
+		),
 });
 export type TemplatesListInput = z.input<typeof TemplatesListInputSchema>;
 
@@ -437,7 +462,7 @@ const TemplatesCreateInputSchema = z.object({
 	height: z.number().int().positive().optional(),
 	tags: z.array(z.string()).max(10).optional(),
 	custom_data: z
-		.union([z.string().max(255), z.record(z.string(), z.unknown())])
+		.union([z.string().max(255), z.record(z.string(), CallerJsonValueSchema)])
 		.optional()
 		.describe('A reference value, such as a serialized JSON object.'),
 	from_template: z
@@ -466,7 +491,11 @@ const TemplatesUpdateInputSchema = z.object({
 	title: z.string().optional(),
 	tags: z.array(z.string()).max(10).optional(),
 	custom_data: z
-		.union([z.string().max(255), z.record(z.string(), z.unknown()), z.null()])
+		.union([
+			z.string().max(255),
+			z.record(z.string(), CallerJsonValueSchema),
+			z.null(),
+		])
 		.optional(),
 });
 export type TemplatesUpdateInput = z.input<typeof TemplatesUpdateInputSchema>;
@@ -498,8 +527,8 @@ const CollectionSchema = z
 		custom_data: z
 			.union([
 				z.string(),
-				z.record(z.string(), z.unknown()),
-				z.array(z.unknown()),
+				z.record(z.string(), CallerJsonValueSchema),
+				CallerJsonArraySchema,
 			])
 			.nullish(),
 		// The docs call this `template_uuids`, but the API answers `templates`
@@ -528,8 +557,11 @@ const CollectionsListInputSchema = z.object({
 		.describe('Page size. Omitted returns every collection, unpaged.'),
 	cursor: z
 		.string()
+		.min(1)
 		.optional()
-		.describe('The `links.next` URL of a previous page, or its cursor value.'),
+		.describe(
+			'Pass `links.next` from the previous page (the whole URL or just its `cursor` value). Omitted returns every collection, unpaged.',
+		),
 });
 export type CollectionsListInput = z.input<typeof CollectionsListInputSchema>;
 
@@ -547,7 +579,7 @@ export type CollectionsListResponse = z.infer<
 const CollectionsCreateInputSchema = z.object({
 	title: z.string().min(1).max(255),
 	custom_data: z
-		.union([z.string().max(1024), z.record(z.string(), z.unknown())])
+		.union([z.string().max(1024), z.record(z.string(), CallerJsonValueSchema)])
 		.optional(),
 	template_uuids: z.array(z.string()).max(500).optional(),
 });
@@ -574,7 +606,11 @@ const CollectionsUpdateInputSchema = z.object({
 	collection_id: z.string().min(1),
 	title: z.string().max(255).optional(),
 	custom_data: z
-		.union([z.string().max(1024), z.record(z.string(), z.unknown()), z.null()])
+		.union([
+			z.string().max(1024),
+			z.record(z.string(), CallerJsonValueSchema),
+			z.null(),
+		])
 		.optional(),
 	template_uuids: z
 		.array(z.string())
@@ -620,7 +656,7 @@ const MediaUploadInputSchema = z.object({
 	file_url: z
 		.string()
 		.describe(
-			'A publicly reachable URL. The plugin downloads it and forwards the bytes as multipart.',
+			'A publicly reachable HTTP(S) URL. The plugin downloads it and forwards the bytes as multipart. Private addresses are rejected, and the download is capped at 25 MB.',
 		),
 	filename: z.string().optional().describe('Overrides the name from the URL.'),
 	file_key: z
@@ -653,7 +689,7 @@ const FontSchema = z
 	.object({
 		uuid: z
 			.string()
-			.describe('The font code. Use it as `fontFamily` on a text layer.'),
+			.describe('The font code. Use it as the `font` value on a text layer.'),
 		title: z.string().nullish(),
 		filename: z.string().nullish(),
 		is_legacy: z.boolean().nullish(),
@@ -669,6 +705,13 @@ const FontsListInputSchema = z.object({
 		.optional()
 		.describe(
 			'Also return account-wide fonts uploaded before per-project fonts.',
+		),
+	cursor: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Pass `links.next` from the previous page (the whole URL or just its `cursor` value) to read the next 20 fonts.',
 		),
 });
 export type FontsListInput = z.input<typeof FontsListInputSchema>;
@@ -694,7 +737,9 @@ export type FontsGetResponse = z.infer<typeof FontsGetResponseSchema>;
 const FontsCreateInputSchema = z.object({
 	file_url: z
 		.string()
-		.describe('A publicly reachable ttf, otf, woff or woff2 file.'),
+		.describe(
+			'A publicly reachable ttf, otf, woff or woff2 file over HTTP(S). Private addresses are rejected, and the download is capped at 25 MB.',
+		),
 	title: z
 		.string()
 		.max(200)

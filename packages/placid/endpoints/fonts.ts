@@ -1,7 +1,7 @@
 import type { PlacidEndpoints } from '..';
-import { segment } from '../client';
+import { cursorParam, segment } from '../client';
 import { call, callDelete } from './call';
-import { downloadAsFile } from './media';
+import { downloadAsFile } from './download';
 import {
 	PlacidEndpointInputSchemas as Inputs,
 	PlacidEndpointOutputSchemas as Outputs,
@@ -16,11 +16,14 @@ export const list: PlacidEndpoints['fontsList'] = (ctx, input) =>
 			output: Outputs.fontsList,
 		},
 		input,
-		(parsed) => ({
+		({ include_legacy, cursor }) => ({
 			method: 'GET',
 			path: '/fonts',
-			// Placid treats any truthy value as on, so 1 is enough.
-			query: parsed.include_legacy ? { include_legacy: 1 } : undefined,
+			query: {
+				// Placid treats any truthy value as on, so 1 is enough.
+				include_legacy: include_legacy ? 1 : undefined,
+				cursor: cursor === undefined ? undefined : cursorParam(cursor),
+			},
 		}),
 		{
 			log: (_, result) => ({ count: result.data.length }),
