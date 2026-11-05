@@ -1,0 +1,22 @@
+displayName: NetSuite
+description: "Create, read, update, and delete NetSuite records, run SuiteQL, and manage OAuth 2.0 tokens."
+domain: netsuite.com
+recommendedAuth: oauth_2
+factory:
+  note: "NetSuite needs your account ID to build account-specific REST and OAuth URLs."
+  options:
+    accountId: "TSTDRV123"
+examples:
+  read:
+    path: listRecords
+    title: List customer records
+    args:
+      recordType: customer
+      limit: 10
+  write:
+    path: createCustomer
+    title: Create a customer
+    args:
+      body:
+        entityId: "ACME"
+        companyName: "Acme Inc."
