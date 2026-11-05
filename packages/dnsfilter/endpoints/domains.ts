@@ -176,7 +176,7 @@ export const domainNotesBatchUpdate: DnsfilterEndpoints['domainNotesBatchUpdate'
 		return result;
 	};
 
-// Delete a domain note - DELETE /v1/notes/{resource}/{id}/notes/{domain}
+// Delete a domain note - DELETE /v1/notes/{resource}/{id}/{domain}
 export const domainNotesDelete: DnsfilterEndpoints['domainNotesDelete'] =
 	async (ctx, input) => {
 		const values = DnsfilterEndpointInputSchemas.domainNotesDelete.parse(
@@ -184,7 +184,7 @@ export const domainNotesDelete: DnsfilterEndpoints['domainNotesDelete'] =
 		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['domainNotesDelete']
-		>('/v1/notes/{resource}/{id}/notes/{domain}', ctx.key, {
+		>('/v1/notes/{resource}/{id}/{domain}', ctx.key, {
 			method: 'DELETE',
 			path: {
 				domain: values.domain,
@@ -203,7 +203,7 @@ export const domainNotesDelete: DnsfilterEndpoints['domainNotesDelete'] =
 		return result;
 	};
 
-// Batch destroy for domain notes - DELETE /v1/notes/{resource}/{id}/notes/batch_destroy
+// Batch destroy for domain notes - DELETE /v1/notes/{resource}/{id}/batch_destroy
 export const domainNotesBatchDestroy: DnsfilterEndpoints['domainNotesBatchDestroy'] =
 	async (ctx, input) => {
 		const values = DnsfilterEndpointInputSchemas.domainNotesBatchDestroy.parse(
@@ -211,7 +211,7 @@ export const domainNotesBatchDestroy: DnsfilterEndpoints['domainNotesBatchDestro
 		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['domainNotesBatchDestroy']
-		>('/v1/notes/{resource}/{id}/notes/batch_destroy', ctx.key, {
+		>('/v1/notes/{resource}/{id}/batch_destroy', ctx.key, {
 			method: 'DELETE',
 			path: {
 				id: values.id,

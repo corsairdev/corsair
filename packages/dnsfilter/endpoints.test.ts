@@ -4,6 +4,7 @@ import * as endpointGroups from './endpoints';
 import {
 	CollectionUsers,
 	CsvExports,
+	DomainNotes,
 	IpAddresses,
 	Networks,
 	TrafficReports,
@@ -213,6 +214,34 @@ describe('DNSFilter request wiring', () => {
 			'42',
 			expect.objectContaining({ name: 'HQ', organizationId: '7' }),
 		);
+	});
+
+	it('deletes domain notes on the routes the API serves', async () => {
+		// The OpenAPI document lists these under an extra `/notes` segment, but
+		// DNSFilter answers 404 there and 401 (route exists) without it.
+		requestMock.mockResolvedValueOnce({});
+		await DomainNotes.domainNotesDelete(createContext(), {
+			resource: 'policies',
+			id: 3,
+			domain: 'example.com',
+		});
+		expect(lastRequestOptions()).toMatchObject({
+			method: 'DELETE',
+			url: '/v1/notes/{resource}/{id}/{domain}',
+			path: { resource: 'policies', id: 3, domain: 'example.com' },
+		});
+
+		requestMock.mockResolvedValueOnce({});
+		await DomainNotes.domainNotesBatchDestroy(createContext(), {
+			resource: 'policies',
+			id: 3,
+			domains: 'a.com,b.com',
+		});
+		expect(lastRequestOptions()).toMatchObject({
+			method: 'DELETE',
+			url: '/v1/notes/{resource}/{id}/batch_destroy',
+			query: { domains: 'a.com,b.com' },
+		});
 	});
 
 	it('passes create bodies through unchanged', async () => {

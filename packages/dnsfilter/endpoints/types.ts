@@ -723,7 +723,7 @@ export type DomainNotesDeleteResponse = z.infer<
 const DomainNotesBatchDestroyInputSchema = z.object({
 	id: z.number().int(),
 	resource: z.enum(['policies', 'msps', 'organizations']),
-	// Required by DELETE /v1/notes/{resource}/{id}/notes/batch_destroy.
+	// Required by DELETE /v1/notes/{resource}/{id}/batch_destroy.
 	domains: z.string(),
 });
 export type DomainNotesBatchDestroyInput = z.infer<
