@@ -221,8 +221,8 @@ describe('Render documented response shapes', () => {
 			'/v1/postgres/dpg-1/credentials',
 		],
 		[
-			'automation.createWorkflowVersion',
-			api.automation.createWorkflowVersion,
+			'workflows.versions.create',
+			api.workflows.versions.create,
 			{ workflowId: 'wfl-1', commit: 'abc123' },
 			'/v1/workflowversions',
 		],
@@ -273,7 +273,7 @@ describe('Render required request fields', () => {
 
 	it('starts a workflow task run with the documented task and input fields', async () => {
 		replies.push({ status: 202, body: { id: 'trn-1' } });
-		await (api.automation.createTaskRun as unknown as Call)(ctx, {
+		await (api.workflows.taskRuns.create as unknown as Call)(ctx, {
 			task: 'my-workflow/hello',
 			input: ['world'],
 		});
@@ -286,10 +286,14 @@ describe('Render required request fields', () => {
 	});
 
 	it.each([
-		['automation.createTaskRun', api.automation.createTaskRun, { taskId: 't' }],
 		[
-			'automation.createWorkflow',
-			api.automation.createWorkflow,
+			'workflows.taskRuns.create',
+			api.workflows.taskRuns.create,
+			{ taskId: 't' },
+		],
+		[
+			'workflows.create',
+			api.workflows.create,
 			{ ownerId: 'tea-1', name: 'flow' },
 		],
 		[
@@ -320,9 +324,9 @@ describe('Render required request fields', () => {
 
 describe('Render responses seen on a live Hobby workspace', () => {
 	it.each([
-		['automation.listTasks', api.automation.listTasks],
-		['automation.listWorkflows', api.automation.listWorkflows],
-		['automation.listWorkflowVersions', api.automation.listWorkflowVersions],
+		['workflows.tasks.list', api.workflows.tasks.list],
+		['workflows.list', api.workflows.list],
+		['workflows.versions.list', api.workflows.versions.list],
 		['logs.resourceStreams', api.logs.resourceStreams],
 	] as const)(
 		'%s turns an empty `null` reply into []',

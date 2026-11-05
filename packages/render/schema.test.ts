@@ -101,7 +101,7 @@ describe('Render schema', () => {
 			'retrieveMaintenance',
 			'updateMaintenance',
 			'triggerMaintenance',
-			'triggerCronJobRun',
+			'listWebhookEvents',
 			'retrieveWebhook',
 			'updateWebhook',
 			'deleteWebhook',
@@ -236,6 +236,8 @@ describe('Render schema', () => {
 			['retrieveOwnerNotificationSettings', { ownerId: 'tea-1' }],
 			['updateOwnerNotificationSettings', { ownerId: 'tea-1' }],
 			['deleteOwnerMetricsStream', { ownerId: 'tea-1' }],
+			['triggerCronJobRun', { cronJobId: 'crn-1' }],
+			['cancelCronJobRun', { cronJobId: 'crn-1' }],
 		] as const) {
 			const schema = RenderEndpointInputSchemas[operation];
 			expect(schema.safeParse(ids).success).toBe(true);
@@ -405,7 +407,6 @@ describe('Render schema', () => {
 			{ cronJobId: 'cron-1' },
 			{ resourceId: 'resource-1' },
 			{ eventId: 'event-1' },
-			{ webhookId: 'webhook-1' },
 			{ serviceId: 'service-1', headerId: 'header-1' },
 			{ serviceId: 'service-1', routeId: 'route-1' },
 			{ serviceId: 'service-1', routeId: 'route-1', body: {} },

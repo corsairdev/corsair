@@ -232,39 +232,39 @@ const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
 	'notifications.updateServiceOverrides':
 		'PATCH /v1/notification-settings/overrides/services/{serviceId}', // patch-service-notification-overrides
 	'events.retrieve': 'GET /v1/events/{eventId}', // retrieve-event
-	'automation.listDisks': 'GET /v1/disks', // list-disks
-	'automation.listMaintenance': 'GET /v1/maintenance', // list-maintenance
-	'automation.listTaskRuns': 'GET /v1/task-runs', // listTaskRuns
-	'automation.listTasks': 'GET /v1/tasks', // listTasks
-	'automation.listWorkflows': 'GET /v1/workflows', // listWorkflows
-	'automation.listWorkflowVersions': 'GET /v1/workflowversions', // listWorkflowVersions
-	'automation.listWebhooks': 'GET /v1/webhooks', // list-webhooks
-	'automation.listWebhookEvents': 'GET /v1/webhooks/{webhookId}/events', // list-webhook-events
-	'automation.createDisk': 'POST /v1/disks', // add-disk
-	'automation.retrieveDisk': 'GET /v1/disks/{id}', // retrieve-disk
-	'automation.updateDisk': 'PATCH /v1/disks/{id}', // update-disk
-	'automation.deleteDisk': 'DELETE /v1/disks/{id}', // delete-disk
-	'automation.listDiskSnapshots': 'GET /v1/disks/{id}/snapshots', // list-snapshots
-	'automation.restoreDiskSnapshot': 'POST /v1/disks/{id}/snapshots/restore', // restore-snapshot
-	'automation.retrieveMaintenance': 'GET /v1/maintenance/{id}', // retrieve-maintenance
-	'automation.updateMaintenance': 'PATCH /v1/maintenance/{id}', // update-maintenance
-	'automation.triggerMaintenance': 'POST /v1/maintenance/{id}/trigger', // trigger-maintenance
-	'automation.triggerCronJobRun': 'POST /v1/cron-jobs/{id}/runs', // run-cron-job
-	'automation.cancelCronJobRun': 'DELETE /v1/cron-jobs/{cronJobId}/runs', // cancel-cron-job-run
-	'automation.createWebhook': 'POST /v1/webhooks', // create-webhook
-	'automation.retrieveWebhook': 'GET /v1/webhooks/{id}', // retrieve-webhook
-	'automation.updateWebhook': 'PATCH /v1/webhooks/{id}', // update-webhook
-	'automation.deleteWebhook': 'DELETE /v1/webhooks/{id}', // delete-webhook
-	'automation.createWorkflow': 'POST /v1/workflows', // createWorkflow
-	'automation.retrieveWorkflow': 'GET /v1/workflows/{id}', // getWorkflow
-	'automation.updateWorkflow': 'PATCH /v1/workflows/{id}', // updateWorkflow
-	'automation.deleteWorkflow': 'DELETE /v1/workflows/{id}', // deleteWorkflow
-	'automation.createWorkflowVersion': 'POST /v1/workflowversions', // createWorkflowVersion
-	'automation.retrieveWorkflowVersion': 'GET /v1/workflowversions/{id}', // getWorkflowVersion
-	'automation.retrieveTask': 'GET /v1/tasks/{id}', // getTask
-	'automation.createTaskRun': 'POST /v1/task-runs', // createTask
-	'automation.retrieveTaskRun': 'GET /v1/task-runs/{id}', // getTaskRun
-	'automation.cancelTaskRun': 'DELETE /v1/task-runs/{id}', // cancelTaskRun
+	'disks.list': 'GET /v1/disks', // list-disks
+	'maintenance.list': 'GET /v1/maintenance', // list-maintenance
+	'workflows.taskRuns.list': 'GET /v1/task-runs', // listTaskRuns
+	'workflows.tasks.list': 'GET /v1/tasks', // listTasks
+	'workflows.list': 'GET /v1/workflows', // listWorkflows
+	'workflows.versions.list': 'GET /v1/workflowversions', // listWorkflowVersions
+	'webhooks.list': 'GET /v1/webhooks', // list-webhooks
+	'webhooks.listEvents': 'GET /v1/webhooks/{id}/events', // list-webhook-events
+	'disks.create': 'POST /v1/disks', // add-disk
+	'disks.retrieve': 'GET /v1/disks/{id}', // retrieve-disk
+	'disks.update': 'PATCH /v1/disks/{id}', // update-disk
+	'disks.delete': 'DELETE /v1/disks/{id}', // delete-disk
+	'disks.listSnapshots': 'GET /v1/disks/{id}/snapshots', // list-snapshots
+	'disks.restoreSnapshot': 'POST /v1/disks/{id}/snapshots/restore', // restore-snapshot
+	'maintenance.retrieve': 'GET /v1/maintenance/{id}', // retrieve-maintenance
+	'maintenance.update': 'PATCH /v1/maintenance/{id}', // update-maintenance
+	'maintenance.trigger': 'POST /v1/maintenance/{id}/trigger', // trigger-maintenance
+	'services.cronJobs.triggerRun': 'POST /v1/cron-jobs/{cronJobId}/runs', // run-cron-job
+	'services.cronJobs.cancelRun': 'DELETE /v1/cron-jobs/{cronJobId}/runs', // cancel-cron-job-run
+	'webhooks.create': 'POST /v1/webhooks', // create-webhook
+	'webhooks.retrieve': 'GET /v1/webhooks/{id}', // retrieve-webhook
+	'webhooks.update': 'PATCH /v1/webhooks/{id}', // update-webhook
+	'webhooks.delete': 'DELETE /v1/webhooks/{id}', // delete-webhook
+	'workflows.create': 'POST /v1/workflows', // createWorkflow
+	'workflows.retrieve': 'GET /v1/workflows/{id}', // getWorkflow
+	'workflows.update': 'PATCH /v1/workflows/{id}', // updateWorkflow
+	'workflows.delete': 'DELETE /v1/workflows/{id}', // deleteWorkflow
+	'workflows.versions.create': 'POST /v1/workflowversions', // createWorkflowVersion
+	'workflows.versions.retrieve': 'GET /v1/workflowversions/{id}', // getWorkflowVersion
+	'workflows.tasks.retrieve': 'GET /v1/tasks/{id}', // getTask
+	'workflows.taskRuns.create': 'POST /v1/task-runs', // createTask
+	'workflows.taskRuns.retrieve': 'GET /v1/task-runs/{id}', // getTaskRun
+	'workflows.taskRuns.cancel': 'DELETE /v1/task-runs/{id}', // cancelTaskRun
 };
 
 // Zod v4 exposes each schema's definition on `.def`; the sampler only needs

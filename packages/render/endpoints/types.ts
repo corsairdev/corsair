@@ -293,7 +293,7 @@ const EnvGroupServiceInputSchema = z.object({
 	serviceId: z.string().min(1),
 });
 const WebhookEventsInputSchema = z.object({
-	webhookId: z.string().min(1),
+	id: z.string().min(1),
 	sentBefore: z.string().datetime().optional(),
 	sentAfter: z.string().datetime().optional(),
 	limit: z.number().int().min(1).max(100).optional(),
@@ -733,7 +733,7 @@ export type RenderEndpointInputs = {
 	retrieveMaintenance: ResourceIdInput;
 	updateMaintenance: z.infer<typeof UpdateMaintenanceInputSchema>;
 	triggerMaintenance: ResourceIdInput;
-	triggerCronJobRun: ResourceIdInput;
+	triggerCronJobRun: z.infer<typeof CronJobIdInputSchema>;
 	cancelCronJobRun: z.infer<typeof CronJobIdInputSchema>;
 	createWebhook: z.infer<typeof CreateWebhookInputSchema>;
 	retrieveWebhook: ResourceIdInput;
@@ -1194,7 +1194,7 @@ export const RenderEndpointInputSchemas = {
 	retrieveMaintenance: ResourceIdInputSchema,
 	updateMaintenance: UpdateMaintenanceInputSchema,
 	triggerMaintenance: ResourceIdInputSchema,
-	triggerCronJobRun: ResourceIdInputSchema,
+	triggerCronJobRun: CronJobIdInputSchema,
 	cancelCronJobRun: CronJobIdInputSchema,
 	createWebhook: CreateWebhookInputSchema,
 	retrieveWebhook: ResourceIdInputSchema,

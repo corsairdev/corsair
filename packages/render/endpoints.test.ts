@@ -272,7 +272,7 @@ describe('Render service endpoints', () => {
 		).toThrow('Invalid Render service ID');
 	});
 
-	it('covers the resource, observability, metrics, automation, and blueprint groups', async () => {
+	it('covers the resource, observability, metrics, disk and blueprint groups', async () => {
 		const ctx = { key: 'secret' } as never;
 		await listEnvironments(ctx, { projectId: 'prj-1' });
 		await listProjects(ctx, {});
@@ -505,7 +505,7 @@ describe('Render service endpoints', () => {
 		const ctx = { key: 'secret' } as never;
 		await retrieveEvent(ctx, { eventId: 'evt-1' });
 		await listWebhookEvents(ctx, {
-			webhookId: 'whk-1',
+			id: 'whk-1',
 			sentAfter: '2026-01-01T00:00:00Z',
 			limit: 20,
 			cursor: 'next',
@@ -1226,16 +1226,14 @@ describe('Render service endpoints', () => {
 
 	it('triggers a cron job run on the documented route', async () => {
 		request.mockResolvedValue({});
-		await triggerCronJobRun({ key: 'secret' } as never, { id: 'cron-1' });
+		await triggerCronJobRun({ key: 'secret' } as never, {
+			cronJobId: 'crn-1',
+		});
 
-		expect(request).toHaveBeenCalledWith(
-			'/v1/cron-jobs/cron-1/runs',
-			'secret',
-			{
-				method: 'POST',
-				body: undefined,
-			},
-		);
+		expect(request).toHaveBeenCalledWith('/v1/cron-jobs/crn-1/runs', 'secret', {
+			method: 'POST',
+			body: undefined,
+		});
 	});
 
 	it('rejects missing identifiers on the new path-based operations', async () => {

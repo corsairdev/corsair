@@ -12,39 +12,6 @@ pnpm add @corsair-dev/render
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `automation.cancelCronJobRun` | `render.api.automation.cancelCronJobRun` | `destructive` | Cancel a run of a Render cron job |
-| `automation.cancelTaskRun` | `render.api.automation.cancelTaskRun` | `destructive` | Cancel a Render workflow task run |
-| `automation.createDisk` | `render.api.automation.createDisk` | `write` | Create a disk for a Render service |
-| `automation.createTaskRun` | `render.api.automation.createTaskRun` | `write` | Start a Render workflow task run |
-| `automation.createWebhook` | `render.api.automation.createWebhook` | `write` | Create a webhook for a Render owner |
-| `automation.createWorkflow` | `render.api.automation.createWorkflow` | `write` | Create a Render workflow |
-| `automation.createWorkflowVersion` | `render.api.automation.createWorkflowVersion` | `write` | Create and deploy a Render workflow version |
-| `automation.deleteDisk` | `render.api.automation.deleteDisk` | `destructive` | Delete a Render disk |
-| `automation.deleteWebhook` | `render.api.automation.deleteWebhook` | `destructive` | Delete a Render webhook |
-| `automation.deleteWorkflow` | `render.api.automation.deleteWorkflow` | `destructive` | Delete a Render workflow |
-| `automation.listDisks` | `render.api.automation.listDisks` | `read` | List Render disks |
-| `automation.listDiskSnapshots` | `render.api.automation.listDiskSnapshots` | `read` | List snapshots for a Render disk |
-| `automation.listMaintenance` | `render.api.automation.listMaintenance` | `read` | List Render maintenance windows |
-| `automation.listTaskRuns` | `render.api.automation.listTaskRuns` | `read` | List Render task runs |
-| `automation.listTasks` | `render.api.automation.listTasks` | `read` | List Render tasks |
-| `automation.listWebhookEvents` | `render.api.automation.listWebhookEvents` | `read` | List delivery events for a Render webhook |
-| `automation.listWebhooks` | `render.api.automation.listWebhooks` | `read` | List Render webhooks |
-| `automation.listWorkflows` | `render.api.automation.listWorkflows` | `read` | List Render workflows |
-| `automation.listWorkflowVersions` | `render.api.automation.listWorkflowVersions` | `read` | List Render workflow versions |
-| `automation.restoreDiskSnapshot` | `render.api.automation.restoreDiskSnapshot` | `write` | Restore a snapshot to a Render disk |
-| `automation.retrieveDisk` | `render.api.automation.retrieveDisk` | `read` | Retrieve a Render disk |
-| `automation.retrieveMaintenance` | `render.api.automation.retrieveMaintenance` | `read` | Retrieve a Render maintenance run |
-| `automation.retrieveTask` | `render.api.automation.retrieveTask` | `read` | Retrieve a Render workflow task |
-| `automation.retrieveTaskRun` | `render.api.automation.retrieveTaskRun` | `read` | Retrieve a Render workflow task run |
-| `automation.retrieveWebhook` | `render.api.automation.retrieveWebhook` | `read` | Retrieve a Render webhook |
-| `automation.retrieveWorkflow` | `render.api.automation.retrieveWorkflow` | `read` | Retrieve a Render workflow |
-| `automation.retrieveWorkflowVersion` | `render.api.automation.retrieveWorkflowVersion` | `read` | Retrieve a Render workflow version |
-| `automation.triggerCronJobRun` | `render.api.automation.triggerCronJobRun` | `write` | Trigger a run of a Render cron job |
-| `automation.triggerMaintenance` | `render.api.automation.triggerMaintenance` | `write` | Trigger a Render maintenance run |
-| `automation.updateDisk` | `render.api.automation.updateDisk` | `write` | Update a Render disk |
-| `automation.updateMaintenance` | `render.api.automation.updateMaintenance` | `write` | Update a Render maintenance run |
-| `automation.updateWebhook` | `render.api.automation.updateWebhook` | `write` | Update a Render webhook |
-| `automation.updateWorkflow` | `render.api.automation.updateWorkflow` | `write` | Update a Render workflow |
 | `blueprints.disconnect` | `render.api.blueprints.disconnect` | `destructive` | Disconnect a Render Blueprint; its resources are kept |
 | `blueprints.list` | `render.api.blueprints.list` | `read` | List Render Blueprints |
 | `blueprints.listSyncs` | `render.api.blueprints.listSyncs` | `read` | List syncs for a Render blueprint |
@@ -76,6 +43,13 @@ pnpm add @corsair-dev/render
 | `dedicatedIps.list` | `render.api.dedicatedIps.list` | `read` | List Render dedicated IP sets |
 | `dedicatedIps.retrieve` | `render.api.dedicatedIps.retrieve` | `read` | Retrieve a Render dedicated IP set |
 | `dedicatedIps.update` | `render.api.dedicatedIps.update` | `write` | Update a Render dedicated IP set |
+| `disks.create` | `render.api.disks.create` | `write` | Create a disk for a Render service |
+| `disks.delete` | `render.api.disks.delete` | `destructive` | Delete a Render disk |
+| `disks.list` | `render.api.disks.list` | `read` | List Render disks |
+| `disks.listSnapshots` | `render.api.disks.listSnapshots` | `read` | List snapshots for a Render disk |
+| `disks.restoreSnapshot` | `render.api.disks.restoreSnapshot` | `write` | Restore a snapshot to a Render disk |
+| `disks.retrieve` | `render.api.disks.retrieve` | `read` | Retrieve a Render disk |
+| `disks.update` | `render.api.disks.update` | `write` | Update a Render disk |
 | `events.retrieve` | `render.api.events.retrieve` | `read` | Retrieve a Render event |
 | `keyValue.connectionInfo` | `render.api.keyValue.connectionInfo` | `read` | Retrieve connection info for a Render Key Value instance |
 | `keyValue.create` | `render.api.keyValue.create` | `write` | Create a Render Key Value instance |
@@ -94,6 +68,10 @@ pnpm add @corsair-dev/render
 | `logs.updateOwnerStream` | `render.api.logs.updateOwnerStream` | `write` | Update an owner log stream |
 | `logs.updateResourceStream` | `render.api.logs.updateResourceStream` | `write` | Set the log stream setting for one Render resource |
 | `logs.values` | `render.api.logs.values` | `read` | List Render log values |
+| `maintenance.list` | `render.api.maintenance.list` | `read` | List Render maintenance windows |
+| `maintenance.retrieve` | `render.api.maintenance.retrieve` | `read` | Retrieve a Render maintenance run |
+| `maintenance.trigger` | `render.api.maintenance.trigger` | `write` | Trigger a Render maintenance run |
+| `maintenance.update` | `render.api.maintenance.update` | `write` | Update a Render maintenance run |
 | `metrics.activeConnections` | `render.api.metrics.activeConnections` | `read` | Read active Render connections |
 | `metrics.applicationFilterValues` | `render.api.metrics.applicationFilterValues` | `read` | List Render application metric filter values |
 | `metrics.bandwidth` | `render.api.metrics.bandwidth` | `read` | Read Render bandwidth metrics |
@@ -163,6 +141,8 @@ pnpm add @corsair-dev/render
 | `services.cancelDeploy` | `render.api.services.cancelDeploy` | `write` | Cancel a Render deployment |
 | `services.create` | `render.api.services.create` | `write` | Create a Render service |
 | `services.createPreview` | `render.api.services.createPreview` | `write` | Create an image-backed preview for a Render service |
+| `services.cronJobs.cancelRun` | `render.api.services.cronJobs.cancelRun` | `destructive` | Cancel a run of a Render cron job |
+| `services.cronJobs.triggerRun` | `render.api.services.cronJobs.triggerRun` | `write` | Trigger a run of a Render cron job |
 | `services.customDomains.create` | `render.api.services.customDomains.create` | `write` | Add a custom domain to a Render service |
 | `services.customDomains.delete` | `render.api.services.customDomains.delete` | `destructive` | Delete a custom domain from a Render service |
 | `services.customDomains.list` | `render.api.services.customDomains.list` | `read` | List custom domains for a Render service |
@@ -230,6 +210,26 @@ pnpm add @corsair-dev/render
 | `services.update` | `render.api.services.update` | `write` | Update a Render service |
 | `services.updateAutoscaling` | `render.api.services.updateAutoscaling` | `write` | Update autoscaling for a Render service |
 | `user.get` | `render.api.user.get` | `read` | Retrieve the authenticated Render user |
+| `webhooks.create` | `render.api.webhooks.create` | `write` | Create a webhook for a Render owner |
+| `webhooks.delete` | `render.api.webhooks.delete` | `destructive` | Delete a Render webhook |
+| `webhooks.list` | `render.api.webhooks.list` | `read` | List Render webhooks |
+| `webhooks.listEvents` | `render.api.webhooks.listEvents` | `read` | List delivery events for a Render webhook |
+| `webhooks.retrieve` | `render.api.webhooks.retrieve` | `read` | Retrieve a Render webhook |
+| `webhooks.update` | `render.api.webhooks.update` | `write` | Update a Render webhook |
+| `workflows.create` | `render.api.workflows.create` | `write` | Create a Render workflow |
+| `workflows.delete` | `render.api.workflows.delete` | `destructive` | Delete a Render workflow |
+| `workflows.list` | `render.api.workflows.list` | `read` | List Render workflows |
+| `workflows.retrieve` | `render.api.workflows.retrieve` | `read` | Retrieve a Render workflow |
+| `workflows.taskRuns.cancel` | `render.api.workflows.taskRuns.cancel` | `destructive` | Cancel a Render workflow task run |
+| `workflows.taskRuns.create` | `render.api.workflows.taskRuns.create` | `write` | Start a Render workflow task run |
+| `workflows.taskRuns.list` | `render.api.workflows.taskRuns.list` | `read` | List Render task runs |
+| `workflows.taskRuns.retrieve` | `render.api.workflows.taskRuns.retrieve` | `read` | Retrieve a Render workflow task run |
+| `workflows.tasks.list` | `render.api.workflows.tasks.list` | `read` | List Render tasks |
+| `workflows.tasks.retrieve` | `render.api.workflows.tasks.retrieve` | `read` | Retrieve a Render workflow task |
+| `workflows.update` | `render.api.workflows.update` | `write` | Update a Render workflow |
+| `workflows.versions.create` | `render.api.workflows.versions.create` | `write` | Create and deploy a Render workflow version |
+| `workflows.versions.list` | `render.api.workflows.versions.list` | `read` | List Render workflow versions |
+| `workflows.versions.retrieve` | `render.api.workflows.versions.retrieve` | `read` | Retrieve a Render workflow version |
 
 ## Auth
 

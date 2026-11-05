@@ -9,7 +9,7 @@ overviewNote: |
   - **Secrets come back in plain text.** Env var and secret file reads return values and file contents.
   - **Paging.** Lists return an array of `{ cursor, <resource> }` entries. Pass the last entry's `cursor` to get the next page; `limit` goes up to 100.
   - **Rate limits.** On a 429 the plugin waits for Render's `Retry-After` (at most 60 seconds) and retries up to five times.
-  - **Not covered.** The deprecated `/redis` routes (use the Key Value operations), sandboxes, flows, and the streaming endpoints (log subscribe and task-run events). The plugin does not receive webhooks; `automation.createWebhook` and friends manage Render's outgoing webhooks.
+  - **Not covered.** The deprecated `/redis` routes (use the Key Value operations), sandboxes, flows, and the streaming endpoints (log subscribe and task-run events). The plugin does not receive webhooks; `webhooks.create` and friends manage Render's outgoing webhooks.
 examples:
   read:
     path: services.list
@@ -69,5 +69,5 @@ apiExamples:
     call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', deployId: 'dep-d0k1q2r3s4t5u6v7w8y0' }"
   services.envGroups.envVars.upsert:
     call: "{ envGroupId: 'evg-d0k1q2r3s4t5u6v7w8x9', envVarKey: 'LOG_LEVEL', value: 'info' }"
-  automation.createTaskRun:
+  workflows.taskRuns.create:
     call: "{ task: 'my-workflow/send-report', input: ['weekly'] }"

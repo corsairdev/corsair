@@ -68,15 +68,15 @@ describeLive('Render live API', () => {
 		['registryCredentials.list', {}],
 		['blueprints.list', {}],
 		['buildSources.list', {}],
-		['automation.listDisks', {}],
-		['automation.listMaintenance', {}],
-		['automation.listTaskRuns', {}],
+		['disks.list', {}],
+		['maintenance.list', {}],
+		['workflows.taskRuns.list', {}],
 		// These four answer null when empty; the plugin returns [].
-		['automation.listTasks', {}],
-		['automation.listWorkflows', {}],
-		['automation.listWorkflowVersions', {}],
+		['workflows.tasks.list', {}],
+		['workflows.list', {}],
+		['workflows.versions.list', {}],
 		['logs.resourceStreams', {}],
-		['automation.listWebhooks', {}],
+		['webhooks.list', {}],
 		['notifications.listOverrides', {}],
 	])('%s returns a list', async (path, input) => {
 		expect(Array.isArray(await live(path, input))).toBe(true);

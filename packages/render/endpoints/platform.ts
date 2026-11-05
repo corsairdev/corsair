@@ -3,8 +3,9 @@ import type { RenderEndpoints } from '../index';
 import { renderPathParameter } from './path';
 
 type Context = { key: string };
-// Stricter typing is not feasible for this shared adapter because each Render
-// automation operation has different provider-specific query filters.
+// Stricter typing is not feasible for this shared adapter because the disk,
+// maintenance, webhook, workflow and cron job operations have different
+// provider-specific query filters.
 // unknown: the operation schemas validate these provider-specific fields.
 type Input = Record<string, unknown>;
 
@@ -98,7 +99,16 @@ export const triggerMaintenance: RenderEndpoints['triggerMaintenance'] = (
 export const triggerCronJobRun: RenderEndpoints['triggerCronJobRun'] = (
 	ctx,
 	input,
-) => postWithoutBody(ctx, '/v1/cron-jobs/{id}/runs', input);
+) =>
+	makeRenderRequest(
+		renderPathParameter(
+			'/v1/cron-jobs/{cronJobId}/runs',
+			'cronJobId',
+			input.cronJobId,
+		),
+		ctx.key,
+		{ method: 'POST', body: undefined },
+	);
 export const createWebhook: RenderEndpoints['createWebhook'] = (ctx, input) =>
 	request(ctx, '/v1/webhooks', 'POST', input);
 export const retrieveWebhook: RenderEndpoints['retrieveWebhook'] = (
@@ -119,13 +129,9 @@ export const listWebhookEvents: RenderEndpoints['listWebhookEvents'] = (
 	ctx,
 	input,
 ) => {
-	const { webhookId, ...query } = input;
+	const { id, ...query } = input;
 	return makeRenderRequest(
-		renderPathParameter(
-			'/v1/webhooks/{webhookId}/events',
-			'webhookId',
-			webhookId,
-		),
+		renderPathParameter('/v1/webhooks/{id}/events', 'id', id),
 		ctx.key,
 		{
 			method: 'GET',

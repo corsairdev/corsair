@@ -538,6 +538,10 @@ const renderEndpointsNested = {
 			updatePriority: patchServiceRoute,
 			delete: deleteServiceRoute,
 		},
+		cronJobs: {
+			triggerRun: triggerCronJobRun,
+			cancelRun: cancelCronJobRun,
+		},
 		customDomains: {
 			list: listServiceCustomDomains,
 			create: createCustomDomain,
@@ -722,40 +726,50 @@ const renderEndpointsNested = {
 		updateServiceOverrides: updateServiceNotificationOverrides,
 	},
 	events: { retrieve: retrieveEvent },
-	automation: {
-		listDisks,
-		listMaintenance,
-		listTaskRuns,
-		listTasks,
-		listWorkflows,
-		listWorkflowVersions,
-		listWebhooks,
-		listWebhookEvents,
-		createDisk,
-		retrieveDisk,
-		updateDisk,
-		deleteDisk,
-		listDiskSnapshots,
-		restoreDiskSnapshot,
-		retrieveMaintenance,
-		updateMaintenance,
-		triggerMaintenance,
-		triggerCronJobRun,
-		cancelCronJobRun,
-		createWebhook,
-		retrieveWebhook,
-		updateWebhook,
-		deleteWebhook,
-		createWorkflow,
-		retrieveWorkflow,
-		updateWorkflow,
-		deleteWorkflow,
-		createWorkflowVersion,
-		retrieveWorkflowVersion,
-		retrieveTask,
-		createTaskRun,
-		retrieveTaskRun,
-		cancelTaskRun,
+	disks: {
+		list: listDisks,
+		create: createDisk,
+		retrieve: retrieveDisk,
+		update: updateDisk,
+		delete: deleteDisk,
+		listSnapshots: listDiskSnapshots,
+		restoreSnapshot: restoreDiskSnapshot,
+	},
+	maintenance: {
+		list: listMaintenance,
+		retrieve: retrieveMaintenance,
+		update: updateMaintenance,
+		trigger: triggerMaintenance,
+	},
+	webhooks: {
+		list: listWebhooks,
+		create: createWebhook,
+		retrieve: retrieveWebhook,
+		update: updateWebhook,
+		delete: deleteWebhook,
+		listEvents: listWebhookEvents,
+	},
+	workflows: {
+		list: listWorkflows,
+		create: createWorkflow,
+		retrieve: retrieveWorkflow,
+		update: updateWorkflow,
+		delete: deleteWorkflow,
+		versions: {
+			list: listWorkflowVersions,
+			create: createWorkflowVersion,
+			retrieve: retrieveWorkflowVersion,
+		},
+		tasks: {
+			list: listTasks,
+			retrieve: retrieveTask,
+		},
+		taskRuns: {
+			list: listTaskRuns,
+			create: createTaskRun,
+			retrieve: retrieveTaskRun,
+			cancel: cancelTaskRun,
+		},
 	},
 } as const;
 
@@ -1164,35 +1178,35 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.getTaskRunsCompleted,
 		output: RenderEndpointOutputSchemas.getTaskRunsCompleted,
 	},
-	'automation.listDisks': {
+	'disks.list': {
 		input: RenderEndpointInputSchemas.listDisks,
 		output: RenderEndpointOutputSchemas.listDisks,
 	},
-	'automation.listMaintenance': {
+	'maintenance.list': {
 		input: RenderEndpointInputSchemas.listMaintenance,
 		output: RenderEndpointOutputSchemas.listMaintenance,
 	},
-	'automation.listTaskRuns': {
+	'workflows.taskRuns.list': {
 		input: RenderEndpointInputSchemas.listTaskRuns,
 		output: RenderEndpointOutputSchemas.listTaskRuns,
 	},
-	'automation.listTasks': {
+	'workflows.tasks.list': {
 		input: RenderEndpointInputSchemas.listTasks,
 		output: RenderEndpointOutputSchemas.listTasks,
 	},
-	'automation.listWorkflows': {
+	'workflows.list': {
 		input: RenderEndpointInputSchemas.listWorkflows,
 		output: RenderEndpointOutputSchemas.listWorkflows,
 	},
-	'automation.listWorkflowVersions': {
+	'workflows.versions.list': {
 		input: RenderEndpointInputSchemas.listWorkflowVersions,
 		output: RenderEndpointOutputSchemas.listWorkflowVersions,
 	},
-	'automation.listWebhooks': {
+	'webhooks.list': {
 		input: RenderEndpointInputSchemas.listWebhooks,
 		output: RenderEndpointOutputSchemas.listWebhooks,
 	},
-	'automation.listWebhookEvents': {
+	'webhooks.listEvents': {
 		input: RenderEndpointInputSchemas.listWebhookEvents,
 		output: RenderEndpointOutputSchemas.listWebhookEvents,
 	},
@@ -1200,63 +1214,63 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.retrieveEvent,
 		output: RenderEndpointOutputSchemas.retrieveEvent,
 	},
-	'automation.createDisk': {
+	'disks.create': {
 		input: RenderEndpointInputSchemas.createDisk,
 		output: RenderEndpointOutputSchemas.createDisk,
 	},
-	'automation.retrieveDisk': {
+	'disks.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveDisk,
 		output: RenderEndpointOutputSchemas.retrieveDisk,
 	},
-	'automation.updateDisk': {
+	'disks.update': {
 		input: RenderEndpointInputSchemas.updateDisk,
 		output: RenderEndpointOutputSchemas.updateDisk,
 	},
-	'automation.deleteDisk': {
+	'disks.delete': {
 		input: RenderEndpointInputSchemas.deleteDisk,
 		output: RenderEndpointOutputSchemas.deleteDisk,
 	},
-	'automation.listDiskSnapshots': {
+	'disks.listSnapshots': {
 		input: RenderEndpointInputSchemas.listDiskSnapshots,
 		output: RenderEndpointOutputSchemas.listDiskSnapshots,
 	},
-	'automation.restoreDiskSnapshot': {
+	'disks.restoreSnapshot': {
 		input: RenderEndpointInputSchemas.restoreDiskSnapshot,
 		output: RenderEndpointOutputSchemas.restoreDiskSnapshot,
 	},
-	'automation.retrieveMaintenance': {
+	'maintenance.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveMaintenance,
 		output: RenderEndpointOutputSchemas.retrieveMaintenance,
 	},
-	'automation.updateMaintenance': {
+	'maintenance.update': {
 		input: RenderEndpointInputSchemas.updateMaintenance,
 		output: RenderEndpointOutputSchemas.updateMaintenance,
 	},
-	'automation.triggerMaintenance': {
+	'maintenance.trigger': {
 		input: RenderEndpointInputSchemas.triggerMaintenance,
 		output: RenderEndpointOutputSchemas.triggerMaintenance,
 	},
-	'automation.triggerCronJobRun': {
+	'services.cronJobs.triggerRun': {
 		input: RenderEndpointInputSchemas.triggerCronJobRun,
 		output: RenderEndpointOutputSchemas.triggerCronJobRun,
 	},
-	'automation.cancelCronJobRun': {
+	'services.cronJobs.cancelRun': {
 		input: RenderEndpointInputSchemas.cancelCronJobRun,
 		output: RenderEndpointOutputSchemas.cancelCronJobRun,
 	},
-	'automation.createWebhook': {
+	'webhooks.create': {
 		input: RenderEndpointInputSchemas.createWebhook,
 		output: RenderEndpointOutputSchemas.createWebhook,
 	},
-	'automation.retrieveWebhook': {
+	'webhooks.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveWebhook,
 		output: RenderEndpointOutputSchemas.retrieveWebhook,
 	},
-	'automation.updateWebhook': {
+	'webhooks.update': {
 		input: RenderEndpointInputSchemas.updateWebhook,
 		output: RenderEndpointOutputSchemas.updateWebhook,
 	},
-	'automation.deleteWebhook': {
+	'webhooks.delete': {
 		input: RenderEndpointInputSchemas.deleteWebhook,
 		output: RenderEndpointOutputSchemas.deleteWebhook,
 	},
@@ -1592,43 +1606,43 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.listPostgresTableScans,
 		output: RenderEndpointOutputSchemas.listPostgresTableScans,
 	},
-	'automation.createWorkflow': {
+	'workflows.create': {
 		input: RenderEndpointInputSchemas.createWorkflow,
 		output: RenderEndpointOutputSchemas.createWorkflow,
 	},
-	'automation.retrieveWorkflow': {
+	'workflows.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveWorkflow,
 		output: RenderEndpointOutputSchemas.retrieveWorkflow,
 	},
-	'automation.updateWorkflow': {
+	'workflows.update': {
 		input: RenderEndpointInputSchemas.updateWorkflow,
 		output: RenderEndpointOutputSchemas.updateWorkflow,
 	},
-	'automation.deleteWorkflow': {
+	'workflows.delete': {
 		input: RenderEndpointInputSchemas.deleteWorkflow,
 		output: RenderEndpointOutputSchemas.deleteWorkflow,
 	},
-	'automation.createWorkflowVersion': {
+	'workflows.versions.create': {
 		input: RenderEndpointInputSchemas.createWorkflowVersion,
 		output: RenderEndpointOutputSchemas.createWorkflowVersion,
 	},
-	'automation.retrieveWorkflowVersion': {
+	'workflows.versions.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveWorkflowVersion,
 		output: RenderEndpointOutputSchemas.retrieveWorkflowVersion,
 	},
-	'automation.retrieveTask': {
+	'workflows.tasks.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveTask,
 		output: RenderEndpointOutputSchemas.retrieveTask,
 	},
-	'automation.createTaskRun': {
+	'workflows.taskRuns.create': {
 		input: RenderEndpointInputSchemas.createTaskRun,
 		output: RenderEndpointOutputSchemas.createTaskRun,
 	},
-	'automation.retrieveTaskRun': {
+	'workflows.taskRuns.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveTaskRun,
 		output: RenderEndpointOutputSchemas.retrieveTaskRun,
 	},
-	'automation.cancelTaskRun': {
+	'workflows.taskRuns.cancel': {
 		input: RenderEndpointInputSchemas.cancelTaskRun,
 		output: RenderEndpointOutputSchemas.cancelTaskRun,
 	},
@@ -2089,35 +2103,35 @@ const renderEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Read completed Render task run metrics',
 	},
-	'automation.listDisks': {
+	'disks.list': {
 		riskLevel: 'read',
 		description: 'List Render disks',
 	},
-	'automation.listMaintenance': {
+	'maintenance.list': {
 		riskLevel: 'read',
 		description: 'List Render maintenance windows',
 	},
-	'automation.listTaskRuns': {
+	'workflows.taskRuns.list': {
 		riskLevel: 'read',
 		description: 'List Render task runs',
 	},
-	'automation.listTasks': {
+	'workflows.tasks.list': {
 		riskLevel: 'read',
 		description: 'List Render tasks',
 	},
-	'automation.listWorkflows': {
+	'workflows.list': {
 		riskLevel: 'read',
 		description: 'List Render workflows',
 	},
-	'automation.listWorkflowVersions': {
+	'workflows.versions.list': {
 		riskLevel: 'read',
 		description: 'List Render workflow versions',
 	},
-	'automation.listWebhooks': {
+	'webhooks.list': {
 		riskLevel: 'read',
 		description: 'List Render webhooks',
 	},
-	'automation.listWebhookEvents': {
+	'webhooks.listEvents': {
 		riskLevel: 'read',
 		description: 'List delivery events for a Render webhook',
 	},
@@ -2125,63 +2139,63 @@ const renderEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Retrieve a Render event',
 	},
-	'automation.createDisk': {
+	'disks.create': {
 		riskLevel: 'write',
 		description: 'Create a disk for a Render service',
 	},
-	'automation.retrieveDisk': {
+	'disks.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a Render disk',
 	},
-	'automation.updateDisk': {
+	'disks.update': {
 		riskLevel: 'write',
 		description: 'Update a Render disk',
 	},
-	'automation.deleteDisk': {
+	'disks.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a Render disk',
 	},
-	'automation.listDiskSnapshots': {
+	'disks.listSnapshots': {
 		riskLevel: 'read',
 		description: 'List snapshots for a Render disk',
 	},
-	'automation.restoreDiskSnapshot': {
+	'disks.restoreSnapshot': {
 		riskLevel: 'write',
 		description: 'Restore a snapshot to a Render disk',
 	},
-	'automation.retrieveMaintenance': {
+	'maintenance.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a Render maintenance run',
 	},
-	'automation.updateMaintenance': {
+	'maintenance.update': {
 		riskLevel: 'write',
 		description: 'Update a Render maintenance run',
 	},
-	'automation.triggerMaintenance': {
+	'maintenance.trigger': {
 		riskLevel: 'write',
 		description: 'Trigger a Render maintenance run',
 	},
-	'automation.triggerCronJobRun': {
+	'services.cronJobs.triggerRun': {
 		riskLevel: 'write',
 		description: 'Trigger a run of a Render cron job',
 	},
-	'automation.cancelCronJobRun': {
+	'services.cronJobs.cancelRun': {
 		riskLevel: 'destructive',
 		description: 'Cancel a run of a Render cron job',
 	},
-	'automation.createWebhook': {
+	'webhooks.create': {
 		riskLevel: 'write',
 		description: 'Create a webhook for a Render owner',
 	},
-	'automation.retrieveWebhook': {
+	'webhooks.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a Render webhook',
 	},
-	'automation.updateWebhook': {
+	'webhooks.update': {
 		riskLevel: 'write',
 		description: 'Update a Render webhook',
 	},
-	'automation.deleteWebhook': {
+	'webhooks.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a Render webhook',
 	},
@@ -2519,43 +2533,43 @@ const renderEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List table scans for a Render Postgres database',
 	},
-	'automation.createWorkflow': {
+	'workflows.create': {
 		riskLevel: 'write',
 		description: 'Create a Render workflow',
 	},
-	'automation.retrieveWorkflow': {
+	'workflows.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a Render workflow',
 	},
-	'automation.updateWorkflow': {
+	'workflows.update': {
 		riskLevel: 'write',
 		description: 'Update a Render workflow',
 	},
-	'automation.deleteWorkflow': {
+	'workflows.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a Render workflow',
 	},
-	'automation.createWorkflowVersion': {
+	'workflows.versions.create': {
 		riskLevel: 'write',
 		description: 'Create and deploy a Render workflow version',
 	},
-	'automation.retrieveWorkflowVersion': {
+	'workflows.versions.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a Render workflow version',
 	},
-	'automation.retrieveTask': {
+	'workflows.tasks.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a Render workflow task',
 	},
-	'automation.createTaskRun': {
+	'workflows.taskRuns.create': {
 		riskLevel: 'write',
 		description: 'Start a Render workflow task run',
 	},
-	'automation.retrieveTaskRun': {
+	'workflows.taskRuns.retrieve': {
 		riskLevel: 'read',
 		description: 'Retrieve a Render workflow task run',
 	},
-	'automation.cancelTaskRun': {
+	'workflows.taskRuns.cancel': {
 		riskLevel: 'destructive',
 		description: 'Cancel a Render workflow task run',
 	},
