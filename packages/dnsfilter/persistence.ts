@@ -14,8 +14,12 @@ function asRecord(value: unknown): Row | undefined {
 		: undefined;
 }
 
-// Raw endpoint response: list, single resource, or wrapped document.
+// Raw endpoint response: list, single resource, wrapped document, or a bare
+// array of rows (organizations.settings).
 function collectRows(payload: unknown): Row[] {
+	if (Array.isArray(payload)) {
+		return payload.map(asRecord).filter((row): row is Row => row !== undefined);
+	}
 	const document = asRecord(payload);
 	if (!document) return [];
 	const data = document.data;

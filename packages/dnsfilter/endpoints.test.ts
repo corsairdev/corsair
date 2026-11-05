@@ -7,6 +7,7 @@ import {
 	DomainNotes,
 	IpAddresses,
 	Networks,
+	Organizations,
 	TrafficReports,
 	UnblockRequests,
 } from './endpoints';
@@ -738,5 +739,28 @@ describe('DNSFilter local rows across reads', () => {
 		expect(networks.rows.get('42')).toEqual({ id: '42', name: 'HQ' });
 		// The caller still gets the null-free parsed response.
 		expect(result.data?.relationships?.policy).toEqual({});
+	});
+
+	it('saves organizations from the bare settings array', async () => {
+		const organizations = memoryTable();
+		organizations.rows.set('7', {
+			id: '7',
+			name: 'Old name',
+			createdAt: new Date('2026-01-01T00:00:00Z'),
+		});
+		const ctx = createContext({ organizations });
+		requestMock.mockResolvedValueOnce([
+			{ id: 7, name: 'Acme', connection_method: 'loopback' },
+			{ id: 8, name: 'Branch' },
+		]);
+
+		await Organizations.organizationsSettings(ctx, {});
+
+		expect(organizations.rows.get('7')).toEqual({
+			id: '7',
+			name: 'Acme',
+			createdAt: new Date('2026-01-01T00:00:00Z'),
+		});
+		expect(organizations.rows.get('8')).toEqual({ id: '8', name: 'Branch' });
 	});
 });
