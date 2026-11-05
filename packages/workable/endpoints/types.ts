@@ -45,6 +45,12 @@ const WorkableAccount = z
 	// unknown: account payloads carry undocumented extras — catchall keeps parsing loose.
 	.catchall(z.unknown());
 
+/**
+ * Cursor envelope on /jobs, /candidates and /requisitions. `next` is the URL
+ * of the next page; pass its `since_id` back as input to fetch that page.
+ */
+const PagingSchema = z.object({ next: z.string().optional() }).loose();
+
 const SuccessResponseSchema = z
 	.object({
 		message: z.string().optional(),
@@ -250,7 +256,8 @@ export const WorkableEndpointOutputSchemas = {
 		.loose(),
 	departmentsCreate: WorkableDepartment,
 	departmentsUpdate: WorkableDepartment,
-	departmentsMerge: SuccessResponseSchema,
+	// Merge answers with the target department the source was merged into.
+	departmentsMerge: WorkableDepartment,
 	departmentsDelete: SuccessResponseSchema,
 
 	employeesList: z
@@ -271,18 +278,21 @@ export const WorkableEndpointOutputSchemas = {
 	membersUpdate: WorkableMember,
 	membersEnable: SuccessResponseSchema,
 
-	jobsList: z.object({ jobs: z.array(WorkableJob) }).loose(),
+	jobsList: z
+		.object({ jobs: z.array(WorkableJob), paging: PagingSchema.optional() })
+		.loose(),
 
 	candidatesList: z
 		.object({
 			candidates: z.array(WorkableCandidate),
-			// unknown: opaque paging envelope — shape varies, never read by the plugin.
-			paging: z.record(z.string(), z.unknown()).optional(),
+			paging: PagingSchema.optional(),
 		})
 		.loose(),
 
 	stagesList: listEnvelope('stages'),
-	requisitionsList: listEnvelope('requisitions'),
+	requisitionsList: listEnvelope('requisitions').extend({
+		paging: PagingSchema.optional(),
+	}),
 	recruitersList: listEnvelope('recruiters'),
 	legalEntitiesList: listEnvelope('legal_entities'),
 	customAttributesList: listEnvelope('custom_attributes'),

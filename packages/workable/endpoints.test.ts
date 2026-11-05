@@ -216,6 +216,22 @@ describe('Workable endpoints', () => {
 			expect(stores.departments.rows.has('d2')).toBe(false);
 		});
 
+		// Workable answers a merge with the target department.
+		it('departments.merge caches the target department it returns', async () => {
+			const { ctx, stores } = makeCtx();
+			stores.departments.rows.set('d2', { id: 'd2', name: 'Sales' });
+			respondWith({ id: 'd1', name: 'Commercial', parent_id: null });
+			const merged = await Departments.merge(ctx, {
+				id: 'd2',
+				target_department_id: 'd1',
+			});
+			expect(merged.id).toBe('d1');
+			expect(stores.departments.rows.has('d2')).toBe(false);
+			expect(stores.departments.rows.get('d1')).toMatchObject({
+				name: 'Commercial',
+			});
+		});
+
 		it('departments.delete hits DELETE /departments/{id} and evicts the row', async () => {
 			const { ctx, stores } = makeCtx();
 			stores.departments.rows.set('d1', { id: 'd1', name: 'Engineering' });
@@ -417,6 +433,15 @@ describe('Workable endpoints', () => {
 			const jobs = await Jobs.list(ctx, { state: 'published', limit: 5 });
 			expect(jobs.jobs).toHaveLength(0);
 			expect(calls.at(-1)?.url).toContain('/jobs');
+		});
+
+		it('jobs.list returns the paging.next cursor URL', async () => {
+			const { ctx } = makeCtx();
+			const next =
+				'https://www.workable.com/spi/v3/accounts/example/jobs?limit=1&since_id=2';
+			respondWith({ jobs: [{ id: 'j1' }], paging: { next } });
+			const jobs = await Jobs.list(ctx, { limit: 1 });
+			expect(jobs.paging?.next).toBe(next);
 		});
 
 		it('candidates.list hits GET /candidates and caches rows', async () => {

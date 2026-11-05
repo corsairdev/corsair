@@ -133,6 +133,15 @@ export const merge: WorkableEndpoints['departmentsMerge'] = async (
 		raw ?? {},
 	);
 	await evictRow(ctx.db.departments, valid.id, 'department');
+	// The response is the target department the source was merged into.
+	if (response.id) {
+		await persistRow(
+			ctx.db.departments,
+			WorkableDepartment,
+			response,
+			'department',
+		);
+	}
 	await logEventFromContext(
 		ctx,
 		'workable.departments.merge',
