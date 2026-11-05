@@ -592,8 +592,28 @@ describe('TurbotPipes Plugin Integration & API Tests', () => {
 			const res = await ConnectionsEndpoints.getOrgConnectionPermission(ctx, {
 				org_handle: 'acme',
 				connection_handle: 'org_gcp',
+				permission_id: 'p_1',
 			});
 			expect(res.permission).toBe('read');
+			expect(mockRequest.mock.calls.at(-1)?.[1]).toEqual(
+				expect.objectContaining({
+					url: 'org/acme/connection/org_gcp/permission/p_1',
+				}),
+			);
+		});
+
+		it('getOrgConnectionPermission lists permissions when no id is given', async () => {
+			mockRequest.mockResolvedValueOnce({ items: [] });
+			const ctx = createMockContext();
+			await ConnectionsEndpoints.getOrgConnectionPermission(ctx, {
+				org_handle: 'acme',
+				connection_handle: 'org_gcp',
+			});
+			expect(mockRequest.mock.calls.at(-1)?.[1]).toEqual(
+				expect.objectContaining({
+					url: 'org/acme/connection/org_gcp/permission',
+				}),
+			);
 		});
 
 		it('deleteOrgConnectionPermission deletes connection permission', async () => {
@@ -601,9 +621,21 @@ describe('TurbotPipes Plugin Integration & API Tests', () => {
 			const ctx = createMockContext();
 			const res = await ConnectionsEndpoints.deleteOrgConnectionPermission(
 				ctx,
-				{ org_handle: 'acme', connection_handle: 'org_gcp' },
+				{
+					org_handle: 'acme',
+					connection_handle: 'org_gcp',
+					permission_id: 'p_1',
+				},
 			);
 			expect(res.success).toBe(true);
+			expect(mockRequest.mock.calls.at(-1)?.[1]).toEqual(
+				expect.objectContaining({
+					url: 'org/acme/connection/org_gcp/permission/p_1',
+				}),
+			);
+			expect(mockRequest.mock.calls.at(-1)?.[1]).toEqual(
+				expect.objectContaining({ method: 'DELETE' }),
+			);
 		});
 
 		it('createOrgConnectionFolder creates connection folder', async () => {

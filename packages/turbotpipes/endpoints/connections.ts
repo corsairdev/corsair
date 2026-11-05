@@ -162,7 +162,9 @@ export const getOrgConnectionPermission: TurbotPipesEndpoints['getOrgConnectionP
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['getOrgConnectionPermission']
 		>(
-			`org/${input.org_handle}/connection/${input.connection_handle}/permission`,
+			input.permission_id
+				? `org/${input.org_handle}/connection/${input.connection_handle}/permission/${input.permission_id}`
+				: `org/${input.org_handle}/connection/${input.connection_handle}/permission`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -180,7 +182,8 @@ export const deleteOrgConnectionPermission: TurbotPipesEndpoints['deleteOrgConne
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['deleteOrgConnectionPermission']
 		>(
-			`org/${input.org_handle}/connection/${input.connection_handle}/permission`,
+			// Pipes has no DELETE on the permission collection (404); it deletes one by id.
+			`org/${input.org_handle}/connection/${input.connection_handle}/permission/${input.permission_id}`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);

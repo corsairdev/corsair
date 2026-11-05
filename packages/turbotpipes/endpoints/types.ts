@@ -323,6 +323,8 @@ export type UpdateOrgConnectionInput = z.infer<
 export const GetOrgConnectionPermissionInputSchema = z.object({
 	org_handle: z.string(),
 	connection_handle: z.string(),
+	/** Omit to list every permission on the connection. */
+	permission_id: z.string().optional(),
 });
 export type GetOrgConnectionPermissionInput = z.infer<
 	typeof GetOrgConnectionPermissionInputSchema
@@ -331,6 +333,8 @@ export type GetOrgConnectionPermissionInput = z.infer<
 export const DeleteOrgConnectionPermissionInputSchema = z.object({
 	org_handle: z.string(),
 	connection_handle: z.string(),
+	/** DELETE /org/{org}/connection/{conn}/permission/{permission_id} */
+	permission_id: z.string(),
 });
 export type DeleteOrgConnectionPermissionInput = z.infer<
 	typeof DeleteOrgConnectionPermissionInputSchema
