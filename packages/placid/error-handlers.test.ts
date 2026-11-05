@@ -74,7 +74,7 @@ describe('errorHandlers', () => {
 		expect((await retryFor(apiError(500), 'pdfs.merge')).maxRetries).toBe(0);
 	});
 
-	it('keeps an unknown error at zero retries', async () => {
+	it('keeps an unrecognized error at zero retries', async () => {
 		expect((await retryFor(new Error('boom'))).maxRetries).toBe(0);
 	});
 });

@@ -26,6 +26,8 @@ function contextFor(key = 'placid-test-key'): Context {
 		// The logger reads options to decide whether to print, and stays silent
 		// when they are empty.
 		options: {},
+		// unknown: only `key` and `hooks` are read here; the real context needs
+		// a database, a KEK and an issued DEK to build.
 	} as unknown as Context;
 }
 

@@ -96,6 +96,8 @@ describe('endpoint schemas', () => {
 			something_new: true,
 		});
 		expect(result.uuid).toBe('abc');
+		// unknown: the parsed object is `.loose()`, so an added key is not on the
+		// inferred type; the cast reads it back to prove it survived.
 		expect((result as Record<string, unknown>).something_new).toBe(true);
 	});
 

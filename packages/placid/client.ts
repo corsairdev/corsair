@@ -140,12 +140,12 @@ export function cursorParam(value: string): string {
 	return end === -1 ? rest : rest.slice(0, end);
 }
 
-// unknown: callers parse the body with the endpoint's zod output schema. It is
-// undefined for the 204 that deleting an image, PDF, video, font or collection
-// returns, which is why the return type is not narrowed here.
 export async function makePlacidRequest(
 	apiKey: string,
 	{ method, path, query, body, formData }: PlacidRequest,
+	// unknown: callers parse the body with the endpoint's zod output schema. It
+	// is undefined for the 204 that deleting an image, PDF, video, font or
+	// collection returns, which is why the return type is not narrowed here.
 ): Promise<unknown> {
 	const isForm = formData !== undefined;
 
