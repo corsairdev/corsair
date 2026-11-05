@@ -1,5 +1,6 @@
 // Wire-level tests: fetch is the only mock, so these cover the bound
 // endpoint (schema parsing), the adapter, makeRenderRequest and core request().
+import { RenderAPIError } from './client';
 import { render } from './index';
 
 type Sent = {
@@ -315,4 +316,67 @@ describe('Render required request fields', () => {
 			expect(sent).toHaveLength(0);
 		},
 	);
+});
+
+describe('Render responses seen on a live Hobby workspace', () => {
+	it.each([
+		['automation.listTasks', api.automation.listTasks],
+		['automation.listWorkflows', api.automation.listWorkflows],
+		['automation.listWorkflowVersions', api.automation.listWorkflowVersions],
+		['logs.resourceStreams', api.logs.resourceStreams],
+	] as const)(
+		'%s turns an empty `null` reply into []',
+		async (_name, endpoint) => {
+			replies.push({ status: 200, body: null });
+			await expect((endpoint as unknown as Call)(ctx, {})).resolves.toEqual([]);
+		},
+	);
+
+	it('still rejects null where Render documents an object', async () => {
+		replies.push({ status: 200, body: null });
+		await expect(
+			(api.owners.retrieve as unknown as Call)(ctx, { id: 'tea-1' }),
+		).rejects.toThrow();
+	});
+
+	it('keeps Render’s explanation in the error message and body', async () => {
+		const body = {
+			id: 'bad-request',
+			message: 'audit logs not available for this plan',
+		};
+		replies.push({ status: 400, body });
+
+		const error = await (api.owners.auditLogs as unknown as Call)(ctx, {
+			id: 'tea-1',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(RenderAPIError);
+		expect((error as RenderAPIError).status).toBe(400);
+		expect((error as RenderAPIError).message).toBe(
+			'Bad Request: audit logs not available for this plan',
+		);
+		expect((error as RenderAPIError).body).toEqual(body);
+	});
+
+	it('accepts an outbound IP kind the plugin does not know yet', async () => {
+		const ips = { type: 'regional', ips: ['203.0.113.10'] };
+		replies.push({ status: 200, body: ips });
+		await expect(
+			(api.services.listOutboundIps as unknown as Call)(ctx, {
+				serviceId: 'srv-1',
+			}),
+		).resolves.toEqual(ips);
+	});
+
+	it('sends env group name filters as one comma-separated value', async () => {
+		replies.push({ status: 200, body: [] });
+		await (api.services.envGroups.list as unknown as Call)(ctx, {
+			name: ['shared-a', 'shared-b'],
+			ownerId: ['tea-1'],
+		});
+		expect(sent[0]?.url.searchParams.getAll('name')).toEqual([
+			'shared-a,shared-b',
+		]);
+		expect(sent[0]?.url.searchParams.getAll('ownerId')).toEqual(['tea-1']);
+	});
 });

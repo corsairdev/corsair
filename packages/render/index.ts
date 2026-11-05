@@ -1663,6 +1663,13 @@ function withRenderSchemas<T extends RenderEndpointTree>(
 			const validated: RenderEndpointHandler = async (ctx, input) => {
 				const parsedInput = schema.input.parse(input ?? {});
 				const result = await endpoint(ctx, parsedInput);
+				// Some Render lists (tasks, workflows, workflow versions,
+				// resource log streams) answer `null` instead of `[]` when empty.
+				// Only list-only schemas (accept [] but not an object) get [].
+				if (result === null && !schema.output.safeParse({}).success) {
+					const empty = schema.output.safeParse([]);
+					if (empty.success) return empty.data;
+				}
 				return schema.output.parse(result);
 			};
 			return [key, validated];

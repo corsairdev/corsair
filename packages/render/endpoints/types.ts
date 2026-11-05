@@ -138,7 +138,8 @@ const ResourceListOutputSchema = z.array(ResourceRecordSchema);
 const AcceptedOutputSchema = ResourceOutputSchema.optional();
 const OutboundIpsOutputSchema = z
 	.object({
-		type: z.enum(['shared', 'dedicated']),
+		// 'shared' or 'dedicated' today; kept open so a new kind doesn't throw.
+		type: z.string(),
 		dedicatedIpId: z.string().optional(),
 		ips: z.array(z.string()),
 	})
@@ -525,6 +526,17 @@ const ListKeyValueInputSchema = z.object({
 	cursor: z.string().optional(),
 	limit: z.number().int().min(1).max(100).optional(),
 });
+const ListEnvGroupsInputSchema = z.object({
+	name: z.array(z.string()).optional(),
+	ownerId: z.array(z.string()).optional(),
+	environmentId: z.array(z.string()).optional(),
+	createdBefore: z.string().datetime().optional(),
+	createdAfter: z.string().datetime().optional(),
+	updatedBefore: z.string().datetime().optional(),
+	updatedAfter: z.string().datetime().optional(),
+	cursor: z.string().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
+});
 const ListBlueprintsInputSchema = z.object({
 	ownerId: z.array(z.string()).optional(),
 	cursor: z.string().optional(),
@@ -639,7 +651,7 @@ export type RenderEndpointInputs = {
 	removeResourcesFromEnvironment: z.infer<
 		typeof EnvironmentResourcesInputSchema
 	>;
-	listEnvGroups: z.infer<typeof ResourceInputSchema>;
+	listEnvGroups: z.infer<typeof ListEnvGroupsInputSchema>;
 	createEnvGroup: z.infer<typeof CreateEnvGroupInputSchema>;
 	retrieveEnvGroup: ResourceIdInput;
 	updateEnvGroup: z.infer<typeof UpdateEnvGroupInputSchema>;
@@ -1100,7 +1112,7 @@ export const RenderEndpointInputSchemas = {
 	updateEnvironment: ResourceIdInputSchema,
 	deleteEnvironment: ResourceIdInputSchema,
 	removeResourcesFromEnvironment: EnvironmentResourcesInputSchema,
-	listEnvGroups: ResourceInputSchema,
+	listEnvGroups: ListEnvGroupsInputSchema,
 	createEnvGroup: CreateEnvGroupInputSchema,
 	retrieveEnvGroup: ResourceIdInputSchema,
 	updateEnvGroup: UpdateEnvGroupInputSchema,

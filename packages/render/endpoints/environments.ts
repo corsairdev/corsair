@@ -13,8 +13,19 @@ const request = <T>(
 	path: string,
 	method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
 	input: ResourceInput,
+	// Filters Render declares as `style: form, explode: false` take one
+	// comma-separated value (`name=a,b`).
+	commaSeparated: readonly string[] = [],
 ) => {
-	const { id, ...values } = input;
+	const { id, ...rest } = input;
+	const values = Object.fromEntries(
+		Object.entries(rest).map(([name, value]) => [
+			name,
+			commaSeparated.includes(name) && Array.isArray(value)
+				? value.join(',')
+				: value,
+		]),
+	);
 	const resolvedPath = path.includes('{id}')
 		? renderPathParameter(path, 'id', id)
 		: path;
@@ -65,7 +76,11 @@ export const removeResourcesFromEnvironment: RenderEndpoints['removeResourcesFro
 		);
 	};
 export const listEnvGroups: RenderEndpoints['listEnvGroups'] = (ctx, input) =>
-	request(ctx, '/v1/env-groups', 'GET', input);
+	request(ctx, '/v1/env-groups', 'GET', input, [
+		'name',
+		'ownerId',
+		'environmentId',
+	]);
 export const createEnvGroup: RenderEndpoints['createEnvGroup'] = (ctx, input) =>
 	request(ctx, '/v1/env-groups', 'POST', input);
 export const retrieveEnvGroup: RenderEndpoints['retrieveEnvGroup'] = (

@@ -6594,12 +6594,15 @@ await corsair.render.api.services.envGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
+| `name` | `string[]` | No | — |
+| `ownerId` | `string[]` | No | — |
+| `environmentId` | `string[]` | No | — |
+| `createdBefore` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+| `updatedBefore` | `string` | No | — |
+| `updatedAfter` | `string` | No | — |
 | `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
 
 
 
@@ -7828,7 +7831,7 @@ await corsair.render.api.services.listOutboundIps({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `type` | `shared \| dedicated` | Yes | — |
+| `type` | `string` | Yes | — |
 | `dedicatedIpId` | `string` | No | — |
 | `ips` | `string[]` | Yes | — |
 

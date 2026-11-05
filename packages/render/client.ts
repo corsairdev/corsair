@@ -11,11 +11,24 @@ export class RenderAPIError extends Error {
 		public readonly status?: number,
 		public readonly code?: string,
 		public readonly retryAfter?: number,
+		// unknown: Render's error body, usually { id, message }.
+		public readonly body?: unknown,
 	) {
 		super(message);
 		this.name = 'RenderAPIError';
 	}
 }
+
+// Render explains most 4xx answers in the body's `message` field
+// (for example which filter or plan was rejected); keep it in the error.
+const renderErrorDetail = (body: unknown): string | undefined => {
+	if (typeof body === 'string') return body.trim().slice(0, 500) || undefined;
+	if (body && typeof body === 'object' && 'message' in body) {
+		const { message } = body;
+		if (typeof message === 'string' && message) return message.slice(0, 500);
+	}
+	return undefined;
+};
 
 const RENDER_API_BASE = 'https://api.render.com';
 
@@ -81,11 +94,13 @@ export async function makeRenderRequest<T>(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			const detail = renderErrorDetail(error.body);
 			throw new RenderAPIError(
-				error.message,
+				detail ? `${error.message}: ${detail}` : error.message,
 				error.status,
 				undefined,
 				error.retryAfter,
+				error.body,
 			);
 		}
 		throw error;
