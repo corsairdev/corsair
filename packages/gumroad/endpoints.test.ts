@@ -109,6 +109,7 @@ afterEach(() => {
 describe('endpoint dispatch', () => {
 	// One row per operation: the response fixture satisfies the route's
 	// output schema, and the row pins the method, path and wire payload.
+	// Input and response stay unknown because each row carries its own shape.
 	const dispatch: Array<{
 		name: string;
 		endpoint: AnyEndpoint;
@@ -1488,6 +1489,7 @@ describe('input schemas: accept and reject', () => {
 	// accepts.
 	const verify = Licenses.verify as AnyEndpoint;
 
+	// unknown: accept/reject cases pass values no schema accepts.
 	const accepts = (schema: GumroadOperation, input: unknown) =>
 		GumroadEndpointInputSchemas[schema].safeParse(input).success;
 
@@ -2226,8 +2228,13 @@ describe('output schemas parse the documented envelopes', () => {
 
 	it('covers every operation in the registry', () => {
 		const covered = new Set(outputs.map(([operation]) => operation));
-		for (const operation of Object.keys(GumroadEndpointOutputSchemas)) {
-			expect(covered.has(operation as GumroadOperation)).toBe(true);
+		// Object.keys returns plain strings; every registry key is an
+		// operation by construction.
+		const registryOps = Object.keys(
+			GumroadEndpointOutputSchemas,
+		) as GumroadOperation[];
+		for (const operation of registryOps) {
+			expect(covered.has(operation)).toBe(true);
 		}
 	});
 

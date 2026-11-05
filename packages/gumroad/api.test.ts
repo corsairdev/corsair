@@ -44,6 +44,19 @@ describeIfKey('Gumroad live API', () => {
 		}
 	});
 
+	test('reads a public profile from the username subdomain', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			const result = await corsair.gumroad.api.public.profile({
+				username: 'sahil',
+			});
+			expect(result.api_version).toBe(1);
+			expect(result.username).toBe('sahil');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	test('answers the documented 404 for a nonexistent license', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
