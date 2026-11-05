@@ -15,12 +15,16 @@ import {
 	EnigmaEndpointOutputSchemas as Outputs,
 } from './types';
 
+// Enigma's filter JSON takes one expression; several conditions go under AND,
+// as in the GraphQL quickstart's brand card revenue example.
 export const CARD_REVENUE_12M_CONDITIONS = {
-	filter: [
-		{ EQ: ['period', '12m'] },
-		{ EQ: ['quantityType', 'card_revenue_amount'] },
-		{ EQ: ['rank', 0] },
-	],
+	filter: {
+		AND: [
+			{ EQ: ['period', '12m'] },
+			{ EQ: ['quantityType', 'card_revenue_amount'] },
+			{ EQ: ['rank', 0] },
+		],
+	},
 };
 
 const BRAND_SUMMARY_FIELDS = `

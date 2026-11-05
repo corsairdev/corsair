@@ -101,11 +101,13 @@ describe('brands.match', () => {
 				matchThreshold: 0.5,
 			},
 			cardTransactions: {
-				filter: [
-					{ EQ: ['period', '12m'] },
-					{ EQ: ['quantityType', 'card_revenue_amount'] },
-					{ EQ: ['rank', 0] },
-				],
+				filter: {
+					AND: [
+						{ EQ: ['period', '12m'] },
+						{ EQ: ['quantityType', 'card_revenue_amount'] },
+						{ EQ: ['rank', 0] },
+					],
+				},
 			},
 		});
 		expect(lastRequest().body.query).toContain('... on Brand');
@@ -197,6 +199,9 @@ describe('brands.get', () => {
 		expectAuthenticated();
 		expect(lastRequest().body.variables).toMatchObject({
 			searchInput: { entityType: 'BRAND', id: brand.id },
+			cardTransactions: {
+				filter: { AND: expect.arrayContaining([{ EQ: ['period', '12m'] }]) },
+			},
 			locationsFirst: 20,
 			locationsAfter: 'cursor-1',
 			legalEntitiesFirst: 2,
