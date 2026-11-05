@@ -1,25 +1,10 @@
 import type { ElasticsearchEndpoints } from '..';
 import { encodeIndexTarget } from '../client';
-import { call, notFoundFoundFalse } from './call';
+import { call, notFoundFoundFalse, pickQuery } from './call';
 import type { DocumentsBulkInput } from './types';
-
-type QueryValue = string | number | boolean | undefined;
-type Query = Record<string, QueryValue>;
 
 const docPath = (index: string, id: string) =>
 	`/${encodeIndexTarget(index)}/_doc/${encodeURIComponent(id)}`;
-
-// Copy the named fields into a query object; the input schemas guarantee the
-// values are query primitives (string, number, boolean) or absent.
-function pickQuery(parsed: Record<string, unknown>, keys: string[]): Query {
-	const query: Query = {};
-	for (const key of keys) {
-		if (parsed[key] !== undefined) {
-			query[key] = parsed[key] as Exclude<QueryValue, undefined>;
-		}
-	}
-	return query;
-}
 
 export const get: ElasticsearchEndpoints['documentsGet'] = (ctx, input) =>
 	call(ctx, 'documentsGet', 'documents.get', input, {

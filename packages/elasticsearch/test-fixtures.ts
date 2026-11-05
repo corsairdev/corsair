@@ -12,8 +12,20 @@ import type {
 	DocumentsMtermvectorsOutput,
 	DocumentsUpdateOutput,
 	ExistsResult,
+	IndicesAddBlockOutput,
+	IndicesAnalyzeOutput,
+	IndicesCloseOutput,
+	IndicesCreateOutput,
+	IndicesDeleteAliasOutput,
+	IndicesDeleteOutput,
+	IndicesDownsampleOutput,
 	IndicesGetResponse,
+	IndicesGetSettingsOutput,
 	IndicesListResponse,
+	IndicesOpenOutput,
+	IndicesRemoveBlockOutput,
+	IndicesResizeOutput,
+	IndicesRolloverOutput,
 	SearchHit,
 	SearchRunResponse,
 	TermVectorsResult,
@@ -263,4 +275,119 @@ export const explainResponse: DocumentsExplainOutput = {
 		description: 'weight(message:disk in 0) [PerFieldSimilarity]',
 		details: [],
 	},
+};
+
+// ── indices lifecycle fixtures ───────────────────────────────────────────────
+
+export const acknowledgedResponse = { acknowledged: true } as const;
+
+export const indicesCreateOutput: IndicesCreateOutput = {
+	acknowledged: true,
+	index: 'logs-2026-12',
+	shards_acknowledged: true,
+};
+
+export const indicesOpenOutput: IndicesOpenOutput = {
+	acknowledged: true,
+	shards_acknowledged: true,
+};
+
+export const indicesCloseOutput: IndicesCloseOutput = {
+	acknowledged: true,
+	shards_acknowledged: true,
+	indices: { 'logs-2026-11': { closed: true } },
+};
+
+export const indicesDeleteOutput: IndicesDeleteOutput = {
+	acknowledged: true,
+};
+
+export const indicesAddBlockOutput: IndicesAddBlockOutput = {
+	acknowledged: true,
+	shards_acknowledged: true,
+	indices: [{ name: 'logs-2026-11', blocked: true }],
+};
+
+export const indicesRemoveBlockOutput: IndicesRemoveBlockOutput = {
+	acknowledged: true,
+	indices: [{ name: 'logs-2026-11', unblocked: true }],
+};
+
+export const indicesGetMappingOutput = {
+	'logs-2026-11': {
+		mappings: {
+			properties: {
+				'@timestamp': { type: 'date' },
+				level: { type: 'keyword' },
+			},
+		},
+	},
+} as const;
+
+export const indicesGetFieldMappingOutput = {
+	'logs-2026-11': {
+		mappings: {
+			level: { full_name: 'level', mapping: { level: { type: 'keyword' } } },
+		},
+	},
+} as const;
+
+export const indicesGetSettingsOutput: IndicesGetSettingsOutput = {
+	'logs-2026-11': {
+		settings: {
+			index: { number_of_shards: '1', number_of_replicas: '1' },
+		},
+	},
+};
+
+export const indicesGetAliasOutput = {
+	'logs-2026-11': {
+		aliases: { 'logs-current': { is_write_index: false } },
+	},
+} as const;
+
+export const indicesPutAliasOutput = { acknowledged: true } as const;
+
+export const indicesDeleteAliasOutput: IndicesDeleteAliasOutput = {
+	acknowledged: true,
+};
+
+export const indicesRolloverOutput: IndicesRolloverOutput = {
+	acknowledged: true,
+	conditions: { '[_conditions][max_size]': true },
+	dry_run: false,
+	new_index: 'logs-000002',
+	old_index: 'logs-000001',
+	rolled_over: true,
+	shards_acknowledged: true,
+};
+
+export const indicesResizeOutput: IndicesResizeOutput = {
+	acknowledged: true,
+	shards_acknowledged: true,
+	index: 'logs-2026-11-clone',
+};
+
+export const indicesDownsampleOutput: IndicesDownsampleOutput = {
+	acknowledged: true,
+	shards_acknowledged: true,
+};
+
+export const indicesAnalyzeOutput: IndicesAnalyzeOutput = {
+	tokens: [
+		{
+			token: 'disk',
+			start_offset: 0,
+			end_offset: 4,
+			type: '<ALPHANUM>',
+			position: 0,
+		},
+		{
+			token: 'error',
+			start_offset: 5,
+			end_offset: 10,
+			type: '<ALPHANUM>',
+			position: 1,
+		},
+	],
 };

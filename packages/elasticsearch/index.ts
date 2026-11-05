@@ -90,6 +90,28 @@ export type ElasticsearchEndpoints = {
 	documentsTermvectors: ElasticsearchEndpoint<'documentsTermvectors'>;
 	documentsMtermvectors: ElasticsearchEndpoint<'documentsMtermvectors'>;
 	documentsBulk: ElasticsearchEndpoint<'documentsBulk'>;
+	indicesCreate: ElasticsearchEndpoint<'indicesCreate'>;
+	indicesExists: ElasticsearchEndpoint<'indicesExists'>;
+	indicesDelete: ElasticsearchEndpoint<'indicesDelete'>;
+	indicesOpen: ElasticsearchEndpoint<'indicesOpen'>;
+	indicesClose: ElasticsearchEndpoint<'indicesClose'>;
+	indicesAddBlock: ElasticsearchEndpoint<'indicesAddBlock'>;
+	indicesRemoveBlock: ElasticsearchEndpoint<'indicesRemoveBlock'>;
+	indicesGetMapping: ElasticsearchEndpoint<'indicesGetMapping'>;
+	indicesPutMapping: ElasticsearchEndpoint<'indicesPutMapping'>;
+	indicesGetFieldMapping: ElasticsearchEndpoint<'indicesGetFieldMapping'>;
+	indicesGetSettings: ElasticsearchEndpoint<'indicesGetSettings'>;
+	indicesPutSettings: ElasticsearchEndpoint<'indicesPutSettings'>;
+	indicesGetAlias: ElasticsearchEndpoint<'indicesGetAlias'>;
+	indicesExistsAlias: ElasticsearchEndpoint<'indicesExistsAlias'>;
+	indicesPutAlias: ElasticsearchEndpoint<'indicesPutAlias'>;
+	indicesDeleteAlias: ElasticsearchEndpoint<'indicesDeleteAlias'>;
+	indicesRollover: ElasticsearchEndpoint<'indicesRollover'>;
+	indicesClone: ElasticsearchEndpoint<'indicesClone'>;
+	indicesSplit: ElasticsearchEndpoint<'indicesSplit'>;
+	indicesShrink: ElasticsearchEndpoint<'indicesShrink'>;
+	indicesDownsample: ElasticsearchEndpoint<'indicesDownsample'>;
+	indicesAnalyze: ElasticsearchEndpoint<'indicesAnalyze'>;
 };
 
 // Elasticsearch has no inbound webhook surface — the REST API is
@@ -103,6 +125,28 @@ const elasticsearchEndpointsNested = {
 	indices: {
 		list: Indices.list,
 		get: Indices.get,
+		create: Indices.create,
+		exists: Indices.exists,
+		delete: Indices.remove,
+		open: Indices.open,
+		close: Indices.close,
+		addBlock: Indices.addBlock,
+		removeBlock: Indices.removeBlock,
+		getMapping: Indices.getMapping,
+		putMapping: Indices.putMapping,
+		getFieldMapping: Indices.getFieldMapping,
+		getSettings: Indices.getSettings,
+		putSettings: Indices.putSettings,
+		getAlias: Indices.getAlias,
+		existsAlias: Indices.existsAlias,
+		putAlias: Indices.putAlias,
+		deleteAlias: Indices.deleteAlias,
+		rollover: Indices.rollover,
+		clone: Indices.clone,
+		split: Indices.split,
+		shrink: Indices.shrink,
+		downsample: Indices.downsample,
+		analyze: Indices.analyze,
 	},
 	search: {
 		run: Search.run,
@@ -202,6 +246,94 @@ export const elasticsearchEndpointSchemas = {
 	'documents.bulk': {
 		input: ElasticsearchEndpointInputSchemas.documentsBulk,
 		output: ElasticsearchEndpointOutputSchemas.documentsBulk,
+	},
+	'indices.create': {
+		input: ElasticsearchEndpointInputSchemas.indicesCreate,
+		output: ElasticsearchEndpointOutputSchemas.indicesCreate,
+	},
+	'indices.exists': {
+		input: ElasticsearchEndpointInputSchemas.indicesExists,
+		output: ElasticsearchEndpointOutputSchemas.indicesExists,
+	},
+	'indices.delete': {
+		input: ElasticsearchEndpointInputSchemas.indicesDelete,
+		output: ElasticsearchEndpointOutputSchemas.indicesDelete,
+	},
+	'indices.open': {
+		input: ElasticsearchEndpointInputSchemas.indicesOpen,
+		output: ElasticsearchEndpointOutputSchemas.indicesOpen,
+	},
+	'indices.close': {
+		input: ElasticsearchEndpointInputSchemas.indicesClose,
+		output: ElasticsearchEndpointOutputSchemas.indicesClose,
+	},
+	'indices.addBlock': {
+		input: ElasticsearchEndpointInputSchemas.indicesAddBlock,
+		output: ElasticsearchEndpointOutputSchemas.indicesAddBlock,
+	},
+	'indices.removeBlock': {
+		input: ElasticsearchEndpointInputSchemas.indicesRemoveBlock,
+		output: ElasticsearchEndpointOutputSchemas.indicesRemoveBlock,
+	},
+	'indices.getMapping': {
+		input: ElasticsearchEndpointInputSchemas.indicesGetMapping,
+		output: ElasticsearchEndpointOutputSchemas.indicesGetMapping,
+	},
+	'indices.putMapping': {
+		input: ElasticsearchEndpointInputSchemas.indicesPutMapping,
+		output: ElasticsearchEndpointOutputSchemas.indicesPutMapping,
+	},
+	'indices.getFieldMapping': {
+		input: ElasticsearchEndpointInputSchemas.indicesGetFieldMapping,
+		output: ElasticsearchEndpointOutputSchemas.indicesGetFieldMapping,
+	},
+	'indices.getSettings': {
+		input: ElasticsearchEndpointInputSchemas.indicesGetSettings,
+		output: ElasticsearchEndpointOutputSchemas.indicesGetSettings,
+	},
+	'indices.putSettings': {
+		input: ElasticsearchEndpointInputSchemas.indicesPutSettings,
+		output: ElasticsearchEndpointOutputSchemas.indicesPutSettings,
+	},
+	'indices.getAlias': {
+		input: ElasticsearchEndpointInputSchemas.indicesGetAlias,
+		output: ElasticsearchEndpointOutputSchemas.indicesGetAlias,
+	},
+	'indices.existsAlias': {
+		input: ElasticsearchEndpointInputSchemas.indicesExistsAlias,
+		output: ElasticsearchEndpointOutputSchemas.indicesExistsAlias,
+	},
+	'indices.putAlias': {
+		input: ElasticsearchEndpointInputSchemas.indicesPutAlias,
+		output: ElasticsearchEndpointOutputSchemas.indicesPutAlias,
+	},
+	'indices.deleteAlias': {
+		input: ElasticsearchEndpointInputSchemas.indicesDeleteAlias,
+		output: ElasticsearchEndpointOutputSchemas.indicesDeleteAlias,
+	},
+	'indices.rollover': {
+		input: ElasticsearchEndpointInputSchemas.indicesRollover,
+		output: ElasticsearchEndpointOutputSchemas.indicesRollover,
+	},
+	'indices.clone': {
+		input: ElasticsearchEndpointInputSchemas.indicesClone,
+		output: ElasticsearchEndpointOutputSchemas.indicesClone,
+	},
+	'indices.split': {
+		input: ElasticsearchEndpointInputSchemas.indicesSplit,
+		output: ElasticsearchEndpointOutputSchemas.indicesSplit,
+	},
+	'indices.shrink': {
+		input: ElasticsearchEndpointInputSchemas.indicesShrink,
+		output: ElasticsearchEndpointOutputSchemas.indicesShrink,
+	},
+	'indices.downsample': {
+		input: ElasticsearchEndpointInputSchemas.indicesDownsample,
+		output: ElasticsearchEndpointOutputSchemas.indicesDownsample,
+	},
+	'indices.analyze': {
+		input: ElasticsearchEndpointInputSchemas.indicesAnalyze,
+		output: ElasticsearchEndpointOutputSchemas.indicesAnalyze,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof elasticsearchEndpointsNested
@@ -304,6 +436,115 @@ const elasticsearchEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Bulk index, create, update or delete documents on one target (PUT /{index}/_bulk) from typed operations or raw NDJSON',
+	},
+	'indices.create': {
+		riskLevel: 'write',
+		description:
+			'Create an index (PUT /{index}) with optional mappings, aliases, settings and shard-readiness wait',
+	},
+	'indices.exists': {
+		riskLevel: 'read',
+		description:
+			'Check whether an index or data stream exists (HEAD): resolves to { exists: boolean } instead of throwing on 404',
+	},
+	'indices.delete': {
+		riskLevel: 'destructive',
+		description:
+			'Delete one or more indices and all their data (alias names are not valid targets)',
+	},
+	'indices.open': {
+		riskLevel: 'write',
+		description: 'Open a closed index so searches and indexing resume on it',
+	},
+	'indices.close': {
+		riskLevel: 'write',
+		description:
+			'Close an index: blocks searches and writes while keeping its data on disk',
+	},
+	'indices.addBlock': {
+		riskLevel: 'write',
+		description:
+			'Add an index block (metadata, read, read_only or write) limiting what operations the index accepts',
+	},
+	'indices.removeBlock': {
+		riskLevel: 'write',
+		description:
+			'Remove a previously added index block (metadata, read, read_only or write)',
+	},
+	'indices.getMapping': {
+		riskLevel: 'read',
+		description:
+			'Get mapping definitions for one or more indices or data streams, keyed by index name',
+	},
+	'indices.putMapping': {
+		riskLevel: 'write',
+		description:
+			'Add or update field mappings on existing indices (new fields only; existing fields cannot change type)',
+	},
+	'indices.getFieldMapping': {
+		riskLevel: 'read',
+		description:
+			'Get mapping definitions for specific fields (comma-separated list or wildcards) across indices',
+	},
+	'indices.getSettings': {
+		riskLevel: 'read',
+		description:
+			'Get index settings by name or wildcard, keyed by index name, optionally including defaults',
+	},
+	'indices.putSettings': {
+		riskLevel: 'write',
+		description:
+			'Update index settings (PUT /{index}/_settings), optionally preserving existing values or reopening closed indices',
+	},
+	'indices.getAlias': {
+		riskLevel: 'read',
+		description:
+			'Get the aliases attached to indices, keyed by index name; a missing alias answers 404',
+	},
+	'indices.existsAlias': {
+		riskLevel: 'read',
+		description:
+			'Check whether an alias exists on a target (HEAD): resolves to { exists: boolean }',
+	},
+	'indices.putAlias': {
+		riskLevel: 'write',
+		description:
+			'Create or update an alias on indices with optional filter query, routing and write-index designation',
+	},
+	'indices.deleteAlias': {
+		riskLevel: 'destructive',
+		description:
+			'Delete aliases from indices (comma-separated names or wildcards); producers writing through the alias lose their target',
+	},
+	'indices.rollover': {
+		riskLevel: 'write',
+		description:
+			'Roll an alias or data stream over to a new index when conditions (max_age, max_size, max_docs...) are met, with dry-run support',
+	},
+	'indices.clone': {
+		riskLevel: 'write',
+		description:
+			'Clone an index into a new index with the same settings, mappings and aliases (source must be read-only)',
+	},
+	'indices.split': {
+		riskLevel: 'write',
+		description:
+			'Split an index into a new index with more primary shards (split count must be a multiple of the source)',
+	},
+	'indices.shrink': {
+		riskLevel: 'write',
+		description:
+			'Shrink an index into a new index with fewer primary shards (factor of the source count)',
+	},
+	'indices.downsample': {
+		riskLevel: 'write',
+		description:
+			'Downsample a time series index into a coarser fixed-interval index (aggregate or last-value sampling)',
+	},
+	'indices.analyze': {
+		riskLevel: 'read',
+		description:
+			'Run text analysis with an index analyzer or field and get the resulting tokens back with offsets and positions',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof elasticsearchEndpointsNested

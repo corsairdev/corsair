@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { Documents, Search } from './endpoints';
+import { Documents, Indices, Search } from './endpoints';
 import {
 	ClusterGetHealthInputSchema,
 	ClusterGetHealthResponseSchema,
@@ -11,14 +11,20 @@ import {
 	DocumentsMgetInputSchema,
 	DocumentsMtermvectorsInputSchema,
 	DocumentsUpdateInputSchema,
+	IndicesAddBlockInputSchema,
+	IndicesAnalyzeInputSchema,
+	IndicesDownsampleInputSchema,
 	IndicesGetInputSchema,
 	IndicesGetResponseSchema,
 	IndicesListInputSchema,
 	IndicesListResponseSchema,
+	IndicesPutMappingInputSchema,
+	IndicesPutSettingsInputSchema,
 	SearchRunInputSchema,
 	SearchRunResponseSchema,
 } from './endpoints/types';
 import {
+	acknowledgedResponse,
 	bulkResponse,
 	byScrollResponse,
 	catIndexRow,
@@ -30,6 +36,22 @@ import {
 	existsTrue,
 	explainResponse,
 	indexInfo,
+	indicesAddBlockOutput,
+	indicesAnalyzeOutput,
+	indicesCloseOutput,
+	indicesCreateOutput,
+	indicesDeleteAliasOutput,
+	indicesDeleteOutput,
+	indicesDownsampleOutput,
+	indicesGetAliasOutput,
+	indicesGetFieldMappingOutput,
+	indicesGetMappingOutput,
+	indicesGetSettingsOutput,
+	indicesOpenOutput,
+	indicesPutAliasOutput,
+	indicesRemoveBlockOutput,
+	indicesResizeOutput,
+	indicesRolloverOutput,
 	mgetResponse,
 	mtermvectorsResponse,
 	searchHit,
@@ -942,5 +964,373 @@ describe('documents wire calls', () => {
 		await Documents.bulk(ctx, { index: 'logs', ndjson });
 		const { init } = await sent();
 		expect(init.body).toBe(ndjson);
+	});
+});
+
+// ── indices lifecycle wire assertions ────────────────────────────────────────
+
+describe('indices lifecycle wire calls', () => {
+	let fetchMock: jest.SpyInstance;
+
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		mockLog.mockClear();
+	});
+
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	const ctx = {
+		options: { baseUrl: 'http://es:9200' },
+		key: 'ApiKey encoded-key',
+	} as never;
+
+	function mockJson(body: unknown, status = 200) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	function mockEmpty(status: number) {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status }));
+	}
+
+	async function sent() {
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		return { url, init };
+	}
+
+	it('indices.create PUTs mappings/settings/aliases as the body', async () => {
+		mockJson(indicesCreateOutput);
+		const result = await Indices.create(ctx, {
+			index: 'logs-2026-12',
+			mappings: { properties: { level: { type: 'keyword' } } },
+			settings: { number_of_shards: 1 },
+			wait_for_active_shards: 'all',
+		});
+		expect(result.index).toBe('logs-2026-12');
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-2026-12?wait_for_active_shards=all');
+		expect(init.method).toBe('PUT');
+		expect(JSON.parse(String(init.body))).toEqual({
+			mappings: { properties: { level: { type: 'keyword' } } },
+			settings: { number_of_shards: 1 },
+		});
+	});
+
+	it('indices.exists HEADs and resolves 404 to exists: false', async () => {
+		mockEmpty(404);
+		const result = await Indices.exists(ctx, { index: 'nope' });
+		expect(result).toEqual({ exists: false });
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/nope');
+		expect(init.method).toBe('HEAD');
+	});
+
+	it('indices.delete DELETEs the index', async () => {
+		mockJson(indicesDeleteOutput);
+		const result = await Indices.remove(ctx, { index: 'logs-2026-11' });
+		expect(result.acknowledged).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-2026-11');
+		expect(init.method).toBe('DELETE');
+	});
+
+	it('indices.open and indices.close POST their _open/_close paths', async () => {
+		mockJson(indicesOpenOutput);
+		mockJson(indicesCloseOutput);
+		await Indices.open(ctx, { index: 'logs-2026-11' });
+		await Indices.close(ctx, { index: 'logs-2026-11' });
+		const [openUrl, openInit] = fetchMock.mock.calls[0] as [
+			string,
+			RequestInit,
+		];
+		expect(openUrl).toBe('http://es:9200/logs-2026-11/_open');
+		expect(openInit.method).toBe('POST');
+		const [closeUrl, closeInit] = fetchMock.mock.calls[1] as [
+			string,
+			RequestInit,
+		];
+		expect(closeUrl).toBe('http://es:9200/logs-2026-11/_close');
+		expect(closeInit.method).toBe('POST');
+	});
+
+	it('indices.addBlock PUTs the block enum and indices.removeBlock DELETEs it', async () => {
+		mockJson(indicesAddBlockOutput);
+		mockJson(indicesRemoveBlockOutput);
+		const added = await Indices.addBlock(ctx, {
+			index: 'logs-2026-11',
+			block: 'write',
+		});
+		expect(added.indices[0]?.blocked).toBe(true);
+		await Indices.removeBlock(ctx, { index: 'logs-2026-11', block: 'write' });
+		const [addUrl, addInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(addUrl).toBe('http://es:9200/logs-2026-11/_block/write');
+		expect(addInit.method).toBe('PUT');
+		const [removeUrl, removeInit] = fetchMock.mock.calls[1] as [
+			string,
+			RequestInit,
+		];
+		expect(removeUrl).toBe('http://es:9200/logs-2026-11/_block/write');
+		expect(removeInit.method).toBe('DELETE');
+	});
+
+	it('indices.getMapping and indices.getFieldMapping GET the mapping paths', async () => {
+		mockJson(indicesGetMappingOutput);
+		mockJson(indicesGetFieldMappingOutput);
+		await Indices.getMapping(ctx, { index: 'logs-2026-11' });
+		await Indices.getFieldMapping(ctx, {
+			index: 'logs-2026-11',
+			fields: 'level,@timestamp',
+		});
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_mapping',
+		);
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_mapping/field/level%2C%40timestamp',
+		);
+	});
+
+	it('indices.putMapping POSTs the mapping body', async () => {
+		mockJson(indicesDeleteOutput);
+		const result = await Indices.putMapping(ctx, {
+			index: 'logs-2026-11',
+			mappings: { properties: { host: { type: 'keyword' } } },
+			write_index_only: true,
+		});
+		expect(result.acknowledged).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-2026-11/_mapping?write_index_only=true',
+		);
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			properties: { host: { type: 'keyword' } },
+		});
+	});
+
+	it('indices.getSettings GETs by name and indices.putSettings PUTs the settings body', async () => {
+		mockJson(indicesGetSettingsOutput);
+		mockJson(acknowledgedResponse);
+		await Indices.getSettings(ctx, { index: 'logs-*', name: 'index.*' });
+		await Indices.putSettings(ctx, {
+			index: 'logs-2026-11',
+			settings: { 'index.number_of_replicas': 2 },
+			preserve_existing: true,
+		});
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'http://es:9200/logs-*/_settings/index.*',
+		);
+		const [putUrl, putInit] = fetchMock.mock.calls[1] as [string, RequestInit];
+		expect(putUrl).toBe(
+			'http://es:9200/logs-2026-11/_settings?preserve_existing=true',
+		);
+		expect(putInit.method).toBe('PUT');
+		expect(JSON.parse(String(putInit.body))).toEqual({
+			'index.number_of_replicas': 2,
+		});
+	});
+
+	it('indices.getAlias GETs, indices.existsAlias HEADs, indices.putAlias POSTs the filter body', async () => {
+		mockJson(indicesGetAliasOutput);
+		mockEmpty(200);
+		mockJson(indicesPutAliasOutput);
+		await Indices.getAlias(ctx, { index: 'logs-*', name: 'logs-current' });
+		const existsResult = await Indices.existsAlias(ctx, {
+			index: 'logs-*',
+			name: 'logs-current',
+		});
+		expect(existsResult).toEqual({ exists: true });
+		await Indices.putAlias(ctx, {
+			index: 'logs-2026-11',
+			name: 'logs-error',
+			filter: { term: { level: 'error' } },
+			is_write_index: false,
+		});
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'http://es:9200/logs-*/_alias/logs-current',
+		);
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'http://es:9200/logs-*/_alias/logs-current',
+		);
+		const [putUrl, putInit] = fetchMock.mock.calls[2] as [string, RequestInit];
+		expect(putUrl).toBe('http://es:9200/logs-2026-11/_aliases/logs-error');
+		expect(putInit.method).toBe('POST');
+		expect(JSON.parse(String(putInit.body))).toEqual({
+			filter: { term: { level: 'error' } },
+			is_write_index: false,
+		});
+	});
+
+	it('indices.deleteAlias DELETEs the alias path', async () => {
+		mockJson(indicesDeleteAliasOutput);
+		const result = await Indices.deleteAlias(ctx, {
+			index: 'logs-2026-11',
+			name: 'logs-error',
+		});
+		expect(result.acknowledged).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-2026-11/_aliases/logs-error');
+		expect(init.method).toBe('DELETE');
+	});
+
+	it('indices.rollover POSTs conditions in the body and dry_run in the query', async () => {
+		mockJson(indicesRolloverOutput);
+		const result = await Indices.rollover(ctx, {
+			alias: 'logs-write',
+			new_index: 'logs-000002',
+			conditions: { max_size: '5gb', max_docs: 1000 },
+			dry_run: true,
+		});
+		expect(result.rolled_over).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/logs-write/_rollover/logs-000002?dry_run=true',
+		);
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			conditions: { max_size: '5gb', max_docs: 1000 },
+		});
+	});
+
+	it('indices.clone/split/shrink POST their paths with settings bodies', async () => {
+		mockJson(indicesResizeOutput);
+		mockJson(indicesResizeOutput);
+		mockJson(indicesResizeOutput);
+		await Indices.clone(ctx, {
+			index: 'logs-2026-11',
+			target: 'logs-clone',
+			settings: { 'index.number_of_replicas': 0 },
+		});
+		await Indices.split(ctx, { index: 'logs-2026-11', target: 'logs-split' });
+		await Indices.shrink(ctx, { index: 'logs-2026-11', target: 'logs-shrink' });
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_clone/logs-clone',
+		);
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_split/logs-split',
+		);
+		expect(fetchMock.mock.calls[2]?.[0]).toBe(
+			'http://es:9200/logs-2026-11/_shrink/logs-shrink',
+		);
+		const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
+		expect(JSON.parse(String(init.body))).toEqual({
+			settings: { 'index.number_of_replicas': 0 },
+		});
+	});
+
+	it('indices.downsample POSTs the fixed_interval body', async () => {
+		mockJson(indicesDownsampleOutput);
+		const result = await Indices.downsample(ctx, {
+			index: 'metrics-2026-11',
+			target_index: 'metrics-2026-11-1d',
+			fixed_interval: '1d',
+			sampling_method: 'last_value',
+		});
+		expect(result.acknowledged).toBe(true);
+		const { url, init } = await sent();
+		expect(url).toBe(
+			'http://es:9200/metrics-2026-11/_downsample/metrics-2026-11-1d',
+		);
+		expect(JSON.parse(String(init.body))).toEqual({
+			fixed_interval: '1d',
+			sampling_method: 'last_value',
+		});
+	});
+
+	it('indices.analyze POSTs text and analyzer as the body', async () => {
+		mockJson(indicesAnalyzeOutput);
+		const result = await Indices.analyze(ctx, {
+			index: 'logs-2026-11',
+			text: ['disk error', 'disk warning'],
+			analyzer: 'standard',
+		});
+		expect(result.tokens?.[0]?.token).toBe('disk');
+		const { url, init } = await sent();
+		expect(url).toBe('http://es:9200/logs-2026-11/_analyze');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			text: ['disk error', 'disk warning'],
+			analyzer: 'standard',
+		});
+	});
+});
+
+describe('indices lifecycle input bounds', () => {
+	it('rejects an unknown block type', () => {
+		expect(
+			IndicesAddBlockInputSchema.safeParse({
+				index: 'logs',
+				block: 'everything',
+			}).success,
+		).toBe(false);
+		expect(
+			IndicesAddBlockInputSchema.safeParse({
+				index: 'logs',
+				block: 'read_only',
+			}).success,
+		).toBe(true);
+	});
+
+	it('requires mappings on putMapping and settings on putSettings', () => {
+		expect(
+			IndicesPutMappingInputSchema.safeParse({ index: 'logs' }).success,
+		).toBe(false);
+		expect(
+			IndicesPutSettingsInputSchema.safeParse({ index: 'logs' }).success,
+		).toBe(false);
+		expect(
+			IndicesPutSettingsInputSchema.safeParse({
+				index: 'logs',
+				settings: { 'index.refresh_interval': '30s' },
+			}).success,
+		).toBe(true);
+	});
+
+	it('bounds downsample sampling_method to the enum', () => {
+		expect(
+			IndicesDownsampleInputSchema.safeParse({
+				index: 'metrics',
+				target_index: 'metrics-1d',
+				fixed_interval: '1d',
+				sampling_method: 'average',
+			}).success,
+		).toBe(false);
+		expect(
+			IndicesDownsampleInputSchema.safeParse({
+				index: 'metrics',
+				target_index: 'metrics-1d',
+				fixed_interval: '1d',
+				sampling_method: 'aggregate',
+			}).success,
+		).toBe(true);
+		expect(
+			IndicesDownsampleInputSchema.safeParse({
+				index: 'metrics',
+				target_index: 'metrics-1d',
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires non-blank text on analyze and rejects unknown analyzers keys', () => {
+		expect(
+			IndicesAnalyzeInputSchema.safeParse({ index: 'logs', text: '' }).success,
+		).toBe(false);
+		expect(
+			IndicesAnalyzeInputSchema.safeParse({ index: 'logs', text: [''] })
+				.success,
+		).toBe(false);
+		expect(
+			IndicesAnalyzeInputSchema.safeParse({
+				index: 'logs',
+				text: 'ok',
+				char_filter: ['html_strip'],
+			}).success,
+		).toBe(false);
 	});
 });

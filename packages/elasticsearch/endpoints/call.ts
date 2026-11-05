@@ -58,6 +58,36 @@ function notFoundFoundFalse(body: unknown): boolean {
 // Exported for endpoints that share the documents.get 404 contract.
 export { notFoundFoundFalse };
 
+type QueryValue = string | number | boolean | undefined;
+
+// Copy the named fields into a query object; the input schemas guarantee the
+// values are query primitives (string, number, boolean) or absent.
+export function pickQuery(
+	parsed: Record<string, unknown>,
+	keys: string[],
+): Record<string, QueryValue> {
+	const query: Record<string, QueryValue> = {};
+	for (const key of keys) {
+		if (parsed[key] !== undefined) {
+			query[key] = parsed[key] as Exclude<QueryValue, undefined>;
+		}
+	}
+	return query;
+}
+
+// Copy the named fields into a JSON body object, dropping absent ones; used
+// where a subset of the input becomes the request body.
+export function pickBody(
+	parsed: Record<string, unknown>,
+	keys: string[],
+): Record<string, unknown> {
+	const body: Record<string, unknown> = {};
+	for (const key of keys) {
+		if (parsed[key] !== undefined) body[key] = parsed[key];
+	}
+	return body;
+}
+
 // unknown: parsed and result are the generic operation's input and output;
 // the log reads only identifier and count fields that some operations carry.
 function logFields(event: string, parsed: unknown, result: unknown) {

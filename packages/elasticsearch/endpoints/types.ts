@@ -718,6 +718,373 @@ export const DocumentsBulkOutputSchema = z.looseObject({
 });
 export type DocumentsBulkOutput = z.infer<typeof DocumentsBulkOutputSchema>;
 
+// ── indices lifecycle (create/exists/delete/open/close/blocks) ───────────────
+
+// z.unknown() values: index settings accept numbers, booleans, strings and
+// nested objects across hundreds of documented keys; the cluster validates
+// setting names, so a stricter value type would reject valid settings.
+const SettingsRecord = z.record(z.string(), z.unknown());
+
+// Per-field mapping definitions are open-ended (dozens of field types with
+// per-type options); the cluster validates them.
+const MappingDefinition = z.looseObject({});
+
+export const IndicesCreateInputSchema = z.strictObject({
+	index: NonBlankString,
+	aliases: z.record(z.string(), z.looseObject({})).optional(),
+	mappings: MappingDefinition.optional(),
+	settings: SettingsRecord.optional(),
+	wait_for_active_shards: WaitForActiveShardsParam.optional(),
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type IndicesCreateInput = z.input<typeof IndicesCreateInputSchema>;
+
+export const IndicesCreateOutputSchema = z.looseObject({
+	acknowledged: z.boolean(),
+	index: z.string(),
+	shards_acknowledged: z.boolean(),
+});
+export type IndicesCreateOutput = z.infer<typeof IndicesCreateOutputSchema>;
+
+export const IndicesExistsInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type IndicesExistsInput = z.infer<typeof IndicesExistsInputSchema>;
+export type IndicesExistsOutput = ExistsResult;
+
+// _types.IndicesResponseBase: acknowledged plus optional shard stats.
+const IndicesResponseBaseSchema = AcknowledgedResponseSchema.extend({
+	_shards: ShardStatisticsSchema.optional(),
+});
+
+export const IndicesDeleteInputSchema = z.strictObject({
+	index: NonBlankString,
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type IndicesDeleteInput = z.infer<typeof IndicesDeleteInputSchema>;
+export type IndicesDeleteOutput = z.infer<typeof IndicesResponseBaseSchema>;
+
+const IndicesOpenCloseFields = {
+	wait_for_active_shards: WaitForActiveShardsParam.optional(),
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+};
+
+export const IndicesOpenInputSchema = z.strictObject({
+	index: NonBlankString,
+	...IndicesOpenCloseFields,
+});
+export type IndicesOpenInput = z.input<typeof IndicesOpenInputSchema>;
+
+export const IndicesOpenOutputSchema = z.looseObject({
+	acknowledged: z.boolean(),
+	shards_acknowledged: z.boolean(),
+});
+export type IndicesOpenOutput = z.infer<typeof IndicesOpenOutputSchema>;
+
+export const IndicesCloseInputSchema = z.strictObject({
+	index: NonBlankString,
+	...IndicesOpenCloseFields,
+});
+export type IndicesCloseInput = z.input<typeof IndicesCloseInputSchema>;
+
+export const IndicesCloseOutputSchema = z.looseObject({
+	acknowledged: z.boolean(),
+	shards_acknowledged: z.boolean(),
+	// Keyed by index name with per-index close details.
+	indices: z.record(z.string(), z.looseObject({})).optional(),
+});
+export type IndicesCloseOutput = z.infer<typeof IndicesCloseOutputSchema>;
+
+// indices._types.IndicesBlockOptions
+const BlockOption = z.enum(['metadata', 'read', 'read_only', 'write']);
+
+export const IndicesAddBlockInputSchema = z.strictObject({
+	index: NonBlankString,
+	block: BlockOption,
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type IndicesAddBlockInput = z.input<typeof IndicesAddBlockInputSchema>;
+
+export const IndicesAddBlockOutputSchema = z.looseObject({
+	acknowledged: z.boolean(),
+	shards_acknowledged: z.boolean(),
+	indices: z.array(z.looseObject({ name: z.string(), blocked: z.boolean() })),
+});
+export type IndicesAddBlockOutput = z.infer<typeof IndicesAddBlockOutputSchema>;
+
+export const IndicesRemoveBlockInputSchema = z.strictObject({
+	index: NonBlankString,
+	block: BlockOption,
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type IndicesRemoveBlockInput = z.input<
+	typeof IndicesRemoveBlockInputSchema
+>;
+
+export const IndicesRemoveBlockOutputSchema = z.looseObject({
+	acknowledged: z.boolean(),
+	indices: z.array(
+		z.looseObject({
+			name: z.string(),
+			unblocked: z.boolean().optional(),
+			exception: ErrorCauseSchema.optional(),
+		}),
+	),
+});
+export type IndicesRemoveBlockOutput = z.infer<
+	typeof IndicesRemoveBlockOutputSchema
+>;
+
+// ── mappings and settings ────────────────────────────────────────────────────
+
+const IndexKeyedMappingSchema = z.record(
+	z.string().min(1),
+	z.looseObject({ mappings: MappingDefinition.optional() }),
+);
+export type IndexKeyedMapping = z.infer<typeof IndexKeyedMappingSchema>;
+
+export const IndicesGetMappingInputSchema = z.strictObject({
+	index: NonBlankString,
+});
+export type IndicesGetMappingInput = z.infer<
+	typeof IndicesGetMappingInputSchema
+>;
+export type IndicesGetMappingOutput = IndexKeyedMapping;
+
+export const IndicesPutMappingInputSchema = z.strictObject({
+	index: NonBlankString,
+	mappings: MappingDefinition,
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+	write_index_only: z.boolean().optional(),
+});
+export type IndicesPutMappingInput = z.input<
+	typeof IndicesPutMappingInputSchema
+>;
+export type IndicesPutMappingOutput = z.infer<typeof IndicesResponseBaseSchema>;
+
+export const IndicesGetFieldMappingInputSchema = z.strictObject({
+	index: NonBlankString,
+	fields: NonBlankString,
+});
+export type IndicesGetFieldMappingInput = z.infer<
+	typeof IndicesGetFieldMappingInputSchema
+>;
+export type IndicesGetFieldMappingOutput = IndexKeyedMapping;
+
+export const IndicesGetSettingsInputSchema = z.strictObject({
+	index: NonBlankString,
+	// Comma-separated setting names or wildcards; `_all` is the documented
+	// default in the spec path.
+	name: NonBlankString,
+	flat_settings: z.boolean().optional(),
+	include_defaults: z.boolean().optional(),
+	local: z.boolean().optional(),
+});
+export type IndicesGetSettingsInput = z.input<
+	typeof IndicesGetSettingsInputSchema
+>;
+
+export const IndicesGetSettingsOutputSchema = z.record(
+	z.string().min(1),
+	z.looseObject({ settings: SettingsRecord.optional() }),
+);
+export type IndicesGetSettingsOutput = z.infer<
+	typeof IndicesGetSettingsOutputSchema
+>;
+
+export const IndicesPutSettingsInputSchema = z.strictObject({
+	index: NonBlankString,
+	settings: SettingsRecord,
+	preserve_existing: z.boolean().optional(),
+	reopen: z.boolean().optional(),
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type IndicesPutSettingsInput = z.input<
+	typeof IndicesPutSettingsInputSchema
+>;
+export type IndicesPutSettingsOutput = z.infer<
+	typeof AcknowledgedResponseSchema
+>;
+
+// ── aliases per index ────────────────────────────────────────────────────────
+
+const IndexKeyedAliasesSchema = z.record(
+	z.string().min(1),
+	z.looseObject({
+		aliases: z.record(z.string(), z.looseObject({})).optional(),
+	}),
+);
+export type IndexKeyedAliases = z.infer<typeof IndexKeyedAliasesSchema>;
+
+export const IndicesGetAliasInputSchema = z.strictObject({
+	index: NonBlankString,
+	// Comma-separated alias names or wildcards; `*`/`_all` selects all.
+	name: NonBlankString,
+});
+export type IndicesGetAliasInput = z.infer<typeof IndicesGetAliasInputSchema>;
+export type IndicesGetAliasOutput = IndexKeyedAliases;
+
+export const IndicesExistsAliasInputSchema = z.strictObject({
+	index: NonBlankString,
+	name: NonBlankString,
+});
+export type IndicesExistsAliasInput = z.infer<
+	typeof IndicesExistsAliasInputSchema
+>;
+export type IndicesExistsAliasOutput = ExistsResult;
+
+export const IndicesPutAliasInputSchema = z.strictObject({
+	index: NonBlankString,
+	name: NonBlankString,
+	filter: QuerySchema.optional(),
+	routing: NonBlankString.optional(),
+	index_routing: NonBlankString.optional(),
+	search_routing: NonBlankString.optional(),
+	is_write_index: z.boolean().optional(),
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type IndicesPutAliasInput = z.input<typeof IndicesPutAliasInputSchema>;
+export type IndicesPutAliasOutput = z.infer<typeof AcknowledgedResponseSchema>;
+
+export const IndicesDeleteAliasInputSchema = z.strictObject({
+	index: NonBlankString,
+	name: NonBlankString,
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type IndicesDeleteAliasInput = z.infer<
+	typeof IndicesDeleteAliasInputSchema
+>;
+
+export const IndicesDeleteAliasOutputSchema = AcknowledgedResponseSchema.extend(
+	{
+		errors: z.boolean().optional(),
+	},
+);
+export type IndicesDeleteAliasOutput = z.infer<
+	typeof IndicesDeleteAliasOutputSchema
+>;
+
+// ── rollover, clone, split, shrink, downsample ───────────────────────────────
+
+// Rollover conditions (max_docs, max_size, max_age, ...) take string or
+// number thresholds; the keys are a documented but growing set.
+const RolloverConditions = z.record(
+	z.string(),
+	z.union([z.string(), z.number()]),
+);
+
+const ResizeSettingsFields = {
+	settings: SettingsRecord.optional(),
+	aliases: z.record(z.string(), z.looseObject({})).optional(),
+	wait_for_active_shards: WaitForActiveShardsParam.optional(),
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+};
+
+export const IndicesRolloverInputSchema = z.strictObject({
+	alias: NonBlankString,
+	new_index: NonBlankString,
+	dry_run: z.boolean().optional(),
+	lazy: z.boolean().optional(),
+	conditions: RolloverConditions.optional(),
+	mappings: MappingDefinition.optional(),
+	...ResizeSettingsFields,
+});
+export type IndicesRolloverInput = z.input<typeof IndicesRolloverInputSchema>;
+
+export const IndicesRolloverOutputSchema = z.looseObject({
+	acknowledged: z.boolean(),
+	conditions: z.record(z.string(), z.boolean()).optional(),
+	dry_run: z.boolean(),
+	new_index: z.string(),
+	old_index: z.string(),
+	rolled_over: z.boolean(),
+	shards_acknowledged: z.boolean(),
+});
+export type IndicesRolloverOutput = z.infer<typeof IndicesRolloverOutputSchema>;
+
+export const IndicesCloneInputSchema = z.strictObject({
+	index: NonBlankString,
+	target: NonBlankString,
+	...ResizeSettingsFields,
+});
+export type IndicesCloneInput = z.input<typeof IndicesCloneInputSchema>;
+
+export const IndicesSplitInputSchema = z.strictObject({
+	index: NonBlankString,
+	target: NonBlankString,
+	...ResizeSettingsFields,
+});
+export type IndicesSplitInput = z.input<typeof IndicesSplitInputSchema>;
+
+export const IndicesShrinkInputSchema = z.strictObject({
+	index: NonBlankString,
+	target: NonBlankString,
+	...ResizeSettingsFields,
+});
+export type IndicesShrinkInput = z.input<typeof IndicesShrinkInputSchema>;
+
+const IndicesResizeOutputSchema = z.looseObject({
+	acknowledged: z.boolean(),
+	shards_acknowledged: z.boolean(),
+	index: z.string(),
+});
+export type IndicesResizeOutput = z.infer<typeof IndicesResizeOutputSchema>;
+
+export const IndicesDownsampleInputSchema = z.strictObject({
+	index: NonBlankString,
+	target_index: NonBlankString,
+	fixed_interval: NonBlankString,
+	sampling_method: z.enum(['aggregate', 'last_value']).optional(),
+});
+export type IndicesDownsampleInput = z.input<
+	typeof IndicesDownsampleInputSchema
+>;
+
+export const IndicesDownsampleOutputSchema = z.looseObject({
+	acknowledged: z.boolean().optional(),
+	shards_acknowledged: z.boolean().optional(),
+});
+export type IndicesDownsampleOutput = z.infer<
+	typeof IndicesDownsampleOutputSchema
+>;
+
+// ── indices.analyze: POST /{index}/_analyze ──────────────────────────────────
+
+export const IndicesAnalyzeInputSchema = z.strictObject({
+	index: NonBlankString,
+	text: z.union([z.string().min(1), z.array(z.string().min(1)).min(1)]),
+	analyzer: NonBlankString.optional(),
+	field: NonBlankString.optional(),
+	tokenizer: NonBlankString.optional(),
+	explain: z.boolean().optional(),
+});
+export type IndicesAnalyzeInput = z.input<typeof IndicesAnalyzeInputSchema>;
+
+const AnalyzeTokenSchema = z.looseObject({
+	token: z.string(),
+	start_offset: z.number(),
+	end_offset: z.number(),
+	type: z.string(),
+	position: z.number(),
+});
+
+export const IndicesAnalyzeOutputSchema = z.looseObject({
+	// explain=true returns detail instead of tokens; both are optional.
+	tokens: z.array(AnalyzeTokenSchema).optional(),
+	detail: z.looseObject({}).optional(),
+});
+export type IndicesAnalyzeOutput = z.infer<typeof IndicesAnalyzeOutputSchema>;
+
 // ── registry ─────────────────────────────────────────────────────────────────
 
 export type ElasticsearchEndpointInputs = {
@@ -740,6 +1107,28 @@ export type ElasticsearchEndpointInputs = {
 	documentsTermvectors: DocumentsTermvectorsInput;
 	documentsMtermvectors: DocumentsMtermvectorsInput;
 	documentsBulk: DocumentsBulkInput;
+	indicesCreate: IndicesCreateInput;
+	indicesExists: IndicesExistsInput;
+	indicesDelete: IndicesDeleteInput;
+	indicesOpen: IndicesOpenInput;
+	indicesClose: IndicesCloseInput;
+	indicesAddBlock: IndicesAddBlockInput;
+	indicesRemoveBlock: IndicesRemoveBlockInput;
+	indicesGetMapping: IndicesGetMappingInput;
+	indicesPutMapping: IndicesPutMappingInput;
+	indicesGetFieldMapping: IndicesGetFieldMappingInput;
+	indicesGetSettings: IndicesGetSettingsInput;
+	indicesPutSettings: IndicesPutSettingsInput;
+	indicesGetAlias: IndicesGetAliasInput;
+	indicesExistsAlias: IndicesExistsAliasInput;
+	indicesPutAlias: IndicesPutAliasInput;
+	indicesDeleteAlias: IndicesDeleteAliasInput;
+	indicesRollover: IndicesRolloverInput;
+	indicesClone: IndicesCloneInput;
+	indicesSplit: IndicesSplitInput;
+	indicesShrink: IndicesShrinkInput;
+	indicesDownsample: IndicesDownsampleInput;
+	indicesAnalyze: IndicesAnalyzeInput;
 };
 
 export type ElasticsearchEndpointOutputs = {
@@ -762,6 +1151,28 @@ export type ElasticsearchEndpointOutputs = {
 	documentsTermvectors: TermVectorsResult;
 	documentsMtermvectors: DocumentsMtermvectorsOutput;
 	documentsBulk: DocumentsBulkOutput;
+	indicesCreate: IndicesCreateOutput;
+	indicesExists: IndicesExistsOutput;
+	indicesDelete: IndicesDeleteOutput;
+	indicesOpen: IndicesOpenOutput;
+	indicesClose: IndicesCloseOutput;
+	indicesAddBlock: IndicesAddBlockOutput;
+	indicesRemoveBlock: IndicesRemoveBlockOutput;
+	indicesGetMapping: IndicesGetMappingOutput;
+	indicesPutMapping: IndicesPutMappingOutput;
+	indicesGetFieldMapping: IndicesGetFieldMappingOutput;
+	indicesGetSettings: IndicesGetSettingsOutput;
+	indicesPutSettings: IndicesPutSettingsOutput;
+	indicesGetAlias: IndicesGetAliasOutput;
+	indicesExistsAlias: IndicesExistsAliasOutput;
+	indicesPutAlias: IndicesPutAliasOutput;
+	indicesDeleteAlias: IndicesDeleteAliasOutput;
+	indicesRollover: IndicesRolloverOutput;
+	indicesClone: IndicesResizeOutput;
+	indicesSplit: IndicesResizeOutput;
+	indicesShrink: IndicesResizeOutput;
+	indicesDownsample: IndicesDownsampleOutput;
+	indicesAnalyze: IndicesAnalyzeOutput;
 };
 
 export type ElasticsearchOperation = keyof ElasticsearchEndpointInputs;
@@ -786,6 +1197,28 @@ export const ElasticsearchEndpointInputSchemas = {
 	documentsTermvectors: DocumentsTermvectorsInputSchema,
 	documentsMtermvectors: DocumentsMtermvectorsInputSchema,
 	documentsBulk: DocumentsBulkInputSchema,
+	indicesCreate: IndicesCreateInputSchema,
+	indicesExists: IndicesExistsInputSchema,
+	indicesDelete: IndicesDeleteInputSchema,
+	indicesOpen: IndicesOpenInputSchema,
+	indicesClose: IndicesCloseInputSchema,
+	indicesAddBlock: IndicesAddBlockInputSchema,
+	indicesRemoveBlock: IndicesRemoveBlockInputSchema,
+	indicesGetMapping: IndicesGetMappingInputSchema,
+	indicesPutMapping: IndicesPutMappingInputSchema,
+	indicesGetFieldMapping: IndicesGetFieldMappingInputSchema,
+	indicesGetSettings: IndicesGetSettingsInputSchema,
+	indicesPutSettings: IndicesPutSettingsInputSchema,
+	indicesGetAlias: IndicesGetAliasInputSchema,
+	indicesExistsAlias: IndicesExistsAliasInputSchema,
+	indicesPutAlias: IndicesPutAliasInputSchema,
+	indicesDeleteAlias: IndicesDeleteAliasInputSchema,
+	indicesRollover: IndicesRolloverInputSchema,
+	indicesClone: IndicesCloneInputSchema,
+	indicesSplit: IndicesSplitInputSchema,
+	indicesShrink: IndicesShrinkInputSchema,
+	indicesDownsample: IndicesDownsampleInputSchema,
+	indicesAnalyze: IndicesAnalyzeInputSchema,
 } as const;
 
 export const ElasticsearchEndpointOutputSchemas = {
@@ -808,4 +1241,26 @@ export const ElasticsearchEndpointOutputSchemas = {
 	documentsTermvectors: TermVectorsResultSchema,
 	documentsMtermvectors: DocumentsMtermvectorsOutputSchema,
 	documentsBulk: DocumentsBulkOutputSchema,
+	indicesCreate: IndicesCreateOutputSchema,
+	indicesExists: ExistsResultSchema,
+	indicesDelete: IndicesResponseBaseSchema,
+	indicesOpen: IndicesOpenOutputSchema,
+	indicesClose: IndicesCloseOutputSchema,
+	indicesAddBlock: IndicesAddBlockOutputSchema,
+	indicesRemoveBlock: IndicesRemoveBlockOutputSchema,
+	indicesGetMapping: IndexKeyedMappingSchema,
+	indicesPutMapping: IndicesResponseBaseSchema,
+	indicesGetFieldMapping: IndexKeyedMappingSchema,
+	indicesGetSettings: IndicesGetSettingsOutputSchema,
+	indicesPutSettings: AcknowledgedResponseSchema,
+	indicesGetAlias: IndexKeyedAliasesSchema,
+	indicesExistsAlias: ExistsResultSchema,
+	indicesPutAlias: AcknowledgedResponseSchema,
+	indicesDeleteAlias: IndicesDeleteAliasOutputSchema,
+	indicesRollover: IndicesRolloverOutputSchema,
+	indicesClone: IndicesResizeOutputSchema,
+	indicesSplit: IndicesResizeOutputSchema,
+	indicesShrink: IndicesResizeOutputSchema,
+	indicesDownsample: IndicesDownsampleOutputSchema,
+	indicesAnalyze: IndicesAnalyzeOutputSchema,
 } as const;
