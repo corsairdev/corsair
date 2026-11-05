@@ -41,8 +41,9 @@ Five things catch callers out, each checked against the live API:
 - The API token is project-scoped. A token from another project returns 401, not an empty list.
 
 `media.upload` and `fonts.create` fetch a public `file_url`, so private and
-loopback addresses are rejected, each redirect hop is checked, and the download
-has a 30 second deadline and a 25 MB cap.
+loopback addresses are rejected, the connection is pinned to a checked address,
+each redirect hop is checked, and the download has a 30 second deadline and a
+25 MB cap.
 
 ## Endpoints
 
