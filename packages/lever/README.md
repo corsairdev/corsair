@@ -57,14 +57,14 @@ pnpm add @corsair-dev/lever
 | `notes.update` | `lever.api.notes.update` | `write` | Update a note on a pipeline opportunity |
 | `offers.download` | `lever.api.offers.download` | `read` | Download the raw bytes of an offer file |
 | `offers.list` | `lever.api.offers.list` | `read` | List offers for a pipeline opportunity |
-| `opportunities.addLinks` | `lever.api.opportunities.addLinks` | `write` | Link contacts to a pipeline opportunity |
+| `opportunities.addLinks` | `lever.api.opportunities.addLinks` | `write` | Add web links (LinkedIn, portfolio) to an opportunity's contact |
 | `opportunities.addSources` | `lever.api.opportunities.addSources` | `write` | Add sourcing sources to a pipeline opportunity |
 | `opportunities.addTags` | `lever.api.opportunities.addTags` | `write` | Add tags to a pipeline opportunity |
 | `opportunities.create` | `lever.api.opportunities.create` | `write` | Create a pipeline opportunity for a candidate profile |
 | `opportunities.list` | `lever.api.opportunities.list` | `read` | List pipeline opportunities with filters and pagination |
 | `opportunities.listDeleted` | `lever.api.opportunities.listDeleted` | `read` | List deleted pipeline opportunities |
 | `opportunities.listFileActions` | `lever.api.opportunities.listFileActions` | `read` | List file actions recorded for a pipeline opportunity |
-| `opportunities.removeLinks` | `lever.api.opportunities.removeLinks` | `write` | Remove contact links from a pipeline opportunity |
+| `opportunities.removeLinks` | `lever.api.opportunities.removeLinks` | `write` | Remove web links from an opportunity's contact |
 | `opportunities.removeSources` | `lever.api.opportunities.removeSources` | `write` | Remove sourcing sources from a pipeline opportunity |
 | `opportunities.removeTags` | `lever.api.opportunities.removeTags` | `write` | Remove tags from a pipeline opportunity |
 | `opportunities.retrieve` | `lever.api.opportunities.retrieve` | `read` | Retrieve a single pipeline opportunity by ID |
@@ -120,6 +120,12 @@ pnpm add @corsair-dev/lever
 ## Auth
 
 Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory to pick one.
+
+Lever attributes writes to a user. Creating opportunities, postings, interviews, panels and feedback, and deleting files, take a `perform_as` Lever user ID; `users.list` returns the IDs.
+
+## Pagination
+
+List operations return `{ data, hasNext, next }`. Pass `next` back as `offset` to fetch the following page; `limit` accepts 1 to 100.
 
 ## Webhooks
 

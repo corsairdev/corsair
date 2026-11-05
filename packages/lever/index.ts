@@ -962,11 +962,12 @@ const leverEndpointMeta = {
 	},
 	'opportunities.addLinks': {
 		riskLevel: 'write',
-		description: 'Link contacts to a pipeline opportunity',
+		description:
+			"Add web links (LinkedIn, portfolio) to an opportunity's contact",
 	},
 	'opportunities.removeLinks': {
 		riskLevel: 'write',
-		description: 'Remove contact links from a pipeline opportunity',
+		description: "Remove web links from an opportunity's contact",
 	},
 	'opportunities.addTags': {
 		riskLevel: 'write',

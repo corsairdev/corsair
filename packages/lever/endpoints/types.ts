@@ -406,7 +406,10 @@ const FormTemplateBodySchema = z.object({
 const RequisitionFieldBodySchema = z.object({
 	id: z.string().min(1),
 	text: z.string().min(1),
-	type: z.enum(['number', 'text', 'date', 'object', 'dropdown']),
+	type: z
+		.string()
+		.min(1)
+		.describe('One of number, text, date, object or dropdown'),
 	isRequired: z.boolean().optional(),
 	subfields: z
 		.array(
