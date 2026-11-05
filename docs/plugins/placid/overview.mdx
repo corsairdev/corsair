@@ -1,0 +1,140 @@
+---
+title: Overview
+description: "Creative automation with Placid - render templates to images, PDFs and videos, plus the template, collection, media and font operations behind them."
+---
+
+Use **Placid** through Corsair: one client, typed API calls.
+
+Create an API project in Placid, open the project, then click API Tokens in the left menu. Tokens are project-scoped: a token only reaches the templates of the project that owns it, and a token from another project returns 401.
+
+- **Renders are queued.** `images.create`, `pdfs.create`, `videos.create` and `pdfs.merge` reply with `status: 'queued'` almost every time. Poll the reply's `polling_url` with the matching `get`, or pass `webhook_success` and let Placid call you. The file URL is null until `status` is `finished`.
+- **Failures are reported after the fact.** A render that fails still returns a 200 from the create call. Read the `status: 'error'` reply for `error_code`, `error_message` and `error_details`. Branch on `error_code`, which does not change; `error_message` can be reworded.
+- **Credits.** One image is one credit, one PDF page is two, and a video is ten credits per ten seconds. `create_now: true` renders immediately instead of queueing, and Placid allows 10 simultaneous calls that way.
+- **Rate limit.** 60 requests per minute. A 429 is retried up to three times with backoff. A 5xx is only retried on reads, because repeating a create would render and bill a second file.
+- **Layers.** `layers` is keyed by the layer name set in the template editor, and every property a layer type supports is accepted. Omitted properties keep the template default. `templates.list` and `templates.get` return each dynamic layer's name and type, which is how to discover the keys.
+- **Uploads take URLs.** `media.upload` and `fonts.create` accept a public `file_url`; the plugin downloads it and forwards the bytes as multipart. The bytes cannot come from a local path.
+- **Fonts.** A font upload requires `terms_accepted: true`. The returned `uuid` is the value to set as `fontFamily` on a text layer.
+- **Webhooks.** The plugin does not receive webhooks. Placid calls the `webhook_success` URL you supply on a create.
+
+**What you get:**
+
+- 26 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/placid
+```
+```bash yarn
+yarn add corsair @corsair-dev/placid
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/placid
+```
+```bash bun
+bun add corsair @corsair-dev/placid
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { placid } from '@corsair-dev/placid';
+
+export const corsair = createCorsair({
+	plugins: [
+		placid(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Save a project API token with `corsair.placid.keys.set_api_key(...)`. A call with no
+saved key throws `AuthMissingError`, which can carry a `connectUrl` to finish setup.
+
+```ts
+placid()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'placid',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List templates by tag**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.placid.api.templates.list({ tag: 'social' });
+```
+
+
+**Render an image from a template**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.placid.api.images.create({
+	template_uuid: 'ospo24ysn',
+	layers: {
+		title: { text: 'Meet Singh' },
+		img: { image: 'https://faywoodwildlife.com/images/lion-singh.jpg' },
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/placid/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/placid/api">
+    Every `placid.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

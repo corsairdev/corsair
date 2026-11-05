@@ -1,0 +1,1444 @@
+---
+title: API
+description: "API reference for Placid: every `placid.api.*` operation with input and output types."
+---
+
+Every `placid.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Collections
+
+### create
+
+`collections.create`
+
+Create a collection, such as one per customer of your SaaS, holding up to 500 templates
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.collections.create({ title: 'Acme onboarding', template_uuids: ['ospo24ysn'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string \| null` | Yes | — |
+| `custom_data` | `object` | No | — |
+| `template_uuids` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_data full type">
+
+```ts
+string | Record<string, unknown>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `custom_data` | `object \| null` | No | — |
+| `template_uuids` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_data full type">
+
+```ts
+string | Record<string, unknown> | unknown[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`collections.delete`
+
+Permanently delete a collection. The templates inside it are not deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.placid.api.collections.delete({ collection_id: 'col_1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `collection_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`collections.get`
+
+Read one collection and the template UUIDs it holds
+
+**Risk:** `read`
+
+```ts
+await corsair.placid.api.collections.get({ collection_id: 'col_1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `custom_data` | `object \| null` | No | — |
+| `template_uuids` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_data full type">
+
+```ts
+string | Record<string, unknown> | unknown[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`collections.list`
+
+List template collections, either all at once or cursor-paged with `per_page`
+
+**Risk:** `read`
+
+```ts
+await corsair.placid.api.collections.list({ per_page: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `per_page` | `number` | No | Page size. Omitted returns every collection, unpaged. |
+| `cursor` | `string` | No | The `links.next` URL of a previous page, or its cursor value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  custom_data?: string | {
+  } | unknown[] | null,
+  template_uuids?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  path?: string | null,
+  per_page?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`collections.update`
+
+Change a collection: replace its whole template list with `template_uuids`, or add and remove individual templates
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.collections.update({ collection_id: 'col_1234', add_template_uuids: ['new_one'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `custom_data` | `object` | No | — |
+| `template_uuids` | `string[] \| null` | No | Replaces the whole list of templates in the collection. |
+| `add_template_uuids` | `string[]` | No | Adds these templates, keeping the existing ones. |
+| `remove_template_uuids` | `string[]` | No | Removes these templates. |
+
+<AccordionGroup>
+<Accordion title="custom_data full type">
+
+```ts
+string | Record<string, unknown> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `custom_data` | `object \| null` | No | — |
+| `template_uuids` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_data full type">
+
+```ts
+string | Record<string, unknown> | unknown[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fonts
+
+### create
+
+`fonts.create`
+
+Upload a ttf, otf, woff or woff2 font from a public URL. `terms_accepted` must be true. The returned `uuid` is the `fontFamily` to set on a text layer
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.fonts.create({ file_url: 'https://example.com/HelveticaNeue-Regular.ttf', title: 'Helvetica Neue', terms_accepted: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | Yes | A publicly reachable ttf, otf, woff or woff2 file. |
+| `title` | `string \| null` | No | Display title. Defaults to the filename. |
+| `terms_accepted` | `true` | Yes | You must confirm you own the font or hold a licence to use it. Placid rejects the upload without it. |
+| `filename` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | The font code. Use it as `fontFamily` on a text layer. |
+| `title` | `string \| null` | No | — |
+| `filename` | `string \| null` | No | — |
+| `is_legacy` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`fonts.delete`
+
+Delete a custom font. Fails with 409 when a template still uses it unless `force` is set, which leaves those templates on the default font
+
+**Risk:** `destructive`
+
+```ts
+await corsair.placid.api.fonts.delete({ uuid: 'f1abc123def456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `force` | `boolean` | No | Delete even when templates still reference the font. Those templates fall back to the default font on their next render. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `uuid` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`fonts.get`
+
+Read one custom font by its `uuid`
+
+**Risk:** `read`
+
+```ts
+await corsair.placid.api.fonts.get({ uuid: 'f1abc123def456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `include_legacy` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | The font code. Use it as `fontFamily` on a text layer. |
+| `title` | `string \| null` | No | — |
+| `filename` | `string \| null` | No | — |
+| `is_legacy` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`fonts.list`
+
+List the custom fonts in the project, optionally including legacy account-wide fonts
+
+**Risk:** `read`
+
+```ts
+await corsair.placid.api.fonts.list({ include_legacy: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_legacy` | `boolean` | No | Also return account-wide fonts uploaded before per-project fonts. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  title?: string | null,
+  filename?: string | null,
+  is_legacy?: boolean | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  path?: string | null,
+  per_page?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`fonts.update`
+
+Rename a custom font. The file itself cannot be replaced: upload a new font instead
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.fonts.update({ uuid: 'f1abc123def456', title: 'Helvetica Neue Bold' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `title` | `string \| null` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | The font code. Use it as `fontFamily` on a text layer. |
+| `title` | `string \| null` | No | — |
+| `filename` | `string \| null` | No | — |
+| `is_legacy` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Images
+
+### create
+
+`images.create`
+
+Render a template to an image. The reply is usually `queued`: poll `polling_url` or set `webhook_success` to get the finished URL. One image costs one credit.
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.images.create({ template_uuid: 'ospo24ysn', layers: { title: { text: 'Meet Singh' } }, create_now: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_uuid` | `string` | Yes | The template to render, from the Templates tab of the project. |
+| `layers` | `object` | No | — |
+| `modifications` | `object` | No | Output sizing and format. Placid overrides the template default. |
+| `transfer` | `object` | No | Copies the finished file to your own S3 bucket. Placid does not store the credentials. |
+| `webhook_success` | `string` | No | Placid POSTs the finished image object to this URL. |
+| `create_now` | `boolean` | No | render immediately instead of queueing. Placid allows 10 simultaneous calls this way; past that the call can fail. |
+| `passthrough` | `string \| unknown[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
+
+<AccordionGroup>
+<Accordion title="layers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="modifications full type">
+
+```ts
+{
+  width?: string | number,
+  height?: string | number,
+  filename?: string,
+  image_format?: 'auto' | 'jpg' | 'png' | 'webp',
+  dpi?: number | string,
+  color_mode?: 'rgb' | 'cmyk',
+  image_quality?: 'high' | 'medium' | 'low'
+}
+```
+</Accordion>
+
+<Accordion title="transfer full type">
+
+```ts
+{
+  to: 's3',
+  key: string,
+  secret: string,
+  region?: string,
+  bucket: string,
+  visibility?: 'public' | 'private',
+  path: string,
+  endpoint?: string,
+  token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `polling_url` | `string \| null` | No | GET this until `status` settles. |
+| `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
+| `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
+| `image_url` | `string \| null` | No | — |
+| `error_details` | `object[]` | No | — |
+| `errors` | `string[]` | No | Deprecated. Use `error_code`, `error_message` and `error_details`. |
+
+<AccordionGroup>
+<Accordion title="error_details full type">
+
+```ts
+{
+  layer?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`images.delete`
+
+Permanently delete an image. Placid only keeps generated files for a limited time, so store them yourself if you need them
+
+**Risk:** `destructive`
+
+```ts
+await corsair.placid.api.images.delete({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`images.get`
+
+Read an image by id, including `image_url` once `status` is `finished` and the render error fields when it is `error`
+
+**Risk:** `read`
+
+```ts
+await corsair.placid.api.images.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The image id from the create reply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `polling_url` | `string \| null` | No | GET this until `status` settles. |
+| `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
+| `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
+| `image_url` | `string \| null` | No | — |
+| `error_details` | `object[]` | No | — |
+| `errors` | `string[]` | No | Deprecated. Use `error_code`, `error_message` and `error_details`. |
+
+<AccordionGroup>
+<Accordion title="error_details full type">
+
+```ts
+{
+  layer?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Media
+
+### upload
+
+`media.upload`
+
+Upload a file from a public URL to Placid storage and get a URL back for a picture layer. Placid keeps it for a limited time
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.media.upload({ file_url: 'https://example.com/assets/logo.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | Yes | A publicly reachable URL. The plugin downloads it and forwards the bytes as multipart. |
+| `filename` | `string \| null` | No | Overrides the name from the URL. |
+| `file_key` | `string \| null` | No | The key the reply is filed under. Defaults to `file`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  file_key?: string | null,
+  file_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pdfs
+
+### create
+
+`pdfs.create`
+
+Render one template per page into a single PDF, merged in the order given. Each page costs two credits
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.pdfs.create({ pages: [{ template_uuid: 'cover', layers: { title: { text: 'Certificate' } } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pages` | `object[]` | Yes | One template per page, merged in the order given. |
+| `modifications` | `object` | No | Output sizing and format. Placid overrides the template default. |
+| `transfer` | `object` | No | Copies the finished file to your own S3 bucket. Placid does not store the credentials. |
+| `webhook_success` | `string` | No | — |
+| `passthrough` | `string \| unknown[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  template_uuid: string,
+  layers?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="modifications full type">
+
+```ts
+{
+  width?: string | number,
+  height?: string | number,
+  filename?: string,
+  image_format?: 'auto' | 'jpg' | 'png' | 'webp',
+  dpi?: number | string,
+  color_mode?: 'rgb' | 'cmyk',
+  image_quality?: 'high' | 'medium' | 'low'
+}
+```
+</Accordion>
+
+<Accordion title="transfer full type">
+
+```ts
+{
+  to: 's3',
+  key: string,
+  secret: string,
+  region?: string,
+  bucket: string,
+  visibility?: 'public' | 'private',
+  path: string,
+  endpoint?: string,
+  token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `polling_url` | `string \| null` | No | GET this until `status` settles. |
+| `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
+| `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
+| `pdf_url` | `string \| null` | No | — |
+| `error_details` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error_details full type">
+
+```ts
+{
+  layer?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`pdfs.delete`
+
+Permanently delete a PDF
+
+**Risk:** `destructive`
+
+```ts
+await corsair.placid.api.pdfs.delete({ id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`pdfs.get`
+
+Read a PDF by id, including `pdf_url` once `status` is `finished`
+
+**Risk:** `read`
+
+```ts
+await corsair.placid.api.pdfs.get({ id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `polling_url` | `string \| null` | No | GET this until `status` settles. |
+| `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
+| `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
+| `pdf_url` | `string \| null` | No | — |
+| `error_details` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error_details full type">
+
+```ts
+{
+  layer?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`pdfs.merge`
+
+Merge 2 to 10 existing PDFs from public URLs into one file, without rendering a template
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.pdfs.merge({ urls: ['https://example.com/a.pdf', 'https://example.com/b.pdf'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | Publicly reachable PDF URLs to merge, in order. |
+| `transfer` | `object` | No | Copies the finished file to your own S3 bucket. Placid does not store the credentials. |
+| `webhook_success` | `string` | No | — |
+| `passthrough` | `string \| unknown[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
+
+<AccordionGroup>
+<Accordion title="transfer full type">
+
+```ts
+{
+  to: 's3',
+  key: string,
+  secret: string,
+  region?: string,
+  bucket: string,
+  visibility?: 'public' | 'private',
+  path: string,
+  endpoint?: string,
+  token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `polling_url` | `string \| null` | No | GET this until `status` settles. |
+| `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
+| `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
+| `pdf_url` | `string \| null` | No | — |
+| `error_details` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error_details full type">
+
+```ts
+{
+  layer?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create an empty template, or duplicate an existing one with `from_template`, optionally adding it to collections
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.templates.create({ title: 'Employee of the month', width: 1080, height: 1080, tags: ['social'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string \| null` | Yes | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_data` | `object` | No | A reference value, such as a serialized JSON object. |
+| `from_template` | `string` | No | Duplicate this template UUID. Overrides `title`, `width` and `height` with the source values. |
+| `add_to_collections` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_data full type">
+
+```ts
+string | Record<string, unknown>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | Null while Placid regenerates the preview. |
+| `tags` | `string[] \| null` | No | — |
+| `layers` | `object[] \| null` | No | — |
+| `custom_data` | `object \| null` | No | The reference value set on the template, if any. |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="layers full type">
+
+```ts
+{
+  name?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="custom_data full type">
+
+```ts
+string | Record<string, unknown> | unknown[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Permanently delete a template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.placid.api.templates.delete({ template_uuid: 'ospo24ysn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `template_uuid` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one template, including every dynamic layer that can be filled in
+
+**Risk:** `read`
+
+```ts
+await corsair.placid.api.templates.get({ template_uuid: 'ospo24ysn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | Null while Placid regenerates the preview. |
+| `tags` | `string[] \| null` | No | — |
+| `layers` | `object[] \| null` | No | — |
+| `custom_data` | `object \| null` | No | The reference value set on the template, if any. |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="layers full type">
+
+```ts
+{
+  name?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="custom_data full type">
+
+```ts
+string | Record<string, unknown> | unknown[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List templates with their layer names and types, optionally filtered by collection, title or tag and sorted; paged 20 at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.placid.api.templates.list({ tag: 'social', order_by: 'title-asc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | No | Only templates in this collection. |
+| `title_filter` | `string` | No | Only templates whose title matches. |
+| `tag` | `string` | No | Only templates with this tag. Nested tags match too: `social` also returns `social/instagram`. |
+| `order_by` | `string` | No | `<field>-<direction>`, where field is `created_at`, `updated_at` or `title` and direction is `asc` or `desc`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  title?: string | null,
+  thumbnail?: string | null,
+  tags?: string[] | null,
+  layers?: {
+    name?: string | null,
+    type?: string | null
+  }[] | null,
+  custom_data?: string | {
+  } | unknown[] | null,
+  width?: number | null,
+  height?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  path?: string | null,
+  per_page?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Change a template's title, tags or custom_data
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.templates.update({ template_uuid: 'ospo24ysn', title: 'Renamed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_uuid` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_data full type">
+
+```ts
+string | Record<string, unknown> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | Null while Placid regenerates the preview. |
+| `tags` | `string[] \| null` | No | — |
+| `layers` | `object[] \| null` | No | — |
+| `custom_data` | `object \| null` | No | The reference value set on the template, if any. |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="layers full type">
+
+```ts
+{
+  name?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="custom_data full type">
+
+```ts
+string | Record<string, unknown> | unknown[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### create
+
+`videos.create`
+
+Render one template per clip into a video of up to 3 minutes, optionally with audio. Each 10 seconds of video costs 10 credits
+
+**Risk:** `write`
+
+```ts
+await corsair.placid.api.videos.create({ clips: [{ template_uuid: 'illcmemnt', layers: { title: { text: '@username' } } }], modifications: { fps: 25 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clips` | `object[]` | Yes | One template per clip, played in order. The whole video is capped at 3 minutes. |
+| `modifications` | `object` | No | Video output settings. |
+| `transfer` | `object` | No | Copies the finished file to your own S3 bucket. Placid does not store the credentials. |
+| `webhook_success` | `string` | No | — |
+| `passthrough` | `string \| unknown[]` | No | Saved with the file and returned in the webhook and polling replies. At most 1024 characters. |
+
+<AccordionGroup>
+<Accordion title="clips full type">
+
+```ts
+{
+  template_uuid: string,
+  layers?: {
+  },
+  audio?: string,
+  audio_duration?: 'auto',
+  audio_trim_start?: string,
+  audio_trim_end?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="modifications full type">
+
+```ts
+{
+  format?: 'mp4',
+  width?: string | number,
+  height?: string | number,
+  canvas_background?: string,
+  fps?: number,
+  filename?: string
+}
+```
+</Accordion>
+
+<Accordion title="transfer full type">
+
+```ts
+{
+  to: 's3',
+  key: string,
+  secret: string,
+  region?: string,
+  bucket: string,
+  visibility?: 'public' | 'private',
+  path: string,
+  endpoint?: string,
+  token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `polling_url` | `string \| null` | No | GET this until `status` settles. |
+| `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
+| `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
+| `video_url` | `string \| null` | No | — |
+| `error_details` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error_details full type">
+
+```ts
+{
+  layer?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`videos.delete`
+
+Permanently delete a video
+
+**Risk:** `destructive`
+
+```ts
+await corsair.placid.api.videos.delete({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`videos.get`
+
+Read a video by id, including `video_url` once `status` is `finished`
+
+**Risk:** `read`
+
+```ts
+await corsair.placid.api.videos.get({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `'queued' \| 'finished' \| 'error'` | Yes | `queued` in the queue, `finished` ready, `error` failed. Poll `polling_url` until it is not `queued`. |
+| `polling_url` | `string \| null` | No | GET this until `status` settles. |
+| `error_code` | `string \| null` | No | A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`. |
+| `error_message` | `string \| null` | No | One sentence about the failure. Wording can change, so branch on `error_code`. |
+| `video_url` | `string \| null` | No | — |
+| `error_details` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error_details full type">
+
+```ts
+{
+  layer?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

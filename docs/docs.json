@@ -2663,6 +2663,14 @@
                 ]
               },
               {
+                "group": "Placid",
+                "pages": [
+                  "plugins/placid/overview",
+                  "plugins/placid/api",
+                  "plugins/placid/database"
+                ]
+              },
+              {
                 "group": "Plain",
                 "pages": [
                   "plugins/plain/overview",
