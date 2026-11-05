@@ -154,4 +154,32 @@ describe('Recall.ai regional request routing', () => {
 			),
 		});
 	});
+
+	it('reads a pasted region host as its region', async () => {
+		for (const stored of [
+			'eu-central-1.recall.ai',
+			'https://eu-central-1.recall.ai/',
+			' EU-CENTRAL-1 ',
+		]) {
+			jest.mocked(request).mockClear();
+			await makeRecallaiContextRequest(
+				{ key: 'recall-key', keys: { get_region: async () => stored } },
+				'/api/v1/bot/',
+			);
+			expect(request).toHaveBeenCalledWith(
+				expect.objectContaining({ BASE: 'https://eu-central-1.recall.ai' }),
+				expect.any(Object),
+				expect.any(Object),
+			);
+		}
+		await expect(
+			makeRecallaiContextRequest(
+				{
+					key: 'recall-key',
+					keys: { get_region: async () => 'eu-central-1.recall.ai.evil.com' },
+				},
+				'/api/v1/bot/',
+			),
+		).rejects.toThrow('Unsupported Recall.ai region');
+	});
 });

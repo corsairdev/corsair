@@ -88,11 +88,19 @@ export async function resolveRecallaiRegion(
 	if (typeof configured !== 'string') {
 		throw new Error('Recall.ai region must be a string');
 	}
-	const region = configured.trim();
+	// People often paste the host from the dashboard URL, so
+	// `https://eu-central-1.recall.ai/` and `eu-central-1.recall.ai` are read
+	// as `eu-central-1`. The result is still checked against the list below.
+	const region = configured
+		.trim()
+		.toLowerCase()
+		.replace(/^https?:\/\//, '')
+		.replace(/\/+$/, '')
+		.replace(/\.recall\.ai$/, '');
 	if (region === '') return RECALLAI_DEFAULT_REGION;
 	if (!isRecallaiRegion(region)) {
 		throw new Error(
-			`Unsupported Recall.ai region: ${region}. Use one of ${RECALLAI_REGIONS.join(', ')}`,
+			`Unsupported Recall.ai region: ${configured.trim()}. Use one of ${RECALLAI_REGIONS.join(', ')}`,
 		);
 	}
 	return region;
