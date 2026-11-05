@@ -412,7 +412,15 @@ function cacheItems(response: unknown): Record<string, unknown>[] {
 }
 
 function idFromLocation(location: string): string | undefined {
-	const match = location.match(/\/([^/?#]+)\/?(?:[?#].*)?$/);
+	// Only NetSuite record URLs (/record/v1/<recordType>/<id>) represent saved records.
+	// Asynchronous job URLs (/async/v1/job/...) or query URLs must never be treated as record IDs.
+	if (
+		!location.includes('/record/v1/') ||
+		/\/(?:async|job|jobs)\//i.test(location)
+	) {
+		return undefined;
+	}
+	const match = location.match(/\/record\/v1\/[^/?#]+\/([^/?#]+)/);
 	if (!match?.[1]) return undefined;
 	let id: string;
 	try {
@@ -433,12 +441,22 @@ async function syncEntityCache(
 	const entity = entityForSpec(spec, input);
 	if (!entity) return;
 
+	// If the write or delete was queued asynchronously via Prefer: respond-async,
+	// do not modify local cache until the job finishes successfully.
+	const isAsync = /respond-async/i.test(
+		String(read(input, 'prefer') ?? read(input, 'Prefer') ?? ''),
+	);
+	if (isAsync) return;
+
 	// ctx.db contains dynamically generated entity tables from plugin schema;
-	// cast through unknown to access optional upsertByEntityId and deleteByEntityId methods.
+	// cast through unknown to access optional upsertByEntityId, findByEntityId, and deleteByEntityId methods.
 	const db = ctx.db as unknown as
 		| Record<
 				string,
 				| {
+						findByEntityId?: (
+							entityId: string,
+						) => Promise<{ data?: Record<string, unknown> } | null | undefined>;
 						upsertByEntityId?: (
 							entityId: string,
 							data: Record<string, unknown>,
@@ -467,7 +485,16 @@ async function syncEntityCache(
 			for (const item of items) {
 				const id = item.id ?? item.entityId;
 				if (typeof id !== 'string' && typeof id !== 'number') continue;
-				await client.upsertByEntityId(String(id), item);
+				const stringId = String(id);
+				// Partial reads (e.g. fields: 'email') must not erase previously saved fields.
+				// Merge with existing record data if available.
+				const existing = await client.findByEntityId?.(stringId);
+				const existingData =
+					existing && isRecord(existing.data) ? existing.data : {};
+				await client.upsertByEntityId(stringId, {
+					...existingData,
+					...item,
+				});
 			}
 			return;
 		}
@@ -476,8 +503,12 @@ async function syncEntityCache(
 			const id = idFromLocation(location);
 			if (!id) return;
 			const body = buildBody(input, spec);
+			const existing = await client.findByEntityId?.(id);
+			const existingData =
+				existing && isRecord(existing.data) ? existing.data : {};
 			await client.upsertByEntityId(id, {
-				...(body ?? {}),
+				...existingData,
+				...(isRecord(body) ? body : {}),
 				id,
 				location,
 			});

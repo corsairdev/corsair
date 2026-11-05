@@ -62,6 +62,7 @@ export type NetSuiteEndpoints = {
 	[K in keyof NetSuiteEndpointOutputs]: NetSuiteEndpoint<K>;
 };
 
+// Cast NetSuite to NetSuiteEndpoints to bind typed endpoint signatures to the constructed endpoint object map.
 const netSuiteEndpoints = NetSuite as NetSuiteEndpoints;
 
 export const netSuiteEndpointSchemas = Object.fromEntries(
@@ -108,6 +109,8 @@ const netSuiteEndpointMeta = Object.fromEntries(
 			description: spec.metaDescription,
 		},
 	]),
+	// Object.fromEntries returns generic key-value pairs; cast to RequiredPluginEndpointMeta
+	// because TypeScript cannot statically correlate the dynamic spec keys with netSuiteEndpoints.
 ) as RequiredPluginEndpointMeta<
 	typeof netSuiteEndpoints
 > satisfies RequiredPluginEndpointMeta<typeof netSuiteEndpoints>;

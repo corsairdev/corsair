@@ -592,6 +592,103 @@ describe('endpoint dispatch', () => {
 		expect(header(init, 'X-NetSuite-Idempotency-Key')).toBe('idem-123');
 	});
 
+	it('merges partial reads with existing cache record to preserve saved fields', async () => {
+		const upsertMock = jest.fn();
+		const findMock = jest.fn().mockResolvedValue({
+			data: {
+				id: '789',
+				companyName: 'Acme Corp',
+				email: 'old@example.com',
+				phone: '555-0100',
+			},
+		});
+		const ctx = {
+			...mockCtx(),
+			db: {
+				customers: {
+					findByEntityId: findMock,
+					upsertByEntityId: upsertMock,
+				},
+			},
+		};
+		globalThis.fetch = jest.fn().mockResolvedValue(
+			jsonResponse({
+				id: '789',
+				email: 'new@example.com',
+			}),
+		) as unknown as typeof fetch;
+
+		await NetSuite.getCustomer(ctx as never, {
+			id: '789',
+			fields: 'email',
+		});
+		expect(findMock).toHaveBeenCalledWith('789');
+		expect(upsertMock).toHaveBeenCalledWith('789', {
+			id: '789',
+			companyName: 'Acme Corp',
+			email: 'new@example.com',
+			phone: '555-0100',
+		});
+	});
+
+	it('skips cache updates and fake record creation for queued asynchronous jobs', async () => {
+		const upsertMock = jest.fn();
+		const deleteMock = jest.fn();
+		const ctx = {
+			...mockCtx(),
+			db: {
+				customers: {
+					upsertByEntityId: upsertMock,
+					deleteByEntityId: deleteMock,
+				},
+			},
+		};
+		const jobUrl =
+			'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/async/v1/job/job-999';
+		globalThis.fetch = jest.fn().mockResolvedValue({
+			ok: true,
+			status: 202,
+			statusText: 'Accepted',
+			headers: new Headers({ Location: jobUrl }),
+			text: async () => '',
+			json: async () => ({}),
+			arrayBuffer: async () => Buffer.from(''),
+		}) as unknown as typeof fetch;
+
+		const createResult = await NetSuite.createCustomer(ctx as never, {
+			Prefer: 'respond-async',
+			body: { companyName: 'Async Corp' },
+		});
+		expect(createResult).toEqual({ location: jobUrl });
+		expect(upsertMock).not.toHaveBeenCalled();
+
+		const deleteResult = await NetSuite.deleteCustomer(ctx as never, {
+			id: '789',
+			prefer: 'respond-async',
+		});
+		expect(deleteResult).toEqual({ location: jobUrl });
+		expect(deleteMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts location reference objects in order responses', async () => {
+		globalThis.fetch = jest.fn().mockResolvedValue(
+			jsonResponse({
+				id: '100',
+				tranId: 'PO-100',
+				location: { id: '5', refName: 'Warehouse HQ' },
+			}),
+		) as unknown as typeof fetch;
+
+		const result = await NetSuite.getPurchaseOrder(mockCtx() as never, {
+			id: '100',
+		});
+		expect(result).toEqual({
+			id: '100',
+			tranId: 'PO-100',
+			location: { id: '5', refName: 'Warehouse HQ' },
+		});
+	});
+
 	it('rejects unsupported JWT algorithms', async () => {
 		await expect(
 			NetSuite.createJwtClientAssertion(mockCtx() as never, {

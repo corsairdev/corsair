@@ -27,6 +27,22 @@ describe('NetSuite schema', () => {
 			false,
 		);
 	});
+
+	it('validates entity schemas with structured links, references, and sublists', () => {
+		const customer = NetSuiteSchema.entities.customers.safeParse({
+			id: '123',
+			companyName: 'Acme Inc',
+			links: [{ rel: 'self', href: 'https://example.com/record/v1/customer/123' }],
+		});
+		expect(customer.success).toBe(true);
+
+		const purchaseOrder = NetSuiteSchema.entities.purchaseOrders.safeParse({
+			id: 'po-1',
+			entity: { id: 'vend-1', refName: 'Supplier LLC' },
+			item: [{ item: { id: 'item-1' }, quantity: 10 }],
+		});
+		expect(purchaseOrder.success).toBe(true);
+	});
 });
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint

@@ -2,6 +2,18 @@ import { z } from 'zod';
 
 const idSchema = z.union([z.string(), z.number()]);
 
+// NetSuite HATEOAS links are represented as objects with rel and href strings.
+const netSuiteLinkSchema = z
+	.object({
+		rel: z.string().optional(),
+		href: z.string().optional(),
+	})
+	.passthrough();
+
+// NetSuite collection items can contain any record type exposed by REST Web Services.
+// Unknown values are used because custom and built-in record properties vary widely.
+const netSuiteItemSchema = z.record(z.string(), z.unknown());
+
 /**
  * NetSuite responses vary by record type, so unknown fields pass through. The
  * fields the plugin itself relies on are declared here to reject malformed
@@ -11,9 +23,16 @@ const passthroughResponse = z
 	.object({
 		id: idSchema.optional(),
 		externalId: z.string().optional(),
-		links: z.array(z.unknown()).optional(),
-		location: z.string().optional(),
-		items: z.array(z.unknown()).optional(),
+		// NetSuite navigation links follow standard HATEOAS format with rel and href.
+		links: z.array(netSuiteLinkSchema).optional(),
+		// In write/job responses, location is the HTTP Location header string (record or job URL).
+		// In NetSuite records (e.g. PurchaseOrder, SalesOrder, Item), location is a reference object or name.
+		location: z
+			.union([z.string(), z.record(z.string(), z.unknown())])
+			.optional(),
+		// Collection responses contain polymorphic record items varying by entity type;
+		// unknown values allow arbitrary record properties to pass through safely.
+		items: z.array(netSuiteItemSchema).optional(),
 		count: z.number().optional(),
 		offset: z.number().optional(),
 		totalResults: z.number().optional(),

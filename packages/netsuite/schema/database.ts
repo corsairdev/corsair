@@ -1,9 +1,38 @@
 import { z } from 'zod';
 
+// NetSuite REST APIs represent HATEOAS navigation links as objects containing rel and href strings.
+const netSuiteLinkSchema = z
+	.object({
+		rel: z.string().optional(),
+		href: z.string().optional(),
+	})
+	.passthrough();
+
+// NetSuite record references may be returned as reference objects ({ id, refName }), numeric IDs, or string names.
+// Record with unknown values accommodates arbitrary custom subrecord fields and custom segment attributes.
+const netSuiteReferenceSchema = z.union([
+	z
+		.object({
+			id: z.union([z.string(), z.number()]).optional(),
+			refName: z.string().optional(),
+		})
+		.passthrough(),
+	z.string(),
+	z.number(),
+	z.record(z.string(), z.unknown()),
+]);
+
+// NetSuite line items and sublists contain heterogeneous properties (strings, numbers, nested reference objects).
+// Unknown values are necessary because sublist row columns vary by record type and NetSuite custom configuration.
+const netSuiteSublistSchema = z.union([
+	z.array(z.record(z.string(), z.unknown())),
+	z.record(z.string(), z.unknown()),
+]);
+
 const baseRecord = {
 	id: z.union([z.string(), z.number()]).optional(),
 	externalId: z.string().optional(),
-	links: z.array(z.unknown()).optional(),
+	links: z.array(netSuiteLinkSchema).optional(),
 };
 
 export const NetSuiteCustomerEntity = z
@@ -23,11 +52,11 @@ export const NetSuiteCustomerPaymentEntity = z
 	.object({
 		...baseRecord,
 		tranId: z.string().optional(),
-		customer: z.unknown().optional(),
+		customer: netSuiteReferenceSchema.optional(),
 		payment: z.number().optional(),
 		total: z.number().optional(),
 		trandate: z.string().optional(),
-		currency: z.unknown().optional(),
+		currency: netSuiteReferenceSchema.optional(),
 	})
 	.passthrough();
 
@@ -39,7 +68,7 @@ export const NetSuiteEmployeeEntity = z
 		lastName: z.string().optional(),
 		email: z.string().optional(),
 		isInactive: z.boolean().optional(),
-		supervisor: z.unknown().optional(),
+		supervisor: netSuiteReferenceSchema.optional(),
 	})
 	.passthrough();
 
@@ -47,12 +76,12 @@ export const NetSuiteInvoiceEntity = z
 	.object({
 		...baseRecord,
 		tranId: z.string().optional(),
-		entity: z.unknown().optional(),
+		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
 		status: z.string().optional(),
 		total: z.number().optional(),
 		balance: z.number().optional(),
-		currency: z.unknown().optional(),
+		currency: netSuiteReferenceSchema.optional(),
 	})
 	.passthrough();
 
@@ -64,7 +93,7 @@ export const NetSuiteItemEntity = z
 		itemType: z.string().optional(),
 		isInactive: z.boolean().optional(),
 		basePrice: z.number().optional(),
-		incomeAccount: z.unknown().optional(),
+		incomeAccount: netSuiteReferenceSchema.optional(),
 	})
 	.passthrough();
 
@@ -72,7 +101,7 @@ export const NetSuiteItemFulfillmentEntity = z
 	.object({
 		...baseRecord,
 		tranId: z.string().optional(),
-		entity: z.unknown().optional(),
+		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
 		status: z.string().optional(),
 	})
@@ -82,7 +111,7 @@ export const NetSuiteItemReceiptEntity = z
 	.object({
 		...baseRecord,
 		tranId: z.string().optional(),
-		entity: z.unknown().optional(),
+		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
 		status: z.string().optional(),
 	})
@@ -95,7 +124,7 @@ export const NetSuiteJournalEntryEntity = z
 		tranDate: z.string().optional(),
 		memo: z.string().optional(),
 		approved: z.boolean().optional(),
-		line: z.unknown().optional(),
+		line: netSuiteSublistSchema.optional(),
 	})
 	.passthrough();
 
@@ -103,11 +132,11 @@ export const NetSuitePurchaseOrderEntity = z
 	.object({
 		...baseRecord,
 		tranId: z.string().optional(),
-		entity: z.unknown().optional(),
+		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
 		status: z.string().optional(),
 		total: z.number().optional(),
-		item: z.unknown().optional(),
+		item: netSuiteSublistSchema.optional(),
 	})
 	.passthrough();
 
@@ -115,11 +144,11 @@ export const NetSuiteSalesOrderEntity = z
 	.object({
 		...baseRecord,
 		tranId: z.string().optional(),
-		entity: z.unknown().optional(),
+		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
 		status: z.string().optional(),
 		total: z.number().optional(),
-		item: z.unknown().optional(),
+		item: netSuiteSublistSchema.optional(),
 	})
 	.passthrough();
 
@@ -138,7 +167,7 @@ export const NetSuiteVendorBillEntity = z
 	.object({
 		...baseRecord,
 		tranId: z.string().optional(),
-		entity: z.unknown().optional(),
+		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
 		status: z.string().optional(),
 		total: z.number().optional(),
@@ -150,7 +179,7 @@ export const NetSuiteVendorPaymentEntity = z
 	.object({
 		...baseRecord,
 		tranId: z.string().optional(),
-		entity: z.unknown().optional(),
+		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
 		status: z.string().optional(),
 		total: z.number().optional(),

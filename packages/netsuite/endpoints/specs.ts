@@ -118,6 +118,9 @@ function remove(resource: string, description: string): RouteSpec {
 		path: `/record/v1/${resource}/{id}`,
 		pathParams: ['id'],
 		headers: writeHeaders,
+		// With Prefer: respond-async, NetSuite answers deletions with 202 + Location (job URL).
+		// Capture that header so callers receive the job reference for polling.
+		responseHeader: 'Location',
 		riskLevel: 'destructive',
 		metaDescription: description,
 	};
