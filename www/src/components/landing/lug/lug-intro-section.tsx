@@ -2,17 +2,15 @@
 
 import { ArrowRight } from '@phosphor-icons/react';
 import type { FormEvent } from 'react';
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 import { readLugHandleAnswer } from '@/lib/lug-handle';
 import { hubLugClaimUrl, LUG_URL, lugHandleProblem } from '@/lib/site-links';
 import { cn } from '@/lib/utils';
 
-const FACTS = [
-	'Works in Claude, ChatGPT, Cursor and any MCP client',
-	'Pick which of 400+ apps it can use',
-	'Approvals before anything risky',
-];
+import { ClientMark } from '../agent-roles/agent-chat-window';
+import { AGENT_CLIENTS } from '../agent-roles/agent-clients';
+import { TypewriterPlaceholder } from './typewriter-placeholder';
 
 function problemText(handle: string): string | null {
 	if (!handle) return null;
@@ -38,6 +36,7 @@ const CHECK_DELAY_MS = 400;
 export function LugIntroSection() {
 	const inputId = useId();
 	const hintId = useId();
+	const inputRef = useRef<HTMLInputElement>(null);
 	const [value, setValue] = useState('');
 	const [submitted, setSubmitted] = useState(false);
 	const [check, setCheck] = useState<Check | null>(null);
@@ -104,6 +103,13 @@ export function LugIntroSection() {
 		}
 	}, [pendingHandle, handle, current]);
 
+	const focusAtEnd = () => {
+		const input = inputRef.current;
+		if (!input) return;
+		input.focus({ preventScroll: true });
+		input.setSelectionRange(input.value.length, input.value.length);
+	};
+
 	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setSubmitted(true);
@@ -139,122 +145,152 @@ export function LugIntroSection() {
 		<section
 			id="lug"
 			aria-labelledby="lug-heading"
-			className="relative w-full scroll-mt-16 py-12 sm:py-16"
+			className="relative w-full scroll-mt-16 py-14 sm:py-20"
 		>
-			<div className="mx-auto max-w-[1100px] px-4 sm:px-6 md:px-10">
-				<div className="grid grid-cols-1 gap-8 rounded-xl border border-[#1c1c1c]/10 bg-white px-6 py-8 shadow-[0_8px_32px_rgba(28,28,28,0.06)] sm:px-10 sm:py-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-12">
-					<div className="min-w-0">
-						<span className="inline-flex rounded-full border border-[#4a38f5]/20 bg-[#4a38f5]/[0.06] px-2.5 py-0.5 text-[12px] font-medium text-[#3d2ee0]">
-							New
-						</span>
-						<h2
-							id="lug-heading"
-							className="mt-3 font-[family-name:var(--landing-font-serif)] text-[clamp(1.75rem,3.4vw,2.5rem)] font-light leading-[1.1] tracking-[-0.02em] text-[#1c1c1c]"
-						>
-							Introducing lug.dev, your own MCP address
-						</h2>
-						<p className="mt-3 max-w-xl text-[16px] leading-relaxed text-[#1c1c1c99]">
-							Claim yourname.lug.dev, connect your apps once, and add the one
-							address to every AI tool you use. Nothing to install.
-						</p>
-						<ul className="mt-5 space-y-2">
-							{FACTS.map((fact) => (
-								<li
-									key={fact}
-									className="flex items-start gap-2.5 text-[14px] leading-snug text-[#1c1c1c]"
-								>
-									<span
-										aria-hidden
-										className="mt-[7px] size-1.5 shrink-0 rounded-full bg-[#4a38f5]"
-									/>
-									{fact}
-								</li>
-							))}
-						</ul>
-					</div>
+			<div className="mx-auto max-w-[760px] px-4 text-center sm:px-6">
+				<span className="inline-flex rounded-full border border-[#4a38f5]/20 bg-[#4a38f5]/[0.06] px-2.5 py-0.5 text-[12px] font-medium text-[#3d2ee0]">
+					New
+				</span>
+				<h2
+					id="lug-heading"
+					className="mt-3 font-[family-name:var(--landing-font-serif)] text-[clamp(1.85rem,4vw,2.9rem)] font-light leading-[1.1] tracking-[-0.02em] text-balance text-[#1c1c1c]"
+				>
+					Introducing lug.dev, your own MCP address
+				</h2>
+				<p className="mx-auto mt-3 max-w-xl text-[16px] leading-relaxed text-[#1c1c1c99]">
+					Claim yourname.lug.dev, connect your apps once, and add the one
+					address to every AI tool you use. Nothing to install.
+				</p>
 
-					<form onSubmit={onSubmit} noValidate className="min-w-0">
-						<label
-							htmlFor={inputId}
-							className="text-[13px] font-medium text-[#1c1c1c99]"
-						>
-							Claim your address
-						</label>
+				<form
+					onSubmit={onSubmit}
+					noValidate
+					className="mx-auto mt-8 max-w-[640px] text-left"
+				>
+					<label htmlFor={inputId} className="sr-only">
+						Claim your address
+					</label>
+					<div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+						{/* One address: the suffix follows whatever is typed (or the
+						    typewriter), like the field on lug.dev. */}
 						<div
+							onMouseDown={(event) => {
+								if (event.target === inputRef.current) return;
+								event.preventDefault();
+								focusAtEnd();
+							}}
 							className={cn(
-								'mt-2 flex min-w-0 items-center rounded-lg border bg-[#fafafa] font-[family-name:var(--landing-font-mono)] text-[15px] transition-colors focus-within:border-[#4a38f5]/60 focus-within:bg-white sm:text-[17px]',
+								'lug-claim-field flex min-w-0 flex-1 cursor-text items-baseline overflow-hidden rounded-[14px] border bg-white px-4 py-3 font-[family-name:var(--landing-font-mono)] text-[clamp(1.25rem,4.4vw,1.85rem)] leading-snug tracking-tight shadow-[inset_0_1px_0_rgba(255,255,255,0.85),0_1px_2px_rgba(28,28,28,0.05)] transition-[border-color,box-shadow] duration-150',
 								tone === 'bad'
 									? 'border-red-300'
 									: tone === 'good'
 										? 'border-emerald-400'
-										: 'border-[#1c1c1c]/15',
+										: 'border-[#1c1c1c]/14 hover:border-[#1c1c1c]/25',
 							)}
 						>
-							<span className="hidden shrink-0 pl-4 text-[#1c1c1c66] sm:inline">
-								https://
+							<span className="relative min-w-[1ch] overflow-hidden whitespace-pre pr-[2px]">
+								{value ? (
+									<span aria-hidden className="invisible">
+										{value}
+									</span>
+								) : (
+									<span aria-hidden className="pointer-events-none">
+										<TypewriterPlaceholder />
+									</span>
+								)}
+								{'\u200b'}
+								<input
+									ref={inputRef}
+									id={inputId}
+									value={value}
+									onChange={(event) =>
+										setValue(event.target.value.replace(/\s/g, '-'))
+									}
+									size={1}
+									autoComplete="off"
+									autoCapitalize="none"
+									autoCorrect="off"
+									spellCheck={false}
+									enterKeyHint="go"
+									maxLength={32}
+									aria-invalid={tone === 'bad'}
+									aria-describedby={hintId}
+									className="absolute inset-0 size-full bg-transparent p-0 text-[#4a38f5] caret-[#4a38f5] outline-none selection:bg-[#4a38f5]/15"
+								/>
 							</span>
-							<input
-								id={inputId}
-								value={value}
-								onChange={(event) =>
-									setValue(event.target.value.replace(/\s/g, '-'))
-								}
-								placeholder="yourname"
-								autoComplete="off"
-								autoCapitalize="none"
-								spellCheck={false}
-								maxLength={32}
-								aria-invalid={tone === 'bad'}
-								aria-describedby={hintId}
-								className="min-w-0 flex-1 bg-transparent py-3.5 pl-4 text-[#1c1c1c] outline-none placeholder:text-[#1c1c1c40] sm:pl-0"
-							/>
-							<span className="shrink-0 pr-4 text-[#1c1c1c99]">.lug.dev</span>
+							<span
+								aria-hidden
+								className="flex-none select-none whitespace-nowrap text-[#1c1c1c66]"
+							>
+								.lug.dev
+							</span>
 						</div>
-						<p
-							id={hintId}
-							aria-live="polite"
-							className={cn(
-								'mt-2 min-h-[1.25rem] text-[13px]',
-								tone === 'bad'
-									? 'text-red-700'
-									: tone === 'good'
-										? 'text-emerald-700'
-										: 'text-[#1c1c1c66]',
-							)}
+						<button
+							type="submit"
+							className="inline-flex items-center justify-center gap-2 rounded-[14px] bg-[#1c1c1c] px-6 py-3 text-[15px] font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_6px_14px_-8px_rgba(28,28,28,0.6)] transition-colors hover:bg-[#333] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a38f5]"
 						>
-							{hint}
-							{suggestion ? (
-								<>
-									{' '}
-									<button
-										type="button"
-										onClick={() => setValue(suggestion)}
-										className="font-medium text-[#4a38f5] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a38f5]"
-									>
-										Use {suggestion}
-									</button>
-								</>
-							) : null}
-						</p>
-						<div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-3">
-							<button
-								type="submit"
-								className="inline-flex items-center gap-2 rounded-lg bg-[#4a38f5] px-5 py-3 text-[15px] font-medium text-white transition-colors hover:bg-[#3d2ee0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a38f5]"
-							>
-								{pendingHandle === handle ? 'Checking…' : 'Claim it'}
-								<ArrowRight size={16} weight="bold" aria-hidden />
-							</button>
-							<a
-								href={LUG_URL}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="text-[14px] font-medium text-[#4a38f5] no-underline hover:underline"
-							>
-								See how lug.dev works
-							</a>
-						</div>
-					</form>
-				</div>
+							{pendingHandle === handle && handle ? 'Checking…' : 'Claim it'}
+							<ArrowRight size={16} weight="bold" aria-hidden />
+						</button>
+					</div>
+					<p
+						id={hintId}
+						aria-live="polite"
+						className={cn(
+							'mt-2.5 min-h-[1.25rem] px-1 text-[13px]',
+							tone === 'bad'
+								? 'text-red-700'
+								: tone === 'good'
+									? 'text-emerald-700'
+									: 'text-[#1c1c1c66]',
+						)}
+					>
+						{hint}
+						{suggestion ? (
+							<>
+								{' '}
+								<button
+									type="button"
+									onClick={() => {
+										setValue(suggestion);
+										inputRef.current?.focus();
+									}}
+									className="font-medium text-[#4a38f5] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a38f5]"
+								>
+									Use {suggestion}
+								</button>
+							</>
+						) : null}
+					</p>
+				</form>
+
+				<p className="mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[13px] text-[#1c1c1c99]">
+					<span className="flex items-center gap-1.5 text-[#1c1c1c]">
+						{AGENT_CLIENTS.map((client) => (
+							<ClientMark
+								key={client.id}
+								skin={client}
+								size={14}
+								color={client.brand}
+							/>
+						))}
+					</span>
+					<span>Works in Claude, ChatGPT, Cursor and any MCP client</span>
+					<span aria-hidden>·</span>
+					<span>400+ apps</span>
+					<span aria-hidden>·</span>
+					<span>Approvals before anything risky</span>
+				</p>
+				<p className="mt-4 text-[14px]">
+					<a
+						href={LUG_URL}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="font-medium text-[#4a38f5] no-underline hover:underline"
+					>
+						See how lug.dev works
+					</a>
+				</p>
 			</div>
 		</section>
 	);

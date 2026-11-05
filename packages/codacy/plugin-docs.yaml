@@ -1,0 +1,57 @@
+displayName: Codacy
+description: Read Codacy code quality data - your account, organizations, repositories and their language and analysis tool settings, plus the catalog of analysis tools and their code patterns.
+domain: codacy.com
+recommendedAuth: api_key
+overviewNote: |
+  The plugin uses a Codacy account API token: in Codacy, open your account, tab Access management, and click Create API token under Account API tokens. The token reaches the same organizations and repositories as your user, and stops working on the expiry date you pick when you create it. Corsair sends it in the `api-token` header and asks for it on the first call that needs it. Self-hosted setups can pass it to the factory instead:
+
+  ```ts
+  codacy({ key: process.env.CODACY_API_TOKEN })
+  ```
+
+  Things to know:
+
+  - **Read only.** Every operation is a read. The plugin does not receive webhooks.
+  - **Naming a repository.** Repository and organization operations take `provider` (`gh` for GitHub, `gl` for GitLab, `bb` for Bitbucket), `organization_name` and `repository_name` as they appear on the Git provider, for example `gh` / `codacy` / `codacy-analysis-cli`.
+  - **Paging.** `organizations.list`, `repositories.list`, `tools.list` and `patterns.list` take `limit` (default 100) and `cursor`. Pass `pagination.cursor` from the response to get the next page; a response without a cursor is the last page.
+  - **Tool UUIDs.** `patterns.list` and `patterns.get` take a tool's `uuid` from `tools.list` or `analysis.getConfig`.
+  - **Rate limits.** On a 429 the plugin waits for Codacy's `Retry-After` and retries up to three times.
+  - **Not covered.** Issues, commits, pull requests, coverage, security findings and any write (repository settings, tool or pattern configuration).
+examples:
+  read:
+    path: repositories.list
+    title: List an organization's repositories
+    args:
+      provider: gh
+      organization_name: codacy
+      limit: 20
+dbExample:
+  entity: repositories
+  note: >-
+    `repositories.list` and `repositories.get` store each repository by
+    `<provider>/<owner>/<name>`. Organizations, tools, patterns and your
+    account are stored the same way; `analysis.getConfig` and
+    `repositories.languages` are not stored.
+  data:
+    owner: codacy
+  limit: 20
+apiExamples:
+  account.get: {}
+  organizations.list:
+    call: "{ provider: 'gh', limit: 20 }"
+  organizations.get:
+    call: "{ provider: 'gh', organization_name: 'codacy' }"
+  repositories.list:
+    call: "{ provider: 'gh', organization_name: 'codacy', search: 'analysis', limit: 20 }"
+  repositories.get:
+    call: "{ provider: 'gh', organization_name: 'codacy', repository_name: 'codacy-analysis-cli' }"
+  repositories.languages:
+    call: "{ provider: 'gh', organization_name: 'codacy', repository_name: 'codacy-analysis-cli' }"
+  analysis.getConfig:
+    call: "{ provider: 'gh', organization_name: 'codacy', repository_name: 'codacy-analysis-cli' }"
+  tools.list:
+    call: "{ limit: 100 }"
+  patterns.list:
+    call: "{ tool_uuid: 'f8b29663-2cb2-498d-b923-a10c6a8c05cd', enabled: true, limit: 50 }"
+  patterns.get:
+    call: "{ tool_uuid: 'f8b29663-2cb2-498d-b923-a10c6a8c05cd', pattern_id: 'ESLint8_accessor-pairs' }"

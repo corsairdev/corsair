@@ -1,0 +1,609 @@
+---
+title: API
+description: "API reference for Codacy: every `codacy.api.*` operation with input and output types."
+---
+
+Every `codacy.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get account details
+
+**Risk:** `read`
+
+```ts
+await corsair.codacy.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  mainEmail: string,
+  otherEmails: string[],
+  isAdmin: boolean,
+  isActive: boolean,
+  created: string,
+  intercomHash?: string,
+  zendeskHash?: string,
+  pylonHash?: string,
+  shouldDoClientQualification?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Analysis
+
+### getConfig
+
+`analysis.getConfig`
+
+Get repository analysis configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.codacy.api.analysis.getConfig({ provider: 'gh', organization_name: 'codacy', repository_name: 'codacy-analysis-cli' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | Git provider (e.g. gh, gl, bb) |
+| `organization_name` | `string` | Yes | Organization name on the Git provider |
+| `repository_name` | `string` | Yes | Repository name on the Git provider |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name: string,
+  isClientSide: boolean,
+  settings?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### get
+
+`organizations.get`
+
+Get organization
+
+**Risk:** `read`
+
+```ts
+await corsair.codacy.api.organizations.get({ provider: 'gh', organization_name: 'codacy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | Git provider (e.g. gh, gl, bb) |
+| `organization_name` | `string` | Yes | Organization name on the Git provider |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  organization: {
+    identifier?: number,
+    remoteIdentifier: string,
+    name: string,
+    avatar?: string,
+    created?: string,
+    provider: string,
+    joinMode?: string,
+    type?: string,
+    joinStatus?: string,
+    singleProviderLogin: boolean,
+    hasDastAccess: boolean,
+    hasScaEnabled: boolean,
+    imageSbomEnabled: boolean,
+    hasAiInventoryEnabled?: boolean,
+    hasFalsePositiveAccess?: boolean,
+    hasSilentFalsePositiveDetection?: boolean
+  },
+  membership?: {
+    userRole: string
+  },
+  analysisConfigurationMinimumPermission?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`organizations.list`
+
+List organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.codacy.api.organizations.list({ provider: 'gh', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | No | Restrict to a single Git provider (e.g. gh). Omit to list across providers. |
+| `cursor` | `string` | No | Pagination cursor from a previous response |
+| `limit` | `number` | No | Results per page (max 1000, default 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  identifier?: number,
+  remoteIdentifier: string,
+  name: string,
+  avatar?: string,
+  created?: string,
+  provider: string,
+  joinMode?: string,
+  type?: string,
+  joinStatus?: string,
+  singleProviderLogin: boolean,
+  hasDastAccess: boolean,
+  hasScaEnabled: boolean,
+  imageSbomEnabled: boolean,
+  hasAiInventoryEnabled?: boolean,
+  hasFalsePositiveAccess?: boolean,
+  hasSilentFalsePositiveDetection?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  cursor?: string,
+  limit?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Patterns
+
+### get
+
+`patterns.get`
+
+Get tool pattern
+
+**Risk:** `read`
+
+```ts
+await corsair.codacy.api.patterns.get({ tool_uuid: 'f8b29663-2cb2-498d-b923-a10c6a8c05cd', pattern_id: 'ESLint8_accessor-pairs' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool_uuid` | `string` | Yes | Tool UUID |
+| `pattern_id` | `string` | Yes | Pattern ID (unique per tool) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  category: string,
+  subCategory?: string,
+  level: string,
+  severityLevel: string,
+  description?: string,
+  explanation?: string,
+  enabled?: boolean,
+  languages?: string[],
+  timeToFix?: number,
+  parameters?: any,
+  rationale?: string,
+  solution?: string,
+  goodExamples?: string[],
+  badExamples?: string[],
+  tags?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`patterns.list`
+
+List tool patterns
+
+**Risk:** `read`
+
+```ts
+await corsair.codacy.api.patterns.list({ tool_uuid: 'f8b29663-2cb2-498d-b923-a10c6a8c05cd', enabled: true, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool_uuid` | `string` | Yes | Tool UUID |
+| `enabled` | `boolean` | No | true: only patterns on by default; false: only those off |
+| `cursor` | `string` | No | Pagination cursor from a previous response |
+| `limit` | `number` | No | Results per page (max 1000, default 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  category: string,
+  subCategory?: string,
+  level: string,
+  severityLevel: string,
+  description?: string,
+  explanation?: string,
+  enabled?: boolean,
+  languages?: string[],
+  timeToFix?: number,
+  parameters?: any,
+  rationale?: string,
+  solution?: string,
+  goodExamples?: string[],
+  badExamples?: string[],
+  tags?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  cursor?: string,
+  limit?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Repositories
+
+### get
+
+`repositories.get`
+
+Get repository
+
+**Risk:** `read`
+
+```ts
+await corsair.codacy.api.repositories.get({ provider: 'gh', organization_name: 'codacy', repository_name: 'codacy-analysis-cli' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | Git provider (e.g. gh, gl, bb) |
+| `organization_name` | `string` | Yes | Organization name on the Git provider |
+| `repository_name` | `string` | Yes | Repository name on the Git provider |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  repositoryId?: number,
+  provider: string,
+  owner: string,
+  name: string,
+  fullPath?: string,
+  visibility?: string,
+  remoteIdentifier?: string,
+  lastUpdated?: string,
+  permission?: string,
+  languages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### languages
+
+`repositories.languages`
+
+Get repository languages
+
+**Risk:** `read`
+
+```ts
+await corsair.codacy.api.repositories.languages({ provider: 'gh', organization_name: 'codacy', repository_name: 'codacy-analysis-cli' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | Git provider (e.g. gh, gl, bb) |
+| `organization_name` | `string` | Yes | Organization name on the Git provider |
+| `repository_name` | `string` | Yes | Repository name on the Git provider |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `languages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="languages full type">
+
+```ts
+{
+  name: string,
+  codacyDefaults: string[],
+  extensions: string[],
+  defaultFiles: string[],
+  enabled: boolean,
+  detected: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`repositories.list`
+
+List repositories
+
+**Risk:** `read`
+
+```ts
+await corsair.codacy.api.repositories.list({ provider: 'gh', organization_name: 'codacy', search: 'analysis', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | Git provider (e.g. gh, gl, bb) |
+| `organization_name` | `string` | Yes | Organization name on the Git provider |
+| `search` | `string` | No | Filter repositories by name |
+| `cursor` | `string` | No | Pagination cursor from a previous response |
+| `limit` | `number` | No | Results per page (max 1000, default 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  repositoryId?: number,
+  provider: string,
+  owner: string,
+  name: string,
+  fullPath?: string,
+  visibility?: string,
+  remoteIdentifier?: string,
+  lastUpdated?: string,
+  permission?: string,
+  languages?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  cursor?: string,
+  limit?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tools
+
+### list
+
+`tools.list`
+
+List analysis tools
+
+**Risk:** `read`
+
+```ts
+await corsair.codacy.api.tools.list({ limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Pagination cursor from a previous response |
+| `limit` | `number` | No | Results per page (max 1000, default 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name: string,
+  version?: string,
+  shortName?: string,
+  documentationUrl?: string,
+  sourceCodeUrl?: string,
+  prefix?: string,
+  needsCompilation?: boolean,
+  configurationFilenames?: string[],
+  description?: string,
+  dockerImage?: string,
+  languages?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  cursor?: string,
+  limit?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
