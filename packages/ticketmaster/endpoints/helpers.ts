@@ -3,9 +3,18 @@ import type { TicketmasterQuery } from '../client';
 import type { TicketmasterPage } from './types';
 
 /**
- * Builds the query string from an input. Arrays stay arrays: the shared HTTP
- * client sends them as repeated parameters, which is what Ticketmaster expects
- * for its list filters, and `undefined` keys are dropped there too.
+ * Builds the query string from an input.
+ *
+ * unknown: the input is one of the ten endpoint inputs, each with its own shape
+ * and its own subset of Ticketmaster's ~40 query parameters. A union of the ten
+ * would not help here — the helper's job is to copy whatever key the operation
+ * declares, and a generic over the input's keys would only re-derive that. The
+ * value type is not open: anything that is not a string, number, boolean or
+ * array of them is dropped, so no caller can smuggle an object into the query.
+ *
+ * Arrays stay arrays: the shared HTTP client sends them as repeated parameters,
+ * which is what Ticketmaster expects for its list filters, and `undefined` keys
+ * are dropped there too.
  */
 export function searchQuery(input: Record<string, unknown>): TicketmasterQuery {
 	const query: TicketmasterQuery = {};
