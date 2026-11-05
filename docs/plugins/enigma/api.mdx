@@ -38,7 +38,7 @@ await corsair.enigma.api.brands.get({ id: '5f1147ed-4d0e-4f36-a1d2-c2b3f2b1a9c4'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `brand` | `object` | No | — |
+| `brand` | `object \| null` | No | `null` when nothing matched. |
 
 <AccordionGroup>
 <Accordion title="brand full type">
@@ -108,7 +108,7 @@ await corsair.enigma.api.brands.get({ id: '5f1147ed-4d0e-4f36-a1d2-c2b3f2b1a9c4'
       endCursor?: string | null
     }
   }
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -140,6 +140,8 @@ await corsair.enigma.api.brands.match({ name: 'Starbucks', address: { state: 'WA
 | `address` | `object` | No | Address to narrow the match. |
 | `matchThreshold` | `number` | No | Confidence threshold between 0.0 and 1.0. |
 
+At least one of `name`, `website`, `phoneNumber` or `prompt` is required, and `prompt` cannot be combined with any of them or with `address`.
+
 <AccordionGroup>
 <Accordion title="address full type">
 
@@ -161,7 +163,7 @@ await corsair.enigma.api.brands.match({ name: 'Starbucks', address: { state: 'WA
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `brand` | `object` | No | — |
+| `brand` | `object \| null` | No | `null` when nothing matched. |
 
 <AccordionGroup>
 <Accordion title="brand full type">
@@ -185,7 +187,7 @@ await corsair.enigma.api.brands.match({ name: 'Starbucks', address: { state: 'WA
     periodStartDate?: string | null,
     periodEndDate?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -215,13 +217,15 @@ await corsair.enigma.api.legalEntities.get({ name: 'Starbucks Corporation' });
 | `id` | `string` | No | The legal entity ID. |
 | `name` | `string` | No | Legal entity name to match instead of an ID. |
 
+At least one of `id` or `name` is required. The `registeredEntities`, `addresses` and `brands` lists return their first page of up to three entries; each carries a `pageInfo` with `hasNextPage` when more exist.
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `legalEntity` | `object` | No | — |
+| `legalEntity` | `object \| null` | No | `null` when nothing matched. |
 
 <AccordionGroup>
 <Accordion title="legalEntity full type">
@@ -233,28 +237,46 @@ await corsair.enigma.api.legalEntities.get({ name: 'Starbucks Corporation' });
   names: string[],
   legalEntityType?: string | null,
   registeredEntities: {
-    name?: string | null,
-    registeredEntityType?: string | null,
-    formationDate?: string | null
-  }[],
+    items: {
+      name?: string | null,
+      registeredEntityType?: string | null,
+      formationDate?: string | null
+    }[],
+    pageInfo: {
+      hasNextPage?: boolean | null,
+      endCursor?: string | null
+    }
+  },
   addresses: {
-    fullAddress?: string | null,
-    streetAddress1?: string | null,
-    streetAddress2?: string | null,
-    city?: string | null,
-    state?: string | null,
-    zip?: string | null,
-    county?: string | null,
-    country?: string | null,
-    latitude?: number | null,
-    longitude?: number | null
-  }[],
+    items: {
+      fullAddress?: string | null,
+      streetAddress1?: string | null,
+      streetAddress2?: string | null,
+      city?: string | null,
+      state?: string | null,
+      zip?: string | null,
+      county?: string | null,
+      country?: string | null,
+      latitude?: number | null,
+      longitude?: number | null
+    }[],
+    pageInfo: {
+      hasNextPage?: boolean | null,
+      endCursor?: string | null
+    }
+  },
   brands: {
-    id: string,
-    enigmaId?: string | null,
-    names: string[]
-  }[]
-}
+    items: {
+      id: string,
+      enigmaId?: string | null,
+      names: string[]
+    }[],
+    pageInfo: {
+      hasNextPage?: boolean | null,
+      endCursor?: string | null
+    }
+  }
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -287,6 +309,8 @@ await corsair.enigma.api.locations.match({ name: 'Bluestone Lane', address: { ci
 | `address` | `object` | No | Address to match. |
 | `matchThreshold` | `number` | No | Confidence threshold between 0.0 and 1.0. |
 
+At least one of `name`, `website`, `phoneNumber` or `address` is required.
+
 <AccordionGroup>
 <Accordion title="address full type">
 
@@ -308,7 +332,7 @@ await corsair.enigma.api.locations.match({ name: 'Bluestone Lane', address: { ci
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `location` | `object` | No | — |
+| `location` | `object \| null` | No | `null` when nothing matched. |
 
 <AccordionGroup>
 <Accordion title="location full type">
@@ -337,7 +361,7 @@ await corsair.enigma.api.locations.match({ name: 'Bluestone Lane', address: { ci
     enigmaId?: string | null,
     names: string[]
   }[]
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
