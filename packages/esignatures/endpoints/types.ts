@@ -213,16 +213,46 @@ const ContractsCreateInputSchema = z.object({
 			'When yes, the contract is a draft until `contracts.sendDraft` sends it.',
 		),
 	placeholder_fields: z.array(PlaceholderFieldInputSchema).optional(),
+	signer_fields: z
+		.array(
+			z.object({
+				signer_field_id: z
+					.string()
+					.min(1)
+					.describe('The Signer field ID set in the template editor.'),
+				default_value: z
+					.string()
+					.optional()
+					.describe(
+						'Pre-filled value: 1 ticks a checkbox or radio button, dates are YYYY-mm-dd.',
+					),
+			}),
+		)
+		.optional()
+		.describe('Pre-fills Signer fields the signer completes.'),
 	emails: z
 		.object({
-			subject: z.string().optional(),
-			text: z.string().optional(),
-			cc_email_addresses: z.array(z.string()).optional(),
+			signature_request_subject: z.string().optional(),
+			signature_request_text: z
+				.string()
+				.optional()
+				.describe('Body of the sign request; __FULL_NAME__ is the signer.'),
+			final_contract_subject: z.string().optional(),
+			final_contract_text: z
+				.string()
+				.optional()
+				.describe(
+					'Body of the signed-contract email; __FULL_NAME__ is the signer.',
+				),
+			cc_email_addresses: z
+				.array(z.string())
+				.optional()
+				.describe('Addresses copied on the signed PDF.'),
 			reply_to: z.string().optional(),
 		})
 		.loose()
 		.optional()
-		.describe('Overrides for the sign request email.'),
+		.describe('Overrides for the sign request and signed-contract emails.'),
 	custom_branding: z
 		.object({
 			company_name: z.string().optional(),

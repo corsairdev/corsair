@@ -106,6 +106,29 @@ describe('contracts.create', () => {
 		);
 	});
 
+	it("forwards signer_fields and the docs' email override names", async () => {
+		respond(contractCreated);
+
+		const input = {
+			template_id: templateId,
+			signers: [{ name: 'Sam Signer', email: signer.email }],
+			signer_fields: [{ signer_field_id: 'city', default_value: 'Boston' }],
+			emails: {
+				signature_request_subject: 'Your document is ready to sign',
+				signature_request_text: 'Hi __FULL_NAME__, please sign.',
+				final_contract_subject: 'Your document is signed',
+				final_contract_text: 'Hi __FULL_NAME__, it is signed.',
+				cc_email_addresses: ['legal@tenants.example'],
+				reply_to: 'support@tenants.example',
+			},
+		};
+		await invoke(Contracts.create, input);
+
+		// A top-level key the schema does not know is stripped, so this pins
+		// that signer_fields reaches eSignatures with the email names intact.
+		expect(lastRequest().body).toEqual(input);
+	});
+
 	it('rejects a create without template_id before any request', async () => {
 		await expect(
 			invoke(Contracts.create, { signers: [{ name: 'Sam Signer' }] }),
