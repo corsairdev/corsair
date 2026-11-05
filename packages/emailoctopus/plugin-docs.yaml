@@ -59,7 +59,7 @@ apiExamples:
   tags.create:
     call: "{ list_id: '00000000-0000-0000-0000-000000000000', tag: 'vip' }"
   tags.update:
-    call: "{ list_id: '00000000-0000-0000-0000-000000000000', tag: 'vip' }"
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', tag: 'vip', name: 'customer' }"
   tags.delete:
     call: "{ list_id: '00000000-0000-0000-0000-000000000000', tag: 'vip' }"
   campaigns.list:

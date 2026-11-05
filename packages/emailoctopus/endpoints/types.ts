@@ -378,7 +378,8 @@ const TagsCreateInputSchema = z
 const TagsUpdateInputSchema = z
 	.object({
 		list_id: IdSchema,
-		tag: z.string().min(1),
+		tag: z.string().min(1).describe('Current tag name. Sent in the URL.'),
+		name: z.string().min(1).describe('Replacement tag name. Sent as body.tag.'),
 	})
 	.strict();
 const TagsDeleteInputSchema = FieldsDeleteInputSchema;

@@ -307,7 +307,8 @@ const emailOctopusEndpointMeta = {
 	},
 	'tags.update': {
 		riskLevel: 'write',
-		description: 'Update a tag on a list',
+		description:
+			'Rename a tag. The current name is the URL; the new name is the body',
 	},
 	'tags.delete': {
 		riskLevel: 'destructive',

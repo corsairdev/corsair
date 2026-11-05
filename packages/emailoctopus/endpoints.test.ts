@@ -292,11 +292,15 @@ describe('emailoctopus endpoints', () => {
 		});
 
 		respond(tag);
-		await invoke(Tags.update, { list_id: 'list-1', tag: 'vip' });
+		await invoke(Tags.update, {
+			list_id: 'list-1',
+			tag: 'vip',
+			name: 'customer',
+		});
 		expect(lastRequest()).toMatchObject({
 			method: 'PUT',
 			path: '/lists/list-1/tags/vip',
-			body: { tag: 'vip' },
+			body: { tag: 'customer' },
 		});
 
 		respondEmpty(204);

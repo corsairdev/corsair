@@ -1289,12 +1289,12 @@ await corsair.emailoctopus.api.tags.list({ list_id: '00000000-0000-0000-0000-000
 
 `tags.update`
 
-Update a tag on a list
+Rename a tag. The current name is the URL; the new name is the body
 
 **Risk:** `write`
 
 ```ts
-await corsair.emailoctopus.api.tags.update({ list_id: '00000000-0000-0000-0000-000000000000', tag: 'vip' });
+await corsair.emailoctopus.api.tags.update({ list_id: '00000000-0000-0000-0000-000000000000', tag: 'vip', name: 'customer' });
 ```
 
 **Input**
@@ -1302,7 +1302,8 @@ await corsair.emailoctopus.api.tags.update({ list_id: '00000000-0000-0000-0000-0
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `list_id` | `string` | Yes | — |
-| `tag` | `string` | Yes | — |
+| `tag` | `string` | Yes | Current tag name. Sent in the URL. |
+| `name` | `string` | Yes | Replacement tag name. Sent as body.tag. |
 
 
 

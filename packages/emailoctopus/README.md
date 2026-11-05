@@ -36,7 +36,7 @@ pnpm add @corsair-dev/emailoctopus
 | `tags.create` | `emailoctopus.api.tags.create` | `write` | Create a tag on a list |
 | `tags.delete` | `emailoctopus.api.tags.delete` | `destructive` | Permanently delete a tag from a list |
 | `tags.list` | `emailoctopus.api.tags.list` | `read` | List the tags on a list |
-| `tags.update` | `emailoctopus.api.tags.update` | `write` | Update a tag on a list |
+| `tags.update` | `emailoctopus.api.tags.update` | `write` | Rename a tag. The current name is the URL; the new name is the body |
 
 ## Auth
 

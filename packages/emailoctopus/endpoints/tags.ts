@@ -50,12 +50,18 @@ export const update: EmailOctopusEndpoints['tagsUpdate'] = (ctx, input) =>
 			output: Outputs.tagsUpdate,
 		},
 		input,
-		({ list_id, tag }) => ({
+		({ list_id, tag, name }) => ({
 			method: 'PUT',
 			path: `/lists/${segment(list_id)}/tags/${segment(tag)}`,
-			body: { tag },
+			body: { tag: name },
 		}),
-		{ log: ({ list_id, tag }) => ({ listId: list_id, tag }) },
+		{
+			log: ({ list_id, tag, name }) => ({
+				listId: list_id,
+				tag,
+				name,
+			}),
+		},
 	);
 
 export const remove: EmailOctopusEndpoints['tagsDelete'] = (ctx, input) =>
