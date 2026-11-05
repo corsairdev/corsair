@@ -156,6 +156,9 @@ describe('TurbotPipes endpoint coverage', () => {
 					const data = rows.get(id);
 					return data ? { entity_id: id, data } : null;
 				}),
+				deleteByEntityId: jest.fn(async (id: string) => {
+					rows.delete(id);
+				}),
 			};
 			return { rows, table };
 		};
@@ -311,6 +314,9 @@ describe('TurbotPipes endpoint coverage', () => {
 
 		it('a list already in flight cannot bring back a record deleted meanwhile', async () => {
 			const rows = new Map<string, Record<string, unknown>>();
+			// w_2 is stored without `state`, so the list below queues a write
+			// for it (filling the gap) before the delete runs.
+			rows.set('w_2', { id: 'w_2', handle: 'two' });
 			const { table } = memoryStore(rows);
 			const ctx = {
 				...createMockContext(),
@@ -330,17 +336,21 @@ describe('TurbotPipes endpoint coverage', () => {
 			mockRequest.mockResolvedValueOnce({
 				items: [
 					{ id: 'w_1', handle: 'one' },
-					{ id: 'w_2', handle: 'two' },
+					{ id: 'w_2', handle: 'two', state: 'running' },
 				],
 			});
 			await UsersEndpoints.listUserWorkspaces(ctx, { user_handle: 'bob' });
 			await new Promise((resolve) => setTimeout(resolve, 0));
 
 			await removeLocalEntity(ctx, 'workspace', { id: 'w_2' });
+			expect(table.deleteByEntityId).toHaveBeenCalledWith('w_2');
+			expect(rows.has('w_2')).toBe(false);
+
 			releaseFirst();
 			await new Promise((resolve) => setTimeout(resolve, 10));
 
 			expect(rows.has('w_1')).toBe(true);
+			// The list that was in flight did not bring w_2 back.
 			expect(rows.has('w_2')).toBe(false);
 
 			// A detail fetch is authoritative and stores the record again.
