@@ -15,9 +15,9 @@ jest.mock('./client', () => {
 import { makeRecallaiRequest } from './client';
 
 describe('Recall.ai schema', () => {
-	it('declares a semver version and workspace entity', () => {
+	it('declares a semver version and stores no local entities', () => {
 		expect(RecallaiSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
-		expect(RecallaiSchema.entities.recallaiWorkspace).toBeDefined();
+		expect(RecallaiSchema.entities).toEqual({});
 	});
 
 	it('registers every implemented operation with executable contracts', () => {
