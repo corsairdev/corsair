@@ -10,9 +10,11 @@ export const ENIGMA_API_URL = 'https://api.enigma.com/graphql';
 
 export type EnigmaGraphQLRequest = {
 	query: string;
+	// unknown: GraphQL variables are arbitrary JSON per query.
 	variables?: Record<string, unknown>;
 };
 
+// unknown: error bodies are the GraphQL errors array, a REST body, or HTML.
 function readMessage(body: unknown): string | undefined {
 	const record = asRecord(body);
 	const errors = Array.isArray(record?.errors) ? record.errors : undefined;
@@ -32,6 +34,7 @@ function readMessage(body: unknown): string | undefined {
 
 export function describeEnigmaError(
 	status: number | undefined,
+	// unknown: any error body shape until readMessage narrows it.
 	body: unknown,
 	fallback: string,
 ): string {
@@ -133,6 +136,14 @@ export async function makeEnigmaRequest(
 // unknown: search returns [SearchUnion]; the endpoint picks the typed entity.
 export function firstSearchResult(data: unknown): unknown {
 	const record = asRecord(data);
-	const search = Array.isArray(record?.search) ? record.search : [];
+	const search = record?.search;
+	if (!Array.isArray(search)) {
+		throw new EnigmaAPIError(
+			'Enigma: search field is missing or not an array',
+			{
+				body: data,
+			},
+		);
+	}
 	return search.find((entry) => entry !== null && entry !== undefined) ?? null;
 }

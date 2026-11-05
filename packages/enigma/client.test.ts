@@ -7,7 +7,6 @@ import {
 import {
 	badKeyResponse,
 	graphQLErrorResponse,
-	noMatchResponse,
 	searchResponse,
 } from './test-fixtures';
 
@@ -162,10 +161,19 @@ describe('describeEnigmaError', () => {
 
 describe('firstSearchResult', () => {
 	it('returns the first non-null union member', () => {
-		expect(firstSearchResult(noMatchResponse)).toBeNull();
+		expect(firstSearchResult({ search: [] })).toBeNull();
 		expect(firstSearchResult({ search: [null] })).toBeNull();
 		expect(firstSearchResult({ search: [null, { id: 'a' }] })).toEqual({
 			id: 'a',
 		});
+	});
+
+	it.each([
+		['missing', {}],
+		['null', { search: null }],
+		['not a list', { search: { id: 'a' } }],
+	])('rejects a search field that is %s', (_name, data) => {
+		expect(() => firstSearchResult(data)).toThrow(EnigmaAPIError);
+		expect(() => firstSearchResult(data)).toThrow(/not an array/);
 	});
 });
