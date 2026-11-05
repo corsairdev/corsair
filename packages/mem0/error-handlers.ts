@@ -38,8 +38,10 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400, 409 and 422: a rejected body, a missing entity ID in filters, or an
-	// unfiltered delete. 404 means an unknown memory or event.
+	// 400, 409 and 422: a rejected body or a missing entity ID in filters.
+	// 409 also covers a write that collides with existing content, such as an
+	// update whose text duplicates another memory, so a retry sends the same
+	// request. 404 means an unknown memory or event.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
