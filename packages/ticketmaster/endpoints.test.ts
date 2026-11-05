@@ -192,6 +192,21 @@ describe('events.search', () => {
 		});
 	});
 
+	it('rejects a malformed collection instead of reporting no results', async () => {
+		// A present but non-array `events` is a broken payload. Coercing it to []
+		// would say "nothing matched", which is a different claim than "the
+		// response was wrong", so the output schema must reject it.
+		respond({
+			_embedded: { events: { not: 'an array' } },
+			page: { size: 20, totalElements: 0, totalPages: 0, number: 0 },
+		});
+
+		await expect(invoke(Events.search, {})).rejects.toMatchObject({
+			name: 'ZodError',
+		});
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
 	it('keeps the fields and statuses it does not know', async () => {
 		respond({
 			...eventsSearchResponse,

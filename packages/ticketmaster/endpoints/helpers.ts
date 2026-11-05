@@ -47,9 +47,18 @@ export function readPage(raw: unknown): TicketmasterPage | undefined {
  * Ticketmaster omits `_embedded` entirely when a page has no results, including
  * the last page of a set whose `page.totalPages` counts one too many. The
  * official JavaScript SDK hit exactly that (sdk-javascript issue #25: a 200 with
- * no `_embedded` key), so a missing block is an empty list, not a parse failure.
+ * no `_embedded` key), so an absent collection is an empty list.
+ *
+ * A collection that is *present* but not an array is a malformed response, and
+ * is returned as-is: turning it into `[]` would report "no results" for a
+ * broken payload. The caller's output schema rejects it.
+ *
+ * Returns `unknown` because the value is whatever the provider sent under that
+ * key; the endpoint's output schema is what validates it, which is the point of
+ * passing it through instead of coercing it here.
  */
-export function readEmbedded(raw: unknown, collection: string): unknown[] {
-	const embedded = asRecord(asRecord(raw)?._embedded)?.[collection];
-	return Array.isArray(embedded) ? embedded : [];
+export function readEmbedded(raw: unknown, collection: string): unknown {
+	const embedded = asRecord(asRecord(raw)?._embedded);
+	if (!embedded || !(collection in embedded)) return [];
+	return embedded[collection];
 }
