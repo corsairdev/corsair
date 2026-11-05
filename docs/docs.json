@@ -32,6 +32,7 @@
               "introduction",
               "quick-start",
               "cloud/overview",
+              "cloud/mcp",
               {
                 "group": "Use cases",
                 "pages": [
@@ -449,6 +450,14 @@
                   "plugins/anthropicadministrator/overview",
                   "plugins/anthropicadministrator/api",
                   "plugins/anthropicadministrator/database"
+                ]
+              },
+              {
+                "group": "AnyAPI",
+                "pages": [
+                  "plugins/anyapi/overview",
+                  "plugins/anyapi/api",
+                  "plugins/anyapi/database"
                 ]
               },
               {
@@ -972,6 +981,14 @@
                 ]
               },
               {
+                "group": "Browser Use",
+                "pages": [
+                  "plugins/browseruse/overview",
+                  "plugins/browseruse/api",
+                  "plugins/browseruse/database"
+                ]
+              },
+              {
                 "group": "Browserless",
                 "pages": [
                   "plugins/browserless/overview",
@@ -1274,7 +1291,7 @@
                 ]
               },
               {
-                "group": "Clickup",
+                "group": "ClickUp",
                 "pages": [
                   "plugins/clickup/overview",
                   "plugins/clickup/api",
@@ -1347,6 +1364,14 @@
                   "plugins/cloudinary/api",
                   "plugins/cloudinary/database",
                   "plugins/cloudinary/webhooks"
+                ]
+              },
+              {
+                "group": "Coassemble",
+                "pages": [
+                  "plugins/coassemble/overview",
+                  "plugins/coassemble/api",
+                  "plugins/coassemble/database"
                 ]
               },
               {
@@ -1440,19 +1465,19 @@
                 ]
               },
               {
+                "group": "Context.dev",
+                "pages": [
+                  "plugins/contextdev/overview",
+                  "plugins/contextdev/api",
+                  "plugins/contextdev/database"
+                ]
+              },
+              {
                 "group": "Context7",
                 "pages": [
                   "plugins/contextsevenmcp/overview",
                   "plugins/contextsevenmcp/api",
                   "plugins/contextsevenmcp/database"
-                ]
-              },
-              {
-                "group": "ContextDev",
-                "pages": [
-                  "plugins/contextdev/overview",
-                  "plugins/contextdev/api",
-                  "plugins/contextdev/database"
                 ]
               },
               {
@@ -1836,6 +1861,14 @@
                 ]
               },
               {
+                "group": "FinerWorks",
+                "pages": [
+                  "plugins/finerworks/overview",
+                  "plugins/finerworks/api",
+                  "plugins/finerworks/database"
+                ]
+              },
+              {
                 "group": "Firecrawl",
                 "pages": [
                   "plugins/firecrawl/overview",
@@ -1945,6 +1978,14 @@
                   "plugins/gmail/api",
                   "plugins/gmail/database",
                   "plugins/gmail/webhooks"
+                ]
+              },
+              {
+                "group": "GMI Cloud",
+                "pages": [
+                  "plugins/gmicloud/overview",
+                  "plugins/gmicloud/api",
+                  "plugins/gmicloud/database"
                 ]
               },
               {
@@ -2196,6 +2237,15 @@
                   "plugins/instagram/api",
                   "plugins/instagram/database",
                   "plugins/instagram/webhooks"
+                ]
+              },
+              {
+                "group": "Instantly",
+                "pages": [
+                  "plugins/instantly/overview",
+                  "plugins/instantly/api",
+                  "plugins/instantly/database",
+                  "plugins/instantly/webhooks"
                 ]
               },
               {
@@ -2875,7 +2925,7 @@
                 ]
               },
               {
-                "group": "Spoki integration for Corsair",
+                "group": "Spoki",
                 "pages": [
                   "plugins/spoki/overview",
                   "plugins/spoki/api",
@@ -3020,6 +3070,14 @@
                 ]
               },
               {
+                "group": "TikHub",
+                "pages": [
+                  "plugins/tikhub/overview",
+                  "plugins/tikhub/api",
+                  "plugins/tikhub/database"
+                ]
+              },
+              {
                 "group": "TimeCamp",
                 "pages": [
                   "plugins/timecamp/overview",
@@ -3121,6 +3179,14 @@
                 ]
               },
               {
+                "group": "Turbot Pipes",
+                "pages": [
+                  "plugins/turbotpipes/overview",
+                  "plugins/turbotpipes/api",
+                  "plugins/turbotpipes/database"
+                ]
+              },
+              {
                 "group": "Turso",
                 "pages": [
                   "plugins/turso/overview",
@@ -3174,12 +3240,29 @@
                 ]
               },
               {
+                "group": "TypeSafe",
+                "pages": [
+                  "plugins/typesafe/overview",
+                  "plugins/typesafe/api",
+                  "plugins/typesafe/database"
+                ]
+              },
+              {
                 "group": "UniOne",
                 "pages": [
                   "plugins/unione/overview",
                   "plugins/unione/api",
                   "plugins/unione/database",
                   "plugins/unione/webhooks"
+                ]
+              },
+              {
+                "group": "Unipile",
+                "pages": [
+                  "plugins/unipile/overview",
+                  "plugins/unipile/api",
+                  "plugins/unipile/database",
+                  "plugins/unipile/webhooks"
                 ]
               },
               {
@@ -3348,6 +3431,14 @@
                 ]
               },
               {
+                "group": "Woodpecker Co",
+                "pages": [
+                  "plugins/woodpeckerco/overview",
+                  "plugins/woodpeckerco/api",
+                  "plugins/woodpeckerco/database"
+                ]
+              },
+              {
                 "group": "Workday",
                 "pages": [
                   "plugins/workday/overview",
@@ -3445,6 +3536,14 @@
                   "plugins/zohobigin/overview",
                   "plugins/zohobigin/api",
                   "plugins/zohobigin/database"
+                ]
+              },
+              {
+                "group": "Zoho Desk",
+                "pages": [
+                  "plugins/zohodesk/overview",
+                  "plugins/zohodesk/api",
+                  "plugins/zohodesk/database"
                 ]
               },
               {

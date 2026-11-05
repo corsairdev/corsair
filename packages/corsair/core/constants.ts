@@ -49,6 +49,7 @@ export const BaseProviders = [
 	'anchorbrowser',
 	'anonyflow',
 	'anthropicadministrator',
+	'anyapi',
 	'apaleo',
 	'api2pdf',
 	'apibible',
@@ -116,6 +117,7 @@ export const BaseProviders = [
 	'builtwith',
 	'browserless',
 	'browsertool',
+	'browseruse',
 	'bubble',
 	'bugsnag',
 	'buildkite',
@@ -211,6 +213,7 @@ export const BaseProviders = [
 	'epicgames',
 	'everhour',
 	'exa',
+	'excel',
 	'exist',
 	'extractaai',
 	'facebook',
@@ -218,6 +221,7 @@ export const BaseProviders = [
 	'figma',
 	'filevine',
 	'filloutforms',
+	'finerworks',
 	'firecrawl',
 	'fireflies',
 	'fixer',
@@ -231,6 +235,7 @@ export const BaseProviders = [
 	'gitlab',
 	'gladia',
 	'gmail',
+	'gmicloud',
 	'googleaddressvalidation',
 	'googleanalytics',
 	'googlebigquery',
@@ -261,6 +266,7 @@ export const BaseProviders = [
 	'imgbb',
 	'insightoai',
 	'instagram',
+	'instantly',
 	'intercom',
 	'jigsawstack',
 	'jira',
@@ -362,6 +368,7 @@ export const BaseProviders = [
 	'telegram',
 	'textrazor',
 	'ticktick',
+	'tikhub',
 	'timecamp',
 	'timelink',
 	'tinypng',
@@ -374,6 +381,7 @@ export const BaseProviders = [
 	'tpscheck',
 	'trello',
 	'tripadvisor',
+	'turbotpipes',
 	'turso',
 	'twentyonerisk',
 	'twilio',
@@ -381,7 +389,9 @@ export const BaseProviders = [
 	'twitterapiio',
 	'twochat',
 	'typeform',
+	'typesafe',
 	'unione',
+	'unipile',
 	'uniswapapi',
 	'updownio',
 	'uploadcare',
@@ -402,6 +412,7 @@ export const BaseProviders = [
 	'witai',
 	'wix',
 	'wiza',
+	'woodpeckerco',
 	'workday',
 	'workiom',
 	'worldnewsapi',
@@ -413,6 +424,7 @@ export const BaseProviders = [
 	'zendesk',
 	'zenserp',
 	'zohobigin',
+	'zohodesk',
 	'zohoinventory',
 	'zohomail',
 	'zoom',
@@ -456,6 +468,7 @@ export const ProviderDisplayNames = {
 	anchorbrowser: 'Anchor Browser',
 	anonyflow: 'Anonyflow',
 	anthropicadministrator: 'Anthropic Administrator',
+	anyapi: 'AnyAPI',
 	apaleo: 'Apaleo',
 	api2pdf: 'API2PDF',
 	apibible: 'API.Bible',
@@ -523,6 +536,7 @@ export const ProviderDisplayNames = {
 	builtwith: 'BuiltWith',
 	browserless: 'Browserless',
 	browsertool: 'Browser Tool',
+	browseruse: 'Browser Use',
 	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
@@ -618,6 +632,7 @@ export const ProviderDisplayNames = {
 	epicgames: 'Epic Games',
 	everhour: 'Everhour',
 	exa: 'Exa',
+	excel: 'Excel',
 	exist: 'Exist',
 	extractaai: 'Extracta.ai',
 	facebook: 'Facebook',
@@ -625,6 +640,7 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
+	finerworks: 'FinerWorks',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	fixer: 'Fixer',
@@ -638,6 +654,7 @@ export const ProviderDisplayNames = {
 	gitlab: 'GitLab',
 	gladia: 'Gladia',
 	gmail: 'Gmail',
+	gmicloud: 'GMI Cloud',
 	googleaddressvalidation: 'Google Address Validation',
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
@@ -668,6 +685,7 @@ export const ProviderDisplayNames = {
 	imgbb: 'ImgBB',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
+	instantly: 'Instantly',
 	intercom: 'Intercom',
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
@@ -768,6 +786,7 @@ export const ProviderDisplayNames = {
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
+	tikhub: 'TikHub',
 	timecamp: 'TimeCamp',
 	timelink: 'Timelink',
 	tinypng: 'TinyPNG',
@@ -780,6 +799,7 @@ export const ProviderDisplayNames = {
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
 	tripadvisor: 'Tripadvisor',
+	turbotpipes: 'Turbot Pipes',
 	turso: 'Turso',
 	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
@@ -787,7 +807,9 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
+	typesafe: 'TypeSafe',
 	unione: 'Unione',
+	unipile: 'Unipile',
 	uniswapapi: 'Uniswap',
 	updownio: 'Updown.io',
 	uploadcare: 'Uploadcare',
@@ -808,6 +830,7 @@ export const ProviderDisplayNames = {
 	witai: 'WitAi',
 	wix: 'Wix',
 	wiza: 'Wiza',
+	woodpeckerco: 'Woodpecker Co',
 	workday: 'Workday',
 	workiom: 'Workiom',
 	worldnewsapi: 'World News API',
@@ -819,6 +842,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zenserp: 'Zenserp',
 	zohobigin: 'Zoho Bigin',
+	zohodesk: 'Zoho Desk',
 	zohoinventory: 'Zoho Inventory',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
@@ -869,6 +893,7 @@ export type AllProviders =
 	| 'anchorbrowser'
 	| 'anonyflow'
 	| 'anthropicadministrator'
+	| 'anyapi'
 	| 'apaleo'
 	| 'api2pdf'
 	| 'apibible'
@@ -935,6 +960,7 @@ export type AllProviders =
 	| 'browseai'
 	| 'browserless'
 	| 'browsertool'
+	| 'browseruse'
 	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
@@ -1030,6 +1056,7 @@ export type AllProviders =
 	| 'epicgames'
 	| 'everhour'
 	| 'exa'
+	| 'excel'
 	| 'exist'
 	| 'extractaai'
 	| 'facebook'
@@ -1037,6 +1064,7 @@ export type AllProviders =
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
+	| 'finerworks'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'fixer'
@@ -1050,6 +1078,7 @@ export type AllProviders =
 	| 'gitlab'
 	| 'gladia'
 	| 'gmail'
+	| 'gmicloud'
 	| 'googleaddressvalidation'
 	| 'googleanalytics'
 	| 'googlebigquery'
@@ -1080,6 +1109,7 @@ export type AllProviders =
 	| 'imgbb'
 	| 'insightoai'
 	| 'instagram'
+	| 'instantly'
 	| 'intercom'
 	| 'jigsawstack'
 	| 'jira'
@@ -1181,6 +1211,7 @@ export type AllProviders =
 	| 'telegram'
 	| 'textrazor'
 	| 'ticktick'
+	| 'tikhub'
 	| 'timecamp'
 	| 'timelink'
 	| 'tinypng'
@@ -1193,6 +1224,7 @@ export type AllProviders =
 	| 'tpscheck'
 	| 'trello'
 	| 'tripadvisor'
+	| 'turbotpipes'
 	| 'turso'
 	| 'twentyonerisk'
 	| 'twilio'
@@ -1200,7 +1232,9 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'twochat'
 	| 'typeform'
+	| 'typesafe'
 	| 'unione'
+	| 'unipile'
 	| 'uniswapapi'
 	| 'updownio'
 	| 'uploadcare'
@@ -1221,6 +1255,7 @@ export type AllProviders =
 	| 'witai'
 	| 'wix'
 	| 'wiza'
+	| 'woodpeckerco'
 	| 'workday'
 	| 'workiom'
 	| 'worldnewsapi'
@@ -1232,6 +1267,7 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zenserp'
 	| 'zohobigin'
+	| 'zohodesk'
 	| 'zohoinventory'
 	| 'zohomail'
 	| 'zoom'
