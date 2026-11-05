@@ -41,7 +41,7 @@ const PATTERN = {
 	id: 'accessor-pairs',
 	category: 'Best Practices',
 	level: 'Warning',
-	severityLevel: 'medium',
+	severityLevel: 'Warning',
 };
 
 function makeCtx() {
@@ -341,7 +341,6 @@ describe('pattern handlers', () => {
 					cursor: undefined,
 					limit: undefined,
 					enabled: true,
-					search: undefined,
 				},
 			},
 		);

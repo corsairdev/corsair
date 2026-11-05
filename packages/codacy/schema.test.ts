@@ -93,7 +93,7 @@ describe('Codacy schema', () => {
 			id: 'accessor-pairs',
 			category: 'Best Practices',
 			level: 'Warning',
-			severityLevel: 'medium',
+			severityLevel: 'Warning',
 		};
 		expect(() => CodacyPattern.parse(pattern)).not.toThrow();
 	});

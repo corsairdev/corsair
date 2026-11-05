@@ -30,7 +30,7 @@ const PATTERN = {
 	id: 'accessor-pairs',
 	category: 'Best Practices',
 	level: 'Warning',
-	severityLevel: 'medium',
+	severityLevel: 'Warning',
 };
 
 describe('runtime output validation rejects malformed provider responses', () => {

@@ -19,12 +19,12 @@ export const list: CodacyEndpoints['patternList'] = async (
 	input: CodacyEndpointInputs['patternList'],
 ): Promise<CodacyEndpointOutputs['patternList']> => {
 	const token = await getCodacyCredentials(ctx);
-	const { tool_uuid, cursor, limit, enabled, search } = input;
+	const { tool_uuid, cursor, limit, enabled } = input;
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['patternList']
 	>(`/tools/${encodeURIComponent(tool_uuid)}/patterns`, token, {
-		query: { cursor, limit, enabled, search },
+		query: { cursor, limit, enabled },
 	});
 
 	const parsed = PatternListOutputSchema.parse(response);

@@ -321,9 +321,11 @@ export const CodacyPatternSchema = z
 		category: z.string(),
 		subCategory: z.string().optional(),
 		level: z.string(),
-		// any/unknown: severity level representation varies across API
-		// versions; accepted as-is so new shapes don't break validation.
-		severityLevel: z.unknown(),
+		// A string rather than an enum so a level Codacy adds later
+		// doesn't fail validation.
+		severityLevel: z
+			.string()
+			.describe('Info, Warning, High or Error (Minor to Critical in the UI)'),
 		description: z.string().optional(),
 		explanation: z.string().optional(),
 		enabled: z.boolean().optional(),
@@ -347,8 +349,10 @@ export type CodacyPattern = z.infer<typeof CodacyPatternSchema>;
 export const PatternListInputSchema = z
 	.object({
 		tool_uuid: z.string().min(1).describe('Tool UUID'),
-		enabled: z.boolean().optional().describe('Filter by enabled status'),
-		search: z.string().optional().describe('Filter patterns by search text'),
+		enabled: z
+			.boolean()
+			.optional()
+			.describe('true: only patterns on by default; false: only those off'),
 	})
 	.merge(CursorPaginationInputSchema);
 
