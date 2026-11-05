@@ -407,3 +407,19 @@ export type CodacyEndpointOutputs = {
 		(typeof CodacyEndpointOutputSchemas)[K]
 	>;
 };
+
+/**
+ * Validates an endpoint's input against its zod schema before any request.
+ * Corsair hands caller arguments straight to the handler (registering a
+ * schema in `endpointSchemas` does not check direct calls), so each handler
+ * enforces its own contract. A missing argument counts as `{}`, so
+ * operations whose fields are all optional can be called with no argument.
+ */
+export function parseEndpointInput<SchemaT extends z.ZodType>(
+	schema: SchemaT,
+	// unknown: the caller's raw argument; parsing against the schema is
+	// what gives it a type.
+	input: unknown,
+): z.output<SchemaT> {
+	return schema.parse(input ?? {});
+}

@@ -6,7 +6,11 @@ import type {
 	CodacyEndpointOutputs,
 	CodacyEndpoints,
 } from '../index';
-import { AnalysisConfigGetOutputSchema } from './types';
+import {
+	AnalysisConfigGetInputSchema,
+	AnalysisConfigGetOutputSchema,
+	parseEndpointInput,
+} from './types';
 
 /**
  * Get the analysis tools settings of a repository (the repository's
@@ -20,8 +24,11 @@ export const getConfig: CodacyEndpoints['analysisConfigGet'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['analysisConfigGet'],
 ): Promise<CodacyEndpointOutputs['analysisConfigGet']> => {
+	const { provider, organization_name, repository_name } = parseEndpointInput(
+		AnalysisConfigGetInputSchema,
+		input,
+	);
 	const token = await getCodacyCredentials(ctx);
-	const { provider, organization_name, repository_name } = input;
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['analysisConfigGet']

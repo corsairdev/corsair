@@ -6,7 +6,11 @@ import type {
 	CodacyEndpointOutputs,
 	CodacyEndpoints,
 } from '../index';
-import { AccountGetOutputSchema } from './types';
+import {
+	AccountGetInputSchema,
+	AccountGetOutputSchema,
+	parseEndpointInput,
+} from './types';
 
 /**
  * Get the authenticated user's account details.
@@ -18,6 +22,7 @@ export const get: CodacyEndpoints['accountGet'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['accountGet'],
 ): Promise<CodacyEndpointOutputs['accountGet']> => {
+	const valid = parseEndpointInput(AccountGetInputSchema, input);
 	const token = await getCodacyCredentials(ctx);
 
 	const response = await makeCodacyRequest<CodacyEndpointOutputs['accountGet']>(
@@ -40,7 +45,7 @@ export const get: CodacyEndpoints['accountGet'] = async (
 	await logEventFromContext(
 		ctx,
 		'codacy.account.get',
-		{ ...input },
+		{ ...valid },
 		'completed',
 	);
 	return parsed;

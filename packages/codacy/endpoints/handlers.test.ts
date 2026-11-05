@@ -65,6 +65,7 @@ function makeCtx() {
 }
 
 beforeEach(() => {
+	mockGetCredentials.mockClear();
 	mockGetCredentials.mockResolvedValue('test-token');
 	mockRequest.mockReset();
 });
@@ -369,5 +370,78 @@ describe('pattern handlers', () => {
 			`${TOOL.uuid}/accessor-pairs`,
 			expect.objectContaining({ id: 'accessor-pairs' }),
 		);
+	});
+});
+
+describe('input validation runs before any request', () => {
+	const UUID = TOOL.uuid;
+	const REPO = {
+		provider: 'gh',
+		organization_name: 'test-org',
+		repository_name: 'test-repo',
+	};
+	// Each case is an argument the operation's schema rejects; the handler
+	// must throw before it calls Codacy. unknown: the cases are deliberately
+	// the wrong shape, including a non-object.
+	const cases: Array<[keyof typeof Endpoints, unknown]> = [
+		['accountGet', 'not-an-object'],
+		['organizationList', { limit: 0 }],
+		['organizationGet', { provider: 'gh' }],
+		['repositoryList', { provider: 'gh', organization_name: '' }],
+		['repositoryGet', { provider: 'gh', organization_name: 'test-org' }],
+		['repositoryLanguages', { ...REPO, repository_name: 42 }],
+		['analysisConfigGet', { provider: 'gh', repository_name: 'test-repo' }],
+		['toolList', { limit: 5000 }],
+		['patternList', { tool_uuid: UUID, enabled: 'yes' }],
+		['patternGet', { tool_uuid: UUID }],
+	];
+
+	it.each(cases)('%s rejects %j without calling Codacy', async (name, args) => {
+		const { ctx } = makeCtx();
+		// Cast: each case is deliberately the wrong shape for its operation.
+		const handler = Endpoints[name] as (
+			c: CodacyContext,
+			input: unknown,
+		) => Promise<unknown>;
+
+		await expect(handler(ctx, args)).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+		expect(mockGetCredentials).not.toHaveBeenCalled();
+	});
+
+	it('treats a missing argument as {} for operations without required fields', async () => {
+		const { ctx } = makeCtx();
+		mockRequest.mockResolvedValueOnce({ data: [TOOL] });
+		// Cast: callers may omit the argument entirely at runtime. unknown:
+		// the missing argument has no type of its own.
+		const listTools = Endpoints.toolList as (
+			c: CodacyContext,
+			input?: unknown,
+		) => ReturnType<typeof Endpoints.toolList>;
+
+		const result = await listTools(ctx);
+
+		expect(result.data).toHaveLength(1);
+		expect(mockRequest).toHaveBeenCalledWith('/tools', 'test-token', {
+			query: { cursor: undefined, limit: undefined },
+		});
+	});
+
+	it('drops keys the schema does not define before building the request', async () => {
+		const { ctx } = makeCtx();
+		mockRequest.mockResolvedValueOnce({ data: [TOOL] });
+
+		// Cast: page_size is not part of the input type; it must not reach
+		// Codacy.
+		const listTools = Endpoints.toolList as (
+			c: CodacyContext,
+			input: { limit: number; page_size: number },
+		) => ReturnType<typeof Endpoints.toolList>;
+
+		await listTools(ctx, { limit: 5, page_size: 50 });
+
+		expect(mockRequest).toHaveBeenCalledWith('/tools', 'test-token', {
+			query: { cursor: undefined, limit: 5 },
+		});
 	});
 });

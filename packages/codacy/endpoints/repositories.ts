@@ -7,8 +7,12 @@ import type {
 	CodacyEndpoints,
 } from '../index';
 import {
+	parseEndpointInput,
+	RepositoryGetInputSchema,
 	RepositoryGetOutputSchema,
+	RepositoryLanguagesInputSchema,
 	RepositoryLanguagesOutputSchema,
+	RepositoryListInputSchema,
 	RepositoryListOutputSchema,
 } from './types';
 
@@ -39,8 +43,9 @@ export const list: CodacyEndpoints['repositoryList'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['repositoryList'],
 ): Promise<CodacyEndpointOutputs['repositoryList']> => {
+	const valid = parseEndpointInput(RepositoryListInputSchema, input);
 	const token = await getCodacyCredentials(ctx);
-	const { provider, organization_name, cursor, limit, search } = input;
+	const { provider, organization_name, cursor, limit, search } = valid;
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['repositoryList']
@@ -68,7 +73,7 @@ export const list: CodacyEndpoints['repositoryList'] = async (
 	await logEventFromContext(
 		ctx,
 		'codacy.repositories.list',
-		{ ...input },
+		{ ...valid },
 		'completed',
 	);
 	return parsed;
@@ -85,8 +90,11 @@ export const get: CodacyEndpoints['repositoryGet'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['repositoryGet'],
 ): Promise<CodacyEndpointOutputs['repositoryGet']> => {
+	const { provider, organization_name, repository_name } = parseEndpointInput(
+		RepositoryGetInputSchema,
+		input,
+	);
 	const token = await getCodacyCredentials(ctx);
-	const { provider, organization_name, repository_name } = input;
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['repositoryGet']
@@ -126,8 +134,11 @@ export const languages: CodacyEndpoints['repositoryLanguages'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['repositoryLanguages'],
 ): Promise<CodacyEndpointOutputs['repositoryLanguages']> => {
+	const { provider, organization_name, repository_name } = parseEndpointInput(
+		RepositoryLanguagesInputSchema,
+		input,
+	);
 	const token = await getCodacyCredentials(ctx);
-	const { provider, organization_name, repository_name } = input;
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['repositoryLanguages']

@@ -6,7 +6,11 @@ import type {
 	CodacyEndpointOutputs,
 	CodacyEndpoints,
 } from '../index';
-import { ToolListOutputSchema } from './types';
+import {
+	parseEndpointInput,
+	ToolListInputSchema,
+	ToolListOutputSchema,
+} from './types';
 
 /**
  * Retrieve the list of analysis tools available on Codacy.
@@ -18,8 +22,9 @@ export const list: CodacyEndpoints['toolList'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['toolList'],
 ): Promise<CodacyEndpointOutputs['toolList']> => {
+	const valid = parseEndpointInput(ToolListInputSchema, input);
 	const token = await getCodacyCredentials(ctx);
-	const { cursor, limit } = input;
+	const { cursor, limit } = valid;
 
 	const response = await makeCodacyRequest<CodacyEndpointOutputs['toolList']>(
 		'/tools',
@@ -44,7 +49,7 @@ export const list: CodacyEndpoints['toolList'] = async (
 	await logEventFromContext(
 		ctx,
 		'codacy.tools.list',
-		{ ...input },
+		{ ...valid },
 		'completed',
 	);
 	return parsed;

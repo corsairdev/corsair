@@ -6,7 +6,13 @@ import type {
 	CodacyEndpointOutputs,
 	CodacyEndpoints,
 } from '../index';
-import { PatternGetOutputSchema, PatternListOutputSchema } from './types';
+import {
+	PatternGetInputSchema,
+	PatternGetOutputSchema,
+	PatternListInputSchema,
+	PatternListOutputSchema,
+	parseEndpointInput,
+} from './types';
 
 /**
  * Retrieve the list of code patterns of a tool.
@@ -18,8 +24,9 @@ export const list: CodacyEndpoints['patternList'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['patternList'],
 ): Promise<CodacyEndpointOutputs['patternList']> => {
+	const valid = parseEndpointInput(PatternListInputSchema, input);
 	const token = await getCodacyCredentials(ctx);
-	const { tool_uuid, cursor, limit, enabled } = input;
+	const { tool_uuid, cursor, limit, enabled } = valid;
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['patternList']
@@ -44,7 +51,7 @@ export const list: CodacyEndpoints['patternList'] = async (
 	await logEventFromContext(
 		ctx,
 		'codacy.patterns.list',
-		{ ...input },
+		{ ...valid },
 		'completed',
 	);
 	return parsed;
@@ -60,8 +67,11 @@ export const get: CodacyEndpoints['patternGet'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['patternGet'],
 ): Promise<CodacyEndpointOutputs['patternGet']> => {
+	const { tool_uuid, pattern_id } = parseEndpointInput(
+		PatternGetInputSchema,
+		input,
+	);
 	const token = await getCodacyCredentials(ctx);
-	const { tool_uuid, pattern_id } = input;
 
 	const response = await makeCodacyRequest<CodacyEndpointOutputs['patternGet']>(
 		`/tools/${encodeURIComponent(tool_uuid)}/patterns/${encodeURIComponent(pattern_id)}`,

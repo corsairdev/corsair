@@ -7,8 +7,11 @@ import type {
 	CodacyEndpoints,
 } from '../index';
 import {
+	OrganizationGetInputSchema,
 	OrganizationGetOutputSchema,
+	OrganizationListInputSchema,
 	OrganizationListOutputSchema,
+	parseEndpointInput,
 } from './types';
 
 /**
@@ -22,8 +25,9 @@ export const list: CodacyEndpoints['organizationList'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['organizationList'],
 ): Promise<CodacyEndpointOutputs['organizationList']> => {
+	const valid = parseEndpointInput(OrganizationListInputSchema, input);
 	const token = await getCodacyCredentials(ctx);
-	const { provider, cursor, limit } = input;
+	const { provider, cursor, limit } = valid;
 	const path = provider
 		? `/user/organizations/${encodeURIComponent(provider)}`
 		: '/user/organizations';
@@ -50,7 +54,7 @@ export const list: CodacyEndpoints['organizationList'] = async (
 	await logEventFromContext(
 		ctx,
 		'codacy.organizations.list',
-		{ ...input },
+		{ ...valid },
 		'completed',
 	);
 	return parsed;
@@ -66,8 +70,11 @@ export const get: CodacyEndpoints['organizationGet'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['organizationGet'],
 ): Promise<CodacyEndpointOutputs['organizationGet']> => {
+	const { provider, organization_name } = parseEndpointInput(
+		OrganizationGetInputSchema,
+		input,
+	);
 	const token = await getCodacyCredentials(ctx);
-	const { provider, organization_name } = input;
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['organizationGet']
