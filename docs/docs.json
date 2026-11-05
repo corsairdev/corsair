@@ -1653,6 +1653,14 @@
                 ]
               },
               {
+                "group": "DNSFilter",
+                "pages": [
+                  "plugins/dnsfilter/overview",
+                  "plugins/dnsfilter/api",
+                  "plugins/dnsfilter/database"
+                ]
+              },
+              {
                 "group": "Docker Hub",
                 "pages": [
                   "plugins/dockerhub/overview",
