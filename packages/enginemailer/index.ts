@@ -389,8 +389,9 @@ const enginemailerEndpointMeta = {
 		description: 'Pause an email campaign',
 	},
 	'campaigns.sendCampaign': {
-		riskLevel: 'write',
-		description: 'Send an email campaign',
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Send an email campaign to its recipient list now',
 	},
 	'n8n.addOrUpdateSubscriber': {
 		riskLevel: 'write',
