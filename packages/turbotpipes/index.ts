@@ -13,6 +13,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import type { ZodType } from 'zod';
+import { z } from 'zod';
 import {
 	ActorEndpoints,
 	AiEndpoints,
@@ -1698,6 +1700,58 @@ export const turbotpipesEndpointSchemas = {
 	typeof turbotpipesEndpointsNested
 >;
 
+// unknown: the wrapper sits between core and every typed handler, so it sees
+// raw caller input and raw provider output before zod has checked either.
+type UncheckedHandler = (ctx: unknown, input: unknown) => Promise<unknown>;
+type EndpointSchemaPair = { input: ZodType; output: ZodType };
+
+/**
+ * Core passes endpoint arguments and results through unchanged, so every
+ * endpoint is wrapped here. The input is parsed before the handler runs
+ * (required fields enforced, unknown keys dropped), and the response is
+ * checked against the output schema before it is returned. The original
+ * response is what comes back, not the parsed copy, so provider fields the
+ * output schemas do not list are kept.
+ */
+function withSchemaValidation<
+	T extends Record<string, Record<string, unknown>>,
+>(tree: T, schemas: Record<string, EndpointSchemaPair>): T {
+	const checked: Record<string, Record<string, UncheckedHandler>> = {};
+	for (const [group, endpoints] of Object.entries(tree)) {
+		const groupChecked: Record<string, UncheckedHandler> = {};
+		for (const [name, endpoint] of Object.entries(endpoints)) {
+			const path = `${group}.${name}`;
+			const schema = schemas[path];
+			if (!schema) {
+				throw new Error(`turbotpipes: ${path} has no endpoint schema`);
+			}
+			// as is necessary: each handler has its own typed signature; the
+			// wrapper calls them generically with input zod has just parsed.
+			const handler = endpoint as UncheckedHandler;
+			groupChecked[name] = async (ctx, input) => {
+				const parsedInput = schema.input.parse(input ?? {});
+				const response = await handler(ctx, parsedInput);
+				const result = schema.output.safeParse(response);
+				if (!result.success) {
+					throw new Error(
+						`turbotpipes ${path}: Turbot Pipes returned a response that does not match the expected shape.\n${z.prettifyError(result.error)}`,
+					);
+				}
+				return response;
+			};
+		}
+		checked[group] = groupChecked;
+	}
+	// as is necessary: the checked map has the same keys and call signatures as
+	// the typed tree; only the runtime functions differ.
+	return checked as T;
+}
+
+const turbotpipesEndpointsChecked = withSchemaValidation(
+	turbotpipesEndpointsNested,
+	turbotpipesEndpointSchemas,
+);
+
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const turbotpipesEndpointMeta = {
@@ -2402,7 +2456,7 @@ export function turbotpipes<const T extends TurbotPipesPluginOptions>(
 		schema: TurbotPipesSchema,
 		options: options,
 		hooks: options.hooks,
-		endpoints: turbotpipesEndpointsNested,
+		endpoints: turbotpipesEndpointsChecked,
 		webhooks: {},
 		endpointMeta: turbotpipesEndpointMeta,
 		endpointSchemas: turbotpipesEndpointSchemas,

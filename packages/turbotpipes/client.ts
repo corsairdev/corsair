@@ -132,7 +132,9 @@ export async function makeTurbotPipesRequest<T>(
 			// undefined selects the shared default (retries on) for reads.
 			rateLimitConfig: method === 'GET' ? undefined : NO_RETRY,
 		});
-		return response;
+		// 204 No Content (and other empty bodies) come back undefined; callers
+		// always get an object instead. A JSON null body stays null.
+		return (response === undefined ? {} : response) as T;
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw error;
