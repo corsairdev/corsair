@@ -1,6 +1,6 @@
 # @corsair-dev/elasticsearch
 
-Elasticsearch plugin for Corsair. Access to a self-hosted (or Elastic Cloud) Elasticsearch cluster: cluster health, index inventory, metadata and lifecycle, document CRUD, and search.
+Elasticsearch plugin for Corsair. Access to a self-hosted (or Elastic Cloud) Elasticsearch cluster: cluster info, health, settings and routing, the CAT inventory APIs, node and task monitoring, index lifecycle, document CRUD, and search.
 
 ## Install
 
@@ -12,7 +12,24 @@ pnpm add @corsair-dev/elasticsearch
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `cluster.getHealth` | `elasticsearch.api.cluster.getHealth` | `read` | Get the cluster's health status (green/yellow/red) with shard, node and pending-task counts |
+| `cluster.getHealth` | `elasticsearch.api.cluster.getHealth` | `read` | Get the cluster's health status (green/yellow/red) with shard, node and pending-task counts, optionally scoped to an index target and with wait_for_status |
+| `cluster.ping` | `elasticsearch.api.cluster.ping` | `read` | Ping the cluster (HEAD /): resolves to { exists: boolean } so an agent can check reachability before heavier calls |
+| `cluster.getInfo` | `elasticsearch.api.cluster.getInfo` | `read` | Get the cluster info block (GET /): cluster name and uuid, the responding node, tagline and full version details |
+| `cluster.subsystemInfo` | `elasticsearch.api.cluster.subsystemInfo` | `read` | Get cluster subsystem info (GET /_info/{target}) for http, ingest, thread_pool or script; target accepts a comma list or _all |
+| `cluster.pendingTasks` | `elasticsearch.api.cluster.pendingTasks` | `read` | List the pending cluster-level tasks (index creation, shard rebalancing) still queued on the master node |
+| `cluster.getSettings` | `elasticsearch.api.cluster.getSettings` | `read` | Get cluster-wide settings (persistent, transient and optionally defaults) keyed by setting name |
+| `cluster.putSettings` | `elasticsearch.api.cluster.putSettings` | `write` | Update cluster-wide settings (PUT /_cluster/settings) with a persistent and/or transient settings object |
+| `cluster.reroute` | `elasticsearch.api.cluster.reroute` | `write` | Reroute cluster shards (POST /_cluster/reroute) with typed move, cancel and allocate commands; dry_run simulates without applying |
+| `cluster.allocationExplain` | `elasticsearch.api.cluster.allocationExplain` | `read` | Explain why a shard is (or is not) allocated: the decider verdicts, current node and disk context for a chosen shard |
+| `cluster.getState` | `elasticsearch.api.cluster.getState` | `read` | Get the cluster state document filtered by metric (metadata, nodes, routing_table, ...) and optional index targets |
+| `cluster.getStats` | `elasticsearch.api.cluster.getStats` | `read` | Get cluster statistics (GET /_cluster/stats) for all nodes or a node filter: index counts and sizes, OS, JVM and process usage |
+| `cluster.addVotingConfigExclusions` | `elasticsearch.api.cluster.addVotingConfigExclusions` | `write` | Exclude nodes from the voting configuration by names or ids (exactly one) so they can leave the cluster safely |
+| `cluster.clearVotingConfigExclusions` | `elasticsearch.api.cluster.clearVotingConfigExclusions` | `write` | Clear the voting configuration exclusions list, optionally waiting until the excluded nodes have left the cluster |
+| `cluster.remoteInfo` | `elasticsearch.api.cluster.remoteInfo` | `read` | Get remote cluster information keyed by alias: connection mode (sniff or proxy), connectivity and seed addresses |
+| `cluster.healthReport` | `elasticsearch.api.cluster.healthReport` | `read` | Get the cluster health report with per-indicator status (master_is_stable, shards_availability, disk, ...); a feature selects a subset |
+| `cluster.sslCertificates` | `elasticsearch.api.cluster.sslCertificates` | `read` | List the SSL certificates loaded on the HTTP layer: alias, subject, issuer, serial, path and expiry per certificate |
+| `cluster.scriptContexts` | `elasticsearch.api.cluster.scriptContexts` | `read` | List the supported script contexts with the methods and parameters each exposes to scripts |
+| `cluster.scriptLanguages` | `elasticsearch.api.cluster.scriptLanguages` | `read` | List the script languages the cluster allows and the contexts each language can be used in |
 | `documents.get` | `elasticsearch.api.documents.get` | `read` | Get one JSON document by index and id; a missing document returns found: false rather than an error |
 | `documents.exists` | `elasticsearch.api.documents.exists` | `read` | Check whether a document exists (HEAD): resolves to { exists: boolean } instead of throwing on 404 |
 | `documents.index` | `elasticsearch.api.documents.index` | `write` | Create or replace a document by id (POST /{index}/_doc/{id}) with optional op_type, refresh and optimistic-concurrency controls |
@@ -95,16 +112,56 @@ pnpm add @corsair-dev/elasticsearch
 | `ccr.pauseFollow` | `elasticsearch.api.ccr.pauseFollow` | `write` | Pause replication of a follower index; the leader stops streaming operations until resumed |
 | `ccr.resumeFollow` | `elasticsearch.api.ccr.resumeFollow` | `write` | Resume replication on a paused follower index |
 | `ccr.unfollow` | `elasticsearch.api.ccr.unfollow` | `write` | Convert a follower index into a regular index, detaching it from its leader for good |
+| `cat.help` | `elasticsearch.api.cat.help` | `read` | Get the CAT API help text (GET /_cat): the plain-text list of every cat command, always returned as text |
+| `cat.aliases` | `elasticsearch.api.cat.aliases` | `read` | List index aliases with their filter, routing and write-index flags, filtered by an alias name pattern |
+| `cat.allocation` | `elasticsearch.api.cat.allocation` | `read` | List shard allocation per data node: shard counts and disk usage (used, available, total, percent) |
+| `cat.circuitBreakers` | `elasticsearch.api.cat.circuitBreakers` | `read` | List circuit breakers per node with their limits, estimated usage and whether they tripped |
+| `cat.componentTemplates` | `elasticsearch.api.cat.componentTemplates` | `read` | List component templates with version and per-section counts (mappings, settings, aliases), filtered by name pattern |
+| `cat.count` | `elasticsearch.api.cat.count` | `read` | Get a quick live-document count for the whole cluster or an index/data stream/alias target |
+| `cat.fielddata` | `elasticsearch.api.cat.fielddata` | `read` | List fielddata cache usage per node and field, in bytes, optionally filtered by field list |
+| `cat.health` | `elasticsearch.api.cat.health` | `read` | Get the compact cluster health row (status, node and shard counts) as a one-row JSON array |
+| `cat.master` | `elasticsearch.api.cat.master` | `read` | Get the elected master node: its id, host, ip and name in one row |
+| `cat.mlJobs` | `elasticsearch.api.cat.mlJobs` | `read` | List anomaly detection jobs with state, processed records, model size and forecast counts |
+| `cat.mlDataFrameAnalytics` | `elasticsearch.api.cat.mlDataFrameAnalytics` | `read` | List data frame analytics jobs with their type and state, filtered by id pattern |
+| `cat.mlDatafeeds` | `elasticsearch.api.cat.mlDatafeeds` | `read` | List ML datafeeds with their state and bucket counts, filtered by datafeed id pattern |
+| `cat.mlTrainedModels` | `elasticsearch.api.cat.mlTrainedModels` | `read` | List trained models with creator, creation time, feature count and version, with from/size paging |
+| `cat.nodeattrs` | `elasticsearch.api.cat.nodeattrs` | `read` | List the custom node attributes (node.name, attr/value pairs) the allocator uses for shard awareness |
+| `cat.nodes` | `elasticsearch.api.cat.nodes` | `read` | List the nodes with id, name, address, heap/ram/cpu percentages, roles and version |
+| `cat.pendingTasks` | `elasticsearch.api.cat.pendingTasks` | `read` | List pending cluster tasks queued on the master with insertion order, priority and queue time |
+| `cat.plugins` | `elasticsearch.api.cat.plugins` | `read` | List the plugins installed per node with name, version and description |
+| `cat.recovery` | `elasticsearch.api.cat.recovery` | `read` | List shard recovery events (index, stage, source and target, bytes recovered), optionally active-only or detailed |
+| `cat.repositories` | `elasticsearch.api.cat.repositories` | `read` | List the registered snapshot repositories with their types |
+| `cat.segments` | `elasticsearch.api.cat.segments` | `read` | List Lucene segments per shard: generation, doc counts, size and memory, filtered by index target |
+| `cat.shards` | `elasticsearch.api.cat.shards` | `read` | List every shard with index, number, primary/replica, state, docs, store size and assigned node |
+| `cat.snapshots` | `elasticsearch.api.cat.snapshots` | `read` | List snapshots in one or more repositories with status, start/end times, duration and index counts |
+| `cat.tasks` | `elasticsearch.api.cat.tasks` | `read` | List currently running tasks with action, node and running time, filterable by actions, nodes or parent task |
+| `cat.templates` | `elasticsearch.api.cat.templates` | `read` | List index templates with their index patterns, order and component templates, filtered by name pattern |
+| `cat.threadPool` | `elasticsearch.api.cat.threadPool` | `read` | List thread pool statistics per node and pool: active, queued and rejected counts, filtered by pool pattern |
+| `cat.transforms` | `elasticsearch.api.cat.transforms` | `read` | List transforms with state, checkpoint progress and documents processed, with from/size paging |
+| `nodes.info` | `elasticsearch.api.nodes.info` | `read` | Get node information (GET /_nodes) for all or selected nodes: OS, process, JVM, thread pools, plugins and ingest processors, filtered by metric |
+| `nodes.stats` | `elasticsearch.api.nodes.stats` | `read` | Get node statistics for all or selected nodes: indices, OS, JVM, filesystem, thread pools, breakers, filtered by metric and index metric |
+| `nodes.usage` | `elasticsearch.api.nodes.usage` | `read` | Get node feature usage: how often each REST action and aggregation ran, per node |
+| `nodes.hotThreads` | `elasticsearch.api.nodes.hotThreads` | `read` | Get the current hot threads dump per node as plain text, with sampling type, interval and thread count controls |
+| `nodes.reloadSecureSettings` | `elasticsearch.api.nodes.reloadSecureSettings` | `write` | Reload keystore secure settings on all or selected nodes so updated credentials take effect without a restart |
+| `nodes.repositoriesMetering` | `elasticsearch.api.nodes.repositoriesMetering` | `read` | Get repositories metering information (snapshot search usage) for all or selected nodes |
+| `nodes.clearRepositoriesMetering` | `elasticsearch.api.nodes.clearRepositoriesMetering` | `write` | Clear archived repositories metering information up to a maximum archive version on selected nodes |
+| `tasks.list` | `elasticsearch.api.tasks.list` | `read` | List the tasks currently running on the cluster, groupable by node or parent task and filterable by actions and nodes |
+| `tasks.get` | `elasticsearch.api.tasks.get` | `read` | Get one task by its <node_id>:<number> id with status, timing and optionally its completed response |
+| `tasks.cancel` | `elasticsearch.api.tasks.cancel` | `write` | Cancel one task (POST /_tasks/{task_id}/_cancel), optionally narrowed by actions, nodes or parent task |
 
 Risk levels follow the operation's effect on the cluster: `read` never mutates, `write` changes documents or index/cluster state, `destructive` deletes data. Mutating calls (POST/PUT/DELETE) are never replayed on 5xx or timeout, because the change may already have been applied; 429 retries remain safe (the request was rejected before executing).
 
 ### HEAD exists convention
 
-Operations whose REST API is a HEAD request (`documents.exists`, `documents.existsSource`, `indices.exists`, `indices.existsAlias`) answer 200 or 404 with an empty body. The plugin resolves both to `{ exists: boolean }` instead of throwing on 404, so an agent can branch on the value directly.
+Operations whose REST API is a HEAD request (`cluster.ping`, `documents.exists`, `documents.existsSource`, `indices.exists`, `indices.existsAlias`) answer 200 or 404 with an empty body. The plugin resolves both to `{ exists: boolean }` instead of throwing on 404, so an agent can branch on the value directly.
+
+Two endpoints always answer plain text and resolve to a string: `cat.help` (the CAT command list) and `nodes.hotThreads` (the thread dump).
 
 `search.run`, `documents.explain`, `documents.updateByQuery`, `documents.deleteByQuery`, `documents.termvectors`, `search.count`, `search.msearch`, `search.asyncSubmit`, `search.eql` (typed body), `search.validateQuery`, `fleet.search`, `fleet.msearch` and `indices.putAlias` (filter) accept the same strict, typed subset of the Query DSL as `search.run`: `match`, `match_phrase`, `term`, `terms`, `ids`, `match_all`, and `bool` (which can nest any of these). Unknown query kinds and unknown body keys are rejected before the wire. `documents.deleteByQuery` additionally requires a `query`, so the deletion set is always explicit.
 
 Bulk-style APIs that speak newline-delimited JSON (`documents.bulk`, `search.msearch`, `search.msearchTemplate`, `fleet.msearch`) accept typed operation/sub-search arrays, serialized by the plugin, or a validated raw `ndjson` string (every line must parse and the payload must end with a newline). `search.vectorTile` returns the binary protobuf tile as `{ contentType, base64 }`.
+
+CAT endpoints (`cat.*`, plus `indices.list`) always request `format=json` and return rows where every value is a string (or null where a size is absent); an empty cluster or a no-match wildcard returns an empty array, which is valid. The CAT APIs are officially intended for human consumption; for programmatic use prefer the JSON API counterpart when one exists (for example `cluster.getHealth` over `cat.health`).
 
 ## Auth
 

@@ -13,7 +13,17 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { buildAuthorizationHeader } from './client';
-import { Ccr, Cluster, Documents, Fleet, Indices, Search } from './endpoints';
+import {
+	Cat,
+	Ccr,
+	Cluster,
+	Documents,
+	Fleet,
+	Indices,
+	Nodes,
+	Search,
+	Tasks,
+} from './endpoints';
 import type {
 	ElasticsearchEndpointInputs,
 	ElasticsearchEndpointOutputs,
@@ -154,6 +164,59 @@ export type ElasticsearchEndpoints = {
 	ccrPauseFollow: ElasticsearchEndpoint<'ccrPauseFollow'>;
 	ccrResumeFollow: ElasticsearchEndpoint<'ccrResumeFollow'>;
 	ccrUnfollow: ElasticsearchEndpoint<'ccrUnfollow'>;
+	clusterPing: ElasticsearchEndpoint<'clusterPing'>;
+	clusterGetInfo: ElasticsearchEndpoint<'clusterGetInfo'>;
+	clusterSubsystemInfo: ElasticsearchEndpoint<'clusterSubsystemInfo'>;
+	clusterPendingTasks: ElasticsearchEndpoint<'clusterPendingTasks'>;
+	clusterGetSettings: ElasticsearchEndpoint<'clusterGetSettings'>;
+	clusterPutSettings: ElasticsearchEndpoint<'clusterPutSettings'>;
+	clusterReroute: ElasticsearchEndpoint<'clusterReroute'>;
+	clusterAllocationExplain: ElasticsearchEndpoint<'clusterAllocationExplain'>;
+	clusterGetState: ElasticsearchEndpoint<'clusterGetState'>;
+	clusterGetStats: ElasticsearchEndpoint<'clusterGetStats'>;
+	clusterAddVotingConfigExclusions: ElasticsearchEndpoint<'clusterAddVotingConfigExclusions'>;
+	clusterClearVotingConfigExclusions: ElasticsearchEndpoint<'clusterClearVotingConfigExclusions'>;
+	clusterRemoteInfo: ElasticsearchEndpoint<'clusterRemoteInfo'>;
+	clusterHealthReport: ElasticsearchEndpoint<'clusterHealthReport'>;
+	clusterSslCertificates: ElasticsearchEndpoint<'clusterSslCertificates'>;
+	clusterScriptContexts: ElasticsearchEndpoint<'clusterScriptContexts'>;
+	clusterScriptLanguages: ElasticsearchEndpoint<'clusterScriptLanguages'>;
+	catHelp: ElasticsearchEndpoint<'catHelp'>;
+	catAliases: ElasticsearchEndpoint<'catAliases'>;
+	catAllocation: ElasticsearchEndpoint<'catAllocation'>;
+	catCircuitBreakers: ElasticsearchEndpoint<'catCircuitBreakers'>;
+	catComponentTemplates: ElasticsearchEndpoint<'catComponentTemplates'>;
+	catCount: ElasticsearchEndpoint<'catCount'>;
+	catFielddata: ElasticsearchEndpoint<'catFielddata'>;
+	catHealth: ElasticsearchEndpoint<'catHealth'>;
+	catMaster: ElasticsearchEndpoint<'catMaster'>;
+	catMlJobs: ElasticsearchEndpoint<'catMlJobs'>;
+	catMlDataFrameAnalytics: ElasticsearchEndpoint<'catMlDataFrameAnalytics'>;
+	catMlDatafeeds: ElasticsearchEndpoint<'catMlDatafeeds'>;
+	catMlTrainedModels: ElasticsearchEndpoint<'catMlTrainedModels'>;
+	catNodeattrs: ElasticsearchEndpoint<'catNodeattrs'>;
+	catNodes: ElasticsearchEndpoint<'catNodes'>;
+	catPendingTasks: ElasticsearchEndpoint<'catPendingTasks'>;
+	catPlugins: ElasticsearchEndpoint<'catPlugins'>;
+	catRecovery: ElasticsearchEndpoint<'catRecovery'>;
+	catRepositories: ElasticsearchEndpoint<'catRepositories'>;
+	catSegments: ElasticsearchEndpoint<'catSegments'>;
+	catShards: ElasticsearchEndpoint<'catShards'>;
+	catSnapshots: ElasticsearchEndpoint<'catSnapshots'>;
+	catTasks: ElasticsearchEndpoint<'catTasks'>;
+	catTemplates: ElasticsearchEndpoint<'catTemplates'>;
+	catThreadPool: ElasticsearchEndpoint<'catThreadPool'>;
+	catTransforms: ElasticsearchEndpoint<'catTransforms'>;
+	nodesInfo: ElasticsearchEndpoint<'nodesInfo'>;
+	nodesStats: ElasticsearchEndpoint<'nodesStats'>;
+	nodesUsage: ElasticsearchEndpoint<'nodesUsage'>;
+	nodesHotThreads: ElasticsearchEndpoint<'nodesHotThreads'>;
+	nodesReloadSecureSettings: ElasticsearchEndpoint<'nodesReloadSecureSettings'>;
+	nodesRepositoriesMetering: ElasticsearchEndpoint<'nodesRepositoriesMetering'>;
+	nodesClearRepositoriesMetering: ElasticsearchEndpoint<'nodesClearRepositoriesMetering'>;
+	tasksList: ElasticsearchEndpoint<'tasksList'>;
+	tasksGet: ElasticsearchEndpoint<'tasksGet'>;
+	tasksCancel: ElasticsearchEndpoint<'tasksCancel'>;
 };
 
 // Elasticsearch has no inbound webhook surface — the REST API is
@@ -163,6 +226,23 @@ const elasticsearchWebhooksNested = {} as const;
 const elasticsearchEndpointsNested = {
 	cluster: {
 		getHealth: Cluster.getHealth,
+		ping: Cluster.ping,
+		getInfo: Cluster.getInfo,
+		subsystemInfo: Cluster.subsystemInfo,
+		pendingTasks: Cluster.pendingTasks,
+		getSettings: Cluster.getSettings,
+		putSettings: Cluster.putSettings,
+		reroute: Cluster.reroute,
+		allocationExplain: Cluster.allocationExplain,
+		getState: Cluster.getState,
+		getStats: Cluster.getStats,
+		addVotingConfigExclusions: Cluster.addVotingConfigExclusions,
+		clearVotingConfigExclusions: Cluster.clearVotingConfigExclusions,
+		remoteInfo: Cluster.remoteInfo,
+		healthReport: Cluster.healthReport,
+		sslCertificates: Cluster.sslCertificates,
+		scriptContexts: Cluster.scriptContexts,
+		scriptLanguages: Cluster.scriptLanguages,
 	},
 	indices: {
 		list: Indices.list,
@@ -255,6 +335,48 @@ const elasticsearchEndpointsNested = {
 		termvectors: Documents.termvectors,
 		mtermvectors: Documents.mtermvectors,
 		bulk: Documents.bulk,
+	},
+	cat: {
+		help: Cat.help,
+		aliases: Cat.aliases,
+		allocation: Cat.allocation,
+		circuitBreakers: Cat.circuitBreakers,
+		componentTemplates: Cat.componentTemplates,
+		count: Cat.count,
+		fielddata: Cat.fielddata,
+		health: Cat.health,
+		master: Cat.master,
+		mlJobs: Cat.mlJobs,
+		mlDataFrameAnalytics: Cat.mlDataFrameAnalytics,
+		mlDatafeeds: Cat.mlDatafeeds,
+		mlTrainedModels: Cat.mlTrainedModels,
+		nodeattrs: Cat.nodeattrs,
+		nodes: Cat.nodes,
+		pendingTasks: Cat.pendingTasks,
+		plugins: Cat.plugins,
+		recovery: Cat.recovery,
+		repositories: Cat.repositories,
+		segments: Cat.segments,
+		shards: Cat.shards,
+		snapshots: Cat.snapshots,
+		tasks: Cat.tasks,
+		templates: Cat.templates,
+		threadPool: Cat.threadPool,
+		transforms: Cat.transforms,
+	},
+	nodes: {
+		info: Nodes.info,
+		stats: Nodes.stats,
+		usage: Nodes.usage,
+		hotThreads: Nodes.hotThreads,
+		reloadSecureSettings: Nodes.reloadSecureSettings,
+		repositoriesMetering: Nodes.repositoriesMetering,
+		clearRepositoriesMetering: Nodes.clearRepositoriesMetering,
+	},
+	tasks: {
+		list: Tasks.list,
+		get: Tasks.get,
+		cancel: Tasks.cancel,
 	},
 } as const;
 
@@ -593,6 +715,219 @@ export const elasticsearchEndpointSchemas = {
 		input: ElasticsearchEndpointInputSchemas.ccrUnfollow,
 		output: ElasticsearchEndpointOutputSchemas.ccrUnfollow,
 	},
+	'cluster.ping': {
+		input: ElasticsearchEndpointInputSchemas.clusterPing,
+		output: ElasticsearchEndpointOutputSchemas.clusterPing,
+	},
+	'cluster.getInfo': {
+		input: ElasticsearchEndpointInputSchemas.clusterGetInfo,
+		output: ElasticsearchEndpointOutputSchemas.clusterGetInfo,
+	},
+	'cluster.subsystemInfo': {
+		input: ElasticsearchEndpointInputSchemas.clusterSubsystemInfo,
+		output: ElasticsearchEndpointOutputSchemas.clusterSubsystemInfo,
+	},
+	'cluster.pendingTasks': {
+		input: ElasticsearchEndpointInputSchemas.clusterPendingTasks,
+		output: ElasticsearchEndpointOutputSchemas.clusterPendingTasks,
+	},
+	'cluster.getSettings': {
+		input: ElasticsearchEndpointInputSchemas.clusterGetSettings,
+		output: ElasticsearchEndpointOutputSchemas.clusterGetSettings,
+	},
+	'cluster.putSettings': {
+		input: ElasticsearchEndpointInputSchemas.clusterPutSettings,
+		output: ElasticsearchEndpointOutputSchemas.clusterPutSettings,
+	},
+	'cluster.reroute': {
+		input: ElasticsearchEndpointInputSchemas.clusterReroute,
+		output: ElasticsearchEndpointOutputSchemas.clusterReroute,
+	},
+	'cluster.allocationExplain': {
+		input: ElasticsearchEndpointInputSchemas.clusterAllocationExplain,
+		output: ElasticsearchEndpointOutputSchemas.clusterAllocationExplain,
+	},
+	'cluster.getState': {
+		input: ElasticsearchEndpointInputSchemas.clusterGetState,
+		output: ElasticsearchEndpointOutputSchemas.clusterGetState,
+	},
+	'cluster.getStats': {
+		input: ElasticsearchEndpointInputSchemas.clusterGetStats,
+		output: ElasticsearchEndpointOutputSchemas.clusterGetStats,
+	},
+	'cluster.addVotingConfigExclusions': {
+		input: ElasticsearchEndpointInputSchemas.clusterAddVotingConfigExclusions,
+		output: ElasticsearchEndpointOutputSchemas.clusterAddVotingConfigExclusions,
+	},
+	'cluster.clearVotingConfigExclusions': {
+		input: ElasticsearchEndpointInputSchemas.clusterClearVotingConfigExclusions,
+		output:
+			ElasticsearchEndpointOutputSchemas.clusterClearVotingConfigExclusions,
+	},
+	'cluster.remoteInfo': {
+		input: ElasticsearchEndpointInputSchemas.clusterRemoteInfo,
+		output: ElasticsearchEndpointOutputSchemas.clusterRemoteInfo,
+	},
+	'cluster.healthReport': {
+		input: ElasticsearchEndpointInputSchemas.clusterHealthReport,
+		output: ElasticsearchEndpointOutputSchemas.clusterHealthReport,
+	},
+	'cluster.sslCertificates': {
+		input: ElasticsearchEndpointInputSchemas.clusterSslCertificates,
+		output: ElasticsearchEndpointOutputSchemas.clusterSslCertificates,
+	},
+	'cluster.scriptContexts': {
+		input: ElasticsearchEndpointInputSchemas.clusterScriptContexts,
+		output: ElasticsearchEndpointOutputSchemas.clusterScriptContexts,
+	},
+	'cluster.scriptLanguages': {
+		input: ElasticsearchEndpointInputSchemas.clusterScriptLanguages,
+		output: ElasticsearchEndpointOutputSchemas.clusterScriptLanguages,
+	},
+	'cat.help': {
+		input: ElasticsearchEndpointInputSchemas.catHelp,
+		output: ElasticsearchEndpointOutputSchemas.catHelp,
+	},
+	'cat.aliases': {
+		input: ElasticsearchEndpointInputSchemas.catAliases,
+		output: ElasticsearchEndpointOutputSchemas.catAliases,
+	},
+	'cat.allocation': {
+		input: ElasticsearchEndpointInputSchemas.catAllocation,
+		output: ElasticsearchEndpointOutputSchemas.catAllocation,
+	},
+	'cat.circuitBreakers': {
+		input: ElasticsearchEndpointInputSchemas.catCircuitBreakers,
+		output: ElasticsearchEndpointOutputSchemas.catCircuitBreakers,
+	},
+	'cat.componentTemplates': {
+		input: ElasticsearchEndpointInputSchemas.catComponentTemplates,
+		output: ElasticsearchEndpointOutputSchemas.catComponentTemplates,
+	},
+	'cat.count': {
+		input: ElasticsearchEndpointInputSchemas.catCount,
+		output: ElasticsearchEndpointOutputSchemas.catCount,
+	},
+	'cat.fielddata': {
+		input: ElasticsearchEndpointInputSchemas.catFielddata,
+		output: ElasticsearchEndpointOutputSchemas.catFielddata,
+	},
+	'cat.health': {
+		input: ElasticsearchEndpointInputSchemas.catHealth,
+		output: ElasticsearchEndpointOutputSchemas.catHealth,
+	},
+	'cat.master': {
+		input: ElasticsearchEndpointInputSchemas.catMaster,
+		output: ElasticsearchEndpointOutputSchemas.catMaster,
+	},
+	'cat.mlJobs': {
+		input: ElasticsearchEndpointInputSchemas.catMlJobs,
+		output: ElasticsearchEndpointOutputSchemas.catMlJobs,
+	},
+	'cat.mlDataFrameAnalytics': {
+		input: ElasticsearchEndpointInputSchemas.catMlDataFrameAnalytics,
+		output: ElasticsearchEndpointOutputSchemas.catMlDataFrameAnalytics,
+	},
+	'cat.mlDatafeeds': {
+		input: ElasticsearchEndpointInputSchemas.catMlDatafeeds,
+		output: ElasticsearchEndpointOutputSchemas.catMlDatafeeds,
+	},
+	'cat.mlTrainedModels': {
+		input: ElasticsearchEndpointInputSchemas.catMlTrainedModels,
+		output: ElasticsearchEndpointOutputSchemas.catMlTrainedModels,
+	},
+	'cat.nodeattrs': {
+		input: ElasticsearchEndpointInputSchemas.catNodeattrs,
+		output: ElasticsearchEndpointOutputSchemas.catNodeattrs,
+	},
+	'cat.nodes': {
+		input: ElasticsearchEndpointInputSchemas.catNodes,
+		output: ElasticsearchEndpointOutputSchemas.catNodes,
+	},
+	'cat.pendingTasks': {
+		input: ElasticsearchEndpointInputSchemas.catPendingTasks,
+		output: ElasticsearchEndpointOutputSchemas.catPendingTasks,
+	},
+	'cat.plugins': {
+		input: ElasticsearchEndpointInputSchemas.catPlugins,
+		output: ElasticsearchEndpointOutputSchemas.catPlugins,
+	},
+	'cat.recovery': {
+		input: ElasticsearchEndpointInputSchemas.catRecovery,
+		output: ElasticsearchEndpointOutputSchemas.catRecovery,
+	},
+	'cat.repositories': {
+		input: ElasticsearchEndpointInputSchemas.catRepositories,
+		output: ElasticsearchEndpointOutputSchemas.catRepositories,
+	},
+	'cat.segments': {
+		input: ElasticsearchEndpointInputSchemas.catSegments,
+		output: ElasticsearchEndpointOutputSchemas.catSegments,
+	},
+	'cat.shards': {
+		input: ElasticsearchEndpointInputSchemas.catShards,
+		output: ElasticsearchEndpointOutputSchemas.catShards,
+	},
+	'cat.snapshots': {
+		input: ElasticsearchEndpointInputSchemas.catSnapshots,
+		output: ElasticsearchEndpointOutputSchemas.catSnapshots,
+	},
+	'cat.tasks': {
+		input: ElasticsearchEndpointInputSchemas.catTasks,
+		output: ElasticsearchEndpointOutputSchemas.catTasks,
+	},
+	'cat.templates': {
+		input: ElasticsearchEndpointInputSchemas.catTemplates,
+		output: ElasticsearchEndpointOutputSchemas.catTemplates,
+	},
+	'cat.threadPool': {
+		input: ElasticsearchEndpointInputSchemas.catThreadPool,
+		output: ElasticsearchEndpointOutputSchemas.catThreadPool,
+	},
+	'cat.transforms': {
+		input: ElasticsearchEndpointInputSchemas.catTransforms,
+		output: ElasticsearchEndpointOutputSchemas.catTransforms,
+	},
+	'nodes.info': {
+		input: ElasticsearchEndpointInputSchemas.nodesInfo,
+		output: ElasticsearchEndpointOutputSchemas.nodesInfo,
+	},
+	'nodes.stats': {
+		input: ElasticsearchEndpointInputSchemas.nodesStats,
+		output: ElasticsearchEndpointOutputSchemas.nodesStats,
+	},
+	'nodes.usage': {
+		input: ElasticsearchEndpointInputSchemas.nodesUsage,
+		output: ElasticsearchEndpointOutputSchemas.nodesUsage,
+	},
+	'nodes.hotThreads': {
+		input: ElasticsearchEndpointInputSchemas.nodesHotThreads,
+		output: ElasticsearchEndpointOutputSchemas.nodesHotThreads,
+	},
+	'nodes.reloadSecureSettings': {
+		input: ElasticsearchEndpointInputSchemas.nodesReloadSecureSettings,
+		output: ElasticsearchEndpointOutputSchemas.nodesReloadSecureSettings,
+	},
+	'nodes.repositoriesMetering': {
+		input: ElasticsearchEndpointInputSchemas.nodesRepositoriesMetering,
+		output: ElasticsearchEndpointOutputSchemas.nodesRepositoriesMetering,
+	},
+	'nodes.clearRepositoriesMetering': {
+		input: ElasticsearchEndpointInputSchemas.nodesClearRepositoriesMetering,
+		output: ElasticsearchEndpointOutputSchemas.nodesClearRepositoriesMetering,
+	},
+	'tasks.list': {
+		input: ElasticsearchEndpointInputSchemas.tasksList,
+		output: ElasticsearchEndpointOutputSchemas.tasksList,
+	},
+	'tasks.get': {
+		input: ElasticsearchEndpointInputSchemas.tasksGet,
+		output: ElasticsearchEndpointOutputSchemas.tasksGet,
+	},
+	'tasks.cancel': {
+		input: ElasticsearchEndpointInputSchemas.tasksCancel,
+		output: ElasticsearchEndpointOutputSchemas.tasksCancel,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof elasticsearchEndpointsNested
 >;
@@ -603,7 +938,7 @@ const elasticsearchEndpointMeta = {
 	'cluster.getHealth': {
 		riskLevel: 'read',
 		description:
-			"Get the cluster's health status (green/yellow/red) with shard, node and pending-task counts",
+			"Get the cluster's health status (green/yellow/red) with shard, node and pending-task counts, optionally scoped to an index target and with wait_for_status",
 	},
 	'indices.list': {
 		riskLevel: 'read',
@@ -1013,6 +1348,270 @@ const elasticsearchEndpointMeta = {
 		description:
 			'Convert a follower index into a regular index, detaching it from its leader for good',
 	},
+	'cluster.ping': {
+		riskLevel: 'read',
+		description:
+			'Ping the cluster (HEAD /): resolves to { exists: boolean } so an agent can check reachability before heavier calls',
+	},
+	'cluster.getInfo': {
+		riskLevel: 'read',
+		description:
+			'Get the cluster info block (GET /): cluster name and uuid, the responding node, tagline and full version details',
+	},
+	'cluster.subsystemInfo': {
+		riskLevel: 'read',
+		description:
+			'Get cluster subsystem info (GET /_info/{target}) for http, ingest, thread_pool or script; target accepts a comma list or _all',
+	},
+	'cluster.pendingTasks': {
+		riskLevel: 'read',
+		description:
+			'List the pending cluster-level tasks (index creation, shard rebalancing) still queued on the master node',
+	},
+	'cluster.getSettings': {
+		riskLevel: 'read',
+		description:
+			'Get cluster-wide settings (persistent, transient and optionally defaults) keyed by setting name',
+	},
+	'cluster.putSettings': {
+		riskLevel: 'write',
+		description:
+			'Update cluster-wide settings (PUT /_cluster/settings) with a persistent and/or transient settings object',
+	},
+	'cluster.reroute': {
+		riskLevel: 'write',
+		description:
+			'Reroute cluster shards (POST /_cluster/reroute) with typed move, cancel and allocate commands; dry_run simulates without applying',
+	},
+	'cluster.allocationExplain': {
+		riskLevel: 'read',
+		description:
+			'Explain why a shard is (or is not) allocated: the decider verdicts, current node and disk context for a chosen shard',
+	},
+	'cluster.getState': {
+		riskLevel: 'read',
+		description:
+			'Get the cluster state document filtered by metric (metadata, nodes, routing_table, ...) and optional index targets',
+	},
+	'cluster.getStats': {
+		riskLevel: 'read',
+		description:
+			'Get cluster statistics (GET /_cluster/stats) for all nodes or a node filter: index counts and sizes, OS, JVM and process usage',
+	},
+	'cluster.addVotingConfigExclusions': {
+		riskLevel: 'write',
+		description:
+			'Exclude nodes from the voting configuration by names or ids (exactly one) so they can leave the cluster safely',
+	},
+	'cluster.clearVotingConfigExclusions': {
+		riskLevel: 'write',
+		description:
+			'Clear the voting configuration exclusions list, optionally waiting until the excluded nodes have left the cluster',
+	},
+	'cluster.remoteInfo': {
+		riskLevel: 'read',
+		description:
+			'Get remote cluster information keyed by alias: connection mode (sniff or proxy), connectivity and seed addresses',
+	},
+	'cluster.healthReport': {
+		riskLevel: 'read',
+		description:
+			'Get the cluster health report with per-indicator status (master_is_stable, shards_availability, disk, ...); a feature selects a subset',
+	},
+	'cluster.sslCertificates': {
+		riskLevel: 'read',
+		description:
+			'List the SSL certificates loaded on the HTTP layer: alias, subject, issuer, serial, path and expiry per certificate',
+	},
+	'cluster.scriptContexts': {
+		riskLevel: 'read',
+		description:
+			'List the supported script contexts with the methods and parameters each exposes to scripts',
+	},
+	'cluster.scriptLanguages': {
+		riskLevel: 'read',
+		description:
+			'List the script languages the cluster allows and the contexts each language can be used in',
+	},
+	'cat.help': {
+		riskLevel: 'read',
+		description:
+			'Get the CAT API help text (GET /_cat): the plain-text list of every cat command, always returned as text',
+	},
+	'cat.aliases': {
+		riskLevel: 'read',
+		description:
+			'List index aliases with their filter, routing and write-index flags, filtered by an alias name pattern',
+	},
+	'cat.allocation': {
+		riskLevel: 'read',
+		description:
+			'List shard allocation per data node: shard counts and disk usage (used, available, total, percent)',
+	},
+	'cat.circuitBreakers': {
+		riskLevel: 'read',
+		description:
+			'List circuit breakers per node with their limits, estimated usage and whether they tripped',
+	},
+	'cat.componentTemplates': {
+		riskLevel: 'read',
+		description:
+			'List component templates with version and per-section counts (mappings, settings, aliases), filtered by name pattern',
+	},
+	'cat.count': {
+		riskLevel: 'read',
+		description:
+			'Get a quick live-document count for the whole cluster or an index/data stream/alias target',
+	},
+	'cat.fielddata': {
+		riskLevel: 'read',
+		description:
+			'List fielddata cache usage per node and field, in bytes, optionally filtered by field list',
+	},
+	'cat.health': {
+		riskLevel: 'read',
+		description:
+			'Get the compact cluster health row (status, node and shard counts) as a one-row JSON array',
+	},
+	'cat.master': {
+		riskLevel: 'read',
+		description:
+			'Get the elected master node: its id, host, ip and name in one row',
+	},
+	'cat.mlJobs': {
+		riskLevel: 'read',
+		description:
+			'List anomaly detection jobs with state, processed records, model size and forecast counts',
+	},
+	'cat.mlDataFrameAnalytics': {
+		riskLevel: 'read',
+		description:
+			'List data frame analytics jobs with their type and state, filtered by id pattern',
+	},
+	'cat.mlDatafeeds': {
+		riskLevel: 'read',
+		description:
+			'List ML datafeeds with their state and bucket counts, filtered by datafeed id pattern',
+	},
+	'cat.mlTrainedModels': {
+		riskLevel: 'read',
+		description:
+			'List trained models with creator, creation time, feature count and version, with from/size paging',
+	},
+	'cat.nodeattrs': {
+		riskLevel: 'read',
+		description:
+			'List the custom node attributes (node.name, attr/value pairs) the allocator uses for shard awareness',
+	},
+	'cat.nodes': {
+		riskLevel: 'read',
+		description:
+			'List the nodes with id, name, address, heap/ram/cpu percentages, roles and version',
+	},
+	'cat.pendingTasks': {
+		riskLevel: 'read',
+		description:
+			'List pending cluster tasks queued on the master with insertion order, priority and queue time',
+	},
+	'cat.plugins': {
+		riskLevel: 'read',
+		description:
+			'List the plugins installed per node with name, version and description',
+	},
+	'cat.recovery': {
+		riskLevel: 'read',
+		description:
+			'List shard recovery events (index, stage, source and target, bytes recovered), optionally active-only or detailed',
+	},
+	'cat.repositories': {
+		riskLevel: 'read',
+		description: 'List the registered snapshot repositories with their types',
+	},
+	'cat.segments': {
+		riskLevel: 'read',
+		description:
+			'List Lucene segments per shard: generation, doc counts, size and memory, filtered by index target',
+	},
+	'cat.shards': {
+		riskLevel: 'read',
+		description:
+			'List every shard with index, number, primary/replica, state, docs, store size and assigned node',
+	},
+	'cat.snapshots': {
+		riskLevel: 'read',
+		description:
+			'List snapshots in one or more repositories with status, start/end times, duration and index counts',
+	},
+	'cat.tasks': {
+		riskLevel: 'read',
+		description:
+			'List currently running tasks with action, node and running time, filterable by actions, nodes or parent task',
+	},
+	'cat.templates': {
+		riskLevel: 'read',
+		description:
+			'List index templates with their index patterns, order and component templates, filtered by name pattern',
+	},
+	'cat.threadPool': {
+		riskLevel: 'read',
+		description:
+			'List thread pool statistics per node and pool: active, queued and rejected counts, filtered by pool pattern',
+	},
+	'cat.transforms': {
+		riskLevel: 'read',
+		description:
+			'List transforms with state, checkpoint progress and documents processed, with from/size paging',
+	},
+	'nodes.info': {
+		riskLevel: 'read',
+		description:
+			'Get node information (GET /_nodes) for all or selected nodes: OS, process, JVM, thread pools, plugins and ingest processors, filtered by metric',
+	},
+	'nodes.stats': {
+		riskLevel: 'read',
+		description:
+			'Get node statistics for all or selected nodes: indices, OS, JVM, filesystem, thread pools, breakers, filtered by metric and index metric',
+	},
+	'nodes.usage': {
+		riskLevel: 'read',
+		description:
+			'Get node feature usage: how often each REST action and aggregation ran, per node',
+	},
+	'nodes.hotThreads': {
+		riskLevel: 'read',
+		description:
+			'Get the current hot threads dump per node as plain text, with sampling type, interval and thread count controls',
+	},
+	'nodes.reloadSecureSettings': {
+		riskLevel: 'write',
+		description:
+			'Reload keystore secure settings on all or selected nodes so updated credentials take effect without a restart',
+	},
+	'nodes.repositoriesMetering': {
+		riskLevel: 'read',
+		description:
+			'Get repositories metering information (snapshot search usage) for all or selected nodes',
+	},
+	'nodes.clearRepositoriesMetering': {
+		riskLevel: 'write',
+		description:
+			'Clear archived repositories metering information up to a maximum archive version on selected nodes',
+	},
+	'tasks.list': {
+		riskLevel: 'read',
+		description:
+			'List the tasks currently running on the cluster, groupable by node or parent task and filterable by actions and nodes',
+	},
+	'tasks.get': {
+		riskLevel: 'read',
+		description:
+			'Get one task by its <node_id>:<number> id with status, timing and optionally its completed response',
+	},
+	'tasks.cancel': {
+		riskLevel: 'write',
+		description:
+			'Cancel one task (POST /_tasks/{task_id}/_cancel), optionally narrowed by actions, nodes or parent task',
+	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof elasticsearchEndpointsNested
 >;
@@ -1090,9 +1689,17 @@ export {
 	encodeIndexTarget,
 } from './client';
 export type {
+	CatAliasesInput,
 	CatIndexRow,
+	CatShardsOutput,
+	CatTasksInput,
 	ClusterGetHealthInput,
 	ClusterGetHealthResponse,
+	ClusterGetInfoResponse,
+	ClusterHealthReportOutput,
+	ClusterPendingTasksOutput,
+	ClusterRerouteInput,
+	ClusterSslCertificatesOutput,
 	DocumentsGetInput,
 	DocumentsGetResponse,
 	ElasticsearchEndpointInputs,
@@ -1101,9 +1708,14 @@ export type {
 	IndicesGetResponse,
 	IndicesListInput,
 	IndicesListResponse,
+	NodesHotThreadsOutput,
+	NodesInfoInput,
+	NodesStatsInput,
 	SearchHit,
 	SearchQuery,
 	SearchRunInput,
 	SearchRunResponse,
+	TasksGetOutput,
+	TasksListInput,
 } from './endpoints/types';
 export { ElasticsearchSchema } from './schema';

@@ -1,9 +1,22 @@
 import { logEventFromContext } from 'corsair/core';
-import { Ccr, Documents, Fleet, Indices, Search } from './endpoints';
+import {
+	Cat,
+	Ccr,
+	Cluster,
+	Documents,
+	Fleet,
+	Indices,
+	Nodes,
+	Search,
+	Tasks,
+} from './endpoints';
 import {
 	CcrForgetFollowerInputSchema,
+	ClusterAddVotingConfigExclusionsInputSchema,
 	ClusterGetHealthInputSchema,
 	ClusterGetHealthResponseSchema,
+	ClusterRerouteInputSchema,
+	ClusterSubsystemInfoInputSchema,
 	DocumentsBulkInputSchema,
 	DocumentsDeleteByQueryInputSchema,
 	DocumentsGetInputSchema,
@@ -24,23 +37,66 @@ import {
 	IndicesPutMappingInputSchema,
 	IndicesPutSettingsInputSchema,
 	IndicesStatsInputSchema,
+	NodesHotThreadsInputSchema,
+	NodesStatsInputSchema,
 	SearchMsearchInputSchema,
 	SearchRunInputSchema,
 	SearchRunResponseSchema,
 	SearchTemplateInputSchema,
 	SearchVectorTileInputSchema,
+	TasksListInputSchema,
 } from './endpoints/types';
 import {
 	acknowledgedResponse,
 	bulkResponse,
 	byScrollResponse,
+	catAliasesRows,
+	catAllocationRows,
+	catCircuitBreakersRows,
+	catComponentTemplatesRows,
+	catCountRows,
+	catFielddataRows,
+	catHealthRows,
+	catHelpText,
 	catIndexRow,
 	catIndices,
+	catMasterRows,
+	catMlDataFrameAnalyticsRows,
+	catMlDatafeedsRows,
+	catMlJobsRows,
+	catMlTrainedModelsRows,
+	catNodeattrsRows,
+	catNodesRows,
+	catPendingTasksRows,
+	catPluginsRows,
+	catRecoveryRows,
+	catRepositoriesRows,
+	catSegmentsRows,
+	catShardsRows,
+	catSnapshotsRows,
+	catTasksRows,
+	catTemplatesRows,
+	catThreadPoolRows,
+	catTransformsRows,
 	ccrFollowInfoOutput,
 	ccrFollowOutput,
 	ccrFollowStatsOutput,
 	ccrForgetFollowerOutput,
+	clusterAllocationExplainOutput,
+	clusterGetSettingsOutput,
+	clusterGetStateOutput,
+	clusterGetStatsOutput,
 	clusterHealth,
+	clusterHealthReportOutput,
+	clusterInfoOutput,
+	clusterPendingTasksOutput,
+	clusterPutSettingsOutput,
+	clusterRemoteInfoOutput,
+	clusterRerouteOutput,
+	clusterScriptContextsOutput,
+	clusterScriptLanguagesOutput,
+	clusterSslCertificatesOutput,
+	clusterSubsystemInfoOutput,
 	documentFound,
 	documentMissing,
 	existsFalse,
@@ -79,6 +135,13 @@ import {
 	msearchEmptyResult,
 	msearchResult,
 	mtermvectorsResponse,
+	nodesClearRepositoriesMeteringOutput,
+	nodesHotThreadsText,
+	nodesInfoOutput,
+	nodesReloadSecureSettingsOutput,
+	nodesRepositoriesMeteringOutput,
+	nodesStatsOutput,
+	nodesUsageOutput,
 	searchAsyncSubmitOutput,
 	searchCountOutput,
 	searchEqlOutput,
@@ -92,6 +155,8 @@ import {
 	searchTermsEnumOutput,
 	searchValidateQueryOutput,
 	shardsOpResponse,
+	taskGetOutput,
+	tasksListOutput,
 	termvectorsResult,
 	updateResponse,
 	writeResponse,
@@ -106,13 +171,28 @@ jest.mock('corsair/core', () => ({
 const mockLog = jest.mocked(logEventFromContext);
 
 describe('cluster.getHealth schemas', () => {
-	it('accepts a no-arg call and tolerates harmless extra keys', () => {
-		// The call helper parses `input ?? {}`, so callers may pass {} or
-		// attach extras; there is no wire body to protect.
-		const input = ClusterGetHealthInputSchema.parse({
-			anything: 'ignored',
-		});
-		expect(input).toEqual({});
+	it('accepts a no-arg call and the documented filters', () => {
+		expect(ClusterGetHealthInputSchema.parse({})).toEqual({});
+		expect(
+			ClusterGetHealthInputSchema.parse({
+				index: 'logs-*',
+				level: 'indices',
+				wait_for_status: 'yellow',
+			}),
+		).toEqual({ index: 'logs-*', level: 'indices', wait_for_status: 'yellow' });
+	});
+
+	it('rejects unknown keys and bad level/wait_for_status values', () => {
+		expect(
+			ClusterGetHealthInputSchema.safeParse({ level: 'shard' }).success,
+		).toBe(false);
+		expect(
+			ClusterGetHealthInputSchema.safeParse({ wait_for_status: 'blue' })
+				.success,
+		).toBe(false);
+		expect(
+			ClusterGetHealthInputSchema.safeParse({ anything: 'ignored' }).success,
+		).toBe(false);
 	});
 
 	it('parses the documented health body', () => {
@@ -2161,5 +2241,765 @@ describe('fleet and ccr wire calls', () => {
 		expect(fetchMock.mock.calls[2]?.[0]).toBe(
 			'http://es:9200/logs-follower/_ccr/unfollow',
 		);
+	});
+});
+
+// ── cluster, cat, nodes, tasks schema bounds ────────────────────────────────
+
+describe('cluster family input bounds', () => {
+	it('subsystemInfo only accepts documented targets', () => {
+		expect(
+			ClusterSubsystemInfoInputSchema.safeParse({ target: 'http,ingest' })
+				.success,
+		).toBe(true);
+		expect(
+			ClusterSubsystemInfoInputSchema.safeParse({ target: '_all' }).success,
+		).toBe(true);
+		expect(
+			ClusterSubsystemInfoInputSchema.safeParse({ target: 'http,nonsense' })
+				.success,
+		).toBe(false);
+		expect(ClusterSubsystemInfoInputSchema.safeParse({}).success).toBe(false);
+	});
+
+	it('reroute commands are typed with explicit data-loss opt-ins', () => {
+		const valid = ClusterRerouteInputSchema.safeParse({
+			dry_run: true,
+			commands: [
+				{
+					move: {
+						index: 'logs-2026-11',
+						shard: 0,
+						from_node: 'node-1',
+						to_node: 'node-2',
+					},
+				},
+				{
+					allocate_stale_primary: {
+						index: 'logs-2026-11',
+						shard: 0,
+						node: 'node-2',
+						accept_data_loss: true,
+					},
+				},
+			],
+		});
+		expect(valid.success).toBe(true);
+		// accept_data_loss must be the literal true, never false or absent on
+		// the data-loss commands.
+		expect(
+			ClusterRerouteInputSchema.safeParse({
+				commands: [
+					{
+						allocate_stale_primary: {
+							index: 'logs',
+							shard: 0,
+							node: 'node-2',
+							accept_data_loss: false,
+						},
+					},
+				],
+			}).success,
+		).toBe(false);
+		expect(
+			ClusterRerouteInputSchema.safeParse({
+				commands: [
+					{ allocate_stale_primary: { index: 'logs', shard: 0, node: 'n' } },
+				],
+			}).success,
+		).toBe(false);
+		// A command needs exactly one action key.
+		expect(
+			ClusterRerouteInputSchema.safeParse({
+				commands: [
+					{
+						move: { index: 'l', shard: 0, from_node: 'a', to_node: 'b' },
+						cancel: { index: 'l', shard: 0, node: 'a' },
+					},
+				],
+			}).success,
+		).toBe(false);
+		expect(
+			ClusterRerouteInputSchema.safeParse({
+				commands: [
+					{ move: { index: 'l', shard: -1, from_node: 'a', to_node: 'b' } },
+				],
+			}).success,
+		).toBe(false);
+	});
+
+	it('voting config exclusions take exactly one of names or ids', () => {
+		expect(
+			ClusterAddVotingConfigExclusionsInputSchema.safeParse({
+				node_names: ['node-1', 'node-2'],
+			}).success,
+		).toBe(true);
+		expect(
+			ClusterAddVotingConfigExclusionsInputSchema.safeParse({
+				node_ids: ['id-1'],
+			}).success,
+		).toBe(true);
+		expect(
+			ClusterAddVotingConfigExclusionsInputSchema.safeParse({
+				node_names: ['node-1'],
+				node_ids: ['id-1'],
+			}).success,
+		).toBe(false);
+		expect(
+			ClusterAddVotingConfigExclusionsInputSchema.safeParse({
+				node_names: [],
+			}).success,
+		).toBe(false);
+	});
+
+	it('reroute and allocationExplain accept empty option sets', () => {
+		expect(ClusterRerouteInputSchema.safeParse({}).success).toBe(true);
+		// With no body, allocation explain picks the first unassigned shard.
+		expect(ClusterRerouteInputSchema.parse({ commands: undefined })).toEqual(
+			{},
+		);
+	});
+});
+
+describe('nodes family input bounds', () => {
+	it('nodes.stats metric selectors are validated', () => {
+		expect(
+			NodesStatsInputSchema.safeParse({ metric: 'indices,os' }).success,
+		).toBe(true);
+		expect(
+			NodesStatsInputSchema.safeParse({ metric: 'not-a-metric' }).success,
+		).toBe(false);
+	});
+
+	it('nodes.stats index_metric requires the indices metric', () => {
+		expect(
+			NodesStatsInputSchema.safeParse({
+				metric: 'indices',
+				index_metric: 'docs,store',
+			}).success,
+		).toBe(true);
+		expect(
+			NodesStatsInputSchema.safeParse({
+				metric: '_all',
+				index_metric: 'docs',
+			}).success,
+		).toBe(true);
+		expect(
+			NodesStatsInputSchema.safeParse({ index_metric: 'docs' }).success,
+		).toBe(false);
+		expect(
+			NodesStatsInputSchema.safeParse({
+				metric: 'os',
+				index_metric: 'docs',
+			}).success,
+		).toBe(false);
+	});
+
+	it('hot threads pins the documented type and sort enums', () => {
+		expect(
+			NodesHotThreadsInputSchema.safeParse({ type: 'gpu', sort: 'total' })
+				.success,
+		).toBe(true);
+		expect(NodesHotThreadsInputSchema.safeParse({ type: 'io' }).success).toBe(
+			false,
+		);
+		expect(NodesHotThreadsInputSchema.safeParse({ sort: 'wait' }).success).toBe(
+			false,
+		);
+		expect(NodesHotThreadsInputSchema.safeParse({ threads: 0 }).success).toBe(
+			false,
+		);
+	});
+});
+
+describe('tasks family input bounds', () => {
+	it('tasks.list takes actions/nodes as string or list and validates group_by', () => {
+		expect(
+			TasksListInputSchema.safeParse({ actions: 'cluster:*' }).success,
+		).toBe(true);
+		expect(
+			TasksListInputSchema.safeParse({ nodes: ['node-1', 'node-2'] }).success,
+		).toBe(true);
+		expect(
+			TasksListInputSchema.safeParse({ group_by: 'parents' }).success,
+		).toBe(true);
+		expect(
+			TasksListInputSchema.safeParse({ group_by: 'clusters' }).success,
+		).toBe(false);
+		expect(TasksListInputSchema.safeParse({ nodes: [] }).success).toBe(false);
+	});
+});
+
+// ── cluster, cat, nodes, tasks wire calls ───────────────────────────────────
+
+describe('cluster, cat, nodes and tasks wire calls', () => {
+	let fetchMock: jest.SpyInstance;
+
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		mockLog.mockClear();
+	});
+
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	const ctx = {
+		options: { baseUrl: 'http://es:9200' },
+		key: 'ApiKey encoded-key',
+	} as never;
+
+	function mockJson(body: unknown, status = 200) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	function mockText(body: string) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(body, {
+				status: 200,
+				headers: { 'Content-Type': 'text/plain; charset=UTF-8' },
+			}),
+		);
+	}
+
+	// Empty-body 200: no Content-Type, so the client surfaces undefined.
+	function mockEmptyBody() {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+	}
+
+	async function sent() {
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		return { url, init };
+	}
+
+	type WireCase = {
+		name: string;
+		url: string;
+		method?: string;
+		body?: unknown;
+		text?: boolean;
+		empty?: boolean;
+		response: unknown;
+		run: () => Promise<unknown>;
+	};
+
+	const cases: WireCase[] = [
+		{
+			name: 'cluster.ping HEADs the root and resolves exists',
+			url: 'http://es:9200/',
+			method: 'HEAD',
+			empty: true,
+			response: { exists: true },
+			run: () => Cluster.ping(ctx, {}),
+		},
+		{
+			name: 'cluster.getInfo GETs the root info block',
+			url: 'http://es:9200/',
+			response: clusterInfoOutput,
+			run: () => Cluster.getInfo(ctx, {}),
+		},
+		{
+			name: 'cluster.getHealth targets an index with a level filter',
+			url: 'http://es:9200/_cluster/health/logs-*?level=indices',
+			response: clusterHealth,
+			run: () => Cluster.getHealth(ctx, { index: 'logs-*', level: 'indices' }),
+		},
+		{
+			name: 'cluster.subsystemInfo encodes a comma target list',
+			url: 'http://es:9200/_info/http,ingest',
+			response: clusterSubsystemInfoOutput,
+			run: () => Cluster.subsystemInfo(ctx, { target: 'http,ingest' }),
+		},
+		{
+			name: 'cluster.pendingTasks passes the local flag',
+			url: 'http://es:9200/_cluster/pending_tasks?local=true',
+			response: clusterPendingTasksOutput,
+			run: () => Cluster.pendingTasks(ctx, { local: true }),
+		},
+		{
+			name: 'cluster.getSettings requests defaults',
+			url: 'http://es:9200/_cluster/settings?include_defaults=true',
+			response: clusterGetSettingsOutput,
+			run: () => Cluster.getSettings(ctx, { include_defaults: true }),
+		},
+		{
+			name: 'cluster.putSettings PUTs persistent settings',
+			url: 'http://es:9200/_cluster/settings',
+			method: 'PUT',
+			body: { persistent: { 'cluster.routing.allocation.enable': 'all' } },
+			response: clusterPutSettingsOutput,
+			run: () =>
+				Cluster.putSettings(ctx, {
+					persistent: { 'cluster.routing.allocation.enable': 'all' },
+				}),
+		},
+		{
+			name: 'cluster.reroute POSTs typed commands with dry_run',
+			url: 'http://es:9200/_cluster/reroute?dry_run=true',
+			method: 'POST',
+			body: {
+				commands: [
+					{
+						move: {
+							index: 'logs-2026-11',
+							shard: 0,
+							from_node: 'node-1',
+							to_node: 'node-2',
+						},
+					},
+				],
+			},
+			response: clusterRerouteOutput,
+			run: () =>
+				Cluster.reroute(ctx, {
+					dry_run: true,
+					commands: [
+						{
+							move: {
+								index: 'logs-2026-11',
+								shard: 0,
+								from_node: 'node-1',
+								to_node: 'node-2',
+							},
+						},
+					],
+				}),
+		},
+		{
+			name: 'cluster.allocationExplain POSTs the shard body',
+			url: 'http://es:9200/_cluster/allocation/explain',
+			method: 'POST',
+			body: { index: 'logs-2026-11', shard: 0, primary: true },
+			response: clusterAllocationExplainOutput,
+			run: () =>
+				Cluster.allocationExplain(ctx, {
+					index: 'logs-2026-11',
+					shard: 0,
+					primary: true,
+				}),
+		},
+		{
+			name: 'cluster.getState filters metrics and indices in the path',
+			url: 'http://es:9200/_cluster/state/metadata,blocks/logs-*',
+			response: clusterGetStateOutput,
+			run: () =>
+				Cluster.getState(ctx, { metric: 'metadata,blocks', index: 'logs-*' }),
+		},
+		{
+			name: 'cluster.getStats targets a node filter',
+			url: 'http://es:9200/_cluster/stats/nodes/node-1,node-2',
+			response: clusterGetStatsOutput,
+			run: () => Cluster.getStats(ctx, { node_id: 'node-1,node-2' }),
+		},
+		{
+			name: 'cluster.addVotingConfigExclusions joins names into the query',
+			url: 'http://es:9200/_cluster/voting_config_exclusions?node_names=node-1%2Cnode-2',
+			method: 'POST',
+			empty: true,
+			response: {},
+			run: () =>
+				Cluster.addVotingConfigExclusions(ctx, {
+					node_names: ['node-1', 'node-2'],
+				}),
+		},
+		{
+			name: 'cluster.clearVotingConfigExclusions DELETEs with wait flag',
+			url: 'http://es:9200/_cluster/voting_config_exclusions?wait_for_removal=false',
+			method: 'DELETE',
+			empty: true,
+			response: {},
+			run: () =>
+				Cluster.clearVotingConfigExclusions(ctx, { wait_for_removal: false }),
+		},
+		{
+			name: 'cluster.remoteInfo GETs remote clusters',
+			url: 'http://es:9200/_remote/info',
+			response: clusterRemoteInfoOutput,
+			run: () => Cluster.remoteInfo(ctx, {}),
+		},
+		{
+			name: 'cluster.healthReport selects one indicator with a size',
+			url: 'http://es:9200/_health_report/shards_availability?size=50',
+			response: clusterHealthReportOutput,
+			run: () =>
+				Cluster.healthReport(ctx, { feature: 'shards_availability', size: 50 }),
+		},
+		{
+			name: 'cluster.sslCertificates GETs the certificate list',
+			url: 'http://es:9200/_ssl/certificates',
+			response: clusterSslCertificatesOutput,
+			run: () => Cluster.sslCertificates(ctx, {}),
+		},
+		{
+			name: 'cluster.scriptContexts GETs script contexts',
+			url: 'http://es:9200/_script_context',
+			response: clusterScriptContextsOutput,
+			run: () => Cluster.scriptContexts(ctx, {}),
+		},
+		{
+			name: 'cluster.scriptLanguages GETs script languages',
+			url: 'http://es:9200/_script_language',
+			response: clusterScriptLanguagesOutput,
+			run: () => Cluster.scriptLanguages(ctx, {}),
+		},
+		{
+			name: 'cat.help GETs the plain-text command list',
+			url: 'http://es:9200/_cat',
+			text: true,
+			response: catHelpText,
+			run: () => Cat.help(ctx, {}),
+		},
+		{
+			name: 'cat.aliases filters by name with format=json',
+			url: 'http://es:9200/_cat/aliases/logs?format=json&expand_wildcards=open',
+			response: catAliasesRows,
+			run: () => Cat.aliases(ctx, { name: 'logs', expand_wildcards: 'open' }),
+		},
+		{
+			name: 'cat.allocation targets a node filter',
+			url: 'http://es:9200/_cat/allocation/node-1?format=json',
+			response: catAllocationRows,
+			run: () => Cat.allocation(ctx, { node_id: 'node-1' }),
+		},
+		{
+			name: 'cat.circuitBreakers takes a pattern filter',
+			url: 'http://es:9200/_cat/circuit_breaker/request*?format=json',
+			response: catCircuitBreakersRows,
+			run: () => Cat.circuitBreakers(ctx, { patterns: 'request*' }),
+		},
+		{
+			name: 'cat.componentTemplates filters by name',
+			url: 'http://es:9200/_cat/component_templates/logs-*?format=json',
+			response: catComponentTemplatesRows,
+			run: () => Cat.componentTemplates(ctx, { name: 'logs-*' }),
+		},
+		{
+			name: 'cat.count targets an index',
+			url: 'http://es:9200/_cat/count/logs-2026-11?format=json',
+			response: catCountRows,
+			run: () => Cat.count(ctx, { index: 'logs-2026-11' }),
+		},
+		{
+			name: 'cat.fielddata filters by fields',
+			url: 'http://es:9200/_cat/fielddata/host.name?format=json',
+			response: catFielddataRows,
+			run: () => Cat.fielddata(ctx, { fields: 'host.name' }),
+		},
+		{
+			name: 'cat.health disables timestamps',
+			url: 'http://es:9200/_cat/health?format=json&ts=false',
+			response: catHealthRows,
+			run: () => Cat.health(ctx, { ts: false }),
+		},
+		{
+			name: 'cat.master GETs the master row',
+			url: 'http://es:9200/_cat/master?format=json',
+			response: catMasterRows,
+			run: () => Cat.master(ctx, {}),
+		},
+		{
+			name: 'cat.mlJobs lists anomaly detectors',
+			url: 'http://es:9200/_cat/ml/anomaly_detectors/total-*?format=json&allow_no_match=true',
+			response: catMlJobsRows,
+			run: () => Cat.mlJobs(ctx, { job_id: 'total-*', allow_no_match: true }),
+		},
+		{
+			name: 'cat.mlDataFrameAnalytics lists analytics jobs',
+			url: 'http://es:9200/_cat/ml/data_frame/analytics?format=json',
+			response: catMlDataFrameAnalyticsRows,
+			run: () => Cat.mlDataFrameAnalytics(ctx, {}),
+		},
+		{
+			name: 'cat.mlDatafeeds lists datafeeds',
+			url: 'http://es:9200/_cat/ml/datafeeds/datafeed-*?format=json',
+			response: catMlDatafeedsRows,
+			run: () => Cat.mlDatafeeds(ctx, { datafeed_id: 'datafeed-*' }),
+		},
+		{
+			name: 'cat.mlTrainedModels pages with from and size',
+			url: 'http://es:9200/_cat/ml/trained_models?format=json&from=10&size=5',
+			response: catMlTrainedModelsRows,
+			run: () => Cat.mlTrainedModels(ctx, { from: 10, size: 5 }),
+		},
+		{
+			name: 'cat.nodeattrs GETs node attributes',
+			url: 'http://es:9200/_cat/nodeattrs?format=json',
+			response: catNodeattrsRows,
+			run: () => Cat.nodeattrs(ctx, {}),
+		},
+		{
+			name: 'cat.nodes asks for full node ids',
+			url: 'http://es:9200/_cat/nodes?format=json&full_id=true',
+			response: catNodesRows,
+			run: () => Cat.nodes(ctx, { full_id: true }),
+		},
+		{
+			name: 'cat.pendingTasks GETs pending tasks',
+			url: 'http://es:9200/_cat/pending_tasks?format=json',
+			response: catPendingTasksRows,
+			run: () => Cat.pendingTasks(ctx, {}),
+		},
+		{
+			name: 'cat.plugins includes bootstrap plugins',
+			url: 'http://es:9200/_cat/plugins?format=json&include_bootstrap=true',
+			response: catPluginsRows,
+			run: () => Cat.plugins(ctx, { include_bootstrap: true }),
+		},
+		{
+			name: 'cat.recovery targets an index with detailed rows',
+			url: 'http://es:9200/_cat/recovery/logs-*?format=json&active_only=false&detailed=true',
+			response: catRecoveryRows,
+			run: () =>
+				Cat.recovery(ctx, {
+					index: 'logs-*',
+					detailed: true,
+					active_only: false,
+				}),
+		},
+		{
+			name: 'cat.repositories GETs repositories',
+			url: 'http://es:9200/_cat/repositories?format=json',
+			response: catRepositoriesRows,
+			run: () => Cat.repositories(ctx, {}),
+		},
+		{
+			name: 'cat.segments targets an index with wildcard expansion',
+			url: 'http://es:9200/_cat/segments/logs-*?format=json&expand_wildcards=open',
+			response: catSegmentsRows,
+			run: () =>
+				Cat.segments(ctx, { index: 'logs-*', expand_wildcards: 'open' }),
+		},
+		{
+			name: 'cat.shards targets an index',
+			url: 'http://es:9200/_cat/shards/logs-2026-11?format=json',
+			response: catShardsRows,
+			run: () => Cat.shards(ctx, { index: 'logs-2026-11' }),
+		},
+		{
+			name: 'cat.snapshots targets a repository',
+			url: 'http://es:9200/_cat/snapshots/my-repo?format=json&ignore_unavailable=true',
+			response: catSnapshotsRows,
+			run: () =>
+				Cat.snapshots(ctx, { repository: 'my-repo', ignore_unavailable: true }),
+		},
+		{
+			name: 'cat.tasks joins action and node filters',
+			url: 'http://es:9200/_cat/tasks?format=json&actions=cluster%3A*%2Cindices%3A*&nodes=node-1&detailed=true',
+			response: catTasksRows,
+			run: () =>
+				Cat.tasks(ctx, {
+					actions: ['cluster:*', 'indices:*'],
+					nodes: 'node-1',
+					detailed: true,
+				}),
+		},
+		{
+			name: 'cat.templates filters by name',
+			url: 'http://es:9200/_cat/templates/logs-*?format=json',
+			response: catTemplatesRows,
+			run: () => Cat.templates(ctx, { name: 'logs-*' }),
+		},
+		{
+			name: 'cat.threadPool takes pool patterns',
+			url: 'http://es:9200/_cat/thread_pool/search*?format=json',
+			response: catThreadPoolRows,
+			run: () => Cat.threadPool(ctx, { thread_pool_patterns: 'search*' }),
+		},
+		{
+			name: 'cat.transforms pages with from and size',
+			url: 'http://es:9200/_cat/transforms/logs-*?format=json&from=0&size=10',
+			response: catTransformsRows,
+			run: () =>
+				Cat.transforms(ctx, { transform_id: 'logs-*', from: 0, size: 10 }),
+		},
+		{
+			name: 'nodes.info targets nodes and metrics in the path',
+			url: 'http://es:9200/_nodes/node-1,node-2/jvm,os?flat_settings=true',
+			response: nodesInfoOutput,
+			run: () =>
+				Nodes.info(ctx, {
+					node_id: 'node-1,node-2',
+					metric: 'jvm,os',
+					flat_settings: true,
+				}),
+		},
+		{
+			name: 'nodes.stats builds the metric and index_metric path',
+			url: 'http://es:9200/_nodes/node-1/stats/indices,os/docs,store?level=shards',
+			response: nodesStatsOutput,
+			run: () =>
+				Nodes.stats(ctx, {
+					node_id: 'node-1',
+					metric: 'indices,os',
+					index_metric: 'docs,store',
+					level: 'shards',
+				}),
+		},
+		{
+			name: 'nodes.stats without filters hits the bare stats path',
+			url: 'http://es:9200/_nodes/stats',
+			response: nodesStatsOutput,
+			run: () => Nodes.stats(ctx, {}),
+		},
+		{
+			name: 'nodes.usage filters by metric',
+			url: 'http://es:9200/_nodes/usage/rest_actions',
+			response: nodesUsageOutput,
+			run: () => Nodes.usage(ctx, { metric: 'rest_actions' }),
+		},
+		{
+			name: 'nodes.hotThreads returns the text dump',
+			url: 'http://es:9200/_nodes/node-1/hot_threads?threads=5&type=cpu',
+			text: true,
+			response: nodesHotThreadsText,
+			run: () =>
+				Nodes.hotThreads(ctx, { node_id: 'node-1', threads: 5, type: 'cpu' }),
+		},
+		{
+			name: 'nodes.reloadSecureSettings POSTs to the node path',
+			url: 'http://es:9200/_nodes/node-1/reload_secure_settings?timeout=30s',
+			method: 'POST',
+			response: nodesReloadSecureSettingsOutput,
+			run: () =>
+				Nodes.reloadSecureSettings(ctx, { node_id: 'node-1', timeout: '30s' }),
+		},
+		{
+			name: 'nodes.repositoriesMetering hits the metering path',
+			url: 'http://es:9200/_nodes/_repositories_metering',
+			response: nodesRepositoriesMeteringOutput,
+			run: () => Nodes.repositoriesMetering(ctx, {}),
+		},
+		{
+			name: 'nodes.clearRepositoriesMetering DELETEs up to a version',
+			url: 'http://es:9200/_nodes/node-1/_repositories_metering/3',
+			method: 'DELETE',
+			response: nodesClearRepositoriesMeteringOutput,
+			run: () =>
+				Nodes.clearRepositoriesMetering(ctx, {
+					node_id: 'node-1',
+					max_archive_version: 3,
+				}),
+		},
+		{
+			name: 'tasks.list passes actions, group_by and nodes',
+			url: 'http://es:9200/_tasks?detailed=true&group_by=parents&actions=cluster%3A*',
+			response: tasksListOutput,
+			run: () =>
+				Tasks.list(ctx, {
+					actions: 'cluster:*',
+					detailed: true,
+					group_by: 'parents',
+				}),
+		},
+		{
+			name: 'tasks.get URL-encodes the task id',
+			url: 'http://es:9200/_tasks/oTUltX4IQMOUUVeiohTt8A%3A124?wait_for_completion=true',
+			response: taskGetOutput,
+			run: () =>
+				Tasks.get(ctx, {
+					task_id: 'oTUltX4IQMOUUVeiohTt8A:124',
+					wait_for_completion: true,
+				}),
+		},
+		{
+			name: 'tasks.cancel POSTs the cancel path with filters',
+			url: 'http://es:9200/_tasks/oTUltX4IQMOUUVeiohTt8A%3A124/_cancel?actions=indices%3A*',
+			method: 'POST',
+			response: tasksListOutput,
+			run: () =>
+				Tasks.cancel(ctx, {
+					task_id: 'oTUltX4IQMOUUVeiohTt8A:124',
+					actions: 'indices:*',
+				}),
+		},
+	];
+
+	it.each(cases)('$name', async (wire) => {
+		if (wire.text) {
+			mockText(String(wire.response));
+		} else if (wire.empty) {
+			mockEmptyBody();
+		} else {
+			mockJson(wire.response);
+		}
+		const result = await wire.run();
+		// The output schema parsed the mock before this assertion ran; a typed
+		// field read proves the caller sees the parsed body.
+		expect(result).toBeDefined();
+		const { url, init } = await sent();
+		expect(url).toBe(wire.url);
+		expect(init.method ?? 'GET').toBe(wire.method ?? 'GET');
+		if (wire.body !== undefined) {
+			expect(JSON.parse(String(init.body))).toEqual(wire.body);
+		}
+	});
+
+	it('cluster.ping resolves a 404 HEAD to exists: false', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 404 }));
+		const result = await Cluster.ping(ctx, {});
+		expect(result).toEqual({ exists: false });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('returns typed results from the parsed bodies', async () => {
+		mockJson(clusterPendingTasksOutput);
+		const pending = await Cluster.pendingTasks(ctx, {});
+		expect(pending.tasks[0]?.insert_order).toBe(1001);
+
+		mockJson(catShardsRows);
+		const shards = await Cat.shards(ctx, { index: 'logs-2026-11' });
+		expect(shards[0]?.state).toBe('STARTED');
+		expect(shards[0]?.['unassigned.reason']).toBeNull();
+
+		mockText(nodesHotThreadsText);
+		const hot = await Nodes.hotThreads(ctx, {});
+		expect(hot).toContain('Hot threads');
+
+		mockJson(taskGetOutput);
+		const task = await Tasks.get(ctx, {
+			task_id: 'oTUltX4IQMOUUVeiohTt8A:124',
+		});
+		expect(task.completed).toBe(true);
+		expect(task.task.cancellable).toBe(true);
+	});
+
+	it('accepts empty cat results as valid empty arrays', async () => {
+		for (const run of [
+			() => Cat.aliases(ctx, {}),
+			() => Cat.allocation(ctx, {}),
+			() => Cat.circuitBreakers(ctx, {}),
+			() => Cat.componentTemplates(ctx, {}),
+			() => Cat.count(ctx, {}),
+			() => Cat.fielddata(ctx, {}),
+			() => Cat.health(ctx, {}),
+			() => Cat.master(ctx, {}),
+			() => Cat.mlJobs(ctx, {}),
+			() => Cat.mlDataFrameAnalytics(ctx, {}),
+			() => Cat.mlDatafeeds(ctx, {}),
+			() => Cat.mlTrainedModels(ctx, {}),
+			() => Cat.nodeattrs(ctx, {}),
+			() => Cat.nodes(ctx, {}),
+			() => Cat.pendingTasks(ctx, {}),
+			() => Cat.plugins(ctx, {}),
+			() => Cat.recovery(ctx, {}),
+			() => Cat.repositories(ctx, {}),
+			() => Cat.segments(ctx, {}),
+			() => Cat.shards(ctx, {}),
+			() => Cat.snapshots(ctx, {}),
+			() => Cat.tasks(ctx, {}),
+			() => Cat.templates(ctx, {}),
+			() => Cat.threadPool(ctx, {}),
+			() => Cat.transforms(ctx, {}),
+		]) {
+			mockJson([]);
+			await expect(run()).resolves.toEqual([]);
+		}
+		expect(fetchMock).toHaveBeenCalledTimes(25);
 	});
 });

@@ -3,12 +3,51 @@
 // Each one satisfies the operation's output schema.
 import type {
 	ByScrollResponse,
+	CatAliasesOutput,
+	CatAllocationOutput,
+	CatCircuitBreakersOutput,
+	CatComponentTemplatesOutput,
+	CatCountOutput,
+	CatFielddataOutput,
+	CatHealthOutput,
 	CatIndexRow,
+	CatMasterOutput,
+	CatMlDataFrameAnalyticsOutput,
+	CatMlDatafeedsOutput,
+	CatMlJobsOutput,
+	CatMlTrainedModelsOutput,
+	CatNodeattrsOutput,
+	CatNodesOutput,
+	CatPendingTasksOutput,
+	CatPluginsOutput,
+	CatRecoveryOutput,
+	CatRepositoriesOutput,
+	CatSegmentsOutput,
+	CatShardsOutput,
+	CatSnapshotsOutput,
+	CatTasksOutput,
+	CatTemplatesOutput,
+	CatThreadPoolOutput,
+	CatTransformsOutput,
 	CcrFollowInfoOutput,
 	CcrFollowOutput,
 	CcrFollowStatsOutput,
 	CcrForgetFollowerOutput,
+	ClusterAllocationExplainOutput,
 	ClusterGetHealthResponse,
+	ClusterGetInfoResponse,
+	ClusterGetSettingsOutput,
+	ClusterGetStateOutput,
+	ClusterGetStatsOutput,
+	ClusterHealthReportOutput,
+	ClusterPendingTasksOutput,
+	ClusterPutSettingsOutput,
+	ClusterRemoteInfoOutput,
+	ClusterRerouteOutput,
+	ClusterScriptContextsOutput,
+	ClusterScriptLanguagesOutput,
+	ClusterSslCertificatesOutput,
+	ClusterSubsystemInfoOutput,
 	DocumentsBulkOutput,
 	DocumentsExplainOutput,
 	DocumentsGetResponse,
@@ -37,6 +76,12 @@ import type {
 	IndicesStatsOutput,
 	LifecycleIndices,
 	MultiSearchResult,
+	NodesClearRepositoriesMeteringOutput,
+	NodesInfoOutput,
+	NodesReloadSecureSettingsOutput,
+	NodesRepositoriesMeteringOutput,
+	NodesStatsOutput,
+	NodesUsageOutput,
 	SearchAsyncSubmitOutput,
 	SearchCountOutput,
 	SearchEqlOutput,
@@ -49,6 +94,8 @@ import type {
 	SearchShardsOutput,
 	SearchTermsEnumOutput,
 	SearchValidateQueryOutput,
+	TasksGetOutput,
+	TasksListOutput,
 	TermVectorsResult,
 	WriteResponse,
 } from './endpoints/types';
@@ -754,4 +801,557 @@ export const ccrFollowStatsOutput: CcrFollowStatsOutput = {
 
 export const ccrForgetFollowerOutput: CcrForgetFollowerOutput = {
 	_shards: { total: 1, successful: 1, failed: 0, skipped: 0 },
+};
+
+// ── cluster family fixtures ──────────────────────────────────────────────────
+
+export const clusterInfoOutput: ClusterGetInfoResponse = {
+	name: 'node-1',
+	cluster_name: 'es-test-cluster',
+	cluster_uuid: 'AxNuG5LbQs6S3D4f9C-Rw',
+	version: {
+		number: '9.0.0',
+		build_flavor: 'default',
+		build_type: 'docker',
+		build_hash: 'e337540bcebdd837e11b7c5d29f4bf0e4e6f5e1e',
+		build_date: '2026-10-01T10:00:00.000Z',
+		build_snapshot: false,
+		lucene_version: '10.0.0',
+		minimum_index_compatibility_version: '8.0.0',
+		minimum_wire_compatibility_version: '8.0.0',
+	},
+	tagline: 'You Know, for Search',
+};
+
+export const clusterPendingTasksOutput: ClusterPendingTasksOutput = {
+	tasks: [
+		{
+			insert_order: 1001,
+			priority: 'URGENT',
+			source: 'create-index [logs-2026-12], cause [api]',
+			executing: false,
+			time_in_queue_millis: 100,
+			time_in_queue: '100ms',
+		},
+	],
+};
+
+export const clusterGetSettingsOutput: ClusterGetSettingsOutput = {
+	persistent: { 'cluster.routing.allocation.enable': 'all' },
+	transient: {},
+	defaults: { 'cluster.max_shards_per_node': '1000' },
+};
+
+export const clusterPutSettingsOutput: ClusterPutSettingsOutput = {
+	acknowledged: true,
+	persistent: { 'cluster.routing.allocation.enable': 'all' },
+	transient: {},
+};
+
+export const clusterRerouteOutput: ClusterRerouteOutput = {
+	acknowledged: true,
+	state: { cluster_uuid: 'AxNuG5LbQs6S3D4f9C-Rw' },
+	explanations: [
+		{
+			command: 'move',
+			decisions: [{ decider: 'same_shard', decision: 'NO', explanation: '' }],
+			parameters: {
+				index: 'logs-2026-11',
+				shard: 0,
+				from_node: 'node-1',
+				to_node: 'node-2',
+			},
+		},
+	],
+};
+
+export const clusterAllocationExplainOutput: ClusterAllocationExplainOutput = {
+	index: 'logs-2026-11',
+	shard: 0,
+	primary: true,
+	current_state: 'unassigned',
+	can_allocate: 'no',
+	allocate_explanation: "Elasticsearch isn't allowed to allocate this shard",
+	explanation:
+		'the shard cannot be allocated because too many shards are already on the node',
+};
+
+export const clusterRemoteInfoOutput: ClusterRemoteInfoOutput = {
+	leader_cluster: {
+		mode: 'sniff',
+		connected: true,
+		num_nodes_connected: 3,
+		max_connections_per_cluster: 3,
+		initial_connect_timeout: '30s',
+		skip_unavailable: false,
+		seeds: ['10.0.0.2:9300'],
+	},
+	proxy_cluster: {
+		mode: 'proxy',
+		connected: true,
+		skip_unavailable: true,
+		proxy_address: 'es.cloud.example:9443',
+	},
+};
+
+export const clusterHealthReportOutput: ClusterHealthReportOutput = {
+	cluster_name: 'es-test-cluster',
+	indicators: {
+		master_is_stable: {
+			status: 'green',
+			symptom: 'The cluster has a stable master node',
+		},
+		shards_availability: {
+			status: 'yellow',
+			symptom: 'Some replicas are not available',
+			impacted_resources: [{ indices: ['logs-2026-11'] }],
+		},
+	},
+};
+
+export const clusterSslCertificatesOutput: ClusterSslCertificatesOutput = [
+	{
+		alias: 'http',
+		expiry: '2027-10-01T10:00:00.000Z',
+		format: 'PEM',
+		has_private_key: false,
+		path: '/etc/elasticsearch/certs/http.p12',
+		serial_number: 'a1:b2:c3',
+		subject_dn: 'CN=node-1',
+		issuer: 'CN=Elastic Certificate Tool',
+	},
+];
+
+export const clusterScriptContextsOutput: ClusterScriptContextsOutput = {
+	contexts: [
+		{
+			name: 'filter',
+			methods: [
+				{ name: 'execute', return_type: 'boolean', params: [] },
+				{ name: 'getScore', return_type: 'double', params: [] },
+			],
+		},
+	],
+};
+
+export const clusterScriptLanguagesOutput: ClusterScriptLanguagesOutput = {
+	types_allowed: ['inline', 'stored'],
+	language_contexts: [
+		{ language: 'painless', contexts: ['filter', 'score', 'ingest'] },
+		{ language: 'expression', contexts: ['aggregation_context'] },
+	],
+};
+
+export const clusterSubsystemInfoOutput: ClusterSubsystemInfoOutput = {
+	cluster_name: 'es-test-cluster',
+	http: { current_open: 3, total_opened: 12 },
+};
+
+export const clusterGetStatsOutput: ClusterGetStatsOutput = {
+	cluster_name: 'es-test-cluster',
+	cluster_uuid: 'AxNuG5LbQs6S3D4f9C-Rw',
+	status: 'green',
+	timestamp: 1761955200000,
+	indices: { count: 5, shards: { total: 5 } },
+	nodes: { count: { total: 3, coordinator: 1, data: 2 } },
+};
+
+export const clusterGetStateOutput: ClusterGetStateOutput = {
+	cluster_uuid: 'AxNuG5LbQs6S3D4f9C-Rw',
+	master_node: 'node-1',
+};
+
+// ── cat family fixtures: every value a string or null ───────────────────────
+
+export const catHelpText =
+	'=^.^=\n/_cat/allocation\n/_cat/shards\n/_cat/health\n';
+
+export const catAliasesRows: CatAliasesOutput = [
+	{
+		alias: 'logs',
+		index: 'logs-2026-11',
+		filter: null,
+		'routing.index': null,
+		'routing.search': null,
+		is_write_index: null,
+	},
+];
+
+export const catAllocationRows: CatAllocationOutput = [
+	{
+		shards: '5',
+		'disk.indices': '1.2gb',
+		'disk.used': '10gb',
+		'disk.avail': '20gb',
+		'disk.total': '30gb',
+		'disk.percent': '33',
+		host: '10.0.0.1',
+		ip: '10.0.0.1',
+		node: 'node-1',
+		'node.role': 'd',
+	},
+];
+
+export const catCircuitBreakersRows: CatCircuitBreakersOutput = [
+	{
+		node_id: 'node-1',
+		node_name: 'node-1',
+		breaker: 'request',
+		limit: '100%',
+		limit_bytes: '16gb',
+		estimated: '1%',
+		estimated_bytes: '200mb',
+		overhead: '1.0',
+		tripped: '0',
+	},
+];
+
+export const catComponentTemplatesRows: CatComponentTemplatesOutput = [
+	{
+		name: 'logs-mappings',
+		version: '1',
+		alias_count: '0',
+		mapping_count: '3',
+		settings_count: '2',
+		metadata_count: '0',
+		included_in: 'logs-template',
+	},
+];
+
+export const catCountRows: CatCountOutput = [
+	{ epoch: '1761955200', timestamp: '10:40:00', count: '4201' },
+];
+
+export const catFielddataRows: CatFielddataOutput = [
+	{
+		id: 'node-1',
+		host: '10.0.0.1',
+		ip: '10.0.0.1',
+		node: 'node-1',
+		field: 'host.name',
+		size: '1.2kb',
+	},
+];
+
+export const catHealthRows: CatHealthOutput = [
+	{
+		epoch: '1761955200',
+		timestamp: '10:40:00',
+		cluster: 'es-test-cluster',
+		status: 'green',
+		'node.total': '3',
+		'node.data': '2',
+		shards: '10',
+		pri: '5',
+		relo: '0',
+		init: '0',
+		unassign: '0',
+	},
+];
+
+export const catMasterRows: CatMasterOutput = [
+	{
+		id: 'QGqKMntKQCSjWbwKK7wOHw',
+		host: '10.0.0.1',
+		ip: '10.0.0.1',
+		node: 'node-1',
+	},
+];
+
+export const catMlJobsRows: CatMlJobsOutput = [
+	{
+		id: 'total-requests',
+		state: 'opened',
+		'data.processed_records': '4201',
+		'model.bytes': '51200',
+		'model.memory_status': 'ok',
+		'forecasts.total': '1',
+		'buckets.count': '140',
+	},
+];
+
+export const catMlDataFrameAnalyticsRows: CatMlDataFrameAnalyticsOutput = [
+	{ id: 'users-analytics', type: 'classification', state: 'started' },
+];
+
+export const catMlDatafeedsRows: CatMlDatafeedsOutput = [
+	{ id: 'datafeed-total-requests', state: 'started', 'buckets.count': '140' },
+];
+
+export const catMlTrainedModelsRows: CatMlTrainedModelsOutput = [
+	{
+		id: 'lang_ident_model_1',
+		created_by: '_xpack',
+		create_time: '1660000000000',
+		version: '9.0.0',
+		description: 'language identification',
+		heap_size: '16kb',
+		operations: '0',
+	},
+];
+
+export const catNodeattrsRows: CatNodeattrsOutput = [
+	{
+		node: 'node-1',
+		host: '10.0.0.1',
+		ip: '10.0.0.1',
+		attr: 'rack',
+		value: 'r1',
+	},
+];
+
+export const catNodesRows: CatNodesOutput = [
+	{
+		id: 'QGqKMntKQCSjWbwKK7wOHw',
+		name: 'node-1',
+		ip: '10.0.0.1',
+		'heap.percent': '40',
+		'ram.percent': '60',
+		cpu: '12',
+		master: '*',
+		role: 'cdhilmrstw',
+		version: '9.0.0',
+	},
+];
+
+export const catPendingTasksRows: CatPendingTasksOutput = [
+	{
+		insertOrder: '1001',
+		timeInQueue: '100ms',
+		priority: 'URGENT',
+		source: 'create-index [logs-2026-12]',
+	},
+];
+
+export const catPluginsRows: CatPluginsOutput = [
+	{
+		id: 'QGqKMntKQCSjWbwKK7wOHw',
+		name: 'analysis-icu',
+		component: 'analysis-icu',
+		version: '9.0.0',
+		description: 'ICU analysis plugin',
+		type: 'isolated',
+	},
+];
+
+export const catRecoveryRows: CatRecoveryOutput = [
+	{
+		index: 'logs-2026-11',
+		shard: '0',
+		start_time: '1761955200000',
+		type: 'empty_store',
+		stage: 'done',
+		source_host: 'n/a',
+		target_host: '10.0.0.1',
+		repository: null,
+		snapshot: null,
+		files: '1',
+		bytes_recovered: '100',
+		bytes_percent: '100.0%',
+	},
+];
+
+export const catRepositoriesRows: CatRepositoriesOutput = [
+	{ id: 'my-repo', type: 'fs' },
+];
+
+export const catSegmentsRows: CatSegmentsOutput = [
+	{
+		index: 'logs-2026-11',
+		shard: '0',
+		prirep: 'p',
+		ip: '10.0.0.1',
+		segment: '_0',
+		generation: '0',
+		'docs.count': '1',
+		'docs.deleted': '0',
+		size: '3kb',
+		'size.memory': '0',
+		committed: 'true',
+		version: '10.0.0',
+	},
+];
+
+export const catShardsRows: CatShardsOutput = [
+	{
+		index: 'logs-2026-11',
+		shard: '0',
+		prirep: 'p',
+		state: 'STARTED',
+		docs: '4201',
+		store: '1.2mb',
+		ip: '10.0.0.1',
+		node: 'node-1',
+		'unassigned.reason': null,
+	},
+];
+
+export const catSnapshotsRows: CatSnapshotsOutput = [
+	{
+		id: 'snapshot-1',
+		repository: 'my-repo',
+		status: 'SUCCESS',
+		start_epoch: '1761955200',
+		end_epoch: '1761955300',
+		start_time: '10:40:00',
+		end_time: '10:41:40',
+		duration: '1.6m',
+		indices: '5',
+	},
+];
+
+export const catTasksRows: CatTasksOutput = [
+	{
+		id: 'oTUltX4IQMOUUVeiohTt8A:124',
+		action: 'cluster:monitor/tasks/lists',
+		task_id: 'oTUltX4IQMOUUVeiohTt8A:124',
+		parent_task_id: null,
+		type: 'transport',
+		start_time: '1761955200000',
+		timestamp: '10:40:00',
+		running_time_ns: '1000000',
+		node_id: 'oTUltX4IQMOUUVeiohTt8A',
+		node: 'node-1',
+	},
+];
+
+export const catTemplatesRows: CatTemplatesOutput = [
+	{
+		name: 'logs-template',
+		index_patterns: 'logs-*',
+		order: '0',
+		version: null,
+		composed_of: 'logs-mappings',
+	},
+];
+
+export const catThreadPoolRows: CatThreadPoolOutput = [
+	{
+		node_name: 'node-1',
+		name: 'search',
+		type: 'fixed',
+		active: '1',
+		pool_size: '13',
+		queue: '0',
+		rejected: '0',
+	},
+];
+
+export const catTransformsRows: CatTransformsOutput = [
+	{
+		id: 'logs-pivot',
+		state: 'started',
+		checkpoint: '140',
+		documents_processed: '4201',
+		checkpoint_progress: '100.0%',
+		last_search_time: '1761955200000',
+		changes_last_detection_time: '1761955100000',
+	},
+];
+
+// ── nodes family fixtures ────────────────────────────────────────────────────
+
+const nodesEnvelope = {
+	cluster_name: 'es-test-cluster',
+	_nodes: { total: 3, successful: 3, failed: 0 },
+};
+
+export const nodesInfoOutput: NodesInfoOutput = {
+	...nodesEnvelope,
+	nodes: {
+		'node-1': {
+			name: 'node-1',
+			transport_address: '10.0.0.1:9300',
+			roles: ['data'],
+			os: { available_processors: 8 },
+		},
+	},
+};
+
+export const nodesStatsOutput: NodesStatsOutput = {
+	...nodesEnvelope,
+	nodes: {
+		'node-1': {
+			timestamp: 1761955200000,
+			name: 'node-1',
+			indices: { docs: { count: 4201 } },
+		},
+	},
+};
+
+export const nodesUsageOutput: NodesUsageOutput = {
+	...nodesEnvelope,
+	nodes: {
+		'node-1': {
+			timestamp: 1761955200000,
+			since: 1761950000000,
+			rest_actions: { search_action: 10 },
+		},
+	},
+};
+
+export const nodesHotThreadsText =
+	'::: {node-1}{QGqKMntKQCSjWbwKK7wOHw}{10.0.0.1}{dim}{10.0.0.1:9300}\n   Hot threads at 2026-11-01 10:40:00, interval=500ms, busiestThreads=3\n';
+
+export const nodesReloadSecureSettingsOutput: NodesReloadSecureSettingsOutput =
+	{
+		...nodesEnvelope,
+		nodes: {
+			'node-1': { name: 'node-1', stats: { reloaded_secure_settings: 2 } },
+		},
+	};
+
+export const nodesRepositoriesMeteringOutput: NodesRepositoriesMeteringOutput =
+	{
+		...nodesEnvelope,
+		nodes: {
+			'node-1': {
+				cloud_repository: { repository_metering: { searched_snapshots: {} } },
+			},
+		},
+	};
+
+export const nodesClearRepositoriesMeteringOutput: NodesClearRepositoriesMeteringOutput =
+	{
+		...nodesEnvelope,
+		nodes: { 'node-1': {} },
+	};
+
+// ── tasks family fixtures ────────────────────────────────────────────────────
+
+export const tasksListOutput: TasksListOutput = {
+	nodes: {
+		'node-1': {
+			name: 'node-1',
+			transport_address: '10.0.0.1:9300',
+			tasks: {
+				'oTUltX4IQMOUUVeiohTt8A:124': {
+					node: 'node-1',
+					id: 124,
+					type: 'transport',
+					action: 'cluster:monitor/tasks/lists',
+					start_time_in_millis: 1761955200000,
+					running_time_in_nanos: 1000000,
+					cancellable: false,
+					headers: {},
+				},
+			},
+		},
+	},
+};
+
+export const taskGetOutput: TasksGetOutput = {
+	completed: true,
+	task: {
+		node: 'node-1',
+		id: 124,
+		type: 'transport',
+		action: 'indices:data/write/reindex',
+		start_time_in_millis: 1761955200000,
+		running_time_in_nanos: 5000000,
+		cancellable: true,
+		headers: {},
+		description: 'reindex from logs-2025 to logs-2026',
+	},
+	response: { total: 4201, updated: 4201 },
 };

@@ -212,11 +212,34 @@ const NdjsonPayload = z
 		{ message: 'expected newline-delimited JSON terminated by a newline' },
 	);
 
-// ── cluster.getHealth: GET /_cluster/health ──────────────────────────────────
+// ── cluster.getHealth: GET /_cluster/health/{index} ───────────────────────────
 
-// Cluster-level call (spec default `level=cluster`); no wire body to protect.
-export const ClusterGetHealthInputSchema = z.object({});
-export type ClusterGetHealthInput = z.infer<typeof ClusterGetHealthInputSchema>;
+// The params become query filters, so the object is strict. `index` is the
+// documented optional target (GET /_cluster/health targets every index).
+export const ClusterGetHealthInputSchema = z.strictObject({
+	index: NonBlankString.optional(),
+	level: z.enum(['cluster', 'indices', 'shards']).optional(),
+	expand_wildcards: z
+		.string()
+		.min(1)
+		.refine(
+			(value) =>
+				value
+					.split(',')
+					.every((token) =>
+						['all', 'open', 'closed', 'hidden', 'none'].includes(token.trim()),
+					),
+			{
+				message:
+					'expand_wildcards must be a comma-separated list of all, open, closed, hidden, none',
+			},
+		)
+		.optional(),
+	local: z.boolean().optional(),
+	wait_for_status: z.enum(['green', 'yellow', 'red']).optional(),
+	timeout: NonBlankString.optional(),
+});
+export type ClusterGetHealthInput = z.input<typeof ClusterGetHealthInputSchema>;
 
 export const ClusterGetHealthResponseSchema = z.looseObject({
 	cluster_name: z.string(),
@@ -237,6 +260,8 @@ export const ClusterGetHealthResponseSchema = z.looseObject({
 	active_shards_percent_as_number: z.number(),
 	active_shards_percent: z.string().optional(),
 	task_max_waiting_in_queue: z.string().optional(),
+	// level=indices|shards adds per-index (and per-shard) detail.
+	indices: z.record(z.string(), z.looseObject({})).optional(),
 });
 export type ClusterGetHealthResponse = z.infer<
 	typeof ClusterGetHealthResponseSchema
@@ -1847,6 +1872,1175 @@ const CcrIndexInputSchema = z.strictObject({
 export type CcrIndexInput = z.input<typeof CcrIndexInputSchema>;
 export type CcrAcknowledgedOutput = z.infer<typeof AcknowledgedResponseSchema>;
 
+// ── shared fragments for cluster, cat, nodes and tasks families ─────────────
+
+// Metric selectors arrive as a comma-separated list; every token must be one
+// of the documented values (spec _types.* metrics enums).
+const commaTokensIn =
+	(tokens: ReadonlySet<string>) =>
+	(value: string): boolean =>
+		value.split(',').every((token) => tokens.has(token.trim()));
+
+const CommaMetric = (tokens: ReadonlySet<string>) =>
+	NonBlankString.refine(commaTokensIn(tokens), {
+		message: 'must be a comma-separated list of documented selectors',
+	});
+
+const CLUSTER_INFO_TARGETS = new Set([
+	'_all',
+	'http',
+	'ingest',
+	'thread_pool',
+	'script',
+]);
+
+const CLUSTER_STATE_METRICS = new Set([
+	'_all',
+	'version',
+	'master_node',
+	'blocks',
+	'nodes',
+	'metadata',
+	'routing_table',
+	'routing_nodes',
+	'customs',
+]);
+
+const NODES_INFO_METRICS = new Set([
+	'_all',
+	'_none',
+	'settings',
+	'os',
+	'process',
+	'jvm',
+	'thread_pool',
+	'transport',
+	'http',
+	'remote_cluster_server',
+	'plugins',
+	'ingest',
+	'aggregations',
+	'indices',
+]);
+
+const NODES_STATS_METRICS = new Set([
+	'_all',
+	'_none',
+	'indices',
+	'os',
+	'process',
+	'jvm',
+	'thread_pool',
+	'fs',
+	'transport',
+	'http',
+	'breaker',
+	'script',
+	'discovery',
+	'ingest',
+	'adaptive_selection',
+	'script_cache',
+	'indexing_pressure',
+	'repositories',
+	'allocations',
+]);
+
+const NODES_USAGE_METRICS = new Set(['_all', 'rest_actions', 'aggregations']);
+
+// Multi-valued params (actions, node lists) take a comma string or a list;
+// the endpoint joins a list with commas on send.
+const StringList = z.union([NonBlankString, z.array(NonBlankString).min(1)]);
+
+// CAT rows arrive with every value as a string, or null where a size is not
+// present (spec cat.*Records type all columns as string-ish); columns are
+// op-specific and version-dependent, so only key columns are typed and rows
+// stay loose.
+const CatColumn = z.string().nullable().optional();
+const CatRow = <T extends Record<string, typeof CatColumn>>(fields: T) =>
+	z.looseObject(fields);
+const CatRows = <T extends z.ZodType>(row: T) => z.array(row);
+
+// 200 with an empty body: the server answers text/plain with zero bytes, so
+// the JSON client surfaces undefined or an empty string; both normalize to {}.
+const EmptyBodyResponse = z
+	.union([z.looseObject({}), z.string().max(0)])
+	.optional()
+	.transform((value) => (typeof value === 'string' ? {} : (value ?? {})));
+
+// ── cluster.ping: HEAD / ─────────────────────────────────────────────────────
+
+export const ClusterPingInputSchema = z.object({});
+export type ClusterPingInput = z.infer<typeof ClusterPingInputSchema>;
+export type ClusterPingOutput = ExistsResult;
+
+// ── cluster.getInfo: GET / ───────────────────────────────────────────────────
+
+export const ClusterGetInfoInputSchema = z.object({});
+export type ClusterGetInfoInput = z.infer<typeof ClusterGetInfoInputSchema>;
+
+export const ClusterGetInfoResponseSchema = z.looseObject({
+	cluster_name: z.string(),
+	cluster_uuid: z.string(),
+	name: z.string(),
+	tagline: z.string(),
+	version: z.looseObject({
+		number: z.string(),
+		build_flavor: z.string().optional(),
+		build_type: z.string().optional(),
+		build_hash: z.string().optional(),
+		build_date: z.string().optional(),
+		build_snapshot: z.boolean().optional(),
+		lucene_version: z.string().optional(),
+		minimum_index_compatibility_version: z.string().optional(),
+		minimum_wire_compatibility_version: z.string().optional(),
+	}),
+});
+export type ClusterGetInfoResponse = z.infer<
+	typeof ClusterGetInfoResponseSchema
+>;
+
+// ── cluster.subsystemInfo: GET /_info/{target} ───────────────────────────────
+
+export const ClusterSubsystemInfoInputSchema = z.strictObject({
+	target: CommaMetric(CLUSTER_INFO_TARGETS),
+});
+export type ClusterSubsystemInfoInput = z.infer<
+	typeof ClusterSubsystemInfoInputSchema
+>;
+
+// The subsystem payloads (http routes, ingest processors, thread pools,
+// script contexts) are large and version-dependent; the spec types the
+// response as a bare object.
+export type ClusterSubsystemInfoOutput = z.infer<typeof EmptyObjectSchema>;
+export const ClusterSubsystemInfoOutputSchema = EmptyObjectSchema;
+
+// ── cluster.pendingTasks: GET /_cluster/pending_tasks ────────────────────────
+
+export const ClusterPendingTasksInputSchema = z.strictObject({
+	local: z.boolean().optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type ClusterPendingTasksInput = z.input<
+	typeof ClusterPendingTasksInputSchema
+>;
+
+export const ClusterPendingTasksOutputSchema = z.looseObject({
+	// An idle master has zero pending tasks: an empty array is valid.
+	tasks: z.array(
+		z.looseObject({
+			insert_order: z.number(),
+			priority: z.string(),
+			source: z.string(),
+			executing: z.boolean(),
+			time_in_queue_millis: z.number().optional(),
+			time_in_queue: z.string().optional(),
+		}),
+	),
+});
+export type ClusterPendingTasksOutput = z.infer<
+	typeof ClusterPendingTasksOutputSchema
+>;
+
+// ── cluster.getSettings / putSettings: GET|PUT /_cluster/settings ────────────
+
+const ClusterSettingsFields = {
+	flat_settings: z.boolean().optional(),
+	timeout: NonBlankString.optional(),
+	master_timeout: NonBlankString.optional(),
+};
+
+export const ClusterGetSettingsInputSchema = z.strictObject({
+	...ClusterSettingsFields,
+	include_defaults: z.boolean().optional(),
+});
+export type ClusterGetSettingsInput = z.input<
+	typeof ClusterGetSettingsInputSchema
+>;
+
+export const ClusterGetSettingsOutputSchema = z.looseObject({
+	persistent: SettingsRecord.optional(),
+	transient: SettingsRecord.optional(),
+	defaults: SettingsRecord.optional(),
+});
+export type ClusterGetSettingsOutput = z.infer<
+	typeof ClusterGetSettingsOutputSchema
+>;
+
+export const ClusterPutSettingsInputSchema = z.strictObject({
+	...ClusterSettingsFields,
+	persistent: SettingsRecord.optional(),
+	transient: SettingsRecord.optional(),
+});
+export type ClusterPutSettingsInput = z.input<
+	typeof ClusterPutSettingsInputSchema
+>;
+
+export const ClusterPutSettingsOutputSchema = z.looseObject({
+	acknowledged: z.boolean(),
+	persistent: SettingsRecord,
+	transient: SettingsRecord,
+});
+export type ClusterPutSettingsOutput = z.infer<
+	typeof ClusterPutSettingsOutputSchema
+>;
+
+// ── cluster.reroute: POST /_cluster/reroute ──────────────────────────────────
+
+// Every reroute command carries exactly one action key whose own fields are
+// all required (spec cluster.reroute.Command*). accept_data_loss is a literal
+// true so the data-loss variants are always explicit opt-ins.
+const RerouteShardCommandBase = {
+	index: NonBlankString,
+	shard: z.number().int().min(0),
+};
+
+const RerouteCommandSchema = z.union([
+	z.strictObject({
+		move: z.strictObject({
+			...RerouteShardCommandBase,
+			from_node: NonBlankString,
+			to_node: NonBlankString,
+		}),
+	}),
+	z.strictObject({
+		cancel: z.strictObject({
+			...RerouteShardCommandBase,
+			node: NonBlankString,
+			allow_primary: z.boolean().optional(),
+		}),
+	}),
+	z.strictObject({
+		allocate_replica: z.strictObject({
+			...RerouteShardCommandBase,
+			node: NonBlankString,
+		}),
+	}),
+	z.strictObject({
+		allocate_stale_primary: z.strictObject({
+			...RerouteShardCommandBase,
+			node: NonBlankString,
+			accept_data_loss: z.literal(true),
+		}),
+	}),
+	z.strictObject({
+		allocate_empty_primary: z.strictObject({
+			...RerouteShardCommandBase,
+			node: NonBlankString,
+			accept_data_loss: z.literal(true),
+		}),
+	}),
+]);
+
+export const ClusterRerouteInputSchema = z.strictObject({
+	dry_run: z.boolean().optional(),
+	explain: z.boolean().optional(),
+	retry_failed: z.boolean().optional(),
+	master_timeout: NonBlankString.optional(),
+	timeout: NonBlankString.optional(),
+	commands: z.array(RerouteCommandSchema).optional(),
+});
+export type ClusterRerouteInput = z.input<typeof ClusterRerouteInputSchema>;
+
+export const ClusterRerouteOutputSchema = z.looseObject({
+	acknowledged: z.boolean(),
+	state: z.looseObject({}).optional(),
+	explanations: z.array(z.looseObject({})).optional(),
+});
+export type ClusterRerouteOutput = z.infer<typeof ClusterRerouteOutputSchema>;
+
+// ── cluster.allocationExplain: POST /_cluster/allocation/explain ─────────────
+
+// All body fields are optional: with none, the API explains the first
+// unallocated shard it finds.
+export const ClusterAllocationExplainInputSchema = z.strictObject({
+	index: NonBlankString.optional(),
+	shard: z.number().int().min(0).optional(),
+	primary: z.boolean().optional(),
+	current_node: NonBlankString.optional(),
+	include_disk_info: z.boolean().optional(),
+	include_yes_decisions: z.boolean().optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type ClusterAllocationExplainInput = z.input<
+	typeof ClusterAllocationExplainInputSchema
+>;
+
+export const ClusterAllocationExplainOutputSchema = z.looseObject({
+	index: z.string(),
+	shard: z.number(),
+	primary: z.boolean(),
+	current_state: z.string(),
+	can_allocate: z.string().optional(),
+	can_remain_on_current_node: z.string().optional(),
+	can_move_to_other_node: z.string().optional(),
+	allocate_explanation: z.string().optional(),
+	decision: z.string().optional(),
+	explanation: z.string().optional(),
+});
+export type ClusterAllocationExplainOutput = z.infer<
+	typeof ClusterAllocationExplainOutputSchema
+>;
+
+// ── cluster.getState: GET /_cluster/state/{metric}/{index} ───────────────────
+
+export const ClusterGetStateInputSchema = z.strictObject({
+	metric: CommaMetric(CLUSTER_STATE_METRICS).optional(),
+	index: NonBlankString.optional(),
+	flat_settings: z.boolean().optional(),
+	local: z.boolean().optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type ClusterGetStateInput = z.input<typeof ClusterGetStateInputSchema>;
+
+// The cluster state document (metadata, routing table, nodes) is deeply
+// nested and version-dependent; the spec types the response as a bare object.
+export type ClusterGetStateOutput = z.infer<typeof EmptyObjectSchema>;
+export const ClusterGetStateOutputSchema = EmptyObjectSchema;
+
+// ── cluster.getStats: GET /_cluster/stats/nodes/{node_id} ────────────────────
+
+export const ClusterGetStatsInputSchema = z.strictObject({
+	node_id: NonBlankString.optional(),
+	include_remotes: z.boolean().optional(),
+	timeout: NonBlankString.optional(),
+});
+export type ClusterGetStatsInput = z.input<typeof ClusterGetStatsInputSchema>;
+
+export const ClusterGetStatsOutputSchema = z.looseObject({
+	cluster_name: z.string().optional(),
+	cluster_uuid: z.string().optional(),
+	status: z.string().optional(),
+	timestamp: z.number().optional(),
+	indices: z.looseObject({}).optional(),
+	nodes: z.looseObject({}).optional(),
+});
+export type ClusterGetStatsOutput = z.infer<typeof ClusterGetStatsOutputSchema>;
+
+// ── cluster voting config exclusions: POST|DELETE /_cluster/voting_config_exclusions
+
+export const ClusterAddVotingConfigExclusionsInputSchema = z
+	.strictObject({
+		node_names: z.array(NonBlankString).min(1).optional(),
+		node_ids: z.array(NonBlankString).min(1).optional(),
+		master_timeout: NonBlankString.optional(),
+		timeout: NonBlankString.optional(),
+	})
+	.refine(
+		(input) =>
+			(input.node_names !== undefined) !== (input.node_ids !== undefined),
+		{
+			message: 'provide exactly one of node_names or node_ids',
+		},
+	);
+export type ClusterAddVotingConfigExclusionsInput = z.input<
+	typeof ClusterAddVotingConfigExclusionsInputSchema
+>;
+
+// Both answers are 200 with an empty JSON body.
+export type ClusterVotingConfigExclusionsOutput = z.infer<
+	typeof EmptyBodyResponse
+>;
+
+export const ClusterClearVotingConfigExclusionsInputSchema = z.strictObject({
+	wait_for_removal: z.boolean().optional(),
+	master_timeout: NonBlankString.optional(),
+});
+export type ClusterClearVotingConfigExclusionsInput = z.input<
+	typeof ClusterClearVotingConfigExclusionsInputSchema
+>;
+
+// ── cluster.remoteInfo: GET /_remote/info ────────────────────────────────────
+
+export const ClusterRemoteInfoInputSchema = z.object({});
+export type ClusterRemoteInfoInput = z.infer<
+	typeof ClusterRemoteInfoInputSchema
+>;
+
+// Keyed by remote cluster alias; sniff and proxy clusters carry different
+// fields, so only the shared ones are typed.
+export const ClusterRemoteInfoOutputSchema = z.record(
+	z.string(),
+	z.looseObject({
+		mode: z.string().optional(),
+		connected: z.boolean().optional(),
+		num_nodes_connected: z.number().optional(),
+		max_connections_per_cluster: z.number().optional(),
+		initial_connect_timeout: z.string().optional(),
+		skip_unavailable: z.boolean().optional(),
+		seeds: z.array(z.string()).optional(),
+		proxy_address: z.string().optional(),
+	}),
+);
+export type ClusterRemoteInfoOutput = z.infer<
+	typeof ClusterRemoteInfoOutputSchema
+>;
+
+// ── cluster.healthReport: GET /_health_report/{feature} ──────────────────────
+
+export const ClusterHealthReportInputSchema = z.strictObject({
+	// Indicator names are an open, growing set (master_is_stable,
+	// shards_availability, disk, ...); a comma list selects several.
+	feature: NonBlankString.optional(),
+	size: z.number().int().min(0).optional(),
+	verbose: z.boolean().optional(),
+	timeout: NonBlankString.optional(),
+});
+export type ClusterHealthReportInput = z.input<
+	typeof ClusterHealthReportInputSchema
+>;
+
+export const ClusterHealthReportOutputSchema = z.looseObject({
+	cluster_name: z.string(),
+	// Indicator name -> status, symptom and detail; the indicator set is open.
+	indicators: z.record(
+		z.string(),
+		z.looseObject({
+			status: z.string(),
+			symptom: z.string().optional(),
+			impacted_resources: z.array(z.looseObject({})).optional(),
+			details: z.looseObject({}).optional(),
+		}),
+	),
+});
+export type ClusterHealthReportOutput = z.infer<
+	typeof ClusterHealthReportOutputSchema
+>;
+
+// ── cluster.sslCertificates: GET /_ssl/certificates ──────────────────────────
+
+export const ClusterSslCertificatesInputSchema = z.object({});
+export type ClusterSslCertificatesInput = z.infer<
+	typeof ClusterSslCertificatesInputSchema
+>;
+
+export const ClusterSslCertificatesOutputSchema = z.array(
+	z.looseObject({
+		alias: z.string(),
+		expiry: z.string(),
+		format: z.string(),
+		has_private_key: z.boolean(),
+		path: z.string(),
+		serial_number: z.string(),
+		subject_dn: z.string(),
+		issuer: z.string().optional(),
+	}),
+);
+export type ClusterSslCertificatesOutput = z.infer<
+	typeof ClusterSslCertificatesOutputSchema
+>;
+
+// ── cluster.scriptContexts / scriptLanguages ────────────────────────────────
+
+export const ClusterScriptContextsInputSchema = z.object({});
+export type ClusterScriptContextsInput = z.infer<
+	typeof ClusterScriptContextsInputSchema
+>;
+
+export const ClusterScriptContextsOutputSchema = z.looseObject({
+	contexts: z.array(
+		z.looseObject({
+			name: z.string(),
+			methods: z.array(
+				z.looseObject({
+					name: z.string(),
+					return_type: z.string(),
+					params: z.array(z.string()),
+				}),
+			),
+		}),
+	),
+});
+export type ClusterScriptContextsOutput = z.infer<
+	typeof ClusterScriptContextsOutputSchema
+>;
+
+export const ClusterScriptLanguagesInputSchema = z.object({});
+export type ClusterScriptLanguagesInput = z.infer<
+	typeof ClusterScriptLanguagesInputSchema
+>;
+
+export const ClusterScriptLanguagesOutputSchema = z.looseObject({
+	types_allowed: z.array(z.string()),
+	language_contexts: z.array(
+		z.looseObject({
+			language: z.string(),
+			contexts: z.array(z.string()),
+		}),
+	),
+});
+export type ClusterScriptLanguagesOutput = z.infer<
+	typeof ClusterScriptLanguagesOutputSchema
+>;
+
+// ── cat family (compact aligned text as JSON rows) ───────────────────────────
+
+// cat.help: GET /_cat always answers plain text (the "=^.^=" command list),
+// whatever the requested format.
+export const CatHelpInputSchema = z.object({});
+export type CatHelpInput = z.infer<typeof CatHelpInputSchema>;
+export const CatHelpResponseSchema = z.string();
+export type CatHelpResponse = z.infer<typeof CatHelpResponseSchema>;
+
+const ExpandWildcardsQuery = z
+	.string()
+	.min(1)
+	.refine(
+		(value) =>
+			value
+				.split(',')
+				.every((token) =>
+					['all', 'open', 'closed', 'hidden', 'none'].includes(token.trim()),
+				),
+		{
+			message:
+				'expand_wildcards must be a comma-separated list of all, open, closed, hidden, none',
+		},
+	)
+	.optional();
+
+export const CatAliasesInputSchema = z.strictObject({
+	name: NonBlankString.optional(),
+	expand_wildcards: ExpandWildcardsQuery,
+});
+export type CatAliasesInput = z.input<typeof CatAliasesInputSchema>;
+export type CatAliasesOutput = z.infer<typeof CatAliasesResponseSchema>;
+export const CatAliasesResponseSchema = CatRows(
+	CatRow({
+		alias: CatColumn,
+		index: CatColumn,
+		filter: CatColumn,
+		'routing.index': CatColumn,
+		'routing.search': CatColumn,
+		is_write_index: CatColumn,
+	}),
+);
+
+export const CatAllocationInputSchema = z.strictObject({
+	node_id: NonBlankString.optional(),
+});
+export type CatAllocationInput = z.input<typeof CatAllocationInputSchema>;
+export type CatAllocationOutput = z.infer<typeof CatAllocationResponseSchema>;
+export const CatAllocationResponseSchema = CatRows(
+	CatRow({
+		shards: CatColumn,
+		'disk.indices': CatColumn,
+		'disk.used': CatColumn,
+		'disk.avail': CatColumn,
+		'disk.total': CatColumn,
+		'disk.percent': CatColumn,
+		host: CatColumn,
+		ip: CatColumn,
+		node: CatColumn,
+		'node.role': CatColumn,
+	}),
+);
+
+export const CatCircuitBreakersInputSchema = z.strictObject({
+	patterns: NonBlankString.optional(),
+});
+export type CatCircuitBreakersInput = z.input<
+	typeof CatCircuitBreakersInputSchema
+>;
+export type CatCircuitBreakersOutput = z.infer<
+	typeof CatCircuitBreakersResponseSchema
+>;
+export const CatCircuitBreakersResponseSchema = CatRows(
+	CatRow({
+		node_id: CatColumn,
+		node_name: CatColumn,
+		breaker: CatColumn,
+		limit: CatColumn,
+		limit_bytes: CatColumn,
+		estimated: CatColumn,
+		estimated_bytes: CatColumn,
+		overhead: CatColumn,
+		tripped: CatColumn,
+	}),
+);
+
+export const CatComponentTemplatesInputSchema = z.strictObject({
+	name: NonBlankString.optional(),
+});
+export type CatComponentTemplatesInput = z.input<
+	typeof CatComponentTemplatesInputSchema
+>;
+export type CatComponentTemplatesOutput = z.infer<
+	typeof CatComponentTemplatesResponseSchema
+>;
+export const CatComponentTemplatesResponseSchema = CatRows(
+	CatRow({
+		name: CatColumn,
+		version: CatColumn,
+		alias_count: CatColumn,
+		mapping_count: CatColumn,
+		settings_count: CatColumn,
+		metadata_count: CatColumn,
+		included_in: CatColumn,
+	}),
+);
+
+export const CatCountInputSchema = z.strictObject({
+	index: NonBlankString.optional(),
+});
+export type CatCountInput = z.input<typeof CatCountInputSchema>;
+export type CatCountOutput = z.infer<typeof CatCountResponseSchema>;
+export const CatCountResponseSchema = CatRows(
+	CatRow({ epoch: CatColumn, timestamp: CatColumn, count: CatColumn }),
+);
+
+export const CatFielddataInputSchema = z.strictObject({
+	fields: NonBlankString.optional(),
+});
+export type CatFielddataInput = z.input<typeof CatFielddataInputSchema>;
+export type CatFielddataOutput = z.infer<typeof CatFielddataResponseSchema>;
+export const CatFielddataResponseSchema = CatRows(
+	CatRow({
+		id: CatColumn,
+		host: CatColumn,
+		ip: CatColumn,
+		node: CatColumn,
+		field: CatColumn,
+		size: CatColumn,
+	}),
+);
+
+export const CatHealthInputSchema = z.strictObject({
+	ts: z.boolean().optional(),
+});
+export type CatHealthInput = z.input<typeof CatHealthInputSchema>;
+export type CatHealthOutput = z.infer<typeof CatHealthResponseSchema>;
+export const CatHealthResponseSchema = CatRows(
+	CatRow({
+		epoch: CatColumn,
+		timestamp: CatColumn,
+		cluster: CatColumn,
+		status: CatColumn,
+		'node.total': CatColumn,
+		'node.data': CatColumn,
+		shards: CatColumn,
+		pri: CatColumn,
+		relo: CatColumn,
+		init: CatColumn,
+		unassign: CatColumn,
+	}),
+);
+
+const CatNoArgInputSchema = z.object({});
+
+export type CatMasterOutput = z.infer<typeof CatMasterResponseSchema>;
+export const CatMasterResponseSchema = CatRows(
+	CatRow({ id: CatColumn, host: CatColumn, ip: CatColumn, node: CatColumn }),
+);
+export type CatMasterInput = z.infer<typeof CatMasterInputSchema>;
+export const CatMasterInputSchema = CatNoArgInputSchema;
+
+export type CatNodeattrsOutput = z.infer<typeof CatNodeattrsResponseSchema>;
+export const CatNodeattrsResponseSchema = CatRows(
+	CatRow({
+		node: CatColumn,
+		host: CatColumn,
+		ip: CatColumn,
+		attr: CatColumn,
+		value: CatColumn,
+	}),
+);
+export type CatNodeattrsInput = z.infer<typeof CatNodeattrsInputSchema>;
+export const CatNodeattrsInputSchema = CatNoArgInputSchema;
+
+export type CatRepositoriesOutput = z.infer<
+	typeof CatRepositoriesResponseSchema
+>;
+export const CatRepositoriesResponseSchema = CatRows(
+	CatRow({ id: CatColumn, type: CatColumn }),
+);
+export type CatRepositoriesInput = z.infer<typeof CatRepositoriesInputSchema>;
+export const CatRepositoriesInputSchema = CatNoArgInputSchema;
+
+export type CatPendingTasksOutput = z.infer<
+	typeof CatPendingTasksResponseSchema
+>;
+export const CatPendingTasksResponseSchema = CatRows(
+	CatRow({
+		insertOrder: CatColumn,
+		timeInQueue: CatColumn,
+		priority: CatColumn,
+		source: CatColumn,
+	}),
+);
+export type CatPendingTasksInput = z.infer<typeof CatPendingTasksInputSchema>;
+export const CatPendingTasksInputSchema = CatNoArgInputSchema;
+
+const AllowNoMatch = z.boolean().optional();
+
+export const CatMlJobsInputSchema = z.strictObject({
+	job_id: NonBlankString.optional(),
+	allow_no_match: AllowNoMatch,
+});
+export type CatMlJobsInput = z.input<typeof CatMlJobsInputSchema>;
+export type CatMlJobsOutput = z.infer<typeof CatMlJobsResponseSchema>;
+export const CatMlJobsResponseSchema = CatRows(
+	CatRow({
+		id: CatColumn,
+		state: CatColumn,
+		'data.processed_records': CatColumn,
+		'model.bytes': CatColumn,
+		'model.memory_status': CatColumn,
+		'forecasts.total': CatColumn,
+		'buckets.count': CatColumn,
+	}),
+);
+
+export const CatMlDataFrameAnalyticsInputSchema = z.strictObject({
+	id: NonBlankString.optional(),
+	allow_no_match: AllowNoMatch,
+});
+export type CatMlDataFrameAnalyticsInput = z.input<
+	typeof CatMlDataFrameAnalyticsInputSchema
+>;
+export type CatMlDataFrameAnalyticsOutput = z.infer<
+	typeof CatMlDataFrameAnalyticsResponseSchema
+>;
+export const CatMlDataFrameAnalyticsResponseSchema = CatRows(
+	CatRow({ id: CatColumn, type: CatColumn, state: CatColumn }),
+);
+
+export const CatMlDatafeedsInputSchema = z.strictObject({
+	datafeed_id: NonBlankString.optional(),
+	allow_no_match: AllowNoMatch,
+});
+export type CatMlDatafeedsInput = z.input<typeof CatMlDatafeedsInputSchema>;
+export type CatMlDatafeedsOutput = z.infer<typeof CatMlDatafeedsResponseSchema>;
+export const CatMlDatafeedsResponseSchema = CatRows(
+	CatRow({ id: CatColumn, state: CatColumn, 'buckets.count': CatColumn }),
+);
+
+const FromSizeParams = {
+	from: z.number().int().min(0).optional(),
+	size: z.number().int().min(1).optional(),
+};
+
+export const CatMlTrainedModelsInputSchema = z.strictObject({
+	model_id: NonBlankString.optional(),
+	allow_no_match: AllowNoMatch,
+	...FromSizeParams,
+});
+export type CatMlTrainedModelsInput = z.input<
+	typeof CatMlTrainedModelsInputSchema
+>;
+export type CatMlTrainedModelsOutput = z.infer<
+	typeof CatMlTrainedModelsResponseSchema
+>;
+export const CatMlTrainedModelsResponseSchema = CatRows(
+	CatRow({
+		id: CatColumn,
+		created_by: CatColumn,
+		create_time: CatColumn,
+		version: CatColumn,
+		description: CatColumn,
+		heap_size: CatColumn,
+		operations: CatColumn,
+	}),
+);
+
+export const CatNodesInputSchema = z.strictObject({
+	full_id: z.boolean().optional(),
+});
+export type CatNodesInput = z.input<typeof CatNodesInputSchema>;
+export type CatNodesOutput = z.infer<typeof CatNodesResponseSchema>;
+export const CatNodesResponseSchema = CatRows(
+	CatRow({
+		id: CatColumn,
+		name: CatColumn,
+		ip: CatColumn,
+		'heap.percent': CatColumn,
+		'ram.percent': CatColumn,
+		cpu: CatColumn,
+		master: CatColumn,
+		role: CatColumn,
+		version: CatColumn,
+	}),
+);
+
+export const CatPluginsInputSchema = z.strictObject({
+	include_bootstrap: z.boolean().optional(),
+});
+export type CatPluginsInput = z.input<typeof CatPluginsInputSchema>;
+export type CatPluginsOutput = z.infer<typeof CatPluginsResponseSchema>;
+export const CatPluginsResponseSchema = CatRows(
+	CatRow({
+		id: CatColumn,
+		name: CatColumn,
+		component: CatColumn,
+		version: CatColumn,
+		description: CatColumn,
+		type: CatColumn,
+	}),
+);
+
+export const CatRecoveryInputSchema = z.strictObject({
+	index: NonBlankString.optional(),
+	active_only: z.boolean().optional(),
+	detailed: z.boolean().optional(),
+});
+export type CatRecoveryInput = z.input<typeof CatRecoveryInputSchema>;
+export type CatRecoveryOutput = z.infer<typeof CatRecoveryResponseSchema>;
+export const CatRecoveryResponseSchema = CatRows(
+	CatRow({
+		index: CatColumn,
+		shard: CatColumn,
+		start_time: CatColumn,
+		type: CatColumn,
+		stage: CatColumn,
+		source_host: CatColumn,
+		target_host: CatColumn,
+		repository: CatColumn,
+		snapshot: CatColumn,
+		files: CatColumn,
+		bytes_recovered: CatColumn,
+		bytes_percent: CatColumn,
+	}),
+);
+
+export const CatSegmentsInputSchema = z.strictObject({
+	index: NonBlankString.optional(),
+	expand_wildcards: ExpandWildcardsQuery,
+});
+export type CatSegmentsInput = z.input<typeof CatSegmentsInputSchema>;
+export type CatSegmentsOutput = z.infer<typeof CatSegmentsResponseSchema>;
+export const CatSegmentsResponseSchema = CatRows(
+	CatRow({
+		index: CatColumn,
+		shard: CatColumn,
+		prirep: CatColumn,
+		ip: CatColumn,
+		segment: CatColumn,
+		generation: CatColumn,
+		'docs.count': CatColumn,
+		'docs.deleted': CatColumn,
+		size: CatColumn,
+		'size.memory': CatColumn,
+		committed: CatColumn,
+		version: CatColumn,
+	}),
+);
+
+export const CatShardsInputSchema = z.strictObject({
+	index: NonBlankString.optional(),
+});
+export type CatShardsInput = z.input<typeof CatShardsInputSchema>;
+export type CatShardsOutput = z.infer<typeof CatShardsResponseSchema>;
+export const CatShardsResponseSchema = CatRows(
+	CatRow({
+		index: CatColumn,
+		shard: CatColumn,
+		prirep: CatColumn,
+		state: CatColumn,
+		docs: CatColumn,
+		store: CatColumn,
+		ip: CatColumn,
+		node: CatColumn,
+		'unassigned.reason': CatColumn,
+	}),
+);
+
+export const CatSnapshotsInputSchema = z.strictObject({
+	repository: NonBlankString.optional(),
+	ignore_unavailable: z.boolean().optional(),
+});
+export type CatSnapshotsInput = z.input<typeof CatSnapshotsInputSchema>;
+export type CatSnapshotsOutput = z.infer<typeof CatSnapshotsResponseSchema>;
+export const CatSnapshotsResponseSchema = CatRows(
+	CatRow({
+		id: CatColumn,
+		repository: CatColumn,
+		status: CatColumn,
+		start_epoch: CatColumn,
+		end_epoch: CatColumn,
+		start_time: CatColumn,
+		end_time: CatColumn,
+		duration: CatColumn,
+		indices: CatColumn,
+	}),
+);
+
+export const CatTasksInputSchema = z.strictObject({
+	actions: StringList.optional(),
+	nodes: StringList.optional(),
+	parent_task_id: NonBlankString.optional(),
+	detailed: z.boolean().optional(),
+	wait_for_completion: z.boolean().optional(),
+});
+export type CatTasksInput = z.input<typeof CatTasksInputSchema>;
+export type CatTasksOutput = z.infer<typeof CatTasksResponseSchema>;
+export const CatTasksResponseSchema = CatRows(
+	CatRow({
+		id: CatColumn,
+		action: CatColumn,
+		task_id: CatColumn,
+		parent_task_id: CatColumn,
+		type: CatColumn,
+		start_time: CatColumn,
+		timestamp: CatColumn,
+		running_time_ns: CatColumn,
+		node_id: CatColumn,
+		node: CatColumn,
+	}),
+);
+
+export const CatTemplatesInputSchema = z.strictObject({
+	name: NonBlankString.optional(),
+});
+export type CatTemplatesInput = z.input<typeof CatTemplatesInputSchema>;
+export type CatTemplatesOutput = z.infer<typeof CatTemplatesResponseSchema>;
+export const CatTemplatesResponseSchema = CatRows(
+	CatRow({
+		name: CatColumn,
+		index_patterns: CatColumn,
+		order: CatColumn,
+		version: CatColumn,
+		composed_of: CatColumn,
+	}),
+);
+
+export const CatThreadPoolInputSchema = z.strictObject({
+	thread_pool_patterns: NonBlankString.optional(),
+});
+export type CatThreadPoolInput = z.input<typeof CatThreadPoolInputSchema>;
+export type CatThreadPoolOutput = z.infer<typeof CatThreadPoolResponseSchema>;
+export const CatThreadPoolResponseSchema = CatRows(
+	CatRow({
+		node_name: CatColumn,
+		name: CatColumn,
+		type: CatColumn,
+		active: CatColumn,
+		pool_size: CatColumn,
+		queue: CatColumn,
+		rejected: CatColumn,
+	}),
+);
+
+export const CatTransformsInputSchema = z.strictObject({
+	transform_id: NonBlankString.optional(),
+	allow_no_match: AllowNoMatch,
+	...FromSizeParams,
+});
+export type CatTransformsInput = z.input<typeof CatTransformsInputSchema>;
+export type CatTransformsOutput = z.infer<typeof CatTransformsResponseSchema>;
+export const CatTransformsResponseSchema = CatRows(
+	CatRow({
+		id: CatColumn,
+		state: CatColumn,
+		checkpoint: CatColumn,
+		documents_processed: CatColumn,
+		checkpoint_progress: CatColumn,
+		last_search_time: CatColumn,
+		changes_last_detection_time: CatColumn,
+	}),
+);
+
+// ── nodes family ─────────────────────────────────────────────────────────────
+
+export const NodesInfoInputSchema = z.strictObject({
+	node_id: NonBlankString.optional(),
+	metric: CommaMetric(NODES_INFO_METRICS).optional(),
+	flat_settings: z.boolean().optional(),
+	timeout: NonBlankString.optional(),
+});
+export type NodesInfoInput = z.input<typeof NodesInfoInputSchema>;
+
+// Per-node info payloads (os, jvm, thread pools, plugins, ingest...) are
+// deeply nested and version-dependent, so only the envelope is typed.
+export const NodesInfoOutputSchema = z.looseObject({
+	cluster_name: z.string().optional(),
+	_nodes: z.looseObject({}).optional(),
+	nodes: z.record(z.string(), z.looseObject({})),
+});
+export type NodesInfoOutput = z.infer<typeof NodesInfoOutputSchema>;
+
+export const NodesStatsInputSchema = z
+	.strictObject({
+		node_id: NonBlankString.optional(),
+		metric: CommaMetric(NODES_STATS_METRICS).optional(),
+		// index_metric is only valid when the indices metric is requested.
+		index_metric: CommaMetric(STATS_METRICS).optional(),
+		level: z.enum(['node', 'indices', 'shards']).optional(),
+		timeout: NonBlankString.optional(),
+		include_segment_file_sizes: z.boolean().optional(),
+		include_unloaded_segments: z.boolean().optional(),
+		fields: NonBlankString.optional(),
+	})
+	.refine(
+		(parsed) =>
+			parsed.index_metric === undefined ||
+			(parsed.metric !== undefined &&
+				parsed.metric
+					.split(',')
+					.some(
+						(metric) => metric.trim() === 'indices' || metric.trim() === '_all',
+					)),
+		{
+			message:
+				'index_metric requires metric to include indices (or _all), per the spec',
+		},
+	);
+export type NodesStatsInput = z.input<typeof NodesStatsInputSchema>;
+
+export const NodesStatsOutputSchema = z.looseObject({
+	cluster_name: z.string().optional(),
+	_nodes: z.looseObject({}).optional(),
+	nodes: z.record(z.string(), z.looseObject({})),
+});
+export type NodesStatsOutput = z.infer<typeof NodesStatsOutputSchema>;
+
+export const NodesUsageInputSchema = z.strictObject({
+	node_id: NonBlankString.optional(),
+	metric: CommaMetric(NODES_USAGE_METRICS).optional(),
+	timeout: NonBlankString.optional(),
+});
+export type NodesUsageInput = z.input<typeof NodesUsageInputSchema>;
+
+export const NodesUsageOutputSchema = z.looseObject({
+	cluster_name: z.string().optional(),
+	_nodes: z.looseObject({}).optional(),
+	nodes: z.record(z.string(), z.looseObject({})),
+});
+export type NodesUsageOutput = z.infer<typeof NodesUsageOutputSchema>;
+
+export const NodesHotThreadsInputSchema = z.strictObject({
+	node_id: NonBlankString.optional(),
+	threads: z.number().int().min(1).optional(),
+	// The spec reuses the ThreadType enum for sort but defaults it to "total",
+	// which that enum does not contain; the server accepts total and cpu
+	// (HotThreads.SortOrder), so those are the pinned values.
+	sort: z.enum(['total', 'cpu']).optional(),
+	type: z.enum(['cpu', 'wait', 'block', 'gpu', 'mem']).optional(),
+	interval: NonBlankString.optional(),
+	snapshots: z.number().int().min(1).optional(),
+	ignore_idle_threads: z.boolean().optional(),
+	timeout: NonBlankString.optional(),
+});
+export type NodesHotThreadsInput = z.input<typeof NodesHotThreadsInputSchema>;
+
+// Hot threads always answer text/plain (RestNodesHotThreadsAction), so the
+// shared JSON client surfaces the raw thread dump as a string.
+export const NodesHotThreadsOutputSchema = z.string();
+export type NodesHotThreadsOutput = z.infer<typeof NodesHotThreadsOutputSchema>;
+
+export const NodesReloadSecureSettingsInputSchema = z.strictObject({
+	node_id: NonBlankString.optional(),
+	timeout: NonBlankString.optional(),
+});
+export type NodesReloadSecureSettingsInput = z.input<
+	typeof NodesReloadSecureSettingsInputSchema
+>;
+
+export const NodesReloadSecureSettingsOutputSchema = z.looseObject({
+	cluster_name: z.string().optional(),
+	_nodes: z.looseObject({}).optional(),
+	nodes: z.record(
+		z.string(),
+		z.looseObject({ stats: z.looseObject({}).optional() }),
+	),
+});
+export type NodesReloadSecureSettingsOutput = z.infer<
+	typeof NodesReloadSecureSettingsOutputSchema
+>;
+
+export const NodesRepositoriesMeteringInputSchema = z.strictObject({
+	node_id: NonBlankString.optional(),
+});
+export type NodesRepositoriesMeteringInput = z.input<
+	typeof NodesRepositoriesMeteringInputSchema
+>;
+
+export const NodesRepositoriesMeteringOutputSchema = z.looseObject({
+	cluster_name: z.string().optional(),
+	_nodes: z.looseObject({}).optional(),
+	nodes: z.record(z.string(), z.looseObject({})),
+});
+export type NodesRepositoriesMeteringOutput = z.infer<
+	typeof NodesRepositoriesMeteringOutputSchema
+>;
+
+export const NodesClearRepositoriesMeteringInputSchema = z.strictObject({
+	node_id: NonBlankString,
+	max_archive_version: z.number().int().min(0),
+});
+export type NodesClearRepositoriesMeteringInput = z.input<
+	typeof NodesClearRepositoriesMeteringInputSchema
+>;
+
+export const NodesClearRepositoriesMeteringOutputSchema = z.looseObject({
+	cluster_name: z.string().optional(),
+	_nodes: z.looseObject({}).optional(),
+	nodes: z.record(z.string(), z.looseObject({})),
+});
+export type NodesClearRepositoriesMeteringOutput = z.infer<
+	typeof NodesClearRepositoriesMeteringOutputSchema
+>;
+
+// ── tasks family ─────────────────────────────────────────────────────────────
+
+const TaskListResponseSchema = z.looseObject({
+	node_failures: z.array(z.looseObject({})).optional(),
+	task_failures: z.array(z.looseObject({})).optional(),
+	// Present with group_by=nodes (the spec default) / parents / none.
+	nodes: z.record(z.string(), z.looseObject({})).optional(),
+	tasks: z.array(z.looseObject({})).optional(),
+});
+export type TaskListResponse = z.infer<typeof TaskListResponseSchema>;
+
+export const TasksListInputSchema = z.strictObject({
+	actions: StringList.optional(),
+	nodes: StringList.optional(),
+	parent_task_id: NonBlankString.optional(),
+	detailed: z.boolean().optional(),
+	group_by: z.enum(['nodes', 'parents', 'none']).optional(),
+	wait_for_completion: z.boolean().optional(),
+	timeout: NonBlankString.optional(),
+});
+export type TasksListInput = z.input<typeof TasksListInputSchema>;
+export type TasksListOutput = TaskListResponse;
+
+// A task id is "<node_id>:<number>" (spec _types.TaskId).
+const TaskId = NonBlankString;
+
+export const TasksGetInputSchema = z.strictObject({
+	task_id: TaskId,
+	wait_for_completion: z.boolean().optional(),
+	timeout: NonBlankString.optional(),
+});
+export type TasksGetInput = z.input<typeof TasksGetInputSchema>;
+
+export const TasksGetOutputSchema = z.looseObject({
+	completed: z.boolean(),
+	task: z.looseObject({
+		node: z.string(),
+		id: z.number(),
+		type: z.string(),
+		action: z.string(),
+		start_time_in_millis: z.number(),
+		running_time_in_nanos: z.number(),
+		cancellable: z.boolean(),
+		headers: z.record(z.string(), z.string()),
+		cancelled: z.boolean().optional(),
+		description: z.string().optional(),
+	}),
+	// The wrapped operation's own response, present once the task completed.
+	response: z.looseObject({}).optional(),
+});
+export type TasksGetOutput = z.infer<typeof TasksGetOutputSchema>;
+
+export const TasksCancelInputSchema = z.strictObject({
+	task_id: TaskId,
+	actions: StringList.optional(),
+	nodes: StringList.optional(),
+	parent_task_id: NonBlankString.optional(),
+	wait_for_completion: z.boolean().optional(),
+});
+export type TasksCancelInput = z.input<typeof TasksCancelInputSchema>;
+export type TasksCancelOutput = TaskListResponse;
+
 // ── registry ─────────────────────────────────────────────────────────────────
 
 export type ElasticsearchEndpointInputs = {
@@ -1933,6 +3127,59 @@ export type ElasticsearchEndpointInputs = {
 	ccrPauseFollow: CcrIndexInput;
 	ccrResumeFollow: CcrIndexInput;
 	ccrUnfollow: CcrIndexInput;
+	clusterPing: ClusterPingInput;
+	clusterGetInfo: ClusterGetInfoInput;
+	clusterSubsystemInfo: ClusterSubsystemInfoInput;
+	clusterPendingTasks: ClusterPendingTasksInput;
+	clusterGetSettings: ClusterGetSettingsInput;
+	clusterPutSettings: ClusterPutSettingsInput;
+	clusterReroute: ClusterRerouteInput;
+	clusterAllocationExplain: ClusterAllocationExplainInput;
+	clusterGetState: ClusterGetStateInput;
+	clusterGetStats: ClusterGetStatsInput;
+	clusterAddVotingConfigExclusions: ClusterAddVotingConfigExclusionsInput;
+	clusterClearVotingConfigExclusions: ClusterClearVotingConfigExclusionsInput;
+	clusterRemoteInfo: ClusterRemoteInfoInput;
+	clusterHealthReport: ClusterHealthReportInput;
+	clusterSslCertificates: ClusterSslCertificatesInput;
+	clusterScriptContexts: ClusterScriptContextsInput;
+	clusterScriptLanguages: ClusterScriptLanguagesInput;
+	catHelp: CatHelpInput;
+	catAliases: CatAliasesInput;
+	catAllocation: CatAllocationInput;
+	catCircuitBreakers: CatCircuitBreakersInput;
+	catComponentTemplates: CatComponentTemplatesInput;
+	catCount: CatCountInput;
+	catFielddata: CatFielddataInput;
+	catHealth: CatHealthInput;
+	catMaster: CatMasterInput;
+	catMlJobs: CatMlJobsInput;
+	catMlDataFrameAnalytics: CatMlDataFrameAnalyticsInput;
+	catMlDatafeeds: CatMlDatafeedsInput;
+	catMlTrainedModels: CatMlTrainedModelsInput;
+	catNodeattrs: CatNodeattrsInput;
+	catNodes: CatNodesInput;
+	catPendingTasks: CatPendingTasksInput;
+	catPlugins: CatPluginsInput;
+	catRecovery: CatRecoveryInput;
+	catRepositories: CatRepositoriesInput;
+	catSegments: CatSegmentsInput;
+	catShards: CatShardsInput;
+	catSnapshots: CatSnapshotsInput;
+	catTasks: CatTasksInput;
+	catTemplates: CatTemplatesInput;
+	catThreadPool: CatThreadPoolInput;
+	catTransforms: CatTransformsInput;
+	nodesInfo: NodesInfoInput;
+	nodesStats: NodesStatsInput;
+	nodesUsage: NodesUsageInput;
+	nodesHotThreads: NodesHotThreadsInput;
+	nodesReloadSecureSettings: NodesReloadSecureSettingsInput;
+	nodesRepositoriesMetering: NodesRepositoriesMeteringInput;
+	nodesClearRepositoriesMetering: NodesClearRepositoriesMeteringInput;
+	tasksList: TasksListInput;
+	tasksGet: TasksGetInput;
+	tasksCancel: TasksCancelInput;
 };
 
 export type ElasticsearchEndpointOutputs = {
@@ -2019,6 +3266,59 @@ export type ElasticsearchEndpointOutputs = {
 	ccrPauseFollow: CcrAcknowledgedOutput;
 	ccrResumeFollow: CcrAcknowledgedOutput;
 	ccrUnfollow: CcrAcknowledgedOutput;
+	clusterPing: ClusterPingOutput;
+	clusterGetInfo: ClusterGetInfoResponse;
+	clusterSubsystemInfo: ClusterSubsystemInfoOutput;
+	clusterPendingTasks: ClusterPendingTasksOutput;
+	clusterGetSettings: ClusterGetSettingsOutput;
+	clusterPutSettings: ClusterPutSettingsOutput;
+	clusterReroute: ClusterRerouteOutput;
+	clusterAllocationExplain: ClusterAllocationExplainOutput;
+	clusterGetState: ClusterGetStateOutput;
+	clusterGetStats: ClusterGetStatsOutput;
+	clusterAddVotingConfigExclusions: ClusterVotingConfigExclusionsOutput;
+	clusterClearVotingConfigExclusions: ClusterVotingConfigExclusionsOutput;
+	clusterRemoteInfo: ClusterRemoteInfoOutput;
+	clusterHealthReport: ClusterHealthReportOutput;
+	clusterSslCertificates: ClusterSslCertificatesOutput;
+	clusterScriptContexts: ClusterScriptContextsOutput;
+	clusterScriptLanguages: ClusterScriptLanguagesOutput;
+	catHelp: CatHelpResponse;
+	catAliases: CatAliasesOutput;
+	catAllocation: CatAllocationOutput;
+	catCircuitBreakers: CatCircuitBreakersOutput;
+	catComponentTemplates: CatComponentTemplatesOutput;
+	catCount: CatCountOutput;
+	catFielddata: CatFielddataOutput;
+	catHealth: CatHealthOutput;
+	catMaster: CatMasterOutput;
+	catMlJobs: CatMlJobsOutput;
+	catMlDataFrameAnalytics: CatMlDataFrameAnalyticsOutput;
+	catMlDatafeeds: CatMlDatafeedsOutput;
+	catMlTrainedModels: CatMlTrainedModelsOutput;
+	catNodeattrs: CatNodeattrsOutput;
+	catNodes: CatNodesOutput;
+	catPendingTasks: CatPendingTasksOutput;
+	catPlugins: CatPluginsOutput;
+	catRecovery: CatRecoveryOutput;
+	catRepositories: CatRepositoriesOutput;
+	catSegments: CatSegmentsOutput;
+	catShards: CatShardsOutput;
+	catSnapshots: CatSnapshotsOutput;
+	catTasks: CatTasksOutput;
+	catTemplates: CatTemplatesOutput;
+	catThreadPool: CatThreadPoolOutput;
+	catTransforms: CatTransformsOutput;
+	nodesInfo: NodesInfoOutput;
+	nodesStats: NodesStatsOutput;
+	nodesUsage: NodesUsageOutput;
+	nodesHotThreads: NodesHotThreadsOutput;
+	nodesReloadSecureSettings: NodesReloadSecureSettingsOutput;
+	nodesRepositoriesMetering: NodesRepositoriesMeteringOutput;
+	nodesClearRepositoriesMetering: NodesClearRepositoriesMeteringOutput;
+	tasksList: TasksListOutput;
+	tasksGet: TasksGetOutput;
+	tasksCancel: TasksCancelOutput;
 };
 
 export type ElasticsearchOperation = keyof ElasticsearchEndpointInputs;
@@ -2108,6 +3408,60 @@ export const ElasticsearchEndpointInputSchemas = {
 	ccrPauseFollow: CcrIndexInputSchema,
 	ccrResumeFollow: CcrIndexInputSchema,
 	ccrUnfollow: CcrIndexInputSchema,
+	clusterPing: ClusterPingInputSchema,
+	clusterGetInfo: ClusterGetInfoInputSchema,
+	clusterSubsystemInfo: ClusterSubsystemInfoInputSchema,
+	clusterPendingTasks: ClusterPendingTasksInputSchema,
+	clusterGetSettings: ClusterGetSettingsInputSchema,
+	clusterPutSettings: ClusterPutSettingsInputSchema,
+	clusterReroute: ClusterRerouteInputSchema,
+	clusterAllocationExplain: ClusterAllocationExplainInputSchema,
+	clusterGetState: ClusterGetStateInputSchema,
+	clusterGetStats: ClusterGetStatsInputSchema,
+	clusterAddVotingConfigExclusions: ClusterAddVotingConfigExclusionsInputSchema,
+	clusterClearVotingConfigExclusions:
+		ClusterClearVotingConfigExclusionsInputSchema,
+	clusterRemoteInfo: ClusterRemoteInfoInputSchema,
+	clusterHealthReport: ClusterHealthReportInputSchema,
+	clusterSslCertificates: ClusterSslCertificatesInputSchema,
+	clusterScriptContexts: ClusterScriptContextsInputSchema,
+	clusterScriptLanguages: ClusterScriptLanguagesInputSchema,
+	catHelp: CatHelpInputSchema,
+	catAliases: CatAliasesInputSchema,
+	catAllocation: CatAllocationInputSchema,
+	catCircuitBreakers: CatCircuitBreakersInputSchema,
+	catComponentTemplates: CatComponentTemplatesInputSchema,
+	catCount: CatCountInputSchema,
+	catFielddata: CatFielddataInputSchema,
+	catHealth: CatHealthInputSchema,
+	catMaster: CatMasterInputSchema,
+	catMlJobs: CatMlJobsInputSchema,
+	catMlDataFrameAnalytics: CatMlDataFrameAnalyticsInputSchema,
+	catMlDatafeeds: CatMlDatafeedsInputSchema,
+	catMlTrainedModels: CatMlTrainedModelsInputSchema,
+	catNodeattrs: CatNodeattrsInputSchema,
+	catNodes: CatNodesInputSchema,
+	catPendingTasks: CatPendingTasksInputSchema,
+	catPlugins: CatPluginsInputSchema,
+	catRecovery: CatRecoveryInputSchema,
+	catRepositories: CatRepositoriesInputSchema,
+	catSegments: CatSegmentsInputSchema,
+	catShards: CatShardsInputSchema,
+	catSnapshots: CatSnapshotsInputSchema,
+	catTasks: CatTasksInputSchema,
+	catTemplates: CatTemplatesInputSchema,
+	catThreadPool: CatThreadPoolInputSchema,
+	catTransforms: CatTransformsInputSchema,
+	nodesInfo: NodesInfoInputSchema,
+	nodesStats: NodesStatsInputSchema,
+	nodesUsage: NodesUsageInputSchema,
+	nodesHotThreads: NodesHotThreadsInputSchema,
+	nodesReloadSecureSettings: NodesReloadSecureSettingsInputSchema,
+	nodesRepositoriesMetering: NodesRepositoriesMeteringInputSchema,
+	nodesClearRepositoriesMetering: NodesClearRepositoriesMeteringInputSchema,
+	tasksList: TasksListInputSchema,
+	tasksGet: TasksGetInputSchema,
+	tasksCancel: TasksCancelInputSchema,
 } as const;
 
 export const ElasticsearchEndpointOutputSchemas = {
@@ -2194,4 +3548,57 @@ export const ElasticsearchEndpointOutputSchemas = {
 	ccrPauseFollow: AcknowledgedResponseSchema,
 	ccrResumeFollow: AcknowledgedResponseSchema,
 	ccrUnfollow: AcknowledgedResponseSchema,
+	clusterPing: ExistsResultSchema,
+	clusterGetInfo: ClusterGetInfoResponseSchema,
+	clusterSubsystemInfo: ClusterSubsystemInfoOutputSchema,
+	clusterPendingTasks: ClusterPendingTasksOutputSchema,
+	clusterGetSettings: ClusterGetSettingsOutputSchema,
+	clusterPutSettings: ClusterPutSettingsOutputSchema,
+	clusterReroute: ClusterRerouteOutputSchema,
+	clusterAllocationExplain: ClusterAllocationExplainOutputSchema,
+	clusterGetState: ClusterGetStateOutputSchema,
+	clusterGetStats: ClusterGetStatsOutputSchema,
+	clusterAddVotingConfigExclusions: EmptyBodyResponse,
+	clusterClearVotingConfigExclusions: EmptyBodyResponse,
+	clusterRemoteInfo: ClusterRemoteInfoOutputSchema,
+	clusterHealthReport: ClusterHealthReportOutputSchema,
+	clusterSslCertificates: ClusterSslCertificatesOutputSchema,
+	clusterScriptContexts: ClusterScriptContextsOutputSchema,
+	clusterScriptLanguages: ClusterScriptLanguagesOutputSchema,
+	catHelp: CatHelpResponseSchema,
+	catAliases: CatAliasesResponseSchema,
+	catAllocation: CatAllocationResponseSchema,
+	catCircuitBreakers: CatCircuitBreakersResponseSchema,
+	catComponentTemplates: CatComponentTemplatesResponseSchema,
+	catCount: CatCountResponseSchema,
+	catFielddata: CatFielddataResponseSchema,
+	catHealth: CatHealthResponseSchema,
+	catMaster: CatMasterResponseSchema,
+	catMlJobs: CatMlJobsResponseSchema,
+	catMlDataFrameAnalytics: CatMlDataFrameAnalyticsResponseSchema,
+	catMlDatafeeds: CatMlDatafeedsResponseSchema,
+	catMlTrainedModels: CatMlTrainedModelsResponseSchema,
+	catNodeattrs: CatNodeattrsResponseSchema,
+	catNodes: CatNodesResponseSchema,
+	catPendingTasks: CatPendingTasksResponseSchema,
+	catPlugins: CatPluginsResponseSchema,
+	catRecovery: CatRecoveryResponseSchema,
+	catRepositories: CatRepositoriesResponseSchema,
+	catSegments: CatSegmentsResponseSchema,
+	catShards: CatShardsResponseSchema,
+	catSnapshots: CatSnapshotsResponseSchema,
+	catTasks: CatTasksResponseSchema,
+	catTemplates: CatTemplatesResponseSchema,
+	catThreadPool: CatThreadPoolResponseSchema,
+	catTransforms: CatTransformsResponseSchema,
+	nodesInfo: NodesInfoOutputSchema,
+	nodesStats: NodesStatsOutputSchema,
+	nodesUsage: NodesUsageOutputSchema,
+	nodesHotThreads: NodesHotThreadsOutputSchema,
+	nodesReloadSecureSettings: NodesReloadSecureSettingsOutputSchema,
+	nodesRepositoriesMetering: NodesRepositoriesMeteringOutputSchema,
+	nodesClearRepositoriesMetering: NodesClearRepositoriesMeteringOutputSchema,
+	tasksList: TaskListResponseSchema,
+	tasksGet: TasksGetOutputSchema,
+	tasksCancel: TaskListResponseSchema,
 } as const;
