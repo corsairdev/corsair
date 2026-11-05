@@ -167,6 +167,21 @@ const ClearValuesResponseSchema = z.object({
 	clearedRange: z.string().optional(),
 });
 
+const UpdateValuesResponseSchema = z.object({
+	spreadsheetId: z.string().optional(),
+	updatedRange: z.string().optional(),
+	updatedRows: z.number().optional(),
+	updatedColumns: z.number().optional(),
+	updatedCells: z.number().optional(),
+	updatedData: ValueRangeSchema.optional(),
+});
+
+const AppendValuesResponseSchema = z.object({
+	spreadsheetId: z.string().optional(),
+	tableRange: z.string().optional(),
+	updates: UpdateValuesResponseSchema.optional(),
+});
+
 const SheetPropertiesSchema = z.object({
 	sheetId: z.number().optional(),
 	title: z.string().optional(),
@@ -207,7 +222,7 @@ export const GoogleSheetsEndpointOutputSchemas = {
 	spreadsheetsCreate: SpreadsheetSchema,
 	spreadsheetsDelete: z.void(),
 	spreadsheetsList: ListSpreadsheetsResponseSchema,
-	sheetsAppendRow: BatchUpdateValuesResponseSchema,
+	sheetsAppendRow: AppendValuesResponseSchema,
 	sheetsAppendOrUpdateRow: BatchUpdateValuesResponseSchema,
 	sheetsGetRows: ValueRangeSchema,
 	sheetsUpdateRow: BatchUpdateValuesResponseSchema,
@@ -240,7 +255,7 @@ export type GoogleSheetsEndpointOutputs = {
 	spreadsheetsCreate: Spreadsheet;
 	spreadsheetsDelete: void;
 	spreadsheetsList: ListSpreadsheetsResponse;
-	sheetsAppendRow: BatchUpdateValuesResponse;
+	sheetsAppendRow: AppendValuesResponse;
 	sheetsAppendOrUpdateRow: UpdateValuesResponse | AppendValuesResponse;
 	sheetsGetRows: ValueRange;
 	sheetsUpdateRow: BatchUpdateValuesResponse;

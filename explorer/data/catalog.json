@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-05T08:57:32.198Z",
+  "generatedAt": "2026-11-05T16:30:09.213Z",
   "corsairVersion": "0.1.157",
   "catalogVersion": 2,
   "plugins": [
@@ -2759,6 +2759,21 @@
       }
     },
     {
+      "id": "dnsfilter",
+      "displayName": "DNSFilter",
+      "description": "Cloud DNS security and content filtering - manage networks, policies, roaming clients, block pages, and traffic reporting.",
+      "npmPackageName": "@corsair-dev/dnsfilter",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 259,
+        "webhooks": 0,
+        "db": 10
+      }
+    },
+    {
       "id": "dockerhub",
       "displayName": "Docker Hub",
       "description": "Container registry for storing, sharing, and distributing Docker images and repositories.",
@@ -2981,6 +2996,21 @@
         "api": 28,
         "webhooks": 0,
         "db": 1
+      }
+    },
+    {
+      "id": "esputnik",
+      "displayName": "eSputnik",
+      "description": "Manage eSputnik contacts and segments, send events and orders, edit and send email, SMS, Viber, push and Telegram messages, and run broadcasts.",
+      "npmPackageName": "@corsair-dev/esputnik",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 108,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -3954,6 +3984,22 @@
       }
     },
     {
+      "id": "lever",
+      "displayName": "Lever",
+      "description": "Applicant tracking system for sourcing, managing, and hiring candidates with postings, interviews, and pipeline management.",
+      "npmPackageName": "@corsair-dev/lever",
+      "authTypes": [
+        "api_key",
+        "oauth_2"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 104,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "linear",
       "displayName": "Linear",
       "description": "Issue tracking tool for software teams managing projects, cycles, and product roadmaps.",
@@ -4692,6 +4738,21 @@
         "api": 3,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "render",
+      "displayName": "Render",
+      "description": "Manage Render services and deploys, Postgres and Key Value databases, env groups, environments, custom domains, disks, logs, metrics, webhooks and workflows.",
+      "npmPackageName": "@corsair-dev/render",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 218,
+        "webhooks": 0,
+        "db": 1
       }
     },
     {
@@ -6007,6 +6068,21 @@
         "api": 8,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "workable",
+      "displayName": "Workable",
+      "description": "Recruiting and HR in Workable - jobs, candidates, hiring team members, departments, employees, time off and webhook subscriptions, plus the public job board of any Workable careers page.",
+      "npmPackageName": "@corsair-dev/workable",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 35,
+        "webhooks": 0,
+        "db": 5
       }
     },
     {
@@ -48121,6 +48197,1560 @@
       "haystack": "interactions.ping discord.webhooks.interactions.ping discord sends a ping to verify the endpoint is live"
     },
     {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "agentLocalUserBulkDeletes.counts",
+      "haystack": "agentlocaluserbulkdeletes.counts dnsfilter.api.agentlocaluserbulkdeletes.counts counts for agent local user bulk deletes read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "agentLocalUserBulkDeletes.create",
+      "haystack": "agentlocaluserbulkdeletes.create dnsfilter.api.agentlocaluserbulkdeletes.create bulk delete agent local user destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "agentLocalUserBulkDeletes.get",
+      "haystack": "agentlocaluserbulkdeletes.get dnsfilter.api.agentlocaluserbulkdeletes.get get an agent local user bulk delete read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "agentLocalUsers.delete",
+      "haystack": "agentlocalusers.delete dnsfilter.api.agentlocalusers.delete delete an agent local user destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "agentLocalUsers.get",
+      "haystack": "agentlocalusers.get dnsfilter.api.agentlocalusers.get get an agent local user read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "agentLocalUsers.list",
+      "haystack": "agentlocalusers.list dnsfilter.api.agentlocalusers.list list agent local users read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "agentLocalUsers.listAll",
+      "haystack": "agentlocalusers.listall dnsfilter.api.agentlocalusers.listall list all agent local users read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "agentLocalUsers.update",
+      "haystack": "agentlocalusers.update dnsfilter.api.agentlocalusers.update update an agent local user write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "agentLocalUsersV2.counts",
+      "haystack": "agentlocalusersv2.counts dnsfilter.api.agentlocalusersv2.counts counts for agent local users v2 read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "apiKeys.create",
+      "haystack": "apikeys.create dnsfilter.api.apikeys.create create an api key write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "apiKeys.delete",
+      "haystack": "apikeys.delete dnsfilter.api.apikeys.delete delete an api key destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "apiKeys.get",
+      "haystack": "apikeys.get dnsfilter.api.apikeys.get get an api key read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "apiKeys.list",
+      "haystack": "apikeys.list dnsfilter.api.apikeys.list list api keys read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "apiKeys.revoke",
+      "haystack": "apikeys.revoke dnsfilter.api.apikeys.revoke revoke an api key destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "applicationCategories.get",
+      "haystack": "applicationcategories.get dnsfilter.api.applicationcategories.get get an application category read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "applicationCategories.list",
+      "haystack": "applicationcategories.list dnsfilter.api.applicationcategories.list list application categories read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "applications.get",
+      "haystack": "applications.get dnsfilter.api.applications.get get an application read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "applications.list",
+      "haystack": "applications.list dnsfilter.api.applications.list list applications read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "applications.listAll",
+      "haystack": "applications.listall dnsfilter.api.applications.listall list all applications read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "billings.addressShow",
+      "haystack": "billings.addressshow dnsfilter.api.billings.addressshow address show for billings read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "billings.addressUpdate",
+      "haystack": "billings.addressupdate dnsfilter.api.billings.addressupdate address update for billings write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "billings.create",
+      "haystack": "billings.create dnsfilter.api.billings.create create a billing write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "billings.get",
+      "haystack": "billings.get dnsfilter.api.billings.get get a billing read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "blockPages.create",
+      "haystack": "blockpages.create dnsfilter.api.blockpages.create create a block page write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "blockPages.delete",
+      "haystack": "blockpages.delete dnsfilter.api.blockpages.delete delete a block page destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "blockPages.get",
+      "haystack": "blockpages.get dnsfilter.api.blockpages.get get a block page read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "blockPages.list",
+      "haystack": "blockpages.list dnsfilter.api.blockpages.list list block pages read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "blockPages.listAll",
+      "haystack": "blockpages.listall dnsfilter.api.blockpages.listall list all block pages read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "blockPages.update",
+      "haystack": "blockpages.update dnsfilter.api.blockpages.update update a block page write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "categories.get",
+      "haystack": "categories.get dnsfilter.api.categories.get get a category read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "categories.list",
+      "haystack": "categories.list dnsfilter.api.categories.list list categories read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "categories.listAll",
+      "haystack": "categories.listall dnsfilter.api.categories.listall list all categories read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "collectionUsers.create",
+      "haystack": "collectionusers.create dnsfilter.api.collectionusers.create create a collection user write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "collectionUsers.delete",
+      "haystack": "collectionusers.delete dnsfilter.api.collectionusers.delete delete a collection user destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "collectionUsers.get",
+      "haystack": "collectionusers.get dnsfilter.api.collectionusers.get get a collection user read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "collectionUsers.list",
+      "haystack": "collectionusers.list dnsfilter.api.collectionusers.list list collection users read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.agentLocalUsersCreate",
+      "haystack": "csvexports.agentlocaluserscreate dnsfilter.api.csvexports.agentlocaluserscreate create agent local users csv export write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.agentLocalUsersGet",
+      "haystack": "csvexports.agentlocalusersget dnsfilter.api.csvexports.agentlocalusersget get agent local users csv export read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.cyberSightCreate",
+      "haystack": "csvexports.cybersightcreate dnsfilter.api.csvexports.cybersightcreate create cybersight csv export write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.cyberSightGet",
+      "haystack": "csvexports.cybersightget dnsfilter.api.csvexports.cybersightget get cybersight csv export read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.networksCreate",
+      "haystack": "csvexports.networkscreate dnsfilter.api.csvexports.networkscreate create networks csv export write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.networksGet",
+      "haystack": "csvexports.networksget dnsfilter.api.csvexports.networksget get networks csv export read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.unblockRequestsCreate",
+      "haystack": "csvexports.unblockrequestscreate dnsfilter.api.csvexports.unblockrequestscreate create unblock requests csv export write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.unblockRequestsGet",
+      "haystack": "csvexports.unblockrequestsget dnsfilter.api.csvexports.unblockrequestsget get unblock requests csv export read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.userAgentCreate",
+      "haystack": "csvexports.useragentcreate dnsfilter.api.csvexports.useragentcreate create user agent csv export write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.userAgentGet",
+      "haystack": "csvexports.useragentget dnsfilter.api.csvexports.useragentget get user agent csv export read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "csvExports.userAgentsCsv",
+      "haystack": "csvexports.useragentscsv dnsfilter.api.csvexports.useragentscsv download user agents csv read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "currentUserOrgUiSettings.suppressLicenseWarning",
+      "haystack": "currentuserorguisettings.suppresslicensewarning dnsfilter.api.currentuserorguisettings.suppresslicensewarning suppress license warning for current user org ui settings write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "currentUsers.get",
+      "haystack": "currentusers.get dnsfilter.api.currentusers.get get a current user read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "currentUsers.update",
+      "haystack": "currentusers.update dnsfilter.api.currentusers.update update a current user write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "currentUserUiSettings.get",
+      "haystack": "currentuseruisettings.get dnsfilter.api.currentuseruisettings.get get a current user ui setting read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "currentUserUiSettings.update",
+      "haystack": "currentuseruisettings.update dnsfilter.api.currentuseruisettings.update update a current user ui setting write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dashboards.available",
+      "haystack": "dashboards.available dnsfilter.api.dashboards.available available for dashboards read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dashboards.create",
+      "haystack": "dashboards.create dnsfilter.api.dashboards.create create a dashboard write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dashboards.delete",
+      "haystack": "dashboards.delete dnsfilter.api.dashboards.delete delete a dashboard destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dashboards.link",
+      "haystack": "dashboards.link dnsfilter.api.dashboards.link link for dashboards write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dashboards.list",
+      "haystack": "dashboards.list dnsfilter.api.dashboards.list list dashboards read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dashboards.makePrivate",
+      "haystack": "dashboards.makeprivate dnsfilter.api.dashboards.makeprivate make private for dashboards write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dashboards.makePublic",
+      "haystack": "dashboards.makepublic dnsfilter.api.dashboards.makepublic make public for dashboards write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dashboards.owned",
+      "haystack": "dashboards.owned dnsfilter.api.dashboards.owned owned for dashboards read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dashboards.unlink",
+      "haystack": "dashboards.unlink dnsfilter.api.dashboards.unlink unlink for dashboards write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dashboards.update",
+      "haystack": "dashboards.update dnsfilter.api.dashboards.update update a dashboard write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dictionary.qpMethods",
+      "haystack": "dictionary.qpmethods dnsfilter.api.dictionary.qpmethods qp methods for dictionary read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dictionaryV2.aiApplications",
+      "haystack": "dictionaryv2.aiapplications dnsfilter.api.dictionaryv2.aiapplications ai applications for dictionary v2 read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dictionaryV2.cyberSightActivityTypes",
+      "haystack": "dictionaryv2.cybersightactivitytypes dnsfilter.api.dictionaryv2.cybersightactivitytypes cyber sight activity types for dictionary v2 read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "dictionaryV2.vpnSettingsStateTypes",
+      "haystack": "dictionaryv2.vpnsettingsstatetypes dnsfilter.api.dictionaryv2.vpnsettingsstatetypes vpn settings state types for dictionary v2 read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "domainNotes.batchDestroy",
+      "haystack": "domainnotes.batchdestroy dnsfilter.api.domainnotes.batchdestroy batch destroy for domain notes destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "domainNotes.batchUpdate",
+      "haystack": "domainnotes.batchupdate dnsfilter.api.domainnotes.batchupdate batch update for domain notes write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "domainNotes.delete",
+      "haystack": "domainnotes.delete dnsfilter.api.domainnotes.delete delete a domain note destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "domainNotes.get",
+      "haystack": "domainnotes.get dnsfilter.api.domainnotes.get get a domain note read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "domainNotes.update",
+      "haystack": "domainnotes.update dnsfilter.api.domainnotes.update update a domain note write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "domains.bulkLookup",
+      "haystack": "domains.bulklookup dnsfilter.api.domains.bulklookup bulk lookup for domains read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "domains.suggestThreat",
+      "haystack": "domains.suggestthreat dnsfilter.api.domains.suggestthreat suggest threat for domains write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "domains.userLookup",
+      "haystack": "domains.userlookup dnsfilter.api.domains.userlookup user lookup for domains read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "enterpriseConnections.create",
+      "haystack": "enterpriseconnections.create dnsfilter.api.enterpriseconnections.create create an enterprise connection write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "enterpriseConnections.delete",
+      "haystack": "enterpriseconnections.delete dnsfilter.api.enterpriseconnections.delete delete an enterprise connection destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "enterpriseConnections.get",
+      "haystack": "enterpriseconnections.get dnsfilter.api.enterpriseconnections.get get an enterprise connection read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "enterpriseConnections.list",
+      "haystack": "enterpriseconnections.list dnsfilter.api.enterpriseconnections.list list enterprise connections read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "enterpriseConnections.update",
+      "haystack": "enterpriseconnections.update dnsfilter.api.enterpriseconnections.update update an enterprise connection write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "invoices.current",
+      "haystack": "invoices.current dnsfilter.api.invoices.current current for invoices read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "invoices.get",
+      "haystack": "invoices.get dnsfilter.api.invoices.get get an invoice read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "invoices.list",
+      "haystack": "invoices.list dnsfilter.api.invoices.list list invoices read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "ipAddresses.create",
+      "haystack": "ipaddresses.create dnsfilter.api.ipaddresses.create create an ip address write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "ipAddresses.delete",
+      "haystack": "ipaddresses.delete dnsfilter.api.ipaddresses.delete delete an ip address destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "ipAddresses.get",
+      "haystack": "ipaddresses.get dnsfilter.api.ipaddresses.get get an ip address read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "ipAddresses.list",
+      "haystack": "ipaddresses.list dnsfilter.api.ipaddresses.list list ip addresses read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "ipAddresses.listAll",
+      "haystack": "ipaddresses.listall dnsfilter.api.ipaddresses.listall list all ip addresses read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "ipAddresses.myip",
+      "haystack": "ipaddresses.myip dnsfilter.api.ipaddresses.myip my ip for ip addresses read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "ipAddresses.update",
+      "haystack": "ipaddresses.update dnsfilter.api.ipaddresses.update update an ip address write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "ipAddresses.verify",
+      "haystack": "ipaddresses.verify dnsfilter.api.ipaddresses.verify verify for ip addresses read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "macAddresses.create",
+      "haystack": "macaddresses.create dnsfilter.api.macaddresses.create create a mac address write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "macAddresses.delete",
+      "haystack": "macaddresses.delete dnsfilter.api.macaddresses.delete delete a mac address destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "macAddresses.get",
+      "haystack": "macaddresses.get dnsfilter.api.macaddresses.get get a mac address read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "macAddresses.list",
+      "haystack": "macaddresses.list dnsfilter.api.macaddresses.list list mac addresses read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "macAddresses.listAll",
+      "haystack": "macaddresses.listall dnsfilter.api.macaddresses.listall list all mac addresses read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "macAddresses.update",
+      "haystack": "macaddresses.update dnsfilter.api.macaddresses.update update a mac address write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "metrics.organizationUsage",
+      "haystack": "metrics.organizationusage dnsfilter.api.metrics.organizationusage organization usage for metrics read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "metrics.organizationUsageDetailed",
+      "haystack": "metrics.organizationusagedetailed dnsfilter.api.metrics.organizationusagedetailed organization usage detailed for metrics read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networkLanIps.get",
+      "haystack": "networklanips.get dnsfilter.api.networklanips.get get a network lan ip read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networkLanIps.list",
+      "haystack": "networklanips.list dnsfilter.api.networklanips.list list network lan ips read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networkLanIps.update",
+      "haystack": "networklanips.update dnsfilter.api.networklanips.update update a network lan ip write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.bulkCreate",
+      "haystack": "networks.bulkcreate dnsfilter.api.networks.bulkcreate bulk create for networks write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.bulkCreateStatus",
+      "haystack": "networks.bulkcreatestatus dnsfilter.api.networks.bulkcreatestatus bulk create status for networks read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.bulkDestroy",
+      "haystack": "networks.bulkdestroy dnsfilter.api.networks.bulkdestroy bulk destroy for networks destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.bulkDestroyStatus",
+      "haystack": "networks.bulkdestroystatus dnsfilter.api.networks.bulkdestroystatus bulk destroy status for networks read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.bulkUpdate",
+      "haystack": "networks.bulkupdate dnsfilter.api.networks.bulkupdate bulk update for networks write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.bulkUpdateStatus",
+      "haystack": "networks.bulkupdatestatus dnsfilter.api.networks.bulkupdatestatus bulk update status for networks read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.counts",
+      "haystack": "networks.counts dnsfilter.api.networks.counts counts for networks read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.create",
+      "haystack": "networks.create dnsfilter.api.networks.create create a network write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.delete",
+      "haystack": "networks.delete dnsfilter.api.networks.delete delete a network destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.generateSecretKey",
+      "haystack": "networks.generatesecretkey dnsfilter.api.networks.generatesecretkey generate secret key for networks write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.geo",
+      "haystack": "networks.geo dnsfilter.api.networks.geo geo for networks read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.get",
+      "haystack": "networks.get dnsfilter.api.networks.get get a network read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.list",
+      "haystack": "networks.list dnsfilter.api.networks.list list networks read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.listAll",
+      "haystack": "networks.listall dnsfilter.api.networks.listall list all networks read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.lookup",
+      "haystack": "networks.lookup dnsfilter.api.networks.lookup lookup for networks read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.msp",
+      "haystack": "networks.msp dnsfilter.api.networks.msp list msp networks read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.mspAll",
+      "haystack": "networks.mspall dnsfilter.api.networks.mspall list all msp networks read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.revokeSecretKey",
+      "haystack": "networks.revokesecretkey dnsfilter.api.networks.revokesecretkey revoke secret key for networks destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.rotateSecretKey",
+      "haystack": "networks.rotatesecretkey dnsfilter.api.networks.rotatesecretkey rotate secret key for networks write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networks.update",
+      "haystack": "networks.update dnsfilter.api.networks.update update a network write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networkSubnets.create",
+      "haystack": "networksubnets.create dnsfilter.api.networksubnets.create create a network subnet write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networkSubnets.delete",
+      "haystack": "networksubnets.delete dnsfilter.api.networksubnets.delete delete a network subnet destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networkSubnets.get",
+      "haystack": "networksubnets.get dnsfilter.api.networksubnets.get get a network subnet read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networkSubnets.list",
+      "haystack": "networksubnets.list dnsfilter.api.networksubnets.list list network subnets read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networkSubnets.listAll",
+      "haystack": "networksubnets.listall dnsfilter.api.networksubnets.listall list all network subnets read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "networkSubnets.update",
+      "haystack": "networksubnets.update dnsfilter.api.networksubnets.update update a network subnet write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizations.bulkUpdate",
+      "haystack": "organizations.bulkupdate dnsfilter.api.organizations.bulkupdate bulk update for organizations write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizations.cancel",
+      "haystack": "organizations.cancel dnsfilter.api.organizations.cancel cancel an organization destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizations.create",
+      "haystack": "organizations.create dnsfilter.api.organizations.create create an organization write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizations.delete",
+      "haystack": "organizations.delete dnsfilter.api.organizations.delete delete an organization destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizations.get",
+      "haystack": "organizations.get dnsfilter.api.organizations.get get an organization read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizations.list",
+      "haystack": "organizations.list dnsfilter.api.organizations.list list organizations read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizations.listAll",
+      "haystack": "organizations.listall dnsfilter.api.organizations.listall list all organizations read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizations.promoteToMsp",
+      "haystack": "organizations.promotetomsp dnsfilter.api.organizations.promotetomsp promote to msp for organizations write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizations.settings",
+      "haystack": "organizations.settings dnsfilter.api.organizations.settings settings for organizations read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizations.update",
+      "haystack": "organizations.update dnsfilter.api.organizations.update update an organization write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizationUsers.create",
+      "haystack": "organizationusers.create dnsfilter.api.organizationusers.create create an organization user write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizationUsers.delete",
+      "haystack": "organizationusers.delete dnsfilter.api.organizationusers.delete delete an organization user destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizationUsers.get",
+      "haystack": "organizationusers.get dnsfilter.api.organizationusers.get get an organization user read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizationUsers.list",
+      "haystack": "organizationusers.list dnsfilter.api.organizationusers.list list organization users read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizationUsers.resendInvite",
+      "haystack": "organizationusers.resendinvite dnsfilter.api.organizationusers.resendinvite resend invite for organization users write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "organizationUsers.update",
+      "haystack": "organizationusers.update dnsfilter.api.organizationusers.update update an organization user write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.addAllowedApplication",
+      "haystack": "policies.addallowedapplication dnsfilter.api.policies.addallowedapplication add allowed application for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.addBlacklistCategory",
+      "haystack": "policies.addblacklistcategory dnsfilter.api.policies.addblacklistcategory add blacklist category for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.addBlacklistDomain",
+      "haystack": "policies.addblacklistdomain dnsfilter.api.policies.addblacklistdomain add blacklist domain for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.addBlockedApplication",
+      "haystack": "policies.addblockedapplication dnsfilter.api.policies.addblockedapplication add blocked application for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.addWhitelistDomain",
+      "haystack": "policies.addwhitelistdomain dnsfilter.api.policies.addwhitelistdomain add whitelist domain for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.application",
+      "haystack": "policies.application dnsfilter.api.policies.application application for policies read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.applicationUpdate",
+      "haystack": "policies.applicationupdate dnsfilter.api.policies.applicationupdate application update for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.create",
+      "haystack": "policies.create dnsfilter.api.policies.create create a policy write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.delete",
+      "haystack": "policies.delete dnsfilter.api.policies.delete delete a policy destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.get",
+      "haystack": "policies.get dnsfilter.api.policies.get get a policy read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.getPermissiveMode",
+      "haystack": "policies.getpermissivemode dnsfilter.api.policies.getpermissivemode get permissive mode for policies read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.list",
+      "haystack": "policies.list dnsfilter.api.policies.list list policies read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.listAll",
+      "haystack": "policies.listall dnsfilter.api.policies.listall list all policies read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.removeAllowedApplication",
+      "haystack": "policies.removeallowedapplication dnsfilter.api.policies.removeallowedapplication remove allowed application for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.removeBlacklistCategory",
+      "haystack": "policies.removeblacklistcategory dnsfilter.api.policies.removeblacklistcategory remove blacklist category for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.removeBlacklistDomain",
+      "haystack": "policies.removeblacklistdomain dnsfilter.api.policies.removeblacklistdomain remove blacklist domain for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.removeBlockedApplication",
+      "haystack": "policies.removeblockedapplication dnsfilter.api.policies.removeblockedapplication remove blocked application for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.removeWhitelistDomain",
+      "haystack": "policies.removewhitelistdomain dnsfilter.api.policies.removewhitelistdomain remove whitelist domain for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.update",
+      "haystack": "policies.update dnsfilter.api.policies.update update a policy write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policies.updatePermissiveMode",
+      "haystack": "policies.updatepermissivemode dnsfilter.api.policies.updatepermissivemode update permissive mode for policies write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policiesBulkActions.addAllowlistDomains",
+      "haystack": "policiesbulkactions.addallowlistdomains dnsfilter.api.policiesbulkactions.addallowlistdomains add allowlist domains for policies bulk actions write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policiesBulkActions.addBlocklistDomains",
+      "haystack": "policiesbulkactions.addblocklistdomains dnsfilter.api.policiesbulkactions.addblocklistdomains add blocklist domains for policies bulk actions write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policiesBulkActions.removeAllowlistDomains",
+      "haystack": "policiesbulkactions.removeallowlistdomains dnsfilter.api.policiesbulkactions.removeallowlistdomains remove allowlist domains for policies bulk actions write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policiesBulkActions.removeBlocklistDomains",
+      "haystack": "policiesbulkactions.removeblocklistdomains dnsfilter.api.policiesbulkactions.removeblocklistdomains remove blocklist domains for policies bulk actions write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policyIps.get",
+      "haystack": "policyips.get dnsfilter.api.policyips.get get a policy ip read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "policyIps.list",
+      "haystack": "policyips.list dnsfilter.api.policyips.list list policy ips read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "psaIntegrations.redirectLink",
+      "haystack": "psaintegrations.redirectlink dnsfilter.api.psaintegrations.redirectlink redirect link for psa integrations read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledPolicies.create",
+      "haystack": "scheduledpolicies.create dnsfilter.api.scheduledpolicies.create create a scheduled policy write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledPolicies.delete",
+      "haystack": "scheduledpolicies.delete dnsfilter.api.scheduledpolicies.delete delete a scheduled policy destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledPolicies.get",
+      "haystack": "scheduledpolicies.get dnsfilter.api.scheduledpolicies.get get a scheduled policy read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledPolicies.list",
+      "haystack": "scheduledpolicies.list dnsfilter.api.scheduledpolicies.list list scheduled policies read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledPolicies.listAll",
+      "haystack": "scheduledpolicies.listall dnsfilter.api.scheduledpolicies.listall list all scheduled policies read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledPolicies.update",
+      "haystack": "scheduledpolicies.update dnsfilter.api.scheduledpolicies.update update a scheduled policy write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReportPreviews.create",
+      "haystack": "scheduledreportpreviews.create dnsfilter.api.scheduledreportpreviews.create create a scheduled report preview write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReportPreviews.get",
+      "haystack": "scheduledreportpreviews.get dnsfilter.api.scheduledreportpreviews.get get a scheduled report preview read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReports.create",
+      "haystack": "scheduledreports.create dnsfilter.api.scheduledreports.create create a scheduled report write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReports.delete",
+      "haystack": "scheduledreports.delete dnsfilter.api.scheduledreports.delete delete a scheduled report destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReports.get",
+      "haystack": "scheduledreports.get dnsfilter.api.scheduledreports.get get a scheduled report read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReports.list",
+      "haystack": "scheduledreports.list dnsfilter.api.scheduledreports.list list scheduled reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReports.update",
+      "haystack": "scheduledreports.update dnsfilter.api.scheduledreports.update update a scheduled report write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReportsV2.bulkUpdate",
+      "haystack": "scheduledreportsv2.bulkupdate dnsfilter.api.scheduledreportsv2.bulkupdate bulk update for scheduled reports v2 write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReportsV2.create",
+      "haystack": "scheduledreportsv2.create dnsfilter.api.scheduledreportsv2.create create a scheduled reports v2 write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReportsV2.delete",
+      "haystack": "scheduledreportsv2.delete dnsfilter.api.scheduledreportsv2.delete delete a scheduled reports v2 destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReportsV2.get",
+      "haystack": "scheduledreportsv2.get dnsfilter.api.scheduledreportsv2.get get a scheduled reports v2 read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReportsV2.list",
+      "haystack": "scheduledreportsv2.list dnsfilter.api.scheduledreportsv2.list list scheduled reports v2 read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "scheduledReportsV2.update",
+      "haystack": "scheduledreportsv2.update dnsfilter.api.scheduledreportsv2.update update a scheduled reports v2 write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.qps",
+      "haystack": "trafficreports.qps dnsfilter.api.trafficreports.qps qps for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.qpsActiveAgents",
+      "haystack": "trafficreports.qpsactiveagents dnsfilter.api.trafficreports.qpsactiveagents qps active agents for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.qpsActiveOrganizations",
+      "haystack": "trafficreports.qpsactiveorganizations dnsfilter.api.trafficreports.qpsactiveorganizations qps active organizations for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.queryLogs",
+      "haystack": "trafficreports.querylogs dnsfilter.api.trafficreports.querylogs query logs for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.topAgents",
+      "haystack": "trafficreports.topagents dnsfilter.api.trafficreports.topagents top agents for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.topApplicationCategories",
+      "haystack": "trafficreports.topapplicationcategories dnsfilter.api.trafficreports.topapplicationcategories top application categories for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.topCategories",
+      "haystack": "trafficreports.topcategories dnsfilter.api.trafficreports.topcategories top categories for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.topCollections",
+      "haystack": "trafficreports.topcollections dnsfilter.api.trafficreports.topcollections top collections for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.topDomains",
+      "haystack": "trafficreports.topdomains dnsfilter.api.trafficreports.topdomains top domains for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.topNetworks",
+      "haystack": "trafficreports.topnetworks dnsfilter.api.trafficreports.topnetworks top networks for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.topOrganizationsRequests",
+      "haystack": "trafficreports.toporganizationsrequests dnsfilter.api.trafficreports.toporganizationsrequests top organizations requests for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.topUsers",
+      "haystack": "trafficreports.topusers dnsfilter.api.trafficreports.topusers top users for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalApplicationsAgentsStats",
+      "haystack": "trafficreports.totalapplicationsagentsstats dnsfilter.api.trafficreports.totalapplicationsagentsstats total applications agents stats for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalApplicationsCollectionsStats",
+      "haystack": "trafficreports.totalapplicationscollectionsstats dnsfilter.api.trafficreports.totalapplicationscollectionsstats total applications collections stats for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalApplicationsNetworksStats",
+      "haystack": "trafficreports.totalapplicationsnetworksstats dnsfilter.api.trafficreports.totalapplicationsnetworksstats total applications networks stats for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalApplicationsStats",
+      "haystack": "trafficreports.totalapplicationsstats dnsfilter.api.trafficreports.totalapplicationsstats total applications stats for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalApplicationsUsersStats",
+      "haystack": "trafficreports.totalapplicationsusersstats dnsfilter.api.trafficreports.totalapplicationsusersstats total applications users stats for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalCategories",
+      "haystack": "trafficreports.totalcategories dnsfilter.api.trafficreports.totalcategories total categories for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalCategoriesOrganizations",
+      "haystack": "trafficreports.totalcategoriesorganizations dnsfilter.api.trafficreports.totalcategoriesorganizations total categories organizations for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalCategoryStats",
+      "haystack": "trafficreports.totalcategorystats dnsfilter.api.trafficreports.totalcategorystats total category stats for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalClientStats",
+      "haystack": "trafficreports.totalclientstats dnsfilter.api.trafficreports.totalclientstats total client stats for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalDeployments",
+      "haystack": "trafficreports.totaldeployments dnsfilter.api.trafficreports.totaldeployments total deployments for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalDomains",
+      "haystack": "trafficreports.totaldomains dnsfilter.api.trafficreports.totaldomains total domains for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalDomainsOrganizations",
+      "haystack": "trafficreports.totaldomainsorganizations dnsfilter.api.trafficreports.totaldomainsorganizations total domains organizations for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalDomainStats",
+      "haystack": "trafficreports.totaldomainstats dnsfilter.api.trafficreports.totaldomainstats total domain stats for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalDomainsUsers",
+      "haystack": "trafficreports.totaldomainsusers dnsfilter.api.trafficreports.totaldomainsusers total domains users for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalOrganizationsRequests",
+      "haystack": "trafficreports.totalorganizationsrequests dnsfilter.api.trafficreports.totalorganizationsrequests total organizations requests for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalOrganizationsStats",
+      "haystack": "trafficreports.totalorganizationsstats dnsfilter.api.trafficreports.totalorganizationsstats total organizations stats for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalRequests",
+      "haystack": "trafficreports.totalrequests dnsfilter.api.trafficreports.totalrequests total requests for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalRequestsAgents",
+      "haystack": "trafficreports.totalrequestsagents dnsfilter.api.trafficreports.totalrequestsagents total requests agents for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalRequestsCollections",
+      "haystack": "trafficreports.totalrequestscollections dnsfilter.api.trafficreports.totalrequestscollections total requests collections for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalRequestsGeo",
+      "haystack": "trafficreports.totalrequestsgeo dnsfilter.api.trafficreports.totalrequestsgeo total requests geo for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalRequestsOrganizations",
+      "haystack": "trafficreports.totalrequestsorganizations dnsfilter.api.trafficreports.totalrequestsorganizations total requests organizations for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalRequestsUsers",
+      "haystack": "trafficreports.totalrequestsusers dnsfilter.api.trafficreports.totalrequestsusers total requests users for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalRoamingClients",
+      "haystack": "trafficreports.totalroamingclients dnsfilter.api.trafficreports.totalroamingclients total roaming clients for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalThreats",
+      "haystack": "trafficreports.totalthreats dnsfilter.api.trafficreports.totalthreats total threats for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalThreatsOrganizations",
+      "haystack": "trafficreports.totalthreatsorganizations dnsfilter.api.trafficreports.totalthreatsorganizations total threats organizations for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trafficReports.totalThreatsUsers",
+      "haystack": "trafficreports.totalthreatsusers dnsfilter.api.trafficreports.totalthreatsusers total threats users for traffic reports read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "trials.create",
+      "haystack": "trials.create dnsfilter.api.trials.create create a trial write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "unblockRequests.counts",
+      "haystack": "unblockrequests.counts dnsfilter.api.unblockrequests.counts counts for unblock requests read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "unblockRequests.decision",
+      "haystack": "unblockrequests.decision dnsfilter.api.unblockrequests.decision decision for unblock requests write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "unblockRequests.get",
+      "haystack": "unblockrequests.get dnsfilter.api.unblockrequests.get get an unblock request read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "unblockRequests.list",
+      "haystack": "unblockrequests.list dnsfilter.api.unblockrequests.list list unblock requests read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "unblockRequests.pendingCount",
+      "haystack": "unblockrequests.pendingcount dnsfilter.api.unblockrequests.pendingcount pending count for unblock requests read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentBulkDeletes.counts",
+      "haystack": "useragentbulkdeletes.counts dnsfilter.api.useragentbulkdeletes.counts counts for user agent bulk deletes read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentBulkDeletes.create",
+      "haystack": "useragentbulkdeletes.create dnsfilter.api.useragentbulkdeletes.create bulk delete user agent destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentBulkDeletes.get",
+      "haystack": "useragentbulkdeletes.get dnsfilter.api.useragentbulkdeletes.get get a user agent bulk delete read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentBulkUpdates.counts",
+      "haystack": "useragentbulkupdates.counts dnsfilter.api.useragentbulkupdates.counts counts for user agent bulk updates read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentBulkUpdates.create",
+      "haystack": "useragentbulkupdates.create dnsfilter.api.useragentbulkupdates.create bulk update user agent write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentBulkUpdates.get",
+      "haystack": "useragentbulkupdates.get dnsfilter.api.useragentbulkupdates.get get a user agent bulk update read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentBulkUpdates.hasMixed",
+      "haystack": "useragentbulkupdates.hasmixed dnsfilter.api.useragentbulkupdates.hasmixed has mixed for user agent bulk updates write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentCleanups.create",
+      "haystack": "useragentcleanups.create dnsfilter.api.useragentcleanups.create clean up user agent destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentCleanups.get",
+      "haystack": "useragentcleanups.get dnsfilter.api.useragentcleanups.get get a user agent cleanup read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentCleanups.update",
+      "haystack": "useragentcleanups.update dnsfilter.api.useragentcleanups.update update a user agent cleanup destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentReleases.list",
+      "haystack": "useragentreleases.list dnsfilter.api.useragentreleases.list list user agent releases read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentReleases.relay",
+      "haystack": "useragentreleases.relay dnsfilter.api.useragentreleases.relay relay for user agent releases read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgents.counts",
+      "haystack": "useragents.counts dnsfilter.api.useragents.counts counts for user agents read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgents.delete",
+      "haystack": "useragents.delete dnsfilter.api.useragents.delete delete a user agent destructive"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgents.dequeueUninstall",
+      "haystack": "useragents.dequeueuninstall dnsfilter.api.useragents.dequeueuninstall dequeue uninstall for user agents write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgents.get",
+      "haystack": "useragents.get dnsfilter.api.useragents.get get a user agent read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgents.list",
+      "haystack": "useragents.list dnsfilter.api.useragents.list list user agents read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgents.listAll",
+      "haystack": "useragents.listall dnsfilter.api.useragents.listall list all user agents read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgents.tags",
+      "haystack": "useragents.tags dnsfilter.api.useragents.tags tags for user agents read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgents.uninstallPin",
+      "haystack": "useragents.uninstallpin dnsfilter.api.useragents.uninstallpin uninstall pin for user agents read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgents.update",
+      "haystack": "useragents.update dnsfilter.api.useragents.update update a user agent write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "userAgentsV2.updateSettings",
+      "haystack": "useragentsv2.updatesettings dnsfilter.api.useragentsv2.updatesettings update settings for user agents v2 write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "users.changePassword",
+      "haystack": "users.changepassword dnsfilter.api.users.changepassword change password for users write"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get dnsfilter.api.users.get get a user read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list dnsfilter.api.users.list list users read"
+    },
+    {
+      "pluginId": "dnsfilter",
+      "kind": "api",
+      "shortPath": "users.listAll",
+      "haystack": "users.listall dnsfilter.api.users.listall list all users read"
+    },
+    {
       "pluginId": "dockerhub",
       "kind": "api",
       "shortPath": "images.get",
@@ -52187,6 +53817,654 @@
       "kind": "api",
       "shortPath": "remote.waitForObjectEvent",
       "haystack": "remote.waitforobjectevent epicgames.api.remote.waitforobjectevent wait for a uobject event (experimental; requires enableexperimentalroutes) write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "account.generateApiToken",
+      "haystack": "account.generateapitoken esputnik.api.account.generateapitoken generate a bearer token for the esputnik event endpoints (returns a secret) write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "account.getAccountInfo",
+      "haystack": "account.getaccountinfo esputnik.api.account.getaccountinfo get the esputnik account name and organisation id read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "account.getBalance",
+      "haystack": "account.getbalance esputnik.api.account.getbalance get the esputnik organisation balance read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "account.getOrganisationBalanceHistory",
+      "haystack": "account.getorganisationbalancehistory esputnik.api.account.getorganisationbalancehistory get daily esputnik billing costs for a period of up to 90 days read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "appInbox.addAppInboxMessage",
+      "haystack": "appinbox.addappinboxmessage esputnik.api.appinbox.addappinboxmessage create a esputnik app inbox message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "appInbox.deleteAppInboxMessage",
+      "haystack": "appinbox.deleteappinboxmessage esputnik.api.appinbox.deleteappinboxmessage delete a esputnik app inbox message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "appInbox.deleteTranslatedAppInboxMessage",
+      "haystack": "appinbox.deletetranslatedappinboxmessage esputnik.api.appinbox.deletetranslatedappinboxmessage delete a language version of a esputnik app inbox message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "appInbox.getAppInboxMessage",
+      "haystack": "appinbox.getappinboxmessage esputnik.api.appinbox.getappinboxmessage get a esputnik app inbox message with its language versions read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "appInbox.searchAppInboxMessages",
+      "haystack": "appinbox.searchappinboxmessages esputnik.api.appinbox.searchappinboxmessages search esputnik app inbox messages by name read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "appInbox.updateBaseAppInboxMessage",
+      "haystack": "appinbox.updatebaseappinboxmessage esputnik.api.appinbox.updatebaseappinboxmessage update a esputnik app inbox message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "appInbox.updateTranslatedAppInboxMessage",
+      "haystack": "appinbox.updatetranslatedappinboxmessage esputnik.api.appinbox.updatetranslatedappinboxmessage add or update a language version of a esputnik app inbox message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "apps.addAppTokens",
+      "haystack": "apps.addapptokens esputnik.api.apps.addapptokens add telegram application tokens to esputnik write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "apps.muteAppToken",
+      "haystack": "apps.muteapptoken esputnik.api.apps.muteapptoken mute esputnik notifications for an application token write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "apps.unmuteAppToken",
+      "haystack": "apps.unmuteapptoken esputnik.api.apps.unmuteapptoken unmute esputnik notifications for an application token write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "broadcasts.cancelBroadcast",
+      "haystack": "broadcasts.cancelbroadcast esputnik.api.broadcasts.cancelbroadcast cancel a scheduled esputnik broadcast destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "broadcasts.createBroadcast",
+      "haystack": "broadcasts.createbroadcast esputnik.api.broadcasts.createbroadcast create an esputnik broadcast for a prepared message and segments write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "broadcasts.getBroadcast",
+      "haystack": "broadcasts.getbroadcast esputnik.api.broadcasts.getbroadcast get an esputnik broadcast read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "broadcasts.getBroadcasts",
+      "haystack": "broadcasts.getbroadcasts esputnik.api.broadcasts.getbroadcasts list esputnik broadcasts read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.addContact",
+      "haystack": "contacts.addcontact esputnik.api.contacts.addcontact create or update an esputnik contact write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.addToUnsubscribed",
+      "haystack": "contacts.addtounsubscribed esputnik.api.contacts.addtounsubscribed add emails to the esputnik unsubscribe list write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.attachContactsToGroup",
+      "haystack": "contacts.attachcontactstogroup esputnik.api.contacts.attachcontactstogroup add contacts to an esputnik static segment write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.changeContactSubscriptionCategories",
+      "haystack": "contacts.changecontactsubscriptioncategories esputnik.api.contacts.changecontactsubscriptioncategories replace an esputnik contact's subscription categories write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.changeTokenActivated",
+      "haystack": "contacts.changetokenactivated esputnik.api.contacts.changetokenactivated activate or deactivate an esputnik mobile push token write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.contactActivity",
+      "haystack": "contacts.contactactivity esputnik.api.contacts.contactactivity get delivery, read and click activity for messages sent to esputnik contacts read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.contactMessages",
+      "haystack": "contacts.contactmessages esputnik.api.contacts.contactmessages get an esputnik contact's message history read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.contactRecoms",
+      "haystack": "contacts.contactrecoms esputnik.api.contacts.contactrecoms get product recommendations for an esputnik contact read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.contactsBulkUpdate",
+      "haystack": "contacts.contactsbulkupdate esputnik.api.contacts.contactsbulkupdate bulk create or update esputnik contacts write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.deleteContactByExternalCustomerId",
+      "haystack": "contacts.deletecontactbyexternalcustomerid esputnik.api.contacts.deletecontactbyexternalcustomerid delete an esputnik contact by external customer id destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.deleteContactById",
+      "haystack": "contacts.deletecontactbyid esputnik.api.contacts.deletecontactbyid delete an esputnik contact by id destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.deleteFromUnsubscribed",
+      "haystack": "contacts.deletefromunsubscribed esputnik.api.contacts.deletefromunsubscribed remove emails from the esputnik unsubscribe list write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.detachContactsFromGroup",
+      "haystack": "contacts.detachcontactsfromgroup esputnik.api.contacts.detachcontactsfromgroup remove contacts from an esputnik static segment destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.fileContactsBulkUpdate",
+      "haystack": "contacts.filecontactsbulkupdate esputnik.api.contacts.filecontactsbulkupdate import esputnik contacts from a file link write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.getAdditionalFields",
+      "haystack": "contacts.getadditionalfields esputnik.api.contacts.getadditionalfields list esputnik contact additional fields read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.getContact",
+      "haystack": "contacts.getcontact esputnik.api.contacts.getcontact get an esputnik contact by id read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.getContactEmails",
+      "haystack": "contacts.getcontactemails esputnik.api.contacts.getcontactemails get email addresses for esputnik contact ids read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.getContactIdByToken",
+      "haystack": "contacts.getcontactidbytoken esputnik.api.contacts.getcontactidbytoken get an esputnik contact id by mobile push token read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.getContactSubscriptionCategories",
+      "haystack": "contacts.getcontactsubscriptioncategories esputnik.api.contacts.getcontactsubscriptioncategories get an esputnik contact's subscription categories read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.getGroupContacts",
+      "haystack": "contacts.getgroupcontacts esputnik.api.contacts.getgroupcontacts get contacts in an esputnik segment read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.getImportSessionStatus",
+      "haystack": "contacts.getimportsessionstatus esputnik.api.contacts.getimportsessionstatus get esputnik contact import status read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.getSubscriptionCategories",
+      "haystack": "contacts.getsubscriptioncategories esputnik.api.contacts.getsubscriptioncategories list the organisation's esputnik subscription categories read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.getTokenActivated",
+      "haystack": "contacts.gettokenactivated esputnik.api.contacts.gettokenactivated get whether an esputnik mobile push token is active read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.searchContacts",
+      "haystack": "contacts.searchcontacts esputnik.api.contacts.searchcontacts search esputnik contacts (up to 500 per page) read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.searchGroups",
+      "haystack": "contacts.searchgroups esputnik.api.contacts.searchgroups search esputnik segments read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.searchWorkflows",
+      "haystack": "contacts.searchworkflows esputnik.api.contacts.searchworkflows search esputnik workflows read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.subscribeContact",
+      "haystack": "contacts.subscribecontact esputnik.api.contacts.subscribecontact subscribe an esputnik contact write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "contacts.updateContact",
+      "haystack": "contacts.updatecontact esputnik.api.contacts.updatecontact update an esputnik contact by id write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "emails.addEmail",
+      "haystack": "emails.addemail esputnik.api.emails.addemail create an esputnik email message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "emails.deleteEmail",
+      "haystack": "emails.deleteemail esputnik.api.emails.deleteemail delete an esputnik email message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "emails.deleteTranslatedEmail",
+      "haystack": "emails.deletetranslatedemail esputnik.api.emails.deletetranslatedemail delete a language version of an esputnik email message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "emails.getEmail",
+      "haystack": "emails.getemail esputnik.api.emails.getemail get an esputnik email message read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "emails.getEmailMessageViewLink",
+      "haystack": "emails.getemailmessageviewlink esputnik.api.emails.getemailmessageviewlink get a link to view an esputnik email message read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "emails.searchEmails",
+      "haystack": "emails.searchemails esputnik.api.emails.searchemails search esputnik email messages by name or tag read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "emails.sendEmail",
+      "haystack": "emails.sendemail esputnik.api.emails.sendemail send an email to esputnik recipients write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "emails.updateMessage",
+      "haystack": "emails.updatemessage esputnik.api.emails.updatemessage update an esputnik email message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "emails.updateTranslatedMessage",
+      "haystack": "emails.updatetranslatedmessage esputnik.api.emails.updatetranslatedmessage add or update a language version of an esputnik email message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "events.registerEvent",
+      "haystack": "events.registerevent esputnik.api.events.registerevent send an esputnik event write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "events.removeHistoryEvents",
+      "haystack": "events.removehistoryevents esputnik.api.events.removehistoryevents delete esputnik events in a period destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "events.sendHistoryEvents",
+      "haystack": "events.sendhistoryevents esputnik.api.events.sendhistoryevents send past esputnik events write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "interfaces.getEmailInterfaces",
+      "haystack": "interfaces.getemailinterfaces esputnik.api.interfaces.getemailinterfaces list esputnik email sender addresses read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "interfaces.getSmsInterfaces",
+      "haystack": "interfaces.getsmsinterfaces esputnik.api.interfaces.getsmsinterfaces list esputnik sms sender names read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "messages.sendPreparedMessage",
+      "haystack": "messages.sendpreparedmessage esputnik.api.messages.sendpreparedmessage send a prepared esputnik message to one or more contacts write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "messages.updateInteractionStatus",
+      "haystack": "messages.updateinteractionstatus esputnik.api.messages.updateinteractionstatus report a delivery, open or click status for an esputnik message interaction write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "mobilePush.addMobilePushMessage",
+      "haystack": "mobilepush.addmobilepushmessage esputnik.api.mobilepush.addmobilepushmessage create a esputnik mobile push message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "mobilePush.deleteMobilePushMessage",
+      "haystack": "mobilepush.deletemobilepushmessage esputnik.api.mobilepush.deletemobilepushmessage delete a esputnik mobile push message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "mobilePush.deleteTranslatedMobilePushMessage",
+      "haystack": "mobilepush.deletetranslatedmobilepushmessage esputnik.api.mobilepush.deletetranslatedmobilepushmessage delete a language version of a esputnik mobile push message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "mobilePush.getMobilePushMessage",
+      "haystack": "mobilepush.getmobilepushmessage esputnik.api.mobilepush.getmobilepushmessage get a esputnik mobile push message with its language versions read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "mobilePush.searchMobilePushMessages",
+      "haystack": "mobilepush.searchmobilepushmessages esputnik.api.mobilepush.searchmobilepushmessages search esputnik mobile push messages by name read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "mobilePush.updateBaseMobilePushMessage",
+      "haystack": "mobilepush.updatebasemobilepushmessage esputnik.api.mobilepush.updatebasemobilepushmessage update a esputnik mobile push message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "mobilePush.updateTranslatedMobilePushMessage",
+      "haystack": "mobilepush.updatetranslatedmobilepushmessage esputnik.api.mobilepush.updatetranslatedmobilepushmessage add or update a language version of a esputnik mobile push message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "orders.ordersBulkInsert",
+      "haystack": "orders.ordersbulkinsert esputnik.api.orders.ordersbulkinsert add or update esputnik orders write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "preprocessor.getPreprocessorFileStatus",
+      "haystack": "preprocessor.getpreprocessorfilestatus esputnik.api.preprocessor.getpreprocessorfilestatus get the status of an esputnik preprocessor file upload read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "preprocessor.updatePreprocessorFile",
+      "haystack": "preprocessor.updatepreprocessorfile esputnik.api.preprocessor.updatepreprocessorfile replace the data of an esputnik preprocessor file write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "preprocessor.uploadPreprocessorFile",
+      "haystack": "preprocessor.uploadpreprocessorfile esputnik.api.preprocessor.uploadpreprocessorfile upload an esputnik preprocessor file from a link write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "productFeeds.configureProductFeeds",
+      "haystack": "productfeeds.configureproductfeeds esputnik.api.productfeeds.configureproductfeeds configure esputnik product feeds write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "productFeeds.getProductFeedsConfiguration",
+      "haystack": "productfeeds.getproductfeedsconfiguration esputnik.api.productfeeds.getproductfeedsconfiguration get esputnik product feed configuration read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "promocodes.getPromocodes",
+      "haystack": "promocodes.getpromocodes esputnik.api.promocodes.getpromocodes get available esputnik promotional codes read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "promocodes.getPromocodesCount",
+      "haystack": "promocodes.getpromocodescount esputnik.api.promocodes.getpromocodescount count available esputnik promotional codes read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "promocodes.insertPromocodes",
+      "haystack": "promocodes.insertpromocodes esputnik.api.promocodes.insertpromocodes upload esputnik promotional codes write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "site.addWebPushDomain",
+      "haystack": "site.addwebpushdomain esputnik.api.site.addwebpushdomain register an esputnik web push domain write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "site.createDomain",
+      "haystack": "site.createdomain esputnik.api.site.createdomain register a domain for esputnik web tracking write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "site.deleteWebPushDomain",
+      "haystack": "site.deletewebpushdomain esputnik.api.site.deletewebpushdomain delete an esputnik web push domain destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "site.getDomains",
+      "haystack": "site.getdomains esputnik.api.site.getdomains get the organisation's esputnik web tracking domain read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "site.getScript",
+      "haystack": "site.getscript esputnik.api.site.getscript get the esputnik web tracking script read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "site.getWebPushDomains",
+      "haystack": "site.getwebpushdomains esputnik.api.site.getwebpushdomains list esputnik web push domains read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "site.getWebPushScript",
+      "haystack": "site.getwebpushscript esputnik.api.site.getwebpushscript get the esputnik web push script for a domain read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "sms.addSmsMessage",
+      "haystack": "sms.addsmsmessage esputnik.api.sms.addsmsmessage create a esputnik sms message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "sms.deleteSmsMessage",
+      "haystack": "sms.deletesmsmessage esputnik.api.sms.deletesmsmessage delete a esputnik sms message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "sms.deleteTranslatedSmsMessage",
+      "haystack": "sms.deletetranslatedsmsmessage esputnik.api.sms.deletetranslatedsmsmessage delete a language version of a esputnik sms message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "sms.getSms",
+      "haystack": "sms.getsms esputnik.api.sms.getsms get a esputnik sms message with its language versions read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "sms.searchSmsMessages",
+      "haystack": "sms.searchsmsmessages esputnik.api.sms.searchsmsmessages search esputnik sms messages by name read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "sms.sendSms",
+      "haystack": "sms.sendsms esputnik.api.sms.sendsms send an sms to esputnik recipients write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "sms.updateBaseSmsMessage",
+      "haystack": "sms.updatebasesmsmessage esputnik.api.sms.updatebasesmsmessage update a esputnik sms message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "sms.updateTranslatedSmsMessage",
+      "haystack": "sms.updatetranslatedsmsmessage esputnik.api.sms.updatetranslatedsmsmessage add or update a language version of a esputnik sms message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "telegramBot.addTelegramBotMessage",
+      "haystack": "telegrambot.addtelegrambotmessage esputnik.api.telegrambot.addtelegrambotmessage create a esputnik telegram bot message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "telegramBot.deleteTelegramBotMessage",
+      "haystack": "telegrambot.deletetelegrambotmessage esputnik.api.telegrambot.deletetelegrambotmessage delete a esputnik telegram bot message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "telegramBot.deleteTranslatedTelegramMessage",
+      "haystack": "telegrambot.deletetranslatedtelegrammessage esputnik.api.telegrambot.deletetranslatedtelegrammessage delete a language version of a esputnik telegram bot message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "telegramBot.getTelegramBotMessage",
+      "haystack": "telegrambot.gettelegrambotmessage esputnik.api.telegrambot.gettelegrambotmessage get a esputnik telegram bot message with its language versions read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "telegramBot.searchTelegramBotMessages",
+      "haystack": "telegrambot.searchtelegrambotmessages esputnik.api.telegrambot.searchtelegrambotmessages search esputnik telegram bot messages by name read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "telegramBot.updateBaseTelegramBotMessage",
+      "haystack": "telegrambot.updatebasetelegrambotmessage esputnik.api.telegrambot.updatebasetelegrambotmessage update a esputnik telegram bot message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "telegramBot.updateTranslatedTelegramMessage",
+      "haystack": "telegrambot.updatetranslatedtelegrammessage esputnik.api.telegrambot.updatetranslatedtelegrammessage add or update a language version of a esputnik telegram bot message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "viber.addViberMessage",
+      "haystack": "viber.addvibermessage esputnik.api.viber.addvibermessage create a esputnik viber message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "viber.deleteTranslatedViberMessage",
+      "haystack": "viber.deletetranslatedvibermessage esputnik.api.viber.deletetranslatedvibermessage delete a language version of a esputnik viber message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "viber.deleteViberMessage",
+      "haystack": "viber.deletevibermessage esputnik.api.viber.deletevibermessage delete a esputnik viber message destructive"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "viber.getViberMessage",
+      "haystack": "viber.getvibermessage esputnik.api.viber.getvibermessage get a esputnik viber message with its language versions read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "viber.searchViberMessages",
+      "haystack": "viber.searchvibermessages esputnik.api.viber.searchvibermessages search esputnik viber messages by name read"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "viber.sendViber",
+      "haystack": "viber.sendviber esputnik.api.viber.sendviber send a viber message to esputnik recipients write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "viber.updateBaseViberMessage",
+      "haystack": "viber.updatebasevibermessage esputnik.api.viber.updatebasevibermessage update a esputnik viber message write"
+    },
+    {
+      "pluginId": "esputnik",
+      "kind": "api",
+      "shortPath": "viber.updateTranslatedViberMessage",
+      "haystack": "viber.updatetranslatedvibermessage esputnik.api.viber.updatetranslatedvibermessage add or update a language version of a esputnik viber message write"
     },
     {
       "pluginId": "everhour",
@@ -68035,6 +70313,630 @@
       "haystack": "users.list leexi.api.users.list list users in the leexi workspace with pagination read"
     },
     {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "applications.list",
+      "haystack": "applications.list lever.api.applications.list list applications belonging to a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "applications.listDeleted",
+      "haystack": "applications.listdeleted lever.api.applications.listdeleted list deleted applications read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "applications.retrieve",
+      "haystack": "applications.retrieve lever.api.applications.retrieve retrieve a single application of a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "archiveReasons.list",
+      "haystack": "archivereasons.list lever.api.archivereasons.list list archive reasons configured for the workspace read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "archiveReasons.retrieve",
+      "haystack": "archivereasons.retrieve lever.api.archivereasons.retrieve retrieve a single archive reason by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "auditEvents.list",
+      "haystack": "auditevents.list lever.api.auditevents.list list workspace audit events read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "contacts.retrieve",
+      "haystack": "contacts.retrieve lever.api.contacts.retrieve retrieve a single contact by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update lever.api.contacts.update update a contact write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "dispositionStages.list",
+      "haystack": "dispositionstages.list lever.api.dispositionstages.list list disposition stages configured for the workspace read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "eeo.retrieveAnonymous",
+      "haystack": "eeo.retrieveanonymous lever.api.eeo.retrieveanonymous retrieve anonymized eeo responses read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "eeo.retrieveWithPii",
+      "haystack": "eeo.retrievewithpii lever.api.eeo.retrievewithpii retrieve eeo responses including personally identifiable information read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "feedback.create",
+      "haystack": "feedback.create lever.api.feedback.create submit a feedback form for a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "feedback.delete",
+      "haystack": "feedback.delete lever.api.feedback.delete delete a feedback form from a pipeline opportunity destructive"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "feedback.list",
+      "haystack": "feedback.list lever.api.feedback.list list feedback forms on a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "feedback.retrieve",
+      "haystack": "feedback.retrieve lever.api.feedback.retrieve retrieve a single feedback form by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "feedback.update",
+      "haystack": "feedback.update lever.api.feedback.update update a feedback form on a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "feedbackTemplates.create",
+      "haystack": "feedbacktemplates.create lever.api.feedbacktemplates.create create a feedback template for the workspace write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "feedbackTemplates.delete",
+      "haystack": "feedbacktemplates.delete lever.api.feedbacktemplates.delete delete a feedback template destructive"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "feedbackTemplates.list",
+      "haystack": "feedbacktemplates.list lever.api.feedbacktemplates.list list feedback templates configured for the workspace read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "feedbackTemplates.retrieve",
+      "haystack": "feedbacktemplates.retrieve lever.api.feedbacktemplates.retrieve retrieve a single feedback template by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "feedbackTemplates.update",
+      "haystack": "feedbacktemplates.update lever.api.feedbacktemplates.update update a feedback template write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "files.delete",
+      "haystack": "files.delete lever.api.files.delete delete a file from a pipeline opportunity destructive"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "files.download",
+      "haystack": "files.download lever.api.files.download download the raw bytes of an opportunity file read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "files.list",
+      "haystack": "files.list lever.api.files.list list files attached to a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "files.retrieve",
+      "haystack": "files.retrieve lever.api.files.retrieve retrieve a single file attached to a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "forms.create",
+      "haystack": "forms.create lever.api.forms.create submit a form for a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "forms.list",
+      "haystack": "forms.list lever.api.forms.list list form submissions on a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "forms.retrieve",
+      "haystack": "forms.retrieve lever.api.forms.retrieve retrieve a single form submission by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "formTemplates.create",
+      "haystack": "formtemplates.create lever.api.formtemplates.create create a form template for the workspace write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "formTemplates.delete",
+      "haystack": "formtemplates.delete lever.api.formtemplates.delete delete a form template destructive"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "formTemplates.list",
+      "haystack": "formtemplates.list lever.api.formtemplates.list list form templates configured for the workspace read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "formTemplates.retrieve",
+      "haystack": "formtemplates.retrieve lever.api.formtemplates.retrieve retrieve a single form template by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "formTemplates.update",
+      "haystack": "formtemplates.update lever.api.formtemplates.update update a form template write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "interviews.create",
+      "haystack": "interviews.create lever.api.interviews.create schedule an interview for a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "interviews.delete",
+      "haystack": "interviews.delete lever.api.interviews.delete delete a scheduled interview destructive"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "interviews.list",
+      "haystack": "interviews.list lever.api.interviews.list list interviews scheduled for a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "interviews.retrieve",
+      "haystack": "interviews.retrieve lever.api.interviews.retrieve retrieve a single interview by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "interviews.update",
+      "haystack": "interviews.update lever.api.interviews.update update a scheduled interview write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "notes.create",
+      "haystack": "notes.create lever.api.notes.create add a note to a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "notes.delete",
+      "haystack": "notes.delete lever.api.notes.delete delete a note from a pipeline opportunity destructive"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "notes.list",
+      "haystack": "notes.list lever.api.notes.list list notes on a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "notes.retrieve",
+      "haystack": "notes.retrieve lever.api.notes.retrieve retrieve a single note on a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "notes.update",
+      "haystack": "notes.update lever.api.notes.update update a note on a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "offers.download",
+      "haystack": "offers.download lever.api.offers.download download the raw bytes of an offer file read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "offers.list",
+      "haystack": "offers.list lever.api.offers.list list offers for a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.addLinks",
+      "haystack": "opportunities.addlinks lever.api.opportunities.addlinks add web links (linkedin, portfolio) to an opportunity's contact write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.addSources",
+      "haystack": "opportunities.addsources lever.api.opportunities.addsources add sourcing sources to a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.addTags",
+      "haystack": "opportunities.addtags lever.api.opportunities.addtags add tags to a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.create",
+      "haystack": "opportunities.create lever.api.opportunities.create create a pipeline opportunity for a candidate profile write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.list",
+      "haystack": "opportunities.list lever.api.opportunities.list list pipeline opportunities with filters and pagination read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.listDeleted",
+      "haystack": "opportunities.listdeleted lever.api.opportunities.listdeleted list deleted pipeline opportunities read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.listFileActions",
+      "haystack": "opportunities.listfileactions lever.api.opportunities.listfileactions list file actions recorded for a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.removeLinks",
+      "haystack": "opportunities.removelinks lever.api.opportunities.removelinks remove web links from an opportunity's contact write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.removeSources",
+      "haystack": "opportunities.removesources lever.api.opportunities.removesources remove sourcing sources from a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.removeTags",
+      "haystack": "opportunities.removetags lever.api.opportunities.removetags remove tags from a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.retrieve",
+      "haystack": "opportunities.retrieve lever.api.opportunities.retrieve retrieve a single pipeline opportunity by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.updateArchivedState",
+      "haystack": "opportunities.updatearchivedstate lever.api.opportunities.updatearchivedstate archive or unarchive a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "opportunities.updateStage",
+      "haystack": "opportunities.updatestage lever.api.opportunities.updatestage move a pipeline opportunity to a different hiring stage write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "panels.create",
+      "haystack": "panels.create lever.api.panels.create create an interview panel for a pipeline opportunity write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "panels.delete",
+      "haystack": "panels.delete lever.api.panels.delete delete an interview panel destructive"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "panels.list",
+      "haystack": "panels.list lever.api.panels.list list interview panels for a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "panels.retrieve",
+      "haystack": "panels.retrieve lever.api.panels.retrieve retrieve a single interview panel by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "panels.update",
+      "haystack": "panels.update lever.api.panels.update update an interview panel write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "postings.apply",
+      "haystack": "postings.apply lever.api.postings.apply submit an application to a job posting write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "postings.create",
+      "haystack": "postings.create lever.api.postings.create create a job posting write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "postings.list",
+      "haystack": "postings.list lever.api.postings.list list job postings read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "postings.listDeleted",
+      "haystack": "postings.listdeleted lever.api.postings.listdeleted list deleted job postings read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "postings.listUsers",
+      "haystack": "postings.listusers lever.api.postings.listusers list users with access to a job posting read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "postings.retrieve",
+      "haystack": "postings.retrieve lever.api.postings.retrieve retrieve a single job posting by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "postings.retrieveApplicationQuestions",
+      "haystack": "postings.retrieveapplicationquestions lever.api.postings.retrieveapplicationquestions retrieve the application questions configured for a posting read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "postings.update",
+      "haystack": "postings.update lever.api.postings.update update an existing job posting write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "referrals.list",
+      "haystack": "referrals.list lever.api.referrals.list list referrals on a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "referrals.retrieve",
+      "haystack": "referrals.retrieve lever.api.referrals.retrieve retrieve a single referral by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitionFields.addOptions",
+      "haystack": "requisitionfields.addoptions lever.api.requisitionfields.addoptions add dropdown options to a requisition field write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitionFields.create",
+      "haystack": "requisitionfields.create lever.api.requisitionfields.create create a requisition field for the workspace write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitionFields.delete",
+      "haystack": "requisitionfields.delete lever.api.requisitionfields.delete delete a requisition field destructive"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitionFields.deleteOptions",
+      "haystack": "requisitionfields.deleteoptions lever.api.requisitionfields.deleteoptions remove dropdown option values from a requisition field write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitionFields.list",
+      "haystack": "requisitionfields.list lever.api.requisitionfields.list list requisition fields configured for the workspace read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitionFields.replaceOptions",
+      "haystack": "requisitionfields.replaceoptions lever.api.requisitionfields.replaceoptions replace the dropdown options of a requisition field write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitionFields.retrieve",
+      "haystack": "requisitionfields.retrieve lever.api.requisitionfields.retrieve retrieve a single requisition field by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitionFields.update",
+      "haystack": "requisitionfields.update lever.api.requisitionfields.update update a requisition field write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitions.create",
+      "haystack": "requisitions.create lever.api.requisitions.create create a requisition write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitions.delete",
+      "haystack": "requisitions.delete lever.api.requisitions.delete delete a requisition destructive"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitions.list",
+      "haystack": "requisitions.list lever.api.requisitions.list list requisitions read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitions.retrieve",
+      "haystack": "requisitions.retrieve lever.api.requisitions.retrieve retrieve a single requisition by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "requisitions.update",
+      "haystack": "requisitions.update lever.api.requisitions.update update a requisition write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "resumes.download",
+      "haystack": "resumes.download lever.api.resumes.download download the raw bytes of an opportunity resume read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "resumes.list",
+      "haystack": "resumes.list lever.api.resumes.list list resumes attached to a pipeline opportunity read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "resumes.retrieve",
+      "haystack": "resumes.retrieve lever.api.resumes.retrieve retrieve a single resume by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "sources.list",
+      "haystack": "sources.list lever.api.sources.list list sourcing sources configured for the workspace read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "stages.list",
+      "haystack": "stages.list lever.api.stages.list list hiring stages configured for the workspace read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "stages.retrieve",
+      "haystack": "stages.retrieve lever.api.stages.retrieve retrieve a single hiring stage by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "surveys.retrieveDiversity",
+      "haystack": "surveys.retrievediversity lever.api.surveys.retrievediversity retrieve the diversity survey for a job posting read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "tags.list",
+      "haystack": "tags.list lever.api.tags.list list tags configured for the workspace read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "users.create",
+      "haystack": "users.create lever.api.users.create create a workspace user write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "users.deactivate",
+      "haystack": "users.deactivate lever.api.users.deactivate deactivate a workspace user write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list lever.api.users.list list workspace users read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "users.reactivate",
+      "haystack": "users.reactivate lever.api.users.reactivate reactivate a workspace user write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "users.retrieve",
+      "haystack": "users.retrieve lever.api.users.retrieve retrieve a single workspace user by id read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "users.update",
+      "haystack": "users.update lever.api.users.update update a workspace user write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create lever.api.webhooks.create register a webhook write"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete lever.api.webhooks.delete delete a registered webhook destructive"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list lever.api.webhooks.list list registered webhooks read"
+    },
+    {
+      "pluginId": "lever",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update lever.api.webhooks.update update a registered webhook write"
+    },
+    {
       "pluginId": "linear",
       "kind": "api",
       "shortPath": "comments.create",
@@ -76829,6 +79731,1314 @@
       "kind": "api",
       "shortPath": "removeBackground.remove",
       "haystack": "removebackground.remove removebg.api.removebackground.remove remove the background from an image, returning a base64-encoded cutout write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "blueprints.disconnect",
+      "haystack": "blueprints.disconnect render.api.blueprints.disconnect disconnect a render blueprint; its resources are kept destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "blueprints.list",
+      "haystack": "blueprints.list render.api.blueprints.list list render blueprints read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "blueprints.listSyncs",
+      "haystack": "blueprints.listsyncs render.api.blueprints.listsyncs list syncs for a render blueprint read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "blueprints.retrieve",
+      "haystack": "blueprints.retrieve render.api.blueprints.retrieve retrieve a render blueprint read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "blueprints.update",
+      "haystack": "blueprints.update render.api.blueprints.update update a render blueprint write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "blueprints.validate",
+      "haystack": "blueprints.validate render.api.blueprints.validate validate a render blueprint configuration read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.builds.list",
+      "haystack": "buildsources.builds.list render.api.buildsources.builds.list list builds for a render build source read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.builds.retrieve",
+      "haystack": "buildsources.builds.retrieve render.api.buildsources.builds.retrieve retrieve a render build source build read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.builds.trigger",
+      "haystack": "buildsources.builds.trigger render.api.buildsources.builds.trigger trigger a render build source build write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.create",
+      "haystack": "buildsources.create render.api.buildsources.create create a render build source write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.delete",
+      "haystack": "buildsources.delete render.api.buildsources.delete delete a render build source destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.envGroups.link",
+      "haystack": "buildsources.envgroups.link render.api.buildsources.envgroups.link link an environment group to a render build source write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.envGroups.unlink",
+      "haystack": "buildsources.envgroups.unlink render.api.buildsources.envgroups.unlink unlink an environment group from a render build source destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.envVars.delete",
+      "haystack": "buildsources.envvars.delete render.api.buildsources.envvars.delete delete an environment variable from a render build source destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.envVars.list",
+      "haystack": "buildsources.envvars.list render.api.buildsources.envvars.list list environment variables for a render build source read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.envVars.retrieve",
+      "haystack": "buildsources.envvars.retrieve render.api.buildsources.envvars.retrieve retrieve an environment variable for a render build source read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.envVars.update",
+      "haystack": "buildsources.envvars.update render.api.buildsources.envvars.update replace all environment variables on a render build source with the given list; variables not listed are deleted destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.envVars.upsert",
+      "haystack": "buildsources.envvars.upsert render.api.buildsources.envvars.upsert add or update an environment variable for a render build source write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.list",
+      "haystack": "buildsources.list render.api.buildsources.list list render build sources read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.retrieve",
+      "haystack": "buildsources.retrieve render.api.buildsources.retrieve retrieve a render build source read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.secretFiles.delete",
+      "haystack": "buildsources.secretfiles.delete render.api.buildsources.secretfiles.delete delete a secret file from a render build source destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.secretFiles.list",
+      "haystack": "buildsources.secretfiles.list render.api.buildsources.secretfiles.list list secret files for a render build source read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.secretFiles.retrieve",
+      "haystack": "buildsources.secretfiles.retrieve render.api.buildsources.secretfiles.retrieve retrieve a secret file for a render build source read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.secretFiles.update",
+      "haystack": "buildsources.secretfiles.update render.api.buildsources.secretfiles.update replace all secret files on a render build source with the given list; files not listed are deleted destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.secretFiles.upsert",
+      "haystack": "buildsources.secretfiles.upsert render.api.buildsources.secretfiles.upsert add or update a secret file for a render build source write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "buildSources.update",
+      "haystack": "buildsources.update render.api.buildsources.update update a render build source write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "dedicatedIps.create",
+      "haystack": "dedicatedips.create render.api.dedicatedips.create create a render dedicated ip set write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "dedicatedIps.delete",
+      "haystack": "dedicatedips.delete render.api.dedicatedips.delete delete a render dedicated ip set destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "dedicatedIps.list",
+      "haystack": "dedicatedips.list render.api.dedicatedips.list list render dedicated ip sets read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "dedicatedIps.retrieve",
+      "haystack": "dedicatedips.retrieve render.api.dedicatedips.retrieve retrieve a render dedicated ip set read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "dedicatedIps.update",
+      "haystack": "dedicatedips.update render.api.dedicatedips.update update a render dedicated ip set write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "disks.create",
+      "haystack": "disks.create render.api.disks.create create a disk for a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "disks.delete",
+      "haystack": "disks.delete render.api.disks.delete delete a render disk destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "disks.list",
+      "haystack": "disks.list render.api.disks.list list render disks read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "disks.listSnapshots",
+      "haystack": "disks.listsnapshots render.api.disks.listsnapshots list snapshots for a render disk read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "disks.restoreSnapshot",
+      "haystack": "disks.restoresnapshot render.api.disks.restoresnapshot restore a snapshot to a render disk write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "disks.retrieve",
+      "haystack": "disks.retrieve render.api.disks.retrieve retrieve a render disk read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "disks.update",
+      "haystack": "disks.update render.api.disks.update update a render disk write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "events.retrieve",
+      "haystack": "events.retrieve render.api.events.retrieve retrieve a render event read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "keyValue.connectionInfo",
+      "haystack": "keyvalue.connectioninfo render.api.keyvalue.connectioninfo retrieve connection info for a render key value instance read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "keyValue.create",
+      "haystack": "keyvalue.create render.api.keyvalue.create create a render key value instance write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "keyValue.delete",
+      "haystack": "keyvalue.delete render.api.keyvalue.delete delete a render key value instance destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "keyValue.list",
+      "haystack": "keyvalue.list render.api.keyvalue.list list render key value instances read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "keyValue.resume",
+      "haystack": "keyvalue.resume render.api.keyvalue.resume resume a render key value instance write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "keyValue.retrieve",
+      "haystack": "keyvalue.retrieve render.api.keyvalue.retrieve retrieve a render key value instance read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "keyValue.suspend",
+      "haystack": "keyvalue.suspend render.api.keyvalue.suspend suspend a render key value instance write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "keyValue.update",
+      "haystack": "keyvalue.update render.api.keyvalue.update update a render key value instance write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "logs.deleteOwnerStream",
+      "haystack": "logs.deleteownerstream render.api.logs.deleteownerstream delete an owner log stream destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "logs.deleteResourceStream",
+      "haystack": "logs.deleteresourcestream render.api.logs.deleteresourcestream delete a render resource log stream destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "logs.list",
+      "haystack": "logs.list render.api.logs.list list render logs read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "logs.resourceStreams",
+      "haystack": "logs.resourcestreams render.api.logs.resourcestreams list resource log streams read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "logs.retrieveOwnerStream",
+      "haystack": "logs.retrieveownerstream render.api.logs.retrieveownerstream retrieve a render owner log stream read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "logs.retrieveResourceStream",
+      "haystack": "logs.retrieveresourcestream render.api.logs.retrieveresourcestream retrieve a render resource log stream read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "logs.updateOwnerStream",
+      "haystack": "logs.updateownerstream render.api.logs.updateownerstream update an owner log stream write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "logs.updateResourceStream",
+      "haystack": "logs.updateresourcestream render.api.logs.updateresourcestream set the log stream setting for one render resource write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "logs.values",
+      "haystack": "logs.values render.api.logs.values list render log values read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "maintenance.list",
+      "haystack": "maintenance.list render.api.maintenance.list list render maintenance windows read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "maintenance.retrieve",
+      "haystack": "maintenance.retrieve render.api.maintenance.retrieve retrieve a render maintenance run read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "maintenance.trigger",
+      "haystack": "maintenance.trigger render.api.maintenance.trigger trigger a render maintenance run write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "maintenance.update",
+      "haystack": "maintenance.update render.api.maintenance.update update a render maintenance run write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.activeConnections",
+      "haystack": "metrics.activeconnections render.api.metrics.activeconnections read active render connections read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.applicationFilterValues",
+      "haystack": "metrics.applicationfiltervalues render.api.metrics.applicationfiltervalues list render application metric filter values read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.bandwidth",
+      "haystack": "metrics.bandwidth render.api.metrics.bandwidth read render bandwidth metrics read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.bandwidthSources",
+      "haystack": "metrics.bandwidthsources render.api.metrics.bandwidthsources read render bandwidth sources read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.cpu",
+      "haystack": "metrics.cpu render.api.metrics.cpu read render cpu metrics read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.cpuLimit",
+      "haystack": "metrics.cpulimit render.api.metrics.cpulimit read render cpu limits read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.cpuTarget",
+      "haystack": "metrics.cputarget render.api.metrics.cputarget read render cpu target metrics read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.deleteOwnerStream",
+      "haystack": "metrics.deleteownerstream render.api.metrics.deleteownerstream delete the metrics stream of a render workspace destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.diskCapacity",
+      "haystack": "metrics.diskcapacity render.api.metrics.diskcapacity read render disk capacity read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.diskUsage",
+      "haystack": "metrics.diskusage render.api.metrics.diskusage read render disk usage read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.httpFilterValues",
+      "haystack": "metrics.httpfiltervalues render.api.metrics.httpfiltervalues list render http metric filter values read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.httpLatency",
+      "haystack": "metrics.httplatency render.api.metrics.httplatency read render http latency metrics read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.httpRequests",
+      "haystack": "metrics.httprequests render.api.metrics.httprequests read render http request metrics read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.instanceCount",
+      "haystack": "metrics.instancecount render.api.metrics.instancecount read render instance counts read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.memory",
+      "haystack": "metrics.memory render.api.metrics.memory read render memory metrics read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.memoryLimit",
+      "haystack": "metrics.memorylimit render.api.metrics.memorylimit read render memory limits read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.memoryTarget",
+      "haystack": "metrics.memorytarget render.api.metrics.memorytarget read render memory targets read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.pathFilterValues",
+      "haystack": "metrics.pathfiltervalues render.api.metrics.pathfiltervalues list render path metric filter values read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.replicationLag",
+      "haystack": "metrics.replicationlag render.api.metrics.replicationlag read render replication lag metrics read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.retrieveOwnerStream",
+      "haystack": "metrics.retrieveownerstream render.api.metrics.retrieveownerstream retrieve metrics stream settings for a render owner read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.taskRunsCompleted",
+      "haystack": "metrics.taskrunscompleted render.api.metrics.taskrunscompleted read completed render task run metrics read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.taskRunsQueued",
+      "haystack": "metrics.taskrunsqueued render.api.metrics.taskrunsqueued read queued render task run metrics read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "metrics.upsertOwnerStream",
+      "haystack": "metrics.upsertownerstream render.api.metrics.upsertownerstream create or update metrics stream settings for a render owner write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "notifications.listOverrides",
+      "haystack": "notifications.listoverrides render.api.notifications.listoverrides list per-service notification overrides read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "notifications.retrieveOwnerSettings",
+      "haystack": "notifications.retrieveownersettings render.api.notifications.retrieveownersettings retrieve notification settings for a render workspace read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "notifications.retrieveServiceOverrides",
+      "haystack": "notifications.retrieveserviceoverrides render.api.notifications.retrieveserviceoverrides retrieve notification overrides for a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "notifications.updateOwnerSettings",
+      "haystack": "notifications.updateownersettings render.api.notifications.updateownersettings update notification settings for a render workspace write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "notifications.updateServiceOverrides",
+      "haystack": "notifications.updateserviceoverrides render.api.notifications.updateserviceoverrides update notification overrides for a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "organizations.auditLogs",
+      "haystack": "organizations.auditlogs render.api.organizations.auditlogs list audit logs for a render organization read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "owners.auditLogs",
+      "haystack": "owners.auditlogs render.api.owners.auditlogs list audit logs for a render owner read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "owners.list",
+      "haystack": "owners.list render.api.owners.list list render owners read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "owners.members",
+      "haystack": "owners.members render.api.owners.members list render owner members read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "owners.removeMember",
+      "haystack": "owners.removemember render.api.owners.removemember remove a member from a render workspace destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "owners.retrieve",
+      "haystack": "owners.retrieve render.api.owners.retrieve retrieve a render owner read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "owners.updateMember",
+      "haystack": "owners.updatemember render.api.owners.updatemember update a render workspace member role write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.connectionInfo",
+      "haystack": "postgres.connectioninfo render.api.postgres.connectioninfo retrieve connection info for a render postgres instance read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.create",
+      "haystack": "postgres.create render.api.postgres.create create a render postgres database write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.createExport",
+      "haystack": "postgres.createexport render.api.postgres.createexport create an export of a render postgres database write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.createUser",
+      "haystack": "postgres.createuser render.api.postgres.createuser create a user for a render postgres database write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.delete",
+      "haystack": "postgres.delete render.api.postgres.delete delete a render postgres database destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.deleteUser",
+      "haystack": "postgres.deleteuser render.api.postgres.deleteuser delete a user on a render postgres instance destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.failover",
+      "haystack": "postgres.failover render.api.postgres.failover trigger a failover for a render postgres instance write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.list",
+      "haystack": "postgres.list render.api.postgres.list list render postgres databases read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.listExports",
+      "haystack": "postgres.listexports render.api.postgres.listexports list exports of a render postgres database read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.listUsers",
+      "haystack": "postgres.listusers render.api.postgres.listusers list users of a render postgres database read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.processes",
+      "haystack": "postgres.processes render.api.postgres.processes list active queries for a render postgres database read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.recover",
+      "haystack": "postgres.recover render.api.postgres.recover trigger point-in-time recovery for a render postgres instance write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.recoveryInfo",
+      "haystack": "postgres.recoveryinfo render.api.postgres.recoveryinfo retrieve point-in-time recovery status for a render postgres instance read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.restart",
+      "haystack": "postgres.restart render.api.postgres.restart restart a render postgres instance write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.resume",
+      "haystack": "postgres.resume render.api.postgres.resume resume a render postgres instance write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.retrieve",
+      "haystack": "postgres.retrieve render.api.postgres.retrieve retrieve a render postgres database read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.sizes",
+      "haystack": "postgres.sizes render.api.postgres.sizes list database sizes for a render postgres database read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.suspend",
+      "haystack": "postgres.suspend render.api.postgres.suspend suspend a render postgres instance write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.tableScans",
+      "haystack": "postgres.tablescans render.api.postgres.tablescans list table scans for a render postgres database read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.topQueries",
+      "haystack": "postgres.topqueries render.api.postgres.topqueries list top queries for a render postgres database read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "postgres.update",
+      "haystack": "postgres.update render.api.postgres.update update a render postgres database write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create render.api.projects.create create a render project write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "projects.delete",
+      "haystack": "projects.delete render.api.projects.delete delete a render project destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list render.api.projects.list list render projects read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "projects.retrieve",
+      "haystack": "projects.retrieve render.api.projects.retrieve retrieve a render project read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "projects.update",
+      "haystack": "projects.update render.api.projects.update update a render project write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "registryCredentials.create",
+      "haystack": "registrycredentials.create render.api.registrycredentials.create create registry credentials write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "registryCredentials.delete",
+      "haystack": "registrycredentials.delete render.api.registrycredentials.delete delete registry credentials destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "registryCredentials.list",
+      "haystack": "registrycredentials.list render.api.registrycredentials.list list registry credentials read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "registryCredentials.retrieve",
+      "haystack": "registrycredentials.retrieve render.api.registrycredentials.retrieve retrieve registry credentials read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "registryCredentials.update",
+      "haystack": "registrycredentials.update render.api.registrycredentials.update update registry credentials write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.cancelDeploy",
+      "haystack": "services.canceldeploy render.api.services.canceldeploy cancel a render deployment write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.create",
+      "haystack": "services.create render.api.services.create create a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.createPreview",
+      "haystack": "services.createpreview render.api.services.createpreview create an image-backed preview for a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.cronJobs.cancelRun",
+      "haystack": "services.cronjobs.cancelrun render.api.services.cronjobs.cancelrun cancel a run of a render cron job destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.cronJobs.triggerRun",
+      "haystack": "services.cronjobs.triggerrun render.api.services.cronjobs.triggerrun trigger a run of a render cron job write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.customDomains.create",
+      "haystack": "services.customdomains.create render.api.services.customdomains.create add a custom domain to a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.customDomains.delete",
+      "haystack": "services.customdomains.delete render.api.services.customdomains.delete delete a custom domain from a render service destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.customDomains.list",
+      "haystack": "services.customdomains.list render.api.services.customdomains.list list custom domains for a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.customDomains.retrieve",
+      "haystack": "services.customdomains.retrieve render.api.services.customdomains.retrieve retrieve a custom domain on a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.customDomains.verify",
+      "haystack": "services.customdomains.verify render.api.services.customdomains.verify re-run dns verification for a custom domain on a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.delete",
+      "haystack": "services.delete render.api.services.delete delete a render service destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.deleteAutoscaling",
+      "haystack": "services.deleteautoscaling render.api.services.deleteautoscaling delete autoscaling configuration for a render service destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.create",
+      "haystack": "services.envgroups.create render.api.services.envgroups.create create a render environment group write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.delete",
+      "haystack": "services.envgroups.delete render.api.services.envgroups.delete delete a render environment group destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.envVars.delete",
+      "haystack": "services.envgroups.envvars.delete render.api.services.envgroups.envvars.delete delete one environment variable from a render env group destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.envVars.retrieve",
+      "haystack": "services.envgroups.envvars.retrieve render.api.services.envgroups.envvars.retrieve retrieve one environment variable, including its value, from a render env group read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.envVars.upsert",
+      "haystack": "services.envgroups.envvars.upsert render.api.services.envgroups.envvars.upsert add or update one environment variable in a render env group write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.linkService",
+      "haystack": "services.envgroups.linkservice render.api.services.envgroups.linkservice link a render service to an env group write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.list",
+      "haystack": "services.envgroups.list render.api.services.envgroups.list list render environment groups read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.retrieve",
+      "haystack": "services.envgroups.retrieve render.api.services.envgroups.retrieve retrieve a render environment group read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.secretFiles.delete",
+      "haystack": "services.envgroups.secretfiles.delete render.api.services.envgroups.secretfiles.delete delete one secret file from a render env group destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.secretFiles.retrieve",
+      "haystack": "services.envgroups.secretfiles.retrieve render.api.services.envgroups.secretfiles.retrieve retrieve one secret file, including its contents, from a render env group read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.secretFiles.upsert",
+      "haystack": "services.envgroups.secretfiles.upsert render.api.services.envgroups.secretfiles.upsert add or update one secret file in a render env group write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.unlinkService",
+      "haystack": "services.envgroups.unlinkservice render.api.services.envgroups.unlinkservice unlink a render service from an environment group destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envGroups.update",
+      "haystack": "services.envgroups.update render.api.services.envgroups.update update a render environment group write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.environments.addResources",
+      "haystack": "services.environments.addresources render.api.services.environments.addresources move services, databases or env groups into a render environment write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.environments.create",
+      "haystack": "services.environments.create render.api.services.environments.create create a render environment write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.environments.delete",
+      "haystack": "services.environments.delete render.api.services.environments.delete delete a render environment destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.environments.list",
+      "haystack": "services.environments.list render.api.services.environments.list list render environments read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.environments.removeResources",
+      "haystack": "services.environments.removeresources render.api.services.environments.removeresources remove resources from a render environment destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.environments.retrieve",
+      "haystack": "services.environments.retrieve render.api.services.environments.retrieve retrieve a render environment read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.environments.update",
+      "haystack": "services.environments.update render.api.services.environments.update update a render environment write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envVars.delete",
+      "haystack": "services.envvars.delete render.api.services.envvars.delete delete an environment variable from a render service destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envVars.list",
+      "haystack": "services.envvars.list render.api.services.envvars.list list environment variables for a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envVars.retrieve",
+      "haystack": "services.envvars.retrieve render.api.services.envvars.retrieve retrieve one environment variable, including its value, from a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envVars.update",
+      "haystack": "services.envvars.update render.api.services.envvars.update replace all environment variables on a render service with the given list; variables not listed are deleted destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.envVars.upsert",
+      "haystack": "services.envvars.upsert render.api.services.envvars.upsert add or update one environment variable on a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.headers.add",
+      "haystack": "services.headers.add render.api.services.headers.add add a response header rule to a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.headers.delete",
+      "haystack": "services.headers.delete render.api.services.headers.delete delete a header from a render service destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.headers.list",
+      "haystack": "services.headers.list render.api.services.headers.list list headers for a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.headers.update",
+      "haystack": "services.headers.update render.api.services.headers.update replace all response header rules on a render service with the given list; rules not listed are deleted destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.jobs.cancel",
+      "haystack": "services.jobs.cancel render.api.services.jobs.cancel cancel a running job on a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.jobs.create",
+      "haystack": "services.jobs.create render.api.services.jobs.create create a job run for a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.jobs.list",
+      "haystack": "services.jobs.list render.api.services.jobs.list list jobs for a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.jobs.retrieve",
+      "haystack": "services.jobs.retrieve render.api.services.jobs.retrieve retrieve a render service job read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.list",
+      "haystack": "services.list render.api.services.list list render services accessible to the authenticated owner read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.listDeploys",
+      "haystack": "services.listdeploys render.api.services.listdeploys list deployments for a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.listEvents",
+      "haystack": "services.listevents render.api.services.listevents list events for a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.listInstances",
+      "haystack": "services.listinstances render.api.services.listinstances list the running instances of a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.listOutboundIps",
+      "haystack": "services.listoutboundips render.api.services.listoutboundips list outbound ips for a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.purgeCache",
+      "haystack": "services.purgecache render.api.services.purgecache purge the cache for a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.restart",
+      "haystack": "services.restart render.api.services.restart restart a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.resume",
+      "haystack": "services.resume render.api.services.resume resume a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.retrieve",
+      "haystack": "services.retrieve render.api.services.retrieve retrieve a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.retrieveDeploy",
+      "haystack": "services.retrievedeploy render.api.services.retrievedeploy retrieve one deploy of a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.rollbackDeploy",
+      "haystack": "services.rollbackdeploy render.api.services.rollbackdeploy roll back a render service deployment write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.routes.add",
+      "haystack": "services.routes.add render.api.services.routes.add add a redirect or rewrite rule to a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.routes.delete",
+      "haystack": "services.routes.delete render.api.services.routes.delete delete a route from a render service destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.routes.list",
+      "haystack": "services.routes.list render.api.services.routes.list list the redirect and rewrite rules of a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.routes.update",
+      "haystack": "services.routes.update render.api.services.routes.update replace all redirect and rewrite rules on a render service with the given list; rules not listed are deleted destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.routes.updatePriority",
+      "haystack": "services.routes.updatepriority render.api.services.routes.updatepriority change the priority of one redirect or rewrite rule on a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.scale",
+      "haystack": "services.scale render.api.services.scale scale a render service to a fixed instance count write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.secretFiles.delete",
+      "haystack": "services.secretfiles.delete render.api.services.secretfiles.delete delete one secret file from a render service destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.secretFiles.list",
+      "haystack": "services.secretfiles.list render.api.services.secretfiles.list list secret files on a render service, including their contents read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.secretFiles.retrieve",
+      "haystack": "services.secretfiles.retrieve render.api.services.secretfiles.retrieve retrieve one secret file, including its contents, from a render service read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.secretFiles.update",
+      "haystack": "services.secretfiles.update render.api.services.secretfiles.update replace all secret files on a render service with the given list; files not listed are deleted destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.secretFiles.upsert",
+      "haystack": "services.secretfiles.upsert render.api.services.secretfiles.upsert add or update one secret file on a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.suspend",
+      "haystack": "services.suspend render.api.services.suspend suspend a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.triggerDeploy",
+      "haystack": "services.triggerdeploy render.api.services.triggerdeploy trigger a render deployment write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.update",
+      "haystack": "services.update render.api.services.update update a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "services.updateAutoscaling",
+      "haystack": "services.updateautoscaling render.api.services.updateautoscaling update autoscaling for a render service write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "user.get",
+      "haystack": "user.get render.api.user.get retrieve the authenticated render user read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create render.api.webhooks.create create a webhook for a render owner write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete render.api.webhooks.delete delete a render webhook destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list render.api.webhooks.list list render webhooks read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "webhooks.listEvents",
+      "haystack": "webhooks.listevents render.api.webhooks.listevents list delivery events for a render webhook read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "webhooks.retrieve",
+      "haystack": "webhooks.retrieve render.api.webhooks.retrieve retrieve a render webhook read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update render.api.webhooks.update update a render webhook write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.create",
+      "haystack": "workflows.create render.api.workflows.create create a render workflow write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.delete",
+      "haystack": "workflows.delete render.api.workflows.delete delete a render workflow destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.list",
+      "haystack": "workflows.list render.api.workflows.list list render workflows read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.retrieve",
+      "haystack": "workflows.retrieve render.api.workflows.retrieve retrieve a render workflow read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.taskRuns.cancel",
+      "haystack": "workflows.taskruns.cancel render.api.workflows.taskruns.cancel cancel a render workflow task run destructive"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.taskRuns.create",
+      "haystack": "workflows.taskruns.create render.api.workflows.taskruns.create start a render workflow task run write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.taskRuns.list",
+      "haystack": "workflows.taskruns.list render.api.workflows.taskruns.list list render task runs read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.taskRuns.retrieve",
+      "haystack": "workflows.taskruns.retrieve render.api.workflows.taskruns.retrieve retrieve a render workflow task run read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.tasks.list",
+      "haystack": "workflows.tasks.list render.api.workflows.tasks.list list render tasks read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.tasks.retrieve",
+      "haystack": "workflows.tasks.retrieve render.api.workflows.tasks.retrieve retrieve a render workflow task read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.update",
+      "haystack": "workflows.update render.api.workflows.update update a render workflow write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.versions.create",
+      "haystack": "workflows.versions.create render.api.workflows.versions.create create and deploy a render workflow version write"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.versions.list",
+      "haystack": "workflows.versions.list render.api.workflows.versions.list list render workflow versions read"
+    },
+    {
+      "pluginId": "render",
+      "kind": "api",
+      "shortPath": "workflows.versions.retrieve",
+      "haystack": "workflows.versions.retrieve render.api.workflows.versions.retrieve retrieve a render workflow version read"
     },
     {
       "pluginId": "replicate",
@@ -94391,6 +98601,216 @@
       "kind": "api",
       "shortPath": "webhooks.listEvents",
       "haystack": "webhooks.listevents woodpeckerco.api.webhooks.listevents list the event types woodpecker can send to a webhook, from woodpecker's docs; makes no api call read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "accounts.get",
+      "haystack": "accounts.get workable.api.accounts.get get account metadata by subdomain read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "accounts.list",
+      "haystack": "accounts.list workable.api.accounts.list list all workable accounts accessible to the authenticated token read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "candidates.list",
+      "haystack": "candidates.list workable.api.candidates.list list candidates across all jobs read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "customAttributes.list",
+      "haystack": "customattributes.list workable.api.customattributes.list list custom attributes configured on the account read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "departments.create",
+      "haystack": "departments.create workable.api.departments.create create a department write"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "departments.delete",
+      "haystack": "departments.delete workable.api.departments.delete delete a department destructive"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "departments.list",
+      "haystack": "departments.list workable.api.departments.list list all departments read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "departments.merge",
+      "haystack": "departments.merge workable.api.departments.merge merge a department into another department write"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "departments.update",
+      "haystack": "departments.update workable.api.departments.update update a department's name or parent write"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "disqualificationReasons.list",
+      "haystack": "disqualificationreasons.list workable.api.disqualificationreasons.list list disqualification reasons read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "employeeFields.list",
+      "haystack": "employeefields.list workable.api.employeefields.list list employee field definitions read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "employees.create",
+      "haystack": "employees.create workable.api.employees.create create an employee in draft or published state write"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "employees.get",
+      "haystack": "employees.get workable.api.employees.get get a specific employee by id read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "employees.list",
+      "haystack": "employees.list workable.api.employees.list list/search employees read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "employees.update",
+      "haystack": "employees.update workable.api.employees.update update an employee's details write"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "employees.uploadDocuments",
+      "haystack": "employees.uploaddocuments workable.api.employees.uploaddocuments upload documents for an employee write"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "events.list",
+      "haystack": "events.list workable.api.events.list list scheduled events read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "jobs.list",
+      "haystack": "jobs.list workable.api.jobs.list list jobs read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "legalEntities.list",
+      "haystack": "legalentities.list workable.api.legalentities.list list account legal entities read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "members.enable",
+      "haystack": "members.enable workable.api.members.enable reactivate a deactivated member write"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "members.invite",
+      "haystack": "members.invite workable.api.members.invite invite a new member by email write"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "members.list",
+      "haystack": "members.list workable.api.members.list list account members read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "members.update",
+      "haystack": "members.update workable.api.members.update update a member's roles or collaboration rules write"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "permissionSets.list",
+      "haystack": "permissionsets.list workable.api.permissionsets.list list permission sets read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "publicJobs.list",
+      "haystack": "publicjobs.list workable.api.publicjobs.list list an account's public job postings (no authentication required) read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "publicLocations.list",
+      "haystack": "publiclocations.list workable.api.publiclocations.list list the locations of an account's public jobs with per-country counts (no authentication required) read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "recruiters.list",
+      "haystack": "recruiters.list workable.api.recruiters.list list external recruiters read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "requisitions.list",
+      "haystack": "requisitions.list workable.api.requisitions.list list requisitions read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "stages.list",
+      "haystack": "stages.list workable.api.stages.list list recruitment pipeline stages read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "subscriptions.create",
+      "haystack": "subscriptions.create workable.api.subscriptions.create subscribe to a candidate or employee webhook event write"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "subscriptions.delete",
+      "haystack": "subscriptions.delete workable.api.subscriptions.delete delete a webhook subscription destructive"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "subscriptions.list",
+      "haystack": "subscriptions.list workable.api.subscriptions.list list webhook subscriptions read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "timeoffBalances.list",
+      "haystack": "timeoffbalances.list workable.api.timeoffbalances.list list employee time-off balances read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "timeoffCategories.list",
+      "haystack": "timeoffcategories.list workable.api.timeoffcategories.list list time-off categories read"
+    },
+    {
+      "pluginId": "workable",
+      "kind": "api",
+      "shortPath": "workSchedules.list",
+      "haystack": "workschedules.list workable.api.workschedules.list list work schedules read"
     },
     {
       "pluginId": "workday",
