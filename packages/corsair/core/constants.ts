@@ -212,6 +212,7 @@ export const BaseProviders = [
 	'enginemailer',
 	'dropboxsign',
 	'dynapictures',
+	'emailoctopus',
 	'emelia',
 	'epicgames',
 	'esputnik',
@@ -643,6 +644,7 @@ export const ProviderDisplayNames = {
 	enginemailer: 'Enginemailer',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
+	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
 	epicgames: 'Epic Games',
 	esputnik: 'eSputnik',
@@ -1078,6 +1080,7 @@ export type AllProviders =
 	| 'enginemailer'
 	| 'dropboxsign'
 	| 'dynapictures'
+	| 'emailoctopus'
 	| 'emelia'
 	| 'epicgames'
 	| 'esputnik'

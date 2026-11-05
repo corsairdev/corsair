@@ -1784,6 +1784,14 @@
                 ]
               },
               {
+                "group": "EmailOctopus",
+                "pages": [
+                  "plugins/emailoctopus/overview",
+                  "plugins/emailoctopus/api",
+                  "plugins/emailoctopus/database"
+                ]
+              },
+              {
                 "group": "Emelia",
                 "pages": [
                   "plugins/emelia/overview",
