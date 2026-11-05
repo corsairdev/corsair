@@ -220,7 +220,7 @@ const riskLevels: Record<string, 'read' | 'write' | 'destructive'> = {
 	'documents.explain': 'read',
 	'documents.termvectors': 'read',
 	'documents.mtermvectors': 'read',
-	'documents.bulk': 'write',
+	'documents.bulk': 'destructive',
 	'indices.create': 'write',
 	'indices.exists': 'read',
 	'indices.delete': 'destructive',

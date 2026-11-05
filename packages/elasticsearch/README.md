@@ -45,7 +45,7 @@ pnpm add @corsair-dev/elasticsearch
 | `documents.explain` | `elasticsearch.api.documents.explain` | `read` | Explain whether and why a document matches a query: score computation and optional inline get back |
 | `documents.termvectors` | `elasticsearch.api.documents.termvectors` | `read` | Get term-vector statistics (terms, positions, offsets, payloads, frequencies) for one document |
 | `documents.mtermvectors` | `elasticsearch.api.documents.mtermvectors` | `read` | Get term vectors for multiple documents by ids or { _index, _id } entries in one request |
-| `documents.bulk` | `elasticsearch.api.documents.bulk` | `write` | Bulk index, create, update or delete documents on one target (PUT /{index}/_bulk) from typed operations or raw NDJSON |
+| `documents.bulk` | `elasticsearch.api.documents.bulk` | `destructive` | Bulk index, create, update or delete documents on one target (PUT /{index}/_bulk) from typed operations or raw NDJSON; marked destructive because bulk actions can include deletes |
 | `indices.analyze` | `elasticsearch.api.indices.analyze` | `read` | Run text analysis with an index analyzer or field and get the resulting tokens back with offsets and positions |
 | `indices.addBlock` | `elasticsearch.api.indices.addBlock` | `write` | Add an index block (metadata, read, read_only or write) limiting what operations the index accepts |
 | `indices.clone` | `elasticsearch.api.indices.clone` | `write` | Clone an index into a new index with the same settings, mappings and aliases (source must be read-only) |

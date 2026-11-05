@@ -9,7 +9,8 @@ export const follow: ElasticsearchEndpoints['ccrFollow'] = (ctx, input) =>
 	call(ctx, 'ccrFollow', 'ccr.follow', input, {
 		method: 'PUT',
 		path: (parsed) => ccrPath(parsed.index, 'follow'),
-		query: (parsed) => pickQuery(parsed, ['master_timeout']),
+		query: (parsed) =>
+			pickQuery(parsed, ['master_timeout', 'wait_for_active_shards']),
 		body: (parsed) =>
 			pickBody(parsed, [
 				'leader_index',

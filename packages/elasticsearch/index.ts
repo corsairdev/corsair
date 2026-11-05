@@ -1283,9 +1283,9 @@ const elasticsearchEndpointMeta = {
 			'Get term vectors for multiple documents by ids or { _index, _id } entries in one request',
 	},
 	'documents.bulk': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Bulk index, create, update or delete documents on one target (PUT /{index}/_bulk) from typed operations or raw NDJSON',
+			'Bulk index, create, update or delete documents on one target (PUT /{index}/_bulk) from typed operations or raw NDJSON; marked destructive because bulk actions can include deletes',
 	},
 	'indices.create': {
 		riskLevel: 'write',

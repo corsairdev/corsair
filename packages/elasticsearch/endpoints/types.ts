@@ -2981,12 +2981,18 @@ export type NodesClearRepositoriesMeteringOutput = z.infer<
 
 // ── tasks family ─────────────────────────────────────────────────────────────
 
-const TaskListResponseSchema = z.looseObject({
+export const TaskListResponseSchema = z.looseObject({
 	node_failures: z.array(z.looseObject({})).optional(),
 	task_failures: z.array(z.looseObject({})).optional(),
-	// Present with group_by=nodes (the spec default) / parents / none.
+	// Present with group_by=nodes (the spec default) / parents / none; parents
+	// keys the tasks by task id instead of listing them.
 	nodes: z.record(z.string(), z.looseObject({})).optional(),
-	tasks: z.array(z.looseObject({})).optional(),
+	tasks: z
+		.union([
+			z.array(z.looseObject({})),
+			z.record(z.string(), z.looseObject({})),
+		])
+		.optional(),
 });
 export type TaskListResponse = z.infer<typeof TaskListResponseSchema>;
 
@@ -3324,15 +3330,10 @@ export type SecurityApiKeysQueryInput = z.input<
 // The _query APIs answer a search-style hits envelope; hit items reuse the
 // typed API key row (loose itself, so vendor additions pass).
 export const SecurityApiKeysQueryOutputSchema = z.looseObject({
-	hits: z.looseObject({
-		total: z
-			.union([
-				z.looseObject({ value: z.number(), relation: z.string() }),
-				z.number(),
-			])
-			.optional(),
-		hits: z.array(SecurityApiKeyItemSchema),
-	}),
+	total: z.number().optional(),
+	count: z.number().optional(),
+	api_keys: z.array(SecurityApiKeyItemSchema).default([]),
+	aggregations: z.looseObject({}).optional(),
 });
 export type SecurityApiKeysQueryOutput = z.infer<
 	typeof SecurityApiKeysQueryOutputSchema
@@ -3541,15 +3542,9 @@ export type SecurityUsersQueryInput = z.input<
 >;
 
 export const SecurityUsersQueryOutputSchema = z.looseObject({
-	hits: z.looseObject({
-		total: z
-			.union([
-				z.looseObject({ value: z.number(), relation: z.string() }),
-				z.number(),
-			])
-			.optional(),
-		hits: z.array(SecurityUserSchema),
-	}),
+	total: z.number().optional(),
+	count: z.number().optional(),
+	users: z.array(SecurityUserSchema).default([]),
 });
 export type SecurityUsersQueryOutput = z.infer<
 	typeof SecurityUsersQueryOutputSchema
@@ -3591,19 +3586,32 @@ const SecurityPrivilegesCheckSchema = z.strictObject({
 
 export const SecurityHasPrivilegesInputSchema = z.strictObject({
 	user: NonBlankString,
-	privileges: SecurityPrivilegesCheckSchema.optional(),
+	cluster: z.array(NonBlankString).min(1).optional(),
+	index: z.array(SecurityPrivilegesCheckIndexSchema).min(1).optional(),
+	application: z
+		.array(
+			z.strictObject({
+				application: NonBlankString,
+				privileges: z.array(NonBlankString).min(1),
+				resources: z.array(NonBlankString).optional(),
+			}),
+		)
+		.min(1)
+		.optional(),
 });
 export type SecurityHasPrivilegesInput = z.input<
 	typeof SecurityHasPrivilegesInputSchema
 >;
 
-// The reply is keyed by username (_user for the caller) and then by dynamic
-// privilege namespaces whose values are per-privilege boolean maps, so only
-// the envelope is typed.
-export const SecurityHasPrivilegesOutputSchema = z.record(
-	z.string().min(1),
-	z.looseObject({}),
-);
+// The reply repeats the request shape with per-privilege booleans plus the
+// username and an overall verdict; privilege namespaces are dynamic.
+export const SecurityHasPrivilegesOutputSchema = z.looseObject({
+	username: z.string(),
+	has_all_requested: z.boolean(),
+	cluster: z.looseObject({}).optional(),
+	index: z.looseObject({}).optional(),
+	application: z.looseObject({}).optional(),
+});
 export type SecurityHasPrivilegesOutput = z.infer<
 	typeof SecurityHasPrivilegesOutputSchema
 >;
@@ -3734,15 +3742,9 @@ export type SecurityRolesQueryInput = z.input<
 
 // Role hit items are the full descriptor tree, so they stay loose.
 export const SecurityRolesQueryOutputSchema = z.looseObject({
-	hits: z.looseObject({
-		total: z
-			.union([
-				z.looseObject({ value: z.number(), relation: z.string() }),
-				z.number(),
-			])
-			.optional(),
-		hits: z.array(z.looseObject({})),
-	}),
+	total: z.number().optional(),
+	count: z.number().optional(),
+	roles: z.array(z.looseObject({})).default([]),
 });
 export type SecurityRolesQueryOutput = z.infer<
 	typeof SecurityRolesQueryOutputSchema
@@ -3836,8 +3838,7 @@ export const SecurityPrivilegesPutOutputSchema = z.record(
 	z.record(
 		z.string().min(1),
 		z.looseObject({
-			actions: z.array(z.string()),
-			metadata: SecurityMetadata.optional(),
+			created: z.boolean(),
 		}),
 	),
 );

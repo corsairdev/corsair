@@ -1428,10 +1428,9 @@ export const securityCacheClearOutput: SecurityCacheClearResponse = {
 };
 
 export const securityApiKeysQueryOutput: SecurityApiKeysQueryOutput = {
-	hits: {
-		total: { value: 1, relation: 'eq' },
-		hits: [securityApiKeyItem],
-	},
+	total: 1,
+	count: 1,
+	api_keys: [securityApiKeyItem],
 };
 
 export const securityUserRow: SecurityUser = {
@@ -1466,10 +1465,10 @@ export const securityAuthenticateOutput: SecurityAuthenticateOutput = {
 };
 
 export const securityHasPrivilegesOutput: SecurityHasPrivilegesOutput = {
-	jacknich: {
-		cluster: { monitor: true, manage: false },
-		index: { 'logs-*': { read: true } },
-	},
+	username: 'jacknich',
+	has_all_requested: true,
+	cluster: { monitor: true, manage: false },
+	index: { 'logs-*': { read: true } },
 };
 
 export const securityGetUserPrivilegesOutput: SecurityGetUserPrivilegesOutput =
@@ -1488,10 +1487,9 @@ export const securityGetUserPrivilegesOutput: SecurityGetUserPrivilegesOutput =
 	};
 
 export const securityUsersQueryOutput: SecurityUsersQueryOutput = {
-	hits: {
-		total: { value: 1, relation: 'eq' },
-		hits: [securityUserRow],
-	},
+	total: 1,
+	count: 1,
+	users: [securityUserRow],
 };
 
 export const securityLogsReaderRole: SecurityRoleDescriptor = {
@@ -1530,18 +1528,14 @@ export const securityRolesBulkDeleteOutput: SecurityRolesBulkDeleteOutput = {
 };
 
 export const securityRolesQueryOutput: SecurityRolesQueryOutput = {
-	hits: {
-		total: { value: 1, relation: 'eq' },
-		hits: [{ cluster: ['monitor'] }],
-	},
+	total: 1,
+	count: 1,
+	roles: [{ cluster: ['monitor'] }],
 };
 
 export const securityPrivilegesPutOutput: SecurityPrivilegesPutOutput = {
 	myapp: {
-		read: {
-			actions: ['data:*:read/*'],
-			metadata: { description: 'read access' },
-		},
+		read: { created: true },
 	},
 };
 

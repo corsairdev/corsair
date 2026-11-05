@@ -294,7 +294,7 @@ export const hasPrivileges: ElasticsearchEndpoints['securityHasPrivileges'] = (
 	call(ctx, 'securityHasPrivileges', 'security.hasPrivileges', input, {
 		method: 'POST',
 		path: (parsed) => `/_security/user/${target(parsed.user)}/_has_privileges`,
-		body: (parsed) => pickBody(parsed, ['privileges']),
+		body: (parsed) => pickBody(parsed, ['cluster', 'index', 'application']),
 	});
 
 export const getUserPrivileges: ElasticsearchEndpoints['securityGetUserPrivileges'] =

@@ -118,11 +118,14 @@ export const getState: ElasticsearchEndpoints['clusterGetState'] = (
 ) =>
 	call(ctx, 'clusterGetState', 'cluster.getState', input, {
 		path: (parsed) => {
+			// An index filter without metrics still needs the metric segment;
+			// _all is the documented way to request every metric.
 			const metric = parsed.metric ? target(parsed.metric) : undefined;
-			if (!metric) return '/_cluster/state';
+			if (!metric && !parsed.index) return '/_cluster/state';
+			const resolved = metric ?? '_all';
 			return parsed.index
-				? `/_cluster/state/${metric}/${target(parsed.index)}`
-				: `/_cluster/state/${metric}`;
+				? `/_cluster/state/${resolved}/${target(parsed.index)}`
+				: `/_cluster/state/${resolved}`;
 		},
 		query: (parsed) =>
 			pickQuery(parsed, ['flat_settings', 'local', 'master_timeout']),

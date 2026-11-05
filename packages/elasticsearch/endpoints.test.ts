@@ -78,6 +78,7 @@ import {
 	SecurityUsersGetOutputSchema,
 	SecurityUsersPutInputSchema,
 	SecurityUsersQueryInputSchema,
+	TaskListResponseSchema,
 	TasksListInputSchema,
 } from './endpoints/types';
 import {
@@ -860,6 +861,8 @@ describe('documents wire calls', () => {
 		key: 'ApiKey encoded-key',
 	} as never;
 
+	// unknown: each case mocks an arbitrary JSON body the output schema
+	// then validates.
 	function mockJson(body: unknown, status = 200) {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -1158,6 +1161,8 @@ describe('indices lifecycle wire calls', () => {
 		key: 'ApiKey encoded-key',
 	} as never;
 
+	// unknown: each case mocks an arbitrary JSON body the output schema
+	// then validates.
 	function mockJson(body: unknown, status = 200) {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -1526,6 +1531,8 @@ describe('indices stats and maintenance wire calls', () => {
 		key: 'ApiKey encoded-key',
 	} as never;
 
+	// unknown: each case mocks an arbitrary JSON body the output schema
+	// then validates.
 	function mockJson(body: unknown, status = 200) {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -1784,6 +1791,8 @@ describe('search family wire calls', () => {
 		key: 'ApiKey encoded-key',
 	} as never;
 
+	// unknown: each case mocks an arbitrary JSON body the output schema
+	// then validates.
 	function mockJson(body: unknown, status = 200) {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -2252,6 +2261,8 @@ describe('fleet and ccr wire calls', () => {
 		key: 'ApiKey encoded-key',
 	} as never;
 
+	// unknown: each case mocks an arbitrary JSON body the output schema
+	// then validates.
 	function mockJson(body: unknown, status = 200) {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -2320,10 +2331,13 @@ describe('fleet and ccr wire calls', () => {
 			leader_index: 'logs-2026-11',
 			remote_cluster: 'leader_cluster',
 			max_outstanding_read_requests: 8,
+			wait_for_active_shards: 'all',
 		});
 		expect(result.index_following_started).toBe(true);
 		const { url, init } = await sent();
-		expect(url).toBe('http://es:9200/logs-follower/_ccr/follow');
+		expect(url).toBe(
+			'http://es:9200/logs-follower/_ccr/follow?wait_for_active_shards=all',
+		);
 		expect(init.method).toBe('PUT');
 		expect(JSON.parse(String(init.body))).toEqual({
 			leader_index: 'logs-2026-11',
@@ -2558,6 +2572,28 @@ describe('nodes family input bounds', () => {
 });
 
 describe('tasks family input bounds', () => {
+	it('tasks.list accepts the parent-grouped reply shape', () => {
+		const grouped = TaskListResponseSchema.parse({
+			nodes: { 'node-1': { name: 'node-1', transport_address: '1.2.3.4' } },
+			tasks: {
+				'node-1:123': {
+					node: 'node-1',
+					id: 123,
+					action: 'cluster:health',
+					status: '',
+					running_time_in_nanos: 1000,
+				},
+			},
+		});
+		const listed = grouped.tasks as Record<string, unknown>;
+		expect(listed['node-1:123']).toBeDefined();
+
+		const flat = TaskListResponseSchema.parse({
+			tasks: [{ node: 'node-1', id: 1 }],
+		});
+		expect(Array.isArray(flat.tasks)).toBe(true);
+	});
+
 	it('tasks.list takes actions/nodes as string or list and validates group_by', () => {
 		expect(
 			TasksListInputSchema.safeParse({ actions: 'cluster:*' }).success,
@@ -2594,6 +2630,8 @@ describe('cluster, cat, nodes and tasks wire calls', () => {
 		key: 'ApiKey encoded-key',
 	} as never;
 
+	// unknown: each case mocks an arbitrary JSON body the output schema
+	// then validates.
 	function mockJson(body: unknown, status = 200) {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -2735,6 +2773,12 @@ describe('cluster, cat, nodes and tasks wire calls', () => {
 			response: clusterGetStateOutput,
 			run: () =>
 				Cluster.getState(ctx, { metric: 'metadata,blocks', index: 'logs-*' }),
+		},
+		{
+			name: 'cluster.getState defaults the metric to _all when only an index is given',
+			url: 'http://es:9200/_cluster/state/_all/logs-*',
+			response: clusterGetStateOutput,
+			run: () => Cluster.getState(ctx, { index: 'logs-*' }),
 		},
 		{
 			name: 'cluster.getStats targets a node filter',
@@ -3313,8 +3357,8 @@ describe('security.apiKeys schemas', () => {
 		const query = SecurityApiKeysQueryOutputSchema.parse(
 			securityApiKeysQueryOutput,
 		);
-		expect(query.hits.total).toEqual({ value: 1, relation: 'eq' });
-		expect(query.hits.hits).toHaveLength(1);
+		expect(query.total).toBe(1);
+		expect(query.api_keys).toHaveLength(1);
 	});
 
 	it('accepts an empty API key list as a valid result', () => {
@@ -3341,6 +3385,8 @@ describe('security.apiKeys wire calls', () => {
 		key: 'ApiKey encoded-key',
 	} as never;
 
+	// unknown: each case mocks an arbitrary JSON body the output schema
+	// then validates.
 	function mockJson(body: unknown, status = 200) {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -3596,25 +3642,23 @@ describe('security.users schemas', () => {
 		expect(
 			SecurityHasPrivilegesInputSchema.safeParse({
 				user: 'jacknich',
-				privileges: {
-					cluster: ['monitor'],
-					index: [{ names: ['logs-*'], privileges: ['read'] }],
-					application: [
-						{ application: 'myapp', privileges: ['read'], resources: ['*'] },
-					],
-				},
+				cluster: ['monitor'],
+				index: [{ names: ['logs-*'], privileges: ['read'] }],
+				application: [
+					{ application: 'myapp', privileges: ['read'], resources: ['*'] },
+				],
 			}).success,
 		).toBe(true);
 		expect(
 			SecurityHasPrivilegesInputSchema.safeParse({
 				user: 'u',
-				privileges: { cluster: [] },
+				cluster: [],
 			}).success,
 		).toBe(false);
 		expect(
 			SecurityHasPrivilegesInputSchema.safeParse({
 				user: 'u',
-				privileges: { index: [{ names: ['logs'], privileges: [] }] },
+				index: [{ names: ['logs'], privileges: [] }],
 			}).success,
 		).toBe(false);
 	});
@@ -3637,7 +3681,8 @@ describe('security.users schemas', () => {
 		const checked = SecurityHasPrivilegesOutputSchema.parse(
 			securityHasPrivilegesOutput,
 		);
-		expect(Object.keys(checked)).toEqual(['jacknich']);
+		expect(checked.username).toBe('jacknich');
+		expect(checked.has_all_requested).toBe(true);
 	});
 
 	it('accepts an empty users map as a valid result', () => {
@@ -3662,6 +3707,8 @@ describe('security.users wire calls', () => {
 		key: 'ApiKey encoded-key',
 	} as never;
 
+	// unknown: each case mocks an arbitrary JSON body the output schema
+	// then validates.
 	function mockJson(body: unknown, status = 200) {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -3773,23 +3820,29 @@ describe('security.users wire calls', () => {
 		});
 	});
 
-	it('hasPrivileges POSTs the privileges body under the user path', async () => {
-		mockJson(securityHasPrivilegesOutput);
+	it('hasPrivileges sends the flat body and parses the flat reply', async () => {
+		mockJson({
+			username: 'jacknich',
+			has_all_requested: true,
+			cluster: { monitor: true },
+			index: { 'logs-*': { read: true } },
+		});
 		const result = await Security.hasPrivileges(ctx, {
 			user: 'jacknich',
-			privileges: { cluster: ['monitor'] },
+			cluster: ['monitor'],
+			index: [{ names: ['logs-*'], privileges: ['read'] }],
 		});
-		expect(result.jacknich).toBeDefined();
+		expect(result.has_all_requested).toBe(true);
 		const { url, init } = await sent();
 		expect(url).toBe('http://es:9200/_security/user/jacknich/_has_privileges');
-		expect(init.method).toBe('POST');
 		expect(JSON.parse(String(init.body))).toEqual({
-			privileges: { cluster: ['monitor'] },
+			cluster: ['monitor'],
+			index: [{ names: ['logs-*'], privileges: ['read'] }],
 		});
 	});
 
 	it('hasPrivileges sends an empty object body when no checks are given', async () => {
-		mockJson({ _user: { cluster: {} } });
+		mockJson({ username: '_user', has_all_requested: true });
 		await Security.hasPrivileges(ctx, { user: '_user' });
 		const { init } = await sent();
 		expect(JSON.parse(String(init.body))).toEqual({});
@@ -3919,6 +3972,8 @@ describe('security.roles wire calls', () => {
 		key: 'ApiKey encoded-key',
 	} as never;
 
+	// unknown: each case mocks an arbitrary JSON body the output schema
+	// then validates.
 	function mockJson(body: unknown, status = 200) {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -4105,7 +4160,7 @@ describe('security.privileges schemas', () => {
 		const created = SecurityPrivilegesPutOutputSchema.parse(
 			securityPrivilegesPutOutput,
 		);
-		expect(created.myapp?.read?.actions).toEqual(['data:*:read/*']);
+		expect(created.myapp?.read?.created).toBe(true);
 
 		const builtin = SecurityPrivilegesGetBuiltinOutputSchema.parse(
 			securityPrivilegesGetBuiltinOutput,
@@ -4133,6 +4188,8 @@ describe('security.privileges wire calls', () => {
 		key: 'ApiKey encoded-key',
 	} as never;
 
+	// unknown: each case mocks an arbitrary JSON body the output schema
+	// then validates.
 	function mockJson(body: unknown, status = 200) {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -4156,7 +4213,7 @@ describe('security.privileges wire calls', () => {
 			},
 			refresh: true,
 		});
-		expect(result.myapp?.read?.actions).toEqual(['data:*:read/*']);
+		expect(result.myapp?.read?.created).toBe(true);
 		const { url, init } = await sent();
 		expect(url).toBe('http://es:9200/_security/privilege?refresh=true');
 		expect(init.method).toBe('POST');
