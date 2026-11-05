@@ -74,24 +74,66 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
   primary?: boolean | null,
   family?: boolean | null,
   segment?: {
-    href?: string | null,
-    templated?: boolean | null
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    _links?: {
+    } | null,
+    _embedded?: {
+      genres?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null,
+        _embedded?: {
+          subgenres?: {
+            id?: string | null,
+            name?: string | null,
+            locale?: string | null,
+            _links?: {
+            } | null
+          }[] | null
+        } | null
+      }[] | null
+    } | null
   } | null,
   genre?: {
-    href?: string | null,
-    templated?: boolean | null
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    _links?: {
+    } | null,
+    _embedded?: {
+      subgenres?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null
+      }[] | null
+    } | null
   } | null,
   subGenre?: {
-    href?: string | null,
-    templated?: boolean | null
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    _links?: {
+    } | null
   } | null,
   type?: {
-    href?: string | null,
-    templated?: boolean | null
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    _links?: {
+    } | null
   } | null,
   subType?: {
-    href?: string | null,
-    templated?: boolean | null
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    _links?: {
+    } | null
   } | null
 }[]
 ```
@@ -200,24 +242,66 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
     primary?: boolean | null,
     family?: boolean | null,
     segment?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null,
+      _embedded?: {
+        genres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              _links?: {
+              } | null
+            }[] | null
+          } | null
+        }[] | null
+      } | null
     } | null,
     genre?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null,
+      _embedded?: {
+        subgenres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
+        }[] | null
+      } | null
     } | null,
     subGenre?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null,
     type?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null,
     subType?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null
   }[] | null,
   aliases?: string[] | null,
@@ -278,14 +362,14 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
+| `primary` | `boolean \| null` | No | — |
+| `family` | `boolean \| null` | No | — |
 | `segment` | `object \| null` | No | — |
 | `genre` | `object \| null` | No | — |
 | `subGenre` | `object \| null` | No | — |
 | `type` | `object \| null` | No | — |
 | `subType` | `object \| null` | No | — |
-| `primary` | `boolean \| null` | No | — |
-| `family` | `boolean \| null` | No | — |
+| `id` | `string \| null` | No | — |
 | `_links` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -300,16 +384,20 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
   } | null,
   _embedded?: {
     genres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null,
-    subgenres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null,
-    subGenres?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null,
+      _embedded?: {
+        subgenres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
+        }[] | null
+      } | null
     }[] | null
   } | null
 }
@@ -326,17 +414,12 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
   _links?: {
   } | null,
   _embedded?: {
-    genres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null,
     subgenres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null,
-    subGenres?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     }[] | null
   } | null
 }
@@ -351,20 +434,6 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
   name?: string | null,
   locale?: string | null,
   _links?: {
-  } | null,
-  _embedded?: {
-    genres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null,
-    subgenres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null,
-    subGenres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null
   } | null
 }
 ```
@@ -378,20 +447,6 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
   name?: string | null,
   locale?: string | null,
   _links?: {
-  } | null,
-  _embedded?: {
-    genres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null,
-    subgenres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null,
-    subGenres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null
   } | null
 }
 ```
@@ -405,20 +460,6 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
   name?: string | null,
   locale?: string | null,
   _links?: {
-  } | null,
-  _embedded?: {
-    genres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null,
-    subgenres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null,
-    subGenres?: {
-      href?: string | null,
-      templated?: boolean | null
-    }[] | null
   } | null
 }
 ```
@@ -479,7 +520,8 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
 
 ```ts
 {
-  id?: string | null,
+  primary?: boolean | null,
+  family?: boolean | null,
   segment?: {
     id?: string | null,
     name?: string | null,
@@ -488,16 +530,20 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
     } | null,
     _embedded?: {
       genres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null,
-      subgenres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null,
-      subGenres?: {
-        href?: string | null,
-        templated?: boolean | null
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null,
+        _embedded?: {
+          subgenres?: {
+            id?: string | null,
+            name?: string | null,
+            locale?: string | null,
+            _links?: {
+            } | null
+          }[] | null
+        } | null
       }[] | null
     } | null
   } | null,
@@ -508,17 +554,12 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
     _links?: {
     } | null,
     _embedded?: {
-      genres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null,
       subgenres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null,
-      subGenres?: {
-        href?: string | null,
-        templated?: boolean | null
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null
       }[] | null
     } | null
   } | null,
@@ -527,20 +568,6 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
     name?: string | null,
     locale?: string | null,
     _links?: {
-    } | null,
-    _embedded?: {
-      genres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null,
-      subgenres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null,
-      subGenres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null
     } | null
   } | null,
   type?: {
@@ -548,20 +575,6 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
     name?: string | null,
     locale?: string | null,
     _links?: {
-    } | null,
-    _embedded?: {
-      genres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null,
-      subgenres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null,
-      subGenres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null
     } | null
   } | null,
   subType?: {
@@ -569,24 +582,9 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
     name?: string | null,
     locale?: string | null,
     _links?: {
-    } | null,
-    _embedded?: {
-      genres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null,
-      subgenres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null,
-      subGenres?: {
-        href?: string | null,
-        templated?: boolean | null
-      }[] | null
     } | null
   } | null,
-  primary?: boolean | null,
-  family?: boolean | null,
+  id?: string | null,
   _links?: {
   } | null
 }[]
@@ -715,13 +713,20 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
 
 ```ts
 {
-  publicSale?: {
-    href?: string | null,
-    templated?: boolean | null
+  public?: {
+    startDateTime?: string | null,
+    endDateTime?: string | null,
+    startTBD?: boolean | null,
+    startTBA?: boolean | null
   } | null,
   presales?: {
-    href?: string | null,
-    templated?: boolean | null
+    name?: string | null,
+    description?: string | null,
+    url?: string | null,
+    startDateTime?: string | null,
+    endDateTime?: string | null,
+    startTBD?: boolean | null,
+    startTBA?: boolean | null
   }[] | null
 }
 ```
@@ -746,24 +751,66 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
   primary?: boolean | null,
   family?: boolean | null,
   segment?: {
-    href?: string | null,
-    templated?: boolean | null
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    _links?: {
+    } | null,
+    _embedded?: {
+      genres?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null,
+        _embedded?: {
+          subgenres?: {
+            id?: string | null,
+            name?: string | null,
+            locale?: string | null,
+            _links?: {
+            } | null
+          }[] | null
+        } | null
+      }[] | null
+    } | null
   } | null,
   genre?: {
-    href?: string | null,
-    templated?: boolean | null
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    _links?: {
+    } | null,
+    _embedded?: {
+      subgenres?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null
+      }[] | null
+    } | null
   } | null,
   subGenre?: {
-    href?: string | null,
-    templated?: boolean | null
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    _links?: {
+    } | null
   } | null,
   type?: {
-    href?: string | null,
-    templated?: boolean | null
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    _links?: {
+    } | null
   } | null,
   subType?: {
-    href?: string | null,
-    templated?: boolean | null
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    _links?: {
+    } | null
   } | null
 }[]
 ```
@@ -929,24 +976,66 @@ Record<string, unknown>
       primary?: boolean | null,
       family?: boolean | null,
       segment?: {
-        href?: string | null,
-        templated?: boolean | null
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null,
+        _embedded?: {
+          genres?: {
+            id?: string | null,
+            name?: string | null,
+            locale?: string | null,
+            _links?: {
+            } | null,
+            _embedded?: {
+              subgenres?: {
+                id?: string | null,
+                name?: string | null,
+                locale?: string | null,
+                _links?: {
+                } | null
+              }[] | null
+            } | null
+          }[] | null
+        } | null
       } | null,
       genre?: {
-        href?: string | null,
-        templated?: boolean | null
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null,
+        _embedded?: {
+          subgenres?: {
+            id?: string | null,
+            name?: string | null,
+            locale?: string | null,
+            _links?: {
+            } | null
+          }[] | null
+        } | null
       } | null,
       subGenre?: {
-        href?: string | null,
-        templated?: boolean | null
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null
       } | null,
       type?: {
-        href?: string | null,
-        templated?: boolean | null
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null
       } | null,
       subType?: {
-        href?: string | null,
-        templated?: boolean | null
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        _links?: {
+        } | null
       } | null
     }[] | null,
     aliases?: string[] | null,
@@ -1139,13 +1228,20 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
     } | null
   } | null,
   sales?: {
-    publicSale?: {
-      href?: string | null,
-      templated?: boolean | null
+    public?: {
+      startDateTime?: string | null,
+      endDateTime?: string | null,
+      startTBD?: boolean | null,
+      startTBA?: boolean | null
     } | null,
     presales?: {
-      href?: string | null,
-      templated?: boolean | null
+      name?: string | null,
+      description?: string | null,
+      url?: string | null,
+      startDateTime?: string | null,
+      endDateTime?: string | null,
+      startTBD?: boolean | null,
+      startTBA?: boolean | null
     }[] | null
   } | null,
   priceRanges?: {
@@ -1158,24 +1254,66 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
     primary?: boolean | null,
     family?: boolean | null,
     segment?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null,
+      _embedded?: {
+        genres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              _links?: {
+              } | null
+            }[] | null
+          } | null
+        }[] | null
+      } | null
     } | null,
     genre?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null,
+      _embedded?: {
+        subgenres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
+        }[] | null
+      } | null
     } | null,
     subGenre?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null,
     type?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null,
     subType?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null
   }[] | null,
   promoter?: {
@@ -1282,24 +1420,66 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
         primary?: boolean | null,
         family?: boolean | null,
         segment?: {
-          href?: string | null,
-          templated?: boolean | null
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null,
+          _embedded?: {
+            genres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              _links?: {
+              } | null,
+              _embedded?: {
+                subgenres?: {
+                  id?: string | null,
+                  name?: string | null,
+                  locale?: string | null,
+                  _links?: {
+                  } | null
+                }[] | null
+              } | null
+            }[] | null
+          } | null
         } | null,
         genre?: {
-          href?: string | null,
-          templated?: boolean | null
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              _links?: {
+              } | null
+            }[] | null
+          } | null
         } | null,
         subGenre?: {
-          href?: string | null,
-          templated?: boolean | null
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
         } | null,
         type?: {
-          href?: string | null,
-          templated?: boolean | null
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
         } | null,
         subType?: {
-          href?: string | null,
-          templated?: boolean | null
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
         } | null
       }[] | null,
       aliases?: string[] | null,
@@ -1409,24 +1589,66 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
     primary?: boolean | null,
     family?: boolean | null,
     segment?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null,
+      _embedded?: {
+        genres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              _links?: {
+              } | null
+            }[] | null
+          } | null
+        }[] | null
+      } | null
     } | null,
     genre?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null,
+      _embedded?: {
+        subgenres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
+        }[] | null
+      } | null
     } | null,
     subGenre?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null,
     type?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null,
     subType?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null
   }[] | null,
   aliases?: string[] | null,
@@ -1488,13 +1710,20 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
     } | null
   } | null,
   sales?: {
-    publicSale?: {
-      href?: string | null,
-      templated?: boolean | null
+    public?: {
+      startDateTime?: string | null,
+      endDateTime?: string | null,
+      startTBD?: boolean | null,
+      startTBA?: boolean | null
     } | null,
     presales?: {
-      href?: string | null,
-      templated?: boolean | null
+      name?: string | null,
+      description?: string | null,
+      url?: string | null,
+      startDateTime?: string | null,
+      endDateTime?: string | null,
+      startTBD?: boolean | null,
+      startTBA?: boolean | null
     }[] | null
   } | null,
   priceRanges?: {
@@ -1507,24 +1736,66 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
     primary?: boolean | null,
     family?: boolean | null,
     segment?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null,
+      _embedded?: {
+        genres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              _links?: {
+              } | null
+            }[] | null
+          } | null
+        }[] | null
+      } | null
     } | null,
     genre?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null,
+      _embedded?: {
+        subgenres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
+        }[] | null
+      } | null
     } | null,
     subGenre?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null,
     type?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null,
     subType?: {
-      href?: string | null,
-      templated?: boolean | null
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      _links?: {
+      } | null
     } | null
   }[] | null,
   promoter?: {
@@ -1631,24 +1902,66 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
         primary?: boolean | null,
         family?: boolean | null,
         segment?: {
-          href?: string | null,
-          templated?: boolean | null
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null,
+          _embedded?: {
+            genres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              _links?: {
+              } | null,
+              _embedded?: {
+                subgenres?: {
+                  id?: string | null,
+                  name?: string | null,
+                  locale?: string | null,
+                  _links?: {
+                  } | null
+                }[] | null
+              } | null
+            }[] | null
+          } | null
         } | null,
         genre?: {
-          href?: string | null,
-          templated?: boolean | null
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              _links?: {
+              } | null
+            }[] | null
+          } | null
         } | null,
         subGenre?: {
-          href?: string | null,
-          templated?: boolean | null
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
         } | null,
         type?: {
-          href?: string | null,
-          templated?: boolean | null
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
         } | null,
         subType?: {
-          href?: string | null,
-          templated?: boolean | null
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          _links?: {
+          } | null
         } | null
       }[] | null,
       aliases?: string[] | null,
@@ -1733,7 +2046,8 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
 <Accordion title="products full type">
 
 ```ts
-Record<string, unknown>[]
+{
+}[]
 ```
 </Accordion>
 </AccordionGroup>
