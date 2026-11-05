@@ -7,8 +7,9 @@ import {
 	ESignaturesEndpointOutputSchemas as Outputs,
 } from './types';
 
-// Every write answer carries its status at the top level; the contract
-// payloads sit under `data.contract`.
+// unknown: the response body is untyped; call() validates whatever this
+// extracts. Writes carry their status at the top level, and the contract
+// sits under `data.contract`.
 function contractOf(raw: unknown): unknown {
 	return asRecord(asRecord(raw)?.data)?.contract;
 }
