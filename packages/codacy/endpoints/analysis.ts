@@ -26,7 +26,7 @@ export const getConfig: CodacyEndpoints['analysisConfigGet'] = async (
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['analysisConfigGet']
 	>(
-		`/analysis/organizations/${provider}/${organization_name}/repositories/${repository_name}/tools`,
+		`/analysis/organizations/${encodeURIComponent(provider)}/${encodeURIComponent(organization_name)}/repositories/${encodeURIComponent(repository_name)}/tools`,
 		token,
 	);
 

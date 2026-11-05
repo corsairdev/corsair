@@ -25,7 +25,7 @@ export const list: CodacyEndpoints['organizationList'] = async (
 	const token = await getCodacyCredentials(ctx);
 	const { provider, cursor, limit } = input;
 	const path = provider
-		? `/user/organizations/${provider}`
+		? `/user/organizations/${encodeURIComponent(provider)}`
 		: '/user/organizations';
 
 	const response = await makeCodacyRequest<
@@ -71,15 +71,19 @@ export const get: CodacyEndpoints['organizationGet'] = async (
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['organizationGet']
-	>(`/organizations/${provider}/${organization_name}`, token);
+	>(
+		`/organizations/${encodeURIComponent(provider)}/${encodeURIComponent(organization_name)}`,
+		token,
+	);
 
 	const parsed = OrganizationGetOutputSchema.parse(response);
 
 	if (ctx.db.organizations) {
+		const { organization } = parsed.data;
 		try {
 			await ctx.db.organizations.upsertByEntityId(
-				`${parsed.data.provider}/${parsed.data.name}`,
-				{ ...parsed.data },
+				`${organization.provider}/${organization.name}`,
+				{ ...organization },
 			);
 		} catch (error) {
 			console.warn('Failed to save organization to database:', error);

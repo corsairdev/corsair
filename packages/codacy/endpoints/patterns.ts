@@ -23,7 +23,7 @@ export const list: CodacyEndpoints['patternList'] = async (
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['patternList']
-	>(`/tools/${tool_uuid}/patterns`, token, {
+	>(`/tools/${encodeURIComponent(tool_uuid)}/patterns`, token, {
 		query: { cursor, limit, enabled, search },
 	});
 
@@ -64,7 +64,7 @@ export const get: CodacyEndpoints['patternGet'] = async (
 	const { tool_uuid, pattern_id } = input;
 
 	const response = await makeCodacyRequest<CodacyEndpointOutputs['patternGet']>(
-		`/tools/${tool_uuid}/patterns/${pattern_id}`,
+		`/tools/${encodeURIComponent(tool_uuid)}/patterns/${encodeURIComponent(pattern_id)}`,
 		token,
 	);
 

@@ -12,6 +12,15 @@ import {
 	RepositoryListOutputSchema,
 } from './types';
 
+/** Path of one repository, with each segment URL-encoded. */
+function repositoryPath(
+	provider: string,
+	organizationName: string,
+	repositoryName: string,
+): string {
+	return `/organizations/${encodeURIComponent(provider)}/${encodeURIComponent(organizationName)}/repositories/${encodeURIComponent(repositoryName)}`;
+}
+
 function repositoryEntityId(input: {
 	provider: string;
 	owner: string;
@@ -35,9 +44,11 @@ export const list: CodacyEndpoints['repositoryList'] = async (
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['repositoryList']
-	>(`/organizations/${provider}/${organization_name}/repositories`, token, {
-		query: { cursor, limit, search },
-	});
+	>(
+		`/organizations/${encodeURIComponent(provider)}/${encodeURIComponent(organization_name)}/repositories`,
+		token,
+		{ query: { cursor, limit, search } },
+	);
 
 	const parsed = RepositoryListOutputSchema.parse(response);
 
@@ -79,10 +90,7 @@ export const get: CodacyEndpoints['repositoryGet'] = async (
 
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['repositoryGet']
-	>(
-		`/organizations/${provider}/${organization_name}/repositories/${repository_name}`,
-		token,
-	);
+	>(repositoryPath(provider, organization_name, repository_name), token);
 
 	const parsed = RepositoryGetOutputSchema.parse(response);
 
@@ -124,7 +132,7 @@ export const languages: CodacyEndpoints['repositoryLanguages'] = async (
 	const response = await makeCodacyRequest<
 		CodacyEndpointOutputs['repositoryLanguages']
 	>(
-		`/organizations/${provider}/${organization_name}/repositories/${repository_name}/settings/languages`,
+		`${repositoryPath(provider, organization_name, repository_name)}/settings/languages`,
 		token,
 	);
 

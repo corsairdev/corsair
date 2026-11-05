@@ -130,9 +130,18 @@ describe('organization handlers', () => {
 		);
 	});
 
-	it('gets an organization and persists it', async () => {
+	it('gets an organization and persists the nested organization record', async () => {
 		const { ctx, upserts } = makeCtx();
-		mockRequest.mockResolvedValueOnce({ data: ORGANIZATION });
+		// GET /organizations/{provider}/{name} wraps the organization with
+		// the caller's membership and billing (OrganizationWithMeta).
+		mockRequest.mockResolvedValueOnce({
+			data: {
+				organization: ORGANIZATION,
+				membership: { userRole: 'member' },
+				analysisConfigurationMinimumPermission: 'admin',
+				subscriptions: [{ product: 'coverage' }],
+			},
+		});
 
 		const result = await Endpoints.organizationGet(ctx, {
 			provider: 'gh',
@@ -143,10 +152,25 @@ describe('organization handlers', () => {
 			'/organizations/gh/test-org',
 			'test-token',
 		);
-		expect(result.data.name).toBe('test-org');
-		expect(upserts.organizations).toHaveBeenCalledWith(
-			'gh/test-org',
-			expect.objectContaining({ name: 'test-org' }),
+		expect(result.data.organization.name).toBe('test-org');
+		expect(result.data.membership?.userRole).toBe('member');
+		expect(upserts.organizations).toHaveBeenCalledWith('gh/test-org', {
+			...ORGANIZATION,
+		});
+	});
+
+	it('URL-encodes provider and organization path segments', async () => {
+		const { ctx } = makeCtx();
+		mockRequest.mockResolvedValueOnce({ data: { organization: ORGANIZATION } });
+
+		await Endpoints.organizationGet(ctx, {
+			provider: 'gh',
+			organization_name: '../admin?x=1',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/organizations/gh/..%2Fadmin%3Fx%3D1',
+			'test-token',
 		);
 	});
 });
@@ -225,6 +249,22 @@ describe('repository handlers', () => {
 			'test-token',
 		);
 		expect(result.languages[0]?.name).toBe('TypeScript');
+	});
+
+	it('URL-encodes repository path segments', async () => {
+		const { ctx } = makeCtx();
+		mockRequest.mockResolvedValueOnce({ data: REPOSITORY });
+
+		await Endpoints.repositoryGet(ctx, {
+			provider: 'gh',
+			organization_name: 'test org',
+			repository_name: 'repo/../../user',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/organizations/gh/test%20org/repositories/repo%2F..%2F..%2Fuser',
+			'test-token',
+		);
 	});
 });
 

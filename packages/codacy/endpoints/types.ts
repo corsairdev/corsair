@@ -124,11 +124,31 @@ export type CodacyOrganization = z.infer<typeof CodacyOrganizationSchema>;
 
 /**
  * Organization details with metadata (GET
- * /organizations/{provider}/{remoteOrganizationName}). Modeled with the
- * organization schema: loose parsing preserves the extra metadata fields
- * Codacy returns alongside the organization record.
+ * /organizations/{provider}/{remoteOrganizationName}). Codacy nests the
+ * organization record under `organization`, next to the caller's
+ * membership and the organization's billing and subscription details.
  */
-export const CodacyOrganizationWithMetaSchema = CodacyOrganizationSchema;
+export const CodacyOrganizationWithMetaSchema = z
+	.object({
+		organization: CodacyOrganizationSchema,
+		membership: z
+			.object({
+				userRole: z.string().describe('admin, manager or member'),
+			})
+			// any/unknown: Codacy may add membership fields; loose parsing
+			// keeps them instead of rejecting the response.
+			.loose()
+			.optional(),
+		analysisConfigurationMinimumPermission: z
+			.string()
+			.optional()
+			.describe(
+				'Lowest repository permission that can change analysis settings',
+			),
+	})
+	// any/unknown: billing, paywall and subscriptions vary by plan and
+	// product; loose parsing keeps them instead of rejecting the response.
+	.loose();
 
 export type CodacyOrganizationWithMeta = z.infer<
 	typeof CodacyOrganizationWithMetaSchema

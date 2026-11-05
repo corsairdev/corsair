@@ -75,16 +75,32 @@ describe('runtime output validation rejects malformed provider responses', () =>
 	it('rejects an organization record without a name', () => {
 		expect(() =>
 			CodacyEndpointOutputSchemas.organizationGet.parse({
-				data: { provider: 'gh' },
+				data: { organization: { provider: 'gh' } },
+			}),
+		).toThrow();
+	});
+
+	it('rejects an organization response that is not nested under organization', () => {
+		// GET /organizations/{provider}/{name} returns OrganizationWithMeta:
+		// { data: { organization, membership, ... } }, not a bare record.
+		expect(() =>
+			CodacyEndpointOutputSchemas.organizationGet.parse({
+				data: ORGANIZATION,
 			}),
 		).toThrow();
 	});
 
 	it('accepts extra unknown fields on an organization record (loose parsing)', () => {
 		const parsed = CodacyEndpointOutputSchemas.organizationGet.parse({
-			data: { ...ORGANIZATION, some_future_field: 'kept' },
+			data: {
+				organization: { ...ORGANIZATION, some_future_field: 'kept' },
+				membership: { userRole: 'admin' },
+				billing: { isPremium: false, model: 'Auto' },
+			},
 		});
-		expect(parsed.data.name).toBe('test-org');
+		expect(parsed.data.organization.name).toBe('test-org');
+		expect(parsed.data.organization.some_future_field).toBe('kept');
+		expect(parsed.data.billing).toEqual({ isPremium: false, model: 'Auto' });
 	});
 
 	it('accepts a well-formed repositories list', () => {
