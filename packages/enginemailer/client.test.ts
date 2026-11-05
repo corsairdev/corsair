@@ -2,6 +2,7 @@ import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import {
 	ENGINEMAILER_API_BASE,
+	ENGINEMAILER_RATE_LIMIT_CONFIG,
 	EnginemailerAPIError,
 	makeEnginemailerRequest,
 } from './client';
@@ -25,6 +26,31 @@ function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
 }
 
 beforeEach(() => mockRequest.mockReset());
+
+describe('Enginemailer retry ownership', () => {
+	// RATE_LIMIT_ERROR retries five times; a transport retry loop on top would
+	// turn one persistent 429 into up to 24 requests.
+	it.each([
+		[
+			'REST',
+			() =>
+				makeEnginemailerRequest(
+					'/restapi/campaign/emcampaign/ListCampaign',
+					'k',
+				),
+		],
+		['N8N', () => makeEnginemailerN8nRequest('/connect', 'k')],
+	])('%s client turns transport retries off', async (_name, call) => {
+		mockRequest.mockResolvedValue({});
+
+		await call();
+
+		expect(mockRequest.mock.calls.at(-1)?.[2]).toEqual({
+			rateLimitConfig: ENGINEMAILER_RATE_LIMIT_CONFIG,
+		});
+		expect(ENGINEMAILER_RATE_LIMIT_CONFIG.maxRetries).toBe(0);
+	});
+});
 
 describe('Enginemailer transport', () => {
 	it('uses the APIKey header and official base URL', async () => {

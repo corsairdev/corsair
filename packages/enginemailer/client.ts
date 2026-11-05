@@ -47,7 +47,12 @@ export function assertEnginemailerSuccess(response: unknown): void {
 	throw new EnginemailerAPIError(message, code, status);
 }
 
-const RATE_LIMIT_CONFIG: RateLimitConfig = {
+/**
+ * Transport-level retries stay off for both APIs: RATE_LIMIT_ERROR in
+ * error-handlers.ts owns the retry budget (five tries, honouring Retry-After),
+ * so a persistent 429 is not multiplied by a second retry loop here.
+ */
+export const ENGINEMAILER_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 0,
 	initialRetryDelay: 1000,
@@ -95,7 +100,7 @@ export async function makeEnginemailerRequest<T>(
 	let response: T;
 	try {
 		response = await request<T>(config, requestOptions, {
-			rateLimitConfig: RATE_LIMIT_CONFIG,
+			rateLimitConfig: ENGINEMAILER_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {

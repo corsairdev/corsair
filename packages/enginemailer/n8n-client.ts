@@ -1,6 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
-import { EnginemailerAPIError } from './client';
+import { ENGINEMAILER_RATE_LIMIT_CONFIG, EnginemailerAPIError } from './client';
 
 export const ENGINEMAILER_N8N_API_BASE =
 	'https://connect.enginemailer.com/api/N8N/v1';
@@ -38,7 +38,9 @@ export async function makeEnginemailerN8nRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: ENGINEMAILER_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new EnginemailerAPIError(
