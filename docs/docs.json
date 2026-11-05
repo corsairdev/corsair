@@ -2317,6 +2317,14 @@
                 ]
               },
               {
+                "group": "Lever",
+                "pages": [
+                  "plugins/lever/overview",
+                  "plugins/lever/api",
+                  "plugins/lever/database"
+                ]
+              },
+              {
                 "group": "Linear",
                 "pages": [
                   "plugins/linear/overview",
