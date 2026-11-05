@@ -112,6 +112,39 @@ describe('makeEmailOctopusRequest', () => {
 		);
 	});
 
+	it('puts the 422 field errors in the message', async () => {
+		// Body as the live API returned it for a decimal in a number field.
+		const unprocessable = {
+			title: 'An error occurred.',
+			detail: 'Unprocessable content.',
+			status: 422,
+			errors: [
+				{
+					detail: 'This field must be of type "integer"',
+					pointer: '/fields/seats',
+				},
+				{ detail: 'This value is not a valid email address.' },
+				{ pointer: '/status' },
+			],
+			type: 'https://emailoctopus.com/api-documentation/v2#unprocessable-content',
+		};
+		respond(unprocessable, 422);
+
+		const error = await failure(
+			makeEmailOctopusRequest(API_KEY, {
+				method: 'POST',
+				path: '/lists/list-1/contacts',
+				body: { email_address: 'a@example.com', fields: { seats: 2.5 } },
+			}),
+		);
+
+		expect(error.status).toBe(422);
+		expect(error.message).toBe(
+			'EmailOctopus 422: Unprocessable content. /fields/seats: This field must be of type "integer"; This value is not a valid email address.',
+		);
+		expect(error.body).toEqual(unprocessable);
+	});
+
 	it('keeps a non-JSON body on the error', async () => {
 		respond('nope', 502);
 

@@ -67,6 +67,20 @@ export class EmailOctopusAPIError extends Error {
 	}
 }
 
+// A 422 says only "Unprocessable content." in detail; the reason is in
+// errors[], one { pointer, detail } per rejected attribute.
+// unknown: errors is part of the untyped error body.
+function readFieldErrors(errors: unknown): string[] {
+	if (!Array.isArray(errors)) return [];
+	return errors.flatMap((item) => {
+		const entry = asRecord(item);
+		const detail = readString(entry, 'detail');
+		if (!detail) return [];
+		const pointer = readString(entry, 'pointer');
+		return [pointer ? `${pointer}: ${detail}` : detail];
+	});
+}
+
 // unknown: see EmailOctopusAPIError.
 export function describeEmailOctopusError(
 	status: number | undefined,
@@ -78,7 +92,10 @@ export function describeEmailOctopusError(
 		readString(record, 'detail') ?? readString(record, 'title') ?? fallback;
 	const label =
 		status !== undefined ? `EmailOctopus ${status}` : 'EmailOctopus';
-	return `${label}: ${text}`;
+	const fieldErrors = readFieldErrors(record?.errors);
+	return fieldErrors.length > 0
+		? `${label}: ${text} ${fieldErrors.join('; ')}`
+		: `${label}: ${text}`;
 }
 
 export type EmailOctopusQuery = Record<
