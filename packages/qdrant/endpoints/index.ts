@@ -92,19 +92,21 @@ function define<K extends Key>(
 		}
 
 		// Inputs carry vectors and payloads, so they are never logged. A failed
-		// event write must not fail a call that Qdrant already carried out
-		// (unknown in the catch below: a rejected promise can carry any value).
+		// event write must not fail a call that Qdrant already carried out.
 		const { collectionName, timeout } = parsed as {
 			collectionName?: string;
 			timeout?: number;
 		};
+		// unknown: a rejected promise can carry any value; it is only logged.
+		const warnLogFailed = (error: unknown) =>
+			console.warn('Failed to log event:', error);
 		const log = (status: 'completed' | 'failed') =>
 			logEventFromContext(
 				ctx,
 				`qdrant.${key}`,
 				collectionName ? { collectionName } : {},
 				status,
-			).catch((error: unknown) => console.warn('Failed to log event:', error));
+			).catch(warnLogFailed);
 
 		try {
 			const pinnedUrl = ctx.options.baseUrl;

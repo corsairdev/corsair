@@ -1,5 +1,6 @@
 type MockResponse = {
 	status?: number;
+	// unknown: any canned JSON response body.
 	body?: unknown;
 	headers?: Record<string, string>;
 };
@@ -8,6 +9,7 @@ export type SentRequest = {
 	url: URL;
 	method: string;
 	headers: Record<string, string>;
+	// unknown: the request body as sent, parsed back from JSON.
 	body: unknown;
 };
 

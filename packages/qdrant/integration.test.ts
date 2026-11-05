@@ -8,6 +8,7 @@ const url = process.env.QDRANT_URL;
 const apiKey = process.env.QDRANT_API_KEY;
 const describeLive = url && apiKey ? describe : describe.skip;
 
+// unknown: a partial context with only what the endpoints read.
 const ctx = {
 	key: apiKey ?? '',
 	options: { baseUrl: url },

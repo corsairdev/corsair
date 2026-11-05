@@ -4,10 +4,12 @@ import { mockFetch } from './test-harness';
 
 afterEach(() => jest.restoreAllMocks());
 
+// unknown: the tests call each endpoint with raw JSON, bypassing the typed inputs and outputs.
 type RawEndpoint = (
 	ctx: QdrantContext,
 	input: Record<string, unknown>,
 ) => Promise<unknown>;
+// unknown: re-typed as RawEndpoint so one table can drive every operation.
 const endpoints = qdrant().endpoints as unknown as Record<
 	string,
 	Record<string, RawEndpoint>
@@ -15,12 +17,14 @@ const endpoints = qdrant().endpoints as unknown as Record<
 
 const BASE = 'https://qdrant.test:6333';
 
+// unknown: input is raw JSON for any operation.
 function call(
 	operation: string,
 	input: Record<string, unknown>,
 	ctxOverrides = {},
 ) {
 	const [group = '', name = ''] = operation.split('.');
+	// unknown: event rows as the fake database receives them.
 	const events: Record<string, unknown>[] = [];
 	const ctx = {
 		key: 'test-key',
@@ -29,6 +33,7 @@ function call(
 		database: {
 			db: {
 				insertInto: () => ({
+					// unknown: the inserted event row.
 					values: (values: Record<string, unknown>) => {
 						events.push(values);
 						return { execute: async () => undefined };
@@ -37,9 +42,11 @@ function call(
 			},
 		},
 		...ctxOverrides,
+		// unknown: a partial context with only what the endpoints read.
 	} as unknown as QdrantContext;
 	const output = endpoints[group]
 		?.[name]?.(ctx, input)
+		// unknown: returns the rejection so each test can assert on it.
 		.catch((e: unknown) => e);
 	return { output, events };
 }
@@ -57,6 +64,7 @@ const info = {
 const vector = { dense: [0.1], bm25: { indices: [3], values: [1] } };
 
 // [operation, method, path, input beyond collectionName, result, query].
+// unknown: inputs and results are raw JSON for any operation.
 // Without a query, GETs send none and writes send wait=true.
 type Case = [
 	string,

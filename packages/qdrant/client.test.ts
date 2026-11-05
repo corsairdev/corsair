@@ -14,6 +14,7 @@ const send = (apiKey = 'secret', timeout?: number) =>
 		body: { exact: true },
 		timeout,
 		schema,
+		// unknown: returns the rejection so each test can assert on it.
 	}).catch((e: unknown) => e);
 
 describe('normalizeQdrantBaseUrl', () => {

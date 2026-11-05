@@ -3,10 +3,12 @@ import type { QdrantKeyBuilderContext } from './index';
 import { qdrant, qdrantEndpointSchemas } from './index';
 
 const plugin = qdrant();
+// unknown: partial contexts with only what the keyBuilder reads.
 const keyContext = (key?: string) =>
 	({
 		keys: { get_api_key: async () => key },
 	}) as unknown as QdrantKeyBuilderContext;
+// unknown: qdrant(options) is typed per options; one signature lets every case call it alike.
 const keyBuilder = (options: Parameters<typeof qdrant>[0]) =>
 	qdrant(options).keyBuilder as unknown as NonNullable<
 		typeof plugin.keyBuilder
