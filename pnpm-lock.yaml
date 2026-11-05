@@ -5454,7 +5454,7 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-packages/enigma:
+  packages/enigma:
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
