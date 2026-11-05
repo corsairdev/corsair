@@ -2884,7 +2884,8 @@ const dnsfilterEndpointMeta = {
 
 export const dnsfilterAuthConfig = {
 	api_key: {
-		account: ['organization_id'] as const,
+		// The API key alone authenticates; organization ids are per-call inputs.
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

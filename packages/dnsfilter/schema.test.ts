@@ -2,7 +2,16 @@ import {
 	DnsfilterEndpointInputSchemas,
 	DnsfilterEndpointOutputSchemas,
 } from './endpoints/types';
+import { dnsfilterAuthConfig } from './index';
 import { DnsfilterSchema } from './schema';
+
+describe('Dnsfilter auth config', () => {
+	it('needs only the API key to connect', () => {
+		// Core treats every extra account field as required, so an unused one
+		// would leave a connection "partial" until it is filled in.
+		expect(dnsfilterAuthConfig.api_key.account).toEqual([]);
+	});
+});
 
 describe('Dnsfilter schema', () => {
 	it('declares a semver version', () => {
