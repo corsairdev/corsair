@@ -2762,6 +2762,14 @@
                 ]
               },
               {
+                "group": "Recall.ai",
+                "pages": [
+                  "plugins/recallai/overview",
+                  "plugins/recallai/api",
+                  "plugins/recallai/database"
+                ]
+              },
+              {
                 "group": "Reddit",
                 "pages": [
                   "plugins/reddit/overview",
