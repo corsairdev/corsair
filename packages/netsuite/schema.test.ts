@@ -1,3 +1,4 @@
+import { NetSuiteEndpointOutputSchemas } from './endpoints/types';
 import { NetSuiteSchema } from './schema';
 
 describe('NetSuite schema', () => {
@@ -14,6 +15,17 @@ describe('NetSuite schema', () => {
 		for (const entity of Object.values(NetSuiteSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
+	});
+
+	it('validates types of known response fields in output schemas', () => {
+		const tokenOutput = NetSuiteEndpointOutputSchemas.oauth2TokenRefresh;
+		expect(tokenOutput.safeParse({ access_token: 'valid-token' }).success).toBe(
+			true,
+		);
+		expect(tokenOutput.safeParse({ access_token: 12345 }).success).toBe(false);
+		expect(tokenOutput.safeParse({ expires_in: 'not-a-number' }).success).toBe(
+			false,
+		);
 	});
 });
 

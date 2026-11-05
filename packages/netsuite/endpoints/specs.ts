@@ -18,6 +18,8 @@ export type RouteSpec = {
 	auth?: 'none';
 	accept?: string;
 	acceptFromInput?: boolean;
+	responseHeader?: string;
+	parseJsonText?: boolean;
 	preferTransient?: boolean;
 	defaults?: Record<string, string>;
 	riskLevel: 'read' | 'write' | 'destructive';
@@ -87,6 +89,9 @@ function create(
 		path: `/record/v1/${resource}`,
 		query: ['replace'],
 		headers: writeHeaders,
+		// NetSuite answers record writes with 204 + Location. Ask the shared
+		// transport for that header so the new record reference is not lost.
+		responseHeader: 'Location',
 		body,
 		riskLevel: 'write',
 		metaDescription: description,
@@ -100,6 +105,7 @@ function update(resource: string, description: string): RouteSpec {
 		pathParams: ['id'],
 		query: updateQuery,
 		headers: writeHeaders,
+		responseHeader: 'Location',
 		body: 'data',
 		riskLevel: 'write',
 		metaDescription: description,
@@ -111,6 +117,7 @@ function remove(resource: string, description: string): RouteSpec {
 		method: 'DELETE',
 		path: `/record/v1/${resource}/{id}`,
 		pathParams: ['id'],
+		headers: writeHeaders,
 		riskLevel: 'destructive',
 		metaDescription: description,
 	};
@@ -282,6 +289,7 @@ export const netSuiteSpecs = {
 		metaDescription: 'Retrieve the metadata schema for a NetSuite record type',
 		accept: 'application/schema+json',
 		acceptFromInput: true,
+		parseJsonText: true,
 	},
 	getReferenceSelectField: {
 		method: 'GET',
@@ -377,6 +385,7 @@ export const netSuiteSpecs = {
 		metaDescription: 'List metadata for all exposed NetSuite record types',
 		accept: 'application/json',
 		acceptFromInput: true,
+		parseJsonText: true,
 	},
 	listPurchaseOrders: list(
 		'purchaseOrder',
@@ -487,6 +496,7 @@ export const netSuiteSpecs = {
 		pathParams: ['source_record_type', 'record_id', 'target_record_type'],
 		query: ['replace'],
 		headers: writeHeaders,
+		responseHeader: 'Location',
 		body: 'record_body',
 		riskLevel: 'write',
 		metaDescription: 'Transform a NetSuite record into another record type',
@@ -537,6 +547,7 @@ export const netSuiteSpecs = {
 		pathParams: ['record_type', 'external_id'],
 		query: ['replace'],
 		headers: writeHeaders,
+		responseHeader: 'Location',
 		body: 'body',
 		riskLevel: 'write',
 		metaDescription: 'Upsert a NetSuite record by external ID',

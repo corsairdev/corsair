@@ -5,6 +5,7 @@ export type NetSuiteBase = 'account' | 'system' | 'datacenter';
 
 export type NetSuiteRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	// NetSuite request bodies vary by resource type; accept arbitrary object records or serialized text.
 	body?: Record<string, unknown> | string;
 	query?: Record<string, string | number | boolean | undefined>;
 	path?: Record<string, string>;
@@ -15,10 +16,23 @@ export type NetSuiteRequestOptions = {
 	auth?: 'bearer' | 'none';
 	basicAuth?: [string, string];
 	accept?: string;
+	responseHeader?: string;
+	parseJsonText?: boolean;
 };
 
+// Browses the account host and OAuth URLs, so a stray slash or dot could send
+// the bearer token to an attacker-controlled domain. NetSuite account IDs are
+// letters, digits, underscores, and hyphens only.
+const ACCOUNT_ID_PATTERN = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
+
 export function normalizeAccountHost(accountId: string): string {
-	return accountId.trim().toLowerCase().replace(/_/g, '-');
+	const trimmed = accountId.trim();
+	if (!ACCOUNT_ID_PATTERN.test(trimmed)) {
+		throw new Error(
+			'[netsuite] invalid accountId: expected letters, digits, underscores, or hyphens',
+		);
+	}
+	return trimmed.toLowerCase().replace(/_/g, '-');
 }
 
 export function netSuiteAccountBase(accountId: string): string {
@@ -132,6 +146,18 @@ export async function makeNetSuiteRequest<T>(
 			: options.body
 				? 'application/json'
 				: undefined,
+		responseHeader: options.responseHeader,
 	};
-	return await request<T>(config, requestOptions);
+	const result = await request<T>(config, requestOptions);
+	// The shared transport only parses application/json and
+	// application/problem+json. Metadata is served as application/schema+json,
+	// so parse it here when the caller opts in.
+	if (options.parseJsonText && typeof result === 'string') {
+		try {
+			return JSON.parse(result) as T;
+		} catch {
+			return result as T;
+		}
+	}
+	return result;
 }

@@ -54,6 +54,7 @@ function mockCtx() {
 		keys: {
 			get_access_token: async () => TOKEN,
 			get_account_id: async () => ACCOUNT,
+			get_refresh_token: async () => 'refresh-token',
 		},
 		$getAccountId: async () => 'account-row',
 		database: undefined,
@@ -400,5 +401,203 @@ describe('endpoint dispatch', () => {
 				Buffer.from(signature!, 'base64url'),
 			),
 		).toBe(true);
+	});
+
+	it('rejects account IDs with URL delimiters and ignores account_id in record input', async () => {
+		expect(() => normalizeAccountHost('attacker.example/')).toThrow(
+			'[netsuite] invalid accountId: expected letters, digits, underscores, or hyphens',
+		);
+		expect(() => normalizeAccountHost('evil.com')).toThrow();
+		expect(() => normalizeAccountHost('foo?bar')).toThrow();
+
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(jsonResponse({ id: '1' })) as unknown as typeof fetch;
+		await NetSuite.getCustomer(
+			mockCtx() as never,
+			{
+				id: '1',
+				account_id: 'attacker.example/',
+			} as never,
+		);
+		const [url, init] = jest.mocked(globalThis.fetch).mock.calls[0] as [
+			string,
+			RequestInit,
+		];
+		expect(url).toContain(
+			'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/record/v1/customer/1',
+		);
+		expect(url).not.toContain('attacker.example');
+		expect(header(init, 'Authorization')).toBe('Bearer test-token');
+	});
+
+	it('syncs records to local entity cache and handles delete cleanup', async () => {
+		const upsertMock = jest.fn();
+		const deleteMock = jest.fn();
+		const ctx = {
+			...mockCtx(),
+			db: {
+				customers: {
+					upsertByEntityId: upsertMock,
+					deleteByEntityId: deleteMock,
+				},
+			},
+		};
+
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(
+				jsonResponse({ items: [{ id: '1', entityId: 'ACME' }] }),
+			) as unknown as typeof fetch;
+		await NetSuite.listRecords(ctx as never, {
+			recordType: 'customer',
+		});
+		expect(upsertMock).toHaveBeenCalledWith('1', { id: '1', entityId: 'ACME' });
+
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(
+				jsonResponse({ ok: true }, 204),
+			) as unknown as typeof fetch;
+		await NetSuite.deleteCustomer(ctx as never, {
+			id: '1',
+		});
+		expect(deleteMock).toHaveBeenCalledWith('1');
+	});
+
+	it('allows token-free setup helpers to run without acquiring an access token', async () => {
+		const plugin = netsuite();
+		const key = await plugin.keyBuilder?.(
+			{
+				authType: 'oauth_2',
+				meteredOperationId: 'netsuite.oauth2TokenClientCredentials',
+			} as never,
+			'endpoint',
+		);
+		expect(key).toBe('');
+
+		const authKey = await plugin.keyBuilder?.(
+			{
+				authType: 'oauth_2',
+				meteredOperationId: 'netsuite.oauth2AuthorizeAccountDomain',
+			} as never,
+			'endpoint',
+		);
+		expect(authKey).toBe('');
+	});
+
+	it('parses application/schema+json text responses as JSON objects', async () => {
+		const schemaPayload = { title: 'Customer Schema', type: 'object' };
+		globalThis.fetch = jest.fn().mockResolvedValue({
+			ok: true,
+			status: 200,
+			statusText: 'OK',
+			headers: new Headers({ 'content-type': 'application/schema+json' }),
+			text: async () => JSON.stringify(schemaPayload),
+			json: async () => {
+				throw new Error('not standard json content-type');
+			},
+			arrayBuffer: async () => Buffer.from(JSON.stringify(schemaPayload)),
+		}) as unknown as typeof fetch;
+
+		const result = await NetSuite.getRecordMetadata(mockCtx() as never, {
+			record_type: 'customer',
+		});
+		expect(result).toEqual(schemaPayload);
+	});
+
+	it('preserves Location header on record creation and syncs cache', async () => {
+		const upsertMock = jest.fn();
+		const ctx = {
+			...mockCtx(),
+			db: {
+				customers: {
+					upsertByEntityId: upsertMock,
+				},
+			},
+		};
+		const locationUrl =
+			'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/record/v1/customer/789';
+		globalThis.fetch = jest.fn().mockResolvedValue({
+			ok: true,
+			status: 204,
+			statusText: 'No Content',
+			headers: new Headers({ Location: locationUrl }),
+			text: async () => '',
+			json: async () => ({}),
+			arrayBuffer: async () => Buffer.from(''),
+		}) as unknown as typeof fetch;
+
+		const result = await NetSuite.createCustomer(ctx as never, {
+			body: { companyName: 'New Corp' },
+		});
+		expect(result).toEqual({ location: locationUrl });
+		expect(upsertMock).toHaveBeenCalledWith(
+			'789',
+			expect.objectContaining({
+				id: '789',
+				location: locationUrl,
+				companyName: 'New Corp',
+			}),
+		);
+	});
+
+	it('resolves refresh credentials from context defaults and rejects when missing', async () => {
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(
+				jsonResponse({ access_token: 'refreshed' }),
+			) as unknown as typeof fetch;
+		const result = await NetSuite.oauth2TokenRefresh(mockCtx() as never, {});
+		expect(result).toEqual({ access_token: 'refreshed' });
+
+		const [, init] = jest.mocked(globalThis.fetch).mock.calls[0] as [
+			string,
+			RequestInit,
+		];
+		expect(header(init, 'Authorization')).toBe(
+			`Basic ${Buffer.from('client-id:client-secret').toString('base64')}`,
+		);
+
+		const emptyCtx = {
+			...mockCtx(),
+			options: { accountId: ACCOUNT },
+			keys: {},
+		};
+		await expect(
+			NetSuite.oauth2TokenRefresh(emptyCtx as never, {}),
+		).rejects.toThrow(
+			'[auth-missing:netsuite]: oauth2TokenRefresh requires client_id',
+		);
+	});
+
+	it('forwards Prefer and idempotency headers on DELETE requests', async () => {
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(jsonResponse({})) as unknown as typeof fetch;
+		await NetSuite.deleteCustomer(
+			mockCtx() as never,
+			{
+				id: '1',
+				prefer: 'respond-async',
+				idempotency_key: 'idem-123',
+			} as never,
+		);
+		const [, init] = jest.mocked(globalThis.fetch).mock.calls[0] as [
+			string,
+			RequestInit,
+		];
+		expect(init.method).toBe('DELETE');
+		expect(header(init, 'Prefer')).toBe('respond-async');
+		expect(header(init, 'X-NetSuite-Idempotency-Key')).toBe('idem-123');
+	});
+
+	it('rejects unsupported JWT algorithms', async () => {
+		await expect(
+			NetSuite.createJwtClientAssertion(mockCtx() as never, {
+				alg: 'PS512' as never,
+				scope: 'rest_webservices',
+			}),
+		).rejects.toThrow();
 	});
 });

@@ -20,7 +20,7 @@ Retrieve the status of an asynchronous NetSuite REST job
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.asyncGetJobStatus({});
+await corsair.netsuite.api.asyncGetJobStatus({ jobId: '123' });
 ```
 
 **Input**
@@ -31,7 +31,32 @@ await corsair.netsuite.api.asyncGetJobStatus({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -47,7 +72,7 @@ Retrieve the task reference and status for an asynchronous job
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.asyncGetJobTask({});
+await corsair.netsuite.api.asyncGetJobTask({ jobId: '123', taskId: '456' });
 ```
 
 **Input**
@@ -59,7 +84,32 @@ await corsair.netsuite.api.asyncGetJobTask({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -75,7 +125,7 @@ Retrieve the result of an asynchronous job task
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.asyncGetJobTaskResult({});
+await corsair.netsuite.api.asyncGetJobTaskResult({ jobId: '123', taskId: '456' });
 ```
 
 **Input**
@@ -87,7 +137,32 @@ await corsair.netsuite.api.asyncGetJobTaskResult({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -103,7 +178,9 @@ Create a NetSuite customer record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createCustomer({});
+await corsair.netsuite.api.createCustomer({
+	body: { entityId: 'ACME', companyName: 'Acme Inc.' },
+});
 ```
 
 **Input**
@@ -129,7 +206,32 @@ await corsair.netsuite.api.createCustomer({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -145,7 +247,12 @@ Create a NetSuite customer payment record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createCustomerPayment({});
+await corsair.netsuite.api.createCustomerPayment({
+	body: {
+		customer: { id: '123' },
+		payment: 100,
+	},
+});
 ```
 
 **Input**
@@ -171,7 +278,32 @@ await corsair.netsuite.api.createCustomerPayment({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -187,7 +319,9 @@ Create a NetSuite employee record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createEmployee({});
+await corsair.netsuite.api.createEmployee({
+	body: { firstName: 'Jane', lastName: 'Doe' },
+});
 ```
 
 **Input**
@@ -213,7 +347,32 @@ await corsair.netsuite.api.createEmployee({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -229,7 +388,11 @@ Create a NetSuite invoice record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createInvoice({});
+await corsair.netsuite.api.createInvoice({
+	body: {
+		entity: { id: '123' },
+	},
+});
 ```
 
 **Input**
@@ -255,7 +418,32 @@ await corsair.netsuite.api.createInvoice({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -271,7 +459,10 @@ Create a NetSuite item record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createItem({});
+await corsair.netsuite.api.createItem({
+	record_type: 'inventoryItem',
+	body: { itemId: 'WIDGET-01', displayName: 'Acme Widget' },
+});
 ```
 
 **Input**
@@ -298,7 +489,32 @@ await corsair.netsuite.api.createItem({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -314,7 +530,9 @@ Create a NetSuite journal entry record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createJournalEntry({});
+await corsair.netsuite.api.createJournalEntry({
+	body: { memo: 'Opening balance' },
+});
 ```
 
 **Input**
@@ -340,7 +558,32 @@ await corsair.netsuite.api.createJournalEntry({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -356,14 +599,16 @@ Create a signed JWT client assertion for OAuth 2.0 client credentials
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.createJwtClientAssertion({});
+await corsair.netsuite.api.createJwtClientAssertion({ aud: 'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token', certificate_id: 'cert-1', private_key_pem: '-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC...
+-----END PRIVATE KEY-----' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `alg` | `string` | No | — |
+| `alg` | `PS256 \| RS256 \| ES256 \| HS256` | No | — |
 | `aud` | `string` | No | — |
 | `exp` | `number` | No | — |
 | `iat` | `number` | No | — |
@@ -374,7 +619,32 @@ await corsair.netsuite.api.createJwtClientAssertion({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -390,7 +660,15 @@ Create a NetSuite purchase order
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createPurchaseOrder({});
+await corsair.netsuite.api.createPurchaseOrder({
+	entity: { id: '123' },
+	item: {
+		items: [{
+			item: { id: '1' },
+			quantity: 10,
+		}],
+	},
+});
 ```
 
 **Input**
@@ -445,7 +723,32 @@ await corsair.netsuite.api.createPurchaseOrder({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -461,7 +764,10 @@ Create a record of any exposed NetSuite type
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createRecord({});
+await corsair.netsuite.api.createRecord({
+	record_type: 'customer',
+	body: { entityId: 'CUST-01', companyName: 'Customer One' },
+});
 ```
 
 **Input**
@@ -488,7 +794,32 @@ await corsair.netsuite.api.createRecord({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -504,7 +835,15 @@ Create a NetSuite sales order
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createSalesOrder({});
+await corsair.netsuite.api.createSalesOrder({
+	entity: { id: '123' },
+	item: {
+		items: [{
+			item: { id: '1' },
+			quantity: 5,
+		}],
+	},
+});
 ```
 
 **Input**
@@ -553,7 +892,32 @@ await corsair.netsuite.api.createSalesOrder({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -569,7 +933,9 @@ Create a NetSuite vendor record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createVendor({});
+await corsair.netsuite.api.createVendor({
+	body: { entityId: 'SUPPLIER-1', companyName: 'Global Supplier' },
+});
 ```
 
 **Input**
@@ -595,7 +961,32 @@ await corsair.netsuite.api.createVendor({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -611,7 +1002,11 @@ Create a NetSuite vendor bill record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.createVendorBill({});
+await corsair.netsuite.api.createVendorBill({
+	body: {
+		entity: { id: '123' },
+	},
+});
 ```
 
 **Input**
@@ -637,7 +1032,32 @@ await corsair.netsuite.api.createVendorBill({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -653,7 +1073,7 @@ Delete a NetSuite customer record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deleteCustomer({});
+await corsair.netsuite.api.deleteCustomer({ id: '123' });
 ```
 
 **Input**
@@ -664,7 +1084,32 @@ await corsair.netsuite.api.deleteCustomer({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -680,7 +1125,7 @@ Delete a NetSuite customer payment record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deleteCustomerPayment({});
+await corsair.netsuite.api.deleteCustomerPayment({ id: '123' });
 ```
 
 **Input**
@@ -691,7 +1136,32 @@ await corsair.netsuite.api.deleteCustomerPayment({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -707,7 +1177,7 @@ Delete a NetSuite employee record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deleteEmployee({});
+await corsair.netsuite.api.deleteEmployee({ id: '123' });
 ```
 
 **Input**
@@ -718,7 +1188,32 @@ await corsair.netsuite.api.deleteEmployee({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -734,7 +1229,7 @@ Delete a NetSuite invoice record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deleteInvoice({});
+await corsair.netsuite.api.deleteInvoice({ id: '123' });
 ```
 
 **Input**
@@ -745,7 +1240,32 @@ await corsair.netsuite.api.deleteInvoice({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -761,7 +1281,7 @@ Delete a NetSuite item record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deleteItem({});
+await corsair.netsuite.api.deleteItem({ item_record_type: 'inventoryItem', id: '123' });
 ```
 
 **Input**
@@ -773,7 +1293,32 @@ await corsair.netsuite.api.deleteItem({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -789,7 +1334,7 @@ Delete a NetSuite item fulfillment record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deleteItemFulfillment({});
+await corsair.netsuite.api.deleteItemFulfillment({ id: '123' });
 ```
 
 **Input**
@@ -802,7 +1347,32 @@ await corsair.netsuite.api.deleteItemFulfillment({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -818,7 +1388,7 @@ Delete a NetSuite item receipt record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deleteItemReceipt({});
+await corsair.netsuite.api.deleteItemReceipt({ id: '123' });
 ```
 
 **Input**
@@ -829,7 +1399,32 @@ await corsair.netsuite.api.deleteItemReceipt({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -845,7 +1440,7 @@ Delete a NetSuite journal entry record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deleteJournalEntry({});
+await corsair.netsuite.api.deleteJournalEntry({ id: '123' });
 ```
 
 **Input**
@@ -858,7 +1453,32 @@ await corsair.netsuite.api.deleteJournalEntry({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -874,7 +1494,7 @@ Delete a NetSuite purchase order record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deletePurchaseOrder({});
+await corsair.netsuite.api.deletePurchaseOrder({ id: '123' });
 ```
 
 **Input**
@@ -885,7 +1505,32 @@ await corsair.netsuite.api.deletePurchaseOrder({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -901,7 +1546,7 @@ Delete a NetSuite sales order record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deleteSalesOrder({});
+await corsair.netsuite.api.deleteSalesOrder({ id: '123' });
 ```
 
 **Input**
@@ -912,7 +1557,32 @@ await corsair.netsuite.api.deleteSalesOrder({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -928,7 +1598,7 @@ Delete a NetSuite vendor payment record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.netsuite.api.deleteVendorPayment({});
+await corsair.netsuite.api.deleteVendorPayment({ id: '123' });
 ```
 
 **Input**
@@ -939,7 +1609,32 @@ await corsair.netsuite.api.deleteVendorPayment({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -955,7 +1650,7 @@ Execute a SuiteAnalytics Workbook dataset
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.executeDataset({});
+await corsair.netsuite.api.executeDataset({ dataset_id: 'custdataset_sales' });
 ```
 
 **Input**
@@ -968,7 +1663,32 @@ await corsair.netsuite.api.executeDataset({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -984,7 +1704,7 @@ Get a NetSuite customer record by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getCustomer({});
+await corsair.netsuite.api.getCustomer({ id: '123' });
 ```
 
 **Input**
@@ -993,11 +1713,37 @@ await corsair.netsuite.api.getCustomer({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
 | `expandSubResources` | `boolean` | No | — |
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1013,7 +1759,7 @@ Get a NetSuite customer payment record by ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getCustomerPayment({});
+await corsair.netsuite.api.getCustomerPayment({ id: '123' });
 ```
 
 **Input**
@@ -1027,7 +1773,32 @@ await corsair.netsuite.api.getCustomerPayment({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1043,7 +1814,7 @@ Discover account-specific NetSuite service domains
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getDatacenterUrls({});
+await corsair.netsuite.api.getDatacenterUrls({ account: 'TSTDRV123' });
 ```
 
 **Input**
@@ -1055,7 +1826,32 @@ await corsair.netsuite.api.getDatacenterUrls({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1071,7 +1867,7 @@ Get a NetSuite employee record by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getEmployee({});
+await corsair.netsuite.api.getEmployee({ id: '123' });
 ```
 
 **Input**
@@ -1080,11 +1876,37 @@ await corsair.netsuite.api.getEmployee({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
 | `expandSubResources` | `boolean` | No | — |
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1106,7 +1928,32 @@ await corsair.netsuite.api.getGovernanceLimits({});
 **Input:** _empty object_
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1122,7 +1969,7 @@ Get a NetSuite invoice record by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getInvoice({});
+await corsair.netsuite.api.getInvoice({ id: '123' });
 ```
 
 **Input**
@@ -1136,7 +1983,32 @@ await corsair.netsuite.api.getInvoice({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1152,7 +2024,7 @@ Get a NetSuite item record by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getItem({});
+await corsair.netsuite.api.getItem({ itemRecordType: 'inventoryItem', id: '123' });
 ```
 
 **Input**
@@ -1166,7 +2038,32 @@ await corsair.netsuite.api.getItem({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1182,7 +2079,7 @@ Get a NetSuite item fulfillment record by ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getItemFulfillment({});
+await corsair.netsuite.api.getItemFulfillment({ id: '123' });
 ```
 
 **Input**
@@ -1196,7 +2093,32 @@ await corsair.netsuite.api.getItemFulfillment({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1212,7 +2134,7 @@ Get a NetSuite item receipt record by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getItemReceipt({});
+await corsair.netsuite.api.getItemReceipt({ id: '123' });
 ```
 
 **Input**
@@ -1221,11 +2143,37 @@ await corsair.netsuite.api.getItemReceipt({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
 | `expandSubResources` | `boolean` | No | — |
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1241,7 +2189,7 @@ Get a NetSuite journal entry record by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getJournalEntry({});
+await corsair.netsuite.api.getJournalEntry({ id: '123' });
 ```
 
 **Input**
@@ -1255,7 +2203,32 @@ await corsair.netsuite.api.getJournalEntry({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1271,7 +2244,7 @@ Get a NetSuite purchase order by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getPurchaseOrder({});
+await corsair.netsuite.api.getPurchaseOrder({ id: '123' });
 ```
 
 **Input**
@@ -1285,7 +2258,32 @@ await corsair.netsuite.api.getPurchaseOrder({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1301,7 +2299,7 @@ Retrieve the metadata schema for a NetSuite record type
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getRecordMetadata({});
+await corsair.netsuite.api.getRecordMetadata({ record_type: 'customer' });
 ```
 
 **Input**
@@ -1313,7 +2311,32 @@ await corsair.netsuite.api.getRecordMetadata({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1329,7 +2352,7 @@ Retrieve the record referenced by a select-type field
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getReferenceSelectField({});
+await corsair.netsuite.api.getReferenceSelectField({ record_type: 'customer', select_field: 'subsidiary', id: '123' });
 ```
 
 **Input**
@@ -1344,7 +2367,32 @@ await corsair.netsuite.api.getReferenceSelectField({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1360,7 +2408,7 @@ Get a NetSuite sales order record by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getSalesOrder({});
+await corsair.netsuite.api.getSalesOrder({ id: '123' });
 ```
 
 **Input**
@@ -1369,11 +2417,37 @@ await corsair.netsuite.api.getSalesOrder({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
 | `expandSubResources` | `boolean` | No | — |
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1395,7 +2469,32 @@ await corsair.netsuite.api.getServerTime({});
 **Input:** _empty object_
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1411,7 +2510,7 @@ Retrieve a sublist collection from a NetSuite record
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getSublistCollection({});
+await corsair.netsuite.api.getSublistCollection({ record_type: 'customer', id: '123', sublist_name: 'addressBook' });
 ```
 
 **Input**
@@ -1426,7 +2525,32 @@ await corsair.netsuite.api.getSublistCollection({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1442,7 +2566,12 @@ Retrieve a specific line from a NetSuite sublist
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getSublistLine({});
+await corsair.netsuite.api.getSublistLine({
+	record_type: 'customer',
+	id: '123',
+	sublist_name: 'addressBook',
+	line_id: '1',
+});
 ```
 
 **Input**
@@ -1457,7 +2586,32 @@ await corsair.netsuite.api.getSublistLine({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1473,7 +2627,7 @@ Retrieve a subrecord from a NetSuite parent record
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getSubrecord({});
+await corsair.netsuite.api.getSubrecord({ record_type: 'customer', id: '123', subrecord_name: 'address' });
 ```
 
 **Input**
@@ -1486,7 +2640,32 @@ await corsair.netsuite.api.getSubrecord({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1502,7 +2681,7 @@ Get a single NetSuite vendor record by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getVendor({});
+await corsair.netsuite.api.getVendor({ id: '123' });
 ```
 
 **Input**
@@ -1516,7 +2695,32 @@ await corsair.netsuite.api.getVendor({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1532,7 +2736,7 @@ Retrieve a NetSuite vendor bill by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getVendorBill({});
+await corsair.netsuite.api.getVendorBill({ id: '123' });
 ```
 
 **Input**
@@ -1541,11 +2745,37 @@ await corsair.netsuite.api.getVendorBill({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
 | `expandSubResources` | `boolean` | No | — |
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1561,7 +2791,7 @@ Retrieve a NetSuite vendor payment by internal ID
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.getVendorPayment({});
+await corsair.netsuite.api.getVendorPayment({ id: '123' });
 ```
 
 **Input**
@@ -1570,11 +2800,37 @@ await corsair.netsuite.api.getVendorPayment({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
 | `expandSubResources` | `boolean` | No | — |
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1590,7 +2846,7 @@ List NetSuite customer payment records
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listCustomerPayments({});
+await corsair.netsuite.api.listCustomerPayments({ limit: 20 });
 ```
 
 **Input**
@@ -1603,7 +2859,32 @@ await corsair.netsuite.api.listCustomerPayments({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1619,7 +2900,7 @@ List SuiteAnalytics Workbook datasets
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listDatasets({});
+await corsair.netsuite.api.listDatasets({ limit: 20 });
 ```
 
 **Input**
@@ -1631,7 +2912,32 @@ await corsair.netsuite.api.listDatasets({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1647,7 +2953,7 @@ List NetSuite employee records
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listEmployees({});
+await corsair.netsuite.api.listEmployees({ limit: 20 });
 ```
 
 **Input**
@@ -1660,7 +2966,32 @@ await corsair.netsuite.api.listEmployees({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1676,7 +3007,7 @@ List NetSuite integration applications and their client IDs
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listIntegrations({});
+await corsair.netsuite.api.listIntegrations({ limit: 20 });
 ```
 
 **Input**
@@ -1688,7 +3019,32 @@ await corsair.netsuite.api.listIntegrations({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1704,7 +3060,7 @@ List NetSuite invoice records
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listInvoices({});
+await corsair.netsuite.api.listInvoices({ limit: 20 });
 ```
 
 **Input**
@@ -1717,7 +3073,32 @@ await corsair.netsuite.api.listInvoices({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1733,7 +3114,7 @@ List NetSuite item fulfillment records
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listItemFulfillments({});
+await corsair.netsuite.api.listItemFulfillments({ limit: 20 });
 ```
 
 **Input**
@@ -1746,7 +3127,32 @@ await corsair.netsuite.api.listItemFulfillments({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1762,7 +3168,7 @@ List NetSuite item receipt records
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listItemReceipts({});
+await corsair.netsuite.api.listItemReceipts({ limit: 20 });
 ```
 
 **Input**
@@ -1775,7 +3181,32 @@ await corsair.netsuite.api.listItemReceipts({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1791,7 +3222,7 @@ List NetSuite journal entry records
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listJournalEntries({});
+await corsair.netsuite.api.listJournalEntries({ limit: 20 });
 ```
 
 **Input**
@@ -1804,7 +3235,32 @@ await corsair.netsuite.api.listJournalEntries({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1832,7 +3288,32 @@ await corsair.netsuite.api.listMetadataCatalog({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1848,7 +3329,7 @@ List NetSuite purchase order records
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listPurchaseOrders({});
+await corsair.netsuite.api.listPurchaseOrders({ limit: 20 });
 ```
 
 **Input**
@@ -1861,7 +3342,32 @@ await corsair.netsuite.api.listPurchaseOrders({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1877,7 +3383,7 @@ List records of any exposed NetSuite type
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listRecords({});
+await corsair.netsuite.api.listRecords({ recordType: 'customer', limit: 20 });
 ```
 
 **Input**
@@ -1891,7 +3397,32 @@ await corsair.netsuite.api.listRecords({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1907,7 +3438,7 @@ List NetSuite sales order records
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listSalesOrders({});
+await corsair.netsuite.api.listSalesOrders({ limit: 20 });
 ```
 
 **Input**
@@ -1920,7 +3451,32 @@ await corsair.netsuite.api.listSalesOrders({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1936,7 +3492,7 @@ List NetSuite vendor payment records
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.listVendorPayments({});
+await corsair.netsuite.api.listVendorPayments({ limit: 20 });
 ```
 
 **Input**
@@ -1949,7 +3505,32 @@ await corsair.netsuite.api.listVendorPayments({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1965,7 +3546,7 @@ Build an OAuth 2.0 authorization URL on the account domain
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.oauth2AuthorizeAccountDomain({});
+await corsair.netsuite.api.oauth2AuthorizeAccountDomain({ client_id: 'client-id', redirect_uri: 'https://example.com/callback', scope: 'rest_webservices' });
 ```
 
 **Input**
@@ -1983,7 +3564,32 @@ await corsair.netsuite.api.oauth2AuthorizeAccountDomain({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -1999,7 +3605,7 @@ Build an OAuth 2.0 authorization URL on the system domain
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.oauth2AuthorizeSystemDomain({});
+await corsair.netsuite.api.oauth2AuthorizeSystemDomain({ client_id: 'client-id', redirect_uri: 'https://example.com/callback', scope: 'rest_webservices' });
 ```
 
 **Input**
@@ -2018,7 +3624,32 @@ await corsair.netsuite.api.oauth2AuthorizeSystemDomain({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2040,7 +3671,32 @@ await corsair.netsuite.api.oauth2GetJwksKeys({});
 **Input:** _empty object_
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2056,7 +3712,7 @@ Log out an OAuth 2.0 session using an ID token hint
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.oauth2Logout({});
+await corsair.netsuite.api.oauth2Logout({ id_token_hint: 'id-token-xxx' });
 ```
 
 **Input**
@@ -2067,7 +3723,32 @@ await corsair.netsuite.api.oauth2Logout({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2083,7 +3764,7 @@ Revoke a NetSuite OAuth 2.0 refresh token
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.oauth2RevokeRefreshToken({});
+await corsair.netsuite.api.oauth2RevokeRefreshToken({ token: 'refresh-token-xxx', client_id: 'client-id' });
 ```
 
 **Input**
@@ -2095,7 +3776,32 @@ await corsair.netsuite.api.oauth2RevokeRefreshToken({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2111,7 +3817,12 @@ Exchange an OAuth 2.0 authorization code for tokens
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.oauth2TokenAuthorizationCode({});
+await corsair.netsuite.api.oauth2TokenAuthorizationCode({
+	code: 'auth-code',
+	client_id: 'client-id',
+	redirect_uri: 'https://example.com/callback',
+	code_verifier: 'verifier',
+});
 ```
 
 **Input**
@@ -2126,7 +3837,32 @@ await corsair.netsuite.api.oauth2TokenAuthorizationCode({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2142,7 +3878,7 @@ Exchange a JWT client assertion for an OAuth 2.0 access token
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.oauth2TokenClientCredentials({});
+await corsair.netsuite.api.oauth2TokenClientCredentials({ client_assertion: 'jwt-assertion-string' });
 ```
 
 **Input**
@@ -2155,7 +3891,32 @@ await corsair.netsuite.api.oauth2TokenClientCredentials({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2171,7 +3932,7 @@ Refresh a NetSuite OAuth 2.0 access token
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.oauth2TokenRefresh({});
+await corsair.netsuite.api.oauth2TokenRefresh({ refresh_token: 'refresh-token-xxx', client_id: 'client-id', client_secret: 'client-secret' });
 ```
 
 **Input**
@@ -2184,7 +3945,32 @@ await corsair.netsuite.api.oauth2TokenRefresh({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2200,7 +3986,7 @@ Run a SuiteQL query against NetSuite data
 **Risk:** `read`
 
 ```ts
-await corsair.netsuite.api.runSuiteqlQuery({});
+await corsair.netsuite.api.runSuiteqlQuery({ q: 'SELECT id, companyName FROM customer WHERE id = 123' });
 ```
 
 **Input**
@@ -2213,7 +3999,32 @@ await corsair.netsuite.api.runSuiteqlQuery({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2229,7 +4040,7 @@ Transform a NetSuite record into another record type
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.transformRecord({});
+await corsair.netsuite.api.transformRecord({ source_record_type: 'salesOrder', record_id: '123', target_record_type: 'invoice' });
 ```
 
 **Input**
@@ -2258,7 +4069,32 @@ await corsair.netsuite.api.transformRecord({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2274,7 +4110,10 @@ Update a NetSuite customer record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateCustomer({});
+await corsair.netsuite.api.updateCustomer({
+	id: '123',
+	data: { comments: 'VIP customer' },
+});
 ```
 
 **Input**
@@ -2283,6 +4122,8 @@ await corsair.netsuite.api.updateCustomer({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `data` | `object` | Yes | — |
+| `replace` | `boolean` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `property_name_validation` | `string` | No | — |
@@ -2300,7 +4141,32 @@ await corsair.netsuite.api.updateCustomer({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2316,7 +4182,10 @@ Update a NetSuite customer payment record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateCustomerPayment({});
+await corsair.netsuite.api.updateCustomerPayment({
+	id: '123',
+	data: { memo: 'Payment updated' },
+});
 ```
 
 **Input**
@@ -2325,6 +4194,8 @@ await corsair.netsuite.api.updateCustomerPayment({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `data` | `object` | Yes | — |
+| `replace` | `boolean` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `property_name_validation` | `string` | No | — |
@@ -2342,7 +4213,32 @@ await corsair.netsuite.api.updateCustomerPayment({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2358,7 +4254,10 @@ Update a NetSuite employee record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateEmployee({});
+await corsair.netsuite.api.updateEmployee({
+	id: '123',
+	data: { title: 'Lead Engineer' },
+});
 ```
 
 **Input**
@@ -2386,7 +4285,32 @@ await corsair.netsuite.api.updateEmployee({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2402,7 +4326,10 @@ Update a NetSuite invoice record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateInvoice({});
+await corsair.netsuite.api.updateInvoice({
+	id: '123',
+	data: { memo: 'Invoice updated' },
+});
 ```
 
 **Input**
@@ -2411,6 +4338,8 @@ await corsair.netsuite.api.updateInvoice({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `data` | `object` | Yes | — |
+| `replace` | `boolean` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `property_name_validation` | `string` | No | — |
@@ -2428,7 +4357,32 @@ await corsair.netsuite.api.updateInvoice({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2444,7 +4398,11 @@ Update a NetSuite item record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateItem({});
+await corsair.netsuite.api.updateItem({
+	item_type: 'inventoryItem',
+	id: '123',
+	data: { displayName: 'Updated Widget' },
+});
 ```
 
 **Input**
@@ -2473,7 +4431,32 @@ await corsair.netsuite.api.updateItem({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2489,7 +4472,10 @@ Update a NetSuite item fulfillment record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateItemFulfillment({});
+await corsair.netsuite.api.updateItemFulfillment({
+	id: '123',
+	data: { memo: 'Fulfillment processed' },
+});
 ```
 
 **Input**
@@ -2517,7 +4503,32 @@ await corsair.netsuite.api.updateItemFulfillment({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2533,7 +4544,10 @@ Update a NetSuite item receipt record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateItemReceipt({});
+await corsair.netsuite.api.updateItemReceipt({
+	id: '123',
+	data: { memo: 'Receipt processed' },
+});
 ```
 
 **Input**
@@ -2561,7 +4575,32 @@ await corsair.netsuite.api.updateItemReceipt({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2577,7 +4616,10 @@ Update a NetSuite journal entry record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateJournalEntry({});
+await corsair.netsuite.api.updateJournalEntry({
+	id: '123',
+	data: { memo: 'Q3 adjustment' },
+});
 ```
 
 **Input**
@@ -2605,7 +4647,32 @@ await corsair.netsuite.api.updateJournalEntry({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2621,7 +4688,10 @@ Update a NetSuite purchase order record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updatePurchaseOrder({});
+await corsair.netsuite.api.updatePurchaseOrder({
+	id: '123',
+	data: { memo: 'Approved by Purchasing' },
+});
 ```
 
 **Input**
@@ -2630,6 +4700,7 @@ await corsair.netsuite.api.updatePurchaseOrder({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `data` | `object` | Yes | — |
+| `replace` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
@@ -2648,7 +4719,32 @@ await corsair.netsuite.api.updatePurchaseOrder({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2664,7 +4760,10 @@ Update a NetSuite sales order record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateSalesOrder({});
+await corsair.netsuite.api.updateSalesOrder({
+	id: '123',
+	data: { memo: 'Priority shipping' },
+});
 ```
 
 **Input**
@@ -2673,6 +4772,8 @@ await corsair.netsuite.api.updateSalesOrder({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `data` | `object` | Yes | — |
+| `replace` | `boolean` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `property_name_validation` | `string` | No | — |
@@ -2690,7 +4791,32 @@ await corsair.netsuite.api.updateSalesOrder({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2706,7 +4832,10 @@ Update a NetSuite vendor record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateVendor({});
+await corsair.netsuite.api.updateVendor({
+	id: '123',
+	data: { comments: 'Primary supplier' },
+});
 ```
 
 **Input**
@@ -2715,6 +4844,8 @@ await corsair.netsuite.api.updateVendor({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `data` | `object` | Yes | — |
+| `replace` | `boolean` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `property_name_validation` | `string` | No | — |
@@ -2732,7 +4863,32 @@ await corsair.netsuite.api.updateVendor({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2748,7 +4904,10 @@ Update a NetSuite vendor bill record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateVendorBill({});
+await corsair.netsuite.api.updateVendorBill({
+	id: '123',
+	data: { memo: 'Approved for payment' },
+});
 ```
 
 **Input**
@@ -2776,7 +4935,32 @@ await corsair.netsuite.api.updateVendorBill({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2792,7 +4976,10 @@ Update a NetSuite vendor payment record
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.updateVendorPayment({});
+await corsair.netsuite.api.updateVendorPayment({
+	id: '123',
+	data: { memo: 'Payment processed' },
+});
 ```
 
 **Input**
@@ -2820,7 +5007,32 @@ await corsair.netsuite.api.updateVendorPayment({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---
@@ -2836,7 +5048,11 @@ Upsert a NetSuite record by external ID
 **Risk:** `write`
 
 ```ts
-await corsair.netsuite.api.upsertRecordByExternalId({});
+await corsair.netsuite.api.upsertRecordByExternalId({
+	record_type: 'customer',
+	external_id: 'EXT-CUST-100',
+	body: { companyName: 'Acme Global' },
+});
 ```
 
 **Input**
@@ -2846,6 +5062,7 @@ await corsair.netsuite.api.upsertRecordByExternalId({});
 | `body` | `object` | Yes | — |
 | `external_id` | `string` | Yes | — |
 | `record_type` | `string` | Yes | — |
+| `replace` | `boolean` | No | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -2859,7 +5076,32 @@ await corsair.netsuite.api.upsertRecordByExternalId({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `any[]` | No | — |
+| `location` | `string` | No | — |
+| `items` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
 
 
 ---

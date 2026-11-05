@@ -1,12 +1,45 @@
 import { z } from 'zod';
 
+const idSchema = z.union([z.string(), z.number()]);
+
+/**
+ * NetSuite responses vary by record type, so unknown fields pass through. The
+ * fields the plugin itself relies on are declared here to reject malformed
+ * values (for example a numeric `access_token`).
+ */
+const passthroughResponse = z
+	.object({
+		id: idSchema.optional(),
+		externalId: z.string().optional(),
+		links: z.array(z.unknown()).optional(),
+		location: z.string().optional(),
+		items: z.array(z.unknown()).optional(),
+		count: z.number().optional(),
+		offset: z.number().optional(),
+		totalResults: z.number().optional(),
+		hasMore: z.boolean().optional(),
+		access_token: z.string().optional(),
+		refresh_token: z.string().optional(),
+		id_token: z.string().optional(),
+		token_type: z.string().optional(),
+		expires_in: z.number().optional(),
+		expires_at: z.number().optional(),
+		scope: z.string().optional(),
+		authorization_url: z.string().optional(),
+		url: z.string().optional(),
+		client_assertion: z.string().optional(),
+		client_assertion_type: z.string().optional(),
+		token_url: z.string().optional(),
+	})
+	.passthrough();
+
 export const AsyncGetJobStatusInputSchema = z
 	.object({
 		jobId: z.union([z.string(), z.number()]),
 	})
 	.passthrough();
 
-export const AsyncGetJobStatusOutputSchema = z.object({}).passthrough();
+export const AsyncGetJobStatusOutputSchema = passthroughResponse;
 
 export const AsyncGetJobTaskInputSchema = z
 	.object({
@@ -15,7 +48,7 @@ export const AsyncGetJobTaskInputSchema = z
 	})
 	.passthrough();
 
-export const AsyncGetJobTaskOutputSchema = z.object({}).passthrough();
+export const AsyncGetJobTaskOutputSchema = passthroughResponse;
 
 export const AsyncGetJobTaskResultInputSchema = z
 	.object({
@@ -24,7 +57,7 @@ export const AsyncGetJobTaskResultInputSchema = z
 	})
 	.passthrough();
 
-export const AsyncGetJobTaskResultOutputSchema = z.object({}).passthrough();
+export const AsyncGetJobTaskResultOutputSchema = passthroughResponse;
 
 export const CreateCustomerInputSchema = z
 	.object({
@@ -37,7 +70,7 @@ export const CreateCustomerInputSchema = z
 	})
 	.passthrough();
 
-export const CreateCustomerOutputSchema = z.object({}).passthrough();
+export const CreateCustomerOutputSchema = passthroughResponse;
 
 export const CreateCustomerPaymentInputSchema = z
 	.object({
@@ -50,7 +83,7 @@ export const CreateCustomerPaymentInputSchema = z
 	})
 	.passthrough();
 
-export const CreateCustomerPaymentOutputSchema = z.object({}).passthrough();
+export const CreateCustomerPaymentOutputSchema = passthroughResponse;
 
 export const CreateEmployeeInputSchema = z
 	.object({
@@ -63,7 +96,7 @@ export const CreateEmployeeInputSchema = z
 	})
 	.passthrough();
 
-export const CreateEmployeeOutputSchema = z.object({}).passthrough();
+export const CreateEmployeeOutputSchema = passthroughResponse;
 
 export const CreateInvoiceInputSchema = z
 	.object({
@@ -76,7 +109,7 @@ export const CreateInvoiceInputSchema = z
 	})
 	.passthrough();
 
-export const CreateInvoiceOutputSchema = z.object({}).passthrough();
+export const CreateInvoiceOutputSchema = passthroughResponse;
 
 export const CreateItemInputSchema = z
 	.object({
@@ -90,7 +123,7 @@ export const CreateItemInputSchema = z
 	})
 	.passthrough();
 
-export const CreateItemOutputSchema = z.object({}).passthrough();
+export const CreateItemOutputSchema = passthroughResponse;
 
 export const CreateJournalEntryInputSchema = z
 	.object({
@@ -103,11 +136,11 @@ export const CreateJournalEntryInputSchema = z
 	})
 	.passthrough();
 
-export const CreateJournalEntryOutputSchema = z.object({}).passthrough();
+export const CreateJournalEntryOutputSchema = passthroughResponse;
 
 export const CreateJwtClientAssertionInputSchema = z
 	.object({
-		alg: z.string().optional(),
+		alg: z.enum(['PS256', 'RS256', 'ES256', 'HS256']).optional(),
 		aud: z.string().optional(),
 		exp: z.number().optional(),
 		iat: z.number().optional(),
@@ -118,7 +151,7 @@ export const CreateJwtClientAssertionInputSchema = z
 	})
 	.passthrough();
 
-export const CreateJwtClientAssertionOutputSchema = z.object({}).passthrough();
+export const CreateJwtClientAssertionOutputSchema = passthroughResponse;
 
 export const CreatePurchaseOrderInputSchema = z
 	.object({
@@ -136,7 +169,7 @@ export const CreatePurchaseOrderInputSchema = z
 	})
 	.passthrough();
 
-export const CreatePurchaseOrderOutputSchema = z.object({}).passthrough();
+export const CreatePurchaseOrderOutputSchema = passthroughResponse;
 
 export const CreateRecordInputSchema = z
 	.object({
@@ -150,7 +183,7 @@ export const CreateRecordInputSchema = z
 	})
 	.passthrough();
 
-export const CreateRecordOutputSchema = z.object({}).passthrough();
+export const CreateRecordOutputSchema = passthroughResponse;
 
 export const CreateSalesOrderInputSchema = z
 	.object({
@@ -170,7 +203,7 @@ export const CreateSalesOrderInputSchema = z
 	})
 	.passthrough();
 
-export const CreateSalesOrderOutputSchema = z.object({}).passthrough();
+export const CreateSalesOrderOutputSchema = passthroughResponse;
 
 export const CreateVendorInputSchema = z
 	.object({
@@ -183,7 +216,7 @@ export const CreateVendorInputSchema = z
 	})
 	.passthrough();
 
-export const CreateVendorOutputSchema = z.object({}).passthrough();
+export const CreateVendorOutputSchema = passthroughResponse;
 
 export const CreateVendorBillInputSchema = z
 	.object({
@@ -196,7 +229,7 @@ export const CreateVendorBillInputSchema = z
 	})
 	.passthrough();
 
-export const CreateVendorBillOutputSchema = z.object({}).passthrough();
+export const CreateVendorBillOutputSchema = passthroughResponse;
 
 export const DeleteCustomerInputSchema = z
 	.object({
@@ -204,7 +237,7 @@ export const DeleteCustomerInputSchema = z
 	})
 	.passthrough();
 
-export const DeleteCustomerOutputSchema = z.object({}).passthrough();
+export const DeleteCustomerOutputSchema = passthroughResponse;
 
 export const DeleteCustomerPaymentInputSchema = z
 	.object({
@@ -212,7 +245,7 @@ export const DeleteCustomerPaymentInputSchema = z
 	})
 	.passthrough();
 
-export const DeleteCustomerPaymentOutputSchema = z.object({}).passthrough();
+export const DeleteCustomerPaymentOutputSchema = passthroughResponse;
 
 export const DeleteEmployeeInputSchema = z
 	.object({
@@ -220,7 +253,7 @@ export const DeleteEmployeeInputSchema = z
 	})
 	.passthrough();
 
-export const DeleteEmployeeOutputSchema = z.object({}).passthrough();
+export const DeleteEmployeeOutputSchema = passthroughResponse;
 
 export const DeleteInvoiceInputSchema = z
 	.object({
@@ -228,7 +261,7 @@ export const DeleteInvoiceInputSchema = z
 	})
 	.passthrough();
 
-export const DeleteInvoiceOutputSchema = z.object({}).passthrough();
+export const DeleteInvoiceOutputSchema = passthroughResponse;
 
 export const DeleteItemInputSchema = z
 	.object({
@@ -237,7 +270,7 @@ export const DeleteItemInputSchema = z
 	})
 	.passthrough();
 
-export const DeleteItemOutputSchema = z.object({}).passthrough();
+export const DeleteItemOutputSchema = passthroughResponse;
 
 export const DeleteItemFulfillmentInputSchema = z
 	.object({
@@ -247,7 +280,7 @@ export const DeleteItemFulfillmentInputSchema = z
 	})
 	.passthrough();
 
-export const DeleteItemFulfillmentOutputSchema = z.object({}).passthrough();
+export const DeleteItemFulfillmentOutputSchema = passthroughResponse;
 
 export const DeleteItemReceiptInputSchema = z
 	.object({
@@ -255,7 +288,7 @@ export const DeleteItemReceiptInputSchema = z
 	})
 	.passthrough();
 
-export const DeleteItemReceiptOutputSchema = z.object({}).passthrough();
+export const DeleteItemReceiptOutputSchema = passthroughResponse;
 
 export const DeleteJournalEntryInputSchema = z
 	.object({
@@ -265,7 +298,7 @@ export const DeleteJournalEntryInputSchema = z
 	})
 	.passthrough();
 
-export const DeleteJournalEntryOutputSchema = z.object({}).passthrough();
+export const DeleteJournalEntryOutputSchema = passthroughResponse;
 
 export const DeletePurchaseOrderInputSchema = z
 	.object({
@@ -273,7 +306,7 @@ export const DeletePurchaseOrderInputSchema = z
 	})
 	.passthrough();
 
-export const DeletePurchaseOrderOutputSchema = z.object({}).passthrough();
+export const DeletePurchaseOrderOutputSchema = passthroughResponse;
 
 export const DeleteSalesOrderInputSchema = z
 	.object({
@@ -281,7 +314,7 @@ export const DeleteSalesOrderInputSchema = z
 	})
 	.passthrough();
 
-export const DeleteSalesOrderOutputSchema = z.object({}).passthrough();
+export const DeleteSalesOrderOutputSchema = passthroughResponse;
 
 export const DeleteVendorPaymentInputSchema = z
 	.object({
@@ -289,7 +322,7 @@ export const DeleteVendorPaymentInputSchema = z
 	})
 	.passthrough();
 
-export const DeleteVendorPaymentOutputSchema = z.object({}).passthrough();
+export const DeleteVendorPaymentOutputSchema = passthroughResponse;
 
 export const ExecuteDatasetInputSchema = z
 	.object({
@@ -299,7 +332,7 @@ export const ExecuteDatasetInputSchema = z
 	})
 	.passthrough();
 
-export const ExecuteDatasetOutputSchema = z.object({}).passthrough();
+export const ExecuteDatasetOutputSchema = passthroughResponse;
 
 export const GetCustomerInputSchema = z
 	.object({
@@ -310,7 +343,7 @@ export const GetCustomerInputSchema = z
 	})
 	.passthrough();
 
-export const GetCustomerOutputSchema = z.object({}).passthrough();
+export const GetCustomerOutputSchema = passthroughResponse;
 
 export const GetCustomerPaymentInputSchema = z
 	.object({
@@ -321,7 +354,7 @@ export const GetCustomerPaymentInputSchema = z
 	})
 	.passthrough();
 
-export const GetCustomerPaymentOutputSchema = z.object({}).passthrough();
+export const GetCustomerPaymentOutputSchema = passthroughResponse;
 
 export const GetDatacenterUrlsInputSchema = z
 	.object({
@@ -330,7 +363,7 @@ export const GetDatacenterUrlsInputSchema = z
 	})
 	.passthrough();
 
-export const GetDatacenterUrlsOutputSchema = z.object({}).passthrough();
+export const GetDatacenterUrlsOutputSchema = passthroughResponse;
 
 export const GetEmployeeInputSchema = z
 	.object({
@@ -341,11 +374,11 @@ export const GetEmployeeInputSchema = z
 	})
 	.passthrough();
 
-export const GetEmployeeOutputSchema = z.object({}).passthrough();
+export const GetEmployeeOutputSchema = passthroughResponse;
 
 export const GetGovernanceLimitsInputSchema = z.object({}).passthrough();
 
-export const GetGovernanceLimitsOutputSchema = z.object({}).passthrough();
+export const GetGovernanceLimitsOutputSchema = passthroughResponse;
 
 export const GetInvoiceInputSchema = z
 	.object({
@@ -356,7 +389,7 @@ export const GetInvoiceInputSchema = z
 	})
 	.passthrough();
 
-export const GetInvoiceOutputSchema = z.object({}).passthrough();
+export const GetInvoiceOutputSchema = passthroughResponse;
 
 export const GetItemInputSchema = z
 	.object({
@@ -367,7 +400,7 @@ export const GetItemInputSchema = z
 	})
 	.passthrough();
 
-export const GetItemOutputSchema = z.object({}).passthrough();
+export const GetItemOutputSchema = passthroughResponse;
 
 export const GetItemFulfillmentInputSchema = z
 	.object({
@@ -378,7 +411,7 @@ export const GetItemFulfillmentInputSchema = z
 	})
 	.passthrough();
 
-export const GetItemFulfillmentOutputSchema = z.object({}).passthrough();
+export const GetItemFulfillmentOutputSchema = passthroughResponse;
 
 export const GetItemReceiptInputSchema = z
 	.object({
@@ -389,7 +422,7 @@ export const GetItemReceiptInputSchema = z
 	})
 	.passthrough();
 
-export const GetItemReceiptOutputSchema = z.object({}).passthrough();
+export const GetItemReceiptOutputSchema = passthroughResponse;
 
 export const GetJournalEntryInputSchema = z
 	.object({
@@ -400,7 +433,7 @@ export const GetJournalEntryInputSchema = z
 	})
 	.passthrough();
 
-export const GetJournalEntryOutputSchema = z.object({}).passthrough();
+export const GetJournalEntryOutputSchema = passthroughResponse;
 
 export const GetPurchaseOrderInputSchema = z
 	.object({
@@ -411,7 +444,7 @@ export const GetPurchaseOrderInputSchema = z
 	})
 	.passthrough();
 
-export const GetPurchaseOrderOutputSchema = z.object({}).passthrough();
+export const GetPurchaseOrderOutputSchema = passthroughResponse;
 
 export const GetRecordMetadataInputSchema = z
 	.object({
@@ -420,7 +453,7 @@ export const GetRecordMetadataInputSchema = z
 	})
 	.passthrough();
 
-export const GetRecordMetadataOutputSchema = z.object({}).passthrough();
+export const GetRecordMetadataOutputSchema = passthroughResponse;
 
 export const GetReferenceSelectFieldInputSchema = z
 	.object({
@@ -432,7 +465,7 @@ export const GetReferenceSelectFieldInputSchema = z
 	})
 	.passthrough();
 
-export const GetReferenceSelectFieldOutputSchema = z.object({}).passthrough();
+export const GetReferenceSelectFieldOutputSchema = passthroughResponse;
 
 export const GetSalesOrderInputSchema = z
 	.object({
@@ -443,11 +476,11 @@ export const GetSalesOrderInputSchema = z
 	})
 	.passthrough();
 
-export const GetSalesOrderOutputSchema = z.object({}).passthrough();
+export const GetSalesOrderOutputSchema = passthroughResponse;
 
 export const GetServerTimeInputSchema = z.object({}).passthrough();
 
-export const GetServerTimeOutputSchema = z.object({}).passthrough();
+export const GetServerTimeOutputSchema = passthroughResponse;
 
 export const GetSublistCollectionInputSchema = z
 	.object({
@@ -459,7 +492,7 @@ export const GetSublistCollectionInputSchema = z
 	})
 	.passthrough();
 
-export const GetSublistCollectionOutputSchema = z.object({}).passthrough();
+export const GetSublistCollectionOutputSchema = passthroughResponse;
 
 export const GetSublistLineInputSchema = z
 	.object({
@@ -471,7 +504,7 @@ export const GetSublistLineInputSchema = z
 	})
 	.passthrough();
 
-export const GetSublistLineOutputSchema = z.object({}).passthrough();
+export const GetSublistLineOutputSchema = passthroughResponse;
 
 export const GetSubrecordInputSchema = z
 	.object({
@@ -481,7 +514,7 @@ export const GetSubrecordInputSchema = z
 	})
 	.passthrough();
 
-export const GetSubrecordOutputSchema = z.object({}).passthrough();
+export const GetSubrecordOutputSchema = passthroughResponse;
 
 export const GetVendorInputSchema = z
 	.object({
@@ -492,7 +525,7 @@ export const GetVendorInputSchema = z
 	})
 	.passthrough();
 
-export const GetVendorOutputSchema = z.object({}).passthrough();
+export const GetVendorOutputSchema = passthroughResponse;
 
 export const GetVendorBillInputSchema = z
 	.object({
@@ -503,7 +536,7 @@ export const GetVendorBillInputSchema = z
 	})
 	.passthrough();
 
-export const GetVendorBillOutputSchema = z.object({}).passthrough();
+export const GetVendorBillOutputSchema = passthroughResponse;
 
 export const GetVendorPaymentInputSchema = z
 	.object({
@@ -514,7 +547,7 @@ export const GetVendorPaymentInputSchema = z
 	})
 	.passthrough();
 
-export const GetVendorPaymentOutputSchema = z.object({}).passthrough();
+export const GetVendorPaymentOutputSchema = passthroughResponse;
 
 export const ListCustomerPaymentsInputSchema = z
 	.object({
@@ -524,7 +557,7 @@ export const ListCustomerPaymentsInputSchema = z
 	})
 	.passthrough();
 
-export const ListCustomerPaymentsOutputSchema = z.object({}).passthrough();
+export const ListCustomerPaymentsOutputSchema = passthroughResponse;
 
 export const ListDatasetsInputSchema = z
 	.object({
@@ -533,7 +566,7 @@ export const ListDatasetsInputSchema = z
 	})
 	.passthrough();
 
-export const ListDatasetsOutputSchema = z.object({}).passthrough();
+export const ListDatasetsOutputSchema = passthroughResponse;
 
 export const ListEmployeesInputSchema = z
 	.object({
@@ -543,7 +576,7 @@ export const ListEmployeesInputSchema = z
 	})
 	.passthrough();
 
-export const ListEmployeesOutputSchema = z.object({}).passthrough();
+export const ListEmployeesOutputSchema = passthroughResponse;
 
 export const ListIntegrationsInputSchema = z
 	.object({
@@ -552,7 +585,7 @@ export const ListIntegrationsInputSchema = z
 	})
 	.passthrough();
 
-export const ListIntegrationsOutputSchema = z.object({}).passthrough();
+export const ListIntegrationsOutputSchema = passthroughResponse;
 
 export const ListInvoicesInputSchema = z
 	.object({
@@ -562,7 +595,7 @@ export const ListInvoicesInputSchema = z
 	})
 	.passthrough();
 
-export const ListInvoicesOutputSchema = z.object({}).passthrough();
+export const ListInvoicesOutputSchema = passthroughResponse;
 
 export const ListItemFulfillmentsInputSchema = z
 	.object({
@@ -572,7 +605,7 @@ export const ListItemFulfillmentsInputSchema = z
 	})
 	.passthrough();
 
-export const ListItemFulfillmentsOutputSchema = z.object({}).passthrough();
+export const ListItemFulfillmentsOutputSchema = passthroughResponse;
 
 export const ListItemReceiptsInputSchema = z
 	.object({
@@ -582,7 +615,7 @@ export const ListItemReceiptsInputSchema = z
 	})
 	.passthrough();
 
-export const ListItemReceiptsOutputSchema = z.object({}).passthrough();
+export const ListItemReceiptsOutputSchema = passthroughResponse;
 
 export const ListJournalEntriesInputSchema = z
 	.object({
@@ -592,7 +625,7 @@ export const ListJournalEntriesInputSchema = z
 	})
 	.passthrough();
 
-export const ListJournalEntriesOutputSchema = z.object({}).passthrough();
+export const ListJournalEntriesOutputSchema = passthroughResponse;
 
 export const ListMetadataCatalogInputSchema = z
 	.object({
@@ -601,7 +634,7 @@ export const ListMetadataCatalogInputSchema = z
 	})
 	.passthrough();
 
-export const ListMetadataCatalogOutputSchema = z.object({}).passthrough();
+export const ListMetadataCatalogOutputSchema = passthroughResponse;
 
 export const ListPurchaseOrdersInputSchema = z
 	.object({
@@ -611,7 +644,7 @@ export const ListPurchaseOrdersInputSchema = z
 	})
 	.passthrough();
 
-export const ListPurchaseOrdersOutputSchema = z.object({}).passthrough();
+export const ListPurchaseOrdersOutputSchema = passthroughResponse;
 
 export const ListRecordsInputSchema = z
 	.object({
@@ -622,7 +655,7 @@ export const ListRecordsInputSchema = z
 	})
 	.passthrough();
 
-export const ListRecordsOutputSchema = z.object({}).passthrough();
+export const ListRecordsOutputSchema = passthroughResponse;
 
 export const ListSalesOrdersInputSchema = z
 	.object({
@@ -632,7 +665,7 @@ export const ListSalesOrdersInputSchema = z
 	})
 	.passthrough();
 
-export const ListSalesOrdersOutputSchema = z.object({}).passthrough();
+export const ListSalesOrdersOutputSchema = passthroughResponse;
 
 export const ListVendorPaymentsInputSchema = z
 	.object({
@@ -642,7 +675,7 @@ export const ListVendorPaymentsInputSchema = z
 	})
 	.passthrough();
 
-export const ListVendorPaymentsOutputSchema = z.object({}).passthrough();
+export const ListVendorPaymentsOutputSchema = passthroughResponse;
 
 export const Oauth2AuthorizeAccountDomainInputSchema = z
 	.object({
@@ -657,9 +690,7 @@ export const Oauth2AuthorizeAccountDomainInputSchema = z
 	})
 	.passthrough();
 
-export const Oauth2AuthorizeAccountDomainOutputSchema = z
-	.object({})
-	.passthrough();
+export const Oauth2AuthorizeAccountDomainOutputSchema = passthroughResponse;
 
 export const Oauth2AuthorizeSystemDomainInputSchema = z
 	.object({
@@ -675,13 +706,11 @@ export const Oauth2AuthorizeSystemDomainInputSchema = z
 	})
 	.passthrough();
 
-export const Oauth2AuthorizeSystemDomainOutputSchema = z
-	.object({})
-	.passthrough();
+export const Oauth2AuthorizeSystemDomainOutputSchema = passthroughResponse;
 
 export const Oauth2GetJwksKeysInputSchema = z.object({}).passthrough();
 
-export const Oauth2GetJwksKeysOutputSchema = z.object({}).passthrough();
+export const Oauth2GetJwksKeysOutputSchema = passthroughResponse;
 
 export const Oauth2LogoutInputSchema = z
 	.object({
@@ -689,7 +718,7 @@ export const Oauth2LogoutInputSchema = z
 	})
 	.passthrough();
 
-export const Oauth2LogoutOutputSchema = z.object({}).passthrough();
+export const Oauth2LogoutOutputSchema = passthroughResponse;
 
 export const Oauth2RevokeRefreshTokenInputSchema = z
 	.object({
@@ -698,7 +727,7 @@ export const Oauth2RevokeRefreshTokenInputSchema = z
 	})
 	.passthrough();
 
-export const Oauth2RevokeRefreshTokenOutputSchema = z.object({}).passthrough();
+export const Oauth2RevokeRefreshTokenOutputSchema = passthroughResponse;
 
 export const Oauth2TokenAuthorizationCodeInputSchema = z
 	.object({
@@ -710,9 +739,7 @@ export const Oauth2TokenAuthorizationCodeInputSchema = z
 	})
 	.passthrough();
 
-export const Oauth2TokenAuthorizationCodeOutputSchema = z
-	.object({})
-	.passthrough();
+export const Oauth2TokenAuthorizationCodeOutputSchema = passthroughResponse;
 
 export const Oauth2TokenClientCredentialsInputSchema = z
 	.object({
@@ -722,9 +749,7 @@ export const Oauth2TokenClientCredentialsInputSchema = z
 	})
 	.passthrough();
 
-export const Oauth2TokenClientCredentialsOutputSchema = z
-	.object({})
-	.passthrough();
+export const Oauth2TokenClientCredentialsOutputSchema = passthroughResponse;
 
 export const Oauth2TokenRefreshInputSchema = z
 	.object({
@@ -734,7 +759,7 @@ export const Oauth2TokenRefreshInputSchema = z
 	})
 	.passthrough();
 
-export const Oauth2TokenRefreshOutputSchema = z.object({}).passthrough();
+export const Oauth2TokenRefreshOutputSchema = passthroughResponse;
 
 export const RunSuiteqlQueryInputSchema = z
 	.object({
@@ -744,7 +769,7 @@ export const RunSuiteqlQueryInputSchema = z
 	})
 	.passthrough();
 
-export const RunSuiteqlQueryOutputSchema = z.object({}).passthrough();
+export const RunSuiteqlQueryOutputSchema = passthroughResponse;
 
 export const TransformRecordInputSchema = z
 	.object({
@@ -760,7 +785,7 @@ export const TransformRecordInputSchema = z
 	})
 	.passthrough();
 
-export const TransformRecordOutputSchema = z.object({}).passthrough();
+export const TransformRecordOutputSchema = passthroughResponse;
 
 export const UpdateCustomerInputSchema = z
 	.object({
@@ -775,7 +800,7 @@ export const UpdateCustomerInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateCustomerOutputSchema = z.object({}).passthrough();
+export const UpdateCustomerOutputSchema = passthroughResponse;
 
 export const UpdateCustomerPaymentInputSchema = z
 	.object({
@@ -790,7 +815,7 @@ export const UpdateCustomerPaymentInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateCustomerPaymentOutputSchema = z.object({}).passthrough();
+export const UpdateCustomerPaymentOutputSchema = passthroughResponse;
 
 export const UpdateEmployeeInputSchema = z
 	.object({
@@ -805,7 +830,7 @@ export const UpdateEmployeeInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateEmployeeOutputSchema = z.object({}).passthrough();
+export const UpdateEmployeeOutputSchema = passthroughResponse;
 
 export const UpdateInvoiceInputSchema = z
 	.object({
@@ -820,7 +845,7 @@ export const UpdateInvoiceInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateInvoiceOutputSchema = z.object({}).passthrough();
+export const UpdateInvoiceOutputSchema = passthroughResponse;
 
 export const UpdateItemInputSchema = z
 	.object({
@@ -836,7 +861,7 @@ export const UpdateItemInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateItemOutputSchema = z.object({}).passthrough();
+export const UpdateItemOutputSchema = passthroughResponse;
 
 export const UpdateItemFulfillmentInputSchema = z
 	.object({
@@ -851,7 +876,7 @@ export const UpdateItemFulfillmentInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateItemFulfillmentOutputSchema = z.object({}).passthrough();
+export const UpdateItemFulfillmentOutputSchema = passthroughResponse;
 
 export const UpdateItemReceiptInputSchema = z
 	.object({
@@ -866,7 +891,7 @@ export const UpdateItemReceiptInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateItemReceiptOutputSchema = z.object({}).passthrough();
+export const UpdateItemReceiptOutputSchema = passthroughResponse;
 
 export const UpdateJournalEntryInputSchema = z
 	.object({
@@ -881,7 +906,7 @@ export const UpdateJournalEntryInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateJournalEntryOutputSchema = z.object({}).passthrough();
+export const UpdateJournalEntryOutputSchema = passthroughResponse;
 
 export const UpdatePurchaseOrderInputSchema = z
 	.object({
@@ -896,7 +921,7 @@ export const UpdatePurchaseOrderInputSchema = z
 	})
 	.passthrough();
 
-export const UpdatePurchaseOrderOutputSchema = z.object({}).passthrough();
+export const UpdatePurchaseOrderOutputSchema = passthroughResponse;
 
 export const UpdateSalesOrderInputSchema = z
 	.object({
@@ -911,7 +936,7 @@ export const UpdateSalesOrderInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateSalesOrderOutputSchema = z.object({}).passthrough();
+export const UpdateSalesOrderOutputSchema = passthroughResponse;
 
 export const UpdateVendorInputSchema = z
 	.object({
@@ -926,7 +951,7 @@ export const UpdateVendorInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateVendorOutputSchema = z.object({}).passthrough();
+export const UpdateVendorOutputSchema = passthroughResponse;
 
 export const UpdateVendorBillInputSchema = z
 	.object({
@@ -941,7 +966,7 @@ export const UpdateVendorBillInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateVendorBillOutputSchema = z.object({}).passthrough();
+export const UpdateVendorBillOutputSchema = passthroughResponse;
 
 export const UpdateVendorPaymentInputSchema = z
 	.object({
@@ -956,7 +981,7 @@ export const UpdateVendorPaymentInputSchema = z
 	})
 	.passthrough();
 
-export const UpdateVendorPaymentOutputSchema = z.object({}).passthrough();
+export const UpdateVendorPaymentOutputSchema = passthroughResponse;
 
 export const UpsertRecordByExternalIdInputSchema = z
 	.object({
@@ -967,7 +992,7 @@ export const UpsertRecordByExternalIdInputSchema = z
 	})
 	.passthrough();
 
-export const UpsertRecordByExternalIdOutputSchema = z.object({}).passthrough();
+export const UpsertRecordByExternalIdOutputSchema = passthroughResponse;
 
 export type NetSuiteEndpointInputs = {
 	asyncGetJobStatus: z.infer<typeof AsyncGetJobStatusInputSchema>;

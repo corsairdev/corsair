@@ -50,6 +50,8 @@ function camelToSnake(key: string): string {
 	return key.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 }
 
+// Endpoint input shapes vary across 85 endpoints; accept a generic record
+// and return unknown to support snake_case/camelCase property lookups safely.
 function read(input: Record<string, unknown>, key: string): unknown {
 	if (input[key] !== undefined) return input[key];
 	const camel = snakeToCamel(key);
@@ -59,22 +61,18 @@ function read(input: Record<string, unknown>, key: string): unknown {
 	return undefined;
 }
 
-async function resolveAccountId(
-	ctx: NetSuiteContext,
-	input: Record<string, unknown>,
-): Promise<string> {
+async function resolveAccountId(ctx: NetSuiteContext): Promise<string> {
 	const options = ctx.options as {
 		accountId?: string;
 		account?: string;
 	};
-	const direct =
-		(typeof read(input, 'account_id') === 'string'
-			? (read(input, 'account_id') as string)
-			: undefined) ??
-		options.accountId ??
-		options.account;
+	// Never read the account from endpoint input: an untrusted caller could
+	// point the stored bearer token at a host they control.
+	const direct = options.accountId ?? options.account;
 	if (direct) return direct;
 
+	// ctx.keys is generic across Corsair plugins; narrow here to the optional
+	// account identifier getter functions.
 	const keys = ctx.keys as unknown as Record<
 		string,
 		(() => Promise<string | null | undefined>) | undefined
@@ -98,6 +96,38 @@ function applyDefaults(
 		if (read(out, key) === undefined) out[key] = value;
 	}
 	return out;
+}
+
+async function applyRefreshDefaults(
+	ctx: NetSuiteContext,
+	input: Record<string, unknown>,
+): Promise<void> {
+	const options = ctx.options as {
+		clientId?: string;
+		clientSecret?: string;
+	};
+	const keys = ctx.keys as {
+		get_refresh_token?: () => Promise<string | null | undefined>;
+	};
+	const fill = (field: string, value: string | null | undefined) => {
+		if (value && read(input, field) === undefined) input[field] = value;
+	};
+	fill('client_id', options.clientId);
+	fill('client_secret', options.clientSecret);
+	fill('refresh_token', await keys.get_refresh_token?.());
+
+	for (const [field, label] of [
+		['client_id', 'client_id'],
+		['client_secret', 'client_secret'],
+		['refresh_token', 'refresh_token'],
+	] as const) {
+		const value = read(input, field);
+		if (typeof value !== 'string' || value.length === 0) {
+			throw new Error(
+				`[auth-missing:netsuite]: oauth2TokenRefresh requires ${label}. Pass it in the input or configure the NetSuite plugin credentials.`,
+			);
+		}
+	}
 }
 
 function buildPath(
@@ -219,7 +249,23 @@ function base64Url(value: string | Buffer): string {
 	return Buffer.from(value).toString('base64url');
 }
 
+type JwtAlgorithm = 'PS256' | 'RS256' | 'ES256' | 'HS256';
+
+const JWT_ALGORITHMS = new Set<JwtAlgorithm>([
+	'PS256',
+	'RS256',
+	'ES256',
+	'HS256',
+]);
+
+function isJwtAlgorithm(value: string): value is JwtAlgorithm {
+	return JWT_ALGORITHMS.has(value as JwtAlgorithm);
+}
+
 function signJwt(alg: string, privateKey: string, data: string): string {
+	if (!isJwtAlgorithm(alg)) {
+		throw new Error(`[netsuite] unsupported JWT algorithm ${alg}`);
+	}
 	if (alg === 'HS256') {
 		return createHmac('sha256', privateKey).update(data).digest('base64url');
 	}
@@ -241,6 +287,8 @@ function signJwt(alg: string, privateKey: string, data: string): string {
 	);
 }
 
+// NetSuite response payloads have heterogeneous structure; accept unknown
+// to recursively search for href links in any response tree safely.
 function firstHref(value: unknown, depth = 0): string | undefined {
 	if (!value || depth > 4) return undefined;
 	if (Array.isArray(value)) {
@@ -283,6 +331,160 @@ function toRequestPath(href: string): string {
 	if (path.startsWith('/services/rest'))
 		path = path.slice('/services/rest'.length);
 	return path || '/';
+}
+
+type NetSuiteEntityName =
+	| 'customers'
+	| 'customerPayments'
+	| 'employees'
+	| 'invoices'
+	| 'items'
+	| 'itemFulfillments'
+	| 'itemReceipts'
+	| 'journalEntries'
+	| 'purchaseOrders'
+	| 'salesOrders'
+	| 'vendors'
+	| 'vendorBills'
+	| 'vendorPayments';
+
+const RECORD_TYPE_ENTITIES: Record<string, NetSuiteEntityName> = {
+	customer: 'customers',
+	customerPayment: 'customerPayments',
+	employee: 'employees',
+	invoice: 'invoices',
+	item: 'items',
+	itemFulfillment: 'itemFulfillments',
+	itemReceipt: 'itemReceipts',
+	journalEntry: 'journalEntries',
+	purchaseOrder: 'purchaseOrders',
+	salesOrder: 'salesOrders',
+	vendor: 'vendors',
+	vendorBill: 'vendorBills',
+	vendorPayment: 'vendorPayments',
+};
+
+// Type guard to determine if an arbitrary value is an object record.
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+// Accepts unknown recordType input to safely validate string type and non-empty bounds.
+function entityForRecordType(
+	recordType: unknown,
+): NetSuiteEntityName | undefined {
+	if (typeof recordType !== 'string' || recordType.length === 0)
+		return undefined;
+	if (RECORD_TYPE_ENTITIES[recordType]) return RECORD_TYPE_ENTITIES[recordType];
+	// Every NetSuite item subtype (inventoryItem, assemblyItem, ...) is stored
+	// in the same `items` entity.
+	if (recordType.endsWith('Item')) return 'items';
+	return undefined;
+}
+
+function entityForSpec(
+	spec: RouteSpec,
+	input: Record<string, unknown>,
+): NetSuiteEntityName | undefined {
+	// Only top-level record routes map to entities. Sublist and subrecord
+	// responses belong to their parent record.
+	if (spec.path.startsWith('/record/v1/') && spec.path.split('/').length <= 5) {
+		const resource = spec.path.split('/')[3];
+		if (resource?.startsWith('{')) {
+			const field = resource.slice(1, -1);
+			return entityForRecordType(read(input, field));
+		}
+		if (resource) return entityForRecordType(resource);
+	}
+	if (spec.path.includes('!transform/')) {
+		return entityForRecordType(read(input, 'target_record_type'));
+	}
+	return undefined;
+}
+
+// Accepts unknown response to extract item arrays from either collection envelopes or direct records.
+function cacheItems(response: unknown): Record<string, unknown>[] {
+	if (Array.isArray(response)) return response.filter(isRecord);
+	if (!isRecord(response)) return [];
+	if (Array.isArray(response.items)) return response.items.filter(isRecord);
+	if (response.id !== undefined) return [response];
+	return [];
+}
+
+function idFromLocation(location: string): string | undefined {
+	const match = location.match(/\/([^/?#]+)\/?(?:[?#].*)?$/);
+	if (!match?.[1]) return undefined;
+	let id: string;
+	try {
+		id = decodeURIComponent(match[1]);
+	} catch {
+		id = match[1];
+	}
+	return id.startsWith('eid:') ? undefined : id;
+}
+
+// Accepts unknown response to sync heterogeneous entity record payloads into local tables.
+async function syncEntityCache(
+	ctx: NetSuiteContext,
+	spec: RouteSpec,
+	input: Record<string, unknown>,
+	response: unknown,
+): Promise<void> {
+	const entity = entityForSpec(spec, input);
+	if (!entity) return;
+
+	// ctx.db contains dynamically generated entity tables from plugin schema;
+	// cast through unknown to access optional upsertByEntityId and deleteByEntityId methods.
+	const db = ctx.db as unknown as
+		| Record<
+				string,
+				| {
+						upsertByEntityId?: (
+							entityId: string,
+							data: Record<string, unknown>,
+						) => Promise<unknown>;
+						deleteByEntityId?: (entityId: string) => Promise<unknown>;
+				  }
+				| undefined
+		  >
+		| undefined;
+	const client = db?.[entity];
+	if (!client) return;
+
+	try {
+		if (spec.method === 'DELETE') {
+			const id = read(input, 'id');
+			if (typeof id === 'string' || typeof id === 'number') {
+				await client.deleteByEntityId?.(String(id));
+			}
+			return;
+		}
+		if (!client.upsertByEntityId) return;
+
+		const location = isRecord(response) ? response.location : undefined;
+		const items = cacheItems(response);
+		if (items.length > 0) {
+			for (const item of items) {
+				const id = item.id ?? item.entityId;
+				if (typeof id !== 'string' && typeof id !== 'number') continue;
+				await client.upsertByEntityId(String(id), item);
+			}
+			return;
+		}
+
+		if (typeof location === 'string') {
+			const id = idFromLocation(location);
+			if (!id) return;
+			const body = buildBody(input, spec);
+			await client.upsertByEntityId(id, {
+				...(body ?? {}),
+				id,
+				location,
+			});
+		}
+	} catch (error) {
+		console.warn(`[netsuite] failed to sync ${entity} cache:`, error);
+	}
 }
 
 async function customEndpoint(
@@ -415,12 +617,12 @@ export async function runNetSuite<K extends NetSuiteSpecKey>(
 	input: NetSuiteEndpointInputs[K],
 	spec: RouteSpec,
 ): Promise<NetSuiteEndpointOutputs[K]> {
-	const accountId = await resolveAccountId(
-		ctx,
-		input as Record<string, unknown>,
-	);
+	const accountId = await resolveAccountId(ctx);
 	const resolvedInput = applyDefaults(input as Record<string, unknown>, spec);
-	const response = spec.custom
+	if (event === 'oauth2TokenRefresh') {
+		await applyRefreshDefaults(ctx, resolvedInput);
+	}
+	const raw = spec.custom
 		? await customEndpoint(
 				event as NetSuiteSpecKey,
 				resolvedInput,
@@ -428,37 +630,50 @@ export async function runNetSuite<K extends NetSuiteSpecKey>(
 				spec,
 				accountId,
 			)
-		: await makeNetSuiteRequest<Record<string, unknown>>(spec.path, ctx.key, {
-				method: spec.method,
-				accountId,
-				path: buildPath(resolvedInput, spec),
-				query: buildQuery(resolvedInput, spec),
-				headers: buildHeaders(resolvedInput, spec),
-				body: buildBody(resolvedInput, spec),
-				formBody: buildForm(resolvedInput, spec),
-				basicAuth: spec.basicAuth
-					? [
-							String(read(resolvedInput, spec.basicAuth[0]) ?? ''),
-							String(read(resolvedInput, spec.basicAuth[1]) ?? ''),
-						]
-					: undefined,
-				base: spec.base,
-				auth: spec.auth,
-				accept: spec.acceptFromInput
-					? (String(
-							read(resolvedInput, 'accept') ??
-								spec.accept ??
-								'application/json',
-						) as string)
-					: spec.accept,
-			});
+		: // Transport returns either parsed object records or raw text (when responseHeader or parseJsonText is requested).
+			await makeNetSuiteRequest<Record<string, unknown> | string>(
+				spec.path,
+				ctx.key,
+				{
+					method: spec.method,
+					accountId,
+					path: buildPath(resolvedInput, spec),
+					query: buildQuery(resolvedInput, spec),
+					headers: buildHeaders(resolvedInput, spec),
+					body: buildBody(resolvedInput, spec),
+					formBody: buildForm(resolvedInput, spec),
+					basicAuth: spec.basicAuth
+						? [
+								String(read(resolvedInput, spec.basicAuth[0]) ?? ''),
+								String(read(resolvedInput, spec.basicAuth[1]) ?? ''),
+							]
+						: undefined,
+					base: spec.base,
+					auth: spec.auth,
+					accept: spec.acceptFromInput
+						? (String(
+								read(resolvedInput, 'accept') ??
+									spec.accept ??
+									'application/json',
+							) as string)
+						: spec.accept,
+					responseHeader: spec.responseHeader,
+					parseJsonText: spec.parseJsonText,
+				},
+			);
+	// Cast through Record<string, unknown> because NetSuite API return shapes vary per endpoint and schema.
+	const response =
+		spec.responseHeader && typeof raw === 'string'
+			? { location: raw }
+			: ((raw ?? {}) as Record<string, unknown>);
+	await syncEntityCache(ctx, spec, resolvedInput, response);
 	await logEventFromContext(
 		ctx,
 		`netsuite.${event}`,
 		redactInput(resolvedInput),
 		'completed',
 	);
-	return (response ?? {}) as NetSuiteEndpointOutputs[K];
+	return response as NetSuiteEndpointOutputs[K];
 }
 
 export type NetSuiteEndpointHandler = <K extends NetSuiteSpecKey>(

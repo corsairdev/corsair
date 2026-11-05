@@ -20,3 +20,260 @@ examples:
       body:
         entityId: "ACME"
         companyName: "Acme Inc."
+apiExamples:
+  asyncGetJobStatus:
+    jobId: "123"
+  asyncGetJobTask:
+    jobId: "123"
+    taskId: "456"
+  asyncGetJobTaskResult:
+    jobId: "123"
+    taskId: "456"
+  createCustomer:
+    body:
+      entityId: "ACME"
+      companyName: "Acme Inc."
+  createCustomerPayment:
+    body:
+      customer:
+        id: "123"
+      payment: 100
+  createEmployee:
+    body:
+      firstName: "Jane"
+      lastName: "Doe"
+  createInvoice:
+    body:
+      entity:
+        id: "123"
+  createItem:
+    record_type: inventoryItem
+    body:
+      itemId: "WIDGET-01"
+      displayName: "Acme Widget"
+  createJournalEntry:
+    body:
+      memo: "Opening balance"
+  createJwtClientAssertion:
+    aud: "https://tstdrv123.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token"
+    certificate_id: cert-1
+    private_key_pem: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC...\n-----END PRIVATE KEY-----"
+  createPurchaseOrder:
+    entity:
+      id: "123"
+    item:
+      items:
+        - item:
+            id: "1"
+          quantity: 10
+  createRecord:
+    record_type: customer
+    body:
+      entityId: "CUST-01"
+      companyName: "Customer One"
+  createSalesOrder:
+    entity:
+      id: "123"
+    item:
+      items:
+        - item:
+            id: "1"
+          quantity: 5
+  createVendor:
+    body:
+      entityId: "SUPPLIER-1"
+      companyName: "Global Supplier"
+  createVendorBill:
+    body:
+      entity:
+        id: "123"
+  deleteCustomer:
+    id: "123"
+  deleteCustomerPayment:
+    id: "123"
+  deleteEmployee:
+    id: "123"
+  deleteInvoice:
+    id: "123"
+  deleteItem:
+    item_record_type: inventoryItem
+    id: "123"
+  deleteItemFulfillment:
+    id: "123"
+  deleteItemReceipt:
+    id: "123"
+  deleteJournalEntry:
+    id: "123"
+  deletePurchaseOrder:
+    id: "123"
+  deleteSalesOrder:
+    id: "123"
+  deleteVendorPayment:
+    id: "123"
+  executeDataset:
+    dataset_id: "custdataset_sales"
+  getCustomer:
+    id: "123"
+  getCustomerPayment:
+    id: "123"
+  getDatacenterUrls:
+    account: "TSTDRV123"
+  getEmployee:
+    id: "123"
+  getGovernanceLimits: {}
+  getInvoice:
+    id: "123"
+  getItem:
+    itemRecordType: inventoryItem
+    id: "123"
+  getItemFulfillment:
+    id: "123"
+  getItemReceipt:
+    id: "123"
+  getJournalEntry:
+    id: "123"
+  getPurchaseOrder:
+    id: "123"
+  getRecordMetadata:
+    record_type: customer
+  getReferenceSelectField:
+    record_type: customer
+    select_field: subsidiary
+    id: "123"
+  getSalesOrder:
+    id: "123"
+  getServerTime: {}
+  getSublistCollection:
+    record_type: customer
+    id: "123"
+    sublist_name: addressBook
+  getSublistLine:
+    record_type: customer
+    id: "123"
+    sublist_name: addressBook
+    line_id: "1"
+  getSubrecord:
+    record_type: customer
+    id: "123"
+    subrecord_name: address
+  getVendor:
+    id: "123"
+  getVendorBill:
+    id: "123"
+  getVendorPayment:
+    id: "123"
+  listCustomerPayments:
+    limit: 20
+  listDatasets:
+    limit: 20
+  listEmployees:
+    limit: 20
+  listIntegrations:
+    limit: 20
+  listInvoices:
+    limit: 20
+  listItemFulfillments:
+    limit: 20
+  listItemReceipts:
+    limit: 20
+  listJournalEntries:
+    limit: 20
+  listMetadataCatalog: {}
+  listPurchaseOrders:
+    limit: 20
+  listRecords:
+    recordType: customer
+    limit: 20
+  listSalesOrders:
+    limit: 20
+  listVendorPayments:
+    limit: 20
+  oauth2AuthorizeAccountDomain:
+    client_id: "client-id"
+    redirect_uri: "https://example.com/callback"
+    scope: "rest_webservices"
+  oauth2AuthorizeSystemDomain:
+    client_id: "client-id"
+    redirect_uri: "https://example.com/callback"
+    scope: "rest_webservices"
+  oauth2GetJwksKeys: {}
+  oauth2Logout:
+    id_token_hint: "id-token-xxx"
+  oauth2RevokeRefreshToken:
+    token: "refresh-token-xxx"
+    client_id: "client-id"
+  oauth2TokenAuthorizationCode:
+    code: "auth-code"
+    client_id: "client-id"
+    redirect_uri: "https://example.com/callback"
+    code_verifier: "verifier"
+  oauth2TokenClientCredentials:
+    client_assertion: "jwt-assertion-string"
+  oauth2TokenRefresh:
+    refresh_token: "refresh-token-xxx"
+    client_id: "client-id"
+    client_secret: "client-secret"
+  runSuiteqlQuery:
+    q: "SELECT id, companyName FROM customer WHERE id = 123"
+  transformRecord:
+    source_record_type: salesOrder
+    record_id: "123"
+    target_record_type: invoice
+  updateCustomer:
+    id: "123"
+    data:
+      comments: "VIP customer"
+  updateCustomerPayment:
+    id: "123"
+    data:
+      memo: "Payment updated"
+  updateEmployee:
+    id: "123"
+    data:
+      title: "Lead Engineer"
+  updateInvoice:
+    id: "123"
+    data:
+      memo: "Invoice updated"
+  updateItem:
+    item_type: inventoryItem
+    id: "123"
+    data:
+      displayName: "Updated Widget"
+  updateItemFulfillment:
+    id: "123"
+    data:
+      memo: "Fulfillment processed"
+  updateItemReceipt:
+    id: "123"
+    data:
+      memo: "Receipt processed"
+  updateJournalEntry:
+    id: "123"
+    data:
+      memo: "Q3 adjustment"
+  updatePurchaseOrder:
+    id: "123"
+    data:
+      memo: "Approved by Purchasing"
+  updateSalesOrder:
+    id: "123"
+    data:
+      memo: "Priority shipping"
+  updateVendor:
+    id: "123"
+    data:
+      comments: "Primary supplier"
+  updateVendorBill:
+    id: "123"
+    data:
+      memo: "Approved for payment"
+  updateVendorPayment:
+    id: "123"
+    data:
+      memo: "Payment processed"
+  upsertRecordByExternalId:
+    record_type: customer
+    external_id: "EXT-CUST-100"
+    body:
+      companyName: "Acme Global"

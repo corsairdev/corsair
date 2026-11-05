@@ -14,6 +14,7 @@ import type {
 import { getOAuthAccessToken } from 'corsair/core';
 import { netSuiteOAuthTokenUrl, normalizeAccountHost } from './client';
 import { NetSuite } from './endpoints';
+import type { RouteSpec } from './endpoints/specs';
 import { netSuiteSpecs } from './endpoints/specs';
 import type {
 	NetSuiteEndpointInputs,
@@ -77,9 +78,26 @@ export const netSuiteEndpointSchemas = Object.fromEntries(
 				],
 		},
 	]),
+	// Object.fromEntries returns Record<string, unknown>; cast through unknown
+	// to RequiredPluginEndpointSchemas because TypeScript cannot statically verify
+	// the dynamically reconstructed per-endpoint schema object map.
 ) as unknown as RequiredPluginEndpointSchemas<typeof netSuiteEndpoints>;
 
 const defaultAuthType = 'oauth_2' as const;
+
+// These operations either bootstrap OAuth or call a public NetSuite endpoint.
+// They must not fail the keyBuilder just because no access token exists yet.
+const tokenFreeOperations = new Set(
+	Object.entries(netSuiteSpecs as Record<string, RouteSpec>)
+		.filter(
+			([, spec]) =>
+				spec.auth === 'none' ||
+				spec.custom === 'authorize-account' ||
+				spec.custom === 'authorize-system' ||
+				spec.custom === 'jwt-client-assertion',
+		)
+		.map(([key]) => key),
+);
 
 const netSuiteEndpointMeta = Object.fromEntries(
 	Object.entries(netSuiteSpecs).map(([key, spec]) => [
@@ -153,8 +171,18 @@ export function netsuite<const T extends NetSuitePluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: NetSuiteKeyBuilderContext, source) => {
+			const operation = ctx.meteredOperationId?.split('.').pop();
+			if (
+				source === 'endpoint' &&
+				operation &&
+				tokenFreeOperations.has(operation)
+			) {
+				return '';
+			}
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				// ctx.keys is generic across Corsair plugins; narrow here to the optional
+				// account identifier getter used to resolve the tenant's NetSuite account ID.
 				const resolvedAccount =
 					options.accountId ??
 					options.account ??
