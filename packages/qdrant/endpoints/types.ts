@@ -12,7 +12,10 @@ export const PointId = z.union([
 	z.string().min(1),
 ]);
 
+// unknown: payloads are arbitrary user JSON.
 const Payload = z.record(z.string(), z.unknown());
+// unknown: nested HNSW/optimizer/quantization/strict-mode configs have many
+// version-dependent fields that Qdrant validates itself.
 const Config = z.record(z.string(), z.unknown());
 
 const DenseVector = z.array(z.number());
@@ -36,7 +39,7 @@ const VectorStruct = z.union([
 	z.record(z.string(), Vector),
 ]);
 
-// Qdrant validates the many condition kinds itself.
+// unknown: Qdrant has many condition kinds (match, range, geo, nested, has_id…) and validates them itself.
 const Condition = z.record(z.string(), z.unknown());
 const Conditions = z.union([Condition, z.array(Condition)]);
 const Filter = z
@@ -94,6 +97,7 @@ const Selector = {
 	shard_key: ShardKeySelector.optional(),
 };
 const oneSelector = [
+	// unknown: only presence is checked here; the fields' own schemas validate the values.
 	(v: { points?: unknown; filter?: unknown }) =>
 		(v.points === undefined) !== (v.filter === undefined),
 	{ message: 'Provide exactly one of `points` or `filter`' },
@@ -396,6 +400,7 @@ export type Prefetch = {
 	query?: z.infer<typeof Query>;
 	using?: string;
 	filter?: z.infer<typeof Filter>;
+	// unknown: search params ({ hnsw_ef, exact, quantization… }) are checked by Qdrant.
 	params?: Record<string, unknown>;
 	score_threshold?: number;
 	limit?: number;

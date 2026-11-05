@@ -89,6 +89,7 @@ export async function makeQdrantRequest<T>(
 		/** True only for a URL pinned in the plugin options, not one stored for an account. */
 		allowPrivateHttp?: boolean;
 		method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown: any JSON body; each endpoint's zod input schema has already validated it.
 		body?: unknown;
 		query?: Record<string, string | number | boolean>;
 		/** Seconds Qdrant may take server-side; the client waits a little longer. */
@@ -110,6 +111,7 @@ export async function makeQdrantRequest<T>(
 		TIMEOUT: (options.timeout ? options.timeout + 5 : 300) * 1000,
 	};
 
+	// unknown: the envelope's `result` differs per endpoint; options.schema checks it below.
 	let response: { result?: unknown } | undefined;
 	try {
 		response = await request(config, {

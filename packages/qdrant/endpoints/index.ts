@@ -82,6 +82,7 @@ function define<K extends Key>(
 		) as QdrantEndpointParsedInputs[K];
 
 		const query: Record<string, string | number | boolean> = { ...fixedQuery };
+		// unknown: body fields are vectors, payloads and configs the input schema already validated.
 		const body: Record<string, unknown> = {};
 		for (const [field, value] of Object.entries(parsed)) {
 			if (value === undefined || PATH_FIELDS.has(field)) continue;
@@ -91,7 +92,8 @@ function define<K extends Key>(
 		}
 
 		// Inputs carry vectors and payloads, so they are never logged. A failed
-		// event write must not fail a call that Qdrant already carried out.
+		// event write must not fail a call that Qdrant already carried out
+		// (unknown in the catch below: a rejected promise can carry any value).
 		const { collectionName, timeout } = parsed as {
 			collectionName?: string;
 			timeout?: number;
@@ -113,6 +115,7 @@ function define<K extends Key>(
 				body: method === 'GET' || method === 'DELETE' ? undefined : body,
 				query,
 				timeout,
+				// unknown: TypeScript can't relate the indexed schema to the generic K; both come from the same key.
 				schema: QdrantEndpointOutputSchemas[key] as unknown as ZodType<
 					QdrantEndpointOutputs[K]
 				>,
@@ -134,10 +137,12 @@ export type QdrantEndpointsNested = {
 	};
 };
 
+// unknown: filled with each define() result below and cast to the typed shape once complete.
 const nested: Record<string, Record<string, unknown>> = {};
 for (const key of Object.keys(routes) as Key[]) {
 	const [group = '', name = ''] = key.split('.');
 	nested[group] ??= {};
 	nested[group][name] = define(key, routes[key] as Route<typeof key>);
 }
+// unknown: the loop builds the groups dynamically; the mapped type above names them.
 export const qdrantEndpointsNested = nested as unknown as QdrantEndpointsNested;
