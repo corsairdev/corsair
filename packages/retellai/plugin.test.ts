@@ -254,6 +254,10 @@ describe('Retell plugin', () => {
 		expect(plugin.pluginWebhookMatcher?.(webhookRequest)).toBe(false);
 	});
 
+	it('needs only the API key, so a keyed account is not left partial', () => {
+		expect(retellai().authConfig?.api_key?.account).toEqual([]);
+	});
+
 	it.each([null, undefined, ''])(
 		'raises AuthMissingError when the stored key is %p',
 		async (empty) => {

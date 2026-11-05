@@ -102,7 +102,8 @@ const retellEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof retellEndpointsNested>;
 
 export const retellAuthConfig = {
-	api_key: { account: ['one'] as const },
+	// The API key alone authenticates; Retell needs no other account field.
+	api_key: { account: [] as const },
 } as const satisfies PluginAuthConfig;
 
 export type BaseRetellPlugin<T extends RetellPluginOptions> = CorsairPlugin<
