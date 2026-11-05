@@ -1,0 +1,2743 @@
+{
+  "id": "close",
+  "displayName": "Close",
+  "description": "Close plugin for Corsair",
+  "npmPackageName": "@corsair-dev/close",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 31,
+    "webhooks": 6,
+    "db": 10
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "organization_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "organization_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "close.api.activities.createCall",
+      "shortPath": "activities.createCall",
+      "description": "Log an external call activity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "inbound | outbound"
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.activities.createNote",
+      "shortPath": "activities.createNote",
+      "description": "Create a note activity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.activities.createSms",
+      "shortPath": "activities.createSms",
+      "description": "Create an SMS activity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "local_phone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "inbound | outbound"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "inbox | draft | scheduled | outbox | sent | error"
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "local_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remote_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.activities.deleteCall",
+      "shortPath": "activities.deleteCall",
+      "description": "Delete a call activity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.activities.listCalls",
+      "shortPath": "activities.listCalls",
+      "description": "List call activities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, lead_id?: string, phone?: string, direction?: string, duration?: number, status?: string, user_id?: string | null, organization_id?: string, date_created?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.activities.listEmails",
+      "shortPath": "activities.listEmails",
+      "description": "List email activities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, lead_id?: string, subject?: string, body_text?: string, sender?: string, direction?: string, user_id?: string | null, organization_id?: string, date_created?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.activities.listNotes",
+      "shortPath": "activities.listNotes",
+      "description": "List note activities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, lead_id?: string, note?: string, user_id?: string | null, organization_id?: string, date_created?: string, date_updated?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ email: string, type?: string }[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ phone: string, type?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ email: string, type?: string }[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ phone: string, type?: string }[]"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Retrieve a contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ email: string, type?: string }[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ phone: string, type?: string }[]"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, lead_id?: string, name?: string, title?: string | null, emails?: { email: string, type?: string }[], phones?: { phone: string, type?: string }[], organization_id?: string, created_by?: string | null, date_created?: string, date_updated?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ email: string, type?: string }[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ phone: string, type?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ email: string, type?: string }[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ phone: string, type?: string }[]"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.customFields.listContact",
+      "shortPath": "customFields.listContact",
+      "description": "List contact custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, type?: string, choices?: string[], organization_id?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.customFields.listLead",
+      "shortPath": "customFields.listLead",
+      "description": "List lead custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, type?: string, choices?: string[], organization_id?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.leads.create",
+      "shortPath": "leads.create",
+      "description": "Create a new lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.leads.delete",
+      "shortPath": "leads.delete",
+      "description": "Delete a lead by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.leads.get",
+      "shortPath": "leads.get",
+      "description": "Retrieve a lead by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.leads.list",
+      "shortPath": "leads.list",
+      "description": "List leads with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: {}[], custom?: {}, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total_results",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.leads.update",
+      "shortPath": "leads.update",
+      "description": "Update an existing lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.opportunities.create",
+      "shortPath": "opportunities.create",
+      "description": "Create an opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "value_period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "value_period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_won",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_lost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.opportunities.delete",
+      "shortPath": "opportunities.delete",
+      "description": "Delete an opportunity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.opportunities.get",
+      "shortPath": "opportunities.get",
+      "description": "Retrieve an opportunity by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "value_period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_won",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_lost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.opportunities.list",
+      "shortPath": "opportunities.list",
+      "description": "List opportunities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, lead_id?: string, lead_name?: string, status_id?: string, status_label?: string, status_type?: string, value?: number, value_period?: string, confidence?: number, user_id?: string | null, organization_id?: string, date_won?: string | null, date_lost?: string | null, date_created?: string, date_updated?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.opportunities.update",
+      "shortPath": "opportunities.update",
+      "description": "Update an opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "value_period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "value_period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_won",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_lost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_complete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Retrieve a task by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_complete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_complete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, lead_id?: string, text?: string, due_date?: string | null, is_complete?: boolean, assigned_to?: string | null, type?: string, organization_id?: string, created_by?: string | null, date_created?: string, date_updated?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_complete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_complete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.users.getMe",
+      "shortPath": "users.getMe",
+      "description": "Get current authenticated user info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "close.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users in the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, first_name?: string, last_name?: string, email?: string, image?: string | null, organization_id?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "close.webhooks.activityNote.created",
+      "shortPath": "activityNote.created",
+      "description": "A note activity was created in Close CRM",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscription_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ id?: string, object_type: activity.note, object_id?: string, action: created, organization_id?: string, data: { id: string, lead_id?: string, note?: string, user_id?: string | null, organization_id?: string, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string }"
+          }
+        ]
+      },
+      "responseType": "{ subscription_id?: string, event: { id?: string, object_type: activity.note, object_id?: string, action: created, organization_id?: string, data: { id: string, lead_id?: string, note?: string, user_id?: string | null, organization_id?: string, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string } }",
+      "usageExample": "close({\n    webhookHooks: {\n        activityNote: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "close.webhooks.contact.created",
+      "shortPath": "contact.created",
+      "description": "A contact was created in Close CRM",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscription_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ id?: string, object_type: contact, object_id?: string, action: created, organization_id?: string, data: { id: string, lead_id?: string, name?: string, title?: string | null, emails?: { email: string, type?: string }[], phones?: { phone: string, type?: string }[], organization_id?: string, created_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string }"
+          }
+        ]
+      },
+      "responseType": "{ subscription_id?: string, event: { id?: string, object_type: contact, object_id?: string, action: created, organization_id?: string, data: { id: string, lead_id?: string, name?: string, title?: string | null, emails?: { email: string, type?: string }[], phones?: { phone: string, type?: string }[], organization_id?: string, created_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string } }",
+      "usageExample": "close({\n    webhookHooks: {\n        contact: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "close.webhooks.lead.created",
+      "shortPath": "lead.created",
+      "description": "A lead was created in Close CRM",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscription_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ id?: string, object_type: lead, object_id?: string, action: created, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: {}[], custom?: {}, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string }"
+          }
+        ]
+      },
+      "responseType": "{ subscription_id?: string, event: { id?: string, object_type: lead, object_id?: string, action: created, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: {}[], custom?: {}, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string } }",
+      "usageExample": "close({\n    webhookHooks: {\n        lead: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "close.webhooks.lead.updated",
+      "shortPath": "lead.updated",
+      "description": "A lead was updated in Close CRM",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscription_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ id?: string, object_type: lead, object_id?: string, action: updated, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: {}[], custom?: {}, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string }"
+          }
+        ]
+      },
+      "responseType": "{ subscription_id?: string, event: { id?: string, object_type: lead, object_id?: string, action: updated, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: {}[], custom?: {}, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string } }",
+      "usageExample": "close({\n    webhookHooks: {\n        lead: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "close.webhooks.opportunity.created",
+      "shortPath": "opportunity.created",
+      "description": "An opportunity was created in Close CRM",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscription_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ id?: string, object_type: opportunity, object_id?: string, action: created, organization_id?: string, data: { id: string, lead_id?: string, lead_name?: string, status_id?: string, status_label?: string, status_type?: string, value?: number, value_period?: string, confidence?: number, user_id?: string | null, organization_id?: string, date_won?: string | null, date_lost?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string }"
+          }
+        ]
+      },
+      "responseType": "{ subscription_id?: string, event: { id?: string, object_type: opportunity, object_id?: string, action: created, organization_id?: string, data: { id: string, lead_id?: string, lead_name?: string, status_id?: string, status_label?: string, status_type?: string, value?: number, value_period?: string, confidence?: number, user_id?: string | null, organization_id?: string, date_won?: string | null, date_lost?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string } }",
+      "usageExample": "close({\n    webhookHooks: {\n        opportunity: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "close.webhooks.task.created",
+      "shortPath": "task.created",
+      "description": "A task was created in Close CRM",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscription_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ id?: string, object_type: string, object_id?: string, action: created, organization_id?: string, data: { id: string, lead_id?: string, text?: string, due_date?: string | null, is_complete?: boolean, assigned_to?: string | null, type?: string, organization_id?: string, created_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string }"
+          }
+        ]
+      },
+      "responseType": "{ subscription_id?: string, event: { id?: string, object_type: string, object_id?: string, action: created, organization_id?: string, data: { id: string, lead_id?: string, text?: string, due_date?: string | null, is_complete?: boolean, assigned_to?: string | null, type?: string, organization_id?: string, created_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string } }",
+      "usageExample": "close({\n    webhookHooks: {\n        task: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "close.db.activityCall.search",
+      "entityName": "activityCall",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "direction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "close.db.activityEmail.search",
+      "entityName": "activityEmail",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body_text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sender",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "direction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "close.db.activityNote.search",
+      "entityName": "activityNote",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "note",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "close.db.activitySms.search",
+      "entityName": "activitySms",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "local_phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "remote_phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "direction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "close.db.contact.search",
+      "entityName": "contact",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "close.db.customField.search",
+      "entityName": "customField",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "close.db.lead.search",
+      "entityName": "lead",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status_label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "close.db.opportunity.search",
+      "entityName": "opportunity",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status_label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "value",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "value_period",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "confidence",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_won",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_lost",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "close.db.task.search",
+      "entityName": "task",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lead_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "due_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_complete",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "assigned_to",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "close.db.user.search",
+      "entityName": "user",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,292 @@
+---
+title: API
+description: "API reference for Suzanne: every `suzanne.api.*` operation with input and output types."
+---
+
+Every `suzanne.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Generations
+
+### photoTo3d
+
+`generations.photoTo3d`
+
+Submit one to four photos and queue a 3D mesh job
+
+**Risk:** `write`
+
+```ts
+await corsair.suzanne.api.generations.photoTo3d({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `sculptor \| atelier \| capture` | Yes | — |
+| `images_upload_ids` | `object` | No | — |
+| `images_inline` | `object` | No | — |
+| `params` | `object` | No | — |
+| `outputs` | `glb \| obj \| stl \| fbx[]` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="images_upload_ids full type">
+
+```ts
+{
+  front: string,
+  back?: string,
+  left?: string,
+  right?: string
+}
+```
+</Accordion>
+
+<Accordion title="images_inline full type">
+
+```ts
+{
+  front: string
+}
+```
+</Accordion>
+
+<Accordion title="params full type">
+
+```ts
+{
+  faces?: 200000 | 500000 | 1000000 | 2000000,
+  pbr?: boolean,
+  quad?: boolean,
+  texture_quality?: standard | detailed
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `billable_amount_cents` | `number` | Yes | — |
+
+
+
+---
+
+### textTo3d
+
+`generations.textTo3d`
+
+Submit a text prompt and queue a 3D mesh job
+
+**Risk:** `write`
+
+```ts
+await corsair.suzanne.api.generations.textTo3d({ model: 'sculptor', prompt: 'a low-poly fox', idempotencyKey: '3f1d6c5e-2b7a-4f0e-9c2d-8a1b6e4f0c11' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `sculptor \| atelier` | Yes | — |
+| `prompt` | `string` | Yes | — |
+| `params` | `object` | No | — |
+| `outputs` | `glb \| obj \| stl \| fbx[]` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+  faces?: 200000 | 500000 | 1000000 | 2000000,
+  pbr?: boolean,
+  quad?: boolean,
+  texture_quality?: standard | detailed
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `billable_amount_cents` | `number` | Yes | — |
+
+
+
+---
+
+## Jobs
+
+### cancel
+
+`jobs.cancel`
+
+Cancel a queued or running generation job
+
+**Risk:** `destructive`
+
+```ts
+await corsair.suzanne.api.jobs.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `already_terminal` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`jobs.get`
+
+Read a generation job and its download URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.suzanne.api.jobs.get({ job_id: 'job_01H' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `model` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `outputs` | `object[]` | No | — |
+| `error` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="outputs full type">
+
+```ts
+{
+  format: string,
+  download_url: string
+}[]
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code: string,
+  message: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### download
+
+`models.download`
+
+Mint a fresh download URL for a finished mesh
+
+**Risk:** `read`
+
+```ts
+await corsair.suzanne.api.models.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `format` | `glb \| obj \| stl \| fbx` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+## Uploads
+
+### create
+
+`uploads.create`
+
+Create a presigned URL for a JPEG or PNG upload
+
+**Risk:** `write`
+
+```ts
+await corsair.suzanne.api.uploads.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload_id` | `string` | Yes | — |
+| `upload_url` | `string` | Yes | — |
+| `expires_at` | `string` | Yes | — |
+
+
+
+---
+

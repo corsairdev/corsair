@@ -34,6 +34,7 @@ export type CorsairInternalConfig = {
 	permissions?: CorsairPermissionsOptions;
 	manual?: CorsairManualConfig;
 	hub?: HubConfig;
+	encryptDataAtRest: boolean;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -83,7 +84,8 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 
 	// Empty kek is tolerated at construction (plugin-only clients, env-less build
 	// steps); it's rejected where used — key access via createMissingConfigProxy,
-	// OAuth state signing/verification in core/auth/state.ts.
+	// OAuth state signing/verification in core/auth/state.ts, and any write while
+	// encryptDataAtRest is on.
 	const kek = config.kek ?? '';
 
 	// Build integration-level keys when database + KEK are configured;
@@ -108,6 +110,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		permissions: rootPermissions,
 		manual: config.manual,
 		hub: config.hub ? resolveHubConfigInput(config.hub) : undefined,
+		encryptDataAtRest: config.encryptDataAtRest === true,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
@@ -345,10 +348,15 @@ export type {
 export type {
 	CorsairCloudConfig,
 	CorsairCloudInstance,
+	CorsairCloudInstanceHandle,
+	CorsairCloudManage,
 	CorsairCloudRegistry,
 } from './cloud';
 // Cloud surface (corsairCloud)
 export { corsairCloud } from './cloud';
+export type * from './cloud/v1';
+// Corsair Cloud management API: error type and wire shapes
+export { CloudApiError } from './cloud/v1';
 // Connect link utilities
 export type { ResolveConnectLinkResult } from './connect';
 export { resolveConnectLink } from './connect';
@@ -394,17 +402,30 @@ export type {
 	PluginDocsIntrospection,
 } from './inspect';
 export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
+// The readonly check lives in callPluginDb, not on the entity clients.
+export {
+	callPluginDb,
+	DB_METHOD_RISK,
+	decodeDbArgs,
+	encodeDbArgs,
+} from './management/db';
+// The runtime plane throws this one, so a caller needs it to tell a provider
+// failure from a transport failure. CloudApiError extends it.
+export { ManagementApiError } from './management/errors';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,
 	EnforcePermissionResult,
 } from './permissions';
 export {
+	activeMode,
+	assertModeAllows,
 	assertReadonlyAllowed,
 	isReadonlyScopeActive,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
 	runReadonly,
+	runWithMode,
 } from './permissions';
 // Plugin types
 export type {
@@ -417,6 +438,7 @@ export type {
 	CorsairPluginSubscribe,
 	CorsairPluginSubscribeResult,
 	EndpointHooks,
+	EndpointJob,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
 	KeyBuilderContext,

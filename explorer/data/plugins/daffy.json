@@ -1,0 +1,918 @@
+{
+  "id": "daffy",
+  "displayName": "Daffy",
+  "description": "Donor-advised fund platform for charitable giving, gifts, and nonprofit search.",
+  "npmPackageName": "@corsair-dev/daffy",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "daffy.api.accounts.cancelDonation",
+      "shortPath": "accounts.cancelDonation",
+      "description": "Cancel a pending donation owned by the API key holder.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "donationId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "daffy.api.accounts.createDonation",
+      "shortPath": "accounts.createDonation",
+      "description": "Create a donation to a nonprofit (minimum $10 USD).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ein",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privateMemo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Donation ID."
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "Donation amount in US dollars."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number",
+            "description": "Donating user ID."
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Donation status."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "Public donation note."
+          },
+          {
+            "key": "scheduled_donation_id",
+            "optional": true,
+            "type": "number",
+            "description": "Scheduled donation ID."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string",
+            "description": "Donation visibility."
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string",
+            "description": "Donation creation timestamp."
+          },
+          {
+            "key": "mailed_at",
+            "optional": true,
+            "type": "string",
+            "description": "Donation mailed timestamp."
+          },
+          {
+            "key": "non_profit",
+            "optional": false,
+            "type": "{ ein: string, name: string, website?: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo?: string | null, cause_id?: number, cause?: { id: number, name: string, logo?: string | null, color: string }, causes?: { id: number, name: string, logo?: string | null, color: string }[] }",
+            "description": "Recipient nonprofit."
+          },
+          {
+            "key": "fund",
+            "optional": true,
+            "type": "{ id: number, name: string }",
+            "description": "Donor fund."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number, name: string, avatar?: string | null, slug: string, city?: string | null }",
+            "description": "Donating user."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.accounts.getBalance",
+      "shortPath": "accounts.getBalance",
+      "description": "Retrieve the authenticated user's fund balance.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pending_deposit_balance",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portfolio_balance",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "available_balance",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.accounts.getContributions",
+      "shortPath": "accounts.getContributions",
+      "description": "List contributions made to the authenticated fund.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ units: number, type: string, status: string, valuation: number, currency: string, frequency: string, created_at: string, received_at?: string | null, completed_at?: string | null, id: number }[]",
+            "description": "Page of returned records."
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ count: number, page: number, last: number }",
+            "description": "Pagination metadata."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.accounts.getDonation",
+      "shortPath": "accounts.getDonation",
+      "description": "Retrieve a single donation by user and donation ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "donationId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Donation ID."
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "Donation amount in US dollars."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number",
+            "description": "Donating user ID."
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Donation status."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "Public donation note."
+          },
+          {
+            "key": "scheduled_donation_id",
+            "optional": true,
+            "type": "number",
+            "description": "Scheduled donation ID."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string",
+            "description": "Donation visibility."
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string",
+            "description": "Donation creation timestamp."
+          },
+          {
+            "key": "mailed_at",
+            "optional": true,
+            "type": "string",
+            "description": "Donation mailed timestamp."
+          },
+          {
+            "key": "non_profit",
+            "optional": false,
+            "type": "{ ein: string, name: string, website?: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo?: string | null, cause_id?: number, cause?: { id: number, name: string, logo?: string | null, color: string }, causes?: { id: number, name: string, logo?: string | null, color: string }[] }",
+            "description": "Recipient nonprofit."
+          },
+          {
+            "key": "fund",
+            "optional": true,
+            "type": "{ id: number, name: string }",
+            "description": "Donor fund."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number, name: string, avatar?: string | null, slug: string, city?: string | null }",
+            "description": "Donating user."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.accounts.getDonations",
+      "shortPath": "accounts.getDonations",
+      "description": "List donations made by the authenticated user.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, amount?: number, user_id?: number, status: string, note?: string | null, scheduled_donation_id?: number | null, visibility?: string, created_at: string, mailed_at?: string | null, non_profit: { ein: string, name: string, website?: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo?: string | null, cause_id?: number, cause?: { id: number, name: string, logo?: string | null, color: string }, causes?: { id: number, name: string, logo?: string | null, color: string }[] }, fund?: { id: number, name: string }, user?: { id: number, name: string, avatar?: string | null, slug: string, city?: string | null } }[]",
+            "description": "Page of returned records."
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ count: number, page: number, last: number }",
+            "description": "Pagination metadata."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.accounts.getUserByUsername",
+      "shortPath": "accounts.getUserByUsername",
+      "description": "Retrieve a public user profile by username.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "User ID."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "User name."
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string",
+            "description": "User avatar URL."
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "User profile slug."
+          },
+          {
+            "key": "cover_image",
+            "optional": true,
+            "type": "string",
+            "description": "User cover image URL."
+          },
+          {
+            "key": "fund_name",
+            "optional": false,
+            "type": "string",
+            "description": "User fund name."
+          },
+          {
+            "key": "current_fund",
+            "optional": false,
+            "type": "{ id: number, name: string, summary: string, causes: { id: number, name: string, logo?: string | null, color: string }[], users: { id: number, name: string, avatar?: string | null, slug: string }[] }",
+            "description": "Current donor-advised fund."
+          },
+          {
+            "key": "follows_user",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the viewer follows this user."
+          },
+          {
+            "key": "follows_viewer",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether this user follows the viewer."
+          },
+          {
+            "key": "onboarding_status",
+            "optional": false,
+            "type": "string",
+            "description": "User onboarding status."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.accounts.getUserCauses",
+      "shortPath": "accounts.getUserCauses",
+      "description": "Retrieve a user's supported charitable causes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, logo?: string | null, color: string }[]"
+      }
+    },
+    {
+      "path": "daffy.api.accounts.getUserDonations",
+      "shortPath": "accounts.getUserDonations",
+      "description": "Retrieve a user's public donations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, amount?: number, user_id?: number, status: string, note?: string | null, scheduled_donation_id?: number | null, visibility?: string, created_at: string, mailed_at?: string | null, non_profit: { ein: string, name: string, website?: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo?: string | null, cause_id?: number, cause?: { id: number, name: string, logo?: string | null, color: string }, causes?: { id: number, name: string, logo?: string | null, color: string }[] }, fund?: { id: number, name: string }, user?: { id: number, name: string, avatar?: string | null, slug: string, city?: string | null } }[]",
+            "description": "Page of returned records."
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ count: number, page: number, last: number }",
+            "description": "Pagination metadata."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.accounts.getUserProfile",
+      "shortPath": "accounts.getUserProfile",
+      "description": "Retrieve the authenticated user's profile.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "User ID."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "User name."
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string",
+            "description": "User avatar URL."
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "User profile slug."
+          },
+          {
+            "key": "cover_image",
+            "optional": true,
+            "type": "string",
+            "description": "User cover image URL."
+          },
+          {
+            "key": "fund_name",
+            "optional": false,
+            "type": "string",
+            "description": "User fund name."
+          },
+          {
+            "key": "current_fund",
+            "optional": false,
+            "type": "{ id: number, name: string, summary: string, causes: { id: number, name: string, logo?: string | null, color: string }[], users: { id: number, name: string, avatar?: string | null, slug: string }[] }",
+            "description": "Current donor-advised fund."
+          },
+          {
+            "key": "follows_user",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the viewer follows this user."
+          },
+          {
+            "key": "follows_viewer",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether this user follows the viewer."
+          },
+          {
+            "key": "onboarding_status",
+            "optional": false,
+            "type": "string",
+            "description": "User onboarding status."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.gifts.create",
+      "shortPath": "gifts.create",
+      "description": "Create a Daffy charitable gift for a beneficiary.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Gift beneficiary name."
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "Gift amount in US dollars."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Gift message."
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "Unique gift code."
+          },
+          {
+            "key": "ein",
+            "optional": true,
+            "type": "string",
+            "description": "Associated nonprofit EIN."
+          },
+          {
+            "key": "seen",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the gift was seen."
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "new | accepted | denied | claimed",
+            "description": "Gift status."
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string",
+            "description": "Gift status update timestamp."
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string",
+            "description": "Gift creation timestamp."
+          },
+          {
+            "key": "claimed",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the gift was claimed."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Shareable gift URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.gifts.getByCode",
+      "shortPath": "gifts.getByCode",
+      "description": "Retrieve a gift by its unique code.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Gift beneficiary name."
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "Gift amount in US dollars."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Gift message."
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "Unique gift code."
+          },
+          {
+            "key": "ein",
+            "optional": true,
+            "type": "string",
+            "description": "Associated nonprofit EIN."
+          },
+          {
+            "key": "seen",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the gift was seen."
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "new | accepted | denied | claimed",
+            "description": "Gift status."
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string",
+            "description": "Gift status update timestamp."
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string",
+            "description": "Gift creation timestamp."
+          },
+          {
+            "key": "claimed",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the gift was claimed."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Shareable gift URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.gifts.list",
+      "shortPath": "gifts.list",
+      "description": "List gifts associated with the authenticated user.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ name: string, amount: number, message?: string | null, code: string, ein?: string | null, seen: boolean, status: new | accepted | denied | claimed, updated_at: string, created_at: string, claimed: boolean, url: string }[]",
+            "description": "Page of returned records."
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ count: number, page: number, last: number }",
+            "description": "Pagination metadata."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.nonProfits.getByEin",
+      "shortPath": "nonProfits.getByEin",
+      "description": "Retrieve a nonprofit organization by EIN.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ein",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ein",
+            "optional": false,
+            "type": "string",
+            "description": "Employer Identification Number."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Organization name."
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string",
+            "description": "Organization website URL."
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string",
+            "description": "Organization city."
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string",
+            "description": "Organization state."
+          },
+          {
+            "key": "public_path",
+            "optional": false,
+            "type": "string",
+            "description": "Daffy public profile path."
+          },
+          {
+            "key": "public_url",
+            "optional": false,
+            "type": "string",
+            "description": "Daffy public profile URL."
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number",
+            "description": "Organization latitude."
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number",
+            "description": "Organization longitude."
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string",
+            "description": "Organization logo URL."
+          },
+          {
+            "key": "cause",
+            "optional": false,
+            "type": "{ id: number, name: string, logo?: string | null, color: string }",
+            "description": "Primary charitable cause."
+          },
+          {
+            "key": "causes",
+            "optional": false,
+            "type": "{ id: number, name: string, logo?: string | null, color: string }[]",
+            "description": "All charitable causes."
+          }
+        ]
+      }
+    },
+    {
+      "path": "daffy.api.nonProfits.search",
+      "shortPath": "nonProfits.search",
+      "description": "Search nonprofit organizations by cause or text.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "causeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ ein: string, name: string, website?: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo?: string | null, cause: { id: number, name: string, logo?: string | null, color: string }, causes: { id: number, name: string, logo?: string | null, color: string }[] }[]",
+            "description": "Page of returned records."
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ count: number, page: number, last: number }",
+            "description": "Pagination metadata."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,797 @@
+{
+  "id": "search1api",
+  "displayName": "Search1API",
+  "description": "Live web search, crawl, extraction, and site-wide data in one API for AI agents.",
+  "npmPackageName": "@corsair-dev/search1api",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "search1api.api.account.health",
+      "shortPath": "account.health",
+      "description": "Check whether the Search1API API is serving traffic",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.account.usage",
+      "shortPath": "account.usage",
+      "description": "Get the remaining credit balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "period",
+            "optional": true,
+            "type": "day | week | month | year"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credential_type",
+            "optional": false,
+            "type": "api_key | oauth"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.content.crawl",
+      "shortPath": "content.crawl",
+      "description": "Crawl a URL and return its readable content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enableFallback",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "crawlParameters",
+            "optional": false,
+            "type": "{ url: string }"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title: string, link: string, content: string, metadata?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.content.crawlBatch",
+      "shortPath": "content.crawlBatch",
+      "description": "Crawl many URLs in a single request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{ url: string, enableFallback?: boolean }[]"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ crawlParameters: { url: string }, results: { title: string, link: string, content: string, metadata?: {} } }[]"
+      }
+    },
+    {
+      "path": "search1api.api.content.extract",
+      "shortPath": "content.extract",
+      "description": "Extract structured data from a page with a prompt",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "extractParameters",
+            "optional": false,
+            "type": "{ url: string }"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.content.screenshot",
+      "shortPath": "content.screenshot",
+      "description": "Render a page as a PNG, JPEG, or WebP image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "png | jpeg | webp"
+          },
+          {
+            "key": "full_page",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewport",
+            "optional": true,
+            "type": "{ width?: number, height?: number, device_scale_factor?: number }"
+          },
+          {
+            "key": "wait_until",
+            "optional": true,
+            "type": "domcontentloaded | load | networkidle"
+          },
+          {
+            "key": "wait_for_selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delay_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "omit_background",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "color_scheme",
+            "optional": true,
+            "type": "light | dark"
+          },
+          {
+            "key": "animations",
+            "optional": true,
+            "type": "disabled | allow"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sizeBytes",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.content.sitemap",
+      "shortPath": "content.sitemap",
+      "description": "Extract a site's URLs from its sitemap",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "sitemap | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.deepcrawl.start",
+      "shortPath": "deepcrawl.start",
+      "description": "Start an asynchronous whole-site crawl",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "sitemap | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.deepcrawl.status",
+      "shortPath": "deepcrawl.status",
+      "description": "Check a deepcrawl task's status and result archive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | waiting | processing | completed | failed | not_found"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "r2Key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zipUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.web.ask",
+      "shortPath": "web.ask",
+      "description": "Agentic search that picks engines and reranks results automatically",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "intent",
+            "optional": false,
+            "type": "{ search_query: string, sources: string[], time_range?: day | week | month | year |  | null }"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title: string, link: string, snippet: string, published_date?: string, source: string, relevance: number }[]"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ source: string, message: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.web.feedback",
+      "shortPath": "web.feedback",
+      "description": "Report a Search1API problem or feature request from an agent run",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "intent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "bug | feature_request | docs | other"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent",
+            "optional": true,
+            "type": "{ name?: string, model?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "new"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.web.news",
+      "shortPath": "web.news",
+      "description": "Search recent news across six sources",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "search_service",
+            "optional": true,
+            "type": "google | bing | duckduckgo | yahoo | hackernews | reuters | "
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "crawl_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_sites",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_sites",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "day | week | month | year | "
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchParameters",
+            "optional": false,
+            "type": "{ query: string, search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | , max_results?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title: string, link: string, snippet: string, content?: string, published_date?: string, metadata?: { kind?: repo | issue | pr | discussion, stars?: number, language?: string, num_comments?: number, story_url?: string, points?: number } }[]"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.web.newsBatch",
+      "shortPath": "web.newsBatch",
+      "description": "Run many news searches in a single request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{ query: string, search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | , max_results?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }[]"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ success: boolean, data?: { searchParameters: { query: string, search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | , max_results?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }, results: { title: string, link: string, snippet: string, content?: string, published_date?: string, metadata?: { kind?: repo | issue | pr | discussion, stars?: number, language?: string, num_comments?: number, story_url?: string, points?: number } }[], images?: string[] }, error?: { message?: string, statusCode?: number }, cost: number }[]"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "{ total: number, successful: number, failed: number, totalCost: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.web.search",
+      "shortPath": "web.search",
+      "description": "Search the web across 19 engines, with optional crawling",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "search_service",
+            "optional": true,
+            "type": "360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | "
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "crawl_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_sites",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_sites",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "day | week | month | year | "
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchParameters",
+            "optional": false,
+            "type": "{ query: string, search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | , max_results?: number, page?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title: string, link: string, snippet: string, content?: string, published_date?: string, metadata?: { kind?: repo | issue | pr | discussion, stars?: number, language?: string, num_comments?: number, story_url?: string, points?: number } }[]"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.web.searchBatch",
+      "shortPath": "web.searchBatch",
+      "description": "Run many web searches in a single request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{ query: string, search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | , max_results?: number, page?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }[]"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ success: boolean, data?: { searchParameters: { query: string, search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | , max_results?: number, page?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }, results: { title: string, link: string, snippet: string, content?: string, published_date?: string, metadata?: { kind?: repo | issue | pr | discussion, stars?: number, language?: string, num_comments?: number, story_url?: string, points?: number } }[], images?: string[] }, error?: { message?: string, statusCode?: number }, cost: number }[]"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "{ total: number, successful: number, failed: number, totalCost: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "search1api.api.web.trending",
+      "shortPath": "web.trending",
+      "description": "Get trending topics from GitHub or Hacker News",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_service",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trendingParameters",
+            "optional": false,
+            "type": "{ search_service: string, max_results?: number }"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title: string, url: string, description?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "search1api.db.searchResults.search",
+      "entityName": "searchResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "snippet",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "service",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

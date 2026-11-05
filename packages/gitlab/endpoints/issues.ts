@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GitlabEndpoints } from '..';
 import { makeAuthenticatedGitlabRequest } from '../client';
-import { enc, persistIssue } from '../utils';
+import { deleteByIid, enc, persistIssue } from '../utils';
 import type { GitlabEndpointOutputs } from './types';
 
 export const list: GitlabEndpoints['issuesList'] = async (ctx, input) => {
@@ -115,6 +115,17 @@ export const deleteIssue: GitlabEndpoints['issuesDelete'] = async (
 		method: 'DELETE',
 		baseUrl: ctx.options.baseUrl,
 	});
+
+	try {
+		await deleteByIid(
+			ctx.db.issues,
+			ctx.db.projects,
+			input.project_id,
+			input.issue_iid,
+		);
+	} catch (error) {
+		console.warn('Failed to delete issue from database:', error);
+	}
 
 	await logEventFromContext(
 		ctx,

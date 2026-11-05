@@ -1,0 +1,147 @@
+---
+title: Overview
+description: "Electronic signature platform for sending, signing, and managing agreements."
+---
+
+Use **DocuSign** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 340 typed API operations
+- 15 synced entities (`accounts`, `brands`, `bulkSendLists`, `connectConfigurations`, `contacts`, `customTabs`, and 9 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/docusign
+```
+```bash yarn
+yarn add corsair @corsair-dev/docusign
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/docusign
+```
+```bash bun
+bun add corsair @corsair-dev/docusign
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { docusign } from '@corsair-dev/docusign';
+
+export const corsair = createCorsair({
+	plugins: [
+		docusign({
+			authType: 'oauth_2',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your DocuSign OAuth app.
+
+```ts
+docusign({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'docusign',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Get an envelope**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.docusign.api.getEnvelope({ envelopeId: '3a1b2c4d-0000-1111-2222-333344445555' });
+```
+
+
+**Send an envelope from a template**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.docusign.api.createEnvelope({
+	emailSubject: 'Please sign the agreement',
+	templateId: '7f6e5d4c-0000-1111-2222-333344445555',
+	templateRoles: [{ email: 'jane@example.com', name: 'Jane Doe', roleName: 'Signer' }],
+});
+```
+
+
+See the full list on the [API](/plugins/docusign/api) page.
+
+## Query synced data
+
+Search envelopes synced from earlier getEnvelope calls.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.docusign.db.envelopes.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `accounts`, `brands`, `bulkSendLists`, `connectConfigurations`, `contacts`, `customTabs`, `documents`, `envelopes`, `groups`, `permissionProfiles`, `recipients`, `signingGroups`, `templates`, `users`, `workspaces`. See [Database](/plugins/docusign/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/docusign/api">
+    Every `docusign.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/docusign/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

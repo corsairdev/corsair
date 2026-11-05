@@ -1021,7 +1021,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{}"
+            "type": "{ allowed_inference_geos: global | us[] | unrestricted, default_inference_geo: global | us, workspace_geo: us }"
           },
           {
             "key": "display_color",
@@ -1068,7 +1068,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{}"
+            "type": "{ allowed_inference_geos?: global | us[] | unrestricted | null, default_inference_geo?: global | us | null, workspace_geo?: us | null }"
           },
           {
             "key": "external_key_id",
@@ -1108,7 +1108,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{}"
+            "type": "{ allowed_inference_geos: global | us[] | unrestricted, default_inference_geo: global | us, workspace_geo: us }"
           },
           {
             "key": "display_color",
@@ -1179,7 +1179,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{}"
+            "type": "{ allowed_inference_geos: global | us[] | unrestricted, default_inference_geo: global | us, workspace_geo: us }"
           },
           {
             "key": "display_color",
@@ -1249,7 +1249,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, archived_at?: string | null, compartment_id?: string, created_at: string, data_residency?: {} | null, display_color?: string, external_key_id?: string | null, name: string, tags?: {} | null, type: workspace }[]"
+            "type": "{ id: string, archived_at?: string | null, compartment_id?: string, created_at: string, data_residency?: { allowed_inference_geos: global | us[] | unrestricted, default_inference_geo: global | us, workspace_geo: us } | null, display_color?: string, external_key_id?: string | null, name: string, tags?: {} | null, type: workspace }[]"
           },
           {
             "key": "first_id",
@@ -1290,7 +1290,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{}"
+            "type": "{ allowed_inference_geos?: global | us[] | unrestricted | null, default_inference_geo?: global | us | null }"
           },
           {
             "key": "external_key_id",
@@ -1330,7 +1330,7 @@
           {
             "key": "data_residency",
             "optional": true,
-            "type": "{}"
+            "type": "{ allowed_inference_geos: global | us[] | unrestricted, default_inference_geo: global | us, workspace_geo: us }"
           },
           {
             "key": "display_color",

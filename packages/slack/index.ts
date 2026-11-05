@@ -931,3 +931,4 @@ export type {
 	UsersProfileSetResponse,
 } from './endpoints/types';
 export * from './error-handlers';
+export { SlackSchema } from './schema';

@@ -1,0 +1,940 @@
+---
+title: API
+description: "API reference for Benzinga: every `benzinga.api.*` operation with input and output types."
+---
+
+Every `benzinga.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Calendar
+
+### getConsensusRatings
+
+`calendar.getConsensusRatings`
+
+Get aggregated analyst consensus rating and price targets for one ticker (GET /api/v1/consensus-ratings)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.getConsensusRatings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `pagesize` | `number` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `simplify` | `boolean` | No | — |
+| `aggregateType` | `number \| percentage` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aggregate_ratings` | `object` | No | — |
+| `aggregate_type` | `string` | No | — |
+| `consensus_price_target` | `number` | No | — |
+| `consensus_rating` | `string` | No | — |
+| `consensus_rating_val` | `number` | No | — |
+| `high_price_target` | `number` | No | — |
+| `low_price_target` | `number` | No | — |
+| `total_analyst_count` | `number` | No | — |
+| `unique_analyst_count` | `number` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="aggregate_ratings full type">
+
+```ts
+{
+  strong_buy?: number | null,
+  buy?: number | null,
+  hold?: number | null,
+  sell?: number | null,
+  strong_sell?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getEarningsStream
+
+`calendar.getEarningsStream`
+
+Get the WebSocket URL for the real-time earnings calendar stream (wss://api.benzinga.com/api/v2.1/calendar/earnings/stream); append token=&lt;api key&gt; to connect
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.getEarningsStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tickers` | `string` | No | — |
+| `isins` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `authQueryParam` | `token` | Yes | — |
+| `commands` | `ping \| replay[]` | Yes | — |
+
+
+
+---
+
+### listConferenceCalls
+
+`calendar.listConferenceCalls`
+
+List conference call data (GET /api/v2.1/calendar/conference-calls, page/pagesize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.listConferenceCalls({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pagesize` | `number` | No | — |
+| `date` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `tickers` | `string` | No | — |
+| `updated` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conference` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conference full type">
+
+```ts
+{
+  id: string,
+  access_code?: string | null,
+  confirmed?: boolean | null,
+  cusip?: string | null,
+  date?: string | null,
+  exchange?: string | null,
+  importance?: number | null,
+  international_num?: string | null,
+  isin?: string | null,
+  name?: string | null,
+  notes?: string | null,
+  period?: string | null,
+  period_year?: number | null,
+  phone_num?: string | null,
+  reservation_num?: string | null,
+  start_time?: string | null,
+  ticker?: string | null,
+  time?: string | null,
+  updated?: number | null,
+  webcast_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDividends
+
+`calendar.listDividends`
+
+List dividends calendar data (GET /api/v2.2/calendar/dividends, page/pagesize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.listDividends({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pagesize` | `number` | No | — |
+| `date` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `tickers` | `string` | No | — |
+| `importance` | `number` | No | — |
+| `updated` | `number` | No | — |
+| `dateSort` | `announced \| ex \| payable \| record` | No | — |
+| `dividend_yield` | `number` | No | — |
+| `dividend_yield_operation` | `gt \| gte \| eq \| lte \| lt` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dividends` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="dividends full type">
+
+```ts
+{
+  id: string,
+  confirmed?: boolean | null,
+  currency?: string | null,
+  cusip?: string | null,
+  date?: string | null,
+  dividend?: string | null,
+  dividend_prior?: string | null,
+  dividend_type?: string | null,
+  dividend_yield?: string | null,
+  end_regular_dividend?: boolean | null,
+  ex_dividend_date?: string | null,
+  exchange?: string | null,
+  frequency?: number | null,
+  importance?: number | null,
+  isin?: string | null,
+  name?: string | null,
+  notes?: string | null,
+  payable_date?: string | null,
+  period?: string | null,
+  record_date?: string | null,
+  ticker?: string | null,
+  updated?: number | null,
+  year?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEarnings
+
+`calendar.listEarnings`
+
+List earnings calendar data (GET /api/v2.1/calendar/earnings, page/pagesize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.listEarnings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pagesize` | `number` | No | — |
+| `date` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `tickers` | `string` | No | — |
+| `importance` | `number` | No | — |
+| `updated` | `number` | No | — |
+| `dateSort` | `date` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `earnings` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="earnings full type">
+
+```ts
+{
+  id: string,
+  currency?: string | null,
+  cusip?: string | null,
+  date?: string | null,
+  date_confirmed?: number | null,
+  eps?: string | null,
+  eps_est?: string | null,
+  eps_prior?: string | null,
+  eps_surprise?: string | null,
+  eps_surprise_percent?: string | null,
+  eps_type?: string | null,
+  exchange?: string | null,
+  importance?: number | null,
+  isin?: string | null,
+  name?: string | null,
+  notes?: string | null,
+  period?: string | null,
+  period_year?: number | null,
+  revenue?: string | null,
+  revenue_est?: string | null,
+  revenue_prior?: string | null,
+  revenue_surprise?: string | null,
+  revenue_surprise_percent?: string | null,
+  revenue_type?: string | null,
+  ticker?: string | null,
+  time?: string | null,
+  updated?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEconomics
+
+`calendar.listEconomics`
+
+List economic calendar data (GET /api/v2.1/calendar/economics, page/pagesize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.listEconomics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pagesize` | `number` | No | — |
+| `date` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `importance` | `number` | No | — |
+| `updated` | `number` | No | — |
+| `country` | `string` | No | — |
+| `event_name` | `string` | No | — |
+| `event_category` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `economics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="economics full type">
+
+```ts
+{
+  id: string,
+  actual?: string | null,
+  actual_t?: string | null,
+  confirmed?: boolean | null,
+  consensus?: string | null,
+  consensus_t?: string | null,
+  country?: string | null,
+  date?: string | null,
+  description?: string | null,
+  event_category?: string | null,
+  event_name?: string | null,
+  event_period?: string | null,
+  importance?: number | null,
+  notes?: string | null,
+  period_year?: number | null,
+  prior?: string | null,
+  prior_t?: string | null,
+  time?: string | null,
+  updated?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGuidance
+
+`calendar.listGuidance`
+
+List company guidance data (GET /api/v2.1/calendar/guidance, page/pagesize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.listGuidance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pagesize` | `number` | No | — |
+| `date` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `tickers` | `string` | No | — |
+| `importance` | `number` | No | — |
+| `updated` | `number` | No | — |
+| `is_primary` | `Y \| N \| All` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guidance` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="guidance full type">
+
+```ts
+{
+  id: string,
+  confirmed?: boolean | null,
+  currency?: string | null,
+  cusip?: string | null,
+  date?: string | null,
+  eps_guidance_est?: string | null,
+  eps_guidance_max?: string | null,
+  eps_guidance_min?: string | null,
+  eps_guidance_prior_max?: string | null,
+  eps_guidance_prior_min?: string | null,
+  eps_type?: string | null,
+  exchange?: string | null,
+  importance?: number | null,
+  is_primary?: string | null,
+  name?: string | null,
+  notes?: string | null,
+  period?: string | null,
+  period_year?: number | null,
+  prelim?: string | null,
+  revenue_guidance_est?: string | null,
+  revenue_guidance_max?: string | null,
+  revenue_guidance_min?: string | null,
+  revenue_guidance_prior_max?: string | null,
+  revenue_guidance_prior_min?: string | null,
+  revenue_type?: string | null,
+  ticker?: string | null,
+  time?: string | null,
+  updated?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listIpos
+
+`calendar.listIpos`
+
+List IPO calendar data (GET /api/v2.1/calendar/ipos, page/pagesize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.listIpos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pagesize` | `number` | No | — |
+| `ipo_date` | `string` | No | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `tickers` | `string` | No | — |
+| `ipo_type` | `string` | No | — |
+| `updated` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ipos` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ipos full type">
+
+```ts
+{
+  id: string,
+  currency?: string | null,
+  cusip?: string | null,
+  date?: string | null,
+  deal_status?: string | null,
+  description?: string | null,
+  exchange?: string | null,
+  initial_filing_date?: string | null,
+  insider_lockup_date?: string | null,
+  insider_lockup_days?: number | null,
+  ipo_type?: string | null,
+  last_yr_income?: number | null,
+  last_yr_income_year?: number | null,
+  last_yr_revenue?: number | null,
+  last_yr_revenue_year?: number | null,
+  lead_underwriters?: string[] | null,
+  market_cap_at_offer?: number | null,
+  name?: string | null,
+  notes?: string | null,
+  offering_shares?: number | null,
+  offering_shares_ord_adr?: number | null,
+  offering_value?: number | null,
+  open_date_verified?: boolean | null,
+  ord_shares_out_after_offer?: number | null,
+  other_underwriters?: string[] | null,
+  price_max?: string | null,
+  price_min?: string | null,
+  price_open?: string | null,
+  price_public_offering?: string | null,
+  pricing_date?: string | null,
+  pricing_date_verified?: boolean | null,
+  sec_accession_number?: string | null,
+  sec_filing_url?: string | null,
+  shares_outstanding?: number | null,
+  sic?: number | null,
+  spac_converted_to_target?: boolean | null,
+  state_location?: string | null,
+  ticker?: string | null,
+  time?: string | null,
+  underwriter_quiet_expiration_date?: string | null,
+  underwriter_quiet_expiration_days?: number | null,
+  updated?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRatings
+
+`calendar.listRatings`
+
+List analyst ratings data (GET /api/v2.1/calendar/ratings, page/pagesize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.listRatings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pagesize` | `number` | No | — |
+| `date` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `tickers` | `string` | No | — |
+| `importance` | `number` | No | — |
+| `updated` | `number` | No | — |
+| `fields` | `string` | No | — |
+| `analyst_id` | `string` | No | — |
+| `firm_id` | `string` | No | — |
+| `action` | `Downgrades \| Maintains \| Reinstates \| Reiterates \| Upgrades \| Assumes \| Initiates Coverage On \| Terminates Coverage On \| Removes \| Suspends \| Firm Dissolved` | No | — |
+| `analyst` | `string` | No | — |
+| `firm` | `string` | No | — |
+| `simplify` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ratings` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ratings full type">
+
+```ts
+{
+  id?: string,
+  action_company?: string | null,
+  action_pt?: string | null,
+  adjusted_pt_current?: string | null,
+  adjusted_pt_prior?: string | null,
+  analyst?: string | null,
+  analyst_id?: string | null,
+  analyst_name?: string | null,
+  currency?: string | null,
+  cusip?: string | null,
+  date?: string | null,
+  exchange?: string | null,
+  firm_id?: string | null,
+  importance?: number | null,
+  isin?: string | null,
+  name?: string | null,
+  notes?: string | null,
+  pt_current?: string | null,
+  pt_prior?: string | null,
+  rating_current?: string | null,
+  rating_prior?: string | null,
+  ticker?: string | null,
+  time?: string | null,
+  updated?: number | null,
+  url?: string | null,
+  url_calendar?: string | null,
+  url_news?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRemoved
+
+`calendar.listRemoved`
+
+List removed calendar events by type and update time (GET /api/v2.1/calendar-removed/, page/pageSize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.listRemoved({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `type` | `ratings \| earnings \| dividends \| splits \| ipos \| offerings \| economics \| guidance \| ma \| conference calls` | No | — |
+| `updated` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `removed` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="removed full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  updated?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSplits
+
+`calendar.listSplits`
+
+List stock split data (GET /api/v2.1/calendar/splits, page/pagesize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.calendar.listSplits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pagesize` | `number` | No | — |
+| `date` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `tickers` | `string` | No | — |
+| `importance` | `number` | No | — |
+| `updated` | `number` | No | — |
+| `date_search_field` | `announced \| ex` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `splits` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="splits full type">
+
+```ts
+{
+  id: string,
+  cusip?: string | null,
+  date_announced?: string | null,
+  date_distribution?: string | null,
+  date_ex?: string | null,
+  date_recorded?: string | null,
+  exchange?: string | null,
+  importance?: number | null,
+  name?: string | null,
+  notes?: string | null,
+  optionable?: boolean | null,
+  ratio?: string | null,
+  split_type?: string | null,
+  ticker?: string | null,
+  updated?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## News
+
+### get
+
+`news.get`
+
+Get Benzinga news articles (GET /api/v2/news, page/pageSize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.news.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `displayOutput` | `full \| abstract \| headline` | No | — |
+| `date` | `string` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `updatedSince` | `number` | No | — |
+| `publishedSince` | `number` | No | — |
+| `sort` | `id:asc \| id:desc \| created:asc \| created:desc \| updated:asc \| updated:desc` | No | — |
+| `isin` | `string` | No | — |
+| `cusips` | `string` | No | — |
+| `tickers` | `string` | No | — |
+| `primaryTickers` | `string` | No | — |
+| `channels` | `string` | No | — |
+| `topics` | `string` | No | — |
+| `topic_group_by` | `and \| or` | No | — |
+| `authors` | `string` | No | — |
+| `content_types` | `string` | No | — |
+| `format` | `text` | No | — |
+| `importance` | `low \| medium \| high` | No | — |
+| `importanceRank` | `number` | No | — |
+| `region` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  author?: string | null,
+  created?: string | null,
+  updated?: string | null,
+  title?: string | null,
+  teaser?: string | null,
+  body?: string | null,
+  url?: string | null,
+  image?: {
+    size?: string | null,
+    url?: string | null,
+    alt?: string | null
+  }[] | null,
+  channels?: {
+    name: string
+  }[] | null,
+  stocks?: {
+    name: string,
+    cusip?: string | null,
+    isin?: string | null,
+    exchange?: string | null,
+    gics?: string | null,
+    gics_code?: string | null,
+    sector?: string | null
+  }[] | null,
+  tags?: {
+    name: string
+  }[] | null,
+  importance_rank?: number | null,
+  original_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getStream
+
+`news.getStream`
+
+Get the WebSocket URL for the real-time news stream (wss://api.benzinga.com/api/v1/news/stream); append token=&lt;api key&gt; to connect
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.news.getStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tickers` | `string` | No | — |
+| `channels` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `authQueryParam` | `token` | Yes | — |
+| `commands` | `ping \| replay[]` | Yes | — |
+
+
+
+---
+
+### listChannels
+
+`news.listChannels`
+
+List available Benzinga news channels (GET /api/v2.1/news/channels)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.news.listChannels({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  parent?: number | null,
+  channel?: string | null,
+  weight?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRemoved
+
+`news.listRemoved`
+
+List IDs and update times of removed news articles (GET /api/v2/news-removed, page/pageSize pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.benzinga.api.news.listRemoved({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `updatedSince` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

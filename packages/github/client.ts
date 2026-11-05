@@ -1,6 +1,10 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
-import { convertKeysToCamelCase, convertQueryKeysToSnakeCase } from './utils';
+import {
+	convertKeysToCamelCase,
+	convertKeysToSnakeCase,
+	convertQueryKeysToSnakeCase,
+} from './utils';
 
 export class GithubAPIError extends Error {
 	constructor(
@@ -58,7 +62,7 @@ async function makeGithubRequestWithToken<T>(
 		url: endpoint,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
+				? body && convertKeysToSnakeCase(body)
 				: undefined,
 		mediaType: 'application/json',
 		query:

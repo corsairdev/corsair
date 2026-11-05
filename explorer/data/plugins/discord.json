@@ -354,6 +354,16 @@
             "key": "embeds",
             "optional": true,
             "type": "{ title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[]"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "{ type: 1, components: ({ type: 2, style: number, label?: string, emoji?: { id?: string, name?: string, animated?: boolean }, custom_id?: string, url?: string, sku_id?: string, disabled?: boolean } | { type: 3, custom_id: string, options: { label: string, value: string, description?: string, emoji?: { id?: string, name?: string, animated?: boolean }, default?: boolean }[], placeholder?: string, min_values?: number, max_values?: number, disabled?: boolean } | { type: 5 | 6 | 7 | 8, custom_id: string, placeholder?: string, min_values?: number, max_values?: number, channel_types?: number[], disabled?: boolean })[] }[]"
+          },
+          {
+            "key": "allowed_mentions",
+            "optional": true,
+            "type": "{ parse?: roles | users | everyone[], roles?: string[], users?: string[], replied_user?: boolean }"
           }
         ]
       },
@@ -439,6 +449,11 @@
             "key": "flags",
             "optional": true,
             "type": "number"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "{ type: number }[]"
           },
           {
             "key": "message_reference",
@@ -567,6 +582,11 @@
             "type": "number"
           },
           {
+            "key": "components",
+            "optional": true,
+            "type": "{ type: number }[]"
+          },
+          {
             "key": "message_reference",
             "optional": true,
             "type": "{ message_id?: string, channel_id?: string, guild_id?: string }"
@@ -626,7 +646,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, channel_id: string, author: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, content: string, timestamp: string, edited_timestamp?: string | null, tts: boolean, mention_everyone: boolean, mentions: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }[], mention_roles: string[], attachments: { id: string, filename: string, description?: string, content_type?: string, size: number, url: string, proxy_url: string, height?: number | null, width?: number | null }[], embeds: { title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[], reactions?: { count: number, me: boolean, emoji: { id?: string | null, name: string } }[], pinned: boolean, type: number, flags?: number, message_reference?: { message_id?: string, channel_id?: string, guild_id?: string }, thread?: { id: string, type: number, guild_id?: string, name?: string | null, topic?: string | null, position?: number, parent_id?: string | null, last_message_id?: string | null, owner_id?: string, thread_metadata?: { archived: boolean, auto_archive_duration: number, archive_timestamp: string, locked: boolean, invitable?: boolean } }, nonce?: string | number, referenced_message: lazy }[]"
+        "type": "{ id: string, channel_id: string, author: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, content: string, timestamp: string, edited_timestamp?: string | null, tts: boolean, mention_everyone: boolean, mentions: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }[], mention_roles: string[], attachments: { id: string, filename: string, description?: string, content_type?: string, size: number, url: string, proxy_url: string, height?: number | null, width?: number | null }[], embeds: { title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[], reactions?: { count: number, me: boolean, emoji: { id?: string | null, name: string } }[], pinned: boolean, type: number, flags?: number, components?: { type: number }[], message_reference?: { message_id?: string, channel_id?: string, guild_id?: string }, thread?: { id: string, type: number, guild_id?: string, name?: string | null, topic?: string | null, position?: number, parent_id?: string | null, last_message_id?: string | null, owner_id?: string, thread_metadata?: { archived: boolean, auto_archive_duration: number, archive_timestamp: string, locked: boolean, invitable?: boolean } }, nonce?: string | number, referenced_message: lazy }[]"
       }
     },
     {
@@ -656,6 +676,16 @@
             "key": "embeds",
             "optional": true,
             "type": "{ title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[]"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "{ type: 1, components: ({ type: 2, style: number, label?: string, emoji?: { id?: string, name?: string, animated?: boolean }, custom_id?: string, url?: string, sku_id?: string, disabled?: boolean } | { type: 3, custom_id: string, options: { label: string, value: string, description?: string, emoji?: { id?: string, name?: string, animated?: boolean }, default?: boolean }[], placeholder?: string, min_values?: number, max_values?: number, disabled?: boolean } | { type: 5 | 6 | 7 | 8, custom_id: string, placeholder?: string, min_values?: number, max_values?: number, channel_types?: number[], disabled?: boolean })[] }[]"
+          },
+          {
+            "key": "allowed_mentions",
+            "optional": true,
+            "type": "{ parse?: roles | users | everyone[], roles?: string[], users?: string[], replied_user?: boolean }"
           },
           {
             "key": "fail_if_not_exists",
@@ -748,6 +778,11 @@
             "type": "number"
           },
           {
+            "key": "components",
+            "optional": true,
+            "type": "{ type: number }[]"
+          },
+          {
             "key": "message_reference",
             "optional": true,
             "type": "{ message_id?: string, channel_id?: string, guild_id?: string }"
@@ -792,6 +827,16 @@
             "key": "embeds",
             "optional": true,
             "type": "{ title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[]"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "{ type: 1, components: ({ type: 2, style: number, label?: string, emoji?: { id?: string, name?: string, animated?: boolean }, custom_id?: string, url?: string, sku_id?: string, disabled?: boolean } | { type: 3, custom_id: string, options: { label: string, value: string, description?: string, emoji?: { id?: string, name?: string, animated?: boolean }, default?: boolean }[], placeholder?: string, min_values?: number, max_values?: number, disabled?: boolean } | { type: 5 | 6 | 7 | 8, custom_id: string, placeholder?: string, min_values?: number, max_values?: number, channel_types?: number[], disabled?: boolean })[] }[]"
+          },
+          {
+            "key": "allowed_mentions",
+            "optional": true,
+            "type": "{ parse?: roles | users | everyone[], roles?: string[], users?: string[], replied_user?: boolean }"
           },
           {
             "key": "tts",
@@ -887,6 +932,11 @@
             "key": "flags",
             "optional": true,
             "type": "number"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "{ type: number }[]"
           },
           {
             "key": "message_reference",

@@ -1,0 +1,352 @@
+---
+title: API
+description: "API reference for TinyPNG: every `tinypng.api.*` operation with input and output types."
+---
+
+Every `tinypng.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getCompressionCount
+
+`account.getCompressionCount`
+
+Get the number of compressions made this calendar month
+
+**Risk:** `read`
+
+```ts
+await corsair.tinypng.api.account.getCompressionCount({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `compressionCount` | `number` | Yes | — |
+
+
+
+---
+
+## Images
+
+### compressAndStoreInAzure
+
+`images.compressAndStoreInAzure`
+
+Compress an image and upload the result to Azure Blob Storage through a SAS URL
+
+**Risk:** `write`
+
+```ts
+await corsair.tinypng.api.images.compressAndStoreInAzure({
+	source: { url: 'https://tinypng.com/images/panda-happy.png' },
+	blobUrl: 'https://myaccount.blob.core.windows.net/images/panda.png?sv=2022-11-02&sig=REDACTED',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source` | `object` | Yes | — |
+| `blobUrl` | `string` | Yes | Full blob URL with a SAS token granting create/write, e.g. https://acct.blob.core.windows.net/container/name.png?sv=... |
+| `cacheControl` | `string` | No | — |
+| `resize` | `object` | No | — |
+| `convert` | `object` | No | Several types return the smallest result |
+| `transform` | `object` | No | — |
+| `preserve` | `copyright \| creation \| location[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="source full type">
+
+```ts
+{
+  url: string
+} | {
+  base64: string
+}
+```
+</Accordion>
+
+<Accordion title="resize full type">
+
+```ts
+{
+  method: scale | fit | cover | thumb,
+  width?: number,
+  height?: number
+}
+```
+</Accordion>
+
+<Accordion title="convert full type">
+
+```ts
+{
+  type: image/avif | image/webp | image/jpeg | image/png | image/jxl | */* | image/avif | image/webp | image/jpeg | image/png | image/jxl | */*[]
+}
+```
+</Accordion>
+
+<Accordion title="transform full type">
+
+```ts
+{
+  background: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+| `blobUrl` | `string` | Yes | Blob URL without the SAS query string |
+| `contentType` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `compressionCount` | `number` | No | — |
+| `etag` | `string` | No | — |
+
+
+
+---
+
+### output
+
+`images.output`
+
+Download a compressed image by its Tinify image ID as base64
+
+**Risk:** `read`
+
+```ts
+await corsair.tinypng.api.images.output({ imageId: '2xnsp7jn34e5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `compressionCount` | `number` | No | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+### shrink
+
+`images.shrink`
+
+Compress an image from a URL or base64 bytes and return its Tinify image ID (uses one compression)
+
+**Risk:** `write`
+
+```ts
+await corsair.tinypng.api.images.shrink({
+	source: { url: 'https://tinypng.com/images/panda-happy.png' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="source full type">
+
+```ts
+{
+  url: string
+} | {
+  base64: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+| `outputUrl` | `string` | Yes | — |
+| `compressionCount` | `number` | No | — |
+| `input` | `object` | Yes | — |
+| `output` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  size: number,
+  type: string
+}
+```
+</Accordion>
+
+<Accordion title="output full type">
+
+```ts
+{
+  size: number,
+  type: string,
+  width?: number,
+  height?: number,
+  ratio?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transform
+
+`images.transform`
+
+Resize, convert, fill the background of, or preserve metadata on a compressed image, optionally storing it on S3 or GCS
+
+**Risk:** `write`
+
+```ts
+await corsair.tinypng.api.images.transform({
+	imageId: '2xnsp7jn34e5',
+	resize: { method: 'fit', width: 150, height: 100 },
+	convert: { type: 'image/webp' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+| `resize` | `object` | No | — |
+| `convert` | `object` | No | Several types return the smallest result |
+| `transform` | `object` | No | — |
+| `preserve` | `copyright \| creation \| location[]` | No | — |
+| `store` | `object` | No | Upload the result to S3 or GCS instead of returning the bytes |
+
+<AccordionGroup>
+<Accordion title="resize full type">
+
+```ts
+{
+  method: scale | fit | cover | thumb,
+  width?: number,
+  height?: number
+}
+```
+</Accordion>
+
+<Accordion title="convert full type">
+
+```ts
+{
+  type: image/avif | image/webp | image/jpeg | image/png | image/jxl | */* | image/avif | image/webp | image/jpeg | image/png | image/jxl | */*[]
+}
+```
+</Accordion>
+
+<Accordion title="transform full type">
+
+```ts
+{
+  background: string
+}
+```
+</Accordion>
+
+<Accordion title="store full type">
+
+```ts
+{
+  service: s3,
+  aws_access_key_id: string,
+  aws_secret_access_key: string,
+  region: string,
+  path: string,
+  headers?: {
+    Cache-Control: string
+  },
+  acl?: string
+} | {
+  service: gcs,
+  gcp_access_token: string,
+  path: string,
+  headers?: {
+    Cache-Control: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  imageId: string,
+  contentType: string,
+  size: number,
+  width?: number,
+  height?: number,
+  compressionCount?: number,
+  base64: string,
+  stored: false
+} | {
+  stored: true,
+  imageId: string,
+  location: string,
+  width?: number,
+  height?: number,
+  compressionCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

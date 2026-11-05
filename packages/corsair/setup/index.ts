@@ -224,6 +224,7 @@ export async function setupCorsair<
 			database: db,
 			kek: internal.kek,
 			multiTenancy: true,
+			...(internal.encryptDataAtRest ? { encryptDataAtRest: true } : {}),
 		}).withTenant(tenantScope.tenantId);
 		await runBackfill(instance, internal.plugins, authReadyPlugins, log, warn);
 		log('[corsair:setup] Backfill complete.');
@@ -680,7 +681,11 @@ async function checkAuthStatus(
 	const isReady =
 		missingIntegration.length === 0 && missingAccount.length === 0;
 
-	if (isReady) {
+	if (authType === 'managed_pricing') {
+		log(
+			`[corsair:setup] '${pluginId}' (managed_pricing) uses Corsair metered credentials via Hub — nothing to store in your database. Pass hub: { ... } to createCorsair().`,
+		);
+	} else if (isReady) {
 		log(`[corsair:setup] '${pluginId}' (${authType}) is configured ✓`);
 	} else if (authType === 'managed') {
 		log(

@@ -1,0 +1,97 @@
+---
+title: Webhooks
+description: "Saperly incoming webhooks: event paths, payloads, and response data."
+---
+
+The Saperly plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/saperly/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `events`
+  - `delivery` (`events.delivery`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Events
+
+### Delivery
+
+`events.delivery`
+
+Signed call and SMS deliveries. The handler confirms the resource with the API before returning success.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deliveryId` | `string` | Yes | — |
+| `eventType` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  callId?: string,
+  messageId?: string,
+  numberId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventType: string,
+  deliveryId: string,
+  resource: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+saperly({
+    webhookHooks: {
+        events: {
+            delivery: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

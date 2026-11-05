@@ -1,0 +1,106 @@
+{
+  "id": "typesafe",
+  "displayName": "TypeSafe",
+  "description": "Ask Jev, TypeSafe's System One model, typed questions about text, JSON or images and get calibrated probabilities back for code to act on.",
+  "npmPackageName": "@corsair-dev/typesafe",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "typesafe.api.models.list",
+      "shortPath": "models.list",
+      "description": "List the TypeSafe model names and aliases this key can use, such as jev-latest",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "models",
+            "optional": false,
+            "type": "{ name: string, description: string, release_date: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typesafe.api.systemOne.ask",
+      "shortPath": "systemOne.ask",
+      "description": "Ask Jev typed questions about text, JSON or images in one call: yes/no (probability), choice (one option), score (ordered levels) or box (locate in an image). Answers come back with calibrated probabilities.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Model name or alias from models.list. jev-latest moves with each release; pin a version such as jev-1.14.0 to keep answers stable."
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "The content every question is about: text, or JSON with descriptive keys. Leave out fields no question needs."
+          },
+          {
+            "key": "questions",
+            "optional": false,
+            "type": "{}",
+            "description": "Questions keyed by a name you choose; answers come back under the same names. Questions run in parallel and cannot see each other."
+          },
+          {
+            "key": "assets",
+            "optional": true,
+            "type": "{}",
+            "description": "Images keyed by a placeholder string. Each placeholder in state, instructions or criteria is replaced by its image. Images are experimental at TypeSafe."
+          },
+          {
+            "key": "longContext",
+            "optional": true,
+            "type": "boolean",
+            "description": "Raise the context limit from 64k (32k per question) to 262k tokens. Slower and less accurate, same price per token."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Versioned model that answered"
+          },
+          {
+            "key": "answers",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ input_tokens: number, output_tokens: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

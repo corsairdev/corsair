@@ -1,4 +1,6 @@
 import type { PortableTextBlock } from '@portabletext/types';
+import type { BlogFaq } from '@/lib/blog-seo';
+import { faqsFromJsonLd } from '@/lib/blog-seo';
 import { getSanityClient } from '@/lib/sanity/client';
 import {
 	allPostSlugsQuery,
@@ -15,8 +17,20 @@ export type BlogPostMeta = {
 	author: string;
 };
 
+export type BlogImage = {
+	asset?: { _ref?: string };
+	alt?: string;
+};
+
 export type BlogPost = BlogPostMeta & {
 	body: PortableTextBlock[];
+	updatedAt?: string;
+	metaTitle?: string;
+	metaDescription?: string;
+	keywords: string[];
+	coverImage?: BlogImage;
+	socialShareImage?: BlogImage;
+	faqs: BlogFaq[];
 };
 
 type SanityPostRecord = {
@@ -27,6 +41,37 @@ type SanityPostRecord = {
 	author: string | null;
 	body?: PortableTextBlock[];
 };
+
+type SanityPostDetailRecord = SanityPostRecord & {
+	updatedAt?: string | null;
+	metaTitle?: string | null;
+	metaDescription?: string | null;
+	targetKeywords?: string[] | null;
+	coverImage?: BlogImage | null;
+	socialShareImage?: BlogImage | null;
+	faqs?: Array<{
+		_key?: string;
+		question?: string | null;
+		answer?: string | null;
+	}> | null;
+	jsonLd?: string | null;
+};
+
+function hasAsset(image: BlogImage | null | undefined): image is BlogImage {
+	return Boolean(image?.asset?._ref);
+}
+
+function toFaqs(record: SanityPostDetailRecord): BlogFaq[] {
+	const faqs = (record.faqs ?? []).flatMap((faq, index) => {
+		const question = faq.question?.trim();
+		const answer = faq.answer?.trim();
+		return question && answer
+			? [{ id: faq._key ?? `faq-${index}`, question, answer }]
+			: [];
+	});
+
+	return faqs.length > 0 ? faqs : faqsFromJsonLd(record.jsonLd);
+}
 
 const fetchOptions = { next: { tags: ['blog'] } };
 
@@ -65,7 +110,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
 
 	if (!sanityProjectId || !sanityClient) return null;
 
-	const record = await sanityClient.fetch<SanityPostRecord | null>(
+	const record = await sanityClient.fetch<SanityPostDetailRecord | null>(
 		postBySlugQuery,
 		{ slug },
 		fetchOptions,
@@ -80,6 +125,15 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
 	return {
 		...meta,
 		body: record.body,
+		updatedAt: record.updatedAt ?? undefined,
+		metaTitle: record.metaTitle?.trim() || undefined,
+		metaDescription: record.metaDescription?.trim() || undefined,
+		keywords: (record.targetKeywords ?? []).filter(Boolean),
+		coverImage: hasAsset(record.coverImage) ? record.coverImage : undefined,
+		socialShareImage: hasAsset(record.socialShareImage)
+			? record.socialShareImage
+			: undefined,
+		faqs: toFaqs(record),
 	};
 }
 
