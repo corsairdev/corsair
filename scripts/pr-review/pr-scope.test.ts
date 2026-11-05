@@ -32,6 +32,44 @@ test('keeps plugin-code PRs in the plugin lane when they regenerate that plugin 
 	);
 });
 
+test('uses the plugin lane for a Graph plugin plus companion core files', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'packages/teams/subscribe.ts',
+			'packages/corsair/core/plugins/index.ts',
+			'pnpm-lock.yaml',
+		]),
+		{ lane: 'plugin', plugin: 'teams' },
+	);
+});
+
+test('uses the full lane when a non-Graph plugin touches companion core files', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'packages/slack/index.ts',
+			'packages/corsair/oauth/renewal.ts',
+		]),
+		{ lane: 'full', includeWww: false },
+	);
+});
+
+test('uses the full lane when a non-Graph plugin touches gate rule files', () => {
+	assert.deepEqual(
+		classifyPrScope(['packages/slack/index.ts', 'scripts/pr-review/gate.ts']),
+		{ lane: 'full', includeWww: false },
+	);
+});
+
+test('uses the plugin lane when a Graph plugin touches gate rule files', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'packages/teams/subscribe.ts',
+			'scripts/pr-review/gate.ts',
+		]),
+		{ lane: 'plugin', plugin: 'teams' },
+	);
+});
+
 test('uses the full lane when a plugin PR changes other corsair files', () => {
 	assert.deepEqual(
 		classifyPrScope([

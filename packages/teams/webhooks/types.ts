@@ -1,6 +1,8 @@
 import { timingSafeEqual } from 'node:crypto';
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import { z } from 'zod';
+import type { TeamsEndpointOutputs } from '../endpoints/types';
+import { TeamsEndpointOutputSchemas } from '../endpoints/types';
 
 // ── Graph API Notification Schemas ────────────────────────────────────────────
 
@@ -52,6 +54,18 @@ export const TeamsChannelMessageEventSchema = z.object({
 export type TeamsChannelMessageEvent = z.infer<
 	typeof TeamsChannelMessageEventSchema
 >;
+
+export const TeamsChannelMessageWebhookResponseSchema =
+	TeamsChannelMessageEventSchema.extend({
+		teamId: z.string().optional(),
+		channelId: z.string().optional(),
+		message: TeamsEndpointOutputSchemas.messagesGet.optional(),
+	});
+export type TeamsChannelMessageWebhookResponse = TeamsChannelMessageEvent & {
+	teamId?: string;
+	channelId?: string;
+	message?: TeamsEndpointOutputs['messagesGet'];
+};
 
 // ── Chat Message Event ────────────────────────────────────────────────────────
 
@@ -125,7 +139,7 @@ export type TeamsWebhookPayload<TEvent> = {
 // ── Webhook Outputs Map ───────────────────────────────────────────────────────
 
 export type TeamsWebhookOutputs = {
-	channelMessage: TeamsChannelMessageEvent;
+	channelMessage: TeamsChannelMessageWebhookResponse;
 	chatMessage: TeamsChatMessageEvent;
 	channelCreated: TeamsChannelCreatedEvent;
 	membershipChanged: TeamsMembershipChangedEvent;
@@ -216,6 +230,28 @@ export function verifyTeamsClientState(
 		return { valid: false, error: 'clientState mismatch' };
 	}
 	return { valid: true };
+}
+
+/**
+ * App-side clientState check that honors Hub's upstream verification.
+ *
+ * When a delivery arrives Hub-verified (see WebhookRequest.hubVerified in
+ * corsair/core — set once Hub has validated the provider signature), the core
+ * withholds ctx.key by contract and skips per-plugin verification. Re-checking
+ * here would 401 a notification Hub already vouched for. Only the direct path
+ * (provider → app, no Hub) still verifies against the stored clientState.
+ */
+export function verifyTeamsWebhook(
+	request: {
+		payload: TeamsWebhookPayload<TeamsNotification>;
+		hubVerified?: boolean;
+	},
+	key: string | undefined,
+): { valid: boolean; error?: string } {
+	if (request.hubVerified === true) {
+		return { valid: true };
+	}
+	return verifyTeamsClientState(request.payload, key ?? '');
 }
 
 // ── Payload Schemas for Index ─────────────────────────────────────────────────
