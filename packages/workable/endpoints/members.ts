@@ -43,7 +43,7 @@ export const list: WorkableEndpoints['membersList'] = async (ctx, input) => {
 		WorkableEndpointOutputSchemas.membersList,
 		raw,
 	);
-	await persistRows(ctx.db.members, WorkableMember, response.members, 'member');
+	await persistRows(ctx, 'members', WorkableMember, response.members);
 	await logEventFromContext(ctx, 'workable.members.list', {}, 'completed');
 	return response;
 };
@@ -73,7 +73,7 @@ export const invite: WorkableEndpoints['membersInvite'] = async (
 		WorkableEndpointOutputSchemas.membersInvite,
 		raw,
 	);
-	await persistRow(ctx.db.members, WorkableMember, response, 'member');
+	await persistRow(ctx, 'members', WorkableMember, response);
 	// The invitee email is intentionally not logged — operational logs must
 	// not carry PII; the member id is persisted to the local cache instead.
 	await logEventFromContext(ctx, 'workable.members.invite', {}, 'completed');
@@ -104,7 +104,7 @@ export const update: WorkableEndpoints['membersUpdate'] = async (
 		WorkableEndpointOutputSchemas.membersUpdate,
 		raw,
 	);
-	await persistRow(ctx.db.members, WorkableMember, response, 'member');
+	await persistRow(ctx, 'members', WorkableMember, response);
 	await logEventFromContext(
 		ctx,
 		'workable.members.update',
@@ -136,7 +136,7 @@ export const enable: WorkableEndpoints['membersEnable'] = async (
 	);
 	// Enable returns 204 with no body, so there is nothing to persist — evict
 	// the cached row instead so reads stop reporting the member as inactive.
-	await evictRow(ctx.db.members, valid.id, 'member');
+	await evictRow(ctx, 'members', valid.id);
 	await logEventFromContext(
 		ctx,
 		'workable.members.enable',

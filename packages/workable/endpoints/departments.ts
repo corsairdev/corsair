@@ -28,12 +28,7 @@ export const list: WorkableEndpoints['departmentsList'] = async (
 		WorkableEndpointOutputSchemas.departmentsList,
 		raw,
 	);
-	await persistRows(
-		ctx.db.departments,
-		WorkableDepartment,
-		response,
-		'department',
-	);
+	await persistRows(ctx, 'departments', WorkableDepartment, response);
 	await logEventFromContext(ctx, 'workable.departments.list', {}, 'completed');
 	return response;
 };
@@ -58,12 +53,7 @@ export const create: WorkableEndpoints['departmentsCreate'] = async (
 		WorkableEndpointOutputSchemas.departmentsCreate,
 		raw,
 	);
-	await persistRow(
-		ctx.db.departments,
-		WorkableDepartment,
-		response,
-		'department',
-	);
+	await persistRow(ctx, 'departments', WorkableDepartment, response);
 	await logEventFromContext(
 		ctx,
 		'workable.departments.create',
@@ -93,12 +83,7 @@ export const update: WorkableEndpoints['departmentsUpdate'] = async (
 		WorkableEndpointOutputSchemas.departmentsUpdate,
 		raw,
 	);
-	await persistRow(
-		ctx.db.departments,
-		WorkableDepartment,
-		response,
-		'department',
-	);
+	await persistRow(ctx, 'departments', WorkableDepartment, response);
 	await logEventFromContext(
 		ctx,
 		'workable.departments.update',
@@ -132,15 +117,10 @@ export const merge: WorkableEndpoints['departmentsMerge'] = async (
 		// An empty success carries no body — validate the empty object instead.
 		raw ?? {},
 	);
-	await evictRow(ctx.db.departments, valid.id, 'department');
+	await evictRow(ctx, 'departments', valid.id);
 	// The response is the target department the source was merged into.
 	if (response.id) {
-		await persistRow(
-			ctx.db.departments,
-			WorkableDepartment,
-			response,
-			'department',
-		);
+		await persistRow(ctx, 'departments', WorkableDepartment, response);
 	}
 	await logEventFromContext(
 		ctx,
@@ -172,7 +152,7 @@ export const remove: WorkableEndpoints['departmentsDelete'] = async (
 		// 204 No Content carries no body — validate the empty object instead.
 		raw ?? {},
 	);
-	await evictRow(ctx.db.departments, valid.id, 'department');
+	await evictRow(ctx, 'departments', valid.id);
 	await logEventFromContext(
 		ctx,
 		'workable.departments.delete',

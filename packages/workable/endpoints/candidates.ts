@@ -39,12 +39,7 @@ export const list: WorkableEndpoints['candidatesList'] = async (ctx, input) => {
 		WorkableEndpointOutputSchemas.candidatesList,
 		raw,
 	);
-	await persistRows(
-		ctx.db.candidates,
-		WorkableCandidate,
-		response.candidates,
-		'candidate',
-	);
+	await persistRows(ctx, 'candidates', WorkableCandidate, response.candidates);
 	await logEventFromContext(
 		ctx,
 		'workable.candidates.list',

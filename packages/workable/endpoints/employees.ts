@@ -37,12 +37,7 @@ export const list: WorkableEndpoints['employeesList'] = async (ctx, input) => {
 		WorkableEndpointOutputSchemas.employeesList,
 		raw,
 	);
-	await persistRows(
-		ctx.db.employees,
-		WorkableEmployee,
-		response.employees,
-		'employee',
-	);
+	await persistRows(ctx, 'employees', WorkableEmployee, response.employees);
 	await logEventFromContext(
 		ctx,
 		'workable.employees.list',
@@ -67,7 +62,7 @@ export const get: WorkableEndpoints['employeesGet'] = async (ctx, input) => {
 		WorkableEndpointOutputSchemas.employeesGet,
 		raw,
 	);
-	await persistRow(ctx.db.employees, WorkableEmployee, response, 'employee');
+	await persistRow(ctx, 'employees', WorkableEmployee, response);
 	await logEventFromContext(
 		ctx,
 		'workable.employees.get',
@@ -101,7 +96,7 @@ export const create: WorkableEndpoints['employeesCreate'] = async (
 		WorkableEndpointOutputSchemas.employeesCreate,
 		raw,
 	);
-	await persistRow(ctx.db.employees, WorkableEmployee, response, 'employee');
+	await persistRow(ctx, 'employees', WorkableEmployee, response);
 	await logEventFromContext(
 		ctx,
 		'workable.employees.create',
@@ -131,7 +126,7 @@ export const update: WorkableEndpoints['employeesUpdate'] = async (
 		WorkableEndpointOutputSchemas.employeesUpdate,
 		raw,
 	);
-	await persistRow(ctx.db.employees, WorkableEmployee, response, 'employee');
+	await persistRow(ctx, 'employees', WorkableEmployee, response);
 	await logEventFromContext(
 		ctx,
 		'workable.employees.update',

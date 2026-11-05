@@ -41,7 +41,7 @@ export const list: WorkableEndpoints['jobsList'] = async (ctx, input) => {
 		WorkableEndpointOutputSchemas.jobsList,
 		raw,
 	);
-	await persistRows(ctx.db.jobs, WorkableJob, response.jobs, 'job');
+	await persistRows(ctx, 'jobs', WorkableJob, response.jobs);
 	await logEventFromContext(
 		ctx,
 		'workable.jobs.list',

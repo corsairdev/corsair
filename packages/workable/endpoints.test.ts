@@ -5,9 +5,11 @@ import * as Departments from './endpoints/departments';
 import * as Employees from './endpoints/employees';
 import * as Jobs from './endpoints/jobs';
 import * as Members from './endpoints/members';
+import { evictRow, pendingCacheWrites, persistRow } from './endpoints/persist';
 import * as PublicJobs from './endpoints/public-jobs';
 import * as Reference from './endpoints/reference';
 import * as Subscriptions from './endpoints/subscriptions';
+import { WorkableMember } from './schema/database';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
@@ -28,8 +30,10 @@ type Ctx = Parameters<typeof Departments.list>[0];
 function makeStore() {
 	// unknown: mock row store holds zod-validated rows of varying entity shapes.
 	const rows = new Map<string, unknown>();
-	return {
+	const store = {
 		rows,
+		/** Delays each read, like a real database round trip. */
+		readDelayMs: 0,
 		// unknown: mock accepts any validated row shape, mirroring the generic store.
 		upsertByEntityId: async (id: string, data: unknown) => {
 			rows.set(id, data);
@@ -37,9 +41,16 @@ function makeStore() {
 		deleteByEntityId: async (id: string) => {
 			rows.delete(id);
 		},
-		findByEntityId: async (id: string) =>
-			rows.has(id) ? { data: rows.get(id) } : null,
+		findByEntityId: async (id: string) => {
+			// The row is read when the query starts; the answer arrives later.
+			const found = rows.has(id) ? { data: rows.get(id) } : null;
+			if (store.readDelayMs > 0) {
+				await new Promise((resolve) => setTimeout(resolve, store.readDelayMs));
+			}
+			return found;
+		},
 	};
+	return store;
 }
 
 /** Builds a mock endpoint context bound to the `example` test account. */
@@ -66,6 +77,7 @@ function makeCtx(
 			},
 		},
 		db: stores,
+		$getAccountId: async () => 'account-1',
 		// why safe: test-only ctx mock — narrowed from the real endpoint
 		// parameter type via `Parameters<typeof …>[0]` above.
 	} as unknown as Ctx;
@@ -271,6 +283,51 @@ describe('Workable endpoints', () => {
 
 		// The list row is a summary of the detail record; caching it must not
 		// wipe the fields employees.get stored.
+		// Overlapping calls for one record used to both read the old row, so
+		// the later write dropped the fields the earlier one added.
+		it('overlapping detail and list calls for one employee keep the union of fields', async () => {
+			const { ctx, stores } = makeCtx();
+			stores.employees.readDelayMs = 20;
+			// why safe: test-only fetch stub — signature matches fetch.
+			globalThis.fetch = (async (url: string, init?: RequestInit) => {
+				calls.push({ url: String(url), init });
+				return String(url).includes('/employees/e1')
+					? jsonResponse({
+							id: 'e1',
+							firstname: 'Ada',
+							hire_date: '2021-10-01T00:00:00.000Z',
+						})
+					: jsonResponse({
+							employees: [{ id: 'e1', firstname: 'Ada', state: 'published' }],
+						});
+			}) as typeof fetch;
+			await Promise.all([
+				Employees.get(ctx, { id: 'e1' }),
+				Employees.list(ctx, {}),
+			]);
+			expect(stores.employees.rows.get('e1')).toEqual({
+				id: 'e1',
+				firstname: 'Ada',
+				hire_date: '2021-10-01T00:00:00.000Z',
+				state: 'published',
+			});
+		});
+
+		it('an eviction waits for a cache write already queued for the record', async () => {
+			const { ctx, stores } = makeCtx();
+			stores.members.readDelayMs = 20;
+			const write = persistRow(ctx, 'members', WorkableMember, {
+				id: 'm2',
+				active: false,
+			});
+			const evict = evictRow(ctx, 'members', 'm2');
+			await Promise.all([write, evict]);
+			// The write was queued first, so the eviction runs after it lands
+			// instead of being undone by it.
+			expect(stores.members.rows.has('m2')).toBe(false);
+			expect(pendingCacheWrites()).toBe(0);
+		});
+
 		it('employees.list keeps the detail fields employees.get cached', async () => {
 			const { ctx, stores } = makeCtx();
 			respondWith({
