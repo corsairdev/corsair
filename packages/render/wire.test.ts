@@ -8,11 +8,13 @@ import { render } from './index';
 type Sent = {
 	method: string;
 	url: URL;
+	// unknown: the parsed JSON body, or the raw FormData for uploads.
 	body: unknown;
 	headers: Headers;
 };
 
 const sent: Sent[] = [];
+// unknown: canned reply bodies are any JSON (objects, arrays, null) by design.
 const replies: Array<{ status: number; body?: unknown }> = [];
 
 beforeEach(() => {
@@ -420,6 +422,7 @@ describe('Render responses seen on a live Hobby workspace', () => {
 
 		const error = await api.owners
 			.auditLogs({ id: 'tea-1' })
+			// unknown: a rejected promise can carry any value; narrowed below.
 			.catch((caught: unknown) => caught);
 
 		if (!(error instanceof RenderAPIError)) throw error;
@@ -436,5 +439,69 @@ describe('Render responses seen on a live Hobby workspace', () => {
 		await expect(
 			api.services.listOutboundIps({ serviceId: 'srv-1' }),
 		).resolves.toEqual(ips);
+	});
+});
+
+describe('Render deploy and lifecycle responses', () => {
+	const deploy = {
+		id: 'dep-1',
+		status: 'build_in_progress',
+		commit: { id: 'abc123' },
+	};
+
+	it.each([
+		[
+			'services.rollbackDeploy',
+			() =>
+				api.services.rollbackDeploy({ serviceId: 'srv-1', deployId: 'dep-0' }),
+		],
+		[
+			'services.cancelDeploy',
+			() =>
+				api.services.cancelDeploy({ serviceId: 'srv-1', deployId: 'dep-1' }),
+		],
+		[
+			'services.triggerDeploy',
+			() => api.services.triggerDeploy({ serviceId: 'srv-1' }),
+		],
+	] as const)('%s returns the deploy Render sends', async (_name, call) => {
+		replies.push({ status: 201, body: deploy });
+		await expect(call()).resolves.toEqual(deploy);
+	});
+
+	it('rejects a deploy reply without an id', async () => {
+		replies.push({ status: 201, body: { status: 'created' } });
+		await expect(
+			api.services.rollbackDeploy({ serviceId: 'srv-1', deployId: 'dep-0' }),
+		).rejects.toThrow();
+	});
+
+	it('accepts the empty 202 Render sends when a deploy is queued', async () => {
+		replies.push({ status: 202 });
+		await expect(
+			api.services.triggerDeploy({ serviceId: 'srv-1' }),
+		).resolves.toBeUndefined();
+	});
+
+	it.each([
+		['services.restart', () => api.services.restart({ serviceId: 'srv-1' })],
+		[
+			'services.purgeCache',
+			() => api.services.purgeCache({ serviceId: 'srv-1' }),
+		],
+		['postgres.failover', () => api.postgres.failover({ id: 'dpg-1' })],
+		['maintenance.trigger', () => api.maintenance.trigger({ id: 'mrn-1' })],
+		['keyValue.suspend', () => api.keyValue.suspend({ id: 'red-1' })],
+	] as const)('%s accepts an empty reply', async (_name, call) => {
+		replies.push({ status: 202 });
+		await expect(call()).resolves.toBeUndefined();
+	});
+
+	it('returns a cron job run, including a status the plugin does not know yet', async () => {
+		const run = { id: 'crnrun-1', status: 'retrying', startedAt: '2026-11-05' };
+		replies.push({ status: 200, body: run });
+		await expect(
+			api.services.cronJobs.triggerRun({ cronJobId: 'crn-1' }),
+		).resolves.toEqual(run);
 	});
 });

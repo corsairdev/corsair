@@ -1791,7 +1791,17 @@ await corsair.render.api.keyValue.resume({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -1857,7 +1867,17 @@ await corsair.render.api.keyValue.suspend({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -2373,7 +2393,17 @@ await corsair.render.api.maintenance.trigger({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -2404,7 +2434,17 @@ await corsair.render.api.maintenance.update({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -4087,7 +4127,17 @@ await corsair.render.api.postgres.failover({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -4356,7 +4406,17 @@ await corsair.render.api.postgres.restart({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -4386,7 +4446,17 @@ await corsair.render.api.postgres.resume({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -4502,7 +4572,17 @@ await corsair.render.api.postgres.suspend({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -5077,7 +5157,17 @@ await corsair.render.api.services.cancelDeploy({});
 
 
 
-**Output:** `any`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `buildId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `finishedAt` | `string` | No | — |
+
 
 
 ---
@@ -5214,7 +5304,16 @@ await corsair.render.api.services.cronJobs.triggerRun({});
 
 
 
-**Output:** `any`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `startedAt` | `string` | No | — |
+| `finishedAt` | `string` | No | — |
+| `triggeredBy` | `string` | No | — |
+
 
 
 ---
@@ -7016,7 +7115,17 @@ await corsair.render.api.services.purgeCache({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -7041,7 +7150,17 @@ await corsair.render.api.services.restart({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -7066,7 +7185,17 @@ await corsair.render.api.services.resume({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -7165,7 +7294,17 @@ await corsair.render.api.services.rollbackDeploy({ serviceId: 'srv-d0k1q2r3s4t5u
 
 
 
-**Output:** `any`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `buildId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `finishedAt` | `string` | No | — |
+
 
 
 ---
@@ -7395,7 +7534,17 @@ await corsair.render.api.services.scale({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9',
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -7617,7 +7766,17 @@ await corsair.render.api.services.suspend({});
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -7647,7 +7806,24 @@ await corsair.render.api.services.triggerDeploy({ serviceId: 'srv-d0k1q2r3s4t5u6
 
 
 
-**Output:** `any`
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status?: string,
+  buildId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  finishedAt?: string
+} | undefined | | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---

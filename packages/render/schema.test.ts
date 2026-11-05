@@ -338,6 +338,8 @@ describe('Render schema', () => {
 	it('keeps every registered endpoint behind a schema boundary', () => {
 		const plugin = render({ key: 'secret' });
 		const paths: string[] = [];
+		// unknown: walks the endpoint tree, whose values are nested groups or
+		// handlers; narrowed with typeof below.
 		const visit = (value: unknown, prefix: string[] = []) => {
 			if (typeof value === 'function') {
 				paths.push(prefix.join('.'));
@@ -517,6 +519,7 @@ describe('Render schema', () => {
 				},
 			},
 			{ type: 'shared', ips: ['203.0.113.10'] },
+			{ id: 'run-1', status: 'pending' },
 			{ processes: [] },
 			{ topQueries: [] },
 			{ sizes: [] },
@@ -525,6 +528,8 @@ describe('Render schema', () => {
 			undefined,
 		];
 		let invokedOperations = 0;
+		// unknown: walks the endpoint tree, whose values are nested groups or
+		// handlers; narrowed with typeof below.
 		const visit = async (value: unknown, prefix: string[] = []) => {
 			if (typeof value === 'function') {
 				invokedOperations += 1;

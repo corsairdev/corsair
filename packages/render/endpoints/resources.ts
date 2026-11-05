@@ -1,6 +1,7 @@
 import { makeRenderRequest } from '../client';
 import type { RenderEndpoints } from '../index';
 import { renderPathParameter } from './path';
+import type { NoContentOutput } from './types';
 
 type Context = { key: string };
 // Stricter typing is not feasible because resource operations share identifiers
@@ -51,10 +52,14 @@ export const updatePostgres: RenderEndpoints['updatePostgres'] = (ctx, input) =>
 
 // Render Postgres lifecycle triggers return 202 with no request body.
 const postWithoutBody = (ctx: Context, template: string, input: Input) =>
-	makeRenderRequest(renderPathParameter(template, 'id', input.id), ctx.key, {
-		method: 'POST',
-		body: undefined,
-	});
+	makeRenderRequest<NoContentOutput>(
+		renderPathParameter(template, 'id', input.id),
+		ctx.key,
+		{
+			method: 'POST',
+			body: undefined,
+		},
+	);
 
 export const restartPostgres: RenderEndpoints['restartPostgres'] = (
 	ctx,

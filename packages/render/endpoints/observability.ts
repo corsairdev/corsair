@@ -10,6 +10,9 @@ type Context = { key: string };
 // Render resources and remain open until schema validation.
 // unknown: the operation schemas validate the provider-specific filters.
 type Input = Record<string, unknown>;
+// unknown: owner records are provider-defined (the list wraps each in
+// { cursor, owner }); saveOwners parses them with RenderOwnerSchema.
+type OwnerRecord = Record<string, unknown>;
 
 const call = <T>(
 	ctx: Context,
@@ -50,9 +53,8 @@ const saveOwners = async (ctx: RenderContext, owners: unknown[]) => {
 
 // Path checks in call() throw synchronously, like every other operation;
 // the save runs once Render answers.
-// unknown: owner records are provider-defined; saveOwners validates them.
 export const listOwners: RenderEndpoints['listOwners'] = (ctx, input) =>
-	call<Record<string, unknown>[]>(ctx, '/v1/owners', 'GET', input).then(
+	call<OwnerRecord[]>(ctx, '/v1/owners', 'GET', input).then(
 		async (response) => {
 			if (Array.isArray(response)) {
 				await saveOwners(
@@ -64,7 +66,7 @@ export const listOwners: RenderEndpoints['listOwners'] = (ctx, input) =>
 		},
 	);
 export const retrieveOwner: RenderEndpoints['retrieveOwner'] = (ctx, input) =>
-	call<Record<string, unknown>>(ctx, '/v1/owners/{id}', 'GET', input).then(
+	call<OwnerRecord>(ctx, '/v1/owners/{id}', 'GET', input).then(
 		async (response) => {
 			await saveOwners(ctx, [response]);
 			return response;

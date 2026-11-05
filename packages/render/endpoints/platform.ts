@@ -1,6 +1,7 @@
 import { makeRenderRequest } from '../client';
 import type { RenderEndpoints } from '../index';
 import { renderPathParameter } from './path';
+import type { CronJobRunOutput, NoContentOutput } from './types';
 
 type Context = { key: string };
 // Stricter typing is not feasible for this shared adapter because the disk,
@@ -35,10 +36,11 @@ const request = <T>(
 // Render lifecycle triggers return 202 with no request body.
 const postWithoutBody = (ctx: Context, template: string, input: Input) => {
 	const { id } = input;
-	return makeRenderRequest(renderPathParameter(template, 'id', id), ctx.key, {
-		method: 'POST',
-		body: undefined,
-	});
+	return makeRenderRequest<NoContentOutput>(
+		renderPathParameter(template, 'id', id),
+		ctx.key,
+		{ method: 'POST', body: undefined },
+	);
 };
 
 export const listDisks: RenderEndpoints['listDisks'] = (ctx, input) =>
@@ -82,7 +84,7 @@ export const retrieveMaintenance: RenderEndpoints['retrieveMaintenance'] = (
 export const updateMaintenance: RenderEndpoints['updateMaintenance'] = (
 	ctx,
 	input,
-) => request(ctx, '/v1/maintenance/{id}', 'PATCH', input);
+) => request<NoContentOutput>(ctx, '/v1/maintenance/{id}', 'PATCH', input);
 export const triggerMaintenance: RenderEndpoints['triggerMaintenance'] = (
 	ctx,
 	input,
@@ -91,7 +93,7 @@ export const triggerCronJobRun: RenderEndpoints['triggerCronJobRun'] = (
 	ctx,
 	input,
 ) =>
-	makeRenderRequest(
+	makeRenderRequest<CronJobRunOutput>(
 		renderPathParameter(
 			'/v1/cron-jobs/{cronJobId}/runs',
 			'cronJobId',

@@ -35,10 +35,13 @@ describeLive('Render live API', () => {
 
 	it('reads the user, workspace and notification settings', async () => {
 		expect(await paced(() => api.user.get({}))).toEqual(
-			expect.objectContaining({ id: expect.any(String) }),
+			expect.objectContaining({ id: expect.stringMatching(/^usr-/) }),
 		);
 		expect(await paced(() => api.owners.retrieve({ id: ownerId }))).toEqual(
-			expect.objectContaining({ id: ownerId, type: expect.any(String) }),
+			expect.objectContaining({
+				id: ownerId,
+				type: expect.stringMatching(/^(user|team)$/),
+			}),
 		);
 		expect(
 			Array.isArray(await paced(() => api.owners.members({ id: ownerId }))),
@@ -85,7 +88,10 @@ describeLive('Render live API', () => {
 			() => api.owners.auditLogs({ id: ownerId }),
 			() => api.metrics.retrieveOwnerStream({ ownerId }),
 		]) {
+			// unknown: the two calls return different types, and the outcome is
+			// either that value (paid plan) or the rejection; narrowed below.
 			const error = await paced<unknown>(call).catch(
+				// unknown: a rejected promise can carry any value.
 				(caught: unknown) => caught,
 			);
 			if (!(error instanceof Error)) continue;
@@ -99,6 +105,8 @@ describeLive('Render live API', () => {
 		const prefix = `corsair-live-${Date.now()}`;
 		const envGroups: string[] = [];
 		const projects: string[] = [];
+		// unknown: create operations return provider-defined records (typed as
+		// a loose record-or-list); only the id is read, after a runtime check.
 		const idOf = (created: unknown): string =>
 			created && typeof created === 'object' && 'id' in created
 				? String(created.id)

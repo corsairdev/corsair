@@ -1,8 +1,8 @@
-// unknown: path values come from parsed inputs; checked to be a safe,
-// non-empty single segment before use.
 export const renderPathParameter = (
 	template: string,
 	name: string,
+	// unknown: adapters pass fields straight from parsed input; this function
+	// is the check that the value is a safe, non-empty single path segment.
 	value: unknown,
 ) => {
 	if (

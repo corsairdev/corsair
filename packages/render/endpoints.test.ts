@@ -819,7 +819,10 @@ describe('Render service endpoints', () => {
 		});
 		expect(request).toHaveBeenCalledWith('/v1/blueprints/validate', 'secret', {
 			method: 'POST',
-			formData: { ownerId: 'own-1', file: expect.any(File) },
+			formData: {
+				ownerId: 'own-1',
+				file: expect.objectContaining({ name: 'render.yaml' }),
+			},
 		});
 	});
 

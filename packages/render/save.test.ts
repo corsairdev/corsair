@@ -54,6 +54,7 @@ const user = {
 };
 
 const originalFetch = globalThis.fetch;
+// unknown: canned JSON replies by request path; each test sets the bodies.
 let replies: Record<string, unknown> = {};
 
 beforeAll(() => {

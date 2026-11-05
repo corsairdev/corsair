@@ -95,6 +95,42 @@ const TriggerDeployInputSchema = ServiceIdInputSchema.extend({
 });
 const ServiceOutputSchema = RenderServiceSchema;
 const EmptyOutputSchema = z.union([z.object({}), z.undefined()]);
+// Lifecycle calls (restart, suspend, resume, scale, purge, failover,
+// maintenance) answer 200/202 with no body. Core request() returns undefined,
+// or '' when the empty body is labelled as text.
+const NoContentOutputSchema = z.union([
+	z.undefined(),
+	z.literal(''),
+	z.object({}),
+]);
+// A deploy as Render returns it from trigger, cancel and rollback. Only id is
+// guaranteed; status stays a string so a new deploy state doesn't throw.
+const DeployOutputSchema = z
+	.object({
+		id: z.string(),
+		status: z.string().optional(),
+		buildId: z.string().optional(),
+		createdAt: z.string().optional(),
+		updatedAt: z.string().optional(),
+		finishedAt: z.string().optional(),
+	})
+	.passthrough();
+// Triggering a deploy returns the new deploy (201), or nothing (202) when
+// Render queues it.
+const TriggerDeployOutputSchema = z.union([
+	DeployOutputSchema,
+	NoContentOutputSchema,
+]);
+// A cron job run started on demand; status is open for the same reason.
+const CronJobRunOutputSchema = z
+	.object({
+		id: z.string(),
+		status: z.string(),
+		startedAt: z.string().optional(),
+		finishedAt: z.string().optional(),
+		triggeredBy: z.string().optional(),
+	})
+	.passthrough();
 const ResourceInputSchema = z
 	.object({
 		id: z.string().min(1).optional(),
@@ -315,8 +351,9 @@ const CreateBuildSourceInputSchema = z
 		ownerId: z.string().min(1),
 		name: z.string().min(1),
 		projectId: z.string().min(1).optional(),
-		// unknown: Render's git and image build settings, passed through as given.
+		// unknown: Render's git build settings, passed through as given.
 		git: z.record(z.string(), z.unknown()).optional(),
+		// unknown: Render's image build settings, passed through as given.
 		image: z.record(z.string(), z.unknown()).optional(),
 	})
 	.passthrough();
@@ -608,6 +645,10 @@ export type ListServicesOutput = z.infer<typeof ListServicesOutputSchema>;
 export type ServiceIdInput = z.infer<typeof ServiceIdInputSchema>;
 export type ServiceOutput = z.infer<typeof ServiceOutputSchema>;
 export type OutboundIpsOutput = z.infer<typeof OutboundIpsOutputSchema>;
+export type DeployOutput = z.infer<typeof DeployOutputSchema>;
+export type TriggerDeployOutput = z.infer<typeof TriggerDeployOutputSchema>;
+export type NoContentOutput = z.infer<typeof NoContentOutputSchema>;
+export type CronJobRunOutput = z.infer<typeof CronJobRunOutputSchema>;
 type ResourceInput = z.infer<typeof ResourceInputSchema>;
 type ResourceIdInput = z.infer<typeof ResourceIdInputSchema>;
 
@@ -860,23 +901,21 @@ export type RenderEndpointOutputs = {
 	retrieveService: ServiceOutput;
 	deleteService: z.infer<typeof EmptyOutputSchema>;
 	updateService: ServiceOutput;
-	// Stricter typing is not feasible because these commands return
-	// provider-specific deployment acknowledgements.
-	triggerDeploy: /* unknown: provider-specific deployment acknowledgement */ unknown;
+	triggerDeploy: z.infer<typeof TriggerDeployOutputSchema>;
 	listDeploys: z.infer<typeof ResourceListOutputSchema>;
-	purgeServiceCache: unknown;
-	cancelDeploy: unknown;
-	rollbackDeploy: unknown;
+	purgeServiceCache: z.infer<typeof NoContentOutputSchema>;
+	cancelDeploy: z.infer<typeof DeployOutputSchema>;
+	rollbackDeploy: z.infer<typeof DeployOutputSchema>;
 	listServiceEvents: z.infer<typeof ResourceListOutputSchema>;
 	listOutboundIps: z.infer<typeof OutboundIpsOutputSchema>;
 	listServiceJobs: z.infer<typeof ResourceListOutputSchema>;
 	retrieveServiceJob: z.infer<typeof ResourceOutputSchema>;
 	createServiceJob: z.infer<typeof ResourceOutputSchema>;
 	cancelServiceJob: z.infer<typeof ResourceOutputSchema>;
-	restartService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
-	suspendService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
-	resumeService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
-	scaleService: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	restartService: z.infer<typeof NoContentOutputSchema>;
+	suspendService: z.infer<typeof NoContentOutputSchema>;
+	resumeService: z.infer<typeof NoContentOutputSchema>;
+	scaleService: z.infer<typeof NoContentOutputSchema>;
 	updateAutoscaling: z.infer<typeof ResourceOutputSchema>;
 	deleteAutoscaling: z.infer<typeof EmptyOutputSchema>;
 	createServicePreview: z.infer<typeof ResourceOutputSchema>;
@@ -909,10 +948,10 @@ export type RenderEndpointOutputs = {
 	createPostgres: z.infer<typeof ResourceOutputSchema>;
 	retrievePostgres: z.infer<typeof ResourceOutputSchema>;
 	updatePostgres: z.infer<typeof ResourceOutputSchema>;
-	restartPostgres: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
-	suspendPostgres: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
-	resumePostgres: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
-	failoverPostgres: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	restartPostgres: z.infer<typeof NoContentOutputSchema>;
+	suspendPostgres: z.infer<typeof NoContentOutputSchema>;
+	resumePostgres: z.infer<typeof NoContentOutputSchema>;
+	failoverPostgres: z.infer<typeof NoContentOutputSchema>;
 	retrievePostgresConnectionInfo: z.infer<typeof ResourceOutputSchema>;
 	retrievePostgresRecoveryInfo: z.infer<typeof ResourceOutputSchema>;
 	recoverPostgres: z.infer<typeof ResourceOutputSchema>;
@@ -974,9 +1013,9 @@ export type RenderEndpointOutputs = {
 	listDiskSnapshots: z.infer<typeof ResourceListOutputSchema>;
 	restoreDiskSnapshot: z.infer<typeof ResourceOutputSchema>;
 	retrieveMaintenance: z.infer<typeof ResourceOutputSchema>;
-	updateMaintenance: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
-	triggerMaintenance: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
-	triggerCronJobRun: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	updateMaintenance: z.infer<typeof NoContentOutputSchema>;
+	triggerMaintenance: z.infer<typeof NoContentOutputSchema>;
+	triggerCronJobRun: z.infer<typeof CronJobRunOutputSchema>;
 	cancelCronJobRun: z.infer<typeof EmptyOutputSchema>;
 	createWebhook: z.infer<typeof ResourceOutputSchema>;
 	retrieveWebhook: z.infer<typeof ResourceOutputSchema>;
@@ -995,8 +1034,8 @@ export type RenderEndpointOutputs = {
 	linkServiceToEnvGroup: z.infer<typeof ResourceOutputSchema>;
 	listBlueprints: z.infer<typeof ResourceListOutputSchema>;
 	listBlueprintSyncs: z.infer<typeof ResourceListOutputSchema>;
-	suspendKeyValue: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
-	resumeKeyValue: /* unknown: provider-specific lifecycle acknowledgement */ unknown;
+	suspendKeyValue: z.infer<typeof NoContentOutputSchema>;
+	resumeKeyValue: z.infer<typeof NoContentOutputSchema>;
 	retrieveKeyValueConnectionInfo: z.infer<typeof ResourceOutputSchema>;
 	listInstances: z.infer<typeof ResourceListOutputSchema>;
 	listKeyValue: z.infer<typeof ResourceListOutputSchema>;
@@ -1308,27 +1347,21 @@ export const RenderEndpointOutputSchemas = {
 	retrieveService: ServiceOutputSchema,
 	deleteService: EmptyOutputSchema,
 	updateService: ServiceOutputSchema,
-	// unknown: lifecycle acknowledgements differ by Render service type.
-	triggerDeploy:
-		/* unknown: provider-specific deployment acknowledgement */ z.unknown(),
+	triggerDeploy: TriggerDeployOutputSchema,
 	listDeploys: ResourceListOutputSchema,
-	purgeServiceCache: z.unknown(),
-	cancelDeploy: z.unknown(),
-	rollbackDeploy: z.unknown(),
+	purgeServiceCache: NoContentOutputSchema,
+	cancelDeploy: DeployOutputSchema,
+	rollbackDeploy: DeployOutputSchema,
 	listServiceEvents: ResourceListOutputSchema,
 	listOutboundIps: OutboundIpsOutputSchema,
 	listServiceJobs: ResourceListOutputSchema,
 	retrieveServiceJob: ResourceOutputSchema,
 	createServiceJob: ResourceOutputSchema,
 	cancelServiceJob: ResourceOutputSchema,
-	restartService:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
-	suspendService:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
-	resumeService:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
-	scaleService:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	restartService: NoContentOutputSchema,
+	suspendService: NoContentOutputSchema,
+	resumeService: NoContentOutputSchema,
+	scaleService: NoContentOutputSchema,
 	updateAutoscaling: ResourceOutputSchema,
 	deleteAutoscaling: EmptyOutputSchema,
 	createServicePreview: ResourceOutputSchema,
@@ -1361,14 +1394,10 @@ export const RenderEndpointOutputSchemas = {
 	createPostgres: ResourceOutputSchema,
 	retrievePostgres: ResourceOutputSchema,
 	updatePostgres: ResourceOutputSchema,
-	restartPostgres:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
-	suspendPostgres:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
-	resumePostgres:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
-	failoverPostgres:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	restartPostgres: NoContentOutputSchema,
+	suspendPostgres: NoContentOutputSchema,
+	resumePostgres: NoContentOutputSchema,
+	failoverPostgres: NoContentOutputSchema,
 	retrievePostgresConnectionInfo: ResourceOutputSchema,
 	retrievePostgresRecoveryInfo: ResourceOutputSchema,
 	recoverPostgres: ResourceOutputSchema,
@@ -1430,12 +1459,9 @@ export const RenderEndpointOutputSchemas = {
 	listDiskSnapshots: ResourceListOutputSchema,
 	restoreDiskSnapshot: ResourceOutputSchema,
 	retrieveMaintenance: ResourceOutputSchema,
-	updateMaintenance:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
-	triggerMaintenance:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
-	triggerCronJobRun:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	updateMaintenance: NoContentOutputSchema,
+	triggerMaintenance: NoContentOutputSchema,
+	triggerCronJobRun: CronJobRunOutputSchema,
 	cancelCronJobRun: EmptyOutputSchema,
 	createWebhook: ResourceOutputSchema,
 	retrieveWebhook: ResourceOutputSchema,
@@ -1454,10 +1480,8 @@ export const RenderEndpointOutputSchemas = {
 	linkServiceToEnvGroup: ResourceOutputSchema,
 	listBlueprints: ResourceListOutputSchema,
 	listBlueprintSyncs: ResourceListOutputSchema,
-	suspendKeyValue:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
-	resumeKeyValue:
-		/* unknown: provider-specific lifecycle acknowledgement */ z.unknown(),
+	suspendKeyValue: NoContentOutputSchema,
+	resumeKeyValue: NoContentOutputSchema,
 	retrieveKeyValueConnectionInfo: ResourceOutputSchema,
 	listInstances: ResourceListOutputSchema,
 	listKeyValue: ResourceListOutputSchema,

@@ -2,18 +2,18 @@ import { logEventFromContext } from 'corsair/core';
 import { makeRenderRequest } from '../client';
 import type { RenderEndpoints } from '../index';
 import type {
+	DeployOutput,
 	ListServicesOutput,
+	NoContentOutput,
 	OutboundIpsOutput,
 	ServiceOutput,
+	TriggerDeployOutput,
 } from './types';
 
 // unknown: Render resource records are provider-defined; each operation's
 // output schema parses them at the bound endpoint.
 type RenderRecord = Record<string, unknown>;
 type RenderResourceList = RenderRecord[];
-// unknown: lifecycle POSTs (deploy, restart, scale, ...) answer with a
-// provider-specific acknowledgement or no body at all.
-type Acknowledgement = unknown;
 
 // Render declares these list filters as `style: form, explode: false`, so a
 // multi-value filter is one comma-separated value (`name=a,b`), not a
@@ -95,7 +95,7 @@ export const triggerDeploy: RenderEndpoints['triggerDeploy'] = async (
 	input,
 ) => {
 	const { serviceId, ...body } = input;
-	return serviceRequest<Acknowledgement>(
+	return serviceRequest<TriggerDeployOutput>(
 		ctx,
 		serviceId,
 		'/deploys',
@@ -123,13 +123,13 @@ export const purgeServiceCache: RenderEndpoints['purgeServiceCache'] = async (
 	ctx,
 	input,
 ) =>
-	serviceRequest<Acknowledgement>(ctx, input.serviceId, '/cache/purge', 'POST');
+	serviceRequest<NoContentOutput>(ctx, input.serviceId, '/cache/purge', 'POST');
 
 export const cancelDeploy: RenderEndpoints['cancelDeploy'] = async (
 	ctx,
 	input,
 ) =>
-	serviceRequest<Acknowledgement>(
+	serviceRequest<DeployOutput>(
 		ctx,
 		input.serviceId,
 		`/deploys/${encodeServiceId(input.deployId)}/cancel`,
@@ -141,7 +141,7 @@ export const rollbackDeploy: RenderEndpoints['rollbackDeploy'] = async (
 	input,
 ) => {
 	const { serviceId, deployId } = input;
-	return serviceRequest<Acknowledgement>(ctx, serviceId, '/rollback', 'POST', {
+	return serviceRequest<DeployOutput>(ctx, serviceId, '/rollback', 'POST', {
 		deployId,
 	});
 };
@@ -203,20 +203,20 @@ export const cancelServiceJob: RenderEndpoints['cancelServiceJob'] = async (
 export const restartService: RenderEndpoints['restartService'] = async (
 	ctx,
 	input,
-) => serviceRequest<Acknowledgement>(ctx, input.serviceId, '/restart', 'POST');
+) => serviceRequest<NoContentOutput>(ctx, input.serviceId, '/restart', 'POST');
 
 export const suspendService: RenderEndpoints['suspendService'] = async (
 	ctx,
 	input,
-) => serviceRequest<Acknowledgement>(ctx, input.serviceId, '/suspend', 'POST');
+) => serviceRequest<NoContentOutput>(ctx, input.serviceId, '/suspend', 'POST');
 
 export const resumeService: RenderEndpoints['resumeService'] = async (
 	ctx,
 	input,
-) => serviceRequest<Acknowledgement>(ctx, input.serviceId, '/resume', 'POST');
+) => serviceRequest<NoContentOutput>(ctx, input.serviceId, '/resume', 'POST');
 
 export const scaleService: RenderEndpoints['scaleService'] = (ctx, input) =>
-	serviceRequest<Acknowledgement>(ctx, input.serviceId, '/scale', 'POST', {
+	serviceRequest<NoContentOutput>(ctx, input.serviceId, '/scale', 'POST', {
 		numInstances: input.numInstances,
 	});
 

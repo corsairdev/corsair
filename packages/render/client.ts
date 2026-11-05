@@ -33,11 +33,16 @@ const renderErrorDetail = (body: unknown): string | undefined => {
 
 const RENDER_API_BASE = 'https://api.render.com';
 
-/** A JSON request body: an object for most writes, an array for replace operations. */
-// unknown: bodies arrive schema-validated but untyped; this guard narrows them.
+// A JSON request body: an object for most writes, an array for replace
+// operations. unknown: the fields are provider-defined and each operation's
+// schema validates them, so no single stricter type fits every body.
+export type RenderJsonBody = Record<string, unknown> | unknown[];
+
 export const isRenderJsonBody = (
+	// unknown: adapters hand over schema-validated but untyped input; this
+	// guard is what narrows it to a JSON body.
 	value: unknown,
-): value is Record<string, unknown> | unknown[] =>
+): value is RenderJsonBody =>
 	Array.isArray(value) || (typeof value === 'object' && value !== null);
 
 const RATE_LIMIT_CONFIG: RateLimitConfig = {
@@ -53,13 +58,8 @@ export async function makeRenderRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// Render request bodies differ by operation and are validated by the
-		// corresponding endpoint schema before reaching this transport boundary.
-		// Stricter typing is not feasible here because Render uses object bodies
-		// for most writes and array bodies for replacement operations.
-		// unknown: the endpoint schemas validate each provider-specific body.
-		body?: /* unknown: provider-specific object or replacement-array body */
-		Record<string, unknown> | unknown[];
+		// Validated by the operation's schema before it reaches the transport.
+		body?: RenderJsonBody;
 		// unknown: filter values are schema-validated per operation; core
 		// request() serialises strings, numbers, booleans and arrays.
 		query?: Record<string, unknown>;
