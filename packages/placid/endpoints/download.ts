@@ -1,4 +1,7 @@
 import { lookup } from 'node:dns/promises';
+import * as http from 'node:http';
+import * as https from 'node:https';
+import type { LookupFunction } from 'node:net';
 
 /**
  * Downloads a caller-supplied URL for a multipart upload without letting the
@@ -8,25 +11,34 @@ import { lookup } from 'node:dns/promises';
  * cannot build a Blob itself, so the bytes are fetched here and forwarded. That
  * makes `file_url` a server-side request: without checks, a tenant could point
  * it at loopback, a private range, or a cloud metadata endpoint and have the
- * response forwarded onward. Every hostname is resolved and every resolved
- * address is checked; redirects are followed by hand so each hop is checked
- * too.
+ * response forwarded onward.
  *
- * Reference for the blocked ranges: RFC 6890 and the AWS/GCP metadata
- * addresses (169.254.169.254, fd00:ec2::254).
+ * Three checks stand between the caller and the socket, and all three are
+ * needed:
+ *
+ * 1. the scheme must be http or https;
+ * 2. every address the host resolves to must be public;
+ * 3. the connection is pinned to a checked address, so a DNS server that
+ *    answers differently the second time cannot swap in a private one.
+ *
+ * Point 3 is why this uses `node:http` rather than `fetch`: `fetch` offers no
+ * way to supply the address it should connect to.
+ *
+ * Blocked ranges follow RFC 6890, plus the metadata addresses that matter most
+ * in practice (169.254.169.254 and fd00:ec2::254).
  */
 
-/** Longest a single upload download may take, including every redirect hop. */
+/** Longest a single upload download may take. */
 export const DOWNLOAD_TIMEOUT_MS = 30_000;
 
 /**
- * Cap on the bytes read into memory. Placid's docs do not state an upload
- * limit; 25 MB covers a high-resolution image or a font several times over
- * while keeping one call from exhausting the host.
+ * Cap on the bytes read into memory. Placid does not document an upload limit;
+ * 25 MB covers a high-resolution image or a font several times over while
+ * keeping one call from exhausting the host.
  */
 export const DOWNLOAD_MAX_BYTES = 25 * 1024 * 1024;
 
-/** Redirects are followed by hand, so the number is bounded here. */
+/** Redirects are followed by hand, so each hop is checked. */
 const MAX_REDIRECTS = 3;
 
 const BLOCKED_V4: ReadonlyArray<readonly [string, number]> = [
@@ -87,6 +99,7 @@ function toV6(ip: string): number[] | undefined {
 
 	// A dotted-quad tail is two groups.
 	const lastColon = text.lastIndexOf(':');
+	if (lastColon === -1) return undefined;
 	const tail = text.slice(lastColon + 1);
 	if (tail.includes('.')) {
 		const v4 = toV4(tail);
@@ -141,9 +154,9 @@ function isBlockedV6(ip: string): boolean {
 	if ((groups[0]! & 0xffc0) === 0xfe80) return true;
 	// Multicast (ff00::/8).
 	if ((groups[0]! & 0xff00) === 0xff00) return true;
-	// 6to4 (2002::/16) can embed an arbitrary v4 address; NAT64 (64:ff9b::/96)
-	// maps one in the last two groups.
+	// 6to4 (2002::/16) can embed an arbitrary v4 address.
 	if (groups[0] === 0x2002) return true;
+	// NAT64 (64:ff9b::/96) maps a v4 address into the last two groups.
 	if (
 		groups[0] === 0x0064 &&
 		groups[1] === 0xff9b &&
@@ -168,10 +181,24 @@ export class UnsafeUrlError extends Error {
 	}
 }
 
+export type TransportResponse = {
+	status: number;
+	headers: Record<string, string | string[] | undefined>;
+	body: AsyncIterable<Uint8Array>;
+};
+
 export type DownloadDeps = {
 	/** Resolves a hostname. Injected so tests need no network. */
 	resolve?: (hostname: string) => Promise<string[]>;
-	fetchImpl?: typeof fetch;
+	/**
+	 * Performs one request to a pinned address. Injected so the redirect and
+	 * size logic can be tested without opening a socket.
+	 */
+	transport?: (
+		url: URL,
+		addresses: readonly string[],
+		signal: AbortSignal,
+	) => Promise<TransportResponse>;
 };
 
 async function defaultResolve(hostname: string): Promise<string[]> {
@@ -180,19 +207,100 @@ async function defaultResolve(hostname: string): Promise<string[]> {
 }
 
 /**
- * Rejects a URL unless it is http(s) and every address its host resolves to is
- * public. A literal IP is checked directly.
+ * A `lookup` for `node:http`/`node:https` that always answers with an address
+ * that has already been checked.
  *
- * Residual risk: the name is resolved here and again by `fetch`, so a
- * deliberately rebinding DNS server could answer differently the second time.
- * Closing that window needs a custom agent that pins the checked address,
- * which `corsair/http` does not expose. The check still stops the ordinary
- * case of a caller naming an internal host outright.
+ * This is what closes the DNS-rebinding window: the resolver is not consulted
+ * again at connect time, so an answer that changes between the check and the
+ * connection cannot redirect the socket to a private address.
+ *
+ * Node calls a lookup in two shapes. With `all: true` it wants the whole set
+ * (`(err, [{address, family}])`); otherwise it wants one `(err, address,
+ * family)`. Handling only one shape makes Node throw "Invalid IP address".
  */
-export async function assertPublicUrl(
+export function pinnedLookup(addresses: readonly string[]): LookupFunction {
+	// unknown: node types the lookup callback as an overloaded pair, which a
+	// single implementation cannot satisfy directly. It is narrowed below.
+	return ((_hostname: string, options: unknown, callback: unknown) => {
+		const cb = callback as (
+			error: Error | null,
+			address: string | { address: string; family: number }[],
+			family?: number,
+		) => void;
+		const wantsAll =
+			typeof options === 'object' &&
+			options !== null &&
+			(options as { all?: boolean }).all === true;
+
+		const records = addresses.map((address) => ({
+			address,
+			family: address.includes(':') ? 6 : 4,
+		}));
+
+		if (records.length === 0) {
+			cb(new Error('No address to connect to.'), '', 0);
+			return;
+		}
+		if (wantsAll) {
+			cb(null, records);
+			return;
+		}
+		const first = records[0]!;
+		cb(null, first.address, first.family);
+	}) as LookupFunction;
+}
+
+/**
+ * The real transport: one HTTP(S) GET to a pinned address, honouring the
+ * abort signal and reporting the raw response for the caller to read.
+ */
+const httpTransport: NonNullable<DownloadDeps['transport']> = (
+	url,
+	addresses,
+	signal,
+) => {
+	const isHttps = url.protocol === 'https:';
+	const hostname = url.hostname.replace(/^\[|\]$/g, '');
+	const options: https.RequestOptions = {
+		method: 'GET',
+		protocol: url.protocol,
+		hostname,
+		// The URL's port, falling back to the scheme default.
+		port: url.port === '' ? undefined : Number(url.port),
+		path: `${url.pathname}${url.search}`,
+		headers: { Accept: '*/*' },
+		// Connect to the vetted address while keeping the hostname for TLS SNI
+		// and the Host header.
+		lookup: pinnedLookup(addresses),
+		signal,
+	};
+	if (isHttps) options.servername = hostname;
+
+	return new Promise<TransportResponse>((resolve, reject) => {
+		const send = isHttps ? https.request : http.request;
+		const request = send(options, (response) => {
+			resolve({
+				status: response.statusCode ?? 0,
+				headers: response.headers,
+				body: response as AsyncIterable<Uint8Array>,
+			});
+		});
+		request.on('error', reject);
+		request.end();
+	});
+};
+
+export type ResolvedUrl = { url: URL; addresses: string[] };
+
+/**
+ * Rejects a URL unless it is http(s) and every address its host resolves to is
+ * public, and returns those addresses so the connection can be pinned to one.
+ * A literal IP is checked directly.
+ */
+export async function resolvePublicUrl(
 	raw: string,
 	deps: DownloadDeps = {},
-): Promise<URL> {
+): Promise<ResolvedUrl> {
 	let url: URL;
 	try {
 		url = new URL(raw);
@@ -219,6 +327,7 @@ export async function assertPublicUrl(
 		throw new UnsafeUrlError(`Could not resolve ${hostname}.`);
 	}
 	// Every answer must be public: one private answer is enough to reach it.
+	// The whole set is what gets pinned, so a later change cannot help either.
 	for (const address of addresses) {
 		if (isBlockedAddress(address)) {
 			throw new UnsafeUrlError(
@@ -226,49 +335,7 @@ export async function assertPublicUrl(
 			);
 		}
 	}
-	return url;
-}
-
-async function readCapped(
-	response: Response,
-	maxBytes: number,
-): Promise<Uint8Array> {
-	const body = response.body;
-	if (!body) {
-		const buffer = new Uint8Array(await response.arrayBuffer());
-		if (buffer.byteLength > maxBytes) {
-			throw new UnsafeUrlError(
-				`file_url is larger than the ${Math.round(maxBytes / (1024 * 1024))} MB limit.`,
-			);
-		}
-		return buffer;
-	}
-
-	const reader = body.getReader();
-	const chunks: Uint8Array[] = [];
-	let total = 0;
-	for (;;) {
-		const { done, value } = await reader.read();
-		if (done) break;
-		if (!value) continue;
-		total += value.byteLength;
-		if (total > maxBytes) {
-			// Stop pulling: the point of the cap is not to buffer the rest.
-			await reader.cancel().catch(() => undefined);
-			throw new UnsafeUrlError(
-				`file_url is larger than the ${Math.round(maxBytes / (1024 * 1024))} MB limit.`,
-			);
-		}
-		chunks.push(value);
-	}
-
-	const bytes = new Uint8Array(total);
-	let offset = 0;
-	for (const chunk of chunks) {
-		bytes.set(chunk, offset);
-		offset += chunk.byteLength;
-	}
-	return bytes;
+	return { url, addresses };
 }
 
 export function filenameFromUrl(fileUrl: string, fallback: string): string {
@@ -280,10 +347,44 @@ export function filenameFromUrl(fileUrl: string, fallback: string): string {
 	}
 }
 
+function headerValue(
+	headers: TransportResponse['headers'],
+	name: string,
+): string | undefined {
+	const raw = headers[name];
+	const value = Array.isArray(raw) ? raw[0] : raw;
+	return value;
+}
+
+async function readCapped(
+	body: AsyncIterable<Uint8Array>,
+	maxBytes: number,
+): Promise<Uint8Array> {
+	const chunks: Uint8Array[] = [];
+	let total = 0;
+	for await (const chunk of body) {
+		total += chunk.byteLength;
+		if (total > maxBytes) {
+			throw new UnsafeUrlError(
+				`file_url is larger than the ${Math.round(maxBytes / (1024 * 1024))} MB limit.`,
+			);
+		}
+		chunks.push(chunk);
+	}
+	const bytes = new Uint8Array(total);
+	let offset = 0;
+	for (const chunk of chunks) {
+		bytes.set(chunk, offset);
+		offset += chunk.byteLength;
+	}
+	return bytes;
+}
+
 /**
  * Fetches `fileUrl` and wraps it as a `File` for the multipart body. Each
- * redirect hop is validated, the whole download shares one deadline, and the
- * body is capped while it is read.
+ * redirect hop is resolved and vetted again, the connection is pinned to a
+ * checked address, the whole download shares one deadline, and the body is
+ * capped while it is read.
  */
 export async function downloadAsFile(
 	fileUrl: string,
@@ -291,14 +392,14 @@ export async function downloadAsFile(
 	fallbackName: string,
 	deps: DownloadDeps = {},
 ): Promise<File> {
-	const fetchImpl = deps.fetchImpl ?? fetch;
+	const transport = deps.transport ?? httpTransport;
 	const signal = AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS);
 
-	let current = await assertPublicUrl(fileUrl, deps);
+	let current = await resolvePublicUrl(fileUrl, deps);
 	for (let hop = 0; ; hop++) {
-		const response = await fetchImpl(current, { redirect: 'manual', signal });
+		const response = await transport(current.url, current.addresses, signal);
 
-		const location = response.headers.get('location');
+		const location = headerValue(response.headers, 'location');
 		if (response.status >= 300 && response.status < 400 && location) {
 			if (hop >= MAX_REDIRECTS) {
 				throw new UnsafeUrlError(
@@ -306,26 +407,26 @@ export async function downloadAsFile(
 				);
 			}
 			// Resolve relative to the hop that sent it, then vet the new host.
-			current = await assertPublicUrl(
-				new URL(location, current).toString(),
+			current = await resolvePublicUrl(
+				new URL(location, current.url).toString(),
 				deps,
 			);
 			continue;
 		}
 
-		if (!response.ok) {
+		if (response.status < 200 || response.status >= 300) {
 			throw new Error(
 				`Could not download file_url (${response.status}). It must be publicly reachable.`,
 			);
 		}
 
-		const bytes = await readCapped(response, DOWNLOAD_MAX_BYTES);
+		const bytes = await readCapped(response.body, DOWNLOAD_MAX_BYTES);
 		const mime =
-			response.headers.get('content-type')?.split(';')[0] ||
+			headerValue(response.headers, 'content-type')?.split(';')[0] ||
 			'application/octet-stream';
 		return new File(
 			[new Uint8Array(bytes)],
-			filename ?? filenameFromUrl(current.toString(), fallbackName),
+			filename ?? filenameFromUrl(current.url.toString(), fallbackName),
 			{ type: mime },
 		);
 	}

@@ -1,3 +1,4 @@
+import { EventEmitter } from 'node:events';
 import { Collections, Fonts, Media, Templates } from './endpoints';
 import {
 	collection,
@@ -9,11 +10,57 @@ import {
 	templateList,
 } from './test-fixtures';
 
-// Uploads resolve the host before fetching, so the lookup is replaced with a
+// Uploads resolve the host before connecting, so the lookup is replaced with a
 // public address. Without this the suite would need live DNS and fail offline.
 jest.mock('node:dns/promises', () => ({
 	lookup: jest.fn(async () => [{ address: '93.184.216.34', family: 4 }]),
 }));
+
+// The upload transport is node:https rather than fetch, so it is mocked here:
+// no socket is opened and the download body is supplied per test.
+type FakeDownload = {
+	status: number;
+	headers: Record<string, string>;
+	chunks: Uint8Array[];
+};
+
+let nextDownload: FakeDownload;
+
+jest.mock('node:https', () => ({
+	// unknown: jest.replace calls this with node's real request signature; only
+	// the response callback is used, so the options are left untyped here.
+	request: (
+		_options: unknown,
+		// unknown: node hands this a real IncomingMessage; the fake only needs
+		// the shape the assertion reads, so it is left untyped.
+		onResponse: (response: unknown) => void,
+	) => {
+		const request = new EventEmitter() as EventEmitter & { end: () => void };
+		request.end = () => {
+			const response = Object.assign(
+				(async function* () {
+					for (const chunk of nextDownload.chunks) yield chunk;
+				})(),
+				{
+					statusCode: nextDownload.status,
+					headers: nextDownload.headers,
+				},
+			);
+			// Deliver on the next tick so the listener is attached first.
+			setImmediate(() => onResponse(response));
+		};
+		return request;
+	},
+}));
+
+function mockDownload(download: Partial<FakeDownload> = {}) {
+	nextDownload = {
+		status: 200,
+		headers: { 'content-type': 'image/jpeg' },
+		chunks: [new Uint8Array([1, 2, 3])],
+		...download,
+	};
+}
 
 let fetchMock: jest.SpyInstance;
 
@@ -26,6 +73,8 @@ function contextFor(key = 'placid-test-key'): Context {
 		key,
 		hooks: {},
 		options: {},
+		// unknown: only `key` and `hooks` are read here; the real context needs
+		// a database, a KEK and an issued DEK to build.
 	} as unknown as Context;
 }
 
@@ -268,13 +317,7 @@ describe('collections', () => {
 
 describe('media', () => {
 	it('downloads the file and forwards it as multipart', async () => {
-		// First call fetches the file, second posts it to Placid.
-		fetchMock.mockResolvedValueOnce(
-			new Response(new Uint8Array([1, 2, 3]), {
-				status: 200,
-				headers: { 'Content-Type': 'image/jpeg' },
-			}),
-		);
+		mockDownload({ headers: { 'content-type': 'image/jpeg' } });
 		respond(mediaUploaded);
 
 		const result = await Media.upload(contextFor(), {
@@ -290,12 +333,7 @@ describe('media', () => {
 	});
 
 	it('files the upload under a custom key', async () => {
-		fetchMock.mockResolvedValueOnce(
-			new Response(new Uint8Array([1]), {
-				status: 200,
-				headers: { 'Content-Type': 'image/png' },
-			}),
-		);
+		mockDownload({ headers: { 'content-type': 'image/png' } });
 		respond(mediaUploaded);
 
 		await Media.upload(contextFor(), {
@@ -308,7 +346,7 @@ describe('media', () => {
 	});
 
 	it('fails clearly when the file is not reachable', async () => {
-		fetchMock.mockResolvedValueOnce(new Response('nope', { status: 403 }));
+		mockDownload({ status: 403, headers: {}, chunks: [] });
 
 		await expect(
 			Media.upload(contextFor(), {
@@ -367,12 +405,7 @@ describe('fonts', () => {
 	});
 
 	it('uploads a font with the required terms acceptance', async () => {
-		fetchMock.mockResolvedValueOnce(
-			new Response(new Uint8Array([1, 2]), {
-				status: 200,
-				headers: { 'Content-Type': 'font/ttf' },
-			}),
-		);
+		mockDownload({ headers: { 'content-type': 'font/ttf' } });
 		respond(font);
 
 		const result = await Fonts.create(contextFor(), {

@@ -1,21 +1,35 @@
+import type { DownloadDeps } from './endpoints/download';
 import {
-	assertPublicUrl,
 	DOWNLOAD_MAX_BYTES,
 	downloadAsFile,
 	isBlockedAddress,
+	pinnedLookup,
+	resolvePublicUrl,
 	UnsafeUrlError,
 } from './endpoints/download';
 
 /**
- * Wraps a jest mock as `typeof fetch`.
+ * Wraps a jest mock as a transport.
  *
- * unknown: `jest.fn` returns `Mock<...>`, whose call signature does not match
- * the DOM `fetch` overloads even when the implementation has the right shape.
- * The double cast is the narrowest way to hand the mock to production code that
- * takes `typeof fetch`; the mock is never called outside these tests.
+ * unknown: `jest.fn` returns `Mock<...>`, whose call signature does not line up
+ * with the transport type even when the implementation matches. The double cast
+ * is the narrowest way to hand the mock to production code; it is only ever
+ * called from these tests.
  */
-function asFetch(mock: jest.Mock): typeof fetch {
-	return mock as unknown as typeof fetch;
+function asTransport(mock: jest.Mock): NonNullable<DownloadDeps['transport']> {
+	// unknown: see the note above; the mock's signature is close enough at
+	// runtime and the cast is confined to tests.
+	return mock as unknown as NonNullable<DownloadDeps['transport']>;
+}
+
+// A public address, so the resolver never needs the network.
+const publicResolve = async () => ['93.184.216.34'];
+const resolveTo = (addresses: string[]) => async () => addresses;
+
+function body(...chunks: Uint8Array[]): AsyncIterable<Uint8Array> {
+	return (async function* () {
+		for (const chunk of chunks) yield chunk;
+	})();
 }
 
 describe('isBlockedAddress', () => {
@@ -82,25 +96,24 @@ describe('isBlockedAddress', () => {
 	});
 });
 
-describe('assertPublicUrl', () => {
-	const resolveTo = (addresses: string[]) => async () => addresses;
+describe('resolvePublicUrl', () => {
+	it('accepts a public http(s) URL and returns its addresses', async () => {
+		const resolved = await resolvePublicUrl('https://example.com/a.jpg', {
+			resolve: resolveTo(['93.184.216.34']),
+		});
 
-	it('accepts a public http(s) URL', async () => {
-		await expect(
-			assertPublicUrl('https://example.com/a.jpg', {
-				resolve: resolveTo(['93.184.216.34']),
-			}),
-		).resolves.toBeInstanceOf(URL);
+		expect(resolved.url).toBeInstanceOf(URL);
+		expect(resolved.addresses).toEqual(['93.184.216.34']);
 	});
 
 	it('rejects a non-http protocol', async () => {
 		await expect(
-			assertPublicUrl('file:///etc/passwd', {
+			resolvePublicUrl('file:///etc/passwd', {
 				resolve: resolveTo(['1.1.1.1']),
 			}),
 		).rejects.toBeInstanceOf(UnsafeUrlError);
 		await expect(
-			assertPublicUrl('gopher://example.com', {
+			resolvePublicUrl('gopher://example.com', {
 				resolve: resolveTo(['1.1.1.1']),
 			}),
 		).rejects.toBeInstanceOf(UnsafeUrlError);
@@ -108,7 +121,7 @@ describe('assertPublicUrl', () => {
 
 	it('rejects a host that resolves to loopback', async () => {
 		await expect(
-			assertPublicUrl('http://localhost:8080/a.jpg', {
+			resolvePublicUrl('http://localhost:8080/a.jpg', {
 				resolve: resolveTo(['127.0.0.1']),
 			}),
 		).rejects.toThrow(/private or reserved/);
@@ -117,7 +130,7 @@ describe('assertPublicUrl', () => {
 	it('rejects when any of several answers is private', async () => {
 		// One private answer is enough to reach the internal service.
 		await expect(
-			assertPublicUrl('https://mixed.example/a.jpg', {
+			resolvePublicUrl('https://mixed.example/a.jpg', {
 				resolve: resolveTo(['93.184.216.34', '10.0.0.5']),
 			}),
 		).rejects.toThrow(/private or reserved/);
@@ -125,7 +138,7 @@ describe('assertPublicUrl', () => {
 
 	it('rejects the cloud metadata address outright', async () => {
 		await expect(
-			assertPublicUrl('http://169.254.169.254/latest/meta-data/', {
+			resolvePublicUrl('http://169.254.169.254/latest/meta-data/', {
 				resolve: resolveTo(['169.254.169.254']),
 			}),
 		).rejects.toThrow(/private or reserved/);
@@ -133,7 +146,7 @@ describe('assertPublicUrl', () => {
 
 	it('rejects a host that does not resolve', async () => {
 		await expect(
-			assertPublicUrl('https://nope.invalid/a.jpg', {
+			resolvePublicUrl('https://nope.invalid/a.jpg', {
 				resolve: async () => {
 					throw new Error('ENOTFOUND');
 				},
@@ -143,29 +156,77 @@ describe('assertPublicUrl', () => {
 
 	it('rejects a relative string that is not a URL', async () => {
 		await expect(
-			assertPublicUrl('/a.jpg', { resolve: resolveTo(['1.1.1.1']) }),
+			resolvePublicUrl('/a.jpg', { resolve: resolveTo(['1.1.1.1']) }),
 		).rejects.toThrow(/absolute URL/);
 	});
 });
 
-describe('downloadAsFile', () => {
-	const publicResolve = async () => ['93.184.216.34'];
+describe('pinnedLookup', () => {
+	// This is the check that closes the DNS-rebinding window: the socket goes to
+	// a vetted address, and the resolver is not consulted again.
+	it('always answers with the vetted address, whatever the hostname', (done) => {
+		const lookup = pinnedLookup(['93.184.216.34']);
 
+		// The second argument is normally a lookup options object.
+		lookup('rebind.example', { family: 0 } as never, (error, address) => {
+			expect(error).toBeNull();
+			expect(address).toBe('93.184.216.34');
+			done();
+		});
+	});
+
+	it('reports family 6 for a v6 address', (done) => {
+		const lookup = pinnedLookup(['2606:4700:4700::1111']);
+
+		lookup('example.com', {} as never, (error, address, family) => {
+			expect(error).toBeNull();
+			expect(address).toBe('2606:4700:4700::1111');
+			expect(family).toBe(6);
+			done();
+		});
+	});
+
+	it('errors when there is nothing to pin', (done) => {
+		const lookup = pinnedLookup([]);
+
+		lookup('example.com', {} as never, (error) => {
+			expect(error).toBeInstanceOf(Error);
+			done();
+		});
+	});
+
+	// Node asks for the whole set when `all` is set, e.g. on connection reuse.
+	// Answering with a single address there makes Node throw
+	// "Invalid IP address: undefined", so both shapes are covered.
+	it('answers with an address list when all is requested', (done) => {
+		const lookup = pinnedLookup(['93.184.216.34', '1.1.1.1']);
+
+		lookup('example.com', { all: true } as never, (error, records) => {
+			expect(error).toBeNull();
+			expect(records).toEqual([
+				{ address: '93.184.216.34', family: 4 },
+				{ address: '1.1.1.1', family: 4 },
+			]);
+			done();
+		});
+	});
+});
+
+describe('downloadAsFile', () => {
 	it('returns a File with the response bytes and type', async () => {
-		const fetchImpl = asFetch(
-			jest.fn(async () => {
-				return new Response(new Uint8Array([1, 2, 3]), {
-					status: 200,
-					headers: { 'Content-Type': 'image/png' },
-				});
-			}),
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-type': 'image/png' },
+				body: body(new Uint8Array([1, 2, 3])),
+			})),
 		);
 
 		const file = await downloadAsFile(
 			'https://example.com/logo.png',
 			undefined,
 			'fallback',
-			{ resolve: publicResolve, fetchImpl },
+			{ resolve: publicResolve, transport },
 		);
 
 		expect(file.name).toBe('logo.png');
@@ -173,42 +234,44 @@ describe('downloadAsFile', () => {
 		expect(file.size).toBe(3);
 	});
 
-	it('sends redirect: manual so each hop can be vetted', async () => {
-		const fetchImpl = asFetch(
-			jest.fn(async () => {
-				return new Response(new Uint8Array([1]), {
-					status: 200,
-					headers: { 'Content-Type': 'image/png' },
-				});
-			}),
-		);
+	it('connects to the vetted address it resolved', async () => {
+		const transportMock = jest.fn(async () => ({
+			status: 200,
+			headers: { 'content-type': 'image/png' },
+			body: body(new Uint8Array([1])),
+		}));
+		const transport = asTransport(transportMock);
 
 		await downloadAsFile('https://example.com/a.png', 'a.png', 'f', {
-			resolve: publicResolve,
-			fetchImpl,
+			resolve: resolveTo(['93.184.216.34']),
+			transport,
 		});
 
-		expect(fetchImpl).toHaveBeenCalledWith(
+		// The address travels with the request, so the transport pins it.
+		expect(transportMock).toHaveBeenCalledWith(
 			expect.anything(),
-			expect.objectContaining({ redirect: 'manual' }),
+			['93.184.216.34'],
+			expect.anything(),
 		);
 	});
 
 	it('follows a redirect to another public host', async () => {
 		let call = 0;
-		const fetchImpl = asFetch(
+		const transport = asTransport(
 			jest.fn(async () => {
 				call += 1;
 				if (call === 1) {
-					return new Response(null, {
+					return {
 						status: 302,
-						headers: { Location: 'https://cdn.example/b.png' },
-					});
+						headers: { location: 'https://cdn.example/b.png' },
+						body: body(),
+					};
 				}
-				return new Response(new Uint8Array([9]), {
+				return {
 					status: 200,
-					headers: { 'Content-Type': 'image/png' },
-				});
+					headers: { 'content-type': 'image/png' },
+					body: body(new Uint8Array([9])),
+				};
 			}),
 		);
 
@@ -216,21 +279,20 @@ describe('downloadAsFile', () => {
 			'https://example.com/a.png',
 			undefined,
 			'f',
-			{ resolve: publicResolve, fetchImpl },
+			{ resolve: publicResolve, transport },
 		);
 
 		expect(file.name).toBe('b.png');
-		expect(fetchImpl).toHaveBeenCalledTimes(2);
+		expect(call).toBe(2);
 	});
 
 	it('refuses a redirect to a private host instead of following it', async () => {
-		const fetchImpl = asFetch(
-			jest.fn(async () => {
-				return new Response(null, {
-					status: 302,
-					headers: { Location: 'http://127.0.0.1/admin' },
-				});
-			}),
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 302,
+				headers: { location: 'http://127.0.0.1/admin' },
+				body: body(),
+			})),
 		);
 
 		await expect(
@@ -238,61 +300,89 @@ describe('downloadAsFile', () => {
 				// The first host is public; the redirect target is not.
 				resolve: async (hostname) =>
 					hostname === '127.0.0.1' ? ['127.0.0.1'] : ['93.184.216.34'],
-				fetchImpl,
+				transport,
 			}),
 		).rejects.toThrow(/private or reserved/);
-		expect(fetchImpl).toHaveBeenCalledTimes(1);
 	});
 
 	it('stops after the redirect limit', async () => {
-		const fetchImpl = asFetch(
-			jest.fn(async () => {
-				return new Response(null, {
-					status: 302,
-					headers: { Location: 'https://example.com/again.png' },
-				});
-			}),
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 302,
+				headers: { location: 'https://example.com/again.png' },
+				body: body(),
+			})),
 		);
 
 		await expect(
 			downloadAsFile('https://example.com/a.png', 'a.png', 'f', {
 				resolve: publicResolve,
-				fetchImpl,
+				transport,
 			}),
 		).rejects.toThrow(/redirected more than/);
 	});
 
-	it('rejects a body larger than the cap without buffering it all', async () => {
-		// One chunk over the limit is enough to trip the guard.
-		const oversized = new Uint8Array(DOWNLOAD_MAX_BYTES + 1);
-		const fetchImpl = asFetch(
-			jest.fn(async () => {
-				return new Response(oversized, {
-					status: 200,
-					headers: { 'Content-Type': 'application/octet-stream' },
-				});
-			}),
+	it('rejects a body larger than the cap', async () => {
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-type': 'application/octet-stream' },
+				body: body(new Uint8Array(DOWNLOAD_MAX_BYTES + 1)),
+			})),
 		);
 
 		await expect(
 			downloadAsFile('https://example.com/big.bin', 'big.bin', 'f', {
 				resolve: publicResolve,
-				fetchImpl,
+				transport,
 			}),
 		).rejects.toThrow(/larger than/);
 	});
 
-	it('reports a failed download with the status', async () => {
-		const fetchImpl = asFetch(
-			jest.fn(async () => {
-				return new Response('nope', { status: 403 });
+	it('stops reading past the cap instead of buffering the rest', async () => {
+		let pulled = 0;
+		const endless: AsyncIterable<Uint8Array> = {
+			[Symbol.asyncIterator]() {
+				return {
+					next: async () => {
+						pulled += 1;
+						// 1 MB per chunk; the cap is 25.
+						return { done: false, value: new Uint8Array(1024 * 1024) };
+					},
+				};
+			},
+		};
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 200,
+				headers: { 'content-type': 'application/octet-stream' },
+				body: endless,
+			})),
+		);
+
+		await expect(
+			downloadAsFile('https://example.com/big.bin', 'big.bin', 'f', {
+				resolve: publicResolve,
+				transport,
 			}),
+		).rejects.toThrow(/larger than/);
+		// It gave up near the cap, not after draining an endless stream.
+		expect(pulled).toBeLessThanOrEqual(27);
+	});
+
+	it('reports a failed download with the status', async () => {
+		const transport = asTransport(
+			jest.fn(async () => ({
+				status: 403,
+				headers: {},
+				body: body(),
+			})),
 		);
 
 		await expect(
 			downloadAsFile('https://example.com/a.png', 'a.png', 'f', {
 				resolve: publicResolve,
-				fetchImpl,
+				transport,
 			}),
 		).rejects.toThrow(/publicly reachable/);
 	});
