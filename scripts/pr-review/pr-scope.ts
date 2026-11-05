@@ -42,6 +42,10 @@ function isWwwFile(file: string): boolean {
 	return file === 'www' || file.startsWith('www/');
 }
 
+function isRepoMetaFile(file: string): boolean {
+	return file.startsWith('.github/') || file.startsWith('scripts/');
+}
+
 export function isGitZeroOid(oid: string): boolean {
 	return oid.length > 0 && /^0+$/.test(oid);
 }
@@ -112,7 +116,12 @@ export function classifyPrScope(changedFiles: string[]): PrScope {
 		return { lane: 'plugin', plugin };
 	}
 
-	if (changedFiles.length > 0 && changedFiles.every(isDocumentationOnlyFile)) {
+	if (
+		changedFiles.length > 0 &&
+		changedFiles.every(
+			(file) => isDocumentationOnlyFile(file) || isRepoMetaFile(file),
+		)
+	) {
 		return { lane: 'skip-heavy' };
 	}
 
@@ -120,7 +129,10 @@ export function classifyPrScope(changedFiles: string[]): PrScope {
 	if (
 		hasWww &&
 		changedFiles.every(
-			(file) => isWwwFile(file) || isDocumentationOnlyFile(file),
+			(file) =>
+				isWwwFile(file) ||
+				isDocumentationOnlyFile(file) ||
+				isRepoMetaFile(file),
 		)
 	) {
 		return { lane: 'www' };
