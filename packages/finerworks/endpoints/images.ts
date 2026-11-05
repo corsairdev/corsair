@@ -157,7 +157,7 @@ export const remove: FinerWorksEndpoint<'images.delete'> = async (
 	);
 	const result = ImagesDeleteOutputSchema.parse(res);
 	// Drop the local rows only once FinerWorks confirms the delete.
-	if (result.status?.success !== false) {
+	if (result.status?.success === true) {
 		await deleteImages(ctx, validated.guids);
 	}
 	return result;

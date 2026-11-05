@@ -99,7 +99,7 @@ export const remove: FinerWorksEndpoint<'inventory.delete'> = async (
 	);
 	const result = InventoryDeleteOutputSchema.parse(res);
 	// Drop the local rows only once FinerWorks confirms the delete.
-	if (result.status?.success !== false) {
+	if (result.status?.success === true) {
 		await deleteInventoryProducts(ctx, validated.skus);
 	}
 	return result;

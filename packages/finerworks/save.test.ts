@@ -201,6 +201,27 @@ describe('finerworks saves with encryptDataAtRest', () => {
 		expect(kept?.data).toMatchObject({ sku: 'OTHER-SKU' });
 	});
 
+	it('keeps local rows when the delete response does not confirm success', async () => {
+		const corsair = await encryptedCorsair();
+		routes['/v3/list_images'] = () => ({ status: okStatus, images: [image] });
+		routes['/v3/list_virtual_inventory'] = () => ({
+			status: okStatus,
+			products: [product],
+		});
+		routes['/v3/delete_images'] = () => ({});
+		routes['/v3/delete_virtual_inventory'] = () => ({ status: {} });
+
+		await corsair.finerworks.api.images.list({
+			library: { name: 'inventory' },
+		});
+		await corsair.finerworks.api.inventory.list({});
+		await corsair.finerworks.api.images.delete({ guids: [IMAGE_GUID] });
+		await corsair.finerworks.api.inventory.delete({ skus: [SKU] });
+
+		expect(storedCells('images')).toHaveLength(1);
+		expect(storedCells('virtualInventoryProducts')).toHaveLength(1);
+	});
+
 	it('keeps the stored image when FinerWorks reports the delete failed', async () => {
 		const corsair = await encryptedCorsair();
 		routes['/v3/list_images'] = () => ({ status: okStatus, images: [image] });
