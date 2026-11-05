@@ -101,7 +101,7 @@ pnpm add @corsair-dev/gumroad
 ## Auth
 
 Auth: API key (OAuth access token), sent as `Authorization: Bearer <token>`.
-Create an application at https://gumroad.com/apps and generate an access token.
+Register an OAuth application at https://gumroad.com/settings/advanced#application-form, then on its page click "Generate access token".
 Corsair prompts your tenant for credentials on first use. An `account`-scope
 token covers most endpoints; media requires its specific scope, and sales,
 payouts and tax data require `view_sales`, `view_payouts` and `view_tax_data`
