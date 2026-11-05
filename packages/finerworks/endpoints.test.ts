@@ -277,7 +277,10 @@ describe('image endpoints', () => {
 			library: { name: 'temporary', session_id: 'session-12345', site_id: 3 },
 		});
 
-		expect((lastCall()[2].body as { library: unknown }).library).toEqual({
+		const sent = lastCall()[2].body as {
+			library: { name: string; session_id: string; site_id: number };
+		};
+		expect(sent.library).toEqual({
 			name: 'temporary',
 			session_id: 'session-12345',
 			site_id: 3,

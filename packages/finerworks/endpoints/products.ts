@@ -47,6 +47,7 @@ export const getPrices: FinerWorksEndpoint<'products.getPrices'> = async (
  * `{ status, <key>: [...] }` envelope the other routes use. Wrap it so callers
  * get one shape. Checked live against v2.api.finerworks.com on 2026-11-05.
  */
+// unknown: the raw body is checked by the endpoint's output schema right after.
 function wrapList(res: unknown, key: string): unknown {
 	return Array.isArray(res) ? { [key]: res } : res;
 }
