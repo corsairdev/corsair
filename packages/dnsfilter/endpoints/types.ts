@@ -384,7 +384,11 @@ const BlockPagesListInputSchema = z.object({
 });
 export type BlockPagesListInput = z.infer<typeof BlockPagesListInputSchema>;
 
-const BlockPagesListResponseSchema = z.array(Models.BlockPageSchema);
+// Live: a JSON:API page, not the bare array the OpenAPI document shows.
+const BlockPagesListResponseSchema = z.object({
+	data: z.array(Models.BlockPageSpecSchema).optional(),
+	links: Models.LinksSchema.optional(),
+});
 export type BlockPagesListResponse = z.infer<
 	typeof BlockPagesListResponseSchema
 >;
@@ -420,7 +424,11 @@ export type BlockPagesListAllInput = z.infer<
 	typeof BlockPagesListAllInputSchema
 >;
 
-const BlockPagesListAllResponseSchema = z.array(Models.BlockPageSchema);
+// Live: a JSON:API page, not the bare array the OpenAPI document shows.
+const BlockPagesListAllResponseSchema = z.object({
+	data: z.array(Models.BlockPageSpecSchema).optional(),
+	links: Models.LinksSchema.optional(),
+});
 export type BlockPagesListAllResponse = z.infer<
 	typeof BlockPagesListAllResponseSchema
 >;
@@ -932,7 +940,11 @@ const InvoicesListInputSchema = z.object({
 });
 export type InvoicesListInput = z.infer<typeof InvoicesListInputSchema>;
 
-const InvoicesListResponseSchema = z.array(Models.InvoiceSchema);
+// Live: rows come wrapped in `data`, not as the bare array the OpenAPI
+// document shows.
+const InvoicesListResponseSchema = z.object({
+	data: z.array(Models.InvoiceSchema).optional(),
+});
 export type InvoicesListResponse = z.infer<typeof InvoicesListResponseSchema>;
 
 // Get invoice
@@ -1535,7 +1547,10 @@ export type NetworksMspAllResponse = z.infer<
 const NetworksGeoInputSchema = z.object({}).optional();
 export type NetworksGeoInput = z.infer<typeof NetworksGeoInputSchema>;
 
-const NetworksGeoResponseSchema = z.array(Models.NetworkGeoSchema);
+// Live: rows come wrapped in `data`.
+const NetworksGeoResponseSchema = z.object({
+	data: z.array(Models.NetworkGeoSchema).optional(),
+});
 export type NetworksGeoResponse = z.infer<typeof NetworksGeoResponseSchema>;
 
 // Get by IP
@@ -1968,9 +1983,10 @@ export type OrganizationsSettingsInput = z.infer<
 	typeof OrganizationsSettingsInputSchema
 >;
 
-const OrganizationsSettingsResponseSchema = z.object({
-	data: Models.OrganizationSpecSchema.optional(),
-});
+// Live: a bare array of flat settings rows, one per organization.
+const OrganizationsSettingsResponseSchema = z.array(
+	Models.OrganizationSettingsSchema,
+);
 export type OrganizationsSettingsResponse = z.infer<
 	typeof OrganizationsSettingsResponseSchema
 >;
@@ -2431,10 +2447,10 @@ export type PoliciesGetPermissiveModeInput = z.infer<
 >;
 
 // Map of policy id -> permissive-mode flag, per `additionalProperties`.
-const PoliciesGetPermissiveModeResponseSchema = z.record(
-	z.string(),
-	Models.PolicyPermissiveModeSpecSchema,
-);
+// Live: `{ permissive_mode: boolean }` itself. The OpenAPI document wraps it
+// in a map (additionalProperties) for both the read and the update.
+const PoliciesGetPermissiveModeResponseSchema =
+	Models.PolicyPermissiveModeSpecSchema;
 export type PoliciesGetPermissiveModeResponse = z.infer<
 	typeof PoliciesGetPermissiveModeResponseSchema
 >;
@@ -2450,10 +2466,10 @@ export type PoliciesUpdatePermissiveModeInput = z.infer<
 >;
 
 // Map of policy id -> permissive-mode flag, per `additionalProperties`.
-const PoliciesUpdatePermissiveModeResponseSchema = z.record(
-	z.string(),
-	Models.PolicyPermissiveModeSpecSchema,
-);
+// Live: `{ permissive_mode: boolean }` itself. The OpenAPI document wraps it
+// in a map (additionalProperties) for both the read and the update.
+const PoliciesUpdatePermissiveModeResponseSchema =
+	Models.PolicyPermissiveModeSpecSchema;
 export type PoliciesUpdatePermissiveModeResponse = z.infer<
 	typeof PoliciesUpdatePermissiveModeResponseSchema
 >;
@@ -2505,9 +2521,11 @@ export type ScheduledPoliciesListInput = z.infer<
 	typeof ScheduledPoliciesListInputSchema
 >;
 
-const ScheduledPoliciesListResponseSchema = z.array(
-	Models.ScheduledPolicySchema,
-);
+// Live: a JSON:API page, not the bare array the OpenAPI document shows.
+const ScheduledPoliciesListResponseSchema = z.object({
+	data: z.array(Models.ScheduledPolicySpecSchema).optional(),
+	links: Models.LinksSchema.optional(),
+});
 export type ScheduledPoliciesListResponse = z.infer<
 	typeof ScheduledPoliciesListResponseSchema
 >;
@@ -2541,9 +2559,11 @@ export type ScheduledPoliciesListAllInput = z.infer<
 	typeof ScheduledPoliciesListAllInputSchema
 >;
 
-const ScheduledPoliciesListAllResponseSchema = z.array(
-	Models.ScheduledPolicySchema,
-);
+// Live: a JSON:API page, not the bare array the OpenAPI document shows.
+const ScheduledPoliciesListAllResponseSchema = z.object({
+	data: z.array(Models.ScheduledPolicySpecSchema).optional(),
+	links: Models.LinksSchema.optional(),
+});
 export type ScheduledPoliciesListAllResponse = z.infer<
 	typeof ScheduledPoliciesListAllResponseSchema
 >;
@@ -4316,7 +4336,10 @@ export type UserAgentsUninstallPinInput = z.infer<
 	typeof UserAgentsUninstallPinInputSchema
 >;
 
-const UserAgentsUninstallPinResponseSchema = z.string();
+// Live: `{ pin }`, not the bare string the OpenAPI document shows.
+const UserAgentsUninstallPinResponseSchema = z.object({
+	pin: z.string().optional(),
+});
 export type UserAgentsUninstallPinResponse = z.infer<
 	typeof UserAgentsUninstallPinResponseSchema
 >;
@@ -4561,7 +4584,10 @@ export type DictionaryV2AiApplicationsInput = z.infer<
 	typeof DictionaryV2AiApplicationsInputSchema
 >;
 
-const DictionaryV2AiApplicationsResponseSchema = z.array(z.string());
+// Live: objects with a `name`, not bare strings.
+const DictionaryV2AiApplicationsResponseSchema = z.array(
+	z.object({ name: z.string().optional() }),
+);
 export type DictionaryV2AiApplicationsResponse = z.infer<
 	typeof DictionaryV2AiApplicationsResponseSchema
 >;
@@ -5385,7 +5411,7 @@ export type DnsfilterEndpointInputs = {
 	>;
 };
 
-export const DnsfilterEndpointOutputSchemas = {
+const ListedOutputSchemas = {
 	agentLocalUserBulkDeletesCreate:
 		AgentLocalUserBulkDeletesCreateResponseSchema,
 	agentLocalUserBulkDeletesGet: AgentLocalUserBulkDeletesGetResponseSchema,
@@ -5682,6 +5708,22 @@ export const DnsfilterEndpointOutputSchemas = {
 		CsvExportsUnblockRequestsCreateResponseSchema,
 	csvExportsUnblockRequestsGet: CsvExportsUnblockRequestsGetResponseSchema,
 } as const;
+
+// Every response schema keeps fields it does not list (see
+// Models.keepUnknownFields); request schemas above are left as they are.
+function keepUnknownFieldsInAll<T extends Record<string, z.ZodType>>(
+	schemas: T,
+): T {
+	const result: Record<string, z.ZodType> = {};
+	for (const [key, schema] of Object.entries(schemas)) {
+		result[key] = Models.keepUnknownFields(schema);
+	}
+	// Safe: same keys as `schemas`, each mapped to a schema of the same type.
+	return result as T;
+}
+
+export const DnsfilterEndpointOutputSchemas =
+	keepUnknownFieldsInAll(ListedOutputSchemas);
 
 export type DnsfilterEndpointOutputs = {
 	[K in keyof typeof DnsfilterEndpointOutputSchemas]: z.infer<

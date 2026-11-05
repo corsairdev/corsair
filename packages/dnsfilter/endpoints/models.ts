@@ -11,6 +11,47 @@ export function openEnum<const T extends readonly [string, ...string[]]>(
 	return z.union([z.enum(values), z.string()]);
 }
 
+// Response schemas keep fields they do not list. The live API returns many
+// fields the OpenAPI document omits (pagination links and meta, user agent
+// release versions, the policy id on networks), and zod's default object
+// parsing would silently drop them. Listed fields are still validated and
+// typed; other keys pass through. Request schemas keep stripping unknown keys.
+const loosened = new WeakMap<z.ZodType, z.ZodType>();
+
+export function keepUnknownFields<T extends z.ZodType>(schema: T): T {
+	// Safe: the copy runs the same validators on every listed field and only
+	// stops stripping unlisted keys, so what it returns still satisfies T.
+	return loosen(schema) as T;
+}
+
+function loosen(schema: z.ZodType): z.ZodType {
+	const cached = loosened.get(schema);
+	if (cached) return cached;
+	let result: z.ZodType = schema;
+	if (schema instanceof z.ZodObject) {
+		const shape: Record<string, z.ZodType> = {};
+		for (const [key, value] of Object.entries(schema.shape)) {
+			// Safe: every entry of a zod object shape is a zod schema.
+			shape[key] = loosen(value as z.ZodType);
+		}
+		result = z.looseObject(shape);
+	} else if (schema instanceof z.ZodOptional) {
+		result = loosen(schema.unwrap() as z.ZodType).optional();
+	} else if (schema instanceof z.ZodNullable) {
+		result = loosen(schema.unwrap() as z.ZodType).nullable();
+	} else if (schema instanceof z.ZodArray) {
+		result = z.array(loosen(schema.element as z.ZodType));
+	} else if (schema instanceof z.ZodUnion) {
+		const options = (schema.options as readonly z.ZodType[]).map(loosen);
+		// Safe: a union always has at least one option, so the mapped list does too.
+		result = z.union(options as [z.ZodType, ...z.ZodType[]]);
+	} else if (schema instanceof z.ZodRecord) {
+		result = z.record(schema.keyType, loosen(schema.valueType as z.ZodType));
+	}
+	loosened.set(schema, result);
+	return result;
+}
+
 // Generated from the DNSFilter OpenAPI document (2026-10-13). Payloads the
 // document leaves open become z.unknown(); typed fields stay concrete.
 
@@ -82,6 +123,10 @@ export type AgentLocalUserSpec = z.infer<typeof AgentLocalUserSpecSchema>;
 
 export const LinksSchema = z.object({
 	self: z.string().optional(),
+	first: z.string().optional(),
+	prev: z.string().optional(),
+	next: z.string().optional(),
+	last: z.string().optional(),
 });
 export type Links = z.infer<typeof LinksSchema>;
 
@@ -228,6 +273,14 @@ export const BlockPageSchema = z.object({
 });
 export type BlockPage = z.infer<typeof BlockPageSchema>;
 
+export const BlockPageSpecSchema = z.object({
+	id: z.string().optional(),
+	type: z.string().optional(),
+	uuid: z.string().optional(),
+	attributes: BlockPageSchema.optional(),
+});
+export type BlockPageSpec = z.infer<typeof BlockPageSpecSchema>;
+
 export const CategorySchema = z.object({
 	name: z.string().optional(),
 	description: z.string().optional(),
@@ -328,7 +381,8 @@ export const DomainSchema = z.object({
 export type Domain = z.infer<typeof DomainSchema>;
 
 export const DomainSpecSchema = z.object({
-	id: z.number().int().optional(),
+	// Live lookups return a string id (empty for unknown domains).
+	id: z.union([z.number().int(), z.string()]).optional(),
 	type: z.string().optional(),
 	uuid: z.string().optional(),
 	name: z.string().optional(),
@@ -892,7 +946,9 @@ export const OrganizationSchema = z.object({
 	first_traffic_sent: z.string().optional(),
 	industry: z.string().optional(),
 	managed_by_msp_id: z.number().int().optional(),
-	metadata: z.string().optional(),
+	// A bag of per-organization flags (e.g. mfa_enabled) whose keys the API
+	// does not document, so the values stay `unknown`.
+	metadata: z.record(z.string(), z.unknown()).optional(),
 	msp_feature_flags: z.array(z.string()).optional(),
 	name: z.string().optional(),
 	owned_msp_id: z.number().int().optional(),
@@ -904,7 +960,7 @@ export const OrganizationSchema = z.object({
 	stripe_customer_id: z.string().optional(),
 	summary_email_address: z.string().optional(),
 	summary_email_enabled: z.boolean().optional(),
-	sync_tools_auto_update: z.string().optional(),
+	sync_tools_auto_update: z.boolean().optional(),
 	trial_days: z.number().int().optional(),
 	unbounce_data: z.string().optional(),
 	unique_id: z.string().optional(),
@@ -1159,6 +1215,37 @@ export const ScheduledPolicySchema = z.object({
 });
 export type ScheduledPolicy = z.infer<typeof ScheduledPolicySchema>;
 
+export const ScheduledPolicySpecSchema = z.object({
+	id: z.string().optional(),
+	type: z.string().optional(),
+	uuid: z.string().optional(),
+	attributes: ScheduledPolicySchema.optional(),
+});
+export type ScheduledPolicySpec = z.infer<typeof ScheduledPolicySpecSchema>;
+
+// Flat per-organization agent settings from /v1/organizations/settings.
+export const OrganizationSettingsSchema = z.object({
+	id: z.number().int().optional(),
+	name: z.string().optional(),
+	user_agents_auto_update: z.boolean().optional(),
+	user_agent_uninstall_notification: z.boolean().optional(),
+	send_uninstall_notifications_to_admin_users: z.boolean().optional(),
+	diagnostics_sharing_enabled: z.boolean().optional(),
+	remote_diagnostics_enabled: z.boolean().optional(),
+	pin_protected_uninstall: z.boolean().optional(),
+	connection_method: z.string().optional(),
+	filtering_method: z.string().optional(),
+	fail_over_method: z.string().optional(),
+	enable_cybersight: z.boolean().optional(),
+	enable_browser_extension: z.boolean().optional(),
+	url_filtering: z.boolean().optional(),
+	ip_filtering: z.boolean().optional(),
+	privacy_mode: z.string().optional(),
+	diagnostics_level: z.string().optional(),
+	agent_shield_state: z.string().optional(),
+});
+export type OrganizationSettings = z.infer<typeof OrganizationSettingsSchema>;
+
 export const ScheduledReportPreviewCreateSchema = z.object({
 	organization_id: z.number().int().optional(),
 	include_threat_summary: z.boolean().optional(),
@@ -1309,7 +1396,7 @@ export type TrafficReportsTotalRequestsGeoResult = z.infer<
 export const TrafficReportsTotalRequestsGeoSchema = z.object({
 	organization_ids: z.array(z.number().int()).optional(),
 	organization_names: z.array(z.string()).optional(),
-	network_ids: z.array(z.string()).optional(),
+	network_ids: z.array(z.union([z.number().int(), z.string()])).optional(),
 	network_names: z.array(z.string()).optional(),
 	values: z.array(TrafficReportsTotalRequestsGeoResultSchema).optional(),
 });
@@ -2014,17 +2101,17 @@ export type TrafficReportsQueryLogsPageResponse = z.infer<
 
 export const TrafficReportsQueryLogsSchema = z.object({
 	organization_id: z.number().int().optional(),
-	organization_ids: z.array(z.string()).optional(),
+	organization_ids: z.array(z.union([z.number().int(), z.string()])).optional(),
 	organization_name: z.string().optional(),
 	organization_names: z.array(z.string()).optional(),
 	network_id: z.number().int().optional(),
-	network_ids: z.array(z.string()).optional(),
+	network_ids: z.array(z.union([z.number().int(), z.string()])).optional(),
 	client_id: z.string().optional(),
 	client_ids: z.array(z.string()).optional(),
 	user_id: z.number().int().optional(),
-	user_ids: z.array(z.string()).optional(),
+	user_ids: z.array(z.union([z.number().int(), z.string()])).optional(),
 	collection_id: z.number().int().optional(),
-	collection_ids: z.array(z.string()).optional(),
+	collection_ids: z.array(z.union([z.number().int(), z.string()])).optional(),
 	values: z.array(TrafficReportsQueryLogsResultSchema).optional(),
 	page: TrafficReportsQueryLogsPageResponseSchema.optional(),
 });
@@ -2440,6 +2527,8 @@ export type UserAgentCleanupUpdate = z.infer<
 export const UserAgentReleaseSchema = z.object({
 	agent_type: openEnum(['windows', 'macos']).optional(),
 	architecture: openEnum(['x86', 'x86_64']).optional(),
+	version: z.string().optional(),
+	platform: z.string().optional(),
 	agent_version: z.string().optional(),
 	white_label: z.boolean().optional(),
 	release_channels: z
@@ -2753,7 +2842,8 @@ export type ScheduledReportV2IndexAttributesSpec = z.infer<
 >;
 
 export const ScheduledReportV2IndexSpecSchema = z.object({
-	id: z.string().optional(),
+	// v2 is not JSON:API: ids come back as numbers.
+	id: z.union([z.number().int(), z.string()]).optional(),
 	type: z.string().optional(),
 	uuid: z.string().optional(),
 	attributes: ScheduledReportV2IndexAttributesSpecSchema.optional(),
@@ -2872,7 +2962,8 @@ export type ScheduledReportV2ShowAttributesSpec = z.infer<
 >;
 
 export const ScheduledReportV2ShowSpecSchema = z.object({
-	id: z.string().optional(),
+	// v2 is not JSON:API: ids come back as numbers.
+	id: z.union([z.number().int(), z.string()]).optional(),
 	type: z.string().optional(),
 	uuid: z.string().optional(),
 	attributes: ScheduledReportV2ShowAttributesSpecSchema.optional(),

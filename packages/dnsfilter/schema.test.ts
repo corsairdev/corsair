@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { dropNullFields } from './client';
 import {
 	DnsfilterEndpointInputSchemas,
 	DnsfilterEndpointOutputSchemas,
@@ -202,5 +203,120 @@ describe('Dnsfilter response enums', () => {
 				scheduled_report: { frequency: 'hourly' },
 			}).success,
 		).toBe(false);
+	});
+});
+
+// Paths of object nodes that would strip keys they do not list.
+function strippingObjectPaths(node: unknown, path: string, out: string[]) {
+	if (Array.isArray(node)) {
+		node.forEach((entry, index) => {
+			strippingObjectPaths(entry, `${path}[${index}]`, out);
+		});
+		return;
+	}
+	if (typeof node !== 'object' || node === null) return;
+	// Safe: the guards above leave a non-null, non-array object.
+	const record = node as Record<string, unknown>;
+	if (record.additionalProperties === false) out.push(path);
+	for (const [key, value] of Object.entries(record)) {
+		strippingObjectPaths(value, `${path}.${key}`, out);
+	}
+}
+
+describe('Dnsfilter response fields', () => {
+	it('keeps fields a response schema does not list', () => {
+		const stripping: string[] = [];
+		for (const [key, schema] of Object.entries(
+			DnsfilterEndpointOutputSchemas,
+		)) {
+			strippingObjectPaths(
+				z.toJSONSchema(schema, { unrepresentable: 'any' }),
+				key,
+				stripping,
+			);
+		}
+		expect(stripping).toEqual([]);
+	});
+
+	it('passes unlisted fields through at every depth', () => {
+		const parsed = DnsfilterEndpointOutputSchemas.networksList.parse({
+			data: [
+				{
+					id: '1',
+					attributes: { name: 'HQ', policy_id: 7, network_type: 'site' },
+				},
+			],
+			links: { self: 'a', next: 'b' },
+			meta: { count: 1 },
+		});
+
+		expect(parsed).toEqual({
+			data: [
+				{
+					id: '1',
+					attributes: { name: 'HQ', policy_id: 7, network_type: 'site' },
+				},
+			],
+			links: { self: 'a', next: 'b' },
+			meta: { count: 1 },
+		});
+	});
+
+	it('still drops unknown request fields', () => {
+		expect(
+			DnsfilterEndpointInputSchemas.networksGet.parse({ id: 1, extra: true }),
+		).toEqual({ id: 1 });
+	});
+});
+
+// Shapes recorded from a live trial account; they differ from the OpenAPI
+// document the schemas were generated from. Ids and names are placeholders.
+const liveShapes: [keyof typeof DnsfilterEndpointOutputSchemas, unknown][] = [
+	['blockPagesList', { data: [], links: { self: 'x', next: null } }],
+	['blockPagesListAll', { data: [], links: { self: 'x' } }],
+	['scheduledPoliciesList', { data: [], links: { self: 'x' } }],
+	['scheduledPoliciesListAll', { data: [], links: { self: 'x' } }],
+	['networksGeo', { data: [] }],
+	['invoicesList', { data: [] }],
+	[
+		'organizationsSettings',
+		[{ id: 1, name: 'Org', connection_method: 'loopback' }],
+	],
+	['dictionaryV2AiApplications', [{ name: 'ChatGPT' }]],
+	['policiesGetPermissiveMode', { permissive_mode: true }],
+	['userAgentsUninstallPin', { pin: '0000' }],
+	[
+		'scheduledReportsV2List',
+		{ data: [{ id: 58_319, attributes: { frequency: 'weekly' } }] },
+	],
+	[
+		'organizationsList',
+		{
+			data: [
+				{
+					id: '1',
+					attributes: {
+						metadata: { mfa_enabled: true },
+						sync_tools_auto_update: true,
+					},
+				},
+			],
+		},
+	],
+	[
+		'trafficReportsQueryLogs',
+		{ data: { organization_ids: [1], values: [], page: { size: 10 } } },
+	],
+	[
+		'domainsUserLookup',
+		{ data: { id: '', type: 'domains', attributes: { name: 'example.com' } } },
+	],
+];
+
+describe('Dnsfilter live response shapes', () => {
+	it.each(liveShapes)('%s parses the live shape', (key, body) => {
+		const schema: z.ZodType = DnsfilterEndpointOutputSchemas[key];
+		// The transport drops nulls before parsing; mirror that here.
+		expect(schema.safeParse(dropNullFields(body)).success).toBe(true);
 	});
 });
