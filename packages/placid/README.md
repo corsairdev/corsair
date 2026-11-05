@@ -32,12 +32,17 @@ const image = await corsair.placid.api.images.get({ id: started.id });
 if (image.status === 'finished') console.log(image.image_url);
 ```
 
-Four things catch callers out, each checked against the live API:
+Five things catch callers out, each checked against the live API:
 
 - A render that fails still returns 200 from the create call. Read `status`, then `error_code`.
 - `polling_url` and the file URL are null until the render finishes. Images with `create_now: true` often finish inline; PDFs and videos usually queue.
 - Deleting a generated file answers 204 and clears its URL, but a later `get` still returns 200 with an empty URL, not a 404.
+- `templates.list`, `collections.list` and `fonts.list` page by cursor. Pass `links.next` from the previous page as `cursor`; template and font pages hold 20 rows.
 - The API token is project-scoped. A token from another project returns 401, not an empty list.
+
+`media.upload` and `fonts.create` fetch a public `file_url`, so private and
+loopback addresses are rejected, each redirect hop is checked, and the download
+has a 30 second deadline and a 25 MB cap.
 
 ## Endpoints
 
@@ -48,7 +53,7 @@ Four things catch callers out, each checked against the live API:
 | `collections.get` | `placid.api.collections.get` | `read` | Read one collection and the template UUIDs it holds |
 | `collections.list` | `placid.api.collections.list` | `read` | List template collections, either all at once or cursor-paged with `per_page` |
 | `collections.update` | `placid.api.collections.update` | `write` | Change a collection: replace its whole template list with `template_uuids`, or add and remove individual templates |
-| `fonts.create` | `placid.api.fonts.create` | `write` | Upload a ttf, otf, woff or woff2 font from a public URL. `terms_accepted` must be true. The returned `uuid` is the `fontFamily` to set on a text layer |
+| `fonts.create` | `placid.api.fonts.create` | `write` | Upload a ttf, otf, woff or woff2 font from a public URL. `terms_accepted` must be true. The returned `uuid` is the value to set as the `font` property on a text layer |
 | `fonts.delete` | `placid.api.fonts.delete` | `destructive` | Delete a custom font. Fails with 409 when a template still uses it unless `force` is set, which leaves those templates on the default font |
 | `fonts.get` | `placid.api.fonts.get` | `read` | Read one custom font by its `uuid` |
 | `fonts.list` | `placid.api.fonts.list` | `read` | List the custom fonts in the project, optionally including legacy account-wide fonts |

@@ -350,7 +350,7 @@ const placidEndpointMeta = {
 	'fonts.create': {
 		riskLevel: 'write',
 		description:
-			'Upload a ttf, otf, woff or woff2 font from a public URL. `terms_accepted` must be true. The returned `uuid` is the `fontFamily` to set on a text layer',
+			'Upload a ttf, otf, woff or woff2 font from a public URL. `terms_accepted` must be true. The returned `uuid` is the value to set as the `font` property on a text layer',
 	},
 	'fonts.update': {
 		riskLevel: 'write',

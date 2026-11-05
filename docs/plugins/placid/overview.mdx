@@ -15,7 +15,8 @@ Create an API project in Placid, open the project, then click API Tokens in the 
 - **Rate limit.** 60 requests per minute. A 429 is retried up to three times with backoff. A 5xx is only retried on reads, because repeating a create would render and bill a second file.
 - **Layers.** `layers` is keyed by the layer name set in the template editor, and every property a layer type supports is accepted. Omitted properties keep the template default. `templates.list` and `templates.get` return each dynamic layer's name and type, which is how to discover the keys.
 - **Uploads take URLs.** `media.upload` and `fonts.create` accept a public `file_url`; the plugin downloads it and forwards the bytes as multipart. The bytes cannot come from a local path.
-- **Fonts.** A font upload requires `terms_accepted: true`. The returned `uuid` is the value to set as `fontFamily` on a text layer.
+- **Fonts.** A font upload requires `terms_accepted: true`. The returned `uuid` is the value to set as the `font` property on a text layer.
+- **Uploads are checked.** `media.upload` and `fonts.create` fetch a public HTTP(S) `file_url`. Private, loopback and cloud-metadata addresses are rejected, each redirect hop is checked, the download has a 30 second deadline and a 25 MB cap.
 - **Webhooks.** The plugin does not receive webhooks. Placid calls the `webhook_success` URL you supply on a create.
 
 **What you get:**

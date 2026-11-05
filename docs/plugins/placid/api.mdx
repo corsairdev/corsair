@@ -156,7 +156,7 @@ await corsair.placid.api.collections.list({ per_page: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `per_page` | `number` | No | Page size. Omitted returns every collection, unpaged. |
-| `cursor` | `string` | No | The `links.next` URL of a previous page, or its cursor value. |
+| `cursor` | `string` | No | Pass `links.next` from the previous page (the whole URL or just its `cursor` value). Omitted returns every collection, unpaged. |
 
 
 
@@ -273,7 +273,7 @@ string | Record<string, unknown> | unknown[]
 
 `fonts.create`
 
-Upload a ttf, otf, woff or woff2 font from a public URL. `terms_accepted` must be true. The returned `uuid` is the `fontFamily` to set on a text layer
+Upload a ttf, otf, woff or woff2 font from a public URL. `terms_accepted` must be true. The returned `uuid` is the value to set as the `font` property on a text layer
 
 **Risk:** `write`
 
@@ -285,7 +285,7 @@ await corsair.placid.api.fonts.create({ file_url: 'https://example.com/Helvetica
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file_url` | `string` | Yes | A publicly reachable ttf, otf, woff or woff2 file. |
+| `file_url` | `string` | Yes | A publicly reachable ttf, otf, woff or woff2 file over HTTP(S). Private addresses are rejected, and the download is capped at 25 MB. |
 | `title` | `string \| null` | No | Display title. Defaults to the filename. |
 | `terms_accepted` | `true` | Yes | You must confirm you own the font or hold a licence to use it. Placid rejects the upload without it. |
 | `filename` | `string \| null` | No | — |
@@ -296,7 +296,7 @@ await corsair.placid.api.fonts.create({ file_url: 'https://example.com/Helvetica
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `uuid` | `string` | Yes | The font code. Use it as `fontFamily` on a text layer. |
+| `uuid` | `string` | Yes | The font code. Use it as the `font` value on a text layer. |
 | `title` | `string \| null` | No | — |
 | `filename` | `string \| null` | No | — |
 | `is_legacy` | `boolean \| null` | No | — |
@@ -363,7 +363,7 @@ await corsair.placid.api.fonts.get({ uuid: 'f1abc123def456' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `uuid` | `string` | Yes | The font code. Use it as `fontFamily` on a text layer. |
+| `uuid` | `string` | Yes | The font code. Use it as the `font` value on a text layer. |
 | `title` | `string \| null` | No | — |
 | `filename` | `string \| null` | No | — |
 | `is_legacy` | `boolean \| null` | No | — |
@@ -390,6 +390,7 @@ await corsair.placid.api.fonts.list({ include_legacy: true });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `include_legacy` | `boolean` | No | Also return account-wide fonts uploaded before per-project fonts. |
+| `cursor` | `string` | No | Pass `links.next` from the previous page (the whole URL or just its `cursor` value) to read the next 20 fonts. |
 
 
 
@@ -467,7 +468,7 @@ await corsair.placid.api.fonts.update({ uuid: 'f1abc123def456', title: 'Helvetic
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `uuid` | `string` | Yes | The font code. Use it as `fontFamily` on a text layer. |
+| `uuid` | `string` | Yes | The font code. Use it as the `font` value on a text layer. |
 | `title` | `string \| null` | No | — |
 | `filename` | `string \| null` | No | — |
 | `is_legacy` | `boolean \| null` | No | — |
@@ -674,7 +675,7 @@ await corsair.placid.api.media.upload({ file_url: 'https://example.com/assets/lo
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file_url` | `string` | Yes | A publicly reachable URL. The plugin downloads it and forwards the bytes as multipart. |
+| `file_url` | `string` | Yes | A publicly reachable HTTP(S) URL. The plugin downloads it and forwards the bytes as multipart. Private addresses are rejected, and the download is capped at 25 MB. |
 | `filename` | `string \| null` | No | Overrides the name from the URL. |
 | `file_key` | `string \| null` | No | The key the reply is filed under. Defaults to `file`. |
 
@@ -1134,6 +1135,7 @@ await corsair.placid.api.templates.list({ tag: 'social', order_by: 'title-asc' }
 | `title_filter` | `string` | No | Only templates whose title matches. |
 | `tag` | `string` | No | Only templates with this tag. Nested tags match too: `social` also returns `social/instagram`. |
 | `order_by` | `string` | No | `<field>-<direction>`, where field is `created_at`, `updated_at` or `title` and direction is `asc` or `desc`. |
+| `cursor` | `string` | No | Pass `links.next` from the previous page (the whole URL or just its `cursor` value) to read the next 20 templates. Null on the last page. |
 
 
 
