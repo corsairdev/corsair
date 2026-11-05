@@ -48,12 +48,15 @@ export const operationsWait: VeoEndpoints['operations']['wait'] = async (
 	let operation: VeoOperation;
 	try {
 		operation = await fetchOperation(ctx, parsed);
-		while (
-			!operation.done &&
-			!operation.error &&
-			Date.now() + pollIntervalMs <= deadline
-		) {
-			await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+		// A timeout shorter than the poll interval must still wait out the
+		// remaining time and fetch once more. Skipping that returned the
+		// first in-progress operation immediately.
+		while (!operation.done && !operation.error) {
+			const remainingMs = deadline - Date.now();
+			if (remainingMs <= 0) break;
+			await new Promise((resolve) =>
+				setTimeout(resolve, Math.min(pollIntervalMs, remainingMs)),
+			);
 			operation = await fetchOperation(ctx, parsed);
 		}
 	} catch (error) {

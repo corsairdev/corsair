@@ -182,6 +182,9 @@ const GeneratedVideoSchema = z
 				'Inline video bytes. The guide returns bytes in the response when storageUri is omitted; this is the same field name the predict API uses for inline media.',
 			),
 	})
+	// Veo sample objects gain fields that are not in the published sample.
+	// catchall keeps them instead of dropping them at parse time. A closed
+	// object would require inventing those fields.
 	.catchall(z.unknown());
 
 const OperationResponseSchema = z
@@ -190,12 +193,16 @@ const OperationResponseSchema = z
 		raiMediaFilteredCount: z.number().optional(),
 		videos: z.array(GeneratedVideoSchema).optional(),
 	})
+	// The operation response is a protobuf Any. Extra fields vary by model
+	// and are not a stable schema, so they stay on the parsed object.
 	.catchall(z.unknown());
 
 export const VeoOperationSchema = z
 	.object({
 		name: z.string(),
 		done: z.boolean().optional(),
+		// Google does not document a stable shape for long-running operation
+		// metadata, so it cannot be narrowed past unknown.
 		metadata: z.unknown().optional(),
 		error: z
 			.object({
@@ -206,6 +213,8 @@ export const VeoOperationSchema = z
 			.optional(),
 		response: OperationResponseSchema.optional(),
 	})
+	// Same reason as the response object: the operation resource can carry
+	// fields outside name, done, metadata, error, and response.
 	.catchall(z.unknown());
 export type VeoOperation = z.infer<typeof VeoOperationSchema>;
 

@@ -50,6 +50,7 @@ module.exports = {
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	// api.test.ts calls the real Veo API. Default `pnpm test` skips it.
+	// `pnpm test:live` replaces this ignore list so the file actually runs.
 	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,

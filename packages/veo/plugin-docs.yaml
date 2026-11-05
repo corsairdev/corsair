@@ -18,12 +18,12 @@ examples:
     path: textToVideo.create
     title: Start a text-to-video generation
     args:
+      model: veo-3.1-generate-001
       prompt: a cat reading a book
       sampleCount: 1
       storageUri: gs://video-bucket/output/
-# Enum fields (`model`, `aspectRatio`, `resolution`, `resizeMode`) are unions
-# without the word `string`, so the docs generator rejects them as args.
-# `call` skips that check. Values are the documented request fields only.
+# `call` is used below because the docs generator rejects unquoted enum
+# values in args. The overview example above includes `model` directly.
 apiExamples:
   textToVideo.create:
     call: "{ model: 'veo-3.1-generate-001', prompt: 'a cat reading a book', aspectRatio: '16:9', sampleCount: 1, storageUri: 'gs://video-bucket/output/' }"

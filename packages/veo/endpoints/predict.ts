@@ -26,6 +26,9 @@ type GenerationFields = {
 	resizeMode?: 'crop' | 'pad';
 };
 
+// The image object is a JSON record rather than a closed interface because
+// exactly one of bytesBase64Encoded or gcsUri is present. Zod already
+// checked that before this runs.
 export function buildImage(image: VeoImage): Record<string, unknown> {
 	return {
 		mimeType: image.mimeType,
@@ -36,6 +39,9 @@ export function buildImage(image: VeoImage): Record<string, unknown> {
 	};
 }
 
+// Parameter values mix strings and numbers. A single record is the request
+// body Google accepts; a closed interface would have to repeat every
+// optional field as `T | undefined` and still be widened at JSON time.
 export function buildParameters(
 	input: GenerationFields,
 ): Record<string, unknown> | undefined {
@@ -61,6 +67,8 @@ export async function startPrediction(
 	ctx: VeoContext,
 	event: string,
 	input: GenerationFields,
+	// Each action builds a different instance (prompt, image, video, or
+	// references). The Zod input for that action already validated it.
 	instance: Record<string, unknown>,
 ): Promise<VeoOperation> {
 	const projectId = await resolveProjectId(ctx, input.projectId);
@@ -71,6 +79,8 @@ export async function startPrediction(
 		...(parameters ? { parameters } : {}),
 	};
 
+	// The HTTP client returns untyped JSON. VeoOperationSchema.parse below
+	// is the boundary that narrows it.
 	let response: unknown;
 	try {
 		response = await makeVeoRequest(

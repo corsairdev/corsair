@@ -299,6 +299,25 @@ describe('Veo operations', () => {
 		);
 	});
 
+	it('polls again when the timeout is shorter than the interval', async () => {
+		mockedRequest
+			.mockResolvedValueOnce({ name: OPERATION, done: false })
+			.mockResolvedValueOnce({
+				name: OPERATION,
+				done: true,
+				response: { videos: [] },
+			});
+
+		const operation = await operationsWait(buildCtx(), {
+			operationName: OPERATION,
+			pollIntervalMs: 60_000,
+			timeoutMs: 40,
+		});
+
+		expect(mockedRequest).toHaveBeenCalledTimes(2);
+		expect(operation.done).toBe(true);
+	});
+
 	it('returns the last operation when the timeout is already due', async () => {
 		mockedRequest.mockResolvedValue({ name: OPERATION, done: false });
 		const operation = await operationsWait(buildCtx(), {

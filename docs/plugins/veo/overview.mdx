@@ -106,7 +106,7 @@ await tenant.veo.api.operations.get({ operationName: 'projects/my-proj/locations
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.veo.api.textToVideo.create({ prompt: 'a cat reading a book', sampleCount: 1, storageUri: 'gs://video-bucket/output/' });
+await tenant.veo.api.textToVideo.create({ model: 'veo-3.1-generate-001', prompt: 'a cat reading a book', sampleCount: 1, storageUri: 'gs://video-bucket/output/' });
 ```
 
 

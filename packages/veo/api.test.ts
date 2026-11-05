@@ -1,5 +1,5 @@
-// Live Veo call. Ignored by jest.config.cjs. Run with:
-//   VEO_ACCESS_TOKEN=... VEO_PROJECT_ID=... pnpm exec jest api.test.ts
+// Live Veo call. The default jest config ignores this file. Run with:
+//   VEO_ACCESS_TOKEN=... VEO_PROJECT_ID=... pnpm test:live
 import { makeVeoRequest, veoHost, veoModelPath } from './client';
 import { VeoOperationSchema } from './endpoints/types';
 
@@ -11,6 +11,8 @@ describeLive('Veo live API (env-gated)', () => {
 	it('starts a text-to-video operation and fetches it once', async () => {
 		const location = 'us-central1';
 		const model = 'veo-3.1-fast-generate-001';
+		// Narrowed by VeoOperationSchema.parse on the next lines. The transport
+		// generic stays unknown until that parse; there is no second schema.
 		const started = await makeVeoRequest<unknown>(
 			veoHost(location),
 			veoModelPath(projectId, location, model, 'predictLongRunning'),
@@ -25,6 +27,7 @@ describeLive('Veo live API (env-gated)', () => {
 		const operation = VeoOperationSchema.parse(started);
 		expect(operation.name).toContain('/operations/');
 
+		// Same as the start call: parsed by VeoOperationSchema immediately below.
 		const polled = await makeVeoRequest<unknown>(
 			veoHost(location),
 			veoModelPath(projectId, location, model, 'fetchPredictOperation'),

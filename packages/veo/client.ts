@@ -148,6 +148,9 @@ export async function makeVeoRequest<T>(
 	path: string,
 	accessToken: string | undefined,
 	options: {
+		// Each Veo action sends a different JSON body. The endpoint Zod
+		// schema validates it before this transport sees it, so the client
+		// stays a generic JSON record instead of a union of every action.
 		body: Record<string, unknown>;
 	},
 ): Promise<T> {
