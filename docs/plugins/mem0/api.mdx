@@ -531,8 +531,8 @@ Record<string, unknown>
 
 ```ts
 {
-  id: string,
-  memory: string,
+  id?: string,
+  memory?: string,
   user_id?: string | null,
   agent_id?: string | null,
   app_id?: string | null,
@@ -544,7 +544,7 @@ Record<string, unknown>
   synthesized?: boolean | null,
   lifecycle_state?: string | null,
   expiration_date?: string | null,
-  created_at: string,
+  created_at?: string,
   updated_at?: string | null
 }[]
 ```
@@ -603,8 +603,8 @@ Record<string, unknown>
 
 ```ts
 {
-  id: string,
-  memory: string,
+  id?: string,
+  memory?: string,
   score?: number | null,
   score_breakdown?: {
     semantic?: number | null,
@@ -618,7 +618,7 @@ Record<string, unknown>
   metadata?: Record<string, unknown> | null,
   categories?: string[] | null,
   expiration_date?: string | null,
-  created_at: string,
+  created_at?: string,
   updated_at?: string | null
 }[]
 ```

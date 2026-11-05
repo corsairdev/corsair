@@ -193,7 +193,7 @@ const ScoreBreakdownSchema = z
 	})
 	.loose();
 
-export const SearchResultSchema = z
+const SearchResultSchema = z
 	.object({
 		id: z.string(),
 		memory: z.string(),
@@ -219,10 +219,17 @@ export const SearchResultSchema = z
 	})
 	.loose();
 
-export type Mem0SearchResult = z.infer<typeof SearchResultSchema>;
+// A search or list call may pass `fields` to ask for a subset, and Mem0 then
+// sends only those keys, so no field here can be required. `memories.get` and
+// `memories.update` return the whole record and use the stricter MemorySchema.
+export const SearchResultRecordSchema = SearchResultSchema.partial().describe(
+	'One search result. Fields you did not request with `fields` are absent.',
+);
+
+export type Mem0SearchResult = z.infer<typeof SearchResultRecordSchema>;
 
 const MemoriesSearchResponseSchema = z.object({
-	results: z.array(SearchResultSchema),
+	results: z.array(SearchResultRecordSchema),
 });
 
 export type MemoriesSearchResponse = z.infer<
@@ -303,6 +310,13 @@ export const MemorySchema = z
 
 export type Mem0Memory = z.infer<typeof MemorySchema>;
 
+// A list call may pass `fields`, and Mem0 then sends only those keys, so the
+// rows cannot require anything. `memories.get` and `memories.update` use the
+// stricter MemorySchema.
+export const ListedMemorySchema = MemorySchema.partial().describe(
+	'One listed memory. Fields you did not request with `fields` are absent.',
+);
+
 const MemoriesListResponseSchema = z.object({
 	count: z.number().describe('Total number of memories matching the filters.'),
 	next: z
@@ -310,7 +324,7 @@ const MemoriesListResponseSchema = z.object({
 		.nullable()
 		.describe('URL of the next page, or null on the last page.'),
 	previous: z.string().nullable(),
-	results: z.array(MemorySchema),
+	results: z.array(ListedMemorySchema),
 });
 
 export type MemoriesListResponse = z.infer<typeof MemoriesListResponseSchema>;
