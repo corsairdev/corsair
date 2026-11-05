@@ -674,6 +674,7 @@ describe('memories.batchUpdate', () => {
 			],
 		});
 
+		// unknown: the body is untyped JSON, inspected one field at a time.
 		const body = lastRequest().body as {
 			memories: Record<string, unknown>[];
 		};
@@ -778,6 +779,8 @@ describe('events.get', () => {
 	it('accepts a null result, which DELETE events send', async () => {
 		respond({ ...event, event_type: 'DELETE', results: null });
 
+		// unknown: the result union covers an array, an object and null, so the
+		// test reads the field it asserted on rather than a fixed member type.
 		const result = (await invoke(Events.get, { event_id: 'evt-1' })) as {
 			results: unknown;
 		};
@@ -860,9 +863,9 @@ describe('webhooks.list', () => {
 	it('surfaces a 403 for a project the key cannot see', async () => {
 		respond(webhookForbidden, 403);
 
-		const error = await invoke(Webhooks.list, {
-			project_id: 'proj_other',
-		}).catch((e: unknown) => e);
+		const error = await rejection(
+			invoke(Webhooks.list, { project_id: 'proj_other' }),
+		);
 
 		expect((error as Mem0APIError).status).toBe(403);
 	});
@@ -971,10 +974,11 @@ describe('webhooks.update', () => {
 	it('keeps the webhook body when a deployment returns it instead of a message', async () => {
 		respond(webhook);
 
+		// unknown: only the passthrough's presence is asserted, not its shape,
+		// so the field stays open rather than duplicating the webhook type here.
 		const result = (await invoke(Webhooks.update, {
 			webhook_id: 'wh_123',
 			name: 'Memory Logger',
-			// unknown: the test only checks the passthrough exists, not its shape.
 		})) as { webhook?: unknown };
 
 		expect(result.webhook).toEqual(webhook);
