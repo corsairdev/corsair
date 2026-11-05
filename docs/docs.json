@@ -3150,6 +3150,14 @@
                 ]
               },
               {
+                "group": "Ticketmaster",
+                "pages": [
+                  "plugins/ticketmaster/overview",
+                  "plugins/ticketmaster/api",
+                  "plugins/ticketmaster/database"
+                ]
+              },
+              {
                 "group": "TickTick",
                 "pages": [
                   "plugins/ticktick/overview",
