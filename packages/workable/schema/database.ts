@@ -1,6 +1,15 @@
 import { z } from 'zod';
 
 /**
+ * An enum read from Workable's responses. The known values document the
+ * field, but a value Workable adds later still parses instead of failing
+ * the whole call. Inputs keep strict enums.
+ */
+function openEnum<const T extends readonly [string, ...string[]]>(values: T) {
+	return z.union([z.enum(values), z.string()]);
+}
+
+/**
  * Workable SPI v3 entity shapes for Corsair DB cache (`ctx.db.*`).
  * Loose + catchall - Workable's account-configured custom fields mean
  * responses carry tenant-specific extras beyond what's documented.
@@ -12,7 +21,7 @@ import { z } from 'zod';
 export const WorkableDepartment = z
 	.object({
 		id: z.string().optional(),
-		name: z.string().optional(),
+		name: z.string().nullish(),
 		parent_id: z.string().nullable().optional(),
 	})
 	.catchall(z.unknown());
@@ -22,11 +31,11 @@ export type WorkableDepartment = z.infer<typeof WorkableDepartment>;
 export const WorkableEmployee = z
 	.object({
 		id: z.string().optional(),
-		firstname: z.string().optional(),
-		lastname: z.string().optional(),
-		email: z.string().optional(),
-		state: z.enum(['draft', 'published']).optional(),
-		job_title: z.string().optional(),
+		firstname: z.string().nullish(),
+		lastname: z.string().nullish(),
+		email: z.string().nullish(),
+		state: openEnum(['draft', 'published']).nullish(),
+		job_title: z.string().nullish(),
 		department_id: z.string().nullable().optional(),
 		manager_id: z.string().nullable().optional(),
 	})
@@ -37,11 +46,11 @@ export type WorkableEmployee = z.infer<typeof WorkableEmployee>;
 export const WorkableMember = z
 	.object({
 		id: z.string().optional(),
-		name: z.string().optional(),
-		headline: z.string().optional(),
-		email: z.string().optional(),
-		roles: z.array(z.string()).optional(),
-		active: z.boolean().optional(),
+		name: z.string().nullish(),
+		headline: z.string().nullish(),
+		email: z.string().nullish(),
+		roles: z.array(z.string()).nullish(),
+		active: z.boolean().nullish(),
 		// unknown: collaboration-rule values are account-configured and undocumented.
 		collaboration_rules: z.array(z.unknown()).optional(),
 	})
@@ -52,13 +61,13 @@ export type WorkableMember = z.infer<typeof WorkableMember>;
 export const WorkableJob = z
 	.object({
 		id: z.string().optional(),
-		title: z.string().optional(),
-		shortcode: z.string().optional(),
-		state: z.enum(['draft', 'published', 'closed', 'archived']).optional(),
+		title: z.string().nullish(),
+		shortcode: z.string().nullish(),
+		state: openEnum(['draft', 'published', 'closed', 'archived']).nullish(),
 		department: z.string().nullable().optional(),
-		url: z.string().optional(),
-		created_at: z.coerce.date().optional(),
-		updated_at: z.coerce.date().optional(),
+		url: z.string().nullish(),
+		created_at: z.coerce.date().nullish(),
+		updated_at: z.coerce.date().nullish(),
 	})
 	.catchall(z.unknown());
 export type WorkableJob = z.infer<typeof WorkableJob>;
@@ -67,21 +76,21 @@ export type WorkableJob = z.infer<typeof WorkableJob>;
 export const WorkableCandidate = z
 	.object({
 		id: z.string().optional(),
-		name: z.string().optional(),
-		firstname: z.string().optional(),
-		lastname: z.string().optional(),
-		email: z.string().optional(),
+		name: z.string().nullish(),
+		firstname: z.string().nullish(),
+		lastname: z.string().nullish(),
+		email: z.string().nullish(),
 		job: z
 			.object({
-				shortcode: z.string().optional(),
-				title: z.string().optional(),
+				shortcode: z.string().nullish(),
+				title: z.string().nullish(),
 			})
 			.catchall(z.unknown())
-			.optional(),
-		stage: z.string().optional(),
-		disqualified: z.boolean().optional(),
-		created_at: z.coerce.date().optional(),
-		updated_at: z.coerce.date().optional(),
+			.nullish(),
+		stage: z.string().nullish(),
+		disqualified: z.boolean().nullish(),
+		created_at: z.coerce.date().nullish(),
+		updated_at: z.coerce.date().nullish(),
 	})
 	.catchall(z.unknown());
 export type WorkableCandidate = z.infer<typeof WorkableCandidate>;

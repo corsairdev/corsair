@@ -166,9 +166,12 @@ describe('Workable endpoints', () => {
 	describe('departments (WORKABLE_LIST/POST/PUT/MERGE/DELETE_DEPARTMENTS)', () => {
 		it('departments.list hits GET /departments and caches rows', async () => {
 			const { ctx, stores } = makeCtx();
-			respondWith({ departments: [{ id: 'd1', name: 'Engineering' }] });
+			// Workable answers with a bare array (checked against the live API).
+			respondWith([
+				{ id: 'd1', name: 'Engineering', parent_id: null, sample: false },
+			]);
 			const listed = await Departments.list(ctx, {});
-			expect(listed.departments).toHaveLength(1);
+			expect(listed).toHaveLength(1);
 			expect(calls[0]?.url).toBe(
 				'https://example.workable.com/spi/v3/departments',
 			);
@@ -503,7 +506,7 @@ describe('Workable endpoints', () => {
 
 		it('legalEntities.list hits GET /legal_entities', async () => {
 			const { ctx } = makeCtx();
-			respondWith({ legal_entities: [] });
+			respondWith([]);
 			await Reference.legalEntitiesList(ctx, {});
 			expect(calls.at(-1)?.url).toBe(
 				'https://example.workable.com/spi/v3/legal_entities',
@@ -521,7 +524,7 @@ describe('Workable endpoints', () => {
 
 		it('disqualificationReasons.list hits GET /disqualification_reasons', async () => {
 			const { ctx } = makeCtx();
-			respondWith({ disqualification_reasons: [] });
+			respondWith([]);
 			await Reference.disqualificationReasonsList(ctx, {});
 			expect(calls.at(-1)?.url).toBe(
 				'https://example.workable.com/spi/v3/disqualification_reasons',
@@ -530,7 +533,7 @@ describe('Workable endpoints', () => {
 
 		it('permissionSets.list hits GET /permission_sets', async () => {
 			const { ctx } = makeCtx();
-			respondWith({ permission_sets: [] });
+			respondWith([]);
 			await Reference.permissionSetsList(ctx, {});
 			expect(calls.at(-1)?.url).toBe(
 				'https://example.workable.com/spi/v3/permission_sets',
@@ -539,7 +542,7 @@ describe('Workable endpoints', () => {
 
 		it('employeeFields.list hits GET /employee_fields', async () => {
 			const { ctx } = makeCtx();
-			respondWith({ employee_fields: [] });
+			respondWith([]);
 			await Reference.employeeFieldsList(ctx, {});
 			expect(calls.at(-1)?.url).toBe(
 				'https://example.workable.com/spi/v3/employee_fields',
@@ -564,7 +567,7 @@ describe('Workable endpoints', () => {
 
 		it('workSchedules.list hits GET /work_schedules', async () => {
 			const { ctx } = makeCtx();
-			respondWith({ work_schedules: [] });
+			respondWith([]);
 			await Reference.workSchedulesList(ctx, {});
 			expect(calls.at(-1)?.url).toBe(
 				'https://example.workable.com/spi/v3/work_schedules',
@@ -721,6 +724,104 @@ describe('Workable endpoints', () => {
 			expect(calls.at(-1)?.url).toBe(
 				'https://www.workable.com/api/accounts/other-co/locations',
 			);
+		});
+	});
+
+	// Bodies below are the shapes a live Workable trial account returned
+	// (names and emails replaced). Each one failed a schema before the fix.
+	describe('live response shapes', () => {
+		it('members.list parses null headline and scope and caches the member', async () => {
+			const { ctx, stores } = makeCtx();
+			respondWith({
+				members: [
+					{
+						id: '201704',
+						name: 'Jordan Lee',
+						headline: null,
+						email: 'jordan@example.com',
+						role: 'admin',
+						type: 'Member',
+						hris_role: 'hris_admin',
+						roles: ['hris.admin', 'workable.superadmin', 'ats.admin'],
+						active: true,
+						collaboration_rules: [],
+						hris_member_scope: null,
+					},
+				],
+			});
+			const { members } = await Members.list(ctx, { limit: 10 });
+			expect(members[0]?.headline).toBeNull();
+			expect(stores.members.rows.get('201704')).toMatchObject({
+				active: true,
+				hris_member_scope: null,
+			});
+		});
+
+		it('accounts.get parses null description and summary', async () => {
+			const { ctx } = makeCtx();
+			respondWith({
+				id: 'b6b49',
+				name: 'Example',
+				subdomain: 'example',
+				description: null,
+				summary: null,
+				website_url: 'https://example.com',
+			});
+			const account = await Accounts.get(ctx, {});
+			expect(account.description).toBeNull();
+		});
+
+		it('publicJobs.list parses a careers page with no description', async () => {
+			const { ctx } = makeCtx();
+			respondWith({ name: 'Example', description: null, jobs: [] });
+			const board = await PublicJobs.list(ctx, { subdomain: 'example' });
+			expect(board.description).toBeNull();
+		});
+
+		it('reference lists answer with bare arrays', async () => {
+			const { ctx } = makeCtx();
+			respondWith([
+				{
+					id: 'b457ce',
+					description: "Doesn't have required qualifications",
+					candidate_withdrew: false,
+					position: 1,
+				},
+			]);
+			const reasons = await Reference.disqualificationReasonsList(ctx, {});
+			expect(reasons[0]?.id).toBe('b457ce');
+			respondWith([
+				{ id: 'firstname', label: 'First name', type: 'text', hint: null },
+			]);
+			const fields = await Reference.employeeFieldsList(ctx, {});
+			expect(fields[0]?.id).toBe('firstname');
+		});
+
+		it('employees.list reads total_count and only sends the page sizes Workable takes', async () => {
+			const { ctx } = makeCtx();
+			respondWith({ total_count: 0, employees: [] });
+			const listed = await Employees.list(ctx, { limit: 20 });
+			expect(listed.total_count).toBe(0);
+			expect(calls.at(-1)?.url).toContain('limit=20');
+			const sent = calls.length;
+			// Live: "limit" must be one of [10, 20, 50, 100].
+			await expect(
+				// why safe: deliberately invalid input to prove it is rejected.
+				Employees.list(ctx, { limit: 5 } as never),
+			).rejects.toThrow();
+			expect(calls).toHaveLength(sent);
+		});
+
+		it('a job or employee state Workable adds later still parses', async () => {
+			const { ctx } = makeCtx();
+			respondWith({ jobs: [{ id: 'j1', state: 'on_hold' }] });
+			const { jobs } = await Jobs.list(ctx, {});
+			expect(jobs[0]?.state).toBe('on_hold');
+			// Inputs stay strict.
+			await expect(
+				// why safe: deliberately invalid input to prove it is rejected.
+				Jobs.list(ctx, { state: 'on_hold' } as never),
+			).rejects.toThrow();
 		});
 	});
 });

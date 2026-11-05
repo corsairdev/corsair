@@ -35,12 +35,25 @@ function listEnvelope(key: string) {
 	);
 }
 
+/**
+ * Rows of a reference endpoint that answers with a bare JSON array rather
+ * than an envelope (departments, employee fields, legal entities,
+ * disqualification reasons, permission sets, work schedules), matching both
+ * Workable's reference and the live API.
+ */
+function bareList() {
+	// unknown: row shapes are account-configured — kept loose, never inspected.
+	return z.array(z.record(z.string(), z.unknown()));
+}
+
 const WorkableAccount = z
 	.object({
 		id: z.string().optional(),
-		name: z.string().optional(),
-		subdomain: z.string().optional(),
-		website_url: z.string().optional(),
+		name: z.string().nullish(),
+		subdomain: z.string().nullish(),
+		description: z.string().nullish(),
+		summary: z.string().nullish(),
+		website_url: z.string().nullish(),
 	})
 	// unknown: account payloads carry undocumented extras — catchall keeps parsing loose.
 	.catchall(z.unknown());
@@ -86,7 +99,10 @@ export const WorkableEndpointInputSchemas = {
 
 	// employees
 	employeesList: z.object({
-		limit: z.number().int().positive().max(100).optional(),
+		// Workable rejects any other page size with a 400.
+		limit: z
+			.union([z.literal(10), z.literal(20), z.literal(50), z.literal(100)])
+			.optional(),
 		offset: z.number().int().nonnegative().optional(),
 		query: z.string().optional(),
 		order_by: z.string().optional(),
@@ -193,7 +209,14 @@ export const WorkableEndpointInputSchemas = {
 
 	// timeoff
 	timeoffCategoriesList: EmptyInputSchema,
-	timeoffBalancesList: z.object({ employee_id: z.string().optional() }),
+	timeoffBalancesList: z.object({
+		employee_id: z
+			.string()
+			.optional()
+			.describe(
+				'The employee whose balances to read. Required with an account token; a user token defaults to its own employee.',
+			),
+	}),
 
 	// work schedules
 	workSchedulesList: EmptyInputSchema,
@@ -251,9 +274,8 @@ export const WorkableEndpointOutputSchemas = {
 	accountsList: z.object({ accounts: z.array(WorkableAccount) }).loose(),
 	accountsGet: WorkableAccount,
 
-	departmentsList: z
-		.object({ departments: z.array(WorkableDepartment) })
-		.loose(),
+	// GET /departments answers with a bare array.
+	departmentsList: z.array(WorkableDepartment),
 	departmentsCreate: WorkableDepartment,
 	departmentsUpdate: WorkableDepartment,
 	// Merge answers with the target department the source was merged into.
@@ -263,6 +285,8 @@ export const WorkableEndpointOutputSchemas = {
 	employeesList: z
 		.object({
 			employees: z.array(WorkableEmployee),
+			// The live API sends `total_count`; Workable's reference shows `totalCount`.
+			total_count: z.number().optional(),
 			totalCount: z.number().optional(),
 		})
 		.loose(),
@@ -271,7 +295,7 @@ export const WorkableEndpointOutputSchemas = {
 	employeesUpdate: WorkableEmployee,
 	employeesUploadDocuments: SuccessResponseSchema,
 
-	employeeFieldsList: listEnvelope('employee_fields'),
+	employeeFieldsList: bareList(),
 
 	membersList: z.object({ members: z.array(WorkableMember) }).loose(),
 	membersInvite: WorkableMember,
@@ -294,24 +318,27 @@ export const WorkableEndpointOutputSchemas = {
 		paging: PagingSchema.optional(),
 	}),
 	recruitersList: listEnvelope('recruiters'),
-	legalEntitiesList: listEnvelope('legal_entities'),
+	legalEntitiesList: bareList(),
 	customAttributesList: listEnvelope('custom_attributes'),
-	disqualificationReasonsList: listEnvelope('disqualification_reasons'),
-	permissionSetsList: listEnvelope('permission_sets'),
+	disqualificationReasonsList: bareList(),
+	permissionSetsList: bareList(),
 	timeoffCategoriesList: listEnvelope('categories'),
 	timeoffBalancesList: listEnvelope('balances'),
-	workSchedulesList: listEnvelope('work_schedules'),
+	workSchedulesList: bareList(),
 	eventsList: listEnvelope('events'),
 
 	subscriptionsList: listEnvelope('subscriptions'),
-	// unknown: webhook-subscription response is opaque and never read by the plugin.
-	subscriptionsCreate: z.record(z.string(), z.unknown()),
+	// 201 with the new subscription's id (a number in Workable's reference).
+	subscriptionsCreate: z
+		.object({ id: z.union([z.number(), z.string()]).optional() })
+		.loose(),
 	subscriptionsDelete: SuccessResponseSchema,
 
 	publicJobsList: z
 		.object({
-			name: z.string().optional(),
-			description: z.string().optional(),
+			name: z.string().nullish(),
+			// null when the account has no careers-page description.
+			description: z.string().nullish(),
 			// unknown: public job-board row shape varies per posting and is display-only.
 			jobs: z.array(z.record(z.string(), z.unknown())).optional(),
 		})
@@ -321,10 +348,10 @@ export const WorkableEndpointOutputSchemas = {
 	publicLocationsList: z.array(
 		z
 			.object({
-				code: z.string().optional(),
-				name: z.string().optional(),
-				count: z.number().optional(),
-				url: z.string().optional(),
+				code: z.string().nullish(),
+				name: z.string().nullish(),
+				count: z.number().nullish(),
+				url: z.string().nullish(),
 			})
 			.loose(),
 	),

@@ -31,7 +31,7 @@ export const list: WorkableEndpoints['departmentsList'] = async (
 	await persistRows(
 		ctx.db.departments,
 		WorkableDepartment,
-		response.departments,
+		response,
 		'department',
 	);
 	await logEventFromContext(ctx, 'workable.departments.list', {}, 'completed');
