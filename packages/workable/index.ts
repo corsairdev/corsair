@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import * as Accounts from './endpoints/accounts';
 import * as Candidates from './endpoints/candidates';
 import * as Departments from './endpoints/departments';
@@ -449,6 +450,47 @@ const workableEndpointMeta = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+/** Operations that call the unauthenticated job-board API and need no key. */
+const PUBLIC_OPERATIONS: ReadonlySet<string> = new Set([
+	'publicJobs.list',
+	'publicLocations.list',
+]);
+
+/** Reports whether the dotted operation path needs no Workable credential. */
+function isPublicOperation(operation: string | undefined): boolean {
+	return operation !== undefined && PUBLIC_OPERATIONS.has(operation);
+}
+
+/**
+ * Reads one stored credential field. A tenant that was never initialized has
+ * no DEK, so the key manager throws instead of returning null; that case is
+ * treated as "not stored". Anything else (a transport failure, say) rethrows.
+ */
+async function readStoredKey(
+	read: () => Promise<string | null | undefined>,
+): Promise<string | null> {
+	try {
+		return (await read()) || null;
+	} catch (error) {
+		// why safe: narrows to the uninitialized-tenant case, which carries no
+		// credential to resolve; anything else rethrows untouched.
+		if (error instanceof Error && /no dek found/i.test(error.message)) {
+			return null;
+		}
+		throw error;
+	}
+}
+
+/** True when the account subdomain, the other half of the credential, is set. */
+async function hasAccount(
+	ctx: WorkableKeyBuilderContext,
+	configured: string | undefined,
+): Promise<boolean> {
+	if (configured || ctx.options?.account) return true;
+	if (ctx.authType !== 'api_key') return false;
+	return (await readStoredKey(() => ctx.keys.get_account())) !== null;
+}
+
 export type BaseWorkablePlugin<T extends WorkablePluginOptions> = CorsairPlugin<
 	'workable',
 	typeof WorkableSchema,
@@ -497,24 +539,23 @@ export function workable<const T extends WorkablePluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: WorkableKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) return options.key;
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				// Resolve (never throw): the unauthenticated job-board endpoints
-				// ignore ctx.key entirely, so they must work without a connected
-				// account. Authenticated endpoints enforce key presence
-				// themselves via resolveAccount, preserving AuthMissingError.
-				try {
-					return (await ctx.keys.get_api_key()) ?? '';
-				} catch (error) {
-					// why safe: narrows to the uninitialized-tenant case, which
-					// carries no credential to resolve — anything else rethrows.
-					if (error instanceof Error && /no dek found/i.test(error.message)) {
-						return '';
-					}
-					throw error;
-				}
+			// The job-board endpoints send no credential, so they work without
+			// a connected account. Every other endpoint needs the token and the
+			// account subdomain, and a missing one must be raised HERE: the
+			// binder only mints a connect link (and records the connect
+			// request) for an AuthMissingError thrown by the keyBuilder.
+			const isPublic = isPublicOperation(ctx.meteredOperationId);
+			if (source === 'endpoint' && options.key) {
+				if (isPublic || (await hasAccount(ctx, options.account)))
+					return options.key;
+			} else if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const key = await readStoredKey(() => ctx.keys.get_api_key());
+				if (isPublic) return key ?? '';
+				if (key && (await hasAccount(ctx, options.account))) return key;
+			} else if (source === 'endpoint' && isPublic) {
+				return '';
 			}
-			return '';
+			throw new AuthMissingError('workable', ctx.authType ?? 'api_key');
 		},
 	} satisfies InternalWorkablePlugin;
 }

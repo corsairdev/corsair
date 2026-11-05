@@ -157,28 +157,56 @@ describe('Workable client', () => {
 		}
 
 		/** Builds a minimal keyBuilder context with a stubbed key manager. */
-		function fakeKeyCtx(apiKey: string | null) {
+		function fakeKeyCtx(
+			apiKey: string | null,
+			operation = 'jobs.list',
+			account: string | null = 'example',
+		) {
 			return {
 				authType: 'api_key',
 				options: {},
 				keys: {
-					get_api_key: async () => apiKey,
-					get_account: async () => 'example',
+					get_api_key: jest.fn(async () => apiKey),
+					get_account: jest.fn(async () => account),
 				},
 				tenantId: 'default',
+				meteredOperationId: operation,
+			};
+		}
+
+		/** Asserts the promise rejects with corsair's AuthMissingError. */
+		async function expectAuthMissing(promise: Promise<string>) {
+			const { AuthMissingError } = await import('corsair/core');
+			await expect(promise).rejects.toBeInstanceOf(AuthMissingError);
+		}
+
+		/** A tenant that was never initialized: the key manager has no DEK. */
+		function uninitializedCtx(operation: string) {
+			const noDek = async (): Promise<string | null> => {
+				throw new Error(
+					'No DEK found for account (tenant: "default"). Initialize the account first.',
+				);
+			};
+			return {
+				authType: 'api_key',
+				options: {},
+				keys: { get_api_key: noDek, get_account: noDek },
+				tenantId: 'default',
+				meteredOperationId: operation,
 			};
 		}
 
 		it('returns the configured options key without touching the key manager', async () => {
 			const { workable } = await import('./index');
-			const key = await keyBuilderOf(workable({ key: 'opt-key' }))(
-				fakeKeyCtx(null),
-				'endpoint',
-			);
+			const ctx = fakeKeyCtx(null);
+			const key = await keyBuilderOf(
+				workable({ key: 'opt-key', account: 'acme' }),
+			)(ctx, 'endpoint');
 			expect(key).toBe('opt-key');
+			expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
 		});
 
-		it('returns the managed api key when configured', async () => {
+		it('returns the stored api key when the subdomain is stored too', async () => {
 			const { workable } = await import('./index');
 			const key = await keyBuilderOf(workable({}))(
 				fakeKeyCtx('managed-key'),
@@ -187,32 +215,51 @@ describe('Workable client', () => {
 			expect(key).toBe('managed-key');
 		});
 
-		it('resolves to an empty key instead of throwing, so public endpoints stay usable', async () => {
+		// The binder mints the connect link only for an AuthMissingError thrown
+		// by the keyBuilder, so a missing credential has to fail here.
+		it('throws AuthMissingError on an authenticated endpoint with no stored key', async () => {
 			const { workable } = await import('./index');
-			const key = await keyBuilderOf(workable({}))(
-				fakeKeyCtx(null),
-				'endpoint',
+			await expectAuthMissing(
+				keyBuilderOf(workable({}))(fakeKeyCtx(null), 'endpoint'),
 			);
-			expect(key).toBe('');
 		});
 
-		it('resolves to an empty key when the tenant was never initialized', async () => {
+		it('throws AuthMissingError when the token is stored but the subdomain is not', async () => {
 			const { workable } = await import('./index');
-			const uninitialized = {
-				authType: 'api_key',
-				options: {},
-				keys: {
-					get_api_key: async (): Promise<string | null> => {
-						throw new Error(
-							'No DEK found for account (tenant: "default"). Initialize the account first.',
-						);
-					},
-					get_account: async () => 'example',
-				},
-				tenantId: 'default',
-			};
-			const key = await keyBuilderOf(workable({}))(uninitialized, 'endpoint');
-			expect(key).toBe('');
+			await expectAuthMissing(
+				keyBuilderOf(workable({}))(
+					fakeKeyCtx('managed-key', 'departments.list', null),
+					'endpoint',
+				),
+			);
+		});
+
+		it('throws AuthMissingError for a tenant that was never initialized', async () => {
+			const { workable } = await import('./index');
+			await expectAuthMissing(
+				keyBuilderOf(workable({}))(uninitializedCtx('jobs.list'), 'endpoint'),
+			);
+		});
+
+		it('resolves an empty key for the public job-board endpoints', async () => {
+			const { workable } = await import('./index');
+			const plugin = workable({});
+			await expect(
+				keyBuilderOf(plugin)(fakeKeyCtx(null, 'publicJobs.list'), 'endpoint'),
+			).resolves.toBe('');
+			await expect(
+				keyBuilderOf(plugin)(
+					uninitializedCtx('publicLocations.list'),
+					'endpoint',
+				),
+			).resolves.toBe('');
+		});
+
+		it('refuses webhook keys (the plugin has no webhooks)', async () => {
+			const { workable } = await import('./index');
+			await expectAuthMissing(
+				keyBuilderOf(workable({}))(fakeKeyCtx('managed-key'), 'webhook'),
+			);
 		});
 	});
 });
