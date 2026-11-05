@@ -4,6 +4,8 @@
 // OpenAPI spec (https://api-docs.render.com/openapi/render-public-api-1.json);
 // the trailing comment is Render's operationId. Path parameters are filled
 // with `X<name>` on the wire, e.g. {serviceId} -> XserviceId.
+import { createCorsair } from 'corsair/core';
+import { z } from 'zod';
 import { render, renderEndpointSchemas } from './index';
 
 const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
@@ -267,58 +269,41 @@ const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
 	'workflows.taskRuns.cancel': 'DELETE /v1/task-runs/{id}', // cancelTaskRun
 };
 
-// Zod v4 exposes each schema's definition on `.def`; the sampler only needs
-// the handful of node types the Render schemas use.
-type SchemaNode = {
-	def: {
-		type: string;
-		format?: string;
-		innerType?: SchemaNode;
-		in?: SchemaNode;
-		element?: SchemaNode;
-		options?: SchemaNode[];
-		entries?: Record<string, string>;
-		values?: unknown[];
-		shape?: Record<string, SchemaNode>;
-	};
-	format?: string | null;
-};
+type JsonSchema = z.core.JSONSchema.JSONSchema;
+type Operation = keyof typeof ROUTES;
 
+// Builds the smallest input each schema accepts from its JSON Schema:
+// required fields only, the first enum value or union branch, and `X<name>`
+// for strings so path parameters are easy to spot on the wire.
 // unknown: samples are arbitrary JSON values that each schema then validates.
-const sample = (schema: SchemaNode, key: string): unknown => {
-	const { def } = schema;
-	switch (def.type) {
-		case 'optional':
-		case 'nullable':
-		case 'default':
-		case 'readonly':
-			return def.innerType ? sample(def.innerType, key) : undefined;
-		case 'pipe':
-			return def.in ? sample(def.in, key) : undefined;
-		case 'string': {
-			const format = schema.format ?? def.format;
-			if (format === 'datetime') return '2026-01-01T00:00:00Z';
-			if (format === 'url') return 'https://example.com/x';
+const sample = (schema: JsonSchema | boolean, key: string): unknown => {
+	if (typeof schema === 'boolean') return {};
+	if (schema.enum) return schema.enum[0];
+	if (schema.const !== undefined) return schema.const;
+	const branch = schema.anyOf?.[0] ?? schema.oneOf?.[0];
+	if (branch !== undefined) return sample(branch, key);
+	switch (schema.type) {
+		case 'string':
+			if (schema.format === 'date-time') return '2026-01-01T00:00:00Z';
+			if (schema.format === 'uri') return 'https://example.com/x';
 			return `X${key}`;
-		}
 		case 'number':
-		case 'int':
+		case 'integer':
 			return 1;
 		case 'boolean':
 			return true;
-		case 'enum':
-			return Object.values(def.entries ?? {})[0];
-		case 'literal':
-			return def.values?.[0];
-		case 'array':
-			return def.element ? [sample(def.element, key)] : [];
-		case 'union':
-			return def.options?.[0] ? sample(def.options[0], key) : undefined;
+		case 'array': {
+			const items = Array.isArray(schema.items)
+				? schema.items[0]
+				: schema.items;
+			return items === undefined ? [] : [sample(items, key)];
+		}
 		case 'object':
 			return Object.fromEntries(
-				Object.entries(def.shape ?? {})
-					.filter(([, child]) => child.def.type !== 'optional')
-					.map(([name, child]) => [name, sample(child, name)]),
+				(schema.required ?? []).map((name) => [
+					name,
+					sample(schema.properties?.[name] ?? {}, name),
+				]),
 			);
 		default:
 			return {};
@@ -326,7 +311,7 @@ const sample = (schema: SchemaNode, key: string): unknown => {
 };
 
 // Inputs the sampler cannot build (cross-field refinements).
-const INPUT_OVERRIDES: Partial<Record<keyof typeof ROUTES, unknown>> = {
+const INPUT_OVERRIDES: Partial<Record<Operation, unknown>> = {
 	'services.envVars.upsert': {
 		serviceId: 'XserviceId',
 		envVarKey: 'XenvVarKey',
@@ -339,8 +324,10 @@ const INPUT_OVERRIDES: Partial<Record<keyof typeof ROUTES, unknown>> = {
 	},
 };
 
-const flatten = (tree: object, prefix = ''): [string, unknown][] =>
-	Object.entries(tree).flatMap(([name, value]): [string, unknown][] => {
+const isOperation = (path: string): path is Operation => path in ROUTES;
+
+const flatten = (tree: object, prefix = ''): [string, Function][] =>
+	Object.entries(tree).flatMap(([name, value]): [string, Function][] => {
 		const path = prefix ? `${prefix}.${name}` : name;
 		if (typeof value === 'function') return [[path, value]];
 		if (value && typeof value === 'object') return flatten(value, path);
@@ -348,28 +335,27 @@ const flatten = (tree: object, prefix = ''): [string, unknown][] =>
 	});
 
 describe('Render route table', () => {
-	const plugin = render({ key: 'rnd_test' });
-	const operations = flatten(plugin.endpoints ?? {});
-	const originalFetch = global.fetch;
+	const operations = flatten(
+		createCorsair({ plugins: [render({ key: 'rnd_test' })] }).render.api,
+	);
 	const sent: { method: string; path: string }[] = [];
 
-	beforeAll(() => {
-		global.fetch = jest.fn(
-			async (url: string | URL | Request, init?: RequestInit) => {
-				sent.push({
-					method: init?.method ?? 'GET',
-					path: new URL(String(url)).pathname,
-				});
-				return new Response('{}', {
-					status: 200,
-					headers: { 'content-type': 'application/json' },
-				});
-			},
-		) as typeof fetch;
+	beforeEach(() => {
+		sent.length = 0;
+		jest.spyOn(global, 'fetch').mockImplementation(async (url, init) => {
+			sent.push({
+				method: init?.method ?? 'GET',
+				path: new URL(String(url)).pathname,
+			});
+			return new Response('{}', {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			});
+		});
 	});
 
-	afterAll(() => {
-		global.fetch = originalFetch;
+	afterEach(() => {
+		jest.restoreAllMocks();
 	});
 
 	it('lists every registered operation exactly once', () => {
@@ -379,24 +365,26 @@ describe('Render route table', () => {
 	});
 
 	it.each(Object.entries(ROUTES))('%s -> %s', async (operation, route) => {
-		const entry = operations.find(([path]) => path === operation);
-		if (!entry) throw new Error(`${operation} is not registered`);
-		const handler = entry[1] as (
-			ctx: never,
-			input: unknown,
-		) => Promise<unknown>;
-		const schema = renderEndpointSchemas[
-			operation as keyof typeof renderEndpointSchemas
-		].input as unknown as SchemaNode;
+		if (!isOperation(operation)) throw new Error(`unknown ${operation}`);
+		const handler = operations.find(([path]) => path === operation)?.[1];
+		if (!handler) throw new Error(`${operation} is not registered`);
 		const input =
-			INPUT_OVERRIDES[operation as keyof typeof ROUTES] ??
-			sample(schema, 'input');
-		const ctx = { key: 'rnd_test', $getAccountId: async () => 'a' } as never;
-		sent.length = 0;
+			INPUT_OVERRIDES[operation] ??
+			sample(
+				z.toJSONSchema(renderEndpointSchemas[operation].input, {
+					io: 'input',
+					unrepresentable: 'any',
+				}),
+				'input',
+			);
 
-		// The reply is a bare `{}`, which some output schemas reject; only the
-		// outgoing request matters here.
-		await handler(ctx, input).catch(() => undefined);
+		// Dynamic dispatch over all 218 operations: the sampled input is checked
+		// by the operation's own schema, so the call is made through
+		// Reflect.apply rather than a typed signature. The reply is a bare `{}`,
+		// which some output schemas reject; only the outgoing request matters.
+		await Promise.resolve(Reflect.apply(handler, undefined, [input])).catch(
+			() => undefined,
+		);
 
 		const [method, template] = route.split(' ');
 		const path = template?.replace(/\{(\w+)\}/g, 'X$1');

@@ -1,12 +1,28 @@
 import { RenderEndpointInputSchemas } from './endpoints/types';
+import type { RenderContext } from './index';
 import { render, renderEndpointSchemas } from './index';
 import { RenderSchema } from './schema';
 
 jest.mock('./client', () => ({
+	...jest.requireActual('./client'),
 	makeRenderRequest: jest.fn(),
 }));
 
+import type { z } from 'zod';
 import { makeRenderRequest } from './client';
+
+// The endpoints only read ctx.key, plus $getAccountId when they log an event,
+// so this stub stands in for the full plugin context. Safe: anything else an
+// adapter touched would be undefined and fail the test loudly.
+// Widened view for lookups by a dotted path built at runtime.
+const schemaByPath: Record<
+	string,
+	{ input: z.ZodType; output: z.ZodType } | undefined
+> = renderEndpointSchemas;
+const ctx = {
+	key: 'secret',
+	$getAccountId: async () => 'account-1',
+} as RenderContext;
 
 describe('Render schema', () => {
 	it('declares a semver version', () => {
@@ -34,14 +50,10 @@ describe('Render schema', () => {
 		request.mockClear();
 		request.mockResolvedValue([]);
 		const plugin = render({ key: 'secret' });
-		const ctx = {
-			key: 'secret',
-			$getAccountId: jest.fn().mockResolvedValue('account-1'),
-		} as never;
 		if (!plugin.endpoints) throw new Error('Render endpoints are missing');
 
 		await expect(
-			plugin.endpoints.services.list(ctx, { limit: 0 } as never),
+			plugin.endpoints.services.list(ctx, { limit: 0 }),
 		).rejects.toThrow();
 		expect(request).not.toHaveBeenCalled();
 
@@ -341,9 +353,7 @@ describe('Render schema', () => {
 		visit(plugin.endpoints);
 		expect(paths).toHaveLength(Object.keys(renderEndpointSchemas).length);
 		for (const path of paths) {
-			expect(
-				renderEndpointSchemas[path as keyof typeof renderEndpointSchemas],
-			).toBeDefined();
+			expect(schemaByPath[path]).toBeDefined();
 		}
 	});
 
@@ -353,10 +363,6 @@ describe('Render schema', () => {
 		const request = jest.mocked(makeRenderRequest);
 		request.mockClear();
 		const plugin = render({ key: 'secret' });
-		const ctx = {
-			key: 'secret',
-			$getAccountId: jest.fn().mockResolvedValue('account-1'),
-		} as never;
 		const inputCandidates = [
 			{ id: 'resource-1', key: 'resource-key', serviceId: 'service-1' },
 			{ serviceId: 'service-1' },
@@ -522,8 +528,8 @@ describe('Render schema', () => {
 		const visit = async (value: unknown, prefix: string[] = []) => {
 			if (typeof value === 'function') {
 				invokedOperations += 1;
-				const path = prefix.join('.') as keyof typeof renderEndpointSchemas;
-				const contract = renderEndpointSchemas[path];
+				const path = prefix.join('.');
+				const contract = schemaByPath[path];
 				if (!contract) throw new Error(`Missing contract for ${path}`);
 				const input = inputCandidates.find(
 					(candidate) => contract.input.safeParse(candidate).success,
@@ -533,10 +539,10 @@ describe('Render schema', () => {
 					(candidate) => contract.output.safeParse(candidate).success,
 				);
 				request.mockResolvedValue(output);
-				await (value as (context: unknown, args: unknown) => Promise<unknown>)(
-					ctx,
-					input,
-				);
+				// Dynamic dispatch over every operation: `input` was just checked
+				// against this operation's own schema, so call it reflectively
+				// instead of asserting a typed signature.
+				await Reflect.apply(value, undefined, [ctx, input]);
 				return;
 			}
 			if (value && typeof value === 'object') {

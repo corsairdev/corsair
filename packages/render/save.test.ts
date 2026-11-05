@@ -5,16 +5,18 @@ import type { createCorsairDatabase } from 'corsair/db';
 import { setupCorsair } from 'corsair/setup';
 import { render } from './index';
 
-const load = createRequire(path.join(process.cwd(), 'package.json'));
-const Database = load(
-	path.resolve(process.cwd(), '../corsair/node_modules/better-sqlite3'),
-) as new (
-	filename: string,
-) => {
+// better-sqlite3 is a driver createCorsairDatabase accepts; the test also
+// calls exec/close directly to create and drop the in-memory tables.
+type SqliteDatabase = Parameters<typeof createCorsairDatabase>[0] & {
 	exec: (sql: string) => void;
-	prepare: (sql: string) => { all: (...params: string[]) => unknown[] };
 	close: () => void;
 };
+// The driver lives in the corsair package, so it is loaded with require();
+// require() returns an untyped module, annotated here with the driver's shape.
+const load = createRequire(path.join(process.cwd(), 'package.json'));
+const Database: new (filename: string) => SqliteDatabase = load(
+	path.resolve(process.cwd(), '../corsair/node_modules/better-sqlite3'),
+);
 
 const TABLES = `
 	CREATE TABLE corsair_integrations (
@@ -70,7 +72,7 @@ afterAll(() => {
 	globalThis.fetch = originalFetch;
 });
 
-let sqlite: InstanceType<typeof Database>;
+let sqlite: SqliteDatabase;
 
 beforeEach(() => {
 	replies = {};
@@ -85,7 +87,7 @@ afterEach(() => {
 async function corsairWithDb() {
 	const corsair = createCorsair({
 		plugins: [render({ key: 'rnd_test' })],
-		database: sqlite as unknown as Parameters<typeof createCorsairDatabase>[0],
+		database: sqlite,
 	});
 	await setupCorsair(corsair, { silent: true });
 	return corsair;
@@ -123,10 +125,6 @@ describe('Render owners are saved locally', () => {
 
 		const saved = await corsair.render.db.renderOwner.findByEntityId(team.id);
 		expect(saved?.data).toMatchObject({ name: 'Acme Inc' });
-		expect(
-			sqlite
-				.prepare('SELECT entity_id FROM corsair_entities WHERE entity_type = ?')
-				.all('renderOwner'),
-		).toHaveLength(1);
+		expect(await corsair.render.db.renderOwner.list()).toHaveLength(1);
 	});
 });

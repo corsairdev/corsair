@@ -136,12 +136,22 @@ import {
 	upsertOwnerMetricsStream,
 	validateBlueprint,
 } from './endpoints';
+import type { RenderContext } from './index';
 
 jest.mock('./client', () => ({
+	...jest.requireActual('./client'),
 	makeRenderRequest: jest.fn(),
 }));
 
 const request = jest.mocked(makeRenderRequest);
+
+// The adapters only read ctx.key, plus $getAccountId when they log an event,
+// so this stub stands in for the full plugin context. Safe: anything else an
+// adapter touched would be undefined and fail the test loudly.
+const ctx = {
+	key: 'secret',
+	$getAccountId: async () => 'account-1',
+} as RenderContext;
 
 describe('Render service endpoints', () => {
 	beforeEach(() => {
@@ -159,14 +169,7 @@ describe('Render service endpoints', () => {
 	});
 
 	it('lists services with the current Render pagination endpoint', async () => {
-		const result = await listServices(
-			{
-				key: 'secret',
-				options: {},
-				$getAccountId: jest.fn().mockResolvedValue('account-1'),
-			} as never,
-			{ limit: 20, cursor: 'next' },
-		);
+		const result = await listServices(ctx, { limit: 20, cursor: 'next' });
 
 		expect(result[0]?.service.id).toBe('srv-1');
 		expect(request).toHaveBeenCalledWith('/v1/services', 'secret', {
@@ -176,17 +179,11 @@ describe('Render service endpoints', () => {
 	});
 
 	it('serializes Render service filters as comma-separated query values', async () => {
-		await listServices(
-			{
-				key: 'secret',
-				$getAccountId: jest.fn().mockResolvedValue('account-1'),
-			} as never,
-			{
-				name: ['api', 'worker'],
-				env: ['node', 'python'],
-				region: ['oregon', 'frankfurt'],
-			},
-		);
+		await listServices(ctx, {
+			name: ['api', 'worker'],
+			env: ['node', 'python'],
+			region: ['oregon', 'frankfurt'],
+		});
 
 		expect(request).toHaveBeenCalledWith('/v1/services', 'secret', {
 			method: 'GET',
@@ -200,7 +197,7 @@ describe('Render service endpoints', () => {
 
 	it('creates a Render service with the exact body', async () => {
 		const input = { type: 'web_service', name: 'api', ownerId: 'own-1' };
-		await createService({ key: 'secret' } as never, input);
+		await createService(ctx, input);
 		expect(request).toHaveBeenCalledWith('/v1/services', 'secret', {
 			method: 'POST',
 			body: input,
@@ -208,7 +205,6 @@ describe('Render service endpoints', () => {
 	});
 
 	it('uses exact service subresource routes and guards every path identifier', async () => {
-		const ctx = { key: 'secret' } as never;
 		await listServiceEnvVars(ctx, {
 			serviceId: 'srv-1',
 			cursor: 'next',
@@ -273,7 +269,6 @@ describe('Render service endpoints', () => {
 	});
 
 	it('covers the resource, observability, metrics, disk and blueprint groups', async () => {
-		const ctx = { key: 'secret' } as never;
 		await listEnvironments(ctx, { projectId: 'prj-1' });
 		await listProjects(ctx, {});
 		await listOwners(ctx, {});
@@ -303,7 +298,6 @@ describe('Render service endpoints', () => {
 	});
 
 	it('covers the remaining Render metric routes', async () => {
-		const ctx = { key: 'secret' } as never;
 		const input = { ownerId: 'own-1', startTime: '2026-01-01T00:00:00Z' };
 
 		await getCpuTarget(ctx, input);
@@ -335,7 +329,6 @@ describe('Render service endpoints', () => {
 	});
 
 	it('updates and removes workspace members on the documented routes', async () => {
-		const ctx = { key: 'secret' } as never;
 		const input = { ownerId: 'own-1', userId: 'usr-1' };
 
 		await updateWorkspaceMember(ctx, { ...input, role: 'ADMIN' });
@@ -369,7 +362,6 @@ describe('Render service endpoints', () => {
 	});
 
 	it('retrieves and updates service notification overrides', async () => {
-		const ctx = { key: 'secret' } as never;
 		const input = { serviceId: 'srv-1' };
 
 		await retrieveServiceNotificationOverrides(ctx, input);
@@ -401,7 +393,6 @@ describe('Render service endpoints', () => {
 	});
 
 	it('scales and manages Render service autoscaling', async () => {
-		const ctx = { key: 'secret' } as never;
 		const serviceId = 'srv-1';
 		const criteria = {
 			cpu: { enabled: true, percentage: 70 },
@@ -444,7 +435,7 @@ describe('Render service endpoints', () => {
 	});
 
 	it('creates an image-backed Render service preview', async () => {
-		await createServicePreview({ key: 'secret' } as never, {
+		await createServicePreview(ctx, {
 			serviceId: 'srv-1',
 			imagePath: 'docker.io/library/nginx:latest',
 			name: 'preview',
@@ -466,7 +457,6 @@ describe('Render service endpoints', () => {
 	});
 
 	it('updates and deletes Render service routes and headers', async () => {
-		const ctx = { key: 'secret' } as never;
 		await deleteServiceHeader(ctx, { serviceId: 'srv-1', headerId: 'hdr-1' });
 		await patchServiceRoute(ctx, {
 			serviceId: 'srv-1',
@@ -502,7 +492,6 @@ describe('Render service endpoints', () => {
 	});
 
 	it('retrieves Render events and lists webhook delivery events', async () => {
-		const ctx = { key: 'secret' } as never;
 		await retrieveEvent(ctx, { eventId: 'evt-1' });
 		await listWebhookEvents(ctx, {
 			id: 'whk-1',
@@ -533,7 +522,6 @@ describe('Render service endpoints', () => {
 
 	it('covers Build Source routes with exact methods, paths, and bodies', async () => {
 		request.mockResolvedValue({});
-		const ctx = { key: 'secret' } as never;
 		const id = { buildSourceId: 'bs-1' };
 		const key = { ...id, envVarKey: 'TOKEN' };
 		await createBuildSource(ctx, { ownerId: 'own-1', name: 'shared-build' });
@@ -641,7 +629,6 @@ describe('Render service endpoints', () => {
 	});
 
 	it('uses exact routes for remaining audited normal HTTP operations', async () => {
-		const ctx = { key: 'secret' } as never;
 		await cancelCronJobRun(ctx, { cronJobId: 'cron-1' });
 		await retrieveOwnerLogStream(ctx, { ownerId: 'own-1' });
 		await retrieveResourceLogStream(ctx, { resourceId: 'srv-1' });
@@ -747,7 +734,6 @@ describe('Render service endpoints', () => {
 
 	it('covers Blueprint, Dedicated IP, Postgres, and workflow task routes', async () => {
 		request.mockResolvedValue({});
-		const ctx = { key: 'secret' } as never;
 		const workflow = {
 			ownerId: 'own-1',
 			name: 'flow',
@@ -838,7 +824,7 @@ describe('Render service endpoints', () => {
 	});
 
 	it('uses the documented current-user route', async () => {
-		await getUser({ key: 'secret' } as never, {});
+		await getUser(ctx, {});
 		expect(request).toHaveBeenCalledWith('/v1/users', 'secret', {
 			method: 'GET',
 			query: {},
@@ -847,14 +833,7 @@ describe('Render service endpoints', () => {
 
 	it('routes route updates to the current Render endpoint', async () => {
 		request.mockResolvedValue({});
-		await updateRoutes(
-			{
-				key: 'secret',
-				options: {},
-				$getAccountId: jest.fn().mockResolvedValue('account-1'),
-			} as never,
-			{ serviceId: 'srv-1', body: [] },
-		);
+		await updateRoutes(ctx, { serviceId: 'srv-1', body: [] });
 
 		expect(request).toHaveBeenCalledWith(
 			'/v1/services/srv-1/routes',
@@ -868,7 +847,7 @@ describe('Render service endpoints', () => {
 
 	it('asserts service retrieve, deploy, and delete requests', async () => {
 		request.mockResolvedValue({});
-		await retrieveService({ key: 'secret' } as never, {
+		await retrieveService(ctx, {
 			serviceId: 'srv-1',
 		});
 		expect(request).toHaveBeenCalledWith('/v1/services/srv-1', 'secret', {
@@ -876,16 +855,13 @@ describe('Render service endpoints', () => {
 			body: undefined,
 		});
 
-		await triggerDeploy(
-			{ key: 'secret' } as never,
-			{
-				serviceId: 'srv-1',
-				commitId: 'commit-1',
-				clearCache: 'clear',
-				imageUrl: 'https://example.test/image.tar',
-				deployMode: 'deploy_only',
-			} as never,
-		);
+		await triggerDeploy(ctx, {
+			serviceId: 'srv-1',
+			commitId: 'commit-1',
+			clearCache: 'clear',
+			imageUrl: 'https://example.test/image.tar',
+			deployMode: 'deploy_only',
+		});
 		expect(request).toHaveBeenCalledWith(
 			'/v1/services/srv-1/deploys',
 			'secret',
@@ -900,7 +876,7 @@ describe('Render service endpoints', () => {
 			},
 		);
 
-		await deleteService({ key: 'secret' } as never, { serviceId: 'srv-1' });
+		await deleteService(ctx, { serviceId: 'srv-1' });
 		expect(request).toHaveBeenCalledWith('/v1/services/srv-1', 'secret', {
 			method: 'DELETE',
 			body: undefined,
@@ -909,7 +885,7 @@ describe('Render service endpoints', () => {
 
 	it('lists deployments using the documented service route', async () => {
 		request.mockResolvedValue([]);
-		await listDeploys({ key: 'secret' } as never, {
+		await listDeploys(ctx, {
 			serviceId: 'srv-1',
 			status: ['live'],
 			limit: 10,
@@ -923,14 +899,14 @@ describe('Render service endpoints', () => {
 
 	it('routes service lifecycle operations to the current Render paths', async () => {
 		request.mockResolvedValue({});
-		await purgeServiceCache({ key: 'secret' } as never, {
+		await purgeServiceCache(ctx, {
 			serviceId: 'srv-1',
 		});
-		await cancelDeploy({ key: 'secret' } as never, {
+		await cancelDeploy(ctx, {
 			serviceId: 'srv-1',
 			deployId: 'dep-1',
 		});
-		await rollbackDeploy({ key: 'secret' } as never, {
+		await rollbackDeploy(ctx, {
 			serviceId: 'srv-1',
 			deployId: 'dep-1',
 		});
@@ -960,12 +936,12 @@ describe('Render service endpoints', () => {
 
 	it('creates and cancels service jobs on the documented routes', async () => {
 		request.mockResolvedValue({});
-		await createServiceJob({ key: 'secret' } as never, {
+		await createServiceJob(ctx, {
 			serviceId: 'srv-1',
 			startCommand: 'npm test',
 			planId: 'plan-1',
 		});
-		await cancelServiceJob({ key: 'secret' } as never, {
+		await cancelServiceJob(ctx, {
 			serviceId: 'srv-1',
 			jobId: 'job-1',
 		});
@@ -983,7 +959,6 @@ describe('Render service endpoints', () => {
 
 	it('covers the disk lifecycle on the current Render disk routes', async () => {
 		request.mockResolvedValue({});
-		const ctx = { key: 'secret' } as never;
 		await createDisk(ctx, {
 			name: 'data',
 			sizeGB: 5,
@@ -1029,7 +1004,6 @@ describe('Render service endpoints', () => {
 
 	it('manages maintenance runs on the documented routes', async () => {
 		request.mockResolvedValue({});
-		const ctx = { key: 'secret' } as never;
 		await retrieveMaintenance(ctx, { id: 'mnt-1' });
 		await updateMaintenance(ctx, {
 			id: 'mnt-1',
@@ -1054,7 +1028,6 @@ describe('Render service endpoints', () => {
 
 	it('covers webhook management on the current webhook routes', async () => {
 		request.mockResolvedValue({});
-		const ctx = { key: 'secret' } as never;
 		await createWebhook(ctx, {
 			ownerId: 'usr-1',
 			name: 'deploys',
@@ -1092,7 +1065,6 @@ describe('Render service endpoints', () => {
 
 	it('routes Postgres lifecycle operations to the documented instance routes', async () => {
 		request.mockResolvedValue({});
-		const ctx = { key: 'secret' } as never;
 		await restartPostgres(ctx, { id: 'pg-1' });
 		await suspendPostgres(ctx, { id: 'pg-1' });
 		await resumePostgres(ctx, { id: 'pg-1' });
@@ -1163,7 +1135,6 @@ describe('Render service endpoints', () => {
 
 	it('covers Key Value lifecycle and blueprint sync routes', async () => {
 		request.mockResolvedValue({});
-		const ctx = { key: 'secret' } as never;
 		await suspendKeyValue(ctx, { id: 'kv-1' });
 		await resumeKeyValue(ctx, { id: 'kv-1' });
 		await retrieveKeyValueConnectionInfo(ctx, { id: 'kv-1' });
@@ -1202,7 +1173,6 @@ describe('Render service endpoints', () => {
 
 	it('lists owner and organization audit logs with time filters', async () => {
 		request.mockResolvedValue([]);
-		const ctx = { key: 'secret' } as never;
 		await listOwnerAuditLogs(ctx, {
 			id: 'usr-1',
 			startTime: '2026-10-01T00:00:00.000Z',
@@ -1226,7 +1196,7 @@ describe('Render service endpoints', () => {
 
 	it('triggers a cron job run on the documented route', async () => {
 		request.mockResolvedValue({});
-		await triggerCronJobRun({ key: 'secret' } as never, {
+		await triggerCronJobRun(ctx, {
 			cronJobId: 'crn-1',
 		});
 
@@ -1236,42 +1206,40 @@ describe('Render service endpoints', () => {
 		});
 	});
 
+	// These call adapters directly, past the schema, with identifiers left out
+	// on purpose; @ts-expect-error records that the types reject them too.
 	it('rejects missing identifiers on the new path-based operations', async () => {
-		expect(() => retrieveDisk({ key: 'secret' } as never, {} as never)).toThrow(
-			'Invalid Render id',
+		// @ts-expect-error id is missing on purpose
+		expect(() => retrieveDisk(ctx, {})).toThrow('Invalid Render id');
+		// @ts-expect-error username is missing on purpose
+		expect(() => deletePostgresUser(ctx, { id: 'pg-1' })).toThrow(
+			'Invalid Render username',
 		);
-		expect(() =>
-			deletePostgresUser({ key: 'secret' } as never, { id: 'pg-1' } as never),
-		).toThrow('Invalid Render username');
 		expect(request).not.toHaveBeenCalled();
 	});
 
 	it('rejects missing and unsafe service sub-resource identifiers', async () => {
-		expect(() => listRoutes({ key: 'secret' } as never, {} as never)).toThrow(
+		// @ts-expect-error serviceId is missing on purpose
+		expect(() => listRoutes(ctx, {})).toThrow('Invalid Render serviceId');
+		expect(() => listRoutes(ctx, { serviceId: '../services' })).toThrow(
 			'Invalid Render serviceId',
 		);
-		expect(() =>
-			listRoutes({ key: 'secret' } as never, { serviceId: '../services' }),
-		).toThrow('Invalid Render serviceId');
 		expect(request).not.toHaveBeenCalled();
 	});
 
 	it('rejects missing identifiers in every path-based adapter family', async () => {
-		expect(() =>
-			retrieveEnvironment({ key: 'secret' } as never, {} as never),
-		).toThrow('Invalid Render id');
-		expect(() =>
-			retrieveProject({ key: 'secret' } as never, {} as never),
-		).toThrow('Invalid Render id');
-		expect(() =>
-			retrieveOwner({ key: 'secret' } as never, {} as never),
-		).toThrow('Invalid Render id');
+		// @ts-expect-error id is missing on purpose
+		expect(() => retrieveEnvironment(ctx, {})).toThrow('Invalid Render id');
+		// @ts-expect-error id is missing on purpose
+		expect(() => retrieveProject(ctx, {})).toThrow('Invalid Render id');
+		// @ts-expect-error id is missing on purpose
+		expect(() => retrieveOwner(ctx, {})).toThrow('Invalid Render id');
 		expect(request).not.toHaveBeenCalled();
 	});
 
 	it('rejects service IDs that can escape the service path', async () => {
 		await expect(
-			deleteService({ key: 'secret' } as never, {
+			deleteService(ctx, {
 				serviceId: '../registrycredentials/credential-id',
 			}),
 		).rejects.toThrow('Invalid Render service ID');
@@ -1280,7 +1248,7 @@ describe('Render service endpoints', () => {
 
 	it('sends owner log stream updates as a request body', async () => {
 		request.mockResolvedValue({});
-		await updateOwnerLogStream({ key: 'secret' } as never, {
+		await updateOwnerLogStream(ctx, {
 			id: 'tea-1',
 			endpoint: 'logs.example.test:6514',
 			token: 'log-token',

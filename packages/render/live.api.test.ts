@@ -1,3 +1,4 @@
+import { createCorsair } from 'corsair/core';
 import { RenderAPIError } from './client';
 import { render } from './index';
 
@@ -9,28 +10,12 @@ import { render } from './index';
 const apiKey = process.env.RENDER_API_KEY;
 const describeLive = apiKey ? describe : describe.skip;
 
-const plugin = render({ key: apiKey ?? 'unset' });
-// The bound tree is typed per operation; the live checks call through a
-// loose view so one paced helper can run any operation.
-// unknown: each operation validates its own input and output.
-type Call = (ctx: never, input: unknown) => Promise<unknown>;
-const ctx = { key: apiKey, $getAccountId: async () => 'live' } as never;
+const api = createCorsair({ plugins: [render({ key: apiKey ?? 'unset' })] })
+	.render.api;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const op = (path: string): Call => {
-	const found = path
-		.split('.')
-		.reduce<unknown>(
-			(node, name) =>
-				node && typeof node === 'object' ? Reflect.get(node, name) : undefined,
-			plugin.endpoints,
-		);
-	if (typeof found !== 'function') throw new Error(`no operation ${path}`);
-	return found as Call;
-};
-const live = async <T>(path: string, input: unknown = {}): Promise<T> => {
+const paced = async <T>(call: () => Promise<T>): Promise<T> => {
 	await sleep(600);
-	return (await op(path)(ctx, input)) as T;
+	return call();
 };
 
 jest.setTimeout(180_000);
@@ -39,70 +24,74 @@ describeLive('Render live API', () => {
 	let ownerId = '';
 
 	beforeAll(async () => {
-		const owners = await live<{ owner: { id: string } }[]>('owners.list');
-		ownerId = owners[0]?.owner.id ?? '';
+		const owners = await paced(() => api.owners.list({}));
+		const first = owners[0]?.owner;
+		ownerId =
+			first && typeof first === 'object' && 'id' in first
+				? String(first.id)
+				: '';
 		expect(ownerId).toMatch(/^(tea|usr)-/);
 	});
 
 	it('reads the user, workspace and notification settings', async () => {
-		expect(await live('user.get')).toEqual(
+		expect(await paced(() => api.user.get({}))).toEqual(
 			expect.objectContaining({ id: expect.any(String) }),
 		);
-		expect(await live('owners.retrieve', { id: ownerId })).toEqual(
+		expect(await paced(() => api.owners.retrieve({ id: ownerId }))).toEqual(
 			expect.objectContaining({ id: ownerId, type: expect.any(String) }),
 		);
-		expect(Array.isArray(await live('owners.members', { id: ownerId }))).toBe(
-			true,
-		);
 		expect(
-			await live('notifications.retrieveOwnerSettings', { ownerId }),
+			Array.isArray(await paced(() => api.owners.members({ id: ownerId }))),
+		).toBe(true);
+		expect(
+			await paced(() => api.notifications.retrieveOwnerSettings({ ownerId })),
 		).toEqual(expect.objectContaining({ ownerId }));
 	});
 
 	it.each([
-		['services.list', {}],
-		['projects.list', {}],
-		['services.envGroups.list', {}],
-		['postgres.list', {}],
-		['keyValue.list', {}],
-		['registryCredentials.list', {}],
-		['blueprints.list', {}],
-		['buildSources.list', {}],
-		['disks.list', {}],
-		['maintenance.list', {}],
-		['workflows.taskRuns.list', {}],
+		['services.list', () => api.services.list({})],
+		['projects.list', () => api.projects.list({})],
+		['services.envGroups.list', () => api.services.envGroups.list({})],
+		['postgres.list', () => api.postgres.list({})],
+		['keyValue.list', () => api.keyValue.list({})],
+		['registryCredentials.list', () => api.registryCredentials.list({})],
+		['blueprints.list', () => api.blueprints.list({})],
+		['buildSources.list', () => api.buildSources.list({})],
+		['disks.list', () => api.disks.list({})],
+		['maintenance.list', () => api.maintenance.list({})],
+		['workflows.taskRuns.list', () => api.workflows.taskRuns.list({})],
 		// These four answer null when empty; the plugin returns [].
-		['workflows.tasks.list', {}],
-		['workflows.list', {}],
-		['workflows.versions.list', {}],
-		['logs.resourceStreams', {}],
-		['webhooks.list', {}],
-		['notifications.listOverrides', {}],
-	])('%s returns a list', async (path, input) => {
-		expect(Array.isArray(await live(path, input))).toBe(true);
+		['workflows.tasks.list', () => api.workflows.tasks.list({})],
+		['workflows.list', () => api.workflows.list({})],
+		['workflows.versions.list', () => api.workflows.versions.list({})],
+		['logs.resourceStreams', () => api.logs.resourceStreams({})],
+		['webhooks.list', () => api.webhooks.list({})],
+		['notifications.listOverrides', () => api.notifications.listOverrides({})],
+	] as const)('%s returns a list', async (_name, call) => {
+		expect(Array.isArray(await paced(call))).toBe(true);
 	});
 
 	it('lists dedicated IPs for the workspace', async () => {
-		expect(Array.isArray(await live('dedicatedIps.list', { ownerId }))).toBe(
-			true,
-		);
+		expect(
+			Array.isArray(await paced(() => api.dedicatedIps.list({ ownerId }))),
+		).toBe(true);
 	});
 
 	it('keeps Render’s reason when a plan does not include a feature', async () => {
 		// Audit logs need an Organization or Enterprise plan; metrics export
 		// needs a paid workspace. Either works on such plans, or fails with
 		// Render's explanation in the error message.
-		for (const [path, input] of [
-			['owners.auditLogs', { id: ownerId }],
-			['metrics.retrieveOwnerStream', { ownerId }],
-		] as const) {
-			try {
-				await live(path, input);
-			} catch (error) {
-				expect(error).toBeInstanceOf(RenderAPIError);
-				expect((error as RenderAPIError).status).toBe(400);
-				expect((error as Error).message).toMatch(/not available/);
-			}
+		for (const call of [
+			() => api.owners.auditLogs({ id: ownerId }),
+			() => api.metrics.retrieveOwnerStream({ ownerId }),
+		]) {
+			const error = await paced<unknown>(call).catch(
+				(caught: unknown) => caught,
+			);
+			if (!(error instanceof Error)) continue;
+			if (!(error instanceof RenderAPIError)) throw error;
+			expect(error.status).toBe(400);
+			expect(error.message).toMatch(/not available/);
 		}
 	});
 
@@ -110,95 +99,116 @@ describeLive('Render live API', () => {
 		const prefix = `corsair-live-${Date.now()}`;
 		const envGroups: string[] = [];
 		const projects: string[] = [];
+		const idOf = (created: unknown): string =>
+			created && typeof created === 'object' && 'id' in created
+				? String(created.id)
+				: '';
 		try {
 			for (const suffix of ['a', 'b']) {
-				const group = await live<{ id: string }>('services.envGroups.create', {
-					name: `${prefix}-${suffix}`,
-					ownerId,
-					envVars: [{ key: 'CORSAIR_LIVE', value: 'one' }],
-				});
-				envGroups.push(group.id);
+				const group = await paced(() =>
+					api.services.envGroups.create({
+						name: `${prefix}-${suffix}`,
+						ownerId,
+						envVars: [{ key: 'CORSAIR_LIVE', value: 'one' }],
+					}),
+				);
+				envGroups.push(idOf(group));
 			}
 			const [a = '', b = ''] = envGroups;
 
 			// name is style=form, explode=false: two names go as `name=x,y`.
-			const both = await live<unknown[]>('services.envGroups.list', {
-				name: [`${prefix}-a`, `${prefix}-b`],
-			});
+			const both = await paced(() =>
+				api.services.envGroups.list({
+					name: [`${prefix}-a`, `${prefix}-b`],
+				}),
+			);
 			expect(both).toHaveLength(2);
 
 			const variable = { envGroupId: a, envVarKey: 'CORSAIR_LIVE' };
 			expect(
-				await live('services.envGroups.envVars.retrieve', variable),
+				await paced(() => api.services.envGroups.envVars.retrieve(variable)),
 			).toEqual({ key: 'CORSAIR_LIVE', value: 'one' });
-			await live('services.envGroups.envVars.upsert', {
-				...variable,
-				value: 'two',
-			});
+			await paced(() =>
+				api.services.envGroups.envVars.upsert({ ...variable, value: 'two' }),
+			);
 			expect(
-				await live('services.envGroups.envVars.retrieve', variable),
+				await paced(() => api.services.envGroups.envVars.retrieve(variable)),
 			).toEqual({ key: 'CORSAIR_LIVE', value: 'two' });
 
 			const file = { envGroupId: a, secretFileName: 'corsair-live.txt' };
-			await live('services.envGroups.secretFiles.upsert', {
-				...file,
-				content: 'hello',
-			});
+			await paced(() =>
+				api.services.envGroups.secretFiles.upsert({
+					...file,
+					content: 'hello',
+				}),
+			);
 			expect(
-				await live('services.envGroups.secretFiles.retrieve', file),
+				await paced(() => api.services.envGroups.secretFiles.retrieve(file)),
 			).toEqual({ name: 'corsair-live.txt', content: 'hello' });
-			await live('services.envGroups.secretFiles.delete', file);
+			await paced(() => api.services.envGroups.secretFiles.delete(file));
 
 			expect(
-				await live('services.envGroups.update', {
-					id: a,
-					name: `${prefix}-a-renamed`,
-				}),
+				await paced(() =>
+					api.services.envGroups.update({
+						id: a,
+						name: `${prefix}-a-renamed`,
+					}),
+				),
 			).toEqual(expect.objectContaining({ name: `${prefix}-a-renamed` }));
 
-			const project = await live<{ id: string }>('projects.create', {
-				name: `${prefix}-project`,
-				ownerId,
-				environments: [{ name: 'production' }],
-			});
-			projects.push(project.id);
-			expect(
-				await live('services.environments.list', { projectId: project.id }),
-			).toHaveLength(1);
-			const staging = await live<{ id: string }>(
-				'services.environments.create',
-				{ name: 'staging', projectId: project.id },
-			);
-			await live('services.environments.addResources', {
-				environmentId: staging.id,
-				resourceIds: [b],
-			});
-			expect(await live('services.envGroups.retrieve', { id: b })).toEqual(
-				expect.objectContaining({ environmentId: staging.id }),
-			);
-			// DELETE with the resourceIds query (the review bot's P1).
-			await live('services.environments.removeResources', {
-				environmentId: staging.id,
-				resourceIds: [b],
-			});
-			expect(
-				await live<{ environmentId?: string }>('services.envGroups.retrieve', {
-					id: b,
+			const project = await paced(() =>
+				api.projects.create({
+					name: `${prefix}-project`,
+					ownerId,
+					environments: [{ name: 'production' }],
 				}),
+			);
+			const projectId = idOf(project);
+			projects.push(projectId);
+			expect(
+				await paced(() => api.services.environments.list({ projectId })),
+			).toHaveLength(1);
+			const stagingId = idOf(
+				await paced(() =>
+					api.services.environments.create({ name: 'staging', projectId }),
+				),
+			);
+			await paced(() =>
+				api.services.environments.addResources({
+					environmentId: stagingId,
+					resourceIds: [b],
+				}),
+			);
+			expect(
+				await paced(() => api.services.envGroups.retrieve({ id: b })),
+			).toEqual(expect.objectContaining({ environmentId: stagingId }));
+			// DELETE with the resourceIds query (the review bot's P1).
+			await paced(() =>
+				api.services.environments.removeResources({
+					environmentId: stagingId,
+					resourceIds: [b],
+				}),
+			);
+			expect(
+				await paced(() => api.services.envGroups.retrieve({ id: b })),
 			).not.toHaveProperty('environmentId');
-			await live('services.environments.delete', { id: staging.id });
+			await paced(() => api.services.environments.delete({ id: stagingId }));
 		} finally {
 			for (const id of envGroups) {
-				await live('services.envGroups.delete', { id }).catch(() => undefined);
+				await paced(() => api.services.envGroups.delete({ id })).catch(
+					() => undefined,
+				);
 			}
 			for (const id of projects) {
-				await live('projects.delete', { id }).catch(() => undefined);
+				await paced(() => api.projects.delete({ id })).catch(() => undefined);
 			}
 		}
 
-		const leftover = await live<{ name: string }[]>('services.envGroups.list', {
-			name: [`${prefix}-a-renamed`, `${prefix}-b`],
-		});
+		const leftover = await paced(() =>
+			api.services.envGroups.list({
+				name: [`${prefix}-a-renamed`, `${prefix}-b`],
+			}),
+		);
 		expect(leftover).toEqual([]);
 	});
 });
