@@ -1384,6 +1384,14 @@
                 ]
               },
               {
+                "group": "Codacy",
+                "pages": [
+                  "plugins/codacy/overview",
+                  "plugins/codacy/api",
+                  "plugins/codacy/database"
+                ]
+              },
+              {
                 "group": "CodeInterpreter",
                 "pages": [
                   "plugins/codeinterpreter/overview",
