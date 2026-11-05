@@ -445,7 +445,7 @@ await corsair.grafbase.api.schemaVersions.list({ accountSlug: 'fieldkit', graphS
 | `graphSlug` | `string` | Yes | The graph slug. |
 | `branch` | `string` | No | Only versions on this branch. |
 | `subgraphName` | `string` | No | Only versions of this subgraph. |
-| `populated` | `boolean` | Yes | Only versions with changes. Default true. |
+| `populated` | `boolean` | No | Only versions with changes. Default true. |
 | `first` | `number` | No | Page size, up to 100. |
 | `after` | `string` | No | Cursor from the previous page. |
 
@@ -502,7 +502,7 @@ await corsair.grafbase.api.subgraphs.delete({ accountSlug: 'fieldkit', graphSlug
 | `graphSlug` | `string` | Yes | The graph slug. |
 | `branch` | `string` | Yes | The branch the subgraph is on. |
 | `subgraph` | `string` | Yes | The subgraph name. |
-| `dryRun` | `boolean` | Yes | Validate the removal without deploying it. |
+| `dryRun` | `boolean` | No | Validate the removal without deploying it. |
 | `message` | `string` | No | A note kept in the deploy history. |
 
 
