@@ -14,7 +14,7 @@ const netSuiteLinkSchema = z
 		rel: z.string().optional(),
 		href: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 // NetSuite collection items can contain any record type exposed by REST Web Services.
 // Unknown values are used because custom and built-in record properties vary widely.
@@ -56,7 +56,7 @@ const passthroughResponse = z
 		client_assertion_type: z.string().optional(),
 		token_url: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const AsyncGetJobStatusInputSchema = z
 	.object({
@@ -107,7 +107,7 @@ export const CreateCustomerPaymentInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreateCustomerPaymentOutputSchema = passthroughResponse;
 
@@ -120,7 +120,7 @@ export const CreateEmployeeInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreateEmployeeOutputSchema = passthroughResponse;
 
@@ -133,7 +133,7 @@ export const CreateInvoiceInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreateInvoiceOutputSchema = passthroughResponse;
 
@@ -147,7 +147,7 @@ export const CreateItemInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreateItemOutputSchema = passthroughResponse;
 
@@ -160,7 +160,7 @@ export const CreateJournalEntryInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreateJournalEntryOutputSchema = passthroughResponse;
 
@@ -175,7 +175,7 @@ export const CreateJwtClientAssertionInputSchema = z
 		certificate_id: z.string().optional(),
 		private_key_pem: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreateJwtClientAssertionOutputSchema = passthroughResponse;
 
@@ -193,7 +193,7 @@ export const CreatePurchaseOrderInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreatePurchaseOrderOutputSchema = passthroughResponse;
 
@@ -207,7 +207,7 @@ export const CreateRecordInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreateRecordOutputSchema = passthroughResponse;
 
@@ -227,7 +227,7 @@ export const CreateSalesOrderInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreateSalesOrderOutputSchema = passthroughResponse;
 
@@ -240,7 +240,7 @@ export const CreateVendorInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreateVendorOutputSchema = passthroughResponse;
 
@@ -253,7 +253,7 @@ export const CreateVendorBillInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const CreateVendorBillOutputSchema = passthroughResponse;
 
@@ -261,7 +261,7 @@ export const DeleteCustomerInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeleteCustomerOutputSchema = passthroughResponse;
 
@@ -269,7 +269,7 @@ export const DeleteCustomerPaymentInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeleteCustomerPaymentOutputSchema = passthroughResponse;
 
@@ -277,7 +277,7 @@ export const DeleteEmployeeInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeleteEmployeeOutputSchema = passthroughResponse;
 
@@ -285,7 +285,7 @@ export const DeleteInvoiceInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeleteInvoiceOutputSchema = passthroughResponse;
 
@@ -294,7 +294,7 @@ export const DeleteItemInputSchema = z
 		id: z.union([z.string(), z.number()]),
 		item_record_type: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeleteItemOutputSchema = passthroughResponse;
 
@@ -304,7 +304,7 @@ export const DeleteItemFulfillmentInputSchema = z
 		prefer: z.string().optional(),
 		idempotency_key: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeleteItemFulfillmentOutputSchema = passthroughResponse;
 
@@ -312,7 +312,7 @@ export const DeleteItemReceiptInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeleteItemReceiptOutputSchema = passthroughResponse;
 
@@ -322,7 +322,7 @@ export const DeleteJournalEntryInputSchema = z
 		prefer: z.string().optional(),
 		idempotency_key: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeleteJournalEntryOutputSchema = passthroughResponse;
 
@@ -330,7 +330,7 @@ export const DeletePurchaseOrderInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeletePurchaseOrderOutputSchema = passthroughResponse;
 
@@ -338,7 +338,7 @@ export const DeleteSalesOrderInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeleteSalesOrderOutputSchema = passthroughResponse;
 
@@ -346,7 +346,7 @@ export const DeleteVendorPaymentInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const DeleteVendorPaymentOutputSchema = passthroughResponse;
 
@@ -356,7 +356,7 @@ export const ExecuteDatasetInputSchema = z
 		offset: z.number().optional(),
 		dataset_id: z.string(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ExecuteDatasetOutputSchema = passthroughResponse;
 
@@ -367,7 +367,7 @@ export const GetCustomerInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetCustomerOutputSchema = passthroughResponse;
 
@@ -378,7 +378,7 @@ export const GetCustomerPaymentInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetCustomerPaymentOutputSchema = passthroughResponse;
 
@@ -387,7 +387,7 @@ export const GetDatacenterUrlsInputSchema = z
 		c: z.string().optional(),
 		account: z.string(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetDatacenterUrlsOutputSchema = passthroughResponse;
 
@@ -398,11 +398,11 @@ export const GetEmployeeInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetEmployeeOutputSchema = passthroughResponse;
 
-export const GetGovernanceLimitsInputSchema = z.object({}).passthrough();
+export const GetGovernanceLimitsInputSchema = z.object({}).passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetGovernanceLimitsOutputSchema = passthroughResponse;
 
@@ -413,7 +413,7 @@ export const GetInvoiceInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetInvoiceOutputSchema = passthroughResponse;
 
@@ -424,7 +424,7 @@ export const GetItemInputSchema = z
 		itemRecordType: z.string(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetItemOutputSchema = passthroughResponse;
 
@@ -435,7 +435,7 @@ export const GetItemFulfillmentInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetItemFulfillmentOutputSchema = passthroughResponse;
 
@@ -446,7 +446,7 @@ export const GetItemReceiptInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetItemReceiptOutputSchema = passthroughResponse;
 
@@ -457,7 +457,7 @@ export const GetJournalEntryInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetJournalEntryOutputSchema = passthroughResponse;
 
@@ -468,7 +468,7 @@ export const GetPurchaseOrderInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetPurchaseOrderOutputSchema = passthroughResponse;
 
@@ -477,7 +477,7 @@ export const GetRecordMetadataInputSchema = z
 		accept: z.string().optional(),
 		record_type: z.string(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetRecordMetadataOutputSchema = passthroughResponse;
 
@@ -489,7 +489,7 @@ export const GetReferenceSelectFieldInputSchema = z
 		select_field: z.string(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetReferenceSelectFieldOutputSchema = passthroughResponse;
 
@@ -500,11 +500,11 @@ export const GetSalesOrderInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetSalesOrderOutputSchema = passthroughResponse;
 
-export const GetServerTimeInputSchema = z.object({}).passthrough();
+export const GetServerTimeInputSchema = z.object({}).passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetServerTimeOutputSchema = passthroughResponse;
 
@@ -516,7 +516,7 @@ export const GetSublistCollectionInputSchema = z
 		record_type: z.string(),
 		sublist_name: z.string(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetSublistCollectionOutputSchema = passthroughResponse;
 
@@ -528,7 +528,7 @@ export const GetSublistLineInputSchema = z
 		sublist_name: z.string(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetSublistLineOutputSchema = passthroughResponse;
 
@@ -538,7 +538,7 @@ export const GetSubrecordInputSchema = z
 		record_type: z.string(),
 		subrecord_name: z.string(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetSubrecordOutputSchema = passthroughResponse;
 
@@ -549,7 +549,7 @@ export const GetVendorInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetVendorOutputSchema = passthroughResponse;
 
@@ -560,7 +560,7 @@ export const GetVendorBillInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetVendorBillOutputSchema = passthroughResponse;
 
@@ -571,7 +571,7 @@ export const GetVendorPaymentInputSchema = z
 		simpleEnumFormat: z.boolean().optional(),
 		expandSubResources: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const GetVendorPaymentOutputSchema = passthroughResponse;
 
@@ -581,7 +581,7 @@ export const ListCustomerPaymentsInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListCustomerPaymentsOutputSchema = passthroughResponse;
 
@@ -590,7 +590,7 @@ export const ListDatasetsInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListDatasetsOutputSchema = passthroughResponse;
 
@@ -600,7 +600,7 @@ export const ListEmployeesInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListEmployeesOutputSchema = passthroughResponse;
 
@@ -609,7 +609,7 @@ export const ListIntegrationsInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListIntegrationsOutputSchema = passthroughResponse;
 
@@ -619,7 +619,7 @@ export const ListInvoicesInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListInvoicesOutputSchema = passthroughResponse;
 
@@ -629,7 +629,7 @@ export const ListItemFulfillmentsInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListItemFulfillmentsOutputSchema = passthroughResponse;
 
@@ -639,7 +639,7 @@ export const ListItemReceiptsInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListItemReceiptsOutputSchema = passthroughResponse;
 
@@ -649,7 +649,7 @@ export const ListJournalEntriesInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListJournalEntriesOutputSchema = passthroughResponse;
 
@@ -658,7 +658,7 @@ export const ListMetadataCatalogInputSchema = z
 		accept: z.string().optional(),
 		select: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListMetadataCatalogOutputSchema = passthroughResponse;
 
@@ -668,7 +668,7 @@ export const ListPurchaseOrdersInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListPurchaseOrdersOutputSchema = passthroughResponse;
 
@@ -679,7 +679,7 @@ export const ListRecordsInputSchema = z
 		offset: z.number().optional(),
 		recordType: z.string(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListRecordsOutputSchema = passthroughResponse;
 
@@ -689,7 +689,7 @@ export const ListSalesOrdersInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListSalesOrdersOutputSchema = passthroughResponse;
 
@@ -699,7 +699,7 @@ export const ListVendorPaymentsInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const ListVendorPaymentsOutputSchema = passthroughResponse;
 
@@ -714,7 +714,7 @@ export const Oauth2AuthorizeAccountDomainInputSchema = z
 		code_challenge: z.string().optional(),
 		code_challenge_method: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const Oauth2AuthorizeAccountDomainOutputSchema = passthroughResponse;
 
@@ -730,11 +730,11 @@ export const Oauth2AuthorizeSystemDomainInputSchema = z
 		code_challenge: z.string().optional(),
 		code_challenge_method: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const Oauth2AuthorizeSystemDomainOutputSchema = passthroughResponse;
 
-export const Oauth2GetJwksKeysInputSchema = z.object({}).passthrough();
+export const Oauth2GetJwksKeysInputSchema = z.object({}).passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const Oauth2GetJwksKeysOutputSchema = passthroughResponse;
 
@@ -742,7 +742,7 @@ export const Oauth2LogoutInputSchema = z
 	.object({
 		id_token_hint: z.string(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const Oauth2LogoutOutputSchema = passthroughResponse;
 
@@ -751,7 +751,7 @@ export const Oauth2RevokeRefreshTokenInputSchema = z
 		token: z.string(),
 		client_id: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const Oauth2RevokeRefreshTokenOutputSchema = passthroughResponse;
 
@@ -763,7 +763,7 @@ export const Oauth2TokenAuthorizationCodeInputSchema = z
 		redirect_uri: z.string(),
 		code_verifier: z.string(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const Oauth2TokenAuthorizationCodeOutputSchema = passthroughResponse;
 
@@ -773,7 +773,7 @@ export const Oauth2TokenClientCredentialsInputSchema = z
 		client_assertion: z.string(),
 		client_assertion_type: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const Oauth2TokenClientCredentialsOutputSchema = passthroughResponse;
 
@@ -783,7 +783,7 @@ export const Oauth2TokenRefreshInputSchema = z
 		client_secret: z.string().optional(),
 		refresh_token: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const Oauth2TokenRefreshOutputSchema = passthroughResponse;
 
@@ -793,7 +793,7 @@ export const RunSuiteqlQueryInputSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const RunSuiteqlQueryOutputSchema = passthroughResponse;
 
@@ -809,7 +809,7 @@ export const TransformRecordInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const TransformRecordOutputSchema = passthroughResponse;
 
@@ -824,7 +824,7 @@ export const UpdateCustomerInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateCustomerOutputSchema = passthroughResponse;
 
@@ -839,7 +839,7 @@ export const UpdateCustomerPaymentInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateCustomerPaymentOutputSchema = passthroughResponse;
 
@@ -854,7 +854,7 @@ export const UpdateEmployeeInputSchema = z
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),
 		'X-NetSuite-PropertyValueValidation': z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateEmployeeOutputSchema = passthroughResponse;
 
@@ -869,7 +869,7 @@ export const UpdateInvoiceInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateInvoiceOutputSchema = passthroughResponse;
 
@@ -885,7 +885,7 @@ export const UpdateItemInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateItemOutputSchema = passthroughResponse;
 
@@ -900,7 +900,7 @@ export const UpdateItemFulfillmentInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateItemFulfillmentOutputSchema = passthroughResponse;
 
@@ -915,7 +915,7 @@ export const UpdateItemReceiptInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateItemReceiptOutputSchema = passthroughResponse;
 
@@ -930,7 +930,7 @@ export const UpdateJournalEntryInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateJournalEntryOutputSchema = passthroughResponse;
 
@@ -945,7 +945,7 @@ export const UpdatePurchaseOrderInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdatePurchaseOrderOutputSchema = passthroughResponse;
 
@@ -960,7 +960,7 @@ export const UpdateSalesOrderInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateSalesOrderOutputSchema = passthroughResponse;
 
@@ -975,7 +975,7 @@ export const UpdateVendorInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateVendorOutputSchema = passthroughResponse;
 
@@ -990,7 +990,7 @@ export const UpdateVendorBillInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateVendorBillOutputSchema = passthroughResponse;
 
@@ -1005,7 +1005,7 @@ export const UpdateVendorPaymentInputSchema = z
 		property_name_validation: z.string().optional(),
 		property_value_validation: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpdateVendorPaymentOutputSchema = passthroughResponse;
 
@@ -1016,7 +1016,7 @@ export const UpsertRecordByExternalIdInputSchema = z
 		record_type: z.string(),
 		replace: z.boolean().optional(),
 	})
-	.passthrough();
+	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
 export const UpsertRecordByExternalIdOutputSchema = passthroughResponse;
 
