@@ -3431,6 +3431,14 @@
                 ]
               },
               {
+                "group": "Woodpecker Co",
+                "pages": [
+                  "plugins/woodpeckerco/overview",
+                  "plugins/woodpeckerco/api",
+                  "plugins/woodpeckerco/database"
+                ]
+              },
+              {
                 "group": "Workday",
                 "pages": [
                   "plugins/workday/overview",
