@@ -209,6 +209,7 @@ export const BaseProviders = [
 	'dropbox',
 	'dropboxsign',
 	'dynapictures',
+	'emailoctopus',
 	'emelia',
 	'epicgames',
 	'everhour',
@@ -627,6 +628,7 @@ export const ProviderDisplayNames = {
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
+	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
 	epicgames: 'Epic Games',
 	everhour: 'Everhour',
@@ -1050,6 +1052,7 @@ export type AllProviders =
 	| 'dropbox'
 	| 'dropboxsign'
 	| 'dynapictures'
+	| 'emailoctopus'
 	| 'emelia'
 	| 'epicgames'
 	| 'everhour'
