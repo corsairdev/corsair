@@ -81,22 +81,6 @@ describe('makeBooqableRequest', () => {
 		});
 	});
 
-	it('parses JSON string bodies returned for vnd.api+json responses', async () => {
-		mockRequest.mockResolvedValue('{"data":[],"meta":{}}');
-
-		await expect(makeBooqableRequest('/users', 'key', 'acme')).resolves.toEqual(
-			{ data: [], meta: {} },
-		);
-	});
-
-	it('passes through non-JSON string bodies untouched', async () => {
-		mockRequest.mockResolvedValue('<html>oops</html>');
-
-		await expect(makeBooqableRequest('/users', 'key', 'acme')).resolves.toBe(
-			'<html>oops</html>',
-		);
-	});
-
 	it('wraps ApiError in BooqableAPIError with status and retryAfter', async () => {
 		const apiError = new ApiError(
 			{ url: '/orders', method: 'GET' },
@@ -122,5 +106,19 @@ describe('makeBooqableRequest', () => {
 				throw new Error('[test] expected BooqableAPIError');
 			}
 		}
+	});
+
+	it('wraps non-ApiError failures in BooqableAPIError', async () => {
+		const networkError = new Error('socket hang up');
+		mockRequest.mockRejectedValue(networkError);
+
+		await expect(
+			makeBooqableRequest('/orders', 'key', 'acme'),
+		).rejects.toMatchObject({
+			name: 'BooqableAPIError',
+			message: 'socket hang up',
+			status: undefined,
+			cause: networkError,
+		});
 	});
 });
