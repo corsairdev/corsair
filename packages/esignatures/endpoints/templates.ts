@@ -61,11 +61,12 @@ export const create: ESignaturesEndpoints['templatesCreate'] = (ctx, input) =>
 			body,
 		}),
 		{
-			// The new template's ID is the first row of `data`.
+			// The docs show `data` as a one-row array; the live API answers
+			// `{ status: 'created', data: { template_id, ... } }`. Both are read.
 			shape: (raw) => {
 				const data = asRecord(raw)?.data;
 				return {
-					template_id: asRecord(Array.isArray(data) ? data[0] : undefined)
+					template_id: asRecord(Array.isArray(data) ? data[0] : data)
 						?.template_id,
 				};
 			},

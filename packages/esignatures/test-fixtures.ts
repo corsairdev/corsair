@@ -44,6 +44,21 @@ export const template = {
 	signer_field_ids: ['city', 'preferred_contact'],
 };
 
+// POST /api/templates as the live API answered on 2026-11-06: `data` is the
+// template object, not the one-row array the docs show.
+export const templateCreated = {
+	status: 'created',
+	data: {
+		template_id: templateId,
+		title: 'Rental agreement',
+		created_at: '2026-11-05T22:32:47.212Z',
+		labels: [],
+		last_contract_created_at: null,
+		placeholder_keys: ['tenant_name'],
+		signer_field_ids: [],
+	},
+};
+
 export const templateRow = {
 	template_id: templateId,
 	title: 'Rental agreement',

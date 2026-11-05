@@ -9,6 +9,7 @@ import {
 	signer,
 	signerId,
 	template,
+	templateCreated,
 	templateId,
 	templateRow,
 } from './test-fixtures';
@@ -352,6 +353,17 @@ describe('templates.create', () => {
 				markdown: '# Rental agreement\n\n{{tenant_name}} agrees.',
 			},
 		});
+		expect(result).toEqual({ template_id: templateId });
+	});
+
+	it('reads the ID from the object the live API returns', async () => {
+		respond(templateCreated);
+
+		const result = await invoke(Templates.create, {
+			title: 'Rental agreement',
+			markdown: '# Rental agreement\n\n{{tenant_name}} agrees.',
+		});
+
 		expect(result).toEqual({ template_id: templateId });
 	});
 });
