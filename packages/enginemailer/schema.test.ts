@@ -21,6 +21,7 @@ describe('Enginemailer schema', () => {
 });
 
 describe('Enginemailer endpoint schemas', () => {
+	// Minimal inputs keyed by operation; each is parsed by its own schema below.
 	const inputs: Record<string, unknown> = {
 		getSubscriber: { email: 'person@example.com' },
 		activateSubscriber: { email: 'person@example.com' },
@@ -158,6 +159,80 @@ describe('Enginemailer endpoint schemas', () => {
 			filter_page: 12,
 			filter_popups: 'All',
 		});
+	});
+
+	it('accepts the documented bare batchUpdateStatus body', () => {
+		for (const body of [
+			{ Status: 'Completed', StatusCode: '200' },
+			{ Status: 'Processing', StatusCode: '201' },
+		]) {
+			expect(
+				EnginemailerEndpointOutputSchemas.batchUpdateStatus.parse(body),
+			).toEqual(body);
+		}
+	});
+
+	it('keeps unsubscribed autoresponder and campaign filters', () => {
+		const input = {
+			filter: 'Campaign' as const,
+			filter_campaign: 42,
+			filter_autoresponder: 'All' as const,
+		};
+
+		expect(
+			EnginemailerEndpointInputSchemas.unsubscribedSubscribers.parse(input),
+		).toEqual(input);
+	});
+
+	it('caps polling limit at the 50 records the API returns', () => {
+		expect(
+			EnginemailerEndpointInputSchemas.deletedSubscribers.safeParse({
+				limit: 51,
+			}).success,
+		).toBe(false);
+	});
+
+	it('takes substitution tags as the list of Key/Value pairs n8n sends', () => {
+		const base = { email: 'person@example.com', type: 'template' as const };
+		expect(
+			EnginemailerEndpointInputSchemas.sendEmail.safeParse({
+				...base,
+				template_id: 7,
+				substitution_tags: [{ Key: 'firstname', Value: 'John' }],
+			}).success,
+		).toBe(true);
+		expect(
+			EnginemailerEndpointInputSchemas.sendEmail.safeParse({
+				...base,
+				substitution_tags: { firstname: 'John' },
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires a key on every custom field', () => {
+		expect(
+			EnginemailerEndpointInputSchemas.insertSubscriber.safeParse({
+				email: 'person@example.com',
+				customfields: [{ customfield_value: 'KL' }],
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires CategoryList and FilterType in a recipient filter', () => {
+		expect(
+			EnginemailerEndpointInputSchemas.assignRecipientList.safeParse({
+				campaignid: 1,
+				FilterBy: 2,
+				data: { CategoryList: [1, 2], FilterType: 'OR' },
+			}).success,
+		).toBe(true);
+		expect(
+			EnginemailerEndpointInputSchemas.assignRecipientList.safeParse({
+				campaignid: 1,
+				FilterBy: 2,
+				data: { CategoryList: [1, 2], FilterType: 'XOR' },
+			}).success,
+		).toBe(false);
 	});
 
 	it.each(['2026-10-29T12:34:56.000Z', '2026-10-29 12:34:56'])(

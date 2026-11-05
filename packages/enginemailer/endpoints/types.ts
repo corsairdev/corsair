@@ -1,32 +1,52 @@
 import { z } from 'zod';
 
 const EmailInputSchema = z.object({ email: z.string().email() });
-const IdInputSchema = z.object({ id: z.number().int().positive() });
-const JsonBodySchema = z.record(z.string(), z.unknown());
 const ResultSchema = z
 	.object({
 		Result: z.object({}).passthrough(),
 	})
 	.passthrough();
+// batchUpdateStatus is documented without the `Result` wrapper
+// ({ "Status": "Completed", "StatusCode": "200" }); its errors come wrapped.
+const BatchStatusResultSchema = z.union([
+	z.object({ Status: z.string(), StatusCode: z.string() }).passthrough(),
+	ResultSchema,
+]);
 
-// The official N8N Swagger contract does not publish response schemas. These
-// aliases keep that provider opacity explicit at the public type boundary
-// without spreading unexplained `unknown` declarations through the map.
+// Enginemailer documents the N8N API only through its official n8n node
+// (Enginemailer-Official/n8n-nodes-enginemailer), which publishes no response
+// schemas. These aliases keep that opacity explicit at the type boundary.
 type N8nOpaqueResponse = unknown;
 type N8nOpaqueCollection = N8nOpaqueResponse[];
 const N8nOpaqueResponseSchema = z.unknown();
 const N8nOpaqueCollectionSchema = z.array(N8nOpaqueResponseSchema);
 
+// Custom field values are sent as text; dates use "dd MMM yyyy", checkboxes
+// join options with "|", phones carry the country code.
+const CustomFieldSchema = z.object({
+	customfield_key: z.string().min(1),
+	customfield_value: z.union([z.string(), z.number()]),
+});
 const SubscriberBodySchema = z.object({
 	email: z.string().email(),
 	subcategories: z.array(z.number().int()).optional(),
-	customfields: z.array(z.record(z.string(), z.unknown())).optional(),
+	customfields: z.array(CustomFieldSchema).optional(),
 	sourcetype: z.string().max(256).optional(),
-	subcategories_type: z.number().int().optional(),
-	customfield_type: z.number().int().optional(),
+	// 0 keep, 1 append (default), 2 remove the listed, 3 replace all.
+	subcategories_type: z.number().int().min(0).max(3).optional(),
+	// 0 update the listed fields, 1 replace (default).
+	customfield_type: z.number().int().min(0).max(1).optional(),
 });
 const BatchSubscribersBodySchema = z.object({
-	subscribers: z.array(z.record(z.string(), z.unknown())).min(1).max(5000),
+	subscribers: z
+		.array(
+			z.object({
+				email: z.string().email(),
+				customfields: z.array(CustomFieldSchema).optional(),
+			}),
+		)
+		.min(1)
+		.max(5000),
 	subcategories: z.array(z.number().int()).optional(),
 	sourcetype: z.string().max(256).optional(),
 });
@@ -35,7 +55,16 @@ const CategoryBodySchema = z.object({
 	categoryName: z.string().min(1).max(128),
 	description: z.string().max(128).optional(),
 	isvisible: z.boolean().optional(),
-	subcategories: z.array(z.record(z.string(), z.unknown())).optional(),
+	subcategories: z
+		.array(
+			z.object({
+				// 0 creates a subcategory; an existing ID renames it.
+				subcategoryID: z.number().int().nonnegative(),
+				subcategoryName: z.string().min(1).max(128),
+				description: z.string().max(128).optional(),
+			}),
+		)
+		.optional(),
 });
 const CampaignBodySchema = z.object({
 	CampaignName: z.string().min(1).max(128),
@@ -44,24 +73,28 @@ const CampaignBodySchema = z.object({
 	ReplyTo: z.string().email().optional(),
 	Subject: z.string().min(1).max(256),
 	Content: z.string(),
-	CampaignID: z.union([z.string(), z.number()]).optional(),
 });
 const CampaignIdInputSchema = z.object({
 	campaignid: z.number().int().positive(),
 });
 const RecipientListBodySchema = z.object({
 	campaignid: z.number().int().positive(),
-	data: z.record(z.string(), z.unknown()).optional(),
-	FilterBy: z.number().int().optional(),
+	// Required when FilterBy is 2.
+	data: z
+		.object({
+			CategoryList: z.array(z.number().int()).min(1),
+			FilterType: z.enum(['AND', 'OR']),
+		})
+		.optional(),
+	// 1 assigns every subscriber, 2 filters by the subcategories in `data`.
+	FilterBy: z.union([z.literal(1), z.literal(2)]).optional(),
 });
 const BatchStatusBodySchema = z.object({ ID: z.number().int().positive() });
-// N8N response payloads are intentionally opaque because the official Swagger
-// documents paths but publishes no response schemas for these operations.
 const N8nEmailSchema = z.object({ email: z.string().email() });
 const N8nSubscriberUpdateSchema = N8nEmailSchema.extend({
 	sourcetype: z.string().optional(),
 	subcategories: z.array(z.number().int()).optional(),
-	customfields: z.array(z.record(z.string(), z.unknown())).optional(),
+	customfields: z.array(CustomFieldSchema).optional(),
 	updatetype: z.enum(['Overwrite', 'Append', 'Ignore']).optional(),
 });
 const N8nSubscriberCategorySchema = N8nEmailSchema.extend({
@@ -74,11 +107,22 @@ const N8nSendEmailSchema = N8nEmailSchema.extend({
 	sender_email: z.string().email().optional(),
 	sender_name: z.string().optional(),
 	template_id: z.number().int().optional(),
-	substitution_tags: z.record(z.string(), z.unknown()).optional(),
-	cc_emails: z.array(z.string().email()).optional(),
+	// The official n8n node sends a list of { Key, Value } pairs.
+	substitution_tags: z
+		.array(
+			z.object({
+				Key: z.string().min(1),
+				Value: z.union([z.string(), z.number()]),
+			}),
+		)
+		.optional(),
+	// Up to 10 addresses; the API takes them as one comma-separated string.
+	cc_emails: z
+		.union([z.string(), z.array(z.string().email()).max(10)])
+		.optional(),
 });
 const N8nPollingSchema = z.object({
-	limit: z.number().int().positive().optional(),
+	limit: z.number().int().positive().max(50).optional(),
 	lastpollingdate: z
 		.string()
 		.refine(
@@ -90,13 +134,51 @@ const N8nPollingSchema = z.object({
 		.optional(),
 });
 
+// "All" mirrors the official n8n node; it is dropped before the request.
+const N8nIdFilterSchema = z.union([z.number().int(), z.literal('All')]);
+const N8nNewSubscribersSchema = N8nPollingSchema.extend({
+	source: z
+		.enum([
+			'All',
+			'API',
+			'Form',
+			'Import',
+			'LandingPage',
+			'Manual',
+			'Popup',
+			'WhatsApp',
+		])
+		.optional(),
+	filter_form: N8nIdFilterSchema.optional(),
+	filter_page: N8nIdFilterSchema.optional(),
+	filter_popups: N8nIdFilterSchema.optional(),
+});
+const N8nUnsubscribedSchema = N8nPollingSchema.extend({
+	filter: z.enum(['All', 'Autoresponder', 'Campaign']).optional(),
+	filter_autoresponder: N8nIdFilterSchema.optional(),
+	filter_campaign: N8nIdFilterSchema.optional(),
+});
+const N8nSubcategoryPollingSchema = N8nPollingSchema.extend({
+	filter_subcategory: N8nIdFilterSchema.optional(),
+});
+const N8nAutoresponderPollingSchema = N8nPollingSchema.extend({
+	filter_autoresponder: N8nIdFilterSchema.optional(),
+});
+const GetSubcategoriesInputSchema = z.object({
+	// Adds active_subscriber_count per subcategory (whitelisted accounts only).
+	includeActiveSubscriberCount: z.boolean().optional(),
+});
+const UpdateCampaignBodySchema = CampaignBodySchema.extend({
+	CampaignID: z.union([z.string().regex(/^\d+$/), z.number().int().positive()]),
+});
+
 export type EnginemailerEndpointInputs = {
 	getSubscriber: z.infer<typeof EmailInputSchema>;
 	activateSubscriber: z.infer<typeof EmailInputSchema>;
 	insertSubscriber: z.infer<typeof SubscriberBodySchema>;
 	updateSubscriber: z.infer<typeof SubscriberBodySchema>;
 	unsubscribeSubscriber: z.infer<typeof EmailInputSchema>;
-	getSubcategories: Record<string, never>;
+	getSubcategories: z.infer<typeof GetSubcategoriesInputSchema>;
 	updateCategory: z.infer<typeof CategoryBodySchema>;
 	getCustomFields: Record<string, never>;
 	batchUpdateSubscribers: z.infer<typeof BatchSubscribersBodySchema>;
@@ -104,9 +186,7 @@ export type EnginemailerEndpointInputs = {
 	deleteSubscriber: z.infer<typeof EmailInputSchema>;
 	listCampaigns: Record<string, never>;
 	createCampaign: z.infer<typeof CampaignBodySchema>;
-	updateCampaign: z.infer<typeof CampaignBodySchema> & {
-		CampaignID: string | number;
-	};
+	updateCampaign: z.infer<typeof UpdateCampaignBodySchema>;
 	deleteCampaign: z.infer<typeof CampaignIdInputSchema>;
 	assignRecipientList: z.infer<typeof RecipientListBodySchema>;
 	deleteRecipientList: z.infer<typeof CampaignIdInputSchema>;
@@ -119,29 +199,14 @@ export type EnginemailerEndpointInputs = {
 	sendEmail: z.infer<typeof N8nSendEmailSchema>;
 	tagSubscriber: z.infer<typeof N8nSubscriberCategorySchema>;
 	untagSubscriber: z.infer<typeof N8nSubscriberCategorySchema>;
-	newSubscribers: z.infer<typeof N8nPollingSchema> & {
-		source?: string;
-		filter_form?: number | 'All';
-		filter_page?: number | 'All';
-		filter_popups?: number | 'All';
-	};
-	unsubscribedSubscribers: z.infer<typeof N8nPollingSchema> & {
-		filter?: string;
-	};
-	taggedSubscribers: z.infer<typeof N8nPollingSchema> & {
-		filter_subcategory?: number;
-	};
+	newSubscribers: z.infer<typeof N8nNewSubscribersSchema>;
+	unsubscribedSubscribers: z.infer<typeof N8nUnsubscribedSchema>;
+	taggedSubscribers: z.infer<typeof N8nSubcategoryPollingSchema>;
 	deletedSubscribers: z.infer<typeof N8nPollingSchema>;
-	untaggedSubscribers: z.infer<typeof N8nPollingSchema> & {
-		filter_subcategory?: number;
-	};
+	untaggedSubscribers: z.infer<typeof N8nSubcategoryPollingSchema>;
 	modifiedSubscribers: z.infer<typeof N8nPollingSchema>;
-	autoresponderTriggered: z.infer<typeof N8nPollingSchema> & {
-		filter_autoresponder?: number;
-	};
-	autoresponderCompleted: z.infer<typeof N8nPollingSchema> & {
-		filter_autoresponder?: number;
-	};
+	autoresponderTriggered: z.infer<typeof N8nAutoresponderPollingSchema>;
+	autoresponderCompleted: z.infer<typeof N8nAutoresponderPollingSchema>;
 	connect: Record<string, never>;
 	listForms: Record<string, never>;
 	listPages: Record<string, never>;
@@ -158,7 +223,7 @@ export type EnginemailerEndpointOutputs = {
 	updateCategory: z.infer<typeof ResultSchema>;
 	getCustomFields: z.infer<typeof ResultSchema>;
 	batchUpdateSubscribers: z.infer<typeof ResultSchema>;
-	batchUpdateStatus: z.infer<typeof ResultSchema>;
+	batchUpdateStatus: z.infer<typeof BatchStatusResultSchema>;
 	deleteSubscriber: z.infer<typeof ResultSchema>;
 	listCampaigns: z.infer<typeof ResultSchema>;
 	createCampaign: z.infer<typeof ResultSchema>;
@@ -195,7 +260,7 @@ export const EnginemailerEndpointInputSchemas = {
 	insertSubscriber: SubscriberBodySchema,
 	updateSubscriber: SubscriberBodySchema,
 	unsubscribeSubscriber: EmailInputSchema,
-	getSubcategories: z.object({}),
+	getSubcategories: GetSubcategoriesInputSchema,
 	updateCategory: CategoryBodySchema,
 	getCustomFields: z.object({}),
 	batchUpdateSubscribers: BatchSubscribersBodySchema,
@@ -203,9 +268,7 @@ export const EnginemailerEndpointInputSchemas = {
 	deleteSubscriber: EmailInputSchema,
 	listCampaigns: z.object({}),
 	createCampaign: CampaignBodySchema,
-	updateCampaign: CampaignBodySchema.extend({
-		CampaignID: z.union([z.string(), z.number()]),
-	}),
+	updateCampaign: UpdateCampaignBodySchema,
 	deleteCampaign: CampaignIdInputSchema,
 	assignRecipientList: RecipientListBodySchema,
 	deleteRecipientList: CampaignIdInputSchema,
@@ -218,29 +281,14 @@ export const EnginemailerEndpointInputSchemas = {
 	sendEmail: N8nSendEmailSchema,
 	tagSubscriber: N8nSubscriberCategorySchema,
 	untagSubscriber: N8nSubscriberCategorySchema,
-	newSubscribers: N8nPollingSchema.extend({
-		source: z.string().optional(),
-		filter_form: z.union([z.number().int(), z.literal('All')]).optional(),
-		filter_page: z.union([z.number().int(), z.literal('All')]).optional(),
-		filter_popups: z.union([z.number().int(), z.literal('All')]).optional(),
-	}),
-	unsubscribedSubscribers: N8nPollingSchema.extend({
-		filter: z.string().optional(),
-	}),
-	taggedSubscribers: N8nPollingSchema.extend({
-		filter_subcategory: z.number().int().optional(),
-	}),
+	newSubscribers: N8nNewSubscribersSchema,
+	unsubscribedSubscribers: N8nUnsubscribedSchema,
+	taggedSubscribers: N8nSubcategoryPollingSchema,
 	deletedSubscribers: N8nPollingSchema,
-	untaggedSubscribers: N8nPollingSchema.extend({
-		filter_subcategory: z.number().int().optional(),
-	}),
+	untaggedSubscribers: N8nSubcategoryPollingSchema,
 	modifiedSubscribers: N8nPollingSchema,
-	autoresponderTriggered: N8nPollingSchema.extend({
-		filter_autoresponder: z.number().int().optional(),
-	}),
-	autoresponderCompleted: N8nPollingSchema.extend({
-		filter_autoresponder: z.number().int().optional(),
-	}),
+	autoresponderTriggered: N8nAutoresponderPollingSchema,
+	autoresponderCompleted: N8nAutoresponderPollingSchema,
 	connect: z.object({}),
 	listForms: z.object({}),
 	listPages: z.object({}),
@@ -257,7 +305,7 @@ export const EnginemailerEndpointOutputSchemas = {
 	updateCategory: ResultSchema,
 	getCustomFields: ResultSchema,
 	batchUpdateSubscribers: ResultSchema,
-	batchUpdateStatus: ResultSchema,
+	batchUpdateStatus: BatchStatusResultSchema,
 	deleteSubscriber: ResultSchema,
 	listCampaigns: ResultSchema,
 	createCampaign: ResultSchema,

@@ -414,6 +414,40 @@ describe('Enginemailer endpoint routes', () => {
 		);
 	});
 
+	it('joins CC addresses into the comma-separated string the API takes', async () => {
+		await n8nEndpoints.sendEmail(ctx, {
+			email: 'person@example.com',
+			type: 'html',
+			html: '<p>Hi</p>',
+			subject: 'Hi',
+			cc_emails: ['a@example.com', 'b@example.com'],
+		});
+
+		expect(n8nRequest).toHaveBeenLastCalledWith(
+			'/sendemail',
+			'test-api-key',
+			expect.objectContaining({
+				body: expect.objectContaining({
+					cc_emails: 'a@example.com,b@example.com',
+				}),
+			}),
+		);
+	});
+
+	it('forwards includeActiveSubscriberCount to getSubCategory', async () => {
+		await subscriberEndpoints.getSubcategories(ctx, {
+			includeActiveSubscriberCount: true,
+		});
+
+		expect(request).toHaveBeenLastCalledWith(
+			'/restapi/subscriber/emsubscriber/getSubCategory',
+			'test-api-key',
+			expect.objectContaining({
+				query: { includeActiveSubscriberCount: true },
+			}),
+		);
+	});
+
 	it('omits the N8N All filter while preserving numeric filters', async () => {
 		await n8nEndpoints.newSubscribers(ctx, {
 			filter_form: 'All',

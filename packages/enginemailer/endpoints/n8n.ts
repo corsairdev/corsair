@@ -60,7 +60,13 @@ export const n8nEndpoints: EnginemailerN8nEndpoints = {
 			input,
 		),
 	sendEmail: (ctx, input) =>
-		post<EnginemailerEndpointOutputs['sendEmail']>(ctx, '/sendemail', input),
+		post<EnginemailerEndpointOutputs['sendEmail']>(ctx, '/sendemail', {
+			...input,
+			// The official n8n node sends CC addresses as one comma-separated string.
+			cc_emails: Array.isArray(input.cc_emails)
+				? input.cc_emails.join(',')
+				: input.cc_emails,
+		}),
 	tagSubscriber: (ctx, input) =>
 		post<EnginemailerEndpointOutputs['tagSubscriber']>(
 			ctx,
