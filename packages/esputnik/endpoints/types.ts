@@ -82,8 +82,13 @@ const TokenPathSchema = z.object({
 // eSputnik does not publish a closed schema for these payloads.
 const GenericObjectSchema = z.record(z.string(), z.unknown());
 
-const EmptyOutputSchema = z.undefined();
-const TextOrEmptyOutputSchema = z.string().or(EmptyOutputSchema);
+// Mutations answer with an empty body, a bare string or a small JSON value,
+// depending on the route and the response Content-Type. The shared HTTP
+// client turns an empty JSON body into `undefined` and an empty text body
+// into ''. Accept all of them so a change the provider already applied is
+// never reported as a failure.
+const AckOutputSchema = ProviderJsonSchema.optional();
+type AckOutput = JsonValue | undefined;
 
 const EmailListSchema = z.object({
 	emails: z.array(z.string().email()).min(1),
@@ -292,10 +297,10 @@ export type EsputnikEndpointOutputs = {
 	getBalance: z.infer<typeof BalanceSchema>;
 	addContact: { id: number };
 	getContact: z.infer<typeof ContactSchema>;
-	updateContact: string | undefined;
+	updateContact: AckOutput;
 	// eSputnik documents an empty response for this mutation, so the provider
 	// response is intentionally opaque and accepted without a local envelope.
-	deleteContactByExternalCustomerId: undefined;
+	deleteContactByExternalCustomerId: AckOutput;
 	searchContacts: z.infer<typeof ContactSchema>[];
 	subscribeContact: z.infer<typeof ContactSubscriptionResultSchema>;
 	// Bulk/import response envelopes vary by provider validation outcome and are
@@ -304,74 +309,74 @@ export type EsputnikEndpointOutputs = {
 	fileContactsBulkUpdate: Record<string, JsonValue>;
 	getImportSessionStatus: Record<string, JsonValue>;
 	getContactEmails: Record<string, JsonValue>;
-	addToUnsubscribed: JsonValue;
-	deleteFromUnsubscribed: JsonValue;
+	addToUnsubscribed: AckOutput;
+	deleteFromUnsubscribed: AckOutput;
 	getGroupContacts: JsonValue[];
-	detachContactsFromGroup: string;
-	attachContactsToGroup: string;
+	detachContactsFromGroup: AckOutput;
+	attachContactsToGroup: AckOutput;
 	searchGroups: JsonValue[];
 	searchWorkflows: JsonValue[];
 	getContactIdByToken: { id: number };
 	getContactSubscriptionCategories: JsonValue[];
-	changeContactSubscriptionCategories: string;
-	deleteContactById: undefined;
+	changeContactSubscriptionCategories: AckOutput;
+	deleteContactById: AckOutput;
 	contactRecoms: JsonValue[];
 	getAdditionalFields: Record<string, JsonValue>;
 	getOrganisationBalanceHistory: Record<string, JsonValue>;
 	ordersBulkInsert: Record<string, JsonValue>;
-	registerEvent: JsonValue;
+	registerEvent: AckOutput;
 	sendHistoryEvents: Record<string, JsonValue>;
-	removeHistoryEvents: JsonValue;
+	removeHistoryEvents: AckOutput;
 	searchEmails: JsonValue[];
 	getEmailMessageViewLink: Record<string, JsonValue>;
 	sendPreparedMessage: JsonValue;
 	addEmail: { id: number };
 	getEmail: Record<string, JsonValue>;
-	updateMessage: string | undefined;
-	deleteEmail: undefined;
-	updateTranslatedMessage: string | undefined;
-	deleteTranslatedEmail: undefined;
+	updateMessage: AckOutput;
+	deleteEmail: AckOutput;
+	updateTranslatedMessage: AckOutput;
+	deleteTranslatedEmail: AckOutput;
 	sendEmail: Record<string, JsonValue>;
 	searchMobilePushMessages: JsonValue[];
 	addMobilePushMessage: { id: number };
 	getMobilePushMessage: Record<string, JsonValue>;
-	updateBaseMobilePushMessage: string | undefined;
-	deleteMobilePushMessage: undefined;
-	updateTranslatedMobilePushMessage: string | undefined;
-	deleteTranslatedMobilePushMessage: undefined;
+	updateBaseMobilePushMessage: AckOutput;
+	deleteMobilePushMessage: AckOutput;
+	updateTranslatedMobilePushMessage: AckOutput;
+	deleteTranslatedMobilePushMessage: AckOutput;
 	searchViberMessages: JsonValue[];
 	addViberMessage: { id: number };
 	getViberMessage: Record<string, JsonValue>;
-	updateBaseViberMessage: string | undefined;
-	deleteViberMessage: undefined;
+	updateBaseViberMessage: AckOutput;
+	deleteViberMessage: AckOutput;
 	searchAppInboxMessages: JsonValue[];
 	addAppInboxMessage: { id: number };
 	getAppInboxMessage: Record<string, JsonValue>;
-	updateBaseAppInboxMessage: string | undefined;
-	deleteAppInboxMessage: undefined;
+	updateBaseAppInboxMessage: AckOutput;
+	deleteAppInboxMessage: AckOutput;
 	searchTelegramBotMessages: JsonValue[];
 	addTelegramBotMessage: { id: number };
 	getTelegramBotMessage: Record<string, JsonValue>;
-	updateBaseTelegramBotMessage: string | undefined;
-	deleteTelegramBotMessage: undefined;
+	updateBaseTelegramBotMessage: AckOutput;
+	deleteTelegramBotMessage: AckOutput;
 	searchSmsMessages: JsonValue[];
 	getSms: Record<string, JsonValue>;
-	updateBaseSmsMessage: string | undefined;
-	deleteSmsMessage: undefined;
+	updateBaseSmsMessage: AckOutput;
+	deleteSmsMessage: AckOutput;
 	getBroadcasts: JsonValue[];
 	createBroadcast: { id: number };
 	getBroadcast: Record<string, JsonValue>;
 	getSmsInterfaces: JsonValue[];
 	getEmailInterfaces: JsonValue[];
-	updateTranslatedViberMessage: string | undefined;
-	deleteTranslatedViberMessage: undefined;
-	updateTranslatedAppInboxMessage: string | undefined;
-	deleteTranslatedAppInboxMessage: undefined;
-	updateTranslatedTelegramMessage: string | undefined;
-	deleteTranslatedTelegramMessage: undefined;
+	updateTranslatedViberMessage: AckOutput;
+	deleteTranslatedViberMessage: AckOutput;
+	updateTranslatedAppInboxMessage: AckOutput;
+	deleteTranslatedAppInboxMessage: AckOutput;
+	updateTranslatedTelegramMessage: AckOutput;
+	deleteTranslatedTelegramMessage: AckOutput;
 	addSmsMessage: { id: number };
 	sendSms: Record<string, JsonValue>;
-	cancelBroadcast: undefined;
+	cancelBroadcast: AckOutput;
 	contactActivity: JsonValue[];
 	contactMessages: JsonValue[];
 	getTokenActivated: { active: boolean };
@@ -381,18 +386,18 @@ export type EsputnikEndpointOutputs = {
 	getScript: string;
 	getWebPushDomains: Record<string, JsonValue>;
 	addWebPushDomain: Record<string, JsonValue>;
-	deleteWebPushDomain: undefined;
+	deleteWebPushDomain: AckOutput;
 	getWebPushScript: Record<string, JsonValue>;
 	getProductFeedsConfiguration: Record<string, JsonValue>;
-	configureProductFeeds: JsonValue;
-	addAppTokens: JsonValue;
-	muteAppToken: JsonValue;
-	unmuteAppToken: JsonValue;
+	configureProductFeeds: AckOutput;
+	addAppTokens: AckOutput;
+	muteAppToken: AckOutput;
+	unmuteAppToken: AckOutput;
 	getSubscriptionCategories: JsonValue[];
 	getPromocodes: JsonValue;
-	getPromocodesCount: JsonValue;
-	insertPromocodes: JsonValue;
-	getPreprocessorFileStatus: Record<string, JsonValue>;
+	getPromocodesCount: AckOutput;
+	insertPromocodes: AckOutput;
+	getPreprocessorFileStatus: AckOutput;
 	updatePreprocessorFile: JsonValue;
 	uploadPreprocessorFile: JsonValue;
 	generateApiToken: Record<string, JsonValue>;
@@ -400,8 +405,8 @@ export type EsputnikEndpointOutputs = {
 	sendViber: Record<string, JsonValue>;
 	sendAppInbox: JsonValue;
 	sendTelegramBot: JsonValue;
-	updateTranslatedSmsMessage: string | undefined;
-	deleteTranslatedSmsMessage: undefined;
+	updateTranslatedSmsMessage: AckOutput;
+	deleteTranslatedSmsMessage: AckOutput;
 };
 
 export const EsputnikEndpointInputSchemas = {
@@ -560,82 +565,82 @@ export const EsputnikEndpointOutputSchemas = {
 	getBalance: BalanceSchema,
 	addContact: z.object({ id: z.number().int() }),
 	getContact: ContactSchema,
-	updateContact: TextOrEmptyOutputSchema,
-	deleteContactByExternalCustomerId: EmptyOutputSchema,
+	updateContact: AckOutputSchema,
+	deleteContactByExternalCustomerId: AckOutputSchema,
 	searchContacts: z.array(ContactSchema),
 	subscribeContact: ContactSubscriptionResultSchema,
 	contactsBulkUpdate: z.record(z.string(), ProviderJsonSchema),
 	fileContactsBulkUpdate: z.record(z.string(), ProviderJsonSchema),
 	getImportSessionStatus: z.record(z.string(), ProviderJsonSchema),
 	getContactEmails: z.record(z.string(), ProviderJsonSchema),
-	addToUnsubscribed: ProviderJsonSchema,
-	deleteFromUnsubscribed: ProviderJsonSchema,
+	addToUnsubscribed: AckOutputSchema,
+	deleteFromUnsubscribed: AckOutputSchema,
 	getGroupContacts: z.array(ProviderJsonSchema),
-	detachContactsFromGroup: z.string(),
-	attachContactsToGroup: z.string(),
+	detachContactsFromGroup: AckOutputSchema,
+	attachContactsToGroup: AckOutputSchema,
 	searchGroups: z.array(ProviderJsonSchema),
 	searchWorkflows: z.array(ProviderJsonSchema),
 	getContactIdByToken: z.object({ id: z.number().int() }),
 	getContactSubscriptionCategories: z.array(ProviderJsonSchema),
-	changeContactSubscriptionCategories: z.string(),
-	deleteContactById: EmptyOutputSchema,
+	changeContactSubscriptionCategories: AckOutputSchema,
+	deleteContactById: AckOutputSchema,
 	contactRecoms: z.array(ProviderJsonSchema),
 	getAdditionalFields: z.record(z.string(), ProviderJsonSchema),
 	getOrganisationBalanceHistory: z.record(z.string(), ProviderJsonSchema),
 	ordersBulkInsert: z.record(z.string(), ProviderJsonSchema),
-	registerEvent: ProviderJsonSchema,
+	registerEvent: AckOutputSchema,
 	sendHistoryEvents: z.record(z.string(), ProviderJsonSchema),
-	removeHistoryEvents: ProviderJsonSchema,
+	removeHistoryEvents: AckOutputSchema,
 	searchEmails: z.array(ProviderJsonSchema),
 	getEmailMessageViewLink: z.record(z.string(), ProviderJsonSchema),
 	sendPreparedMessage: ProviderJsonSchema,
 	addEmail: z.object({ id: z.number().int() }),
 	getEmail: z.record(z.string(), ProviderJsonSchema),
-	updateMessage: TextOrEmptyOutputSchema,
-	deleteEmail: EmptyOutputSchema,
-	updateTranslatedMessage: TextOrEmptyOutputSchema,
-	deleteTranslatedEmail: EmptyOutputSchema,
+	updateMessage: AckOutputSchema,
+	deleteEmail: AckOutputSchema,
+	updateTranslatedMessage: AckOutputSchema,
+	deleteTranslatedEmail: AckOutputSchema,
 	sendEmail: z.record(z.string(), ProviderJsonSchema),
 	searchMobilePushMessages: z.array(ProviderJsonSchema),
 	addMobilePushMessage: z.object({ id: z.number().int() }),
 	getMobilePushMessage: z.record(z.string(), ProviderJsonSchema),
-	updateBaseMobilePushMessage: TextOrEmptyOutputSchema,
-	deleteMobilePushMessage: EmptyOutputSchema,
-	updateTranslatedMobilePushMessage: TextOrEmptyOutputSchema,
-	deleteTranslatedMobilePushMessage: EmptyOutputSchema,
+	updateBaseMobilePushMessage: AckOutputSchema,
+	deleteMobilePushMessage: AckOutputSchema,
+	updateTranslatedMobilePushMessage: AckOutputSchema,
+	deleteTranslatedMobilePushMessage: AckOutputSchema,
 	searchViberMessages: z.array(ProviderJsonSchema),
 	addViberMessage: z.object({ id: z.number().int() }),
 	getViberMessage: z.record(z.string(), ProviderJsonSchema),
-	updateBaseViberMessage: TextOrEmptyOutputSchema,
-	deleteViberMessage: EmptyOutputSchema,
+	updateBaseViberMessage: AckOutputSchema,
+	deleteViberMessage: AckOutputSchema,
 	searchAppInboxMessages: z.array(ProviderJsonSchema),
 	addAppInboxMessage: z.object({ id: z.number().int() }),
 	getAppInboxMessage: z.record(z.string(), ProviderJsonSchema),
-	updateBaseAppInboxMessage: TextOrEmptyOutputSchema,
-	deleteAppInboxMessage: EmptyOutputSchema,
+	updateBaseAppInboxMessage: AckOutputSchema,
+	deleteAppInboxMessage: AckOutputSchema,
 	searchTelegramBotMessages: z.array(ProviderJsonSchema),
 	addTelegramBotMessage: z.object({ id: z.number().int() }),
 	getTelegramBotMessage: z.record(z.string(), ProviderJsonSchema),
-	updateBaseTelegramBotMessage: TextOrEmptyOutputSchema,
-	deleteTelegramBotMessage: EmptyOutputSchema,
+	updateBaseTelegramBotMessage: AckOutputSchema,
+	deleteTelegramBotMessage: AckOutputSchema,
 	searchSmsMessages: z.array(ProviderJsonSchema),
 	getSms: z.record(z.string(), ProviderJsonSchema),
-	updateBaseSmsMessage: TextOrEmptyOutputSchema,
-	deleteSmsMessage: EmptyOutputSchema,
+	updateBaseSmsMessage: AckOutputSchema,
+	deleteSmsMessage: AckOutputSchema,
 	getBroadcasts: z.array(ProviderJsonSchema),
 	createBroadcast: z.object({ id: z.number().int() }),
 	getBroadcast: z.record(z.string(), ProviderJsonSchema),
 	getSmsInterfaces: z.array(ProviderJsonSchema),
 	getEmailInterfaces: z.array(ProviderJsonSchema),
-	updateTranslatedViberMessage: TextOrEmptyOutputSchema,
-	deleteTranslatedViberMessage: EmptyOutputSchema,
-	updateTranslatedAppInboxMessage: TextOrEmptyOutputSchema,
-	deleteTranslatedAppInboxMessage: EmptyOutputSchema,
-	updateTranslatedTelegramMessage: TextOrEmptyOutputSchema,
-	deleteTranslatedTelegramMessage: EmptyOutputSchema,
+	updateTranslatedViberMessage: AckOutputSchema,
+	deleteTranslatedViberMessage: AckOutputSchema,
+	updateTranslatedAppInboxMessage: AckOutputSchema,
+	deleteTranslatedAppInboxMessage: AckOutputSchema,
+	updateTranslatedTelegramMessage: AckOutputSchema,
+	deleteTranslatedTelegramMessage: AckOutputSchema,
 	addSmsMessage: z.object({ id: z.number().int() }),
 	sendSms: z.record(z.string(), ProviderJsonSchema),
-	cancelBroadcast: EmptyOutputSchema,
+	cancelBroadcast: AckOutputSchema,
 	contactActivity: z.array(ProviderJsonSchema),
 	contactMessages: z.array(ProviderJsonSchema),
 	getTokenActivated: z.object({ active: z.boolean() }),
@@ -645,18 +650,18 @@ export const EsputnikEndpointOutputSchemas = {
 	getScript: z.string(),
 	getWebPushDomains: z.record(z.string(), ProviderJsonSchema),
 	addWebPushDomain: z.record(z.string(), ProviderJsonSchema),
-	deleteWebPushDomain: EmptyOutputSchema,
+	deleteWebPushDomain: AckOutputSchema,
 	getWebPushScript: z.record(z.string(), ProviderJsonSchema),
 	getProductFeedsConfiguration: z.record(z.string(), ProviderJsonSchema),
-	configureProductFeeds: ProviderJsonSchema,
-	addAppTokens: ProviderJsonSchema,
-	muteAppToken: ProviderJsonSchema,
-	unmuteAppToken: ProviderJsonSchema,
+	configureProductFeeds: AckOutputSchema,
+	addAppTokens: AckOutputSchema,
+	muteAppToken: AckOutputSchema,
+	unmuteAppToken: AckOutputSchema,
 	getSubscriptionCategories: z.array(ProviderJsonSchema),
 	getPromocodes: ProviderJsonSchema,
-	getPromocodesCount: ProviderJsonSchema,
-	insertPromocodes: ProviderJsonSchema,
-	getPreprocessorFileStatus: z.record(z.string(), ProviderJsonSchema),
+	getPromocodesCount: AckOutputSchema,
+	insertPromocodes: AckOutputSchema,
+	getPreprocessorFileStatus: AckOutputSchema,
 	updatePreprocessorFile: ProviderJsonSchema,
 	uploadPreprocessorFile: ProviderJsonSchema,
 	generateApiToken: z.record(z.string(), ProviderJsonSchema),
@@ -664,6 +669,6 @@ export const EsputnikEndpointOutputSchemas = {
 	sendViber: z.record(z.string(), ProviderJsonSchema),
 	sendAppInbox: ProviderJsonSchema,
 	sendTelegramBot: ProviderJsonSchema,
-	updateTranslatedSmsMessage: TextOrEmptyOutputSchema,
-	deleteTranslatedSmsMessage: EmptyOutputSchema,
+	updateTranslatedSmsMessage: AckOutputSchema,
+	deleteTranslatedSmsMessage: AckOutputSchema,
 } as const;
