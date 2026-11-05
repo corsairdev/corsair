@@ -71,6 +71,10 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// Zoho Desk's own mark is its App Store icon (zoho.com/desk has no touch icon).
 	zohodesk:
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/a9/08/3e/a9083ec8-1697-2db1-92d4-d175d9121cac/AppIcon-0-0-1x_U007emarketing-0-0-0-8-0-0-85-220.png/180x180bb.png',
+	// dnsfilter.com only has a 32px favicon, so twenty-icons returns a blur.
+	// DNSFilter's App Store icon (Roaming Client) is the same mark at 180px.
+	dnsfilter:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4f/32/b4/4f32b46f-f35c-8b7c-6784-c862067f7400/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/180x180bb.png',
 };
 
 type FetchResult =
