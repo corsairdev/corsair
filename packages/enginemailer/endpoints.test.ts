@@ -5,6 +5,7 @@ import {
 	subscriberEndpoints,
 } from './endpoints';
 import type { EnginemailerContext } from './index';
+import { enginemailer } from './index';
 import { makeEnginemailerN8nRequest } from './n8n-client';
 
 jest.mock('./client', () => ({
@@ -460,5 +461,23 @@ describe('Enginemailer endpoint routes', () => {
 			'test-api-key',
 			expect.objectContaining({ query: { filter_page: 12 } }),
 		);
+	});
+});
+
+describe('Enginemailer plugin endpoints run their zod schemas', () => {
+	const endpoints = enginemailer().endpoints;
+	if (!endpoints) throw new Error('enginemailer() returned no endpoints');
+
+	it('rejects invalid input before any request is sent', async () => {
+		await expect(
+			endpoints.subscribers.insert(ctx, { email: 'not-an-email' }),
+		).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+	});
+
+	it('rejects a REST response without the Result envelope', async () => {
+		request.mockResolvedValueOnce({ unexpected: true });
+
+		await expect(endpoints.campaigns.listCampaigns(ctx, {})).rejects.toThrow();
 	});
 });
