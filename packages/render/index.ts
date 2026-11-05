@@ -2167,52 +2167,59 @@ const renderEndpointMeta = {
 	'final.addHeaders': { riskLevel: 'write', description: 'Render addHeaders' },
 	'final.addOrUpdateSecretFile': {
 		riskLevel: 'write',
-		description: 'Render addOrUpdateSecretFile',
+		description:
+			'Add or update one secret file on a Render service (id: service ID, key: file name)',
 	},
 	'final.addResourcesToEnvironment': {
 		riskLevel: 'write',
-		description: 'Render addResourcesToEnvironment',
+		description:
+			'Move services, databases or env groups into a Render environment (id: environment ID)',
 	},
 	'final.addRoute': { riskLevel: 'write', description: 'Render addRoute' },
 	'final.createCustomDomain': {
 		riskLevel: 'write',
-		description: 'Render createCustomDomain',
+		description: 'Add a custom domain to a Render service (id: service ID)',
 	},
 	'final.deleteEnvGroupEnvVar': {
 		riskLevel: 'destructive',
-		description: 'Render deleteEnvGroupEnvVar',
+		description:
+			'Delete one environment variable from a Render env group (id: env group ID, key: variable name)',
 	},
 	'final.deleteEnvGroupSecretFile': {
 		riskLevel: 'destructive',
-		description: 'Render deleteEnvGroupSecretFile',
+		description:
+			'Delete one secret file from a Render env group (id: env group ID, key: file name)',
 	},
 	'final.deleteKeyValue': {
 		riskLevel: 'destructive',
-		description: 'Render deleteKeyValue',
+		description: 'Delete a Render Key Value instance (id: Key Value ID)',
 	},
 	'final.deleteSecretFile': {
 		riskLevel: 'destructive',
-		description: 'Render deleteSecretFile',
+		description:
+			'Delete one secret file from a Render service (id: service ID, key: file name)',
 	},
 	'final.disconnectBlueprint': {
 		riskLevel: 'destructive',
-		description: 'Render disconnectBlueprint',
+		description:
+			'Disconnect a Render Blueprint; its resources are kept (id: Blueprint ID)',
 	},
 	'final.linkServiceToEnvGroup': {
 		riskLevel: 'write',
-		description: 'Render linkServiceToEnvGroup',
+		description: 'Link a Render service to an env group (id: env group ID)',
 	},
 	'final.listBlueprints': {
 		riskLevel: 'read',
-		description: 'Render listBlueprints',
+		description: 'List Render Blueprints',
 	},
 	'final.listInstances': {
 		riskLevel: 'read',
-		description: 'Render listInstances',
+		description:
+			'List the running instances of a Render service (id: service ID)',
 	},
 	'final.listKeyValue': {
 		riskLevel: 'read',
-		description: 'Render listKeyValue',
+		description: 'List Render Key Value instances',
 	},
 	'keyValue.suspend': {
 		riskLevel: 'write',
@@ -2232,7 +2239,7 @@ const renderEndpointMeta = {
 	},
 	'final.listNotificationOverrides': {
 		riskLevel: 'read',
-		description: 'Render listNotificationOverrides',
+		description: 'List per-service notification overrides',
 	},
 	'final.retrieveServiceNotificationOverrides': {
 		riskLevel: 'read',
@@ -2244,56 +2251,67 @@ const renderEndpointMeta = {
 	},
 	'final.listPostgresExport': {
 		riskLevel: 'read',
-		description: 'Render listPostgresExport',
+		description: 'List exports of a Render Postgres database (id: Postgres ID)',
 	},
 	'final.listPostgresUsers': {
 		riskLevel: 'read',
-		description: 'Render listPostgresUsers',
+		description: 'List users of a Render Postgres database (id: Postgres ID)',
 	},
 	'final.listRoutes': { riskLevel: 'read', description: 'Render listRoutes' },
 	'final.listSecretFiles': {
 		riskLevel: 'read',
-		description: 'Render listSecretFiles',
+		description:
+			'List secret files on a Render service, including their contents (id: service ID)',
 	},
 	'final.retrieveCustomDomain': {
 		riskLevel: 'read',
-		description: 'Render retrieveCustomDomain',
+		description:
+			'Retrieve a custom domain on a Render service (id: service ID, key: domain name or ID)',
 	},
 	'final.retrieveDeploy': {
 		riskLevel: 'read',
-		description: 'Render retrieveDeploy',
+		description:
+			'Retrieve one deploy of a Render service (id: service ID, key: deploy ID)',
 	},
 	'final.retrieveEnvGroupEnvVar': {
 		riskLevel: 'read',
-		description: 'Render retrieveEnvGroupEnvVar',
+		description:
+			'Retrieve one environment variable, including its value, from a Render env group (id: env group ID, key: variable name)',
 	},
 	'final.retrieveEnvGroupSecretFile': {
 		riskLevel: 'read',
-		description: 'Render retrieveEnvGroupSecretFile',
+		description:
+			'Retrieve one secret file, including its contents, from a Render env group (id: env group ID, key: file name)',
 	},
 	'final.retrieveEnvVar': {
 		riskLevel: 'read',
-		description: 'Render retrieveEnvVar',
+		description:
+			'Retrieve one environment variable, including its value, from a Render service (id: service ID, key: variable name)',
 	},
 	'final.retrieveOwnerNotificationSettings': {
 		riskLevel: 'read',
-		description: 'Render retrieveOwnerNotificationSettings',
+		description:
+			'Retrieve notification settings for a Render workspace (id: owner ID)',
 	},
 	'final.retrieveSecretFile': {
 		riskLevel: 'read',
-		description: 'Render retrieveSecretFile',
+		description:
+			'Retrieve one secret file, including its contents, from a Render service (id: service ID, key: file name)',
 	},
 	'final.updateEnvGroupEnvVar': {
 		riskLevel: 'write',
-		description: 'Render updateEnvGroupEnvVar',
+		description:
+			'Add or update one environment variable in a Render env group (id: env group ID, key: variable name)',
 	},
 	'final.updateEnvGroupSecretFile': {
 		riskLevel: 'write',
-		description: 'Render updateEnvGroupSecretFile',
+		description:
+			'Add or update one secret file in a Render env group (id: env group ID, key: file name)',
 	},
 	'final.updateEnvVar': {
 		riskLevel: 'write',
-		description: 'Render updateEnvVar',
+		description:
+			'Add or update one environment variable on a Render service (id: service ID, key: variable name)',
 	},
 	'final.updateEnvVarsForService': {
 		riskLevel: 'destructive',
@@ -2307,7 +2325,8 @@ const renderEndpointMeta = {
 	},
 	'final.updateResourceLogStream': {
 		riskLevel: 'write',
-		description: 'Render updateResourceLogStream',
+		description:
+			'Set the log stream setting for one Render resource (id: resource ID)',
 	},
 	'final.updateSecretFilesForService': {
 		riskLevel: 'destructive',
@@ -2316,11 +2335,13 @@ const renderEndpointMeta = {
 	},
 	'final.verifyCustomDomain': {
 		riskLevel: 'write',
-		description: 'Render verifyCustomDomain',
+		description:
+			'Re-run DNS verification for a custom domain on a Render service (id: service ID, key: domain name or ID)',
 	},
 	'final.deleteOwnerMetricsStream': {
 		riskLevel: 'destructive',
-		description: 'Render deleteOwnerMetricsStream',
+		description:
+			'Delete the metrics stream of a Render workspace (id: owner ID)',
 	},
 	'final.retrieveOwnerMetricsStream': {
 		riskLevel: 'read',
@@ -2332,7 +2353,8 @@ const renderEndpointMeta = {
 	},
 	'final.updateOwnerNotificationSettings': {
 		riskLevel: 'write',
-		description: 'Render updateOwnerNotificationSettings',
+		description:
+			'Update notification settings for a Render workspace (id: owner ID)',
 	},
 	'final.updateRoutes': {
 		riskLevel: 'destructive',
