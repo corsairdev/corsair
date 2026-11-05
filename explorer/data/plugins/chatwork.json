@@ -1,0 +1,1948 @@
+{
+  "id": "chatwork",
+  "displayName": "Chatwork",
+  "description": "Business chat and communication tool for team messaging, room management, and collaboration.",
+  "npmPackageName": "@corsair-dev/chatwork",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 30,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "account_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "chatwork.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get profile information of the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "number",
+            "description": "The Chatwork account ID"
+          },
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The user personal room ID"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The user name"
+          },
+          {
+            "key": "chatwork_id",
+            "optional": true,
+            "type": "string",
+            "description": "The Chatwork ID handle"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "number",
+            "description": "The organization ID"
+          },
+          {
+            "key": "organization_name",
+            "optional": true,
+            "type": "string",
+            "description": "The organization name"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string",
+            "description": "The department name"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "The user title/position"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The user website URL"
+          },
+          {
+            "key": "introduction",
+            "optional": true,
+            "type": "string",
+            "description": "The user profile introduction"
+          },
+          {
+            "key": "login_mail",
+            "optional": true,
+            "type": "string",
+            "description": "The login email address"
+          },
+          {
+            "key": "mail",
+            "optional": true,
+            "type": "string",
+            "description": "The user email address"
+          },
+          {
+            "key": "tel_organization",
+            "optional": true,
+            "type": "string",
+            "description": "Organization phone number"
+          },
+          {
+            "key": "tel_extension",
+            "optional": true,
+            "type": "string",
+            "description": "Extension phone number"
+          },
+          {
+            "key": "tel_mobile",
+            "optional": true,
+            "type": "string",
+            "description": "Mobile phone number"
+          },
+          {
+            "key": "skype",
+            "optional": true,
+            "type": "string",
+            "description": "Skype handle"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string",
+            "description": "Facebook profile"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string",
+            "description": "Twitter/X handle"
+          },
+          {
+            "key": "avatar_image_url",
+            "optional": true,
+            "type": "string",
+            "description": "Avatar image URL"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.account.getStatus",
+      "shortPath": "account.getStatus",
+      "description": "Get unread, mention and open task counts for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "unread_room_num",
+            "optional": false,
+            "type": "number",
+            "description": "Number of rooms with unread messages"
+          },
+          {
+            "key": "mention_room_num",
+            "optional": false,
+            "type": "number",
+            "description": "Number of rooms with unread mentions"
+          },
+          {
+            "key": "mytask_room_num",
+            "optional": false,
+            "type": "number",
+            "description": "Number of rooms with my open tasks"
+          },
+          {
+            "key": "unread_num",
+            "optional": false,
+            "type": "number",
+            "description": "Total unread messages"
+          },
+          {
+            "key": "mention_num",
+            "optional": false,
+            "type": "number",
+            "description": "Total unread mentions"
+          },
+          {
+            "key": "mytask_num",
+            "optional": false,
+            "type": "number",
+            "description": "Total open tasks assigned to me"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.account.listTasks",
+      "shortPath": "account.listTasks",
+      "description": "List tasks assigned to the authenticated user (up to 100)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assigned_by_account_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only tasks assigned by this account ID"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | done",
+            "description": "Task status filter (default open)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ task_id: number, assigned_by_account: { account_id: number, name: string, avatar_image_url?: string }, message_id: string, body: string, limit_time: number, status: open | done, limit_type?: none | date | time, room: { room_id: number, name: string, icon_path: string } }[]"
+      }
+    },
+    {
+      "path": "chatwork.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts of the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ account_id: number, room_id: number, name: string, chatwork_id?: string, organization_id?: number, organization_name?: string, department?: string, avatar_image_url?: string }[]"
+      }
+    },
+    {
+      "path": "chatwork.api.contacts.listIncomingRequests",
+      "shortPath": "contacts.listIncomingRequests",
+      "description": "List pending contact requests sent to the authenticated user (up to 100)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ request_id: number, account_id: number, message?: string | null, name: string, chatwork_id?: string, organization_id?: number, organization_name?: string, department?: string, avatar_image_url?: string }[]"
+      }
+    },
+    {
+      "path": "chatwork.api.files.get",
+      "shortPath": "files.get",
+      "description": "Get file details, optionally with a temporary download URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the file"
+          },
+          {
+            "key": "create_download_url",
+            "optional": true,
+            "type": "boolean",
+            "description": "Generate a download URL valid for 30 seconds"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "number",
+            "description": "The file ID"
+          },
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ account_id: number, name: string, avatar_image_url?: string }",
+            "description": "The uploader"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The message ID the file was posted with"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "The file name"
+          },
+          {
+            "key": "filesize",
+            "optional": false,
+            "type": "number",
+            "description": "The file size in bytes"
+          },
+          {
+            "key": "upload_time",
+            "optional": false,
+            "type": "number",
+            "description": "Upload timestamp in Unix seconds"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string",
+            "description": "Temporary download URL"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.files.list",
+      "shortPath": "files.list",
+      "description": "List files uploaded to a chat room (up to 100)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only files uploaded by this account ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ file_id: number, account: { account_id: number, name: string, avatar_image_url?: string }, message_id: string, filename: string, filesize: number, upload_time: number }[]"
+      }
+    },
+    {
+      "path": "chatwork.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file to a chat room",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "file_base64",
+            "optional": false,
+            "type": "string",
+            "description": "File contents as base64 (max 5MB)"
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string",
+            "description": "File name including extension"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string",
+            "description": "MIME type of the file (default application/octet-stream)"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Message body to post together with the file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "number",
+            "description": "The uploaded file ID"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.links.create",
+      "shortPath": "links.create",
+      "description": "Create an invitation link for a group chat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string",
+            "description": "Path part of the invitation link URL (random if omitted)"
+          },
+          {
+            "key": "need_acceptance",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether joining requires admin approval (default true)"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description shown on the link page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "public",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the invitation link is enabled"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The invitation link URL"
+          },
+          {
+            "key": "need_acceptance",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether joining requires admin approval"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The link page description"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.links.delete",
+      "shortPath": "links.delete",
+      "description": "Delete the invitation link of a group chat",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "public",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the invitation link is enabled"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The invitation link URL"
+          },
+          {
+            "key": "need_acceptance",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether joining requires admin approval"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The link page description"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.links.get",
+      "shortPath": "links.get",
+      "description": "Get the invitation link of a group chat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "public",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the invitation link is enabled"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The invitation link URL"
+          },
+          {
+            "key": "need_acceptance",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether joining requires admin approval"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The link page description"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.links.update",
+      "shortPath": "links.update",
+      "description": "Update the invitation link of a group chat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string",
+            "description": "Path part of the invitation link URL (random if omitted)"
+          },
+          {
+            "key": "need_acceptance",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether joining requires admin approval (default true)"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description shown on the link page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "public",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the invitation link is enabled"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The invitation link URL"
+          },
+          {
+            "key": "need_acceptance",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether joining requires admin approval"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The link page description"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.members.list",
+      "shortPath": "members.list",
+      "description": "List members belonging to a chat room",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ account_id: number, role: admin | member | readonly | string, name: string, chatwork_id?: string, organization_id?: number, organization_name?: string, department?: string, avatar_image_url?: string }[]"
+      }
+    },
+    {
+      "path": "chatwork.api.members.update",
+      "shortPath": "members.update",
+      "description": "Replace the member list and roles of a group chat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members_admin_ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "Account IDs to grant the admin role (at least one)"
+          },
+          {
+            "key": "members_member_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Account IDs to grant the member role"
+          },
+          {
+            "key": "members_readonly_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Account IDs to grant the read-only role"
+          },
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "admin",
+            "optional": false,
+            "type": "number[]",
+            "description": "Account IDs with the admin role"
+          },
+          {
+            "key": "member",
+            "optional": false,
+            "type": "number[]",
+            "description": "Account IDs with the member role"
+          },
+          {
+            "key": "readonly",
+            "optional": false,
+            "type": "number[]",
+            "description": "Account IDs with the read-only role"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Delete a message from a chat room",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the message to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The message ID"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Get a specific message from a chat room",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the message to retrieve"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique message ID"
+          },
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ account_id: number, name: string, avatar_image_url?: string }",
+            "description": "The sender profile summary"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The message content"
+          },
+          {
+            "key": "send_time",
+            "optional": false,
+            "type": "number",
+            "description": "Sent timestamp in Unix seconds"
+          },
+          {
+            "key": "update_time",
+            "optional": false,
+            "type": "number",
+            "description": "Updated timestamp in Unix seconds (0 if not updated)"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages in a chat room (up to 100)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "0: get only unread messages (default), 1: get up to 100 latest messages"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ message_id: string, account: { account_id: number, name: string, avatar_image_url?: string }, body: string, send_time: number, update_time: number }[]"
+      }
+    },
+    {
+      "path": "chatwork.api.messages.markRead",
+      "shortPath": "messages.markRead",
+      "description": "Mark messages in a chat room as read",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string",
+            "description": "Mark messages up to this ID as read (all if omitted)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "unread_num",
+            "optional": false,
+            "type": "number",
+            "description": "Remaining unread messages in the room"
+          },
+          {
+            "key": "mention_num",
+            "optional": false,
+            "type": "number",
+            "description": "Remaining unread mentions in the room"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.messages.markUnread",
+      "shortPath": "messages.markUnread",
+      "description": "Mark messages in a chat room as unread from a given message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "Mark this message and every later one as unread"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "unread_num",
+            "optional": false,
+            "type": "number",
+            "description": "Remaining unread messages in the room"
+          },
+          {
+            "key": "mention_num",
+            "optional": false,
+            "type": "number",
+            "description": "Remaining unread mentions in the room"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a new message to a chat room",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room to post to"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The message body text"
+          },
+          {
+            "key": "self_unread",
+            "optional": true,
+            "type": "0 | 1 | boolean",
+            "description": "Whether the posted message should be marked as unread for the sender (0: read, 1: unread)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the created message"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.messages.update",
+      "shortPath": "messages.update",
+      "description": "Edit the body of a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the message to update"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The new message body"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The message ID"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.rooms.create",
+      "shortPath": "rooms.create",
+      "description": "Create a new group chat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members_admin_ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "Account IDs to grant the admin role (at least one)"
+          },
+          {
+            "key": "members_member_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Account IDs to grant the member role"
+          },
+          {
+            "key": "members_readonly_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Account IDs to grant the read-only role"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The group chat name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The group chat description"
+          },
+          {
+            "key": "icon_preset",
+            "optional": true,
+            "type": "group | check | document | meeting | event | project | business | study | security | star | idea | heart | magcup | beer | music | sports | travel",
+            "description": "The group chat icon type"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to create an invitation link"
+          },
+          {
+            "key": "link_code",
+            "optional": true,
+            "type": "string",
+            "description": "Path part of the invitation link URL (random if omitted)"
+          },
+          {
+            "key": "link_need_acceptance",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether joining via the link requires admin approval"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The room ID"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.rooms.delete",
+      "shortPath": "rooms.delete",
+      "description": "Leave or permanently delete a group chat",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "action_type",
+            "optional": false,
+            "type": "leave | delete",
+            "description": "leave: leave the group chat; delete: delete it for every member (irreversible)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the operation succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.rooms.get",
+      "shortPath": "rooms.get",
+      "description": "Get details of a specific chat room",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room to retrieve"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The room ID"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The room name"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "The room type (e.g. my, direct, group)"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "string",
+            "description": "The current user role in the room (e.g. admin, member, readonly)"
+          },
+          {
+            "key": "sticky",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the room is pinned"
+          },
+          {
+            "key": "unread_num",
+            "optional": false,
+            "type": "number",
+            "description": "Number of unread messages"
+          },
+          {
+            "key": "mention_num",
+            "optional": false,
+            "type": "number",
+            "description": "Number of unread mentions"
+          },
+          {
+            "key": "mytask_num",
+            "optional": false,
+            "type": "number",
+            "description": "Number of open tasks assigned to me"
+          },
+          {
+            "key": "message_num",
+            "optional": false,
+            "type": "number",
+            "description": "Total number of messages in the room"
+          },
+          {
+            "key": "file_num",
+            "optional": false,
+            "type": "number",
+            "description": "Total number of files in the room"
+          },
+          {
+            "key": "task_num",
+            "optional": false,
+            "type": "number",
+            "description": "Total number of tasks in the room"
+          },
+          {
+            "key": "icon_path",
+            "optional": false,
+            "type": "string",
+            "description": "Icon image URL or icon path"
+          },
+          {
+            "key": "last_update_time",
+            "optional": false,
+            "type": "number",
+            "description": "Last updated timestamp in Unix seconds"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Detailed room description"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.rooms.list",
+      "shortPath": "rooms.list",
+      "description": "List chat rooms the authenticated user belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ room_id: number, name: string, type: string, role: string, sticky: boolean, unread_num: number, mention_num: number, mytask_num: number, message_num: number, file_num: number, task_num: number, icon_path: string, last_update_time: number, description?: string }[]"
+      }
+    },
+    {
+      "path": "chatwork.api.rooms.update",
+      "shortPath": "rooms.update",
+      "description": "Update the name, description or icon of a group chat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New group chat name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "New group chat description"
+          },
+          {
+            "key": "icon_preset",
+            "optional": true,
+            "type": "group | check | document | meeting | event | project | business | study | security | star | idea | heart | magcup | beer | music | sports | travel",
+            "description": "New group chat icon type"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The room ID"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task in a chat room",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The task content"
+          },
+          {
+            "key": "to_ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "Account IDs of the assignees"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Deadline as a Unix timestamp in seconds"
+          },
+          {
+            "key": "limit_type",
+            "optional": true,
+            "type": "none | date | time",
+            "description": "The deadline type"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "IDs of the created tasks"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a specific task in a chat room",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the task"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "The task ID"
+          },
+          {
+            "key": "assigned_by_account",
+            "optional": false,
+            "type": "{ account_id: number, name: string, avatar_image_url?: string }",
+            "description": "The account that assigned the task"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The message ID the task belongs to"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The task content"
+          },
+          {
+            "key": "limit_time",
+            "optional": false,
+            "type": "number",
+            "description": "Deadline in Unix seconds (0 if none)"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "open | done",
+            "description": "The task status"
+          },
+          {
+            "key": "limit_type",
+            "optional": true,
+            "type": "none | date | time",
+            "description": "The deadline type"
+          },
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ account_id: number, name: string, avatar_image_url?: string }",
+            "description": "The task assignee"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chatwork.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks in a chat room (up to 100)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only tasks assigned to this account ID"
+          },
+          {
+            "key": "assigned_by_account_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only tasks assigned by this account ID"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | done",
+            "description": "Task status filter (default open)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ task_id: number, assigned_by_account: { account_id: number, name: string, avatar_image_url?: string }, message_id: string, body: string, limit_time: number, status: open | done, limit_type?: none | date | time, account: { account_id: number, name: string, avatar_image_url?: string } }[]"
+      }
+    },
+    {
+      "path": "chatwork.api.tasks.updateStatus",
+      "shortPath": "tasks.updateStatus",
+      "description": "Mark a task as done or reopen it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "room_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the room"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the task"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "open | done",
+            "description": "done: complete the task; open: reopen it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "The updated task ID"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "chatwork.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "room_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chatwork_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "organization_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "introduction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "login_mail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tel_organization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tel_extension",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tel_mobile",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "skype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "facebook",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "twitter",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_image_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatwork.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "room_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "message_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filename",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filesize",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "upload_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatwork.db.incomingRequests.search",
+      "entityName": "incomingRequests",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "request_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "account_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chatwork_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "organization_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_image_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatwork.db.members.search",
+      "entityName": "members",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "room_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chatwork_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "organization_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_image_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatwork.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "room_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "send_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "update_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatwork.db.rooms.search",
+      "entityName": "rooms",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "room_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sticky",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "unread_num",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "mention_num",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "mytask_num",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "message_num",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "file_num",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "task_num",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "icon_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_update_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chatwork.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "task_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "room_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "message_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "limit_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "limit_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

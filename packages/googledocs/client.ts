@@ -1,6 +1,12 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
-import type { BatchUpdateResponse, Document, StructuralElement } from './types';
+import type {
+	BatchUpdateResponse,
+	Document,
+	DocumentTabSummary,
+	StructuralElement,
+	Tab,
+} from './types';
 
 export class GoogleDocsAPIError extends Error {
 	constructor(
@@ -155,9 +161,145 @@ function flattenStructuralElements(elements: StructuralElement[]): string {
 	return lines.join('\n');
 }
 
-export function extractPlainText(document: Document): string {
-	const bodyText = flattenStructuralElements(document.body?.content ?? []);
-	return bodyText.replace(/\n{3,}/g, '\n\n').trim();
+export type ExtractPlainTextOptions = {
+	tabId?: string;
+	tabTitle?: string;
+	/** Root-level tab index (see TabProperties.index). */
+	tabIndex?: number;
+	/** When document.tabs is populated, concatenate text from every tab. */
+	allTabs?: boolean;
+};
+
+function normalizePlainText(text: string): string {
+	return text.replace(/\n{3,}/g, '\n\n').trim();
+}
+
+function walkTabs(tabs: Tab[], visit: (tab: Tab) => void): void {
+	for (const tab of tabs) {
+		visit(tab);
+		if (tab.childTabs?.length) {
+			walkTabs(tab.childTabs, visit);
+		}
+	}
+}
+
+/** Find a tab by id, case-insensitive title, or root-level index (depth-first for id/title). */
+export function findTab(
+	document: Document,
+	criteria: { tabId?: string; tabTitle?: string; tabIndex?: number },
+): Tab | undefined {
+	if (!document.tabs?.length) {
+		return undefined;
+	}
+	if (criteria.tabIndex !== undefined) {
+		const roots = document.tabs;
+		const byProp = roots.find(
+			(tab) => tab.tabProperties?.index === criteria.tabIndex,
+		);
+		if (byProp) return byProp;
+		return roots[criteria.tabIndex];
+	}
+
+	const wantId = criteria.tabId;
+	const wantTitle = criteria.tabTitle?.trim().toLowerCase();
+	if (!wantId && !wantTitle) {
+		return undefined;
+	}
+
+	let match: Tab | undefined;
+	walkTabs(document.tabs, (tab) => {
+		if (match) return;
+		const props = tab.tabProperties;
+		if (wantId && props?.tabId === wantId) {
+			match = tab;
+			return;
+		}
+		if (wantTitle && props?.title?.trim().toLowerCase() === wantTitle) {
+			match = tab;
+		}
+	});
+	return match;
+}
+
+/** Flat list of tab metadata for agents (includes nested tabs). */
+export function listTabSummaries(document: Document): DocumentTabSummary[] {
+	if (!document.tabs?.length) {
+		return [];
+	}
+	const summaries: DocumentTabSummary[] = [];
+	walkTabs(document.tabs, (tab) => {
+		const tabId = tab.tabProperties?.tabId;
+		if (!tabId) return;
+		summaries.push({
+			tabId,
+			title: tab.tabProperties?.title,
+			index: tab.tabProperties?.index,
+			parentTabId: tab.tabProperties?.parentTabId,
+			nestingLevel: tab.tabProperties?.nestingLevel,
+		});
+	});
+	return summaries;
+}
+
+function extractPlainTextFromBody(document: Document): string {
+	return flattenStructuralElements(document.body?.content ?? []);
+}
+
+function extractPlainTextFromTab(tab: Tab): string {
+	return flattenStructuralElements(tab.documentTab?.body?.content ?? []);
+}
+
+export function extractPlainText(
+	document: Document,
+	options?: ExtractPlainTextOptions,
+): string {
+	if (options?.tabId || options?.tabTitle || options?.tabIndex !== undefined) {
+		const tab = findTab(document, {
+			tabId: options.tabId,
+			tabTitle: options.tabTitle,
+			tabIndex: options.tabIndex,
+		});
+		if (!tab) {
+			const hint =
+				options.tabId !== undefined
+					? `tabId "${options.tabId}"`
+					: options.tabTitle !== undefined
+						? `tabTitle "${options.tabTitle}"`
+						: `tabIndex ${options.tabIndex}`;
+			throw new Error(
+				`[googledocs] No tab matching ${hint}. Call documents.listDocumentTabs or pass includeTabsContent on getDocumentPlaintext.`,
+			);
+		}
+		return normalizePlainText(extractPlainTextFromTab(tab));
+	}
+
+	if (options?.allTabs && document.tabs?.length) {
+		const parts: string[] = [];
+		walkTabs(document.tabs, (tab) => {
+			const chunk = extractPlainTextFromTab(tab);
+			if (chunk) {
+				const label = tab.tabProperties?.title?.trim();
+				parts.push(label ? `## ${label}\n${chunk}` : chunk);
+			}
+		});
+		return normalizePlainText(parts.join('\n\n'));
+	}
+
+	// includeTabsContent=true leaves top-level body empty; fall back to tabs.
+	if (document.tabs?.length && !document.body?.content?.length) {
+		return extractPlainText(document, { allTabs: true });
+	}
+
+	return normalizePlainText(extractPlainTextFromBody(document));
+}
+
+export function documentGetQuery(options?: {
+	includeTabsContent?: boolean;
+}): Record<string, string | boolean | undefined> {
+	if (options?.includeTabsContent) {
+		return { includeTabsContent: true };
+	}
+	return {};
 }
 
 export function countWords(text: string): number {
@@ -175,25 +317,68 @@ export type DocumentStructure = {
 	namedRanges: number;
 };
 
-export function summarizeStructure(document: Document): DocumentStructure {
+function summarizeStructureFromParts(parts: {
+	body?: Document['body'];
+	headers?: Document['headers'];
+	footers?: Document['footers'];
+	footnotes?: Document['footnotes'];
+	inlineObjects?: Document['inlineObjects'];
+	positionedObjects?: Document['positionedObjects'];
+	namedRanges?: Document['namedRanges'];
+}): DocumentStructure {
 	let tables = 0;
-	for (const element of document.body?.content ?? []) {
+	for (const element of parts.body?.content ?? []) {
 		if (element.table) tables++;
 	}
 
 	return {
-		headers: document.headers ? Object.keys(document.headers).length : 0,
-		footers: document.footers ? Object.keys(document.footers).length : 0,
-		footnotes: document.footnotes ? Object.keys(document.footnotes).length : 0,
+		headers: parts.headers ? Object.keys(parts.headers).length : 0,
+		footers: parts.footers ? Object.keys(parts.footers).length : 0,
+		footnotes: parts.footnotes ? Object.keys(parts.footnotes).length : 0,
 		tables,
-		images: document.inlineObjects
-			? Object.keys(document.inlineObjects).length
+		images: parts.inlineObjects ? Object.keys(parts.inlineObjects).length : 0,
+		positionedObjects: parts.positionedObjects
+			? Object.keys(parts.positionedObjects).length
 			: 0,
-		positionedObjects: document.positionedObjects
-			? Object.keys(document.positionedObjects).length
-			: 0,
-		namedRanges: document.namedRanges
-			? Object.keys(document.namedRanges).length
-			: 0,
+		namedRanges: parts.namedRanges ? Object.keys(parts.namedRanges).length : 0,
 	};
+}
+
+export function summarizeStructure(document: Document): DocumentStructure {
+	if (document.tabs?.length) {
+		let merged: DocumentStructure = {
+			headers: 0,
+			footers: 0,
+			footnotes: 0,
+			tables: 0,
+			images: 0,
+			positionedObjects: 0,
+			namedRanges: 0,
+		};
+		walkTabs(document.tabs, (tab) => {
+			const dt = tab.documentTab;
+			if (!dt) return;
+			const part = summarizeStructureFromParts({
+				body: dt.body,
+				headers: dt.headers,
+				footers: dt.footers,
+				footnotes: dt.footnotes,
+				inlineObjects: dt.inlineObjects,
+				positionedObjects: dt.positionedObjects,
+				namedRanges: dt.namedRanges,
+			});
+			merged = {
+				headers: merged.headers + part.headers,
+				footers: merged.footers + part.footers,
+				footnotes: merged.footnotes + part.footnotes,
+				tables: merged.tables + part.tables,
+				images: merged.images + part.images,
+				positionedObjects: merged.positionedObjects + part.positionedObjects,
+				namedRanges: merged.namedRanges + part.namedRanges,
+			};
+		});
+		return merged;
+	}
+
+	return summarizeStructureFromParts(document);
 }

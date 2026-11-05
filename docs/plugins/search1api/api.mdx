@@ -1,0 +1,942 @@
+---
+title: API
+description: "API reference for Search1API: every `search1api.api.*` operation with input and output types."
+---
+
+Every `search1api.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### health
+
+`account.health`
+
+Check whether the Search1API API is serving traffic
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.account.health({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `timestamp` | `string` | No | — |
+| `version` | `string` | No | — |
+
+
+
+---
+
+### usage
+
+`account.usage`
+
+Get the remaining credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.account.usage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `period` | `day \| week \| month \| year` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usage` | `number` | Yes | — |
+| `user_id` | `string` | No | — |
+| `credential_type` | `api_key \| oauth` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+---
+
+## Content
+
+### crawl
+
+`content.crawl`
+
+Crawl a URL and return its readable content
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.content.crawl({ url: 'https://example.com/docs' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `enableFallback` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crawlParameters` | `object` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="crawlParameters full type">
+
+```ts
+{
+  url: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  title: string,
+  link: string,
+  content: string,
+  metadata?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### crawlBatch
+
+`content.crawlBatch`
+
+Crawl many URLs in a single request
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.content.crawlBatch({});
+```
+
+**Input:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  url: string,
+  enableFallback?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  crawlParameters: {
+    url: string
+  },
+  results: {
+    title: string,
+    link: string,
+    content: string,
+    metadata?: {
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### extract
+
+`content.extract`
+
+Extract structured data from a page with a prompt
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.content.extract({ url: 'https://example.com/pricing', prompt: 'List the pricing tiers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `prompt` | `string` | No | — |
+| `response_format` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_format full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `extractParameters` | `object` | Yes | — |
+| `results` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="extractParameters full type">
+
+```ts
+{
+  url: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### screenshot
+
+`content.screenshot`
+
+Render a page as a PNG, JPEG, or WebP image
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.content.screenshot({
+	url: 'https://example.com',
+	full_page: true,
+	viewport: { width: 1440, height: 900 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `format` | `png \| jpeg \| webp` | No | — |
+| `full_page` | `boolean` | No | — |
+| `viewport` | `object` | No | — |
+| `wait_until` | `domcontentloaded \| load \| networkidle` | No | — |
+| `wait_for_selector` | `string` | No | — |
+| `selector` | `string` | No | — |
+| `delay_ms` | `number` | No | — |
+| `timeout_ms` | `number` | No | — |
+| `quality` | `number` | No | — |
+| `omit_background` | `boolean` | No | — |
+| `color_scheme` | `light \| dark` | No | — |
+| `animations` | `disabled \| allow` | No | — |
+
+<AccordionGroup>
+<Accordion title="viewport full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  device_scale_factor?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `sizeBytes` | `number` | Yes | — |
+
+
+
+---
+
+### sitemap
+
+`content.sitemap`
+
+Extract a site's URLs from its sitemap
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.content.sitemap({ url: 'https://example.com', type: 'sitemap' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `type` | `sitemap \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `string[]` | Yes | — |
+
+
+
+---
+
+## Deepcrawl
+
+### start
+
+`deepcrawl.start`
+
+Start an asynchronous whole-site crawl
+
+**Risk:** `write`
+
+```ts
+await corsair.search1api.api.deepcrawl.start({ url: 'https://example.com', type: 'sitemap' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `type` | `sitemap \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `status` | `queued` | Yes | — |
+
+
+
+---
+
+### status
+
+`deepcrawl.status`
+
+Check a deepcrawl task's status and result archive
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.deepcrawl.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `status` | `queued \| waiting \| processing \| completed \| failed \| not_found` | Yes | — |
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+| `r2Key` | `string` | No | — |
+| `zipUrl` | `string` | No | — |
+
+
+
+---
+
+## Web
+
+### ask
+
+`web.ask`
+
+Agentic search that picks engines and reranks results automatically
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.web.ask({ query: 'what shipped in AI this week?' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `intent` | `object` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `errors` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="intent full type">
+
+```ts
+{
+  search_query: string,
+  sources: string[],
+  time_range?: day | week | month | year | | null
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  title: string,
+  link: string,
+  snippet: string,
+  published_date?: string,
+  source: string,
+  relevance: number
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  source: string,
+  message: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### feedback
+
+`web.feedback`
+
+Report a Search1API problem or feature request from an agent run
+
+**Risk:** `write`
+
+```ts
+await corsair.search1api.api.web.feedback({ message: 'POST /crawl returned empty content for example.com/docs', category: 'bug', request_id: 'req_8f3a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `intent` | `string` | No | — |
+| `category` | `bug \| feature_request \| docs \| other` | No | — |
+| `request_id` | `string` | No | — |
+| `agent` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="agent full type">
+
+```ts
+{
+  name?: string,
+  model?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `new` | Yes | — |
+
+
+
+---
+
+### news
+
+`web.news`
+
+Search recent news across six sources
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.web.news({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `search_service` | `google \| bing \| duckduckgo \| yahoo \| hackernews \| reuters \| ` | No | — |
+| `max_results` | `number` | No | — |
+| `crawl_results` | `number` | No | — |
+| `image` | `boolean` | No | — |
+| `include_sites` | `string[]` | No | — |
+| `exclude_sites` | `string[]` | No | — |
+| `language` | `string` | No | — |
+| `time_range` | `day \| week \| month \| year \| ` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchParameters` | `object` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `images` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="searchParameters full type">
+
+```ts
+{
+  query: string,
+  search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | ,
+  max_results?: number,
+  crawl_results?: number,
+  image?: boolean,
+  include_sites?: string[],
+  exclude_sites?: string[],
+  language?: string,
+  time_range?: day | week | month | year |
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  title: string,
+  link: string,
+  snippet: string,
+  content?: string,
+  published_date?: string,
+  metadata?: {
+    kind?: repo | issue | pr | discussion,
+    stars?: number,
+    language?: string,
+    num_comments?: number,
+    story_url?: string,
+    points?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### newsBatch
+
+`web.newsBatch`
+
+Run many news searches in a single request
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.web.newsBatch({});
+```
+
+**Input:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  query: string,
+  search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | ,
+  max_results?: number,
+  crawl_results?: number,
+  image?: boolean,
+  include_sites?: string[],
+  exclude_sites?: string[],
+  language?: string,
+  time_range?: day | week | month | year |
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `summary` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  success: boolean,
+  data?: {
+    searchParameters: {
+      query: string,
+      search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | ,
+      max_results?: number,
+      crawl_results?: number,
+      image?: boolean,
+      include_sites?: string[],
+      exclude_sites?: string[],
+      language?: string,
+      time_range?: day | week | month | year |
+    },
+    results: {
+      title: string,
+      link: string,
+      snippet: string,
+      content?: string,
+      published_date?: string,
+      metadata?: {
+        kind?: repo | issue | pr | discussion,
+        stars?: number,
+        language?: string,
+        num_comments?: number,
+        story_url?: string,
+        points?: number
+      }
+    }[],
+    images?: string[]
+  },
+  error?: {
+    message?: string,
+    statusCode?: number
+  },
+  cost: number
+}[]
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  total: number,
+  successful: number,
+  failed: number,
+  totalCost: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`web.search`
+
+Search the web across 19 engines, with optional crawling
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.web.search({ query: 'open source integration layer', search_service: 'duckduckgo', max_results: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `search_service` | `360 \| google \| bing \| bingcn \| duckduckgo \| yahoo \| yandex \| youtube \| x \| reddit \| github \| arxiv \| wechat \| bilibili \| imdb \| wikipedia \| grokipedia \| baidu \| quark \| ` | No | — |
+| `max_results` | `number` | No | — |
+| `page` | `number` | No | — |
+| `crawl_results` | `number` | No | — |
+| `image` | `boolean` | No | — |
+| `include_sites` | `string[]` | No | — |
+| `exclude_sites` | `string[]` | No | — |
+| `language` | `string` | No | — |
+| `time_range` | `day \| week \| month \| year \| ` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchParameters` | `object` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `images` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="searchParameters full type">
+
+```ts
+{
+  query: string,
+  search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | ,
+  max_results?: number,
+  page?: number,
+  crawl_results?: number,
+  image?: boolean,
+  include_sites?: string[],
+  exclude_sites?: string[],
+  language?: string,
+  time_range?: day | week | month | year |
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  title: string,
+  link: string,
+  snippet: string,
+  content?: string,
+  published_date?: string,
+  metadata?: {
+    kind?: repo | issue | pr | discussion,
+    stars?: number,
+    language?: string,
+    num_comments?: number,
+    story_url?: string,
+    points?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchBatch
+
+`web.searchBatch`
+
+Run many web searches in a single request
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.web.searchBatch({});
+```
+
+**Input:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  query: string,
+  search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | ,
+  max_results?: number,
+  page?: number,
+  crawl_results?: number,
+  image?: boolean,
+  include_sites?: string[],
+  exclude_sites?: string[],
+  language?: string,
+  time_range?: day | week | month | year |
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `summary` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  success: boolean,
+  data?: {
+    searchParameters: {
+      query: string,
+      search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | ,
+      max_results?: number,
+      page?: number,
+      crawl_results?: number,
+      image?: boolean,
+      include_sites?: string[],
+      exclude_sites?: string[],
+      language?: string,
+      time_range?: day | week | month | year |
+    },
+    results: {
+      title: string,
+      link: string,
+      snippet: string,
+      content?: string,
+      published_date?: string,
+      metadata?: {
+        kind?: repo | issue | pr | discussion,
+        stars?: number,
+        language?: string,
+        num_comments?: number,
+        story_url?: string,
+        points?: number
+      }
+    }[],
+    images?: string[]
+  },
+  error?: {
+    message?: string,
+    statusCode?: number
+  },
+  cost: number
+}[]
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  total: number,
+  successful: number,
+  failed: number,
+  totalCost: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trending
+
+`web.trending`
+
+Get trending topics from GitHub or Hacker News
+
+**Risk:** `read`
+
+```ts
+await corsair.search1api.api.web.trending({ search_service: 'github', max_results: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_service` | `string` | Yes | — |
+| `max_results` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trendingParameters` | `object` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="trendingParameters full type">
+
+```ts
+{
+  search_service: string,
+  max_results?: number
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  title: string,
+  url: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

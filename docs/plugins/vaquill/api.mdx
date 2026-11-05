@@ -1,0 +1,2186 @@
+---
+title: API
+description: "API reference for Vaquill: every `vaquill.api.*` operation with input and output types."
+---
+
+Every `vaquill.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### creditsBalance
+
+`account.creditsBalance`
+
+Get your credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.account.creditsBalance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creditsRemaining` | `number` | No | — |
+| `usdRemaining` | `number` | No | — |
+| `bySource` | `any` | No | — |
+| `nextExpiry` | `object` | No | — |
+| `plan` | `string` | No | — |
+| `totalPurchased` | `number` | No | — |
+| `totalConsumed` | `number` | No | — |
+| `rateLimit` | `any` | No | — |
+| `asOf` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="nextExpiry full type">
+
+```ts
+{
+  at?: string,
+  credits?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### creditsPricing
+
+`account.creditsPricing`
+
+Get API credit pricing
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.account.creditsPricing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dollarPerCredit` | `number` | No | — |
+| `minCredits` | `number` | No | — |
+| `maxCredits` | `number` | No | — |
+| `costs` | `any` | No | — |
+
+
+
+---
+
+## Alerts
+
+### boards
+
+`alerts.boards`
+
+List watchable law-change boards
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.alerts.boards({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `corpusType` | `string` | No | — |
+| `state` | `federal \| al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  boards: {
+    corpusType: string,
+    state?: string | null,
+    label?: string,
+    cadence?: string,
+    scopable?: boolean,
+    scopeBrowseCorpus?: string | null
+  }[],
+  total?: number,
+  hasMore?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  processingTimeMs?: number,
+  creditsConsumed?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### watchChangeDiff
+
+`alerts.watchChangeDiff`
+
+Old-vs-new text for one change
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.alerts.watchChangeDiff({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watch_id` | `string` | Yes | — |
+| `change_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  changeId?: string | number,
+  changeKind?: string | null,
+  beforeText?: string | null,
+  afterText?: string | null,
+  hasBefore?: boolean,
+  hasAfter?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### watchChanges
+
+`alerts.watchChanges`
+
+List what changed on a watch's source
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.alerts.watchChanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watch_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sinceId` | `number` | No | — |
+| `beforeId` | `number` | No | — |
+| `since` | `string` | No | — |
+| `changeKind` | `added \| amended \| removed[]` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  changes: {
+    id: number,
+    refreshLogId?: number | null,
+    corpusType?: string | null,
+    state?: string | null,
+    changeKind?: string | null,
+    actId?: string | null,
+    citation?: string | null,
+    title?: string | null,
+    detectedAt?: string | null,
+    hasDiff?: boolean
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  processingTimeMs?: number,
+  creditsConsumed?: number,
+  cursor?: number | null,
+  hasMore?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### watchDeliveries
+
+`alerts.watchDeliveries`
+
+List delivery history for a watch
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.alerts.watchDeliveries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watch_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deliveries: {
+    deliveryId?: string | null,
+    status?: string | null,
+    firedAt?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### watchesCreate
+
+`alerts.watchesCreate`
+
+Create a board watch for law-change alerts
+
+**Risk:** `write`
+
+```ts
+await corsair.vaquill.api.alerts.watchesCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `corpusType` | `string` | Yes | — |
+| `state` | `federal \| al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | No | — |
+| `channel` | `webhook \| email \| both` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `webhookSecret` | `string` | No | — |
+| `emailAddress` | `string` | No | — |
+| `scope` | `object` | No | — |
+| `webhookAuth` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="scope full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="webhookAuth full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  watch?: {
+    id: string | number,
+    corpusType?: string,
+    state?: string | null,
+    channel?: string,
+    isActive?: boolean,
+    scope?: {
+    } | null,
+    createdAt?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### watchesDelete
+
+`alerts.watchesDelete`
+
+Delete a board watch
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vaquill.api.alerts.watchesDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watch_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### watchesList
+
+`alerts.watchesList`
+
+List your board watches
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.alerts.watchesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  watches?: {
+    id: string | number,
+    corpusType?: string,
+    state?: string | null,
+    channel?: string,
+    isActive?: boolean,
+    scope?: {
+    } | null,
+    createdAt?: string | null
+  }[],
+  total?: number,
+  hasMore?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### watchesTest
+
+`alerts.watchesTest`
+
+Send a test delivery for a watch
+
+**Risk:** `write`
+
+```ts
+await corsair.vaquill.api.alerts.watchesTest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watch_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | No | — |
+
+
+
+---
+
+### watchesUpdate
+
+`alerts.watchesUpdate`
+
+Update a board watch
+
+**Risk:** `write`
+
+```ts
+await corsair.vaquill.api.alerts.watchesUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watch_id` | `string` | Yes | — |
+| `isActive` | `boolean` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `webhookSecret` | `string` | No | — |
+| `scope` | `object` | No | — |
+| `emailAddress` | `string` | No | — |
+| `webhookAuth` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="scope full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="webhookAuth full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  watch?: {
+    id: string | number,
+    corpusType?: string,
+    state?: string | null,
+    channel?: string,
+    isActive?: boolean,
+    scope?: {
+    } | null,
+    createdAt?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Session Laws
+
+### batch
+
+`sessionLaws.batch`
+
+Get many state session laws at once, by id or citation
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.sessionLaws.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `jurisdiction` | `al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | No | — |
+| `includeBody` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `laws` | `object[]` | Yes | — |
+| `resolved` | `any[]` | No | — |
+| `notFound` | `string[]` | No | — |
+| `count` | `number` | No | — |
+| `deduped` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="laws full type">
+
+```ts
+{
+  sessionLawId: string,
+  jurisdiction?: string,
+  citation?: string | null,
+  citableAs?: string | null,
+  citationShort?: string | null,
+  session?: string | null,
+  series?: string | null,
+  instrumentType?: string | null,
+  number?: string | null,
+  title?: string | null,
+  shortTitle?: string | null,
+  approvedDate?: string | null,
+  effectiveFirst?: string | null,
+  effectiveLast?: string | null,
+  enactmentOutcome?: string | null,
+  isLaw?: boolean | null,
+  textStatus?: string | null,
+  charCount?: number | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### body
+
+`sessionLaws.body`
+
+Get a state session law's text
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.sessionLaws.body({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_law_id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `startChar` | `number` | No | — |
+| `expectTextSha256` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessionLawId` | `string` | Yes | — |
+| `citation` | `string` | No | — |
+| `jurisdiction` | `string` | No | — |
+| `session` | `string` | No | — |
+| `approvedDate` | `string` | No | — |
+| `sourceUrl` | `string` | No | — |
+| `available` | `boolean` | No | — |
+| `reason` | `string` | No | — |
+| `textStatus` | `string` | No | — |
+| `withheldReason` | `string` | No | — |
+| `text` | `string` | No | — |
+| `creditsConsumed` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+
+
+
+---
+
+### changes
+
+`sessionLaws.changes`
+
+Feed of changes to the session-law registry
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.sessionLaws.changes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sinceId` | `number` | No | — |
+| `jurisdiction` | `al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `changes` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+| `cursor` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `creditsConsumed` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="changes full type">
+
+```ts
+{
+  id: number,
+  jurisdiction?: string | null,
+  changeKind?: string | null,
+  sessionLawId?: string | null,
+  citation?: string | null,
+  title?: string | null,
+  detectedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sessionLaws.get`
+
+Get a state session law, by id or by citation
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.sessionLaws.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_law_id` | `string` | Yes | — |
+| `jurisdiction` | `al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessionLawId` | `string` | No | — |
+| `lawId` | `string` | No | — |
+| `jurisdiction` | `string` | No | — |
+| `citation` | `string` | No | — |
+| `citableAs` | `string` | No | — |
+| `citationShort` | `string` | No | — |
+| `session` | `string` | No | — |
+| `series` | `string` | No | — |
+| `instrumentType` | `string` | No | — |
+| `title` | `string` | No | — |
+| `shortTitle` | `string` | No | — |
+| `approvedDate` | `string` | No | — |
+| `effectiveDates` | `any[]` | No | — |
+| `codeSectionsAffected` | `any[]` | No | — |
+| `sourceUrl` | `string` | No | — |
+| `textStatus` | `string` | No | — |
+| `creditsConsumed` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`sessionLaws.list`
+
+List a state's session laws
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.sessionLaws.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jurisdiction` | `al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | Yes | — |
+| `session` | `string` | No | — |
+| `series` | `string` | No | — |
+| `instrumentType` | `string` | No | — |
+| `approvedFrom` | `string` | No | — |
+| `approvedTo` | `string` | No | — |
+| `effectiveFrom` | `string` | No | — |
+| `effectiveTo` | `string` | No | — |
+| `hasText` | `boolean` | No | — |
+| `textStatus` | `held \| withheld \| not_held \| pending` | No | — |
+| `isLaw` | `boolean` | No | — |
+| `enactmentOutcome` | `string` | No | — |
+| `updatedSince` | `string` | No | — |
+| `q` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+| `nextCursor` | `string` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `coverage` | `any` | No | — |
+| `creditsConsumed` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  sessionLawId: string,
+  jurisdiction?: string,
+  citation?: string | null,
+  citableAs?: string | null,
+  citationShort?: string | null,
+  session?: string | null,
+  series?: string | null,
+  instrumentType?: string | null,
+  number?: string | null,
+  title?: string | null,
+  shortTitle?: string | null,
+  approvedDate?: string | null,
+  effectiveFirst?: string | null,
+  effectiveLast?: string | null,
+  enactmentOutcome?: string | null,
+  isLaw?: boolean | null,
+  textStatus?: string | null,
+  charCount?: number | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`sessionLaws.search`
+
+Search the text of state session laws
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.sessionLaws.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `jurisdiction` | `al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | No | — |
+| `session` | `string` | No | — |
+| `series` | `string` | No | — |
+| `instrumentType` | `string` | No | — |
+| `approvedFrom` | `string` | No | — |
+| `approvedTo` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `parsed` | `any` | No | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `creditsConsumed` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  sessionLawId: string,
+  jurisdiction?: string,
+  citation?: string | null,
+  citableAs?: string | null,
+  citationShort?: string | null,
+  session?: string | null,
+  series?: string | null,
+  instrumentType?: string | null,
+  number?: string | null,
+  title?: string | null,
+  shortTitle?: string | null,
+  approvedDate?: string | null,
+  effectiveFirst?: string | null,
+  effectiveLast?: string | null,
+  enactmentOutcome?: string | null,
+  isLaw?: boolean | null,
+  textStatus?: string | null,
+  charCount?: number | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Statutes
+
+### count
+
+`statutes.count`
+
+Count statute sections matching a scope
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.count({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `corpusType` | `USC \| CFR \| STATE \| CONSTITUTION \| FEDERAL_LOCAL_RULES \| FEDERAL_RULES \| STATE_CONSTITUTION \| STATE_RULES \| EXECUTIVE_ACTION \| REGULATION \| FEDERAL_REGISTER \| FEDERAL_REGISTER_NOTICE \| AGENCY_GUIDANCE \| SENTENCING_GUIDELINES \| US_TAX_TREATY \| STATE_AGENCY_GUIDANCE \| STATE_AG_OPINION \| SESSION_LAW \| STATE_REGISTER \| STATUTE_COMPILATION \| AGENCY_ADJUDICATION \| CFR_ANNUAL \| USC_ANNUAL \| USC \| CFR \| STATE \| CONSTITUTION \| FEDERAL_LOCAL_RULES \| FEDERAL_RULES \| STATE_CONSTITUTION \| STATE_RULES \| EXECUTIVE_ACTION \| REGULATION \| FEDERAL_REGISTER \| FEDERAL_REGISTER_NOTICE \| AGENCY_GUIDANCE \| SENTENCING_GUIDELINES \| US_TAX_TREATY \| STATE_AGENCY_GUIDANCE \| STATE_AG_OPINION \| SESSION_LAW \| STATE_REGISTER \| STATUTE_COMPILATION \| AGENCY_ADJUDICATION \| CFR_ANNUAL \| USC_ANNUAL[]` | No | — |
+| `state` | `federal \| al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy \| federal \| al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy[]` | No | — |
+| `code` | `string \| string[]` | No | — |
+| `article` | `string \| string[]` | No | — |
+| `titleNumber` | `number` | No | — |
+| `chapter` | `string \| string[]` | No | — |
+| `part` | `string \| string[]` | No | — |
+| `actStatus` | `abolished \| deleted \| expired \| in_force \| inactive \| non_precedential \| not_funded \| not_yet_effective \| omitted \| proposed \| recodified \| recompiled \| rejected \| relocated \| removed \| renumbered \| repealed \| rescinded \| reserved \| revoked \| superseded \| terminated \| transferred \| unconstitutional \| vacant \| vacated \| vetoed \| withdrawn \| abolished \| deleted \| expired \| in_force \| inactive \| non_precedential \| not_funded \| not_yet_effective \| omitted \| proposed \| recodified \| recompiled \| rejected \| relocated \| removed \| renumbered \| repealed \| rescinded \| reserved \| revoked \| superseded \| terminated \| transferred \| unconstitutional \| vacant \| vacated \| vetoed \| withdrawn[]` | No | — |
+| `excludeRepealed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `isExact` | `boolean` | No | — |
+| `scope` | `object` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="scope full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### coverage
+
+`statutes.coverage`
+
+List the covered corpora and jurisdictions
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.coverage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  corpusTypes: {
+    token: string,
+    description?: string,
+    scope?: string
+  }[],
+  jurisdictions: {
+    code: string,
+    name?: string,
+    kind?: string,
+    sectionCount?: number,
+    hasData?: boolean,
+    statusBreakdown?: {
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### divisions
+
+`statutes.divisions`
+
+Browse the statutory hierarchy of a corpus
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.divisions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `corpusType` | `USC \| CFR \| STATE \| REGULATION \| CONSTITUTION \| STATE_CONSTITUTION \| FEDERAL_RULES` | Yes | — |
+| `state` | `al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | No | — |
+| `titleNumber` | `number` | No | — |
+| `code` | `string` | No | — |
+| `chapter` | `string` | No | — |
+| `part` | `string` | No | — |
+| `article` | `string` | No | — |
+| `excludeRepealed` | `boolean` | No | — |
+| `actStatus` | `abolished \| deleted \| expired \| in_force \| inactive \| non_precedential \| not_funded \| not_yet_effective \| omitted \| proposed \| recodified \| recompiled \| rejected \| relocated \| removed \| renumbered \| repealed \| rescinded \| reserved \| revoked \| superseded \| terminated \| transferred \| unconstitutional \| vacant \| vacated \| vetoed \| withdrawn` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `corpusType` | `string` | Yes | — |
+| `level` | `string` | No | — |
+| `parentLabel` | `string` | No | — |
+| `divisions` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+| `truncated` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="divisions full type">
+
+```ts
+{
+  identifier: string,
+  name?: string,
+  kind?: string,
+  isLeaf?: boolean,
+  actId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enactments
+
+`statutes.enactments`
+
+List the session-law enactments behind a section
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.enactments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `act_id` | `string` | Yes | Section identifier, as returned on a search hit or by the citation resolver. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actId` | `string` | Yes | — |
+| `jurisdiction` | `string` | No | — |
+| `supported` | `boolean` | No | — |
+| `reason` | `string` | No | — |
+| `enactments` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+| `truncated` | `boolean` | No | — |
+| `creditsConsumed` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="enactments full type">
+
+```ts
+{
+  sessionLawId?: string | null,
+  href?: string | null,
+  citation?: string | null,
+  title?: string | null,
+  approvedDate?: string | null,
+  action?: string | null,
+  matchQuality?: string | null,
+  textStatus?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extractCitations
+
+`statutes.extractCitations`
+
+Find the citations in a text and optionally resolve each
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.extractCitations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `state` | `al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | No | — |
+| `resolve` | `boolean` | No | — |
+| `includeUnresolved` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `citations` | `object[]` | Yes | — |
+| `counts` | `object` | No | — |
+| `truncated` | `boolean` | No | — |
+| `textChars` | `number` | No | — |
+| `extractorVersion` | `string` | No | — |
+| `creditsConsumed` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="citations full type">
+
+```ts
+{
+  citation: string,
+  resolved?: boolean,
+  section?: {
+    actId: string,
+    citation?: string,
+    citationShort?: string | null,
+    title?: string | null,
+    corpusType?: string,
+    state?: string | null,
+    year?: number | null,
+    excerpt?: string | null,
+    body?: string | null,
+    titleNumber?: string | number | null,
+    titleName?: string | null,
+    chapter?: string | null,
+    chapterName?: string | null,
+    sectionNumber?: string | null,
+    sectionTitle?: string | null,
+    displayPath?: string | null,
+    actStatus?: string | null,
+    goodLawStatus?: string | null,
+    effectiveDate?: string | null,
+    wordCount?: number | null,
+    htmlUrl?: string | null,
+    textUrl?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="counts full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resolve
+
+`statutes.resolve`
+
+Resolve Bluebook citations to statute sections
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.resolve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `citations` | `string[]` | Yes | — |
+| `state` | `al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | No | — |
+| `corpusType` | `CONSTITUTION \| REGULATION \| STATE \| STATE_CONSTITUTION \| STATE_RULES` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `resolvedCount` | `number` | No | — |
+| `count` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resolved: boolean,
+  inputCitation: string,
+  section?: {
+    actId: string,
+    citation?: string,
+    citationShort?: string | null,
+    title?: string | null,
+    corpusType?: string,
+    state?: string | null,
+    year?: number | null,
+    excerpt?: string | null,
+    body?: string | null,
+    titleNumber?: string | number | null,
+    titleName?: string | null,
+    chapter?: string | null,
+    chapterName?: string | null,
+    sectionNumber?: string | null,
+    sectionTitle?: string | null,
+    displayPath?: string | null,
+    actStatus?: string | null,
+    goodLawStatus?: string | null,
+    effectiveDate?: string | null,
+    wordCount?: number | null,
+    htmlUrl?: string | null,
+    textUrl?: string | null
+  } | null,
+  subsection?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resolveCitation
+
+`statutes.resolveCitation`
+
+Resolve a single Bluebook citation to its section
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.resolveCitation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cite` | `string` | Yes | — |
+| `state` | `al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy` | No | — |
+| `corpusType` | `CONSTITUTION \| REGULATION \| STATE \| STATE_CONSTITUTION \| STATE_RULES` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resolved` | `boolean` | Yes | — |
+| `inputCitation` | `string` | No | — |
+| `section` | `object` | No | — |
+| `subsection` | `any` | No | — |
+| `matchLevel` | `string` | No | — |
+| `missReason` | `string` | No | — |
+| `candidates` | `any[]` | No | — |
+| `creditsConsumed` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="section full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`statutes.search`
+
+Search US statutes, regulations, court rules and guidance
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `corpusType` | `USC \| CFR \| STATE \| CONSTITUTION \| FEDERAL_LOCAL_RULES \| FEDERAL_RULES \| STATE_CONSTITUTION \| STATE_RULES \| EXECUTIVE_ACTION \| REGULATION \| FEDERAL_REGISTER \| FEDERAL_REGISTER_NOTICE \| AGENCY_GUIDANCE \| SENTENCING_GUIDELINES \| US_TAX_TREATY \| STATE_AGENCY_GUIDANCE \| STATE_AG_OPINION \| SESSION_LAW \| STATE_REGISTER \| STATUTE_COMPILATION \| AGENCY_ADJUDICATION \| CFR_ANNUAL \| USC_ANNUAL \| USC \| CFR \| STATE \| CONSTITUTION \| FEDERAL_LOCAL_RULES \| FEDERAL_RULES \| STATE_CONSTITUTION \| STATE_RULES \| EXECUTIVE_ACTION \| REGULATION \| FEDERAL_REGISTER \| FEDERAL_REGISTER_NOTICE \| AGENCY_GUIDANCE \| SENTENCING_GUIDELINES \| US_TAX_TREATY \| STATE_AGENCY_GUIDANCE \| STATE_AG_OPINION \| SESSION_LAW \| STATE_REGISTER \| STATUTE_COMPILATION \| AGENCY_ADJUDICATION \| CFR_ANNUAL \| USC_ANNUAL[]` | No | — |
+| `state` | `federal \| al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy \| federal \| al \| ak \| az \| ar \| as \| ca \| co \| ct \| de \| dc \| fl \| ga \| gu \| hi \| id \| il \| in \| ia \| ks \| ky \| la \| me \| md \| ma \| mi \| mn \| ms \| mo \| mp \| mt \| ne \| nv \| nh \| nj \| nm \| ny \| nc \| nd \| oh \| ok \| or \| pa \| pr \| ri \| sc \| sd \| tn \| tx \| ut \| vt \| va \| vi \| wa \| wv \| wi \| wy[]` | No | — |
+| `code` | `string \| string[]` | No | — |
+| `article` | `string \| string[]` | No | — |
+| `yearFrom` | `number` | No | — |
+| `yearTo` | `number` | No | — |
+| `excludeRepealed` | `boolean` | No | — |
+| `actStatus` | `abolished \| deleted \| expired \| in_force \| inactive \| non_precedential \| not_funded \| not_yet_effective \| omitted \| proposed \| recodified \| recompiled \| rejected \| relocated \| removed \| renumbered \| repealed \| rescinded \| reserved \| revoked \| superseded \| terminated \| transferred \| unconstitutional \| vacant \| vacated \| vetoed \| withdrawn \| abolished \| deleted \| expired \| in_force \| inactive \| non_precedential \| not_funded \| not_yet_effective \| omitted \| proposed \| recodified \| recompiled \| rejected \| relocated \| removed \| renumbered \| repealed \| rescinded \| reserved \| revoked \| superseded \| terminated \| transferred \| unconstitutional \| vacant \| vacated \| vetoed \| withdrawn[]` | No | — |
+| `changedSince` | `string` | No | — |
+| `agency` | `string \| string[]` | No | — |
+| `source` | `string` | No | — |
+| `fields` | `string \| string[]` | No | — |
+| `documentType` | `final \| proposed \| presidential` | No | — |
+| `publishedFrom` | `string` | No | — |
+| `publishedTo` | `string` | No | — |
+| `titleNumber` | `number` | No | — |
+| `chapter` | `string \| string[]` | No | — |
+| `part` | `string \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `includeBody` | `boolean` | No | — |
+| `excerptChars` | `number` | No | — |
+| `matchType` | `any \| all \| phrase` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+| `total` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `noGoodMatch` | `boolean` | No | — |
+| `matchQuality` | `string` | No | — |
+| `citationMissReason` | `string` | No | — |
+| `rankingDegraded` | `boolean` | No | — |
+| `query` | `string` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  excerpt?: string | null,
+  body?: string | null,
+  goodLawStatus?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### section
+
+`statutes.section`
+
+Get a statute section by id
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.section({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `act_id` | `string` | Yes | Section identifier, as returned on a search hit or by the citation resolver. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `section` | `object` | Yes | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="section full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sectionBody
+
+`statutes.sectionBody`
+
+Get a section's full text
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.sectionBody({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `act_id` | `string` | Yes | Section identifier, as returned on a search hit or by the citation resolver. |
+| `format` | `all \| both \| html \| markdown \| plain \| content \| operative` | No | — |
+| `structured` | `boolean` | No | — |
+| `asOf` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actId` | `string` | Yes | — |
+| `plain` | `string` | No | — |
+| `html` | `string` | No | — |
+| `content` | `string` | No | — |
+| `operative` | `string` | No | — |
+| `markdown` | `string` | No | — |
+| `subsections` | `any[]` | No | — |
+| `tables` | `any[]` | No | — |
+| `figures` | `any[]` | No | — |
+| `note` | `string` | No | — |
+| `source` | `string` | No | — |
+| `sourceUrl` | `string` | No | — |
+| `available` | `boolean` | No | — |
+| `asOf` | `any` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+
+
+---
+
+### sectionChanges
+
+`statutes.sectionChanges`
+
+Get a section's amendment history
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.sectionChanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `act_id` | `string` | Yes | Section identifier, as returned on a search hit or by the citation resolver. |
+| `limit` | `number` | No | — |
+| `sinceId` | `number` | No | — |
+| `beforeId` | `number` | No | — |
+| `changeKind` | `added \| amended \| removed[]` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actId` | `string` | Yes | — |
+| `section` | `object` | No | — |
+| `changes` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `cursor` | `number` | No | — |
+| `observedFrom` | `string` | No | — |
+| `coverage` | `string` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="section full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="changes full type">
+
+```ts
+{
+  id: number,
+  changeKind?: string,
+  detectedAt?: string,
+  citation?: string,
+  displayCitation?: string | null,
+  title?: string | null,
+  hasDiff?: boolean,
+  corpusType?: string,
+  state?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sectionCitedBy
+
+`statutes.sectionCitedBy`
+
+Get sections citing this one
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.sectionCitedBy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `act_id` | `string` | Yes | Section identifier, as returned on a search hit or by the citation resolver. |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `section` | `object` | Yes | — |
+| `citers` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+| `truncated` | `boolean` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="section full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="citers full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  excerpt?: string | null,
+  body?: string | null,
+  goodLawStatus?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sectionCrossState
+
+`statutes.sectionCrossState`
+
+Compare a provision across states
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.sectionCrossState({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `act_id` | `string` | Yes | Section identifier, as returned on a search hit or by the citation resolver. |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `section` | `object` | Yes | — |
+| `neighbors` | `object[]` | Yes | — |
+| `statesCovered` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="section full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="neighbors full type">
+
+```ts
+{
+  section?: {
+    actId: string,
+    citation?: string,
+    citationShort?: string | null,
+    title?: string | null,
+    corpusType?: string,
+    state?: string | null,
+    year?: number | null,
+    excerpt?: string | null,
+    body?: string | null,
+    titleNumber?: string | number | null,
+    titleName?: string | null,
+    chapter?: string | null,
+    chapterName?: string | null,
+    sectionNumber?: string | null,
+    sectionTitle?: string | null,
+    displayPath?: string | null,
+    actStatus?: string | null,
+    goodLawStatus?: string | null,
+    effectiveDate?: string | null,
+    wordCount?: number | null,
+    htmlUrl?: string | null,
+    textUrl?: string | null
+  } | null,
+  state?: string,
+  similarity?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sectionDefinitions
+
+`statutes.sectionDefinitions`
+
+Get the defined terms governing a section
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.sectionDefinitions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `act_id` | `string` | Yes | Section identifier, as returned on a search hit or by the citation resolver. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `section` | `object` | Yes | — |
+| `definitionsSection` | `object` | No | — |
+| `terms` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="section full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="definitionsSection full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="terms full type">
+
+```ts
+{
+  term: string,
+  definition?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sectionRelated
+
+`statutes.sectionRelated`
+
+Get the neighbouring sections in statutory order
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.sectionRelated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `act_id` | `string` | Yes | Section identifier, as returned on a search hit or by the citation resolver. |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `section` | `object` | Yes | — |
+| `previous` | `object[]` | Yes | — |
+| `next` | `object[]` | Yes | — |
+| `container` | `string` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="section full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="previous full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sections
+
+`statutes.sections`
+
+Get statute sections in batch by ids
+
+**Risk:** `read`
+
+```ts
+await corsair.vaquill.api.statutes.sections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actIds` | `string[]` | Yes | — |
+| `includeBody` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sections` | `object[]` | Yes | — |
+| `notFound` | `string[]` | No | — |
+| `notFoundDetail` | `any[]` | No | — |
+| `count` | `number` | No | — |
+| `processingTimeMs` | `number` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="sections full type">
+
+```ts
+{
+  actId: string,
+  citation?: string,
+  citationShort?: string | null,
+  title?: string | null,
+  corpusType?: string,
+  state?: string | null,
+  year?: number | null,
+  excerpt?: string | null,
+  body?: string | null,
+  titleNumber?: string | number | null,
+  titleName?: string | null,
+  chapter?: string | null,
+  chapterName?: string | null,
+  sectionNumber?: string | null,
+  sectionTitle?: string | null,
+  displayPath?: string | null,
+  actStatus?: string | null,
+  goodLawStatus?: string | null,
+  effectiveDate?: string | null,
+  wordCount?: number | null,
+  htmlUrl?: string | null,
+  textUrl?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

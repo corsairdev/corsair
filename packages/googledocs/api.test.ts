@@ -53,6 +53,10 @@ function lastCall() {
 	return { config: call?.[0], options: call?.[1] };
 }
 
+function optionsQueryFromLastCall() {
+	return lastCall().options?.query;
+}
+
 function countLeaves(tree: Record<string, unknown>): number {
 	return Object.values(tree).reduce<number>((count, value) => {
 		if (typeof value === 'function') return count + 1;
@@ -64,13 +68,13 @@ function countLeaves(tree: Record<string, unknown>): number {
 }
 
 describe('Google Docs plugin shape', () => {
-	it('exposes all 36 operations with schemas and meta in lockstep', () => {
+	it('exposes all 37 operations with schemas and meta in lockstep', () => {
 		const plugin = googledocs();
 		const endpoints = plugin.endpoints as unknown as Record<string, unknown>;
 
-		expect(countLeaves(endpoints)).toBe(36);
-		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(36);
-		expect(Object.keys(googledocsEndpointSchemas)).toHaveLength(36);
+		expect(countLeaves(endpoints)).toBe(37);
+		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(37);
+		expect(Object.keys(googledocsEndpointSchemas)).toHaveLength(37);
 	});
 
 	it('requests the documents, drive, and sheets-read OAuth scopes', () => {
@@ -205,6 +209,103 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 			const { config, options } = lastCall();
 			expect(config.BASE).toBe(DOCS_BASE);
 			expect(options).toMatchObject({ method: 'GET', url: '/documents/doc1' });
+		});
+
+		it('getDocument passes includeTabsContent when requested', async () => {
+			mockRequest.mockResolvedValue({ ...minimalDocument, tabs: [] });
+			await DocumentsEndpoints.getDocument(ctx, {
+				documentId: 'doc1',
+				includeTabsContent: true,
+			});
+
+			const { options } = lastCall();
+			expect(options.query).toEqual({ includeTabsContent: true });
+		});
+
+		it('getDocumentPlaintext reads a specific tab when tabIndex is set', async () => {
+			mockRequest.mockResolvedValue({
+				documentId: 'doc1',
+				title: 'Meet notes',
+				tabs: [
+					{
+						tabProperties: { tabId: 't0', title: 'Summary', index: 0 },
+						documentTab: {
+							body: {
+								content: [
+									{
+										paragraph: {
+											elements: [{ textRun: { content: 'short summary' } }],
+										},
+									},
+								],
+							},
+						},
+					},
+					{
+						tabProperties: { tabId: 't1', title: 'Transcript', index: 1 },
+						documentTab: {
+							body: {
+								content: [
+									{
+										paragraph: {
+											elements: [{ textRun: { content: 'long transcript' } }],
+										},
+									},
+								],
+							},
+						},
+					},
+				],
+			});
+			const result = await DocumentsEndpoints.getDocumentPlaintext(ctx, {
+				documentId: 'doc1',
+				tabIndex: 1,
+			});
+
+			expect(optionsQueryFromLastCall()).toEqual({ includeTabsContent: true });
+			expect(result.text).toBe('long transcript');
+			expect(result.tabId).toBe('t1');
+			expect(result.tabTitle).toBe('Transcript');
+		});
+
+		it('listDocumentTabs returns tab metadata without document bodies', async () => {
+			mockRequest.mockResolvedValue({
+				documentId: 'doc1',
+				title: 'Meet notes',
+				tabs: [
+					{
+						tabProperties: { tabId: 't0', title: 'Summary', index: 0 },
+						documentTab: { body: { content: [] } },
+						childTabs: [
+							{
+								tabProperties: {
+									tabId: 't0a',
+									title: 'Nested',
+									index: 0,
+									parentTabId: 't0',
+									nestingLevel: 1,
+								},
+								documentTab: { body: { content: [] } },
+							},
+						],
+					},
+				],
+			});
+			const result = await DocumentsEndpoints.listDocumentTabs(ctx, {
+				documentId: 'doc1',
+			});
+
+			expect(optionsQueryFromLastCall()).toEqual({ includeTabsContent: true });
+			expect(result.tabs).toEqual([
+				{ tabId: 't0', title: 'Summary', index: 0 },
+				{
+					tabId: 't0a',
+					title: 'Nested',
+					index: 0,
+					parentTabId: 't0',
+					nestingLevel: 1,
+				},
+			]);
 		});
 
 		it('getDocumentPlaintext flattens the fetched document body', async () => {

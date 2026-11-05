@@ -1,3 +1,4 @@
+import { reencryptSealedAccountData } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { AuthTypes } from '../constants';
 import {
@@ -524,10 +525,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			const account = await ctx.getAccount();
 			const newDek = generateDEK();
 
-			// If there's an existing DEK, re-encrypt config; otherwise start fresh
+			// If there's an existing DEK, re-encrypt config and sealed rows; otherwise start fresh
 			let newConfig: Record<string, string> = {};
+			let oldDek: string | null = null;
 			if (account.dek) {
-				const oldDek = await decryptDEK(account.dek, kek);
+				oldDek = await decryptDEK(account.dek, kek);
 				const config = account.config as Record<string, string>;
 				if (config && Object.keys(config).length > 0) {
 					newConfig = reEncryptConfig(config, oldDek, newDek);
@@ -536,10 +538,31 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 			const encryptedNewDek = await encryptDEK(newDek, kek);
 
-			await ctx.updateAccount({
-				config: newConfig,
-				dek: encryptedNewDek,
-			});
+			if (oldDek) {
+				const previousDek = oldDek;
+				await database.db.transaction().execute(async (trx) => {
+					await reencryptSealedAccountData(
+						trx,
+						account.id,
+						previousDek,
+						newDek,
+					);
+					await trx
+						.updateTable('corsair_accounts')
+						.set({
+							config: newConfig,
+							dek: encryptedNewDek,
+							updated_at: new Date(),
+						})
+						.where('id', '=', account.id)
+						.execute();
+				});
+			} else {
+				await ctx.updateAccount({
+					config: newConfig,
+					dek: encryptedNewDek,
+				});
+			}
 
 			cachedDek = newDek;
 			cachedDekSource = encryptedNewDek;

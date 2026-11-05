@@ -1,0 +1,2359 @@
+{
+  "id": "vaquill",
+  "displayName": "Vaquill",
+  "description": "US primary law as an API. Search statutes, regulations and court rules, resolve citations, and read section text, histories and cross-state equivalents.",
+  "npmPackageName": "@corsair-dev/vaquill",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 33,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "vaquill.api.account.creditsBalance",
+      "shortPath": "account.creditsBalance",
+      "description": "Get your credit balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "creditsRemaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "usdRemaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bySource",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "nextExpiry",
+            "optional": true,
+            "type": "{ at?: string, credits?: number }"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalPurchased",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalConsumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rateLimit",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "asOf",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.account.creditsPricing",
+      "shortPath": "account.creditsPricing",
+      "description": "Get API credit pricing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dollarPerCredit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "costs",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.alerts.boards",
+      "shortPath": "alerts.boards",
+      "description": "List watchable law-change boards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "corpusType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ boards: { corpusType: string, state?: string | null, label?: string, cadence?: string, scopable?: boolean, scopeBrowseCorpus?: string | null }[], total?: number, hasMore?: boolean }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ processingTimeMs?: number, creditsConsumed?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.alerts.watchChangeDiff",
+      "shortPath": "alerts.watchChangeDiff",
+      "description": "Old-vs-new text for one change",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watch_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "change_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ changeId?: string | number, changeKind?: string | null, beforeText?: string | null, afterText?: string | null, hasBefore?: boolean, hasAfter?: boolean }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.alerts.watchChanges",
+      "shortPath": "alerts.watchChanges",
+      "description": "List what changed on a watch's source",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watch_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sinceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "beforeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeKind",
+            "optional": true,
+            "type": "added | amended | removed[]"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ changes: { id: number, refreshLogId?: number | null, corpusType?: string | null, state?: string | null, changeKind?: string | null, actId?: string | null, citation?: string | null, title?: string | null, detectedAt?: string | null, hasDiff?: boolean }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ processingTimeMs?: number, creditsConsumed?: number, cursor?: number | null, hasMore?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.alerts.watchDeliveries",
+      "shortPath": "alerts.watchDeliveries",
+      "description": "List delivery history for a watch",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watch_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deliveries: { deliveryId?: string | null, status?: string | null, firedAt?: string | null }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.alerts.watchesCreate",
+      "shortPath": "alerts.watchesCreate",
+      "description": "Create a board watch for law-change alerts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "corpusType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "webhook | email | both"
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhookSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "webhookAuth",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ watch?: { id: string | number, corpusType?: string, state?: string | null, channel?: string, isActive?: boolean, scope?: {} | null, createdAt?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.alerts.watchesDelete",
+      "shortPath": "alerts.watchesDelete",
+      "description": "Delete a board watch",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watch_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "vaquill.api.alerts.watchesList",
+      "shortPath": "alerts.watchesList",
+      "description": "List your board watches",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ watches?: { id: string | number, corpusType?: string, state?: string | null, channel?: string, isActive?: boolean, scope?: {} | null, createdAt?: string | null }[], total?: number, hasMore?: boolean }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.alerts.watchesTest",
+      "shortPath": "alerts.watchesTest",
+      "description": "Send a test delivery for a watch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watch_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.alerts.watchesUpdate",
+      "shortPath": "alerts.watchesUpdate",
+      "description": "Update a board watch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watch_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhookSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhookAuth",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ watch?: { id: string | number, corpusType?: string, state?: string | null, channel?: string, isActive?: boolean, scope?: {} | null, createdAt?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.sessionLaws.batch",
+      "shortPath": "sessionLaws.batch",
+      "description": "Get many state session laws at once, by id or citation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "jurisdiction",
+            "optional": true,
+            "type": "al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          },
+          {
+            "key": "includeBody",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "laws",
+            "optional": false,
+            "type": "{ sessionLawId: string, jurisdiction?: string, citation?: string | null, citableAs?: string | null, citationShort?: string | null, session?: string | null, series?: string | null, instrumentType?: string | null, number?: string | null, title?: string | null, shortTitle?: string | null, approvedDate?: string | null, effectiveFirst?: string | null, effectiveLast?: string | null, enactmentOutcome?: string | null, isLaw?: boolean | null, textStatus?: string | null, charCount?: number | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "resolved",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "notFound",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deduped",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.sessionLaws.body",
+      "shortPath": "sessionLaws.body",
+      "description": "Get a state session law's text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_law_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startChar",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expectTextSha256",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionLawId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "citation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jurisdiction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approvedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "available",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "textStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withheldReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.sessionLaws.changes",
+      "shortPath": "sessionLaws.changes",
+      "description": "Feed of changes to the session-law registry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sinceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jurisdiction",
+            "optional": true,
+            "type": "al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "changes",
+            "optional": false,
+            "type": "{ id: number, jurisdiction?: string | null, changeKind?: string | null, sessionLawId?: string | null, citation?: string | null, title?: string | null, detectedAt?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.sessionLaws.get",
+      "shortPath": "sessionLaws.get",
+      "description": "Get a state session law, by id or by citation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_law_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jurisdiction",
+            "optional": true,
+            "type": "al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionLawId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lawId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jurisdiction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "citation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "citableAs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "citationShort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instrumentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approvedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "effectiveDates",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "codeSectionsAffected",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "sourceUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "textStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.sessionLaws.list",
+      "shortPath": "sessionLaws.list",
+      "description": "List a state's session laws",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jurisdiction",
+            "optional": false,
+            "type": "al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instrumentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approvedFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approvedTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "effectiveFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "effectiveTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasText",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "textStatus",
+            "optional": true,
+            "type": "held | withheld | not_held | pending"
+          },
+          {
+            "key": "isLaw",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enactmentOutcome",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedSince",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ sessionLawId: string, jurisdiction?: string, citation?: string | null, citableAs?: string | null, citationShort?: string | null, session?: string | null, series?: string | null, instrumentType?: string | null, number?: string | null, title?: string | null, shortTitle?: string | null, approvedDate?: string | null, effectiveFirst?: string | null, effectiveLast?: string | null, enactmentOutcome?: string | null, isLaw?: boolean | null, textStatus?: string | null, charCount?: number | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "coverage",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.sessionLaws.search",
+      "shortPath": "sessionLaws.search",
+      "description": "Search the text of state session laws",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jurisdiction",
+            "optional": true,
+            "type": "al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instrumentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approvedFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approvedTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parsed",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ sessionLawId: string, jurisdiction?: string, citation?: string | null, citableAs?: string | null, citationShort?: string | null, session?: string | null, series?: string | null, instrumentType?: string | null, number?: string | null, title?: string | null, shortTitle?: string | null, approvedDate?: string | null, effectiveFirst?: string | null, effectiveLast?: string | null, enactmentOutcome?: string | null, isLaw?: boolean | null, textStatus?: string | null, charCount?: number | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.count",
+      "shortPath": "statutes.count",
+      "description": "Count statute sections matching a scope",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "corpusType",
+            "optional": true,
+            "type": "USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL | USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL[]"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy | federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy[]"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "article",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "titleNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "chapter",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "actStatus",
+            "optional": true,
+            "type": "abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn | abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn[]"
+          },
+          {
+            "key": "excludeRepealed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "isExact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.coverage",
+      "shortPath": "statutes.coverage",
+      "description": "List the covered corpora and jurisdictions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ corpusTypes: { token: string, description?: string, scope?: string }[], jurisdictions: { code: string, name?: string, kind?: string, sectionCount?: number, hasData?: boolean, statusBreakdown?: {} }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.divisions",
+      "shortPath": "statutes.divisions",
+      "description": "Browse the statutory hierarchy of a corpus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "corpusType",
+            "optional": false,
+            "type": "USC | CFR | STATE | REGULATION | CONSTITUTION | STATE_CONSTITUTION | FEDERAL_RULES"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          },
+          {
+            "key": "titleNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chapter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "article",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeRepealed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "actStatus",
+            "optional": true,
+            "type": "abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "corpusType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "level",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentLabel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "divisions",
+            "optional": false,
+            "type": "{ identifier: string, name?: string, kind?: string, isLeaf?: boolean, actId?: string }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "truncated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.enactments",
+      "shortPath": "statutes.enactments",
+      "description": "List the session-law enactments behind a section",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "act_id",
+            "optional": false,
+            "type": "string",
+            "description": "Section identifier, as returned on a search hit or by the citation resolver."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "actId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jurisdiction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supported",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enactments",
+            "optional": false,
+            "type": "{ sessionLawId?: string | null, href?: string | null, citation?: string | null, title?: string | null, approvedDate?: string | null, action?: string | null, matchQuality?: string | null, textStatus?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "truncated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.extractCitations",
+      "shortPath": "statutes.extractCitations",
+      "description": "Find the citations in a text and optionally resolve each",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          },
+          {
+            "key": "resolve",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeUnresolved",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "citations",
+            "optional": false,
+            "type": "{ citation: string, resolved?: boolean, section?: { actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null } | null }[]"
+          },
+          {
+            "key": "counts",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "truncated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "textChars",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "extractorVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.resolve",
+      "shortPath": "statutes.resolve",
+      "description": "Resolve Bluebook citations to statute sections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "citations",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          },
+          {
+            "key": "corpusType",
+            "optional": true,
+            "type": "CONSTITUTION | REGULATION | STATE | STATE_CONSTITUTION | STATE_RULES"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ resolved: boolean, inputCitation: string, section?: { actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null } | null, subsection?: any }[]"
+          },
+          {
+            "key": "resolvedCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.resolveCitation",
+      "shortPath": "statutes.resolveCitation",
+      "description": "Resolve a single Bluebook citation to its section",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cite",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy"
+          },
+          {
+            "key": "corpusType",
+            "optional": true,
+            "type": "CONSTITUTION | REGULATION | STATE | STATE_CONSTITUTION | STATE_RULES"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resolved",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "inputCitation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section",
+            "optional": true,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }"
+          },
+          {
+            "key": "subsection",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "matchLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "missReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "candidates",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.search",
+      "shortPath": "statutes.search",
+      "description": "Search US statutes, regulations, court rules and guidance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "corpusType",
+            "optional": true,
+            "type": "USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL | USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL[]"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy | federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy[]"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "article",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "yearFrom",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "yearTo",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "excludeRepealed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "actStatus",
+            "optional": true,
+            "type": "abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn | abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn[]"
+          },
+          {
+            "key": "changedSince",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agency",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "documentType",
+            "optional": true,
+            "type": "final | proposed | presidential"
+          },
+          {
+            "key": "publishedFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishedTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "titleNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "chapter",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeBody",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "excerptChars",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "matchType",
+            "optional": true,
+            "type": "any | all | phrase"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ actId: string, citation?: string, title?: string | null, corpusType?: string, state?: string | null, excerpt?: string | null, body?: string | null, goodLawStatus?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "noGoodMatch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "matchQuality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "citationMissReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rankingDegraded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.section",
+      "shortPath": "statutes.section",
+      "description": "Get a statute section by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "act_id",
+            "optional": false,
+            "type": "string",
+            "description": "Section identifier, as returned on a search hit or by the citation resolver."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "section",
+            "optional": false,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.sectionBody",
+      "shortPath": "statutes.sectionBody",
+      "description": "Get a section's full text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "act_id",
+            "optional": false,
+            "type": "string",
+            "description": "Section identifier, as returned on a search hit or by the citation resolver."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "all | both | html | markdown | plain | content | operative"
+          },
+          {
+            "key": "structured",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "asOf",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "actId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "operative",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subsections",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "tables",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "figures",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "available",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "asOf",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.sectionChanges",
+      "shortPath": "statutes.sectionChanges",
+      "description": "Get a section's amendment history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "act_id",
+            "optional": false,
+            "type": "string",
+            "description": "Section identifier, as returned on a search hit or by the citation resolver."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sinceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "beforeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "changeKind",
+            "optional": true,
+            "type": "added | amended | removed[]"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "actId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "section",
+            "optional": true,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }"
+          },
+          {
+            "key": "changes",
+            "optional": false,
+            "type": "{ id: number, changeKind?: string, detectedAt?: string, citation?: string, displayCitation?: string | null, title?: string | null, hasDiff?: boolean, corpusType?: string, state?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "observedFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "coverage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.sectionCitedBy",
+      "shortPath": "statutes.sectionCitedBy",
+      "description": "Get sections citing this one",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "act_id",
+            "optional": false,
+            "type": "string",
+            "description": "Section identifier, as returned on a search hit or by the citation resolver."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "section",
+            "optional": false,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }"
+          },
+          {
+            "key": "citers",
+            "optional": false,
+            "type": "{ actId: string, citation?: string, title?: string | null, corpusType?: string, state?: string | null, excerpt?: string | null, body?: string | null, goodLawStatus?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "truncated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.sectionCrossState",
+      "shortPath": "statutes.sectionCrossState",
+      "description": "Compare a provision across states",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "act_id",
+            "optional": false,
+            "type": "string",
+            "description": "Section identifier, as returned on a search hit or by the citation resolver."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "section",
+            "optional": false,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }"
+          },
+          {
+            "key": "neighbors",
+            "optional": false,
+            "type": "{ section?: { actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null } | null, state?: string, similarity?: number }[]"
+          },
+          {
+            "key": "statesCovered",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.sectionDefinitions",
+      "shortPath": "statutes.sectionDefinitions",
+      "description": "Get the defined terms governing a section",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "act_id",
+            "optional": false,
+            "type": "string",
+            "description": "Section identifier, as returned on a search hit or by the citation resolver."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "section",
+            "optional": false,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }"
+          },
+          {
+            "key": "definitionsSection",
+            "optional": true,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }"
+          },
+          {
+            "key": "terms",
+            "optional": false,
+            "type": "{ term: string, definition?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.sectionRelated",
+      "shortPath": "statutes.sectionRelated",
+      "description": "Get the neighbouring sections in statutory order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "act_id",
+            "optional": false,
+            "type": "string",
+            "description": "Section identifier, as returned on a search hit or by the citation resolver."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "section",
+            "optional": false,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": false,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }[]"
+          },
+          {
+            "key": "container",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vaquill.api.statutes.sections",
+      "shortPath": "statutes.sections",
+      "description": "Get statute sections in batch by ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "actIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "includeBody",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sections",
+            "optional": false,
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }[]"
+          },
+          {
+            "key": "notFound",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "notFoundDetail",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processingTimeMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "vaquill.db.searchResults.search",
+      "entityName": "searchResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "actId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "citation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "corpusType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "excerpt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "actStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "goodLawStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

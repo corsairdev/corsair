@@ -1,0 +1,54 @@
+displayName: TikHub
+description: Social media data API for public TikTok, Instagram, YouTube, X (Twitter) and Reddit profiles, posts, comments and search results.
+domain: tikhub.io
+recommendedAuth: api_key
+examples:
+  read:
+    path: tiktok.searchVideos
+    title: Search TikTok videos
+    args:
+      keyword: open source ai agents
+      count: 10
+      region: US
+apiExamples:
+  tiktok.searchVideos:
+    call: "{ keyword: 'open source ai agents', count: 10, sort_type: 1, publish_time: 7 }"
+  tiktok.getUserProfile:
+    call: "{ uniqueId: 'tiktok' }"
+  tiktok.getVideo:
+    call: "{ aweme_id: '7350810998023949599' }"
+  tiktok.getUserVideos:
+    call: "{ unique_id: 'tiktok', count: 20, max_cursor: 0 }"
+  tiktok.getVideoComments:
+    call: "{ aweme_id: '7326156045968067873', count: 20 }"
+  tiktok.getHashtag:
+    call: "{ tag_name: 'tiktok' }"
+  tiktok.getHashtagVideos:
+    call: "{ ch_id: '7551', count: 10 }"
+  instagram.getUserByUsername:
+    call: "{ username: 'instagram' }"
+  instagram.getUserPosts:
+    call: "{ user_id: '25025320', count: 12 }"
+  instagram.getUserReels:
+    call: "{ user_id: '25025320', count: 12 }"
+  instagram.getPostByUrl:
+    call: "{ post_url: 'https://www.instagram.com/p/DPwhVB-jo9k/' }"
+  instagram.getPostComments:
+    call: "{ code_or_url: 'DPwhVB-jo9k', sort_by: 'popular' }"
+  youtube.getVideo:
+    call: "{ video_id: 'dQw4w9WgXcQ' }"
+  youtube.search:
+    call: "{ keyword: 'python tutorial', type: 'video', sort_by: 'view_count' }"
+  youtube.getChannelVideos:
+    call: "{ channel_id: 'UCJHBJ7F-nAIlMGolm0Hu4vg', language_code: 'en-US' }"
+  twitter.getUserProfile:
+    call: "{ screen_name: 'elonmusk' }"
+  twitter.getUserTweets:
+    call: "{ screen_name: 'elonmusk' }"
+  twitter.searchTweets:
+    call: "{ keyword: 'corsair', search_type: 'Latest' }"
+  twitter.getTweet:
+    call: "{ tweet_id: '1808168603721650364' }"
+  reddit.search:
+    call: "{ query: 'model context protocol', search_type: 'post', sort: 'TOP', time_range: 'week' }"
+  account.getInfo: {}

@@ -1,0 +1,185 @@
+import { logEventFromContext } from 'corsair/core';
+import type { ConvexEndpoints } from '..';
+import { makeConvexRequest, tryCacheWrite } from '../client';
+import type { ConvexEndpointOutputs } from './types';
+
+export const list: ConvexEndpoints['projectsList'] = async (ctx, input) => {
+	const query: Record<string, string | number | boolean | undefined> = {};
+	if (input.cursor !== undefined) query.cursor = input.cursor;
+	if (input.limit !== undefined) query.limit = input.limit;
+	if (input.q !== undefined) query.q = input.q;
+
+	const response = await makeConvexRequest<
+		ConvexEndpointOutputs['projectsList']
+	>('/teams/{team_id}/projects', ctx.key, {
+		path: { team_id: input.team_id },
+		method: 'GET',
+		query,
+	});
+
+	const projects = ctx.db.projects;
+	if (response.items && projects) {
+		await tryCacheWrite(async () => {
+			for (const project of response.items) {
+				await projects.upsertByEntityId(String(project.id), { ...project });
+			}
+		});
+	}
+
+	await logEventFromContext(
+		ctx,
+		'convex.projects.list',
+		{ team_id: input.team_id },
+		'completed',
+	);
+	return response;
+};
+
+export const getById: ConvexEndpoints['projectGetById'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeConvexRequest<
+		ConvexEndpointOutputs['projectGetById']
+	>('/projects/{project_id}', ctx.key, {
+		path: { project_id: input.project_id },
+		method: 'GET',
+	});
+
+	const projects = ctx.db.projects;
+	if (response && projects) {
+		await tryCacheWrite(() =>
+			projects.upsertByEntityId(String(response.id), { ...response }),
+		);
+	}
+
+	await logEventFromContext(
+		ctx,
+		'convex.projects.getById',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const getBySlug: ConvexEndpoints['projectGetBySlug'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeConvexRequest<
+		ConvexEndpointOutputs['projectGetBySlug']
+	>('/teams/{team_id_or_slug}/projects/{project_slug}', ctx.key, {
+		path: {
+			team_id_or_slug: input.team_id_or_slug,
+			project_slug: input.project_slug,
+		},
+		method: 'GET',
+	});
+
+	const projects = ctx.db.projects;
+	if (response && projects) {
+		await tryCacheWrite(() =>
+			projects.upsertByEntityId(String(response.id), { ...response }),
+		);
+	}
+
+	await logEventFromContext(
+		ctx,
+		'convex.projects.getBySlug',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const create: ConvexEndpoints['projectCreate'] = async (ctx, input) => {
+	const { team_id, ...body } = input;
+
+	const response = await makeConvexRequest<
+		ConvexEndpointOutputs['projectCreate']
+	>('/teams/{team_id}/create_project', ctx.key, {
+		path: { team_id },
+		method: 'POST',
+		body,
+	});
+
+	// The create response only carries `{ id, slug, ... }`, so fetch the full
+	// project record for the cache. The project was created upstream — neither a
+	// refresh failure nor a cache failure may turn this successful
+	// non-idempotent call into an endpoint error (which could prompt a duplicate
+	// create on retry).
+	const projects = ctx.db.projects;
+	if (projects) {
+		try {
+			const created = await makeConvexRequest<
+				ConvexEndpointOutputs['projectGetById']
+			>('/projects/{project_id}', ctx.key, {
+				path: { project_id: String(response.id) },
+				method: 'GET',
+			});
+			await tryCacheWrite(() =>
+				projects.upsertByEntityId(String(created.id), { ...created }),
+			);
+		} catch {
+			// Intentionally swallowed — create already succeeded; cache refresh is best-effort.
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'convex.projects.create',
+		{ team_id: input.team_id, projectName: input.projectName },
+		'completed',
+	);
+	return response;
+};
+
+export const deleteProject: ConvexEndpoints['projectDelete'] = async (
+	ctx,
+	input,
+) => {
+	await makeConvexRequest<void>('/projects/{project_id}/delete', ctx.key, {
+		path: { project_id: input.project_id },
+		method: 'POST',
+	});
+
+	const { projects, deployments, deployKeys } = ctx.db;
+	if (projects) {
+		await tryCacheWrite(() => projects.deleteByEntityId(input.project_id));
+	}
+	if (deployments) {
+		await tryCacheWrite(async () => {
+			const cached = await deployments.list();
+			const removedNames: string[] = [];
+			for (const deployment of cached) {
+				if (String(deployment.data.projectId) === String(input.project_id)) {
+					removedNames.push(deployment.entity_id);
+					await deployments.deleteByEntityId(deployment.entity_id);
+				}
+			}
+			if (!deployKeys) return;
+			const keys = await deployKeys.list();
+			for (const key of keys) {
+				if (removedNames.includes(String(key.data.deploymentName))) {
+					await deployKeys.deleteByEntityId(key.entity_id);
+				}
+			}
+		});
+	}
+
+	await logEventFromContext(
+		ctx,
+		'convex.projects.delete',
+		{ ...input },
+		'completed',
+	);
+	return { success: true };
+};
+
+export const ProjectsEndpoints = {
+	list,
+	getById,
+	getBySlug,
+	create,
+	delete: deleteProject,
+} as const;

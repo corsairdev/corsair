@@ -1,0 +1,2064 @@
+---
+title: API
+description: "API reference for TikHub: every `tikhub.api.*` operation with input and output types."
+---
+
+Every `tikhub.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getInfo
+
+`account.getInfo`
+
+Get the TikHub account balance, free credit and API key status
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.account.getInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `router` | `string` | No | — |
+| `api_key_data` | `object` | Yes | — |
+| `user_data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="api_key_data full type">
+
+```ts
+{
+  api_key_name: string,
+  api_key_scopes: string[],
+  created_at: string,
+  expires_at?: string | null,
+  api_key_status: number
+}
+```
+</Accordion>
+
+<Accordion title="user_data full type">
+
+```ts
+{
+  email: string,
+  balance: number,
+  free_credit: number,
+  email_verified: boolean,
+  account_disabled: boolean,
+  is_active: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Instagram
+
+### getPostByUrl
+
+`instagram.getPostByUrl`
+
+Get an Instagram post or reel with its media, likes and comments count from its URL
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.instagram.getPostByUrl({ post_url: 'https://www.instagram.com/p/DPwhVB-jo9k/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_url` | `string` | Yes | Post or reel URL, e.g. https://www.instagram.com/p/DPwhVB-jo9k/ |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  shortcode?: string | null,
+  __typename?: string | null,
+  is_video?: boolean | null,
+  taken_at_timestamp?: number | null,
+  display_url?: string | null,
+  video_url?: string | null,
+  video_view_count?: number | null,
+  video_play_count?: number | null,
+  accessibility_caption?: string | null,
+  comments_disabled?: boolean | null,
+  edge_media_preview_like?: {
+    count?: number | null
+  } | null,
+  edge_media_to_parent_comment?: {
+    count?: number | null
+  } | null,
+  edge_media_to_caption?: {
+    edges?: {
+      node: {
+        text?: string | null
+      }
+    }[] | null
+  } | null,
+  owner?: {
+    id?: string | null,
+    username?: string | null,
+    full_name?: string | null,
+    is_verified?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPostComments
+
+`instagram.getPostComments`
+
+List comments on an Instagram post, recent or popular first
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.instagram.getPostComments({ code_or_url: 'DPwhVB-jo9k', sort_by: 'popular' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code_or_url` | `string` | Yes | Post shortcode (code from instagram.getUserPosts) or post URL, e.g. "DPwhVB-jo9k" |
+| `sort_by` | `recent \| popular` | No | recent (default) or popular |
+| `pagination_token` | `string` | No | Omit for the first page, then pagination_token from the previous response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  data?: {
+    count?: number | null,
+    total?: number | null,
+    items?: {
+      pk?: number | string | null,
+      id?: string | null,
+      text?: string | null,
+      created_at?: number | null,
+      created_at_utc?: number | null,
+      comment_like_count?: number | null,
+      child_comment_count?: number | null,
+      is_liked_by_media_owner?: boolean | null,
+      user?: {
+        pk?: number | string | null,
+        id?: string | null,
+        username?: string | null,
+        full_name?: string | null,
+        is_verified?: boolean | null,
+        profile_pic_url?: string | null
+      } | null
+    }[] | null,
+    additional_data?: {
+      caption?: {
+        text?: string | null
+      } | null
+    } | null
+  } | null,
+  pagination_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserByUsername
+
+`instagram.getUserByUsername`
+
+Get an Instagram profile (bio, follower and following counts, recent posts) by username
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.instagram.getUserByUsername({ username: 'instagram' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | Instagram username, e.g. "instagram" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  data?: {
+    user?: {
+      id?: string | null,
+      pk?: number | string | null,
+      username?: string | null,
+      full_name?: string | null,
+      biography?: string | null,
+      external_url?: string | null,
+      is_private?: boolean | null,
+      is_verified?: boolean | null,
+      is_business_account?: boolean | null,
+      is_professional_account?: boolean | null,
+      profile_pic_url?: string | null,
+      profile_pic_url_hd?: string | null,
+      highlight_reel_count?: number | null,
+      bio_links?: {
+        url?: string | null,
+        title?: string | null
+      }[] | null,
+      edge_followed_by?: {
+        count?: number | null
+      } | null,
+      edge_follow?: {
+        count?: number | null
+      } | null,
+      edge_owner_to_timeline_media?: {
+        count?: number | null
+      } | null,
+      category_name?: string | null
+    } | null
+  } | null,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserPosts
+
+`instagram.getUserPosts`
+
+List an Instagram user's posts by user ID
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.instagram.getUserPosts({ user_id: '25025320', count: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | Instagram user ID (data.data.user.id from instagram.getUserByUsername) |
+| `count` | `number` | No | Posts per page (default 12, max 50) |
+| `max_id` | `string` | No | Omit for the first page, then next_max_id from the previous response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  items?: {
+    id?: string | null,
+    pk?: number | string | null,
+    code?: string | null,
+    media_type?: number | null,
+    product_type?: string | null,
+    taken_at?: number | null,
+    like_count?: number | null,
+    comment_count?: number | null,
+    play_count?: number | null,
+    view_count?: number | null,
+    caption?: {
+      text?: string | null
+    } | null,
+    user?: {
+      pk?: number | string | null,
+      id?: string | null,
+      username?: string | null,
+      full_name?: string | null,
+      is_verified?: boolean | null,
+      profile_pic_url?: string | null
+    } | null
+  }[] | null,
+  more_available?: boolean | null,
+  next_max_id?: string | null,
+  num_results?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserReels
+
+`instagram.getUserReels`
+
+List an Instagram user's reels by user ID
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.instagram.getUserReels({ user_id: '25025320', count: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | Instagram user ID (data.data.user.id from instagram.getUserByUsername) |
+| `count` | `number` | No | Reels per page (default 12, max 50) |
+| `max_id` | `string` | No | Omit for the first page, then paging_info.max_id from the previous response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  items?: {
+    media?: {
+      id?: string | null,
+      pk?: number | string | null,
+      code?: string | null,
+      media_type?: number | null,
+      product_type?: string | null,
+      taken_at?: number | null,
+      like_count?: number | null,
+      comment_count?: number | null,
+      play_count?: number | null,
+      view_count?: number | null,
+      caption?: {
+        text?: string | null
+      } | null,
+      user?: {
+        pk?: number | string | null,
+        id?: string | null,
+        username?: string | null,
+        full_name?: string | null,
+        is_verified?: boolean | null,
+        profile_pic_url?: string | null
+      } | null
+    } | null
+  }[] | null,
+  paging_info?: {
+    max_id?: string | null,
+    more_available?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reddit
+
+### search
+
+`reddit.search`
+
+Search Reddit posts, communities, comments, media or users, with sort and time filters
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.reddit.search({ query: 'model context protocol', search_type: 'post', sort: 'TOP', time_range: 'week' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Keywords; supports AND, OR, NOT, grouping and quoted phrases |
+| `search_type` | `post \| community \| comment \| media \| people` | No | post (default), community, comment, media, or people |
+| `sort` | `RELEVANCE \| HOT \| TOP \| NEW \| COMMENTS` | No | For post, comment and media searches; COMMENTS is post-only |
+| `time_range` | `all \| year \| month \| week \| day \| hour` | No | For post and media searches |
+| `safe_search` | `unset \| strict` | No | — |
+| `allow_nsfw` | `0 \| 1` | No | — |
+| `after` | `string` | No | pageInfo.endCursor from the previous response |
+| `need_format` | `boolean` | No | Defaults to true here: compact children + pageInfo. Pass false for the raw nested payload |
+| `language` | `string` | No | IETF language tag (default en-US) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  children?: {
+  }[] | null,
+  pageInfo?: {
+    endCursor?: string | null,
+    startCursor?: string | null,
+    hasNextPage?: boolean | null,
+    hasPreviousPage?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tiktok
+
+### getHashtag
+
+`tiktok.getHashtag`
+
+Get a TikTok hashtag by name, including its ID and video and view counts
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.tiktok.getHashtag({ tag_name: 'tiktok' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_name` | `string` | Yes | Hashtag name without #, e.g. "tiktok" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  statusCode?: number | null,
+  challengeInfo?: {
+    challenge?: {
+      id?: string | null,
+      title?: string | null,
+      desc?: string | null,
+      coverLarger?: string | null
+    } | null,
+    stats?: {
+      videoCount?: number | null,
+      viewCount?: number | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHashtagVideos
+
+`tiktok.getHashtagVideos`
+
+List videos under a TikTok hashtag ID
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.tiktok.getHashtagVideos({ ch_id: '7551', count: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ch_id` | `string` | Yes | Hashtag ID (challengeInfo.challenge.id from tiktok.getHashtag) |
+| `cursor` | `number` | No | 0 for the first page, then cursor from the previous response |
+| `count` | `number` | No | Videos per page (default 10) |
+| `region` | `string` | No | ISO 3166-1 alpha-2 region code, e.g. US, GB, JP |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  status_code?: number | null,
+  status_msg?: string | null,
+  aweme_list?: {
+    aweme_id: string,
+    desc?: string | null,
+    create_time?: number | null,
+    region?: string | null,
+    share_url?: string | null,
+    author?: {
+      uid?: string | null,
+      sec_uid?: string | null,
+      unique_id?: string | null,
+      nickname?: string | null,
+      signature?: string | null,
+      region?: string | null,
+      follower_count?: number | null,
+      following_count?: number | null,
+      total_favorited?: number | string | null,
+      aweme_count?: number | null,
+      avatar_thumb?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    statistics?: {
+      play_count?: number | null,
+      digg_count?: number | null,
+      comment_count?: number | null,
+      share_count?: number | null,
+      collect_count?: number | null,
+      download_count?: number | null
+    } | null,
+    video?: {
+      duration?: number | null,
+      width?: number | null,
+      height?: number | null,
+      cover?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null,
+      play_addr?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null,
+      download_addr?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    music?: {
+      id_str?: string | null,
+      title?: string | null,
+      author?: string | null,
+      play_url?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    text_extra?: {
+      type?: number | null,
+      hashtag_id?: string | null,
+      hashtag_name?: string | null
+    }[] | null
+  }[] | null,
+  has_more?: boolean | number | null,
+  max_cursor?: number | string | null,
+  min_cursor?: number | string | null,
+  cursor?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserProfile
+
+`tiktok.getUserProfile`
+
+Get a TikTok profile and follower, like and video counts by username or secUid
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.tiktok.getUserProfile({ uniqueId: 'tiktok' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uniqueId` | `string` | No | Username from the profile URL (preferred), e.g. "tiktok" |
+| `secUid` | `string` | No | The user secUid |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  statusCode?: number | null,
+  userInfo?: {
+    user?: {
+      id?: string | null,
+      uniqueId?: string | null,
+      secUid?: string | null,
+      nickname?: string | null,
+      signature?: string | null,
+      verified?: boolean | null,
+      privateAccount?: boolean | null,
+      createTime?: number | null,
+      avatarLarger?: string | null,
+      avatarThumb?: string | null,
+      language?: string | null,
+      bioLink?: {
+        link?: string | null
+      } | null
+    } | null,
+    stats?: {
+      followerCount?: number | null,
+      followingCount?: number | null,
+      heart?: number | null,
+      heartCount?: number | null,
+      videoCount?: number | null,
+      diggCount?: number | null,
+      friendCount?: number | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserVideos
+
+`tiktok.getUserVideos`
+
+List a TikTok user's posted videos, newest or most popular first
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.tiktok.getUserVideos({ unique_id: 'tiktok', count: 20, max_cursor: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sec_user_id` | `string` | No | User sec_user_id (faster than unique_id) |
+| `unique_id` | `string` | No | Username, used when sec_user_id is empty |
+| `max_cursor` | `number` | No | 0 for the first page, then max_cursor from the previous response |
+| `count` | `number` | No | Videos per page (default 20) |
+| `sort_type` | `0 \| 1` | No | 0 = latest (default), 1 = popular |
+| `region` | `string` | No | ISO 3166-1 alpha-2 region code, e.g. US, GB, JP |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  status_code?: number | null,
+  status_msg?: string | null,
+  aweme_list?: {
+    aweme_id: string,
+    desc?: string | null,
+    create_time?: number | null,
+    region?: string | null,
+    share_url?: string | null,
+    author?: {
+      uid?: string | null,
+      sec_uid?: string | null,
+      unique_id?: string | null,
+      nickname?: string | null,
+      signature?: string | null,
+      region?: string | null,
+      follower_count?: number | null,
+      following_count?: number | null,
+      total_favorited?: number | string | null,
+      aweme_count?: number | null,
+      avatar_thumb?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    statistics?: {
+      play_count?: number | null,
+      digg_count?: number | null,
+      comment_count?: number | null,
+      share_count?: number | null,
+      collect_count?: number | null,
+      download_count?: number | null
+    } | null,
+    video?: {
+      duration?: number | null,
+      width?: number | null,
+      height?: number | null,
+      cover?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null,
+      play_addr?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null,
+      download_addr?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    music?: {
+      id_str?: string | null,
+      title?: string | null,
+      author?: string | null,
+      play_url?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    text_extra?: {
+      type?: number | null,
+      hashtag_id?: string | null,
+      hashtag_name?: string | null
+    }[] | null
+  }[] | null,
+  has_more?: boolean | number | null,
+  max_cursor?: number | string | null,
+  min_cursor?: number | string | null,
+  cursor?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVideo
+
+`tiktok.getVideo`
+
+Get one TikTok video with its author, stats, music and media URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.tiktok.getVideo({ aweme_id: '7350810998023949599' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aweme_id` | `string` | Yes | Video ID, e.g. 7350810998023949599 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  status_code?: number | null,
+  status_msg?: string | null,
+  aweme_detail?: {
+    aweme_id: string,
+    desc?: string | null,
+    create_time?: number | null,
+    region?: string | null,
+    share_url?: string | null,
+    author?: {
+      uid?: string | null,
+      sec_uid?: string | null,
+      unique_id?: string | null,
+      nickname?: string | null,
+      signature?: string | null,
+      region?: string | null,
+      follower_count?: number | null,
+      following_count?: number | null,
+      total_favorited?: number | string | null,
+      aweme_count?: number | null,
+      avatar_thumb?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    statistics?: {
+      play_count?: number | null,
+      digg_count?: number | null,
+      comment_count?: number | null,
+      share_count?: number | null,
+      collect_count?: number | null,
+      download_count?: number | null
+    } | null,
+    video?: {
+      duration?: number | null,
+      width?: number | null,
+      height?: number | null,
+      cover?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null,
+      play_addr?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null,
+      download_addr?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    music?: {
+      id_str?: string | null,
+      title?: string | null,
+      author?: string | null,
+      play_url?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    text_extra?: {
+      type?: number | null,
+      hashtag_id?: string | null,
+      hashtag_name?: string | null
+    }[] | null
+  } | null,
+  aweme_details?: {
+    aweme_id: string,
+    desc?: string | null,
+    create_time?: number | null,
+    region?: string | null,
+    share_url?: string | null,
+    author?: {
+      uid?: string | null,
+      sec_uid?: string | null,
+      unique_id?: string | null,
+      nickname?: string | null,
+      signature?: string | null,
+      region?: string | null,
+      follower_count?: number | null,
+      following_count?: number | null,
+      total_favorited?: number | string | null,
+      aweme_count?: number | null,
+      avatar_thumb?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    statistics?: {
+      play_count?: number | null,
+      digg_count?: number | null,
+      comment_count?: number | null,
+      share_count?: number | null,
+      collect_count?: number | null,
+      download_count?: number | null
+    } | null,
+    video?: {
+      duration?: number | null,
+      width?: number | null,
+      height?: number | null,
+      cover?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null,
+      play_addr?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null,
+      download_addr?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    music?: {
+      id_str?: string | null,
+      title?: string | null,
+      author?: string | null,
+      play_url?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    text_extra?: {
+      type?: number | null,
+      hashtag_id?: string | null,
+      hashtag_name?: string | null
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVideoComments
+
+`tiktok.getVideoComments`
+
+List comments on a TikTok video
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.tiktok.getVideoComments({ aweme_id: '7326156045968067873', count: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aweme_id` | `string` | Yes | Video ID |
+| `cursor` | `number` | No | 0 for the first page, then cursor from the previous response |
+| `count` | `number` | No | Comments per page (default 20) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  status_code?: number | null,
+  status_msg?: string | null,
+  comments?: {
+    cid?: string | null,
+    aweme_id?: string | null,
+    text?: string | null,
+    create_time?: number | null,
+    digg_count?: number | null,
+    reply_comment_total?: number | null,
+    user?: {
+      uid?: string | null,
+      sec_uid?: string | null,
+      unique_id?: string | null,
+      nickname?: string | null,
+      signature?: string | null,
+      region?: string | null,
+      follower_count?: number | null,
+      following_count?: number | null,
+      total_favorited?: number | string | null,
+      aweme_count?: number | null,
+      avatar_thumb?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null
+  }[] | null,
+  cursor?: number | string | null,
+  has_more?: boolean | number | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchVideos
+
+`tiktok.searchVideos`
+
+Search TikTok videos by keyword, with sort, publish-date and region filters
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.tiktok.searchVideos({ keyword: 'open source ai agents', count: 10, sort_type: 1, publish_time: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | Yes | Search keyword |
+| `offset` | `number` | No | Result offset for paging (default 0) |
+| `count` | `number` | No | Results per page (default 20) |
+| `sort_type` | `0 \| 1` | No | 0 = relevance (default), 1 = most liked |
+| `publish_time` | `0 \| 1 \| 7 \| 30 \| 90 \| 180` | No | Published within N days: 0 (any, default), 1, 7, 30, 90, 180 |
+| `region` | `string` | No | ISO 3166-1 alpha-2 region code, e.g. US, GB, JP |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  status_code?: number | null,
+  status_msg?: string | null,
+  search_item_list?: {
+    aweme_info?: {
+      aweme_id: string,
+      desc?: string | null,
+      create_time?: number | null,
+      region?: string | null,
+      share_url?: string | null,
+      author?: {
+        uid?: string | null,
+        sec_uid?: string | null,
+        unique_id?: string | null,
+        nickname?: string | null,
+        signature?: string | null,
+        region?: string | null,
+        follower_count?: number | null,
+        following_count?: number | null,
+        total_favorited?: number | string | null,
+        aweme_count?: number | null,
+        avatar_thumb?: {
+          uri?: string | null,
+          url_list?: string[] | null
+        } | null
+      } | null,
+      statistics?: {
+        play_count?: number | null,
+        digg_count?: number | null,
+        comment_count?: number | null,
+        share_count?: number | null,
+        collect_count?: number | null,
+        download_count?: number | null
+      } | null,
+      video?: {
+        duration?: number | null,
+        width?: number | null,
+        height?: number | null,
+        cover?: {
+          uri?: string | null,
+          url_list?: string[] | null
+        } | null,
+        play_addr?: {
+          uri?: string | null,
+          url_list?: string[] | null
+        } | null,
+        download_addr?: {
+          uri?: string | null,
+          url_list?: string[] | null
+        } | null
+      } | null,
+      music?: {
+        id_str?: string | null,
+        title?: string | null,
+        author?: string | null,
+        play_url?: {
+          uri?: string | null,
+          url_list?: string[] | null
+        } | null
+      } | null,
+      text_extra?: {
+        type?: number | null,
+        hashtag_id?: string | null,
+        hashtag_name?: string | null
+      }[] | null
+    } | null
+  }[] | null,
+  aweme_list?: {
+    aweme_id: string,
+    desc?: string | null,
+    create_time?: number | null,
+    region?: string | null,
+    share_url?: string | null,
+    author?: {
+      uid?: string | null,
+      sec_uid?: string | null,
+      unique_id?: string | null,
+      nickname?: string | null,
+      signature?: string | null,
+      region?: string | null,
+      follower_count?: number | null,
+      following_count?: number | null,
+      total_favorited?: number | string | null,
+      aweme_count?: number | null,
+      avatar_thumb?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    statistics?: {
+      play_count?: number | null,
+      digg_count?: number | null,
+      comment_count?: number | null,
+      share_count?: number | null,
+      collect_count?: number | null,
+      download_count?: number | null
+    } | null,
+    video?: {
+      duration?: number | null,
+      width?: number | null,
+      height?: number | null,
+      cover?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null,
+      play_addr?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null,
+      download_addr?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    music?: {
+      id_str?: string | null,
+      title?: string | null,
+      author?: string | null,
+      play_url?: {
+        uri?: string | null,
+        url_list?: string[] | null
+      } | null
+    } | null,
+    text_extra?: {
+      type?: number | null,
+      hashtag_id?: string | null,
+      hashtag_name?: string | null
+    }[] | null
+  }[] | null,
+  cursor?: number | string | null,
+  has_more?: boolean | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Twitter
+
+### getTweet
+
+`twitter.getTweet`
+
+Get one X (Twitter) post by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.twitter.getTweet({ tweet_id: '1808168603721650364' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweet_id` | `string` | Yes | Tweet ID from the status URL |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserProfile
+
+`twitter.getUserProfile`
+
+Get an X (Twitter) profile by handle or numeric user ID
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.twitter.getUserProfile({ screen_name: 'elonmusk' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `screen_name` | `string` | No | Handle without @, e.g. "elonmusk" |
+| `rest_id` | `string` | No | Numeric user ID; wins over screen_name when both are set |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserTweets
+
+`twitter.getUserTweets`
+
+List an X (Twitter) user's posts
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.twitter.getUserTweets({ screen_name: 'elonmusk' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `screen_name` | `string` | No | Handle without @, e.g. "elonmusk" |
+| `rest_id` | `string` | No | Numeric user ID; wins over screen_name when both are set |
+| `cursor` | `string` | No | Cursor from the previous response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchTweets
+
+`twitter.searchTweets`
+
+Search X (Twitter) posts, people or lists (Top, Latest, Media, People, Lists)
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.twitter.searchTweets({ keyword: 'corsair', search_type: 'Latest' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | Yes | Search query |
+| `search_type` | `Top \| Latest \| Media \| People \| Lists` | No | Top (default), Latest, Media, People, or Lists |
+| `cursor` | `string` | No | Cursor from the previous response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Youtube
+
+### getChannelVideos
+
+`youtube.getChannelVideos`
+
+List a YouTube channel's videos, with channel details on the first page
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.youtube.getChannelVideos({ channel_id: 'UCJHBJ7F-nAIlMGolm0Hu4vg', language_code: 'en-US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | Channel ID, usually starting with UC, e.g. UCJHBJ7F-nAIlMGolm0Hu4vg |
+| `continuation_token` | `string` | No | continuation_token from the previous response |
+| `language_code` | `string` | No | Language, e.g. en-US (default zh-CN) |
+| `country_code` | `string` | No | Country, e.g. US (default US) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  channel?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    handle_url?: string | null,
+    avatar?: string | null,
+    url?: string | null,
+    rss_url?: string | null,
+    keywords?: string | null,
+    is_family_safe?: boolean | null,
+    is_verified?: boolean | null
+  } | null,
+  videos?: {
+    video_id?: string | null,
+    title?: string | null,
+    thumbnail?: string | null,
+    duration?: string | null,
+    view_count?: string | null,
+    published_time?: string | null,
+    is_live?: boolean | null,
+    url?: string | null
+  }[] | null,
+  continuation_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVideo
+
+`youtube.getVideo`
+
+Get a YouTube video with its channel, duration, view, like and comment counts
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.youtube.getVideo({ video_id: 'dQw4w9WgXcQ' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | No | Video ID, e.g. dQw4w9WgXcQ |
+| `video_url` | `string` | No | Full video URL; ignored when video_id is set |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  video_id?: string | null,
+  video_url?: string | null,
+  embed_url?: string | null,
+  title?: string | null,
+  description?: string | null,
+  author?: string | null,
+  channel_id?: string | null,
+  channel_handle?: string | null,
+  channel_url?: string | null,
+  subscriber_count_text?: string | null,
+  is_verified?: boolean | null,
+  publish_date?: string | null,
+  upload_date?: string | null,
+  length_seconds?: number | string | null,
+  view_count?: number | string | null,
+  like_count?: number | string | null,
+  comment_count?: number | string | null,
+  keywords?: string[] | string | null,
+  category?: string | null,
+  is_live_content?: boolean | null,
+  is_private?: boolean | null,
+  is_unlisted?: boolean | null,
+  is_family_safe?: boolean | null,
+  playability_status?: string | null,
+  thumbnail_url?: string | null,
+  thumbnails?: {
+    url?: string | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  captions?: {
+    language_code?: string | null,
+    kind?: string | null
+  }[] | null,
+  chapters?: {
+    title?: string | null,
+    time_description?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`youtube.search`
+
+Search YouTube videos, Shorts, channels and playlists with date, type, duration and sort filters
+
+**Risk:** `read`
+
+```ts
+await corsair.tikhub.api.youtube.search({ keyword: 'python tutorial', type: 'video', sort_by: 'view_count' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | No | Search keyword (required for the first page) |
+| `continuation_token` | `string` | No | continuation_token from the previous response |
+| `upload_date` | `last_hour \| today \| this_week \| this_month \| this_year` | No | — |
+| `type` | `video \| channel \| playlist \| movie` | No | — |
+| `duration` | `short \| medium \| long` | No | short (<4 min), medium (4-20 min), long (>20 min) |
+| `features` | `string` | No | Comma-separated: live, 4k, hd, subtitles, creative_commons, 360, vr180, 3d, hdr |
+| `sort_by` | `relevance \| upload_date \| view_count \| rating` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `message_zh` | `string` | No | — |
+| `support` | `string` | No | — |
+| `time` | `string` | No | — |
+| `time_stamp` | `number` | No | — |
+| `time_zone` | `string` | No | — |
+| `docs` | `string` | No | — |
+| `cache_message` | `string` | No | — |
+| `cache_message_zh` | `string` | No | — |
+| `cache_url` | `string` | No | — |
+| `router` | `string` | No | — |
+| `params` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  videos?: {
+    video_id?: string | null,
+    title?: string | null,
+    author?: string | null,
+    channel_id?: string | null,
+    duration?: string | null,
+    view_count?: number | string | null,
+    published_time?: string | null
+  }[] | null,
+  shorts?: {
+    video_id?: string | null,
+    title?: string | null,
+    author?: string | null,
+    channel_id?: string | null,
+    duration?: string | null,
+    view_count?: number | string | null,
+    published_time?: string | null
+  }[] | null,
+  channels?: {
+  }[] | null,
+  playlists?: {
+  }[] | null,
+  continuation_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

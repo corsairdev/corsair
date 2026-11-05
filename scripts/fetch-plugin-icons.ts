@@ -52,6 +52,25 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 		'https://media.licdn.com/dms/image/v2/D560BAQGBEC5giXvomQ/company-logo_200_200/B56ZlidRJjIsAM-/0/1758293463972/filevine_logo?e=2147483647&v=beta&t=oruRrK3tPc5_e8haya4o-oxpBMhFDjjgoa_1xePKBYI',
 	currentsapi:
 		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://currentsapi.services&size=128',
+	// starton.io answers 402 and starton.com has no favicon; the GitHub org mark is the public logo.
+	starton: 'https://github.com/starton-io.png?size=200',
+	// twenty-icons only has a 32px blur; the site apple touch icon is 180px.
+	turso: 'https://turso.tech/apple-touch-icon.png',
+	// twenty-icons only has a 32px blur; the site apple touch icon is 180px.
+	browseruse: 'https://browser-use.com/apple-touch-icon.png',
+	// plugin-docs.yaml names graph.microsoft.com (the API host), whose icon is the
+	// Microsoft logo; excel.cloud.microsoft carries Excel's own mark.
+	excel: 'https://twenty-icons.com/excel.cloud.microsoft/128',
+	// twenty-icons returns a 32px blur; Google's favicon is the sharp site mark.
+	octen: 'https://www.google.com/s2/favicons?domain=octen.ai&sz=128',
+	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
+	// is the current black knot on pink.
+	typesafe:
+		'https://framerusercontent.com/images/kcuF2BEp5XaVfkmFB634IPRKQH0.png',
+	// plugin-docs.yaml names zoho.com, whose icon is the generic 32px Zoho mark.
+	// Zoho Desk's own mark is its App Store icon (zoho.com/desk has no touch icon).
+	zohodesk:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/a9/08/3e/a9083ec8-1697-2db1-92d4-d175d9121cac/AppIcon-0-0-1x_U007emarketing-0-0-0-8-0-0-85-220.png/180x180bb.png',
 };
 
 type FetchResult =

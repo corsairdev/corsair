@@ -6,7 +6,7 @@
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
   "counts": {
-    "api": 35,
+    "api": 37,
     "webhooks": 1,
     "db": 1
   },
@@ -188,6 +188,11 @@
             "key": "suggestionsViewMode",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "tabs",
+            "optional": true,
+            "type": "any"
           }
         ]
       }
@@ -279,6 +284,11 @@
             "key": "suggestionsViewMode",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "tabs",
+            "optional": true,
+            "type": "any"
           }
         ]
       }
@@ -370,6 +380,11 @@
             "key": "suggestionsViewMode",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "tabs",
+            "optional": true,
+            "type": "any"
           }
         ]
       }
@@ -413,7 +428,7 @@
     {
       "path": "googledocs.api.documents.getDocument",
       "shortPath": "documents.getDocument",
-      "description": "Retrieve a Google Doc by id",
+      "description": "Retrieve a Google Doc by id (set includeTabsContent for multi-tab documents)",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -422,6 +437,11 @@
             "key": "documentId",
             "optional": false,
             "type": "string"
+          },
+          {
+            "key": "includeTabsContent",
+            "optional": true,
+            "type": "boolean"
           }
         ]
       },
@@ -492,6 +512,11 @@
             "key": "suggestionsViewMode",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "tabs",
+            "optional": true,
+            "type": "any"
           }
         ]
       }
@@ -499,7 +524,7 @@
     {
       "path": "googledocs.api.documents.getDocumentPlaintext",
       "shortPath": "documents.getDocumentPlaintext",
-      "description": "Retrieve a Google Doc as best-effort plain text",
+      "description": "Retrieve a Google Doc as plain text; optional tabId, tabTitle, or tabIndex for a specific tab",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -508,6 +533,26 @@
             "key": "documentId",
             "optional": false,
             "type": "string"
+          },
+          {
+            "key": "includeTabsContent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tabId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tabTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tabIndex",
+            "optional": true,
+            "type": "number"
           }
         ]
       },
@@ -533,6 +578,52 @@
             "key": "wordCount",
             "optional": false,
             "type": "number"
+          },
+          {
+            "key": "tabId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tabTitle",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.listDocumentTabs",
+      "shortPath": "documents.listDocumentTabs",
+      "description": "List tab id, title, and hierarchy for a Google Doc (includes nested tabs)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tabs",
+            "optional": false,
+            "type": "{ tabId: string, title?: string, index?: number, parentTabId?: string, nestingLevel?: number }[]"
           }
         ]
       }
@@ -850,6 +941,68 @@
             "key": "writeControl",
             "optional": true,
             "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.sheets.readValues",
+      "shortPath": "sheets.readValues",
+      "description": "Read cell values from a spreadsheet (Sheets API via spreadsheets.readonly)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sheetName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "string",
+            "description": "A1 notation range (e.g. \"Sheet1!A1:D10\"). When omitted, defaults to sheetName!A:Z or Sheet1!A:Z."
+          },
+          {
+            "key": "valueRenderOption",
+            "optional": true,
+            "type": "FORMATTED_VALUE | UNFORMATTED_VALUE | FORMULA"
+          },
+          {
+            "key": "dateTimeRenderOption",
+            "optional": true,
+            "type": "SERIAL_NUMBER | FORMATTED_STRING"
+          },
+          {
+            "key": "majorDimension",
+            "optional": true,
+            "type": "ROWS | COLUMNS"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "range",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "majorDimension",
+            "optional": true,
+            "type": "ROWS | COLUMNS | DIMENSION_UNSPECIFIED"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "(string | number | boolean | null)[][]"
           }
         ]
       }

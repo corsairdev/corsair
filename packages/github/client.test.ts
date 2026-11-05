@@ -90,3 +90,116 @@ describe('makeGithubRequest response casing (ENG-34)', () => {
 		expect(marker.htmlUrl).toBe('https://github.com/o/r/pull/10');
 	});
 });
+
+describe('makeGithubRequest request body casing', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockRequest.mockResolvedValue({});
+	});
+
+	it('converts release options while preserving existing snake_case keys', async () => {
+		await makeGithubRequest('/repos/o/r/releases', 'token', {
+			method: 'POST',
+			body: {
+				tag_name: 'v1.0.0',
+				target_commitish: 'main',
+				generateReleaseNotes: true,
+				draft: false,
+			},
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'POST',
+				body: {
+					tag_name: 'v1.0.0',
+					target_commitish: 'main',
+					generate_release_notes: true,
+					draft: false,
+				},
+			}),
+		);
+	});
+
+	it('converts review options and nested multiline comments without mutating input', async () => {
+		const body = {
+			commitId: 'abc123',
+			event: 'COMMENT',
+			comments: [
+				{
+					path: 'src/index.ts',
+					body: 'Please check this range.',
+					line: 12,
+					side: 'RIGHT',
+					startLine: 10,
+					startSide: 'RIGHT',
+				},
+			],
+		};
+		const original = structuredClone(body);
+
+		await makeGithubRequest('/repos/o/r/pulls/1/reviews', 'token', {
+			method: 'POST',
+			body,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				body: {
+					commit_id: 'abc123',
+					event: 'COMMENT',
+					comments: [
+						{
+							path: 'src/index.ts',
+							body: 'Please check this range.',
+							line: 12,
+							side: 'RIGHT',
+							start_line: 10,
+							start_side: 'RIGHT',
+						},
+					],
+				},
+			}),
+		);
+		expect(body).toEqual(original);
+	});
+
+	it.each(['POST', 'PUT', 'PATCH'] as const)(
+		'converts %s bodies and preserves false, zero, null, and arrays',
+		async (method) => {
+			await makeGithubRequest('/test', 'token', {
+				method,
+				body: {
+					isEnabled: false,
+					itemCount: 0,
+					optionalValue: null,
+					nestedItems: [{ displayName: 'KeepThisValue' }],
+				},
+			});
+
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining({
+					method,
+					body: {
+						is_enabled: false,
+						item_count: 0,
+						optional_value: null,
+						nested_items: [{ display_name: 'KeepThisValue' }],
+					},
+				}),
+			);
+		},
+	);
+
+	it('keeps an omitted write body undefined', async () => {
+		await makeGithubRequest('/test', 'token', { method: 'POST' });
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({ body: undefined }),
+		);
+	});
+});

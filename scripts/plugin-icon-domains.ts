@@ -20,11 +20,13 @@ const PLUGIN_DISCOVERY_SKIP_DIRS = new Set([
 
 /** Hand-tuned domains for plugins where `<id>.com` is wrong and yaml is not set yet. */
 const PLUGIN_DOMAIN_OVERRIDES: Record<string, string> = {
+	akta: 'akta.pro',
 	ably: 'ably.io',
 	abstract: 'abstractapi.com',
 	anthropicadministrator: 'anthropic.com',
 	apibible: 'api.bible',
 	apininjas: 'api-ninjas.com',
+	apollo: 'apollo.io',
 	ascora: 'ascora.com',
 	aryn: 'aryn.ai',
 	attio: 'attio.com',
@@ -38,6 +40,7 @@ const PLUGIN_DOMAIN_OVERRIDES: Record<string, string> = {
 	brevo: 'brevo.com',
 	collegefootballdata: 'collegefootballdata.com',
 	contentfulgraphql: 'contentful.com',
+	contextdev: 'context.dev',
 	cosmic: 'cosmicjs.com',
 	emelia: 'emelia.io',
 	filevine: 'filevine.com',
@@ -60,6 +63,7 @@ const PLUGIN_DOMAIN_OVERRIDES: Record<string, string> = {
 	openrouter: 'openrouter.ai',
 	perplexityai: 'perplexity.ai',
 	posthog: 'posthog.com',
+	reducto: 'reducto.ai',
 	removebg: 'remove.bg',
 	scrapegraphai: 'scrapegraphai.com',
 	serpapi: 'serpapi.com',
@@ -74,6 +78,8 @@ const PLUGIN_DOMAIN_OVERRIDES: Record<string, string> = {
 	youcom: 'you.com',
 	zohobigin: 'bigin.zoho.com',
 	zohomail: 'zoho.com',
+	accrediblecertificates: 'accredible.com',
+	agentmail: 'agentmail.to',
 };
 
 let yamlDomainsCache: Record<string, string> | null = null;

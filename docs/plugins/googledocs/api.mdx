@@ -89,6 +89,7 @@ await corsair.googledocs.api.documents.createBlankDocument({});
 | `lists` | `any` | No | — |
 | `documentStyle` | `any` | No | — |
 | `suggestionsViewMode` | `string` | No | — |
+| `tabs` | `any` | No | — |
 
 
 
@@ -132,6 +133,7 @@ await corsair.googledocs.api.documents.createDocument({});
 | `lists` | `any` | No | — |
 | `documentStyle` | `any` | No | — |
 | `suggestionsViewMode` | `string` | No | — |
+| `tabs` | `any` | No | — |
 
 
 
@@ -175,6 +177,7 @@ await corsair.googledocs.api.documents.createDocumentMarkdown({});
 | `lists` | `any` | No | — |
 | `documentStyle` | `any` | No | — |
 | `suggestionsViewMode` | `string` | No | — |
+| `tabs` | `any` | No | — |
 
 
 
@@ -216,7 +219,7 @@ await corsair.googledocs.api.documents.exportDocumentAsPdf({});
 
 `documents.getDocument`
 
-Retrieve a Google Doc by id
+Retrieve a Google Doc by id (set includeTabsContent for multi-tab documents)
 
 **Risk:** `read`
 
@@ -229,6 +232,7 @@ await corsair.googledocs.api.documents.getDocument({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | Yes | — |
+| `includeTabsContent` | `boolean` | No | — |
 
 
 
@@ -249,6 +253,7 @@ await corsair.googledocs.api.documents.getDocument({});
 | `lists` | `any` | No | — |
 | `documentStyle` | `any` | No | — |
 | `suggestionsViewMode` | `string` | No | — |
+| `tabs` | `any` | No | — |
 
 
 
@@ -258,12 +263,51 @@ await corsair.googledocs.api.documents.getDocument({});
 
 `documents.getDocumentPlaintext`
 
-Retrieve a Google Doc as best-effort plain text
+Retrieve a Google Doc as plain text; optional tabId, tabTitle, or tabIndex for a specific tab
 
 **Risk:** `read`
 
 ```ts
 await corsair.googledocs.api.documents.getDocumentPlaintext({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `includeTabsContent` | `boolean` | No | — |
+| `tabId` | `string` | No | — |
+| `tabTitle` | `string` | No | — |
+| `tabIndex` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `text` | `string` | Yes | — |
+| `wordCount` | `number` | Yes | — |
+| `tabId` | `string` | No | — |
+| `tabTitle` | `string` | No | — |
+
+
+
+---
+
+### listDocumentTabs
+
+`documents.listDocumentTabs`
+
+List tab id, title, and hierarchy for a Google Doc (includes nested tabs)
+
+**Risk:** `read`
+
+```ts
+await corsair.googledocs.api.documents.listDocumentTabs({});
 ```
 
 **Input**
@@ -280,8 +324,22 @@ await corsair.googledocs.api.documents.getDocumentPlaintext({});
 |------|------|----------|-------------|
 | `documentId` | `string` | Yes | — |
 | `title` | `string` | No | — |
-| `text` | `string` | Yes | — |
-| `wordCount` | `number` | Yes | — |
+| `tabs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tabs full type">
+
+```ts
+{
+  tabId: string,
+  title?: string,
+  index?: number,
+  parentTabId?: string,
+  nestingLevel?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -685,6 +743,45 @@ await corsair.googledocs.api.documents.updateExistingDocument({});
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+## Sheets
+
+### readValues
+
+`sheets.readValues`
+
+Read cell values from a spreadsheet (Sheets API via spreadsheets.readonly)
+
+**Risk:** `read`
+
+```ts
+await corsair.googledocs.api.sheets.readValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+| `sheetName` | `string` | No | — |
+| `range` | `string` | No | A1 notation range (e.g. "Sheet1!A1:D10"). When omitted, defaults to sheetName!A:Z or Sheet1!A:Z. |
+| `valueRenderOption` | `FORMATTED_VALUE \| UNFORMATTED_VALUE \| FORMULA` | No | — |
+| `dateTimeRenderOption` | `SERIAL_NUMBER \| FORMATTED_STRING` | No | — |
+| `majorDimension` | `ROWS \| COLUMNS` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `range` | `string` | No | — |
+| `majorDimension` | `ROWS \| COLUMNS \| DIMENSION_UNSPECIFIED` | No | — |
+| `values` | `(string \| number \| boolean \| null)[][]` | No | — |
 
 
 
