@@ -20,7 +20,7 @@ Add a custom field to a product's checkout, optionally required
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.customFields.create({});
+await corsair.gumroad.api.customFields.create({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example' });
 ```
 
 **Input**
@@ -65,7 +65,7 @@ Permanently delete a product's custom field by name
 **Risk:** `destructive`
 
 ```ts
-await corsair.gumroad.api.customFields.delete({});
+await corsair.gumroad.api.customFields.delete({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example' });
 ```
 
 **Input**
@@ -97,7 +97,7 @@ List a product's checkout custom fields
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.customFields.list({});
+await corsair.gumroad.api.customFields.list({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -140,7 +140,7 @@ Flip whether one of a product's custom fields is required
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.customFields.update({});
+await corsair.gumroad.api.customFields.update({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example' });
 ```
 
 **Input**
@@ -187,7 +187,7 @@ Read the annual earnings breakdown (gross, fees, taxes, affiliate credit, net) f
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.earnings.get({});
+await corsair.gumroad.api.earnings.get({ year: '2025' });
 ```
 
 **Input**
@@ -226,7 +226,7 @@ Create a draft audience email by subject, HTML body and audience, or send it imm
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.emails.create({});
+await corsair.gumroad.api.emails.create({ subject: 'Welcome', body: 'Thanks for your purchase' });
 ```
 
 **Input**
@@ -288,7 +288,7 @@ Delete an audience email
 **Risk:** `destructive`
 
 ```ts
-await corsair.gumroad.api.emails.delete({});
+await corsair.gumroad.api.emails.delete({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -319,7 +319,7 @@ Read one audience email by id
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.emails.get({});
+await corsair.gumroad.api.emails.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -434,7 +434,7 @@ Send a preview of an audience email to the seller's own address
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.emails.preview({});
+await corsair.gumroad.api.emails.preview({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -492,7 +492,7 @@ Schedule a draft audience email to publish at a set time in the seller's timezon
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.emails.schedule({});
+await corsair.gumroad.api.emails.schedule({ id: 'bfi_30HLgGWL8H2wo_Gzlg==', to_be_published_at: '2026-01-01 09:00' });
 ```
 
 **Input**
@@ -549,7 +549,7 @@ Publish a draft audience email and send it to its audience
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.emails.send({});
+await corsair.gumroad.api.emails.send({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -605,7 +605,7 @@ Cancel a scheduled audience email and turn it back into a draft
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.emails.unschedule({});
+await corsair.gumroad.api.emails.unschedule({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -663,7 +663,7 @@ Cancel a multipart upload started by files.presign
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.files.abort({});
+await corsair.gumroad.api.files.abort({ upload_id: 'example-upload', key: 'uploads/abc' });
 ```
 
 **Input**
@@ -695,7 +695,7 @@ Finalize a multipart upload with the S3 upload id, key and part etags, returning
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.files.complete({});
+await corsair.gumroad.api.files.complete({ upload_id: 'example-upload', key: 'uploads/abc', parts: [{ part_number: 1, etag: d41d8cd98f00b204e9800998ecf8427e }] });
 ```
 
 **Input**
@@ -740,7 +740,7 @@ Start a multipart file upload and get presigned S3 URLs per 100 MB part (max 20 
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.files.presign({});
+await corsair.gumroad.api.files.presign({ file_size: 1024, filename: 'bundle.zip' });
 ```
 
 **Input**
@@ -789,7 +789,7 @@ Decrement a license key use counter and read its purchase
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.licenses.decrementUsesCount({});
+await corsair.gumroad.api.licenses.decrementUsesCount({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
 ```
 
 **Input**
@@ -871,7 +871,7 @@ Disable a license key so it fails verification, and read its purchase
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.licenses.disable({});
+await corsair.gumroad.api.licenses.disable({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
 ```
 
 **Input**
@@ -953,7 +953,7 @@ Re-enable a disabled license key and read its purchase
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.licenses.enable({});
+await corsair.gumroad.api.licenses.enable({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
 ```
 
 **Input**
@@ -1035,7 +1035,7 @@ Rotate a license key to a new one; the previous key stops validating immediately
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.licenses.rotate({});
+await corsair.gumroad.api.licenses.rotate({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
 ```
 
 **Input**
@@ -1117,7 +1117,7 @@ Verify a license key against a product and read its purchase; increments the lic
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.licenses.verify({ product_id: '32-nPAicqbLj8B_WswVlMw==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD', increment_uses_count: 'false' });
+await corsair.gumroad.api.licenses.verify({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
 ```
 
 **Input**
@@ -1202,7 +1202,7 @@ Add a media library file from a public image URL or a direct-upload signed blob 
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.media.create({});
+await corsair.gumroad.api.media.create({ url: 'https://example.com/logo.png' });
 ```
 
 **Input**
@@ -1256,7 +1256,7 @@ Delete a media library file by id
 **Risk:** `destructive`
 
 ```ts
-await corsair.gumroad.api.media.delete({});
+await corsair.gumroad.api.media.delete({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -1335,7 +1335,7 @@ Create a fixed-amount or percentage offer code for a product, optionally univers
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.offerCodes.createForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: '1OFF', amount_off: 100 });
+await corsair.gumroad.api.offerCodes.createForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example', amount_off: 100 });
 ```
 
 **Input**
@@ -1399,7 +1399,7 @@ Permanently delete one of a product's offer codes
 **Risk:** `destructive`
 
 ```ts
-await corsair.gumroad.api.offerCodes.deleteForProduct({});
+await corsair.gumroad.api.offerCodes.deleteForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -1431,7 +1431,7 @@ Read one store-wide offer code by id
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.offerCodes.get({});
+await corsair.gumroad.api.offerCodes.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -1485,7 +1485,7 @@ Read one of a product's offer codes by id
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.offerCodes.getForProduct({});
+await corsair.gumroad.api.offerCodes.getForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -1597,7 +1597,7 @@ List all of a product's offer codes with amounts and redemption counts
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.offerCodes.listForProduct({});
+await corsair.gumroad.api.offerCodes.listForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -1651,7 +1651,7 @@ Update a store-wide offer code schedule, usage cap or minimum; the amount and un
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.offerCodes.update({});
+await corsair.gumroad.api.offerCodes.update({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -1711,7 +1711,7 @@ Update one of a product's offer codes: usage cap, minimum, automatic application
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.offerCodes.updateForProduct({});
+await corsair.gumroad.api.offerCodes.updateForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -1774,7 +1774,7 @@ Read one payout with its sale ids and optional per-transaction breakdown lines
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.payouts.get({});
+await corsair.gumroad.api.payouts.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -1990,7 +1990,7 @@ Attach a cover to a product from a public image/video or YouTube/Vimeo URL
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.products.coversAdd({});
+await corsair.gumroad.api.products.coversAdd({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', url: 'https://example.com/file.zip' });
 ```
 
 **Input**
@@ -2043,7 +2043,7 @@ Permanently delete one of a product's covers by id
 **Risk:** `destructive`
 
 ```ts
-await corsair.gumroad.api.products.coversDelete({});
+await corsair.gumroad.api.products.coversDelete({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -2207,7 +2207,7 @@ Permanently delete a product
 **Risk:** `destructive`
 
 ```ts
-await corsair.gumroad.api.products.delete({});
+await corsair.gumroad.api.products.delete({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -2238,7 +2238,7 @@ Unpublish (disable) an existing product
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.products.disable({});
+await corsair.gumroad.api.products.disable({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -2305,7 +2305,7 @@ Publish (enable) an existing product
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.products.enable({});
+await corsair.gumroad.api.products.enable({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -2503,7 +2503,7 @@ List one product's reviews with rating, message and the seller's public reply
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.products.reviewsList({});
+await corsair.gumroad.api.products.reviewsList({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -2557,7 +2557,7 @@ Remove a product's thumbnail
 **Risk:** `destructive`
 
 ```ts
-await corsair.gumroad.api.products.thumbnailDelete({});
+await corsair.gumroad.api.products.thumbnailDelete({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -2588,7 +2588,7 @@ Set a product's thumbnail from a public image URL or a direct-upload signed blob
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.products.thumbnailSet({});
+await corsair.gumroad.api.products.thumbnailSet({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', url: 'https://example.com/thumb.png' });
 ```
 
 **Input**
@@ -2633,7 +2633,7 @@ Update a product; files and tags are full replacements, and custom_html or cover
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.products.update({});
+await corsair.gumroad.api.products.update({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -2897,7 +2897,7 @@ Read a creator's public profile with up to 100 visible products; no authenticati
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.public.profile({});
+await corsair.gumroad.api.public.profile({ username: 'sahil' });
 ```
 
 **Input**
@@ -2949,7 +2949,7 @@ List active subscriptions for one resource event type
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.resourceSubscriptions.list({});
+await corsair.gumroad.api.resourceSubscriptions.list({ resource_name: 'sale' });
 ```
 
 **Input**
@@ -2993,7 +2993,7 @@ Subscribe a post URL to one of the 8 resource event types (sales, refunds, dispu
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.resourceSubscriptions.subscribe({});
+await corsair.gumroad.api.resourceSubscriptions.subscribe({ resource_name: 'sale', post_url: 'https://example.com/webhook' });
 ```
 
 **Input**
@@ -3038,7 +3038,7 @@ Queue a sample event for a resource subscription post URL
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.resourceSubscriptions.testEvent({});
+await corsair.gumroad.api.resourceSubscriptions.testEvent({ resource_subscription_id: 'example' });
 ```
 
 **Input**
@@ -3081,7 +3081,7 @@ Delete a resource subscription by id
 **Risk:** `destructive`
 
 ```ts
-await corsair.gumroad.api.resourceSubscriptions.unsubscribe({});
+await corsair.gumroad.api.resourceSubscriptions.unsubscribe({ resource_subscription_id: 'example' });
 ```
 
 **Input**
@@ -3114,7 +3114,7 @@ Get one sale by id with price, fees, taxes, refund and chargeback state
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.sales.get({});
+await corsair.gumroad.api.sales.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -3181,7 +3181,7 @@ List successful sales, filterable by date range, product, buyer email, order id,
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.sales.list({ after: '2020-09-03', before: '2021-09-03' });
+await corsair.gumroad.api.sales.list({});
 ```
 
 **Input**
@@ -3257,7 +3257,7 @@ Mark a physical sale as shipped with an optional tracking URL
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.sales.markAsShipped({});
+await corsair.gumroad.api.sales.markAsShipped({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -3325,7 +3325,7 @@ Refund a sale fully, or partially with amount_cents; returns the updated sale
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.sales.refund({ id: 'B28UKN-dvxYabdavG97Y-Q==', amount_cents: 200 });
+await corsair.gumroad.api.sales.refund({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -3393,7 +3393,7 @@ Resend the purchase receipt to the customer's email
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.sales.resendReceipt({});
+await corsair.gumroad.api.sales.resendReceipt({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -3423,7 +3423,7 @@ Revoke the buyer's access to a sale without refunding it (refused for refunded, 
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.sales.revokeAccess({});
+await corsair.gumroad.api.sales.revokeAccess({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -3490,7 +3490,7 @@ Restore a buyer's access to a previously revoked sale
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.sales.undoRevokeAccess({});
+await corsair.gumroad.api.sales.undoRevokeAccess({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -3559,7 +3559,7 @@ Read one subscriber by id with status, recurrence and license key
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.subscribers.get({});
+await corsair.gumroad.api.subscribers.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -3617,7 +3617,7 @@ List one product's subscribers with status, recurrence and license key
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.subscribers.list({ product_id: '0ssD7adjRklGBjS5cwlWPq==', paginated: 'true' });
+await corsair.gumroad.api.subscribers.list({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -3790,7 +3790,7 @@ Sanitize profile HTML and return the sanitized result without saving anything
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.user.customHtmlPreview({});
+await corsair.gumroad.api.user.customHtmlPreview({ custom_html: '<p>Hello</p>' });
 ```
 
 **Input**
@@ -3836,7 +3836,7 @@ Publish or clear the profile custom HTML landing page; the response carries a sa
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.user.customHtmlUpdate({});
+await corsair.gumroad.api.user.customHtmlUpdate({ custom_html: '<p>Hello</p>' });
 ```
 
 **Input**
@@ -3967,7 +3967,7 @@ Update the account-level refund policy period and its fine print (max 3000 chara
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.user.refundPolicyUpdate({});
+await corsair.gumroad.api.user.refundPolicyUpdate({ refund_period: '30' });
 ```
 
 **Input**
@@ -4015,7 +4015,7 @@ Create a variant category on a product by title
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.variantCategories.create({});
+await corsair.gumroad.api.variantCategories.create({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', title: 'Format' });
 ```
 
 **Input**
@@ -4059,7 +4059,7 @@ Permanently delete a product's variant category
 **Risk:** `destructive`
 
 ```ts
-await corsair.gumroad.api.variantCategories.delete({});
+await corsair.gumroad.api.variantCategories.delete({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -4091,7 +4091,7 @@ Read one of a product's variant categories by id
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.variantCategories.get({});
+await corsair.gumroad.api.variantCategories.get({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -4135,7 +4135,7 @@ List a product's variant categories
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.variantCategories.list({});
+await corsair.gumroad.api.variantCategories.list({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -4178,7 +4178,7 @@ Rename one of a product's variant categories
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.variantCategories.update({});
+await corsair.gumroad.api.variantCategories.update({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==', title: 'Format' });
 ```
 
 **Input**
@@ -4223,7 +4223,7 @@ Create a variant with a name, price difference in cents and optional purchase ca
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.variantCategories.variantsCreate({});
+await corsair.gumroad.api.variantCategories.variantsCreate({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', name: 'Example', price_difference_cents: 100 });
 ```
 
 **Input**
@@ -4272,7 +4272,7 @@ Permanently delete a variant
 **Risk:** `destructive`
 
 ```ts
-await corsair.gumroad.api.variantCategories.variantsDelete({});
+await corsair.gumroad.api.variantCategories.variantsDelete({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -4305,7 +4305,7 @@ Read one variant by id
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.variantCategories.variantsGet({});
+await corsair.gumroad.api.variantCategories.variantsGet({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -4352,7 +4352,7 @@ List the variants in one of a product's variant categories
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.variantCategories.variantsList({});
+await corsair.gumroad.api.variantCategories.variantsList({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1' });
 ```
 
 **Input**
@@ -4398,7 +4398,7 @@ Update a variant name, price difference or purchase cap
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.variantCategories.variantsUpdate({});
+await corsair.gumroad.api.variantCategories.variantsUpdate({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
@@ -4450,7 +4450,7 @@ Append one email step to a workflow with a delay in hours, days, weeks or months
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.workflows.emailsAdd({});
+await corsair.gumroad.api.workflows.emailsAdd({ workflow_id: 'wfl_30HLgGWL8H2wo_Gzlg==', subject: 'Welcome', body: 'Thanks for your purchase', delay_amount: 1, delay_unit: 'day' });
 ```
 
 **Input**
@@ -4519,7 +4519,7 @@ Update one workflow email step subject, body or delay without changing publicati
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.workflows.emailsUpdate({});
+await corsair.gumroad.api.workflows.emailsUpdate({ workflow_id: 'wfl_30HLgGWL8H2wo_Gzlg==', email_id: 'bfi_30HLgGWL8H2wo_Gzlg==', subject: 'Welcome', body: 'Thanks for your purchase', delay_amount: 1, delay_unit: 'day' });
 ```
 
 **Input**
@@ -4589,7 +4589,7 @@ Read one workflow with its email steps and delivery statistics
 **Risk:** `read`
 
 ```ts
-await corsair.gumroad.api.workflows.get({});
+await corsair.gumroad.api.workflows.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 ```
 
 **Input**
