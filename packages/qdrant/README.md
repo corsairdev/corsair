@@ -16,7 +16,7 @@ export const corsair = createCorsair({
 
 Each account stores its API key (or JWT) as `api_key` and its cluster URL as `base_url`. To use one cluster for every account, pass the URL instead: `qdrant({ baseUrl: 'http://localhost:6333' })`. For a server running without an API key, pass `unauthenticated: true`. Otherwise a missing key fails with `AuthMissingError`.
 
-The URL is never taken from endpoint input, so an agent can't send the key to another server. It must not contain credentials, a query string or a fragment, and plain `http` is only accepted for localhost, private addresses and cluster-internal names (`qdrant`, `*.svc.cluster.local`). A path prefix is allowed, for clusters behind a reverse proxy.
+The URL is never taken from endpoint input, so an agent can't send the key to another server. It must not contain credentials, a query string or a fragment. Plain `http` is accepted for localhost; a URL pinned with the `baseUrl` option may also use it for private addresses and cluster-internal names (`qdrant`, `*.svc.cluster.local`). A `base_url` stored for an account can't, because whoever connects the account sets it, and on a hosted runtime it must not reach the host's private network. A path prefix is allowed, for clusters behind a reverse proxy.
 
 ## Endpoints
 

@@ -13,20 +13,26 @@ export class QdrantAPIError extends Error {
 }
 
 // Plain http would send the key in cleartext, so it is only allowed for
-// loopback, private addresses and cluster-internal names.
-const LOCAL_HOSTS = [
-	/^localhost$/,
-	/^127(\.\d+){3}$/,
+// loopback hosts.
+const LOOPBACK_HOSTS = [/^localhost$/, /^127(\.\d+){3}$/, /^\[::1\]$/];
+// Private addresses and cluster-internal names (`qdrant`, `*.svc.cluster.local`)
+// are also allowed over http, but only for a URL the developer pinned in the
+// plugin options. A URL stored for an account is set by whoever connects it,
+// and on a hosted runtime it must not reach the host's private network.
+const PRIVATE_HOSTS = [
 	/^10(\.\d+){3}$/,
 	/^192\.168(\.\d+){2}$/,
 	/^172\.(1[6-9]|2\d|3[01])(\.\d+){2}$/,
-	/^\[(::1|f[cd][0-9a-f:]*)\]$/,
+	/^\[f[cd][0-9a-f:]*\]$/,
 	/^[a-z0-9-]+$/,
 	/\.(local|internal|localhost)$/,
 ];
 
 // Never taken from endpoint input, so an agent can't send the key elsewhere.
-export function normalizeQdrantBaseUrl(baseUrl: string | undefined): string {
+export function normalizeQdrantBaseUrl(
+	baseUrl: string | undefined,
+	{ allowPrivateHttp = false }: { allowPrivateHttp?: boolean } = {},
+): string {
 	if (!baseUrl) {
 		throw new QdrantAPIError(
 			'A Qdrant base URL is required. Set `baseUrl` in the plugin options or store `base_url` for the account.',
@@ -47,12 +53,17 @@ export function normalizeQdrantBaseUrl(baseUrl: string | undefined): string {
 			'INVALID_BASE_URL',
 		);
 	}
+	const httpHosts = allowPrivateHttp
+		? [...LOOPBACK_HOSTS, ...PRIVATE_HOSTS]
+		: LOOPBACK_HOSTS;
 	if (
 		url.protocol === 'http:' &&
-		!LOCAL_HOSTS.some((host) => host.test(url.hostname))
+		!httpHosts.some((host) => host.test(url.hostname))
 	) {
 		throw new QdrantAPIError(
-			`Use https for ${url.hostname}: http is only allowed for localhost and private hosts`,
+			allowPrivateHttp
+				? `Use https for ${url.hostname}: http is only allowed for localhost and private hosts`
+				: `Use https for ${url.hostname}: a stored base_url may use http only for localhost. For a private host, pin it with the plugin's baseUrl option`,
 			'INSECURE_BASE_URL',
 		);
 	}
@@ -75,6 +86,8 @@ export async function makeQdrantRequest<T>(
 	apiKey: string,
 	options: {
 		baseUrl: string | undefined;
+		/** True only for a URL pinned in the plugin options, not one stored for an account. */
+		allowPrivateHttp?: boolean;
 		method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: unknown;
 		query?: Record<string, string | number | boolean>;
@@ -84,7 +97,9 @@ export async function makeQdrantRequest<T>(
 	},
 ): Promise<T> {
 	const config: OpenAPIConfig = {
-		BASE: normalizeQdrantBaseUrl(options.baseUrl),
+		BASE: normalizeQdrantBaseUrl(options.baseUrl, {
+			allowPrivateHttp: options.allowPrivateHttp,
+		}),
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',

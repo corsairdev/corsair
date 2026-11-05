@@ -21,13 +21,25 @@ describe('normalizeQdrantBaseUrl', () => {
 		['https://xyz.cloud.qdrant.io:6333/', 'https://xyz.cloud.qdrant.io:6333'],
 		['https://proxy.example.com/qdrant/', 'https://proxy.example.com/qdrant'],
 		['http://localhost:6333', 'http://localhost:6333'],
-		['http://10.0.0.5:6333', 'http://10.0.0.5:6333'],
-		[
-			'http://qdrant.default.svc.cluster.local:6333',
-			'http://qdrant.default.svc.cluster.local:6333',
-		],
+		['http://127.0.0.1:6333', 'http://127.0.0.1:6333'],
+		['http://[::1]:6333', 'http://[::1]:6333'],
 	])('accepts %s', (input, expected) => {
 		expect(normalizeQdrantBaseUrl(input)).toBe(expected);
+	});
+
+	it.each([
+		'http://10.0.0.5:6333',
+		'http://192.168.1.20:6333',
+		'http://qdrant:6333',
+		'http://qdrant.default.svc.cluster.local:6333',
+		'http://[fd00::5]:6333',
+	])('accepts %s over http only when pinned in the plugin options', (input) => {
+		expect(normalizeQdrantBaseUrl(input, { allowPrivateHttp: true })).toBe(
+			input,
+		);
+		expect(() => normalizeQdrantBaseUrl(input)).toThrow(
+			expect.objectContaining({ code: 'INSECURE_BASE_URL' }),
+		);
 	});
 
 	it.each([
@@ -37,10 +49,13 @@ describe('normalizeQdrantBaseUrl', () => {
 		['https://qdrant.example.com?api-key=secret', 'INVALID_BASE_URL'],
 		['http://xyz.cloud.qdrant.io:6333', 'INSECURE_BASE_URL'],
 		['http://127.example.com', 'INSECURE_BASE_URL'],
-	])('rejects %s', (input, code) => {
-		expect(() => normalizeQdrantBaseUrl(input)).toThrow(
-			expect.objectContaining({ code }),
-		);
+		['http://qdrant.example.com:6333', 'INSECURE_BASE_URL'],
+	])('rejects %s, even when pinned', (input, code) => {
+		for (const allowPrivateHttp of [false, true]) {
+			expect(() => normalizeQdrantBaseUrl(input, { allowPrivateHttp })).toThrow(
+				expect.objectContaining({ code }),
+			);
+		}
 	});
 });
 

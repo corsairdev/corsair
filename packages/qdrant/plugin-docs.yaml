@@ -2,7 +2,7 @@ displayName: Qdrant
 description: Vector search engine for semantic, hybrid and filtered search over embeddings, self-hosted or on Qdrant Cloud.
 domain: qdrant.tech
 overviewNote: |
-  Works with self-hosted Qdrant and [Qdrant Cloud](https://cloud.qdrant.io). Each account stores its cluster URL as `base_url` next to its API key. The URL is never taken from endpoint input.
+  Works with self-hosted Qdrant and [Qdrant Cloud](https://cloud.qdrant.io). Each account stores its cluster URL as `base_url` next to its API key. The URL is never taken from endpoint input. A stored URL must use https, or http on localhost; pin a private host such as `http://qdrant:6333` with the `baseUrl` option.
 recommendedAuth: api_key
 factory:
   note: Pass `baseUrl` to pin one cluster for every account, or leave it out and store `base_url` per account.

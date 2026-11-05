@@ -105,11 +105,10 @@ function define<K extends Key>(
 			).catch((error: unknown) => console.warn('Failed to log event:', error));
 
 		try {
+			const pinnedUrl = ctx.options.baseUrl;
 			const output = await makeQdrantRequest(path(parsed), ctx.key, {
-				baseUrl:
-					ctx.options.baseUrl ??
-					(await ctx.keys?.get_base_url?.()) ??
-					undefined,
+				baseUrl: pinnedUrl ?? (await ctx.keys?.get_base_url?.()) ?? undefined,
+				allowPrivateHttp: pinnedUrl !== undefined,
 				method,
 				body: method === 'GET' || method === 'DELETE' ? undefined : body,
 				query,

@@ -197,6 +197,31 @@ describe('Qdrant endpoints', () => {
 		expect(requests).toHaveLength(1);
 	});
 
+	it('allows http to a private host only when the URL is pinned in the options', async () => {
+		const requests = mockFetch({ body: { result: { collections: [] } } });
+		const stored = call(
+			'collections.list',
+			{},
+			{
+				options: {},
+				keys: { get_base_url: async () => 'http://10.0.0.5:6333' },
+			},
+		);
+		await expect(stored.output).resolves.toMatchObject({
+			code: 'INSECURE_BASE_URL',
+		});
+		expect(requests).toHaveLength(0);
+
+		await call(
+			'collections.list',
+			{},
+			{
+				options: { baseUrl: 'http://10.0.0.5:6333' },
+			},
+		).output;
+		expect(requests[0]?.url.href).toBe('http://10.0.0.5:6333/collections');
+	});
+
 	it('logs completed and failed calls with only the collection name', async () => {
 		mockFetch(
 			{ body: { result: done } },
