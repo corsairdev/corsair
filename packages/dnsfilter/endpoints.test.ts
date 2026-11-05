@@ -184,6 +184,37 @@ describe('DNSFilter request wiring', () => {
 		expect(options.path).toEqual({ id: 42 });
 	});
 
+	it('accepts null attributes and empty to-one relationships', async () => {
+		// DNSFilter documents these fields as "may be null"; JSON:API sends
+		// `{ data: null }` for a network without a policy.
+		requestMock.mockResolvedValueOnce({
+			data: {
+				id: '42',
+				type: 'networks',
+				attributes: { name: 'HQ', physical_address: null },
+				relationships: {
+					organization: { data: { id: '7', type: 'organizations' } },
+					policy: { data: null },
+					scheduled_policy: { data: null },
+				},
+			},
+		});
+		const upsertByEntityId = jest.fn(async () => undefined);
+		const findByEntityId = jest.fn(async () => null);
+		const result = await Networks.networksGet(
+			createContext({ networks: { upsertByEntityId, findByEntityId } }),
+			{ id: 42 },
+		);
+
+		expect(result.data?.attributes?.name).toBe('HQ');
+		expect(result.data?.attributes).not.toHaveProperty('physical_address');
+		expect(result.data?.relationships?.policy).toEqual({});
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'42',
+			expect.objectContaining({ name: 'HQ', organizationId: '7' }),
+		);
+	});
+
 	it('passes create bodies through unchanged', async () => {
 		requestMock.mockResolvedValueOnce({ data: {} });
 		await Networks.networksCreate(createContext(), {

@@ -91,6 +91,23 @@ function withoutUndefinedBody(body: unknown): unknown {
 	return entries.length > 0 ? Object.fromEntries(entries) : undefined;
 }
 
+// The API reference describes many response fields as "may be null" (JSON:API
+// also sends `{ data: null }` for an empty to-one relationship), but the
+// OpenAPI document never marks them nullable, so the generated output schemas
+// use `.optional()`, which rejects null. Dropping null keys before parsing
+// turns "no value" into "absent" and keeps such responses valid. The input is
+// arbitrary parsed JSON, so it stays `unknown`.
+export function dropNullFields(value: unknown): unknown {
+	if (Array.isArray(value)) return value.map(dropNullFields);
+	if (typeof value !== 'object' || value === null) return value;
+	// Copies the keys of untyped JSON, so the values stay `unknown`.
+	const result: Record<string, unknown> = {};
+	for (const [key, entry] of Object.entries(value)) {
+		if (entry !== null) result[key] = dropNullFields(entry);
+	}
+	return result;
+}
+
 // Anything the fetch/zod layer can throw; narrowed with instanceof below.
 function toDnsfilterError(error: unknown): Error {
 	if (error instanceof ApiError) {
@@ -141,9 +158,13 @@ export async function makeDnsfilterRequest<T>(
 		mediaType: 'application/json; charset=utf-8',
 	};
 
+	let response: T;
 	try {
-		return await request<T>(config, requestOptions);
+		response = await request<T>(config, requestOptions);
 	} catch (error) {
 		throw toDnsfilterError(error);
 	}
+	// Safe: dropNullFields only removes keys, so the value keeps the shape the
+	// caller's output schema then validates.
+	return dropNullFields(response) as T;
 }

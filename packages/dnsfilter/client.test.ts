@@ -2,6 +2,7 @@ import { ApiError, request } from 'corsair/http';
 import {
 	DNSFILTER_API_BASE,
 	DnsfilterAPIError,
+	dropNullFields,
 	makeDnsfilterRequest,
 } from './client';
 import { redactSensitive } from './redact';
@@ -154,6 +155,37 @@ describe('makeDnsfilterRequest', () => {
 
 		const [, arrayOptions] = lastRequestCall();
 		expect(arrayOptions.body).toEqual([{ id: 1 }, { id: 2 }]);
+	});
+
+	it('drops null fields from responses at every depth', async () => {
+		requestMock.mockResolvedValueOnce({
+			data: [
+				{
+					id: '1',
+					attributes: { name: 'HQ', physical_address: null },
+					relationships: { policy: { data: null } },
+				},
+			],
+			links: null,
+		});
+
+		const response = await makeDnsfilterRequest('/v1/networks', 'k');
+
+		expect(response).toEqual({
+			data: [
+				{ id: '1', attributes: { name: 'HQ' }, relationships: { policy: {} } },
+			],
+		});
+	});
+
+	it('leaves non-object responses alone when dropping nulls', () => {
+		expect(dropNullFields('id,name\n1,HQ')).toBe('id,name\n1,HQ');
+		expect(dropNullFields(undefined)).toBeUndefined();
+		expect(dropNullFields([1, null, { a: null, b: 0 }])).toEqual([
+			1,
+			null,
+			{ b: 0 },
+		]);
 	});
 
 	it('normalises v1 error bodies', async () => {
