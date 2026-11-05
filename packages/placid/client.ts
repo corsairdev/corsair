@@ -8,9 +8,9 @@ import { ApiError, request } from 'corsair/http';
 
 export const PLACID_API_BASE = 'https://api.placid.app/api/rest';
 
-// A render is queued, not done, so the answer comes back long before the work
-// finishes; the default 20 seconds is enough for the request itself. Uploads
-// carry the file, which can be large, so they get a longer window.
+// A render is queued, not done, so the reply arrives long before the work
+// finishes and the request itself is quick. Media and font uploads carry a
+// file, so they get a wider window than the 20 second default.
 const PLACID_TIMEOUT_MS = 30_000;
 
 // Placid allows 60 requests per minute and answers 429 when it is exceeded.

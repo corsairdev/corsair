@@ -64,8 +64,8 @@ describe('placid plugin definition', () => {
 	});
 
 	it('exposes exactly the 26 documented operations', () => {
-		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(([group, fns]) =>
-			Object.keys(fns).map((name) => `${group}.${name}`),
+		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
+			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
 		expect(nested.sort()).toEqual([...OPERATIONS].sort());
 	});
@@ -141,9 +141,9 @@ describe('keyBuilder', () => {
 	});
 
 	it('throws AuthMissingError when no key is available', async () => {
-		await expect(
-			buildKey(placid(), keyContext(null)),
-		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(buildKey(placid(), keyContext(null))).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
 	});
 
 	it('throws AuthMissingError for the webhook source, which it does not serve', async () => {
