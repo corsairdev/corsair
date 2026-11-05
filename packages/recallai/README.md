@@ -1,6 +1,6 @@
 # @corsair-dev/recallai
 
-Recallai plugin for Corsair.
+Recall.ai plugin for Corsair: meeting bots, recordings, transcripts and calendars.
 
 ## Install
 
@@ -10,13 +10,26 @@ pnpm add @corsair-dev/recallai
 
 ## Region
 
-Recall.ai API keys are region-specific. Set the matching region when creating
-the plugin. Supported regions are `us-east-1`, `us-west-2`, `eu-central-1`,
-and `ap-northeast-1`; omitting the option keeps the existing `us-west-2`
-default.
+A Recall.ai API key only works on the host of the region it was created in:
+`us-west-2`, `us-east-1`, `eu-central-1` or `ap-northeast-1`. Store the region
+with the tenant's key in the `region` account field, or pass it to the factory,
+which takes precedence. Without either, requests go to `us-west-2`. A pasted
+host such as `eu-central-1.recall.ai` is read as its region; anything else is
+rejected.
 
 ```ts
 recallai({ key: process.env.RECALLAI_API_KEY, region: 'eu-central-1' });
+```
+
+## Live test
+
+`live.api.test.ts` is skipped in CI. With a key it lists every resource, round
+trips a Google login group and a calendar V1 user, and checks a key sent to
+the wrong region fails with a 401. `RECALLAI_LIVE_BOTS=1` also schedules a bot a
+week out and deletes it before it can join.
+
+```bash
+LIVE_TEST=1 RECALLAI_API_KEY=... RECALLAI_REGION=us-west-2 npx jest live.api.test.ts
 ```
 
 ## Endpoints

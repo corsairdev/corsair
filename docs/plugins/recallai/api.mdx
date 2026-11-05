@@ -1,0 +1,6127 @@
+---
+title: API
+description: "API reference for Recall.ai: every `recallai.api.*` operation with input and output types."
+---
+
+Every `recallai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Audio Mixed
+
+### delete
+
+`audioMixed.delete`
+
+Delete a mixed audio artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.audioMixed.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`audioMixed.list`
+
+List mixed audio artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.audioMixed.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: {
+  },
+  metadata?: {
+  },
+  status?: {
+  },
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`audioMixed.retrieve`
+
+Retrieve a mixed audio artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.audioMixed.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`audioMixed.update`
+
+Update mixed audio artifact metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.audioMixed.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audio Separate
+
+### delete
+
+`audioSeparate.delete`
+
+Delete a separate audio artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.audioSeparate.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`audioSeparate.list`
+
+List separate audio artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.audioSeparate.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: {
+  },
+  metadata?: {
+  },
+  status?: {
+  },
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`audioSeparate.retrieve`
+
+Retrieve a separate audio artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.audioSeparate.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`audioSeparate.update`
+
+Update separate audio artifact metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.audioSeparate.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Billing
+
+### retrieveUsage
+
+`billing.retrieveUsage`
+
+Retrieve Recall.ai billing usage
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.billing.retrieveUsage({ start: '2026-10-01T00:00:00Z', end: '2026-11-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bot_total` | `number` | Yes | — |
+
+
+
+---
+
+## Bot Actions
+
+### deleteBotMedia
+
+`botActions.deleteBotMedia`
+
+Delete stored media for a Recall.ai bot
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.botActions.deleteBotMedia({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### leaveBotCall
+
+`botActions.leaveBotCall`
+
+Remove a Recall.ai bot from its meeting
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.botActions.leaveBotCall({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### outputAudio
+
+`botActions.outputAudio`
+
+Output audio from a Recall.ai bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.outputAudio({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `mp3` | Yes | — |
+| `b64_data` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### outputMedia
+
+`botActions.outputMedia`
+
+Start media output from a Recall.ai bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.outputMedia({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `camera` | `object` | No | — |
+| `screenshare` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="camera full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="screenshare full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### outputVideo
+
+`botActions.outputVideo`
+
+Output video from a Recall.ai bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.outputVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `jpeg` | Yes | — |
+| `b64_data` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pauseRecording
+
+`botActions.pauseRecording`
+
+Pause a Recall.ai bot recording
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.pauseRecording({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pinParticipant
+
+`botActions.pinParticipant`
+
+Pin a participant for a Recall.ai bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.pinParticipant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bot_id` | `string` | Yes | — |
+| `participant_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resumeRecording
+
+`botActions.resumeRecording`
+
+Resume a Recall.ai bot recording
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.resumeRecording({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendChatMessage
+
+`botActions.sendChatMessage`
+
+Send a chat message from a Recall.ai bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.sendChatMessage({ id: '550e8400-e29b-41d4-a716-446655440000', message: 'This meeting is being recorded.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `to` | `string` | No | — |
+| `message` | `string` | Yes | — |
+| `pin` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### startRecording
+
+`botActions.startRecording`
+
+Start a Recall.ai bot recording
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.startRecording({ id: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording_config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### startScreenshare
+
+`botActions.startScreenshare`
+
+Start bot screenshare in Recall.ai
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.startScreenshare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `jpeg` | Yes | — |
+| `b64_data` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stopOutputAudio
+
+`botActions.stopOutputAudio`
+
+Stop bot audio output in Recall.ai
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.stopOutputAudio({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### stopOutputMedia
+
+`botActions.stopOutputMedia`
+
+Stop bot media output in Recall.ai
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.stopOutputMedia({ id: '550e8400-e29b-41d4-a716-446655440000', camera: true, screenshare: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `camera` | `boolean` | Yes | — |
+| `screenshare` | `boolean` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### stopOutputVideo
+
+`botActions.stopOutputVideo`
+
+Stop bot video output in Recall.ai
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.stopOutputVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### stopRecording
+
+`botActions.stopRecording`
+
+Stop a Recall.ai bot recording
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.stopRecording({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stopScreenshare
+
+`botActions.stopScreenshare`
+
+Stop bot screenshare in Recall.ai
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.botActions.stopScreenshare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Bots
+
+### create
+
+`bots.create`
+
+Create a Recall.ai meeting bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.bots.create({ meeting_url: 'https://meet.google.com/abc-defg-hij', bot_name: 'Meeting Notetaker', join_at: '2026-11-20T15:00:00Z', recording_config: { transcript: { provider: { recallai_streaming: {} } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meeting_url` | `object` | Yes | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `recording_config` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="recording_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`bots.delete`
+
+Delete a Recall.ai meeting bot
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.bots.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`bots.list`
+
+List Recall.ai meeting bots
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.bots.list({ status: ['done'], join_at_after: '2026-11-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `join_at_after` | `string` | No | — |
+| `join_at_before` | `string` | No | — |
+| `meeting_url` | `string` | No | — |
+| `page` | `number` | No | — |
+| `platform` | `chime_sdk \| google_meet \| google_meet_media_api \| goto_meeting \| microsoft_teams \| microsoft_teams_live \| slack_authenticator \| slack_huddle_observer \| webex \| zoom \| zoom_rtms[]` | No | — |
+| `status` | `analysis_done \| analysis_failed \| call_ended \| done \| fatal \| in_call_not_recording \| in_call_recording \| in_waiting_room \| joining_call \| media_expired \| ready \| recording_done \| recording_permission_allowed \| recording_permission_denied[]` | No | — |
+| `use_cursor` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  meeting_url?: string | {
+  } | null,
+  bot_name?: string,
+  join_at?: string | null,
+  status_changes?: {
+  }[],
+  recordings?: {
+  }[],
+  metadata?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`bots.retrieve`
+
+Retrieve a Recall.ai meeting bot
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.bots.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`bots.update`
+
+Update a Recall.ai meeting bot
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.bots.update({ id: '550e8400-e29b-41d4-a716-446655440000', join_at: '2026-11-20T16:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `bot_name` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `recording_config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="recording_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `meeting_url` | `object` | No | — |
+| `bot_name` | `string` | No | — |
+| `join_at` | `string` | No | — |
+| `status_changes` | `object[]` | No | — |
+| `recordings` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meeting_url full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Calendar
+
+### authenticate
+
+`calendar.authenticate`
+
+Create a Recall.ai calendar auth token
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendar.authenticate({ user_id: 'user-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteUser
+
+`calendar.deleteUser`
+
+Delete a Recall.ai calendar user
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.calendar.deleteUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### disconnectPlatform
+
+`calendar.disconnectPlatform`
+
+Disconnect a Recall.ai calendar platform
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.calendar.disconnectPlatform({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+| `platform` | `google \| microsoft` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listEvents
+
+`calendar.listEvents`
+
+List Recall.ai calendar events
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.listEvents({ calendar_id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d', start_time__gte: '2026-11-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `ical_uid` | `string` | No | — |
+| `is_deleted` | `boolean` | No | — |
+| `start_time` | `string` | No | — |
+| `start_time__gte` | `string` | No | — |
+| `start_time__lte` | `string` | No | — |
+| `updated_at__gte` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listMeetings
+
+`calendar.listMeetings`
+
+List Recall.ai calendar meetings
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.listMeetings({ calendar_auth_token: token, start_time_after: '2026-11-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+| `ical_uid` | `string` | No | — |
+| `start_time_after` | `string` | No | — |
+| `start_time_before` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUsers
+
+`calendar.listUsers`
+
+List Recall.ai calendar users
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `paginate` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  next?: string | null,
+  previous?: string | null,
+  results: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### refreshMeetings
+
+`calendar.refreshMeetings`
+
+Refresh Recall.ai calendar meetings
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendar.refreshMeetings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveEvent
+
+`calendar.retrieveEvent`
+
+Retrieve a Recall.ai calendar event
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.retrieveEvent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveMeeting
+
+`calendar.retrieveMeeting`
+
+Retrieve a Recall.ai calendar meeting
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.retrieveMeeting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `calendar_auth_token` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveUser
+
+`calendar.retrieveUser`
+
+Retrieve a Recall.ai calendar user
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendar.retrieveUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### scheduleBot
+
+`calendar.scheduleBot`
+
+Schedule a Recall.ai bot for a calendar event
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendar.scheduleBot({ id: '8b9c0d1e-2f3a-4b4c-8d5e-6f7a8b9c0d1e', deduplication_key: 'standup-2026-11-20', bot_config: { bot_name: 'Meeting Notetaker' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deduplication_key` | `string` | Yes | — |
+| `bot_config` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="bot_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unscheduleBot
+
+`calendar.unscheduleBot`
+
+Remove a scheduled Recall.ai bot from a calendar event
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.calendar.unscheduleBot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateMeeting
+
+`calendar.updateMeeting`
+
+Update a Recall.ai calendar meeting
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendar.updateMeeting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `calendar_auth_token` | `string` | Yes | — |
+| `override_should_record` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateUser
+
+`calendar.updateUser`
+
+Update a Recall.ai calendar user
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendar.updateUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_auth_token` | `string` | Yes | — |
+| `external_id` | `string` | No | — |
+| `preferences` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="preferences full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Calendars
+
+### create
+
+`calendars.create`
+
+Create a Recall.ai calendar
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendars.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadata` | `object` | No | — |
+| `oauth_client_id` | `string` | Yes | — |
+| `oauth_client_secret` | `string` | No | — |
+| `oauth_client_certificate` | `string` | No | — |
+| `oauth_client_private_key` | `string` | No | — |
+| `oauth_refresh_token` | `string` | Yes | — |
+| `platform` | `google_calendar \| microsoft_outlook` | Yes | — |
+| `oauth_email` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `oauth_client_id` | `string` | Yes | — |
+| `oauth_client_secret` | `string` | No | — |
+| `oauth_refresh_token` | `string` | Yes | — |
+| `platform` | `google_calendar \| microsoft_outlook \| string` | Yes | — |
+| `oauth_email` | `string` | No | — |
+| `platform_email` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `status_changes` | `object[]` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+  status: connected | connecting | disconnected | string,
+  created_at: string,
+  reason: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createAccessToken
+
+`calendars.createAccessToken`
+
+Create a Recall.ai calendar access token
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendars.createAccessToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `expires_at` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`calendars.delete`
+
+Delete a Recall.ai calendar
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.calendars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`calendars.list`
+
+List Recall.ai calendars
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at__gte` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `email` | `string` | No | — |
+| `platform` | `google_calendar \| microsoft_outlook` | No | — |
+| `status` | `connected \| connecting \| disconnected` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  metadata?: {
+  },
+  oauth_client_id: string,
+  oauth_client_secret?: string | null,
+  oauth_refresh_token: string,
+  platform: google_calendar | microsoft_outlook | string,
+  oauth_email?: string,
+  platform_email?: string | null,
+  status: string,
+  status_changes: {
+    status: connected | connecting | disconnected | string,
+    created_at: string,
+    reason: string
+  }[],
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`calendars.retrieve`
+
+Retrieve a Recall.ai calendar
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.calendars.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `oauth_client_id` | `string` | Yes | — |
+| `oauth_client_secret` | `string` | No | — |
+| `oauth_refresh_token` | `string` | Yes | — |
+| `platform` | `google_calendar \| microsoft_outlook \| string` | Yes | — |
+| `oauth_email` | `string` | No | — |
+| `platform_email` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `status_changes` | `object[]` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+  status: connected | connecting | disconnected | string,
+  created_at: string,
+  reason: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`calendars.update`
+
+Update a Recall.ai calendar
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.calendars.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `oauth_client_id` | `string` | No | — |
+| `oauth_client_secret` | `string` | No | — |
+| `oauth_client_certificate` | `string` | No | — |
+| `oauth_client_private_key` | `string` | No | — |
+| `oauth_refresh_token` | `string` | No | — |
+| `platform` | `google_calendar \| microsoft_outlook` | No | — |
+| `oauth_email` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `oauth_client_id` | `string` | Yes | — |
+| `oauth_client_secret` | `string` | No | — |
+| `oauth_refresh_token` | `string` | Yes | — |
+| `platform` | `google_calendar \| microsoft_outlook \| string` | Yes | — |
+| `oauth_email` | `string` | No | — |
+| `platform_email` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `status_changes` | `object[]` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status_changes full type">
+
+```ts
+{
+  status: connected | connecting | disconnected | string,
+  created_at: string,
+  reason: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Google Login Groups
+
+### create
+
+`googleLoginGroups.create`
+
+Create a Recall.ai Google login group
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required \| string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `logins` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="logins full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  is_active?: boolean,
+  sso_v2_workspace_domain: string,
+  sso_v2_private_key: string,
+  sso_v2_cert: string,
+  group_id: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`googleLoginGroups.delete`
+
+Delete a Recall.ai Google login group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`googleLoginGroups.list`
+
+List Recall.ai Google login groups
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `name` | `string` | No | — |
+| `name__contains` | `string` | No | — |
+| `ordering` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  login_mode: always | only_if_required | string,
+  created_at: string,
+  updated_at: string,
+  logins: {
+    id: string,
+    email: string,
+    is_active?: boolean,
+    sso_v2_workspace_domain: string,
+    sso_v2_private_key: string,
+    sso_v2_cert: string,
+    group_id: string,
+    created_at: string,
+    updated_at: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### partialUpdate
+
+`googleLoginGroups.partialUpdate`
+
+Update fields on a Recall.ai Google login group
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.partialUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `login_mode` | `always \| only_if_required` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required \| string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `logins` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="logins full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  is_active?: boolean,
+  sso_v2_workspace_domain: string,
+  sso_v2_private_key: string,
+  sso_v2_cert: string,
+  group_id: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`googleLoginGroups.retrieve`
+
+Retrieve a Recall.ai Google login group
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required \| string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `logins` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="logins full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  is_active?: boolean,
+  sso_v2_workspace_domain: string,
+  sso_v2_private_key: string,
+  sso_v2_cert: string,
+  group_id: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`googleLoginGroups.update`
+
+Replace a Recall.ai Google login group
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLoginGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `login_mode` | `always \| only_if_required \| string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `logins` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="logins full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  is_active?: boolean,
+  sso_v2_workspace_domain: string,
+  sso_v2_private_key: string,
+  sso_v2_cert: string,
+  group_id: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Google Logins
+
+### create
+
+`googleLogins.create`
+
+Create a Recall.ai Google login
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLogins.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`googleLogins.delete`
+
+Delete a Recall.ai Google login
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.googleLogins.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`googleLogins.list`
+
+List Recall.ai Google logins
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.googleLogins.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `email` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `ordering` | `string` | No | — |
+| `sso_v2_workspace_domain` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  is_active?: boolean,
+  sso_v2_workspace_domain: string,
+  sso_v2_private_key: string,
+  sso_v2_cert: string,
+  group_id: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### partialUpdate
+
+`googleLogins.partialUpdate`
+
+Update fields on a Recall.ai Google login
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLogins.partialUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | No | — |
+| `sso_v2_private_key` | `string` | No | — |
+| `sso_v2_cert` | `string` | No | — |
+| `group_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### retrieve
+
+`googleLogins.retrieve`
+
+Retrieve a Recall.ai Google login
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.googleLogins.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`googleLogins.update`
+
+Replace a Recall.ai Google login
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.googleLogins.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `sso_v2_workspace_domain` | `string` | Yes | — |
+| `sso_v2_private_key` | `string` | Yes | — |
+| `sso_v2_cert` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+## Meeting Direct Connects
+
+### create
+
+`meetingDirectConnects.create`
+
+Create a Recall.ai direct connection
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.meetingDirectConnects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zoom_rtms` | `object` | No | — |
+| `google_meet_media_api` | `object` | No | — |
+| `recording_config` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="zoom_rtms full type">
+
+```ts
+{
+  meeting_uuid: string,
+  rtms_stream_id: string,
+  server_urls: string,
+  signature: string
+}
+```
+</Accordion>
+
+<Accordion title="google_meet_media_api full type">
+
+```ts
+{
+  space_name: string,
+  access_token: string
+}
+```
+</Accordion>
+
+<Accordion title="recording_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `object` | Yes | — |
+| `zoom_rtms` | `object` | No | — |
+| `google_meet_media_api` | `object` | No | — |
+| `recording_config` | `object` | No | — |
+| `recordings` | `object[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `created_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: pending | connecting | processing | complete | failed | string,
+  sub_code?: string | null,
+  updated_at: string
+}
+```
+</Accordion>
+
+<Accordion title="zoom_rtms full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="google_meet_media_api full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="recording_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+  id: string,
+  created_at: string,
+  started_at?: string | null,
+  completed_at?: string | null,
+  expires_at?: string | null,
+  status?: {
+  } | null,
+  media_shortcuts?: {
+  } | null,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`meetingDirectConnects.list`
+
+List Recall.ai direct connections
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.meetingDirectConnects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status: {
+    code: pending | connecting | processing | complete | failed | string,
+    sub_code?: string | null,
+    updated_at: string
+  },
+  zoom_rtms?: {
+  } | null,
+  google_meet_media_api?: {
+  } | null,
+  recording_config?: {
+  } | null,
+  recordings: {
+    id: string,
+    created_at: string,
+    started_at?: string | null,
+    completed_at?: string | null,
+    expires_at?: string | null,
+    status?: {
+    } | null,
+    media_shortcuts?: {
+    } | null,
+    metadata?: {
+    }
+  }[],
+  metadata?: {
+  },
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`meetingDirectConnects.retrieve`
+
+Retrieve a Recall.ai direct connection
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.meetingDirectConnects.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `object` | Yes | — |
+| `zoom_rtms` | `object` | No | — |
+| `google_meet_media_api` | `object` | No | — |
+| `recording_config` | `object` | No | — |
+| `recordings` | `object[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `created_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  code: pending | connecting | processing | complete | failed | string,
+  sub_code?: string | null,
+  updated_at: string
+}
+```
+</Accordion>
+
+<Accordion title="zoom_rtms full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="google_meet_media_api full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="recording_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="recordings full type">
+
+```ts
+{
+  id: string,
+  created_at: string,
+  started_at?: string | null,
+  completed_at?: string | null,
+  expires_at?: string | null,
+  status?: {
+  } | null,
+  media_shortcuts?: {
+  } | null,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meeting Metadata
+
+### delete
+
+`meetingMetadata.delete`
+
+Delete a Recall.ai meeting metadata artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.meetingMetadata.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`meetingMetadata.list`
+
+List Recall.ai meeting metadata artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.meetingMetadata.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: {
+  },
+  created_at?: string,
+  status?: {
+    code: string,
+    sub_code?: string | null,
+    updated_at?: string
+  },
+  metadata?: {
+  },
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`meetingMetadata.retrieve`
+
+Retrieve a Recall.ai meeting metadata artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.meetingMetadata.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`meetingMetadata.update`
+
+Update Recall.ai meeting metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.meetingMetadata.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Participant Events
+
+### delete
+
+`participantEvents.delete`
+
+Delete a Recall.ai participant event artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.participantEvents.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`participantEvents.list`
+
+List Recall.ai participant event artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.participantEvents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: {
+  },
+  created_at?: string,
+  status?: {
+    code: string,
+    sub_code?: string | null,
+    updated_at?: string
+  },
+  metadata?: {
+  },
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`participantEvents.retrieve`
+
+Retrieve a Recall.ai participant event artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.participantEvents.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`participantEvents.update`
+
+Update Recall.ai participant event metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.participantEvents.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Realtime Endpoints
+
+### list
+
+`realtimeEndpoints.list`
+
+List Recall.ai real-time endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.realtimeEndpoints.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recording_id` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `status_code` | `running \| done \| failed` | No | — |
+| `type` | `desktop_sdk_callback \| rtmp \| webhook \| websocket` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: {
+  },
+  metadata?: {
+  },
+  status?: {
+  },
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`realtimeEndpoints.retrieve`
+
+Retrieve a Recall.ai real-time endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.realtimeEndpoints.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`realtimeEndpoints.update`
+
+Update a Recall.ai real-time endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.realtimeEndpoints.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Recordings
+
+### createTranscript
+
+`recordings.createTranscript`
+
+Create an asynchronous Recall.ai transcript
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.recordings.createTranscript({ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', provider: { recallai_async: { language_code: 'en' } }, diarization: { use_separate_streams_when_available: true } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `provider` | `object` | Yes | — |
+| `diarization` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="provider full type">
+
+```ts
+{
+  assembly_ai_async?: {
+  },
+  deepgram_async?: {
+  },
+  gladia_v2_async?: {
+  },
+  recallai_async?: {
+  },
+  rev_async?: {
+  },
+  speechmatics_async?: {
+  },
+  google_speech_v2_async?: {
+  },
+  aws_transcribe_async?: {
+  },
+  soniox_async?: {
+  },
+  elevenlabs_async?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="diarization full type">
+
+```ts
+{
+  use_separate_streams_when_available?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`recordings.delete`
+
+Delete a Recall.ai recording artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.recordings.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`recordings.list`
+
+List Recall.ai recording artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.recordings.list({ bot_id: '550e8400-e29b-41d4-a716-446655440000', status_code: 'done' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bot_id` | `string` | No | — |
+| `desktop_sdk_upload_id` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `status_code` | `processing \| paused \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: {
+  },
+  metadata?: {
+  },
+  status?: {
+  },
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`recordings.retrieve`
+
+Retrieve a Recall.ai recording artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.recordings.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`recordings.update`
+
+Update Recall.ai recording metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.recordings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sdk Uploads
+
+### create
+
+`sdkUploads.create`
+
+Create a Recall.ai Desktop SDK upload
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.sdkUploads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recording_config` | `object` | No | — |
+| `_1080p` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sdkUploads.list`
+
+List Recall.ai Desktop SDK uploads
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.sdkUploads.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: {
+  },
+  metadata?: {
+  },
+  status?: {
+  },
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`sdkUploads.retrieve`
+
+Retrieve a Recall.ai Desktop SDK upload
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.sdkUploads.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transcripts
+
+### delete
+
+`transcripts.delete`
+
+Delete a Recall.ai transcript artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.transcripts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`transcripts.list`
+
+List Recall.ai transcript artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.transcripts.list({ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: {
+  },
+  created_at?: string,
+  status?: {
+    code: string,
+    sub_code?: string | null,
+    updated_at?: string
+  },
+  metadata?: {
+  },
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`transcripts.retrieve`
+
+Retrieve a Recall.ai transcript artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.transcripts.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`transcripts.update`
+
+Update Recall.ai transcript metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.transcripts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `status` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  code: string,
+  sub_code?: string | null,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video Mixed
+
+### delete
+
+`videoMixed.delete`
+
+Delete a mixed video artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.videoMixed.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`videoMixed.list`
+
+List mixed video artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.videoMixed.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: {
+  },
+  metadata?: {
+  },
+  status?: {
+  },
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`videoMixed.retrieve`
+
+Retrieve a mixed video artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.videoMixed.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`videoMixed.update`
+
+Update mixed video artifact metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.videoMixed.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video Separate
+
+### delete
+
+`videoSeparate.delete`
+
+Delete a separate video artifact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.videoSeparate.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`videoSeparate.list`
+
+List separate video artifacts
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.videoSeparate.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `recording_id` | `string` | No | — |
+| `status_code` | `processing \| done \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  recording?: {
+  },
+  metadata?: {
+  },
+  status?: {
+  },
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`videoSeparate.retrieve`
+
+Retrieve a separate video artifact
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.videoSeparate.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`videoSeparate.update`
+
+Update separate video artifact metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.videoSeparate.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recording` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Zoom Meetings To Credentials
+
+### list
+
+`zoomMeetingsToCredentials.list`
+
+List Zoom meeting credential mappings
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomMeetingsToCredentials.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `meeting_id` | `number` | No | — |
+| `ordering` | `string` | No | — |
+| `synced_at_after` | `string` | No | — |
+| `synced_at_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  meeting_id: number,
+  credential: string,
+  synced_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Zoom OAuth App Logs
+
+### list
+
+`zoomOAuthAppLogs.list`
+
+List Recall.ai Zoom OAuth app logs
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthAppLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `ordering` | `string` | No | — |
+| `oauth_app` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  oauth_app: string,
+  message: string,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Zoom OAuth Apps
+
+### create
+
+`zoomOAuthApps.create`
+
+Create a Recall.ai Zoom OAuth app
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.zoomOAuthApps.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `user_level \| account_level` | Yes | — |
+| `client_id` | `string` | Yes | — |
+| `client_secret` | `string` | Yes | — |
+| `webhook_secret` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `user_level \| account_level \| string` | Yes | — |
+| `client_id` | `string` | Yes | — |
+| `client_secret` | `string` | Yes | — |
+| `webhook_secret` | `string` | Yes | — |
+| `webhook_last_validation` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`zoomOAuthApps.delete`
+
+Delete a Recall.ai Zoom OAuth app
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.zoomOAuthApps.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`zoomOAuthApps.list`
+
+List Recall.ai Zoom OAuth apps
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthApps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `kind` | `user_level \| account_level` | No | — |
+| `ordering` | `string` | No | — |
+| `webhook_last_validation_after` | `string` | No | — |
+| `webhook_last_validation_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  kind: user_level | account_level | string,
+  client_id: string,
+  client_secret: string,
+  webhook_secret: string,
+  webhook_last_validation?: string | null,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`zoomOAuthApps.retrieve`
+
+Retrieve a Recall.ai Zoom OAuth app
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthApps.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `user_level \| account_level \| string` | Yes | — |
+| `client_id` | `string` | Yes | — |
+| `client_secret` | `string` | Yes | — |
+| `webhook_secret` | `string` | Yes | — |
+| `webhook_last_validation` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`zoomOAuthApps.update`
+
+Update a Recall.ai Zoom OAuth app
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.zoomOAuthApps.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `webhook_secret` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `kind` | `user_level \| account_level \| string` | Yes | — |
+| `client_id` | `string` | Yes | — |
+| `client_secret` | `string` | Yes | — |
+| `webhook_secret` | `string` | Yes | — |
+| `webhook_last_validation` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+## Zoom OAuth Credential Logs
+
+### list
+
+`zoomOAuthCredentialLogs.list`
+
+List Recall.ai Zoom OAuth credential logs
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentialLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `ordering` | `string` | No | — |
+| `credential` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  credential: string,
+  message: string,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Zoom OAuth Credentials
+
+### create
+
+`zoomOAuthCredentials.create`
+
+Create a Recall.ai Zoom OAuth credential
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `oauth_app` | `string` | Yes | — |
+| `authorization_code` | `object` | No | — |
+| `access_token_callback_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="authorization_code full type">
+
+```ts
+{
+  code: string,
+  redirect_uri: string,
+  code_verifier?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `oauth_app` | `string` | Yes | — |
+| `status` | `healthy \| unhealthy \| string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `account_id` | `string` | No | — |
+| `access_token_callback_url` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `meeting_sync_status` | `not_started \| in_progress \| completed \| failed \| string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`zoomOAuthCredentials.delete`
+
+Delete a Recall.ai Zoom OAuth credential
+
+**Risk:** `destructive`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`zoomOAuthCredentials.list`
+
+List Recall.ai Zoom OAuth credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `created_at_after` | `string` | No | — |
+| `created_at_before` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `meeting_sync_status` | `not_started \| in_progress \| completed \| failed` | No | — |
+| `oauth_app` | `string` | No | — |
+| `ordering` | `string` | No | — |
+| `status` | `healthy \| unhealthy` | No | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  oauth_app: string,
+  status: healthy | unhealthy | string,
+  user_id?: string | null,
+  account_id?: string | null,
+  access_token_callback_url?: string | null,
+  created_at: string,
+  meeting_sync_status: not_started | in_progress | completed | failed | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`zoomOAuthCredentials.retrieve`
+
+Retrieve a Recall.ai Zoom OAuth credential
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `oauth_app` | `string` | Yes | — |
+| `status` | `healthy \| unhealthy \| string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `account_id` | `string` | No | — |
+| `access_token_callback_url` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `meeting_sync_status` | `not_started \| in_progress \| completed \| failed \| string` | Yes | — |
+
+
+
+---
+
+### retrieveAccessToken
+
+`zoomOAuthCredentials.retrieveAccessToken`
+
+Retrieve a Zoom OAuth access token
+
+**Risk:** `read`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.retrieveAccessToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `expires_at` | `string` | Yes | — |
+
+
+
+---
+
+### syncMeetings
+
+`zoomOAuthCredentials.syncMeetings`
+
+Synchronize Zoom OAuth credential meetings
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.syncMeetings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### validate
+
+`zoomOAuthCredentials.validate`
+
+Validate a Recall.ai Zoom OAuth credential
+
+**Risk:** `write`
+
+```ts
+await corsair.recallai.api.zoomOAuthCredentials.validate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+

@@ -1,0 +1,64 @@
+displayName: Recall.ai
+description: Meeting bots, recordings and transcripts with Recall.ai - send bots to Zoom, Google Meet, Teams and Webex calls, control them in the call, read recordings, transcripts and media, schedule bots from calendars, and manage Google logins and Zoom OAuth credentials.
+domain: recall.ai
+recommendedAuth: api_key
+overviewNote: |
+  Recall.ai needs two things from each tenant: an API key and the region it was created in. Create the key in the Recall dashboard of your region (for example `https://us-west-2.recall.ai/dashboard/developers/api-keys`). Recall runs a separate deployment per region, so a key only works on its own region's host. Corsair asks for the key on the first call that needs it; store the region with it in the tenant's `region` account field. Self-hosted setups can pass both to the factory instead:
+
+  ```ts
+  recallai({ key: process.env.RECALLAI_API_KEY, region: 'eu-central-1' })
+  ```
+
+  Things to know:
+
+  - **Region.** One of `us-west-2`, `us-east-1`, `eu-central-1` or `ap-northeast-1`. A pasted host such as `eu-central-1.recall.ai` is read as its region; any other value is rejected, so requests only ever go to the four Recall hosts. Without a region, requests go to `us-west-2`. A 401 usually means the key and the region do not match.
+  - **Bots cost money.** `bots.create` sends a bot to the meeting, and Recall bills for its time there. Without `join_at`, or with one less than 10 minutes out, the bot joins right away; Recall recommends scheduling at least 10 minutes ahead. `bots.update` and `bots.delete` work only on a scheduled bot that has not joined yet.
+  - **In-call actions.** The `botActions` calls (chat, recording, pinning, audio, video and screenshare output) need the bot in the call; otherwise Recall answers 400. The calls that start something return the updated bot; the `stop*Output*` and `stopScreenshare` calls return nothing. `leaveBotCall` and `deleteBotMedia` cannot be undone.
+  - **Transcripts after the call.** `recordings.createTranscript` takes the provider as an object keyed by provider name, for example `{ recallai_async: { language_code: 'en' } }`. Recall allows five a minute per bot.
+  - **Calendar V1.** The meeting calls (`calendar.listMeetings`, `retrieveMeeting`, `updateMeeting`, `refreshMeetings`) and the user calls (`calendar.retrieveUser`, `updateUser`, `deleteUser`, `disconnectPlatform`) act for one calendar user and take their `calendar_auth_token`. Get it from `calendar.authenticate`; it is valid for a day. Calendar V2 (`calendars.*` and the `calendar` event calls) uses the API key alone.
+  - **Paging.** `bots.list` pages by `page` number, or by cursor when you pass `use_cursor`. The other lists return `next` as a URL; pass its `cursor` value back to get the next page.
+  - **Rate limits.** Most lists allow 60 requests a minute per workspace. A 429 is retried up to five times, waiting for Recall's `Retry-After`.
+  - **Webhooks.** The plugin does not receive Recall's webhooks. Bot and recording status changes arrive there; Recall asks integrations not to poll `bots.list` for them.
+  - **No local data.** Every call returns live data from Recall.
+examples:
+  read:
+    path: bots.list
+    title: List finished bots
+    args:
+      status:
+        - done
+  write:
+    path: bots.create
+    title: Send a bot to a meeting
+    args:
+      meeting_url: https://meet.google.com/abc-defg-hij
+      bot_name: Meeting Notetaker
+apiExamples:
+  bots.list:
+    call: "{ status: ['done'], join_at_after: '2026-11-01' }"
+  bots.create:
+    call: "{ meeting_url: 'https://meet.google.com/abc-defg-hij', bot_name: 'Meeting Notetaker', join_at: '2026-11-20T15:00:00Z', recording_config: { transcript: { provider: { recallai_streaming: {} } } } }"
+  bots.update:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000', join_at: '2026-11-20T16:00:00Z' }"
+  botActions.sendChatMessage:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000', message: 'This meeting is being recorded.' }"
+  botActions.stopOutputMedia:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000', camera: true, screenshare: false }"
+  botActions.startRecording:
+    call: "{ id: '550e8400-e29b-41d4-a716-446655440000' }"
+  recordings.list:
+    call: "{ bot_id: '550e8400-e29b-41d4-a716-446655440000', status_code: 'done' }"
+  recordings.createTranscript:
+    call: "{ id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', provider: { recallai_async: { language_code: 'en' } }, diarization: { use_separate_streams_when_available: true } }"
+  transcripts.list:
+    call: "{ recording_id: '6f1c2d3e-4b5a-4c6d-8e7f-001122334455', status_code: 'done' }"
+  calendar.authenticate:
+    call: "{ user_id: 'user-123' }"
+  calendar.listMeetings:
+    call: "{ calendar_auth_token: token, start_time_after: '2026-11-01T00:00:00Z' }"
+  calendar.listEvents:
+    call: "{ calendar_id: '7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d', start_time__gte: '2026-11-01T00:00:00Z' }"
+  calendar.scheduleBot:
+    call: "{ id: '8b9c0d1e-2f3a-4b4c-8d5e-6f7a8b9c0d1e', deduplication_key: 'standup-2026-11-20', bot_config: { bot_name: 'Meeting Notetaker' } }"
+  billing.retrieveUsage:
+    call: "{ start: '2026-10-01T00:00:00Z', end: '2026-11-01T00:00:00Z' }"
