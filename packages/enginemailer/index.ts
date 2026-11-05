@@ -111,6 +111,8 @@ const enginemailerEndpointsNested = {
 	n8n: n8nEndpoints,
 } as const;
 
+// The wrapper walks the nested endpoint map generically: each leaf's real
+// input/output types come from its zod schema, so the walker stays untyped.
 type EnginemailerEndpointTree = Record<string, unknown>;
 type EnginemailerEndpointHandler = (
 	context: unknown,
@@ -133,6 +135,7 @@ function withEnginemailerSchemas<T extends EnginemailerEndpointTree>(
 			const endpoint = value as EnginemailerEndpointHandler;
 			return [
 				key,
+				// Raw caller input; schema.input.parse narrows it before the handler runs.
 				async (context: unknown, input: unknown) => {
 					const parsedInput = schema.input.parse(input ?? {});
 					const result = await endpoint(context, parsedInput);

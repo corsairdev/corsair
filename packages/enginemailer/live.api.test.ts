@@ -7,6 +7,7 @@ const describeIfApiKey = apiKey ? describe : describe.skip;
 
 describeIfApiKey('Enginemailer live API', () => {
 	it('can read the campaign list without mutating the account', async () => {
+		// Only the envelope is asserted; the campaign list shape is not checked here.
 		const response = await makeEnginemailerRequest<{ Result: unknown }>(
 			'/restapi/campaign/emcampaign/ListCampaign',
 			apiKey!,
@@ -16,6 +17,7 @@ describeIfApiKey('Enginemailer live API', () => {
 	});
 
 	it('can check the N8N connection without mutating the account', async () => {
+		// /connect publishes no response schema; the call succeeding is the check.
 		const response = await makeEnginemailerN8nRequest<unknown>(
 			'/connect',
 			apiKey!,
