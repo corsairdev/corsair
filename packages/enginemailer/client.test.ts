@@ -230,6 +230,76 @@ describe('Enginemailer REST status in the response body', () => {
 	});
 });
 
+describe('Enginemailer live response quirks', () => {
+	it('parses REST JSON that arrives as application/octet-stream text', async () => {
+		// Live getCustomField: Content-Type application/octet-stream, so the
+		// shared client returns the JSON as a string.
+		mockRequest.mockResolvedValue(
+			'{\r\n  "Result": {\r\n    "Status": "OK",\r\n    "StatusCode": "200",\r\n    "Data": [{ "customfield_key": "first_name" }]\r\n  }\r\n}',
+		);
+
+		await expect(
+			makeEnginemailerRequest(
+				'/restapi/subscriber/emsubscriber/getCustomField',
+				'k',
+			),
+		).resolves.toEqual({
+			Result: {
+				Status: 'OK',
+				StatusCode: '200',
+				Data: [{ customfield_key: 'first_name' }],
+			},
+		});
+	});
+
+	it('still raises a body error that arrives as text', async () => {
+		mockRequest.mockResolvedValue(
+			'{"Result":{"StatusCode":"500","Status":"InternalServerError","ErrorMessage":"API Key Not Found!"}}',
+		);
+
+		await expect(
+			makeEnginemailerRequest('/restapi/campaign/emcampaign/ListCampaign', 'k'),
+		).rejects.toMatchObject({ message: 'API Key Not Found!', status: 500 });
+	});
+
+	it('raises a non-JSON body instead of returning a string', async () => {
+		mockRequest.mockResolvedValue('<html>Request Error</html>');
+
+		await expect(
+			makeEnginemailerRequest('/restapi/campaign/emcampaign/ListCampaign', 'k'),
+		).rejects.toBeInstanceOf(EnginemailerAPIError);
+	});
+
+	it('keeps the N8N error message from the response body', async () => {
+		// Live findsubscriber for an unknown address: HTTP 500 with this body.
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'POST', url: '/findsubscriber' },
+				{
+					url: `${ENGINEMAILER_N8N_API_BASE}/findsubscriber`,
+					ok: false,
+					status: 500,
+					statusText: 'Internal Server Error',
+					body: { status: 'failed', message: 'Email not exists.' },
+				},
+				'Internal Server Error',
+			),
+		);
+
+		await expect(
+			makeEnginemailerN8nRequest('/findsubscriber', 'k', {
+				method: 'POST',
+				body: { email: 'nobody@example.com' },
+			}),
+		).rejects.toMatchObject({
+			name: 'EnginemailerAPIError',
+			message: 'Email not exists.',
+			status: 500,
+			code: 'failed',
+		});
+	});
+});
+
 describe('Enginemailer N8N transport', () => {
 	it('uses the N8N base URL and APIKEY header', async () => {
 		mockRequest.mockResolvedValue({});

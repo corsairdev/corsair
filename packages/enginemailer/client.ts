@@ -48,6 +48,60 @@ export function assertEnginemailerSuccess(response: unknown): void {
 }
 
 /**
+ * The REST API labels its JSON `application/octet-stream`, so the shared HTTP
+ * client hands the body back as text. Parse it here, and raise anything that
+ * is not JSON instead of returning a string the output schemas reject.
+ */
+export function parseEnginemailerBody(body: unknown): unknown {
+	// `body` is whatever the transport returned: parsed JSON or raw text.
+	if (typeof body !== 'string') return body;
+	const text = body.replace(/^\uFEFF/, '').trim();
+	if (!text) return undefined;
+	try {
+		return JSON.parse(text);
+	} catch {
+		throw new EnginemailerAPIError(
+			`Enginemailer returned a response that is not JSON: ${text.slice(0, 200)}`,
+		);
+	}
+}
+
+/**
+ * Wraps an HTTP-level failure, keeping the provider's own message when the
+ * body has one: the N8N API answers 500 with `{ "status": "failed",
+ * "message": "Email not exists." }`, which ApiError reports only as
+ * "Internal Server Error".
+ */
+export function toEnginemailerAPIError(error: ApiError): EnginemailerAPIError {
+	let detail: unknown;
+	try {
+		detail = parseEnginemailerBody(error.body);
+	} catch {
+		detail = undefined;
+	}
+	const record =
+		detail && typeof detail === 'object'
+			? (detail as Record<string, unknown>)
+			: undefined;
+	const result =
+		record?.Result && typeof record.Result === 'object'
+			? (record.Result as Record<string, unknown>)
+			: undefined;
+	const providerMessage =
+		typeof record?.message === 'string'
+			? record.message
+			: typeof result?.ErrorMessage === 'string'
+				? result.ErrorMessage
+				: undefined;
+	return new EnginemailerAPIError(
+		providerMessage || error.message,
+		error.status,
+		typeof record?.status === 'string' ? record.status : undefined,
+		error.retryAfter,
+	);
+}
+
+/**
  * Transport-level retries stay off for both APIs: RATE_LIMIT_ERROR in
  * error-handlers.ts owns the retry budget (five tries, honouring Retry-After),
  * so a persistent 429 is not multiplied by a second retry loop here.
@@ -97,22 +151,17 @@ export async function makeEnginemailerRequest<T>(
 		query,
 	};
 
-	let response: T;
+	let response: unknown;
 	try {
-		response = await request<T>(config, requestOptions, {
+		response = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: ENGINEMAILER_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new EnginemailerAPIError(
-				error.message,
-				error.status,
-				undefined,
-				error.retryAfter,
-			);
-		}
+		if (error instanceof ApiError) throw toEnginemailerAPIError(error);
 		throw error;
 	}
-	assertEnginemailerSuccess(response);
-	return response;
+	const parsed = parseEnginemailerBody(response);
+	assertEnginemailerSuccess(parsed);
+	// T is the caller's declared shape; the endpoint output schema checks it.
+	return parsed as T;
 }
