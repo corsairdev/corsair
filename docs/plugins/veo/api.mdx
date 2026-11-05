@@ -1,0 +1,591 @@
+---
+title: API
+description: "API reference for Veo: every `veo.api.*` operation with input and output types."
+---
+
+Every `veo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Extend
+
+### create
+
+`extend.create`
+
+Extend a Veo video stored in Cloud Storage.
+
+**Risk:** `write`
+
+```ts
+await corsair.veo.api.extend.create({ model: 'veo-3.1-generate-001', prompt: 'a butterfly flies in and lands on the flower', video: { gcsUri: 'gs://cloud-samples-data/generative-ai/video/flower.mp4', mimeType: 'video/mp4' }, resolution: '720p' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | No | Google Cloud project id. Falls back to veo(&#123; projectId &#125;) or the stored projectId account field. |
+| `location` | `string` | No | API location. Defaults to us-central1, the region in the Veo REST samples. Pass global for the global host. |
+| `aspectRatio` | `16:9 \| 9:16` | No | Defaults to 16:9 when omitted. |
+| `negativePrompt` | `string` | No | — |
+| `personGeneration` | `allow_adult \| disallow` | No | Defaults to allow_adult when omitted. |
+| `resolution` | `720p \| 1080p \| 4k` | No | Veo 3 models. Defaults to 720p. 4k is documented for Veo 3.1. |
+| `sampleCount` | `number` | No | Number of videos to generate, from 1 to 4. |
+| `seed` | `number` | No | — |
+| `storageUri` | `string` | No | Cloud Storage prefix for output. When omitted, the API returns video bytes in the operation response. |
+| `durationSeconds` | `4 \| 6 \| 8` | No | Video length in seconds. Defaults to 8 when omitted. |
+| `model` | `veo-3.1-generate-001 \| veo-3.1-fast-generate-001 \| veo-3.1-lite-generate-001` | Yes | — |
+| `prompt` | `string` | Yes | — |
+| `video` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="video full type">
+
+```ts
+{
+  gcsUri: string,
+  mimeType: video/mp4
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `done` | `boolean` | No | — |
+| `metadata` | `any` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code?: number,
+  message?: string,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+  @type?: string,
+  raiMediaFilteredCount?: number,
+  videos?: {
+    gcsUri?: string,
+    mimeType?: string,
+    bytesBase64Encoded?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Frames
+
+### create
+
+`frames.create`
+
+Start a Veo video that begins at one image and ends at another.
+
+**Risk:** `write`
+
+```ts
+await corsair.veo.api.frames.create({ model: 'veo-3.1-generate-001', prompt: 'a hand places a glass of milk next to the plate of cookies', image: { mimeType: 'image/png', gcsUri: 'gs://cloud-samples-data/generative-ai/image/cookies.png' }, lastFrame: { mimeType: 'image/png', gcsUri: 'gs://cloud-samples-data/generative-ai/image/cookies-milk.png' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | No | Google Cloud project id. Falls back to veo(&#123; projectId &#125;) or the stored projectId account field. |
+| `location` | `string` | No | API location. Defaults to us-central1, the region in the Veo REST samples. Pass global for the global host. |
+| `aspectRatio` | `16:9 \| 9:16` | No | Defaults to 16:9 when omitted. |
+| `negativePrompt` | `string` | No | — |
+| `personGeneration` | `allow_adult \| disallow` | No | Defaults to allow_adult when omitted. |
+| `resolution` | `720p \| 1080p \| 4k` | No | Veo 3 models. Defaults to 720p. 4k is documented for Veo 3.1. |
+| `sampleCount` | `number` | No | Number of videos to generate, from 1 to 4. |
+| `seed` | `number` | No | — |
+| `storageUri` | `string` | No | Cloud Storage prefix for output. When omitted, the API returns video bytes in the operation response. |
+| `durationSeconds` | `4 \| 6 \| 8` | No | Video length in seconds. Defaults to 8 when omitted. |
+| `model` | `veo-3.1-generate-001 \| veo-3.1-fast-generate-001 \| veo-3.1-lite-generate-001` | Yes | — |
+| `prompt` | `string` | No | — |
+| `image` | `object` | Yes | First frame. |
+| `lastFrame` | `object` | Yes | Last frame. Sent with image, as in the first-and-last-frame REST sample. |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  mimeType: image/jpeg | image/png,
+  bytesBase64Encoded?: string,
+  gcsUri?: string
+}
+```
+</Accordion>
+
+<Accordion title="lastFrame full type">
+
+```ts
+{
+  mimeType: image/jpeg | image/png,
+  bytesBase64Encoded?: string,
+  gcsUri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `done` | `boolean` | No | — |
+| `metadata` | `any` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code?: number,
+  message?: string,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+  @type?: string,
+  raiMediaFilteredCount?: number,
+  videos?: {
+    gcsUri?: string,
+    mimeType?: string,
+    bytesBase64Encoded?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Image To Video
+
+### create
+
+`imageToVideo.create`
+
+Start a Veo image-to-video generation from a first-frame image.
+
+**Risk:** `write`
+
+```ts
+await corsair.veo.api.imageToVideo.create({ model: 'veo-3.1-fast-generate-001', image: { mimeType: 'image/png', gcsUri: 'gs://cloud-samples-data/generative-ai/image/flowers.png' }, resizeMode: 'pad' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | No | Google Cloud project id. Falls back to veo(&#123; projectId &#125;) or the stored projectId account field. |
+| `location` | `string` | No | API location. Defaults to us-central1, the region in the Veo REST samples. Pass global for the global host. |
+| `aspectRatio` | `16:9 \| 9:16` | No | Defaults to 16:9 when omitted. |
+| `negativePrompt` | `string` | No | — |
+| `personGeneration` | `allow_adult \| disallow` | No | Defaults to allow_adult when omitted. |
+| `resolution` | `720p \| 1080p \| 4k` | No | Veo 3 models. Defaults to 720p. 4k is documented for Veo 3.1. |
+| `sampleCount` | `number` | No | Number of videos to generate, from 1 to 4. |
+| `seed` | `number` | No | — |
+| `storageUri` | `string` | No | Cloud Storage prefix for output. When omitted, the API returns video bytes in the operation response. |
+| `durationSeconds` | `4 \| 6 \| 8` | No | Video length in seconds. Defaults to 8 when omitted. |
+| `model` | `veo-3.1-generate-001 \| veo-3.1-fast-generate-001 \| veo-3.1-lite-generate-001` | Yes | — |
+| `prompt` | `string` | No | Optional. The image guide allows an image alone or an image plus text. |
+| `image` | `object` | Yes | — |
+| `resizeMode` | `crop \| pad` | No | How to fit an image whose aspect ratio differs from the output. crop fits by cropping; pad fits by padding. |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  mimeType: image/jpeg | image/png,
+  bytesBase64Encoded?: string,
+  gcsUri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `done` | `boolean` | No | — |
+| `metadata` | `any` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code?: number,
+  message?: string,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+  @type?: string,
+  raiMediaFilteredCount?: number,
+  videos?: {
+    gcsUri?: string,
+    mimeType?: string,
+    bytesBase64Encoded?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Operations
+
+### get
+
+`operations.get`
+
+Fetch the status of a Veo predictLongRunning operation.
+
+**Risk:** `read`
+
+```ts
+await corsair.veo.api.operations.get({ operationName: 'projects/my-proj/locations/us-central1/publishers/google/models/veo-3.1-generate-001/operations/op-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operationName` | `string` | Yes | Full operation name returned by predictLongRunning, projects/.../operations/... |
+| `model` | `veo-3.1-generate-001 \| veo-3.1-fast-generate-001 \| veo-3.1-lite-generate-001` | No | — |
+| `projectId` | `string` | No | Google Cloud project id. Falls back to veo(&#123; projectId &#125;) or the stored projectId account field. |
+| `location` | `string` | No | API location. Defaults to us-central1, the region in the Veo REST samples. Pass global for the global host. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `done` | `boolean` | No | — |
+| `metadata` | `any` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code?: number,
+  message?: string,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+  @type?: string,
+  raiMediaFilteredCount?: number,
+  videos?: {
+    gcsUri?: string,
+    mimeType?: string,
+    bytesBase64Encoded?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### wait
+
+`operations.wait`
+
+Poll a Veo operation until it finishes, fails, or the timeout is reached.
+
+**Risk:** `read`
+
+```ts
+await corsair.veo.api.operations.wait({ operationName: 'projects/my-proj/locations/us-central1/publishers/google/models/veo-3.1-generate-001/operations/op-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operationName` | `string` | Yes | Full operation name returned by predictLongRunning, projects/.../operations/... |
+| `model` | `veo-3.1-generate-001 \| veo-3.1-fast-generate-001 \| veo-3.1-lite-generate-001` | No | — |
+| `projectId` | `string` | No | Google Cloud project id. Falls back to veo(&#123; projectId &#125;) or the stored projectId account field. |
+| `location` | `string` | No | API location. Defaults to us-central1, the region in the Veo REST samples. Pass global for the global host. |
+| `pollIntervalMs` | `number` | No | Delay between fetchPredictOperation calls. Defaults to 15000. |
+| `timeoutMs` | `number` | No | Stop polling and return the last operation after this many milliseconds. Defaults to 360000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `done` | `boolean` | No | — |
+| `metadata` | `any` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code?: number,
+  message?: string,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+  @type?: string,
+  raiMediaFilteredCount?: number,
+  videos?: {
+    gcsUri?: string,
+    mimeType?: string,
+    bytesBase64Encoded?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## References
+
+### create
+
+`references.create`
+
+Start a Veo video guided by up to three asset reference images.
+
+**Risk:** `write`
+
+```ts
+await corsair.veo.api.references.create({ model: 'veo-3.1-generate-001', prompt: 'A person walks in carrying a vase full of flowers', durationSeconds: 8, referenceImages: [{ image: { mimeType: 'image/png', gcsUri: 'gs://cloud-samples-data/generative-ai/image/vase.png' }, referenceType: 'asset' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | No | Google Cloud project id. Falls back to veo(&#123; projectId &#125;) or the stored projectId account field. |
+| `location` | `string` | No | API location. Defaults to us-central1, the region in the Veo REST samples. Pass global for the global host. |
+| `aspectRatio` | `16:9 \| 9:16` | No | Defaults to 16:9 when omitted. |
+| `negativePrompt` | `string` | No | — |
+| `personGeneration` | `allow_adult \| disallow` | No | Defaults to allow_adult when omitted. |
+| `resolution` | `720p \| 1080p \| 4k` | No | Veo 3 models. Defaults to 720p. 4k is documented for Veo 3.1. |
+| `sampleCount` | `number` | No | Number of videos to generate, from 1 to 4. |
+| `seed` | `number` | No | — |
+| `storageUri` | `string` | No | Cloud Storage prefix for output. When omitted, the API returns video bytes in the operation response. |
+| `durationSeconds` | `8` | No | Reference-image videos are documented at 8 seconds. Other lengths are rejected here. |
+| `model` | `veo-3.1-generate-001 \| veo-3.1-fast-generate-001` | Yes | — |
+| `prompt` | `string` | Yes | — |
+| `referenceImages` | `object[]` | Yes | Up to three asset reference images. |
+
+<AccordionGroup>
+<Accordion title="referenceImages full type">
+
+```ts
+{
+  image: {
+    mimeType: image/jpeg | image/png,
+    bytesBase64Encoded?: string,
+    gcsUri?: string
+  },
+  referenceType: asset
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `done` | `boolean` | No | — |
+| `metadata` | `any` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code?: number,
+  message?: string,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+  @type?: string,
+  raiMediaFilteredCount?: number,
+  videos?: {
+    gcsUri?: string,
+    mimeType?: string,
+    bytesBase64Encoded?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Text To Video
+
+### create
+
+`textToVideo.create`
+
+Start a Veo text-to-video generation. Returns a long-running operation name.
+
+**Risk:** `write`
+
+```ts
+await corsair.veo.api.textToVideo.create({ model: 'veo-3.1-generate-001', prompt: 'a cat reading a book', aspectRatio: '16:9', sampleCount: 1, storageUri: 'gs://video-bucket/output/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | No | Google Cloud project id. Falls back to veo(&#123; projectId &#125;) or the stored projectId account field. |
+| `location` | `string` | No | API location. Defaults to us-central1, the region in the Veo REST samples. Pass global for the global host. |
+| `aspectRatio` | `16:9 \| 9:16` | No | Defaults to 16:9 when omitted. |
+| `negativePrompt` | `string` | No | — |
+| `personGeneration` | `allow_adult \| disallow` | No | Defaults to allow_adult when omitted. |
+| `resolution` | `720p \| 1080p \| 4k` | No | Veo 3 models. Defaults to 720p. 4k is documented for Veo 3.1. |
+| `sampleCount` | `number` | No | Number of videos to generate, from 1 to 4. |
+| `seed` | `number` | No | — |
+| `storageUri` | `string` | No | Cloud Storage prefix for output. When omitted, the API returns video bytes in the operation response. |
+| `durationSeconds` | `4 \| 6 \| 8` | No | Video length in seconds. Defaults to 8 when omitted. |
+| `model` | `veo-3.1-generate-001 \| veo-3.1-fast-generate-001 \| veo-3.1-lite-generate-001` | Yes | — |
+| `prompt` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `done` | `boolean` | No | — |
+| `metadata` | `any` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code?: number,
+  message?: string,
+  status?: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+  @type?: string,
+  raiMediaFilteredCount?: number,
+  videos?: {
+    gcsUri?: string,
+    mimeType?: string,
+    bytesBase64Encoded?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

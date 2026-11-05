@@ -1,0 +1,127 @@
+---
+title: Overview
+description: "Google Veo 3.1 video generation on Gemini Enterprise Agent Platform."
+---
+
+Use **Veo** through Corsair: one client, typed API calls.
+
+Veo 3.1 preview models on the Gemini API (`veo-3.1-generate-preview`, `veo-3.1-fast-generate-preview`, and `veo-3.1-lite-generate-preview`) were shut down on 22 October 2026. These operations call the current Agent Platform models with `predictLongRunning` and `fetchPredictOperation`.
+
+The stored API key is a Google access token, sent as `Authorization: Bearer`. Pass `projectId` on the plugin or on each call. Location defaults to `us-central1`. Models are `veo-3.1-generate-001`, `veo-3.1-fast-generate-001`, and preview `veo-3.1-lite-generate-001`. Reference images accept the two GA models.
+
+The published operation sample returns `videos[].gcsUri` when `storageUri` is set. The guide also says that omitting `storageUri` returns video bytes in the response. This plugin types that inline field as `bytesBase64Encoded` and keeps any other response fields.
+
+**What you get:**
+
+- 7 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/veo
+```
+```bash yarn
+yarn add corsair @corsair-dev/veo
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/veo
+```
+```bash bun
+bun add corsair @corsair-dev/veo
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { veo } from '@corsair-dev/veo';
+
+export const corsair = createCorsair({
+	plugins: [
+		veo(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+veo()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'veo',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Fetch an operation**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.veo.api.operations.get({ operationName: 'projects/my-proj/locations/us-central1/publishers/google/models/veo-3.1-generate-001/operations/op-1' });
+```
+
+
+**Start a text-to-video generation**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.veo.api.textToVideo.create({ prompt: 'a cat reading a book', sampleCount: 1, storageUri: 'gs://video-bucket/output/' });
+```
+
+
+See the full list on the [API](/plugins/veo/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/veo/api">
+    Every `veo.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
