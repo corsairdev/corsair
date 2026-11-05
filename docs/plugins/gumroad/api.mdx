@@ -492,7 +492,7 @@ Schedule a draft audience email to publish at a set time in the seller's timezon
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.emails.schedule({ id: 'bfi_30HLgGWL8H2wo_Gzlg==', to_be_published_at: '2026-01-01 09:00' });
+await corsair.gumroad.api.emails.schedule({ id: 'bfi_30HLgGWL8H2wo_Gzlg==', to_be_published_at: '2027-01-01 09:00' });
 ```
 
 **Input**
@@ -695,7 +695,7 @@ Finalize a multipart upload with the S3 upload id, key and part etags, returning
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.files.complete({ upload_id: 'example-upload', key: 'uploads/abc', parts: [{ part_number: 1, etag: d41d8cd98f00b204e9800998ecf8427e }] });
+await corsair.gumroad.api.files.complete({ upload_id: 'example-upload', key: 'uploads/abc', parts: [{ part_number: 1, etag: 'd41d8cd98f00b204e9800998ecf8427e' }] });
 ```
 
 **Input**
@@ -1990,7 +1990,7 @@ Attach a cover to a product from a public image/video or YouTube/Vimeo URL
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.products.coversAdd({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', url: 'https://example.com/file.zip' });
+await corsair.gumroad.api.products.coversAdd({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', url: 'https://example.com/cover.png' });
 ```
 
 **Input**
@@ -2633,7 +2633,7 @@ Update a product; files and tags are full replacements, and custom_html or cover
 **Risk:** `write`
 
 ```ts
-await corsair.gumroad.api.products.update({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+await corsair.gumroad.api.products.update({ id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Pencil Icon PSD v2', files: [{ url: 'https://example.com/bundle.zip' }] });
 ```
 
 **Input**

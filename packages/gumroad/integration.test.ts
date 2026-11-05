@@ -101,6 +101,8 @@ describe('Gumroad plugin through createCorsair', () => {
 			expect(result.sales[0]?.id).toBe('B28UKN-dvxYabdavG97Y-Q==');
 
 			respond(errorBody('You did not provide a valid access token.'), 401);
+			// unknown: the rejection is whatever bind throws; it is narrowed
+			// by the instanceof assertion below.
 			const error = await corsair.gumroad.api.sales
 				.list({ after: '2020-09-03' })
 				.catch((e: unknown) => e);

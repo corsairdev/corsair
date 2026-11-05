@@ -20,7 +20,7 @@ apiExamples:
   products.create:
     call: "{ name: 'Pencil Icon PSD', price: 100, native_type: 'digital' }"
   products.update:
-    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
+    call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Pencil Icon PSD v2', files: [{ url: 'https://example.com/bundle.zip' }] }"
   products.delete:
     call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
   products.enable:
@@ -31,7 +31,7 @@ apiExamples:
     call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
   products.categoriesList: {}
   products.coversAdd:
-    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', url: 'https://example.com/file.zip' }"
+    call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', url: 'https://example.com/cover.png' }"
   products.coversDelete:
     call: "{ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
   products.thumbnailSet:
@@ -102,7 +102,7 @@ apiExamples:
   files.presign:
     call: "{ file_size: 1024, filename: 'bundle.zip' }"
   files.complete:
-    call: "{ upload_id: 'example-upload', key: 'uploads/abc', parts: [{ part_number: 1, etag: d41d8cd98f00b204e9800998ecf8427e }] }"
+    call: "{ upload_id: 'example-upload', key: 'uploads/abc', parts: [{ part_number: 1, etag: 'd41d8cd98f00b204e9800998ecf8427e' }] }"
   files.abort:
     call: "{ upload_id: 'example-upload', key: 'uploads/abc' }"
   emails.list: {}
@@ -115,7 +115,7 @@ apiExamples:
   emails.send:
     call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
   emails.schedule:
-    call: "{ id: 'bfi_30HLgGWL8H2wo_Gzlg==', to_be_published_at: '2026-01-01 09:00' }"
+    call: "{ id: 'bfi_30HLgGWL8H2wo_Gzlg==', to_be_published_at: '2027-01-01 09:00' }"
   emails.unschedule:
     call: "{ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }"
   emails.delete:

@@ -260,6 +260,8 @@ export async function downloadGumroadFile(
 		}
 		let message = `Gumroad ${res.status}`;
 		try {
+			// unknown: the failure body is arbitrary text that may be JSON;
+			// only the message field is read, narrowed right below.
 			const parsed = JSON.parse(text) as { message?: unknown };
 			if (typeof parsed.message === 'string' && parsed.message.length > 0) {
 				message = `Gumroad ${res.status}: ${parsed.message}`;
