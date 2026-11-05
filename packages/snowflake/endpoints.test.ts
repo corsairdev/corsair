@@ -138,9 +138,25 @@ describe('statements.submit', () => {
 			bindings: { '1': { type: 'FIXED', value: '123' } },
 			parameters: {
 				query_tag: 'tag-1234',
-				multi_statement_count: '2',
+				MULTI_STATEMENT_COUNT: '2',
 				client_result_chunk_size: 160,
 			},
+		});
+		expect(request.body.parameters).not.toHaveProperty('multi_statement_count');
+	});
+
+	it('sends multi_statement_count as MULTI_STATEMENT_COUNT, 0 included', async () => {
+		respond({
+			...resultSet,
+			statementHandles: [STATEMENT_HANDLE, STATEMENT_HANDLE],
+		});
+		await invoke(submit, {
+			statement: 'SELECT 1; SELECT 2;',
+			parameters: { multi_statement_count: 0, timezone: 'Asia/Kolkata' },
+		});
+		expect(lastRequest().body.parameters).toEqual({
+			MULTI_STATEMENT_COUNT: 0,
+			timezone: 'Asia/Kolkata',
 		});
 	});
 

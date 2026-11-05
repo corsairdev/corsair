@@ -26,6 +26,21 @@ function queryOf(
 	return Object.keys(query).length > 0 ? query : undefined;
 }
 
+// Snowflake reads the other session parameters in lowercase, but it ignores a
+// lowercase multi_statement_count and fails a two-statement request with
+// 000008 "desired statement count 1" (live check 2026-11-06). The
+// multi-statement guide sends MULTI_STATEMENT_COUNT, which works.
+function parametersBody(
+	parameters: NonNullable<SubmitStatementInput['parameters']>,
+): Record<string, string | number> {
+	const { multi_statement_count, ...rest } = parameters;
+	const body: Record<string, string | number> = { ...rest };
+	if (multi_statement_count !== undefined) {
+		body.MULTI_STATEMENT_COUNT = multi_statement_count;
+	}
+	return body;
+}
+
 function submitBody(
 	input: SubmitStatementInput,
 ): Record<string, string | number | boolean | object> {
@@ -38,7 +53,9 @@ function submitBody(
 	if (input.warehouse !== undefined) body.warehouse = input.warehouse;
 	if (input.role !== undefined) body.role = input.role;
 	if (input.bindings !== undefined) body.bindings = input.bindings;
-	if (input.parameters !== undefined) body.parameters = input.parameters;
+	if (input.parameters !== undefined) {
+		body.parameters = parametersBody(input.parameters);
+	}
 	return body;
 }
 
