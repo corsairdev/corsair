@@ -46,6 +46,7 @@ export function connectionNodes(
 	});
 }
 
+// unknown: a GraphQL connection like the one connectionNodes reads.
 export function connectionPageInfo(connection: unknown): {
 	hasNextPage: boolean | null;
 	endCursor: string | null;
@@ -59,6 +60,7 @@ export function connectionPageInfo(connection: unknown): {
 	};
 }
 
+// unknown: a GraphQL connection like the one connectionNodes reads.
 export function nodeStrings(connection: unknown, field: string): string[] {
 	return connectionNodes(connection).flatMap((node) => {
 		const value = node[field];
@@ -71,6 +73,7 @@ export function firstNode(connection: unknown): Record<string, unknown> | null {
 	return connectionNodes(connection)[0] ?? null;
 }
 
+// unknown: a GraphQL node whose fields are untyped until read.
 export function readString(
 	node: Record<string, unknown> | null,
 	field: string,
@@ -79,6 +82,7 @@ export function readString(
 	return typeof value === 'string' && value.length > 0 ? value : null;
 }
 
+// unknown: a GraphQL node like the one readString takes.
 export function readNumber(
 	node: Record<string, unknown> | null,
 	field: string,
