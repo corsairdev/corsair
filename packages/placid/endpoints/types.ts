@@ -502,7 +502,17 @@ const CollectionSchema = z
 				z.array(z.unknown()),
 			])
 			.nullish(),
-		template_uuids: z.array(z.string()).nullish(),
+		// The docs call this `template_uuids`, but the API answers `templates`
+		// with a plain array of UUID strings (checked against the live API).
+		// Both are read so a future fix on either side cannot break a call.
+		templates: z
+			.array(z.string())
+			.nullish()
+			.describe('The UUIDs of the templates in this collection.'),
+		template_uuids: z
+			.array(z.string())
+			.nullish()
+			.describe('Deprecated alias. The API returns `templates`.'),
 	})
 	.loose();
 

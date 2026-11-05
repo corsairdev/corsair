@@ -79,11 +79,13 @@ export const templateList = {
 };
 
 // https://placid.app/docs/2.0/rest/collections#the-collection-object
+// The docs name the member list `template_uuids`, but the API answers
+// `templates` with a plain array of UUID strings (verified live).
 export const collection = {
 	id: 'col_1234',
 	title: 'Acme onboarding',
 	custom_data: { plan: 'pro' },
-	template_uuids: ['ospo24ysn', 'jxac36kja'],
+	templates: ['ospo24ysn', 'jxac36kja'],
 };
 
 export const collectionList = {
