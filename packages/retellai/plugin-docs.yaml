@@ -1,0 +1,34 @@
+displayName: Retell AI
+description: Analyze Retell AI calls and chats with transcripts, recordings, and post-call analysis.
+domain: retellai.com
+recommendedAuth: api_key
+overviewNote: |
+  - **Lists are summaries.** `calls.list` and `chats.list` omit transcripts; call `calls.get` or `chats.get` for the transcript, recording and analysis. Only the `get` operations save records locally.
+  - **Paging.** Pass the returned `pagination_key` back as `paginationKey` while `has_more` is true. Set `includeTotal: true` to get `total` (Retell runs an extra count query for it).
+examples:
+  read:
+    path: calls.list
+    title: List ended calls
+    args:
+      limit: 50
+      filterCriteria:
+        call_status:
+          type: enum
+          op: in
+          value:
+            - ended
+dbExample:
+  entity: calls
+  note: Calls fetched with `calls.get` are kept locally.
+  data:
+    call_status: ended
+  limit: 20
+apiExamples:
+  calls.list:
+    call: "{ limit: 50, sortOrder: 'descending', filterCriteria: { call_status: { type: 'enum', op: 'in', value: ['ended'] } } }"
+  calls.get:
+    call: "{ id: 'Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6' }"
+  chats.list:
+    call: "{ limit: 50, includeTotal: true }"
+  chats.get:
+    call: "{ id: 'Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6' }"
