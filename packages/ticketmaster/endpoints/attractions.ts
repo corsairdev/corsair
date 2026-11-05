@@ -1,5 +1,5 @@
-import type { TicketmasterEndpoints } from '..';
 import { segment } from '../client';
+import type { TicketmasterEndpoints } from '../index';
 import { call } from './call';
 import { readEmbedded, readPage, searchQuery } from './helpers';
 import {

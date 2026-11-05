@@ -1,8 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
-import type { TicketmasterContext } from '..';
 import type { TicketmasterRequest } from '../client';
 import { makeTicketmasterRequest } from '../client';
+import type { TicketmasterContext } from '../index';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 

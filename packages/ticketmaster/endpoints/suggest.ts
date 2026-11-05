@@ -1,4 +1,4 @@
-import type { TicketmasterEndpoints } from '..';
+import type { TicketmasterEndpoints } from '../index';
 import { call } from './call';
 import { readEmbedded, searchQuery } from './helpers';
 import {
