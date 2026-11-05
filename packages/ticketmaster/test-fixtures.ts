@@ -300,11 +300,22 @@ export const classification = {
 	},
 };
 
+/**
+ * Suggest has an `_embedded` envelope like the searches, which the docs do not
+ * show: they describe the response only as "schema (string)". The live API
+ * answers `{ _links, _embedded: { venues, attractions, events, products } }`,
+ * so a capture from that response is the fixture.
+ */
 export const suggestResponse = {
-	attractions: [attraction],
-	events: [event],
-	venues: [venue],
-	products: [{ id: 'p1', name: 'Parking' }],
+	_links: {
+		self: { href: '/discovery/v2/suggest.json?size=3&keyword=coachella' },
+	},
+	_embedded: {
+		venues: [venue],
+		attractions: [attraction],
+		events: [event],
+		products: [{ id: 'p1', name: 'Parking', type: 'product' }],
+	},
 };
 
 /**

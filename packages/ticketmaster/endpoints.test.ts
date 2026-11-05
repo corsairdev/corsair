@@ -527,7 +527,7 @@ describe('classifications.get', () => {
 });
 
 describe('suggest.get', () => {
-	it('GETs discovery/v2/suggest.json and keeps the top-level collections', async () => {
+	it('GETs discovery/v2/suggest.json and unwraps the embedded collections', async () => {
 		respond(suggestResponse);
 
 		const result = await invoke(Suggest.get, { keyword: 'coach' });
@@ -542,7 +542,7 @@ describe('suggest.get', () => {
 			attractions: [attraction],
 			events: [event],
 			venues: [venue],
-			products: [{ id: 'p1', name: 'Parking' }],
+			products: [{ id: 'p1', name: 'Parking', type: 'product' }],
 		});
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
@@ -567,18 +567,32 @@ describe('suggest.get', () => {
 		});
 	});
 
-	it('treats a response missing some collections as partially empty', async () => {
-		respond({ attractions: [attraction] });
+	it('reads an absent collection as empty', async () => {
+		respond({
+			_links: { self: { href: '/discovery/v2/suggest.json' } },
+			_embedded: { venues: [venue] },
+		});
 
 		await expect(
 			invoke(Suggest.get, { keyword: 'coach' }),
 		).resolves.toMatchObject({
-			attractions: [attraction],
-			// Absent, not null: the schema marks them nullish, and the body
-			// simply had no key.
-			events: undefined,
-			venues: undefined,
-			products: undefined,
+			attractions: [],
+			events: [],
+			venues: [venue],
+			products: [],
+		});
+	});
+
+	it('reads a response with no _embedded as all empty', async () => {
+		respond({ _links: { self: { href: '/discovery/v2/suggest.json' } } });
+
+		await expect(
+			invoke(Suggest.get, { keyword: 'zzzznotarealterm' }),
+		).resolves.toEqual({
+			attractions: [],
+			events: [],
+			venues: [],
+			products: [],
 		});
 	});
 

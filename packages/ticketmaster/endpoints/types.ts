@@ -752,15 +752,23 @@ const SuggestGetInputSchema = z.object({
 
 export type SuggestGetInput = z.infer<typeof SuggestGetInputSchema>;
 
-// The docs list only "schema (string)" for this response, so the collections are
-// read loosely and every one of them is optional.
+/**
+ * Suggest returns the same `_embedded` envelope as the searches, despite its
+ * docs describing the response only as "schema (string)". The live API answers
+ * `{ _links, _embedded: { venues, attractions, events, products } }`, so every
+ * collection is read from there and an absent one is an empty list.
+ *
+ * `EventSchema` and `AttractionSchema` are reused as-is: a suggest row carries
+ * the same fields as a search row for these types.
+ */
 const SuggestGetResponseSchema = z.object({
-	attractions: z.array(AttractionSchema).nullish(),
-	events: z.array(EventSchema).nullish(),
-	venues: z.array(VenueSchema).nullish(),
-	// unknown: suggested products are not documented and change shape.
-	products: z.array(z.record(z.string(), z.unknown())).nullish(),
-	_links: LinksSchema,
+	attractions: z.array(AttractionSchema),
+	events: z.array(EventSchema),
+	venues: z.array(VenueSchema),
+	// unknown: products are only ever returned by suggest, and they are shaped
+	// like an event with a `_embedded` of venues and attractions. They are passed
+	// through rather than pinned to a schema nothing else uses.
+	products: z.array(z.record(z.string(), z.unknown())),
 });
 
 export type SuggestGetResponse = z.infer<typeof SuggestGetResponseSchema>;
