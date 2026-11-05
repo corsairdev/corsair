@@ -42,6 +42,47 @@ export async function deleteImages(
 	} catch (error) {
 		console.warn('Failed to delete FinerWorks images from database:', error);
 	}
+	await deleteProductsForImages(ctx, guids);
+}
+
+const PRODUCT_PAGE = 500;
+
+/**
+ * FinerWorks deletes the virtual inventory products assigned to an inventory
+ * image when the image is deleted, so drop their local copies too.
+ * https://v2.api.finerworks.com/Help/Api/DELETE-v3-delete_images
+ *
+ * The rows are scanned page by page and matched on `image_guid` in memory:
+ * a JSON field filter can't run while `encryptDataAtRest` seals the rows.
+ */
+async function deleteProductsForImages(
+	ctx: FinerWorksContext,
+	guids: string[],
+): Promise<void> {
+	if (!guids.length) return;
+	const deleted = new Set(guids);
+	try {
+		const skus: string[] = [];
+		for (let offset = 0; ; offset += PRODUCT_PAGE) {
+			const rows = await ctx.db.virtualInventoryProducts.search({
+				limit: PRODUCT_PAGE,
+				offset,
+			});
+			for (const row of rows) {
+				const imageGuid = row.data.image_guid;
+				if (imageGuid && deleted.has(imageGuid)) skus.push(row.entity_id);
+			}
+			if (rows.length < PRODUCT_PAGE) break;
+		}
+		for (const sku of skus) {
+			await ctx.db.virtualInventoryProducts.deleteByEntityId(sku);
+		}
+	} catch (error) {
+		console.warn(
+			'Failed to delete FinerWorks inventory products for deleted images:',
+			error,
+		);
+	}
 }
 
 export async function saveInventoryProducts(

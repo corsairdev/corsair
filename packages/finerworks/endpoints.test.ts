@@ -167,6 +167,8 @@ describe('account endpoints', () => {
 		});
 
 		const res = (await endpoint('account', 'getUser')(makeCtx(), {})) as {
+			// unknown: the test looks for credential fields the output must not carry;
+			// a closed account type would hide the extra fields being checked.
 			user_account: Record<string, unknown>;
 		};
 
@@ -684,18 +686,18 @@ describe('shipping endpoints', () => {
 	it('getOptionIds GETs /v3/get_shipping_options_ids with a type filter', async () => {
 		makeFinerWorksRequest.mockResolvedValue({
 			status: okStatus,
-			shipping_options: [{ id: 1, shipping_code: 'SD' }],
+			shipping_options_ids: [1, 3],
 		});
 
 		const res = (await endpoint('shipping', 'getOptionIds')(makeCtx(), {
 			type: 1,
-		})) as { shipping_options: Array<{ shipping_code: string }> };
+		})) as { shipping_options_ids: number[] };
 
 		const [path, , opts] = lastCall();
 		expect(path).toBe('v3/get_shipping_options_ids');
 		expect(opts.method).toBe('GET');
 		expect(opts.query).toEqual({ type: 1 });
-		expect(res.shipping_options[0]?.shipping_code).toBe('SD');
+		expect(res.shipping_options_ids).toEqual([1, 3]);
 	});
 
 	it('rejects a non-numeric shipping type, which the API validates as Int32', async () => {

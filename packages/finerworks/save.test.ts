@@ -172,6 +172,35 @@ describe('finerworks saves with encryptDataAtRest', () => {
 		expect(requested).toEqual(['/v3/list_images', '/v3/delete_images']);
 	});
 
+	it('drops cached products tied to a deleted image, and keeps the rest', async () => {
+		const corsair = await encryptedCorsair();
+		const other = { ...product, sku: 'OTHER-SKU', image_guid: 'other-guid' };
+		routes['/v3/list_images'] = () => ({ status: okStatus, images: [image] });
+		routes['/v3/list_virtual_inventory'] = () => ({
+			status: okStatus,
+			products: [{ ...product, image_guid: IMAGE_GUID }, other],
+		});
+		routes['/v3/delete_images'] = () => ({ status: okStatus });
+
+		await corsair.finerworks.api.images.list({
+			library: { name: 'inventory' },
+		});
+		await corsair.finerworks.api.inventory.list({});
+		expect(storedCells('virtualInventoryProducts')).toHaveLength(2);
+
+		await corsair.finerworks.api.images.delete({ guids: [IMAGE_GUID] });
+
+		expect(storedCells('images')).toEqual([]);
+		expect(
+			await corsair.finerworks.db.virtualInventoryProducts.findByEntityId(SKU),
+		).toBeNull();
+		const kept =
+			await corsair.finerworks.db.virtualInventoryProducts.findByEntityId(
+				'OTHER-SKU',
+			);
+		expect(kept?.data).toMatchObject({ sku: 'OTHER-SKU' });
+	});
+
 	it('keeps the stored image when FinerWorks reports the delete failed', async () => {
 		const corsair = await encryptedCorsair();
 		routes['/v3/list_images'] = () => ({ status: okStatus, images: [image] });
