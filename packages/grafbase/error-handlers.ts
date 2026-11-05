@@ -60,7 +60,9 @@ export const errorHandlers = {
 } satisfies CorsairErrorHandler;
 
 // Handlers match in key order and DEFAULT matches everything, so it stays
-// last even when the caller adds or overrides handlers.
+// last. Caller handlers keep their value and come first, so one wins over a
+// builtin that matches the same error under a different key; builtin keys the
+// caller did not provide are appended after them.
 export function mergeErrorHandlers(
 	builtin: CorsairErrorHandler,
 	user: CorsairErrorHandler | undefined,
@@ -68,8 +70,12 @@ export function mergeErrorHandlers(
 	if (!user) return builtin;
 	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
 	const { DEFAULT: userDefault, ...userRest } = user;
+	const merged: CorsairErrorHandler = { ...userRest };
+	for (const [key, handler] of Object.entries(builtinRest)) {
+		if (!(key in merged)) {
+			merged[key as keyof CorsairErrorHandler] = handler;
+		}
+	}
 	const fallback = userDefault ?? builtinDefault;
-	return fallback
-		? { ...builtinRest, ...userRest, DEFAULT: fallback }
-		: { ...builtinRest, ...userRest };
+	return fallback ? { ...merged, DEFAULT: fallback } : merged;
 }
