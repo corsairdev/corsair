@@ -1,6 +1,11 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
-import { ENGINEMAILER_API_BASE, makeEnginemailerRequest } from './client';
+import {
+	ENGINEMAILER_API_BASE,
+	EnginemailerAPIError,
+	makeEnginemailerRequest,
+} from './client';
+import { errorHandlers } from './error-handlers';
 import {
 	ENGINEMAILER_N8N_API_BASE,
 	makeEnginemailerN8nRequest,
@@ -104,6 +109,90 @@ describe('Enginemailer transport', () => {
 		).rejects.toMatchObject({
 			status: 429,
 			retryAfter: 12_000,
+		});
+	});
+});
+
+describe('Enginemailer REST status in the response body', () => {
+	// Captured from api.enginemailer.com: failures come back as HTTP 200.
+	const apiKeyNotFound = {
+		Result: {
+			StatusCode: '500',
+			Status: 'InternalServerError',
+			ErrorMessage: 'API Key Not Found!',
+		},
+	};
+
+	it('raises a 200 response whose Result.StatusCode is an error', async () => {
+		mockRequest.mockResolvedValue(apiKeyNotFound);
+
+		const call = makeEnginemailerRequest(
+			'/restapi/subscriber/emsubscriber/getSubscriber',
+			'bad-key',
+			{ method: 'GET', query: { email: 'person@example.com' } },
+		);
+
+		await expect(call).rejects.toBeInstanceOf(EnginemailerAPIError);
+		await expect(call).rejects.toMatchObject({
+			message: 'API Key Not Found!',
+			status: 500,
+			code: 'InternalServerError',
+		});
+	});
+
+	it('lets AUTH_ERROR recognise a rejected key', async () => {
+		mockRequest.mockResolvedValue(apiKeyNotFound);
+
+		const error = await makeEnginemailerRequest(
+			'/restapi/campaign/emcampaign/ListCampaign',
+			'bad-key',
+		).catch((caught: Error) => caught);
+
+		expect(error).toBeInstanceOf(EnginemailerAPIError);
+		expect(errorHandlers.AUTH_ERROR.match(error as Error)).toBe(true);
+	});
+
+	it('raises a bare batchUpdateStatus error without a Result wrapper', async () => {
+		mockRequest.mockResolvedValue({
+			Status: 'Records Not Exists',
+			StatusCode: '404',
+		});
+
+		await expect(
+			makeEnginemailerRequest(
+				'/restapi/subscriber/emsubscriber/batchUpdateStatus',
+				'secret',
+				{ method: 'POST', body: { ID: 1 } },
+			),
+		).rejects.toMatchObject({ message: 'Records Not Exists', status: 404 });
+	});
+
+	it.each([
+		{ Result: { Status: 'OK', StatusCode: '200', Data: [] } },
+		{ Result: { StatusCode: '201', Status: 'Processing', ID: 12345 } },
+		{ Status: 'Processing', StatusCode: '201' },
+		{ Result: {} },
+	])('returns 2xx and status-less bodies unchanged (%j)', async (body) => {
+		mockRequest.mockResolvedValue(body);
+
+		await expect(
+			makeEnginemailerRequest('/restapi/campaign/emcampaign/ListCampaign', 'k'),
+		).resolves.toEqual(body);
+	});
+
+	it('sends query parameters on POST for activateSubscriber', async () => {
+		mockRequest.mockResolvedValue({ Result: { StatusCode: '200' } });
+
+		await makeEnginemailerRequest(
+			'/restapi/subscriber/emsubscriber/activateSubscriber',
+			'secret',
+			{ method: 'POST', query: { email: 'person@example.com' } },
+		);
+
+		expect(lastCall()[1]).toMatchObject({
+			method: 'POST',
+			query: { email: 'person@example.com' },
+			body: undefined,
 		});
 	});
 });

@@ -19,6 +19,34 @@ export class EnginemailerAPIError extends Error {
 
 export const ENGINEMAILER_API_BASE = 'https://api.enginemailer.com';
 
+/**
+ * The REST API answers HTTP 200 even when a call fails: the outcome is in
+ * `Result.StatusCode` ("200", "201", "500"...) with `Result.ErrorMessage`.
+ * batchUpdateStatus returns the same fields without the `Result` wrapper.
+ * Anything outside 2xx is raised so callers never mistake a failure (for
+ * example "API Key Not Found!") for a success.
+ * @see https://enginemailer.zendesk.com/hc/en-us/articles/360000859651-Errors-for-Subscribers-API
+ */
+export function assertEnginemailerSuccess(response: unknown): void {
+	// `response` is the raw JSON body; only its status fields are inspected.
+	if (!response || typeof response !== 'object') return;
+	const body = response as Record<string, unknown>;
+	const outcome =
+		body.Result && typeof body.Result === 'object'
+			? (body.Result as Record<string, unknown>)
+			: body;
+	if (outcome.StatusCode === undefined || outcome.StatusCode === null) return;
+	const code = Number(outcome.StatusCode);
+	if (!Number.isFinite(code) || (code >= 200 && code < 300)) return;
+	const status =
+		typeof outcome.Status === 'string' ? outcome.Status : undefined;
+	const message =
+		typeof outcome.ErrorMessage === 'string' && outcome.ErrorMessage
+			? outcome.ErrorMessage
+			: (status ?? `Enginemailer request failed with status ${code}`);
+	throw new EnginemailerAPIError(message, code, status);
+}
+
 const RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 0,
@@ -60,11 +88,13 @@ export async function makeEnginemailerRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		// activateSubscriber is a POST that reads `email` from the query string.
+		query,
 	};
 
+	let response: T;
 	try {
-		return await request<T>(config, requestOptions, {
+		response = await request<T>(config, requestOptions, {
 			rateLimitConfig: RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
@@ -78,4 +108,6 @@ export async function makeEnginemailerRequest<T>(
 		}
 		throw error;
 	}
+	assertEnginemailerSuccess(response);
+	return response;
 }
