@@ -1,5 +1,5 @@
 import type { RenderEndpoints } from '..';
-import { makeRenderRequest } from '../client';
+import { isRenderJsonBody, makeRenderRequest } from '../client';
 import { renderPathParameter } from './path';
 
 type Context = { key: string };
@@ -19,23 +19,14 @@ const request = <T>(
 		? renderPathParameter(template, 'id', id)
 		: template;
 	const requestBody =
-		body ??
-		(Object.keys(values).length > 0
-			? (values as Record<string, unknown>)
-			: undefined);
+		body ?? (Object.keys(values).length > 0 ? values : undefined);
 	return makeRenderRequest<T>(path, ctx.key, {
 		method,
 		body:
-			method === 'GET' || method === 'DELETE'
+			method === 'GET' || method === 'DELETE' || !isRenderJsonBody(requestBody)
 				? undefined
-				: (requestBody as Record<string, unknown> | unknown[] | undefined),
-		query:
-			method === 'GET'
-				? (values as Record<
-						string,
-						string | number | boolean | string[] | undefined
-					>)
-				: undefined,
+				: requestBody,
+		query: method === 'GET' ? values : undefined,
 	});
 };
 

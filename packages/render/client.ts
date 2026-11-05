@@ -21,6 +21,7 @@ export class RenderAPIError extends Error {
 
 // Render explains most 4xx answers in the body's `message` field
 // (for example which filter or plan was rejected); keep it in the error.
+// unknown: the error body is untyped JSON or text; narrowed below.
 const renderErrorDetail = (body: unknown): string | undefined => {
 	if (typeof body === 'string') return body.trim().slice(0, 500) || undefined;
 	if (body && typeof body === 'object' && 'message' in body) {
@@ -31,6 +32,13 @@ const renderErrorDetail = (body: unknown): string | undefined => {
 };
 
 const RENDER_API_BASE = 'https://api.render.com';
+
+/** A JSON request body: an object for most writes, an array for replace operations. */
+// unknown: bodies arrive schema-validated but untyped; this guard narrows them.
+export const isRenderJsonBody = (
+	value: unknown,
+): value is Record<string, unknown> | unknown[] =>
+	Array.isArray(value) || (typeof value === 'object' && value !== null);
 
 const RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -52,7 +60,9 @@ export async function makeRenderRequest<T>(
 		// unknown: the endpoint schemas validate each provider-specific body.
 		body?: /* unknown: provider-specific object or replacement-array body */
 		Record<string, unknown> | unknown[];
-		query?: Record<string, string | string[] | number | boolean | undefined>;
+		// unknown: filter values are schema-validated per operation; core
+		// request() serialises strings, numbers, booleans and arrays.
+		query?: Record<string, unknown>;
 		headers?: Record<string, string>;
 		mediaType?: string;
 		// multipart/form-data fields; fetch sets the boundary Content-Type.

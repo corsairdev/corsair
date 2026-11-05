@@ -1,4 +1,4 @@
-import { makeRenderRequest } from '../client';
+import { isRenderJsonBody, makeRenderRequest } from '../client';
 import type { RenderEndpoints } from '../index';
 import { renderPathParameter } from './path';
 
@@ -39,20 +39,14 @@ const call = <T>(
 					: value,
 			]),
 	);
-	const body =
-		'body' in values
-			? (values.body as Record<string, unknown> | unknown[])
-			: values;
+	const body = 'body' in values ? values.body : values;
 	return makeRenderRequest<T>(path, ctx.key, {
 		method,
-		body: method === 'GET' || method === 'DELETE' ? undefined : body,
-		query:
-			method === 'GET'
-				? (values as Record<
-						string,
-						string | number | boolean | string[] | undefined
-					>)
-				: undefined,
+		body:
+			method === 'GET' || method === 'DELETE' || !isRenderJsonBody(body)
+				? undefined
+				: body,
+		query: method === 'GET' ? values : undefined,
 	});
 };
 

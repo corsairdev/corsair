@@ -7,18 +7,24 @@ import type {
 	ServiceOutput,
 } from './types';
 
-type RenderResourceList = Record<string, unknown>[];
+// unknown: Render resource records are provider-defined; each operation's
+// output schema parses them at the bound endpoint.
+type RenderRecord = Record<string, unknown>;
+type RenderResourceList = RenderRecord[];
+// unknown: lifecycle POSTs (deploy, restart, scale, ...) answer with a
+// provider-specific acknowledgement or no body at all.
+type Acknowledgement = unknown;
 
 // Render declares these list filters as `style: form, explode: false`, so a
 // multi-value filter is one comma-separated value (`name=a,b`), not a
 // repeated key (`name=a&name=b`).
-const commaSeparated = <T extends Record<string, unknown>>(input: T) =>
+const commaSeparated = <T extends RenderRecord>(input: T) =>
 	Object.fromEntries(
 		Object.entries(input).map(([key, value]) => [
 			key,
 			Array.isArray(value) ? value.join(',') : value,
 		]),
-	) as Record<string, string | number | boolean | undefined>;
+	);
 
 export const listServices: RenderEndpoints['listServices'] = async (
 	ctx,
@@ -89,7 +95,13 @@ export const triggerDeploy: RenderEndpoints['triggerDeploy'] = async (
 	input,
 ) => {
 	const { serviceId, ...body } = input;
-	return serviceRequest<unknown>(ctx, serviceId, '/deploys', 'POST', body);
+	return serviceRequest<Acknowledgement>(
+		ctx,
+		serviceId,
+		'/deploys',
+		'POST',
+		body,
+	);
 };
 
 export const listDeploys: RenderEndpoints['listDeploys'] = async (
@@ -102,10 +114,7 @@ export const listDeploys: RenderEndpoints['listDeploys'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			query: query as Record<
-				string,
-				string | number | boolean | string[] | undefined
-			>,
+			query,
 		},
 	);
 };
@@ -113,13 +122,14 @@ export const listDeploys: RenderEndpoints['listDeploys'] = async (
 export const purgeServiceCache: RenderEndpoints['purgeServiceCache'] = async (
 	ctx,
 	input,
-) => serviceRequest<unknown>(ctx, input.serviceId, '/cache/purge', 'POST');
+) =>
+	serviceRequest<Acknowledgement>(ctx, input.serviceId, '/cache/purge', 'POST');
 
 export const cancelDeploy: RenderEndpoints['cancelDeploy'] = async (
 	ctx,
 	input,
 ) =>
-	serviceRequest<unknown>(
+	serviceRequest<Acknowledgement>(
 		ctx,
 		input.serviceId,
 		`/deploys/${encodeServiceId(input.deployId)}/cancel`,
@@ -131,7 +141,7 @@ export const rollbackDeploy: RenderEndpoints['rollbackDeploy'] = async (
 	input,
 ) => {
 	const { serviceId, deployId } = input;
-	return serviceRequest<unknown>(ctx, serviceId, '/rollback', 'POST', {
+	return serviceRequest<Acknowledgement>(ctx, serviceId, '/rollback', 'POST', {
 		deployId,
 	});
 };
@@ -161,7 +171,7 @@ export const retrieveServiceJob: RenderEndpoints['retrieveServiceJob'] = (
 	ctx,
 	input,
 ) =>
-	serviceRequest<Record<string, unknown>>(
+	serviceRequest<RenderRecord>(
 		ctx,
 		input.serviceId,
 		`/jobs/${encodeServiceId(input.jobId)}`,
@@ -173,20 +183,17 @@ export const createServiceJob: RenderEndpoints['createServiceJob'] = (
 	input,
 ) => {
 	const { startCommand, planId } = input;
-	return serviceRequest<Record<string, unknown>>(
-		ctx,
-		input.serviceId,
-		'/jobs',
-		'POST',
-		{ startCommand, planId },
-	);
+	return serviceRequest<RenderRecord>(ctx, input.serviceId, '/jobs', 'POST', {
+		startCommand,
+		planId,
+	});
 };
 
 export const cancelServiceJob: RenderEndpoints['cancelServiceJob'] = async (
 	ctx,
 	input,
 ) =>
-	serviceRequest<Record<string, unknown>>(
+	serviceRequest<RenderRecord>(
 		ctx,
 		input.serviceId,
 		`/jobs/${encodeServiceId(input.jobId)}/cancel`,
@@ -196,20 +203,20 @@ export const cancelServiceJob: RenderEndpoints['cancelServiceJob'] = async (
 export const restartService: RenderEndpoints['restartService'] = async (
 	ctx,
 	input,
-) => serviceRequest<unknown>(ctx, input.serviceId, '/restart', 'POST');
+) => serviceRequest<Acknowledgement>(ctx, input.serviceId, '/restart', 'POST');
 
 export const suspendService: RenderEndpoints['suspendService'] = async (
 	ctx,
 	input,
-) => serviceRequest<unknown>(ctx, input.serviceId, '/suspend', 'POST');
+) => serviceRequest<Acknowledgement>(ctx, input.serviceId, '/suspend', 'POST');
 
 export const resumeService: RenderEndpoints['resumeService'] = async (
 	ctx,
 	input,
-) => serviceRequest<unknown>(ctx, input.serviceId, '/resume', 'POST');
+) => serviceRequest<Acknowledgement>(ctx, input.serviceId, '/resume', 'POST');
 
 export const scaleService: RenderEndpoints['scaleService'] = (ctx, input) =>
-	serviceRequest<unknown>(ctx, input.serviceId, '/scale', 'POST', {
+	serviceRequest<Acknowledgement>(ctx, input.serviceId, '/scale', 'POST', {
 		numInstances: input.numInstances,
 	});
 

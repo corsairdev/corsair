@@ -282,6 +282,7 @@ const UpdateKeyValueInputSchema = KeyValueIdInputSchema.extend({
 	plan: z.string().min(1).optional(),
 	maxmemoryPolicy: z.string().min(1).optional(),
 	persistenceMode: z.string().min(1).optional(),
+	// unknown: CIDR entries are passed through to Render as given.
 	ipAllowList: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 const EnvironmentResourcesInputSchema = z.object({
@@ -314,11 +315,13 @@ const CreateBuildSourceInputSchema = z
 		ownerId: z.string().min(1),
 		name: z.string().min(1),
 		projectId: z.string().min(1).optional(),
+		// unknown: Render's git and image build settings, passed through as given.
 		git: z.record(z.string(), z.unknown()).optional(),
 		image: z.record(z.string(), z.unknown()).optional(),
 	})
 	.passthrough();
 const BuildSourceBodyInputSchema = BuildSourceIdInputSchema.extend({
+	// unknown: the PATCH body Render documents for a build source, passed through.
 	body: z.record(z.string(), z.unknown()),
 });
 // Render's replace operations (PUT env-vars, secret-files, headers, routes)
@@ -364,9 +367,12 @@ const ServiceRoutesReplaceInputSchema = ServiceIdInputSchema.extend({
 	body: RouteReplacementSchema,
 });
 const BuildSourceEnvVarBodyInputSchema = BuildSourceEnvVarInputSchema.extend({
+	// unknown: { value } or { generateValue } (or { content } for a file).
 	body: z.record(z.string(), z.unknown()),
 });
 const ResourceBodyInputSchema = ResourceIdInputSchema.extend({
+	// unknown: the PATCH body for Blueprints, dedicated IPs and workflows,
+	// passed through to Render as given.
 	body: z.record(z.string(), z.unknown()),
 });
 // Required fields below follow Render's OpenAPI spec. Create and update

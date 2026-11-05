@@ -12,10 +12,7 @@ type Input = Record<string, unknown>;
 const get = <T>(ctx: Context, path: string, input: Input) =>
 	makeRenderRequest<T>(path, ctx.key, {
 		method: 'GET',
-		query: input as Record<
-			string,
-			string | number | boolean | string[] | undefined
-		>,
+		query: input,
 	});
 
 const request = <T>(
@@ -31,13 +28,7 @@ const request = <T>(
 	return makeRenderRequest<T>(path, ctx.key, {
 		method,
 		body: method === 'GET' || method === 'DELETE' ? undefined : values,
-		query:
-			method === 'GET'
-				? (values as Record<
-						string,
-						string | number | boolean | string[] | undefined
-					>)
-				: undefined,
+		query: method === 'GET' ? values : undefined,
 	});
 };
 

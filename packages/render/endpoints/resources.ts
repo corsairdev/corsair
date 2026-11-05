@@ -21,13 +21,7 @@ const request = <T>(
 	return makeRenderRequest<T>(path, ctx.key, {
 		method,
 		body: method === 'GET' || method === 'DELETE' ? undefined : values,
-		query:
-			method === 'GET'
-				? (values as Record<
-						string,
-						string | number | boolean | string[] | undefined
-					>)
-				: undefined,
+		query: method === 'GET' ? values : undefined,
 	});
 };
 

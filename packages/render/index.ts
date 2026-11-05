@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import type { z } from 'zod';
 import type { RenderEndpointInputs, RenderEndpointOutputs } from './endpoints';
 import {
 	addHeaders,
@@ -1665,14 +1666,20 @@ function withRenderSchemas<T extends RenderEndpointTree>(
 	tree: T,
 	prefix = '',
 ): T {
+	// Widened view for lookups by a dotted path built at runtime.
+	const schemas: Record<
+		string,
+		{ input: z.ZodType; output: z.ZodType } | undefined
+	> = renderEndpointSchemas;
 	const validatedEntries = Object.entries(tree).map(([key, value]) => {
 		const operation = prefix ? `${prefix}.${key}` : key;
 		if (typeof value === 'function') {
-			const schema =
-				renderEndpointSchemas[operation as keyof typeof renderEndpointSchemas];
+			const schema = schemas[operation];
 			if (!schema) {
 				throw new Error(`Missing Render endpoint schema for ${operation}`);
 			}
+			// Safe: every leaf of renderEndpointsNested is a (ctx, input) => Promise
+			// handler, and its input is re-parsed by its own schema just below.
 			const endpoint = value as RenderEndpointHandler;
 			const validated: RenderEndpointHandler = async (ctx, input) => {
 				const parsedInput = schema.input.parse(input ?? {});
@@ -1689,10 +1696,13 @@ function withRenderSchemas<T extends RenderEndpointTree>(
 			return [key, validated];
 		}
 		if (value && typeof value === 'object') {
+			// Safe: non-function values in the tree are nested groups.
 			return [key, withRenderSchemas(value as RenderEndpointTree, operation)];
 		}
 		return [key, value];
 	});
+	// Safe: the result has the same keys as `tree`, each handler wrapped with
+	// the same signature, so it keeps the input tree's type.
 	return Object.fromEntries(validatedEntries) as T;
 }
 
@@ -2594,6 +2604,9 @@ export type ExternalRenderPlugin<T extends RenderPluginOptions> =
 	BaseRenderPlugin<T>;
 
 export function render<const T extends RenderPluginOptions>(
+	// TS can't prove {} satisfies a generic T; the default only applies when no
+	// options are passed, and every Render option is optional (the same default
+	// every plugin factory uses).
 	incomingOptions: RenderPluginOptions & T = {} as RenderPluginOptions & T,
 ): ExternalRenderPlugin<T> {
 	const options = {

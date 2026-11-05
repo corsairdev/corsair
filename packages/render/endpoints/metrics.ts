@@ -10,10 +10,7 @@ type Input = Record<string, unknown>;
 const metric = <T>(ctx: Context, path: string, input: Input) =>
 	makeRenderRequest<T>(path, ctx.key, {
 		method: 'GET',
-		query: input as Record<
-			string,
-			string | number | boolean | string[] | undefined
-		>,
+		query: input,
 	});
 
 export const getActiveConnections: RenderEndpoints['getActiveConnections'] = (

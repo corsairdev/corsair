@@ -24,13 +24,7 @@ const call = <T>(
 	return makeRenderRequest<T>(path, ctx.key, {
 		method,
 		body: method === 'PUT' ? query : undefined,
-		query:
-			method === 'GET'
-				? (query as Record<
-						string,
-						string | number | boolean | string[] | undefined
-					>)
-				: undefined,
+		query: method === 'GET' ? query : undefined,
 	});
 };
 
@@ -38,6 +32,8 @@ const call = <T>(
  * Keeps a local copy of each workspace (owner) the API key can see, keyed by
  * owner ID. Render returns the full owner on both list and retrieve, so a
  * save replaces the row. A failed save never fails the API call.
+ * unknown: entries come from a loose list schema; RenderOwnerSchema parses
+ * each one before it is stored.
  */
 const saveOwners = async (ctx: RenderContext, owners: unknown[]) => {
 	if (!ctx.database) return;
@@ -54,6 +50,7 @@ const saveOwners = async (ctx: RenderContext, owners: unknown[]) => {
 
 // Path checks in call() throw synchronously, like every other operation;
 // the save runs once Render answers.
+// unknown: owner records are provider-defined; saveOwners validates them.
 export const listOwners: RenderEndpoints['listOwners'] = (ctx, input) =>
 	call<Record<string, unknown>[]>(ctx, '/v1/owners', 'GET', input).then(
 		async (response) => {

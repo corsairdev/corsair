@@ -1,3 +1,5 @@
+// unknown: path values come from parsed inputs; checked to be a safe,
+// non-empty single segment before use.
 export const renderPathParameter = (
 	template: string,
 	name: string,
