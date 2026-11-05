@@ -184,10 +184,18 @@ export type GumroadDownload = {
 
 function filenameFrom(res: Response): string | undefined {
 	const raw = res.headers.get('content-disposition');
-	const match = raw?.match(/filename\*?=(?:UTF-8''|"?)([^";]+)/i);
-	return match?.[1]
-		? decodeURIComponent(match[1].replace(/"/g, ''))
-		: undefined;
+	// RFC 5987 filename* is percent-encoded; a plain filename= value is not,
+	// so URI-decoding is applied to the extended form only.
+	const extended = raw?.match(/filename\*=(?:UTF-8'')?([^";]+)/i);
+	if (extended?.[1]) {
+		try {
+			return decodeURIComponent(extended[1]);
+		} catch {
+			return extended[1];
+		}
+	}
+	const plain = raw?.match(/filename="?([^";]+)/i);
+	return plain?.[1] ? plain[1].replace(/"/g, '') : undefined;
 }
 
 // Retry-After as ms; the docs never document it, so both the delay-seconds
@@ -238,7 +246,18 @@ export async function downloadGumroadFile(
 	}
 
 	if (!res.ok) {
-		const text = await res.text();
+		// A body-read failure (connection dropped mid-response) must still
+		// carry the status so SERVER_ERROR can classify it.
+		let text: string;
+		try {
+			text = await res.text();
+		} catch (error) {
+			throw new GumroadAPIError(`Gumroad ${res.status}`, {
+				status: res.status,
+				method: 'GET',
+				cause: error instanceof Error ? error : undefined,
+			});
+		}
 		let message = `Gumroad ${res.status}`;
 		try {
 			const parsed = JSON.parse(text) as { message?: unknown };

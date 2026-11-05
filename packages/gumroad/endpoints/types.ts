@@ -11,8 +11,18 @@ const bool = z.boolean().nullish();
 
 // Gumroad ids are opaque base64-style strings ("A-m3CDDC5dlrSdKZp0RFhA=="),
 // not UUIDs, so only non-emptiness is pinned.
-const ProductId = z.string().min(1).describe('Product id from products.list');
-const SaleId = z.string().min(1).describe('Sale id from sales.list');
+// "." and ".." are valid non-empty strings but resolve to other path
+// segments when embedded in a URL, so path-carrier ids reject them.
+const ProductId = z
+	.string()
+	.min(1)
+	.refine((value) => value !== '.' && value !== '..')
+	.describe('Product id from products.list');
+const SaleId = z
+	.string()
+	.min(1)
+	.refine((value) => value !== '.' && value !== '..')
+	.describe('Sale id from sales.list');
 // License keys look like "A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD" in the docs
 // but the format is not documented as a constraint, so only non-emptiness is
 // pinned.
@@ -648,14 +658,7 @@ const OfferCodesUpdateInputSchema = z
 		id: z.string().min(1).describe('Store-wide offer code id'),
 		...OfferCodeWritableFields,
 	})
-	.strict()
-	.refine(
-		(data) => !(data.expires_at !== undefined && data.valid_at === undefined),
-		{
-			message: 'An end requires a start (valid_at)',
-			path: ['expires_at'],
-		},
-	);
+	.strict();
 
 const OfferCodesListForProductInputSchema = z.object({
 	product_id: ProductId,
@@ -701,14 +704,7 @@ const OfferCodesUpdateForProductInputSchema = z
 		id: z.string().min(1).describe('Offer code id'),
 		...OfferCodeWritableFields,
 	})
-	.strict()
-	.refine(
-		(data) => !(data.expires_at !== undefined && data.valid_at === undefined),
-		{
-			message: 'An end requires a start (valid_at)',
-			path: ['expires_at'],
-		},
-	);
+	.strict();
 
 const OfferCodesDeleteForProductInputSchema = z.object({
 	product_id: ProductId,
@@ -796,7 +792,11 @@ const CustomFieldsUpdateInputSchema = z.object({
 
 const CustomFieldsDeleteInputSchema = z.object({
 	product_id: ProductId,
-	name: z.string().min(1).describe('Name of the custom field'),
+	name: z
+		.string()
+		.min(1)
+		.refine((value) => value !== '.' && value !== '..')
+		.describe('Name of the custom field'),
 });
 
 const UserGetInputSchema = z.object({});

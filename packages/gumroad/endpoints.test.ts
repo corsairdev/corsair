@@ -1201,10 +1201,19 @@ describe('endpoint dispatch', () => {
 				expect(init.body).toBeUndefined();
 			}
 			// Every fixture must parse through its output schema before the
-			// endpoint returns, so a returned object proves the parse passed.
+			// endpoint returns; truthiness here only proves a value came back,
+			// the parse itself is pinned by the rejection test below.
 			expect(result).toBeTruthy();
 		});
 	}
+
+	it('rejects a response body that violates the output schema', async () => {
+		respond({ success: true, products: 'not-an-array' });
+
+		await expect(invoke(Products.list, {})).rejects.toThrow(
+			expect.objectContaining({ name: 'ZodError' }),
+		);
+	});
 
 	it('taxForms.download fetches the PDF and returns it base64-encoded', async () => {
 		const pdf = Buffer.from('%PDF-1.4 fake tax form');
@@ -1236,6 +1245,31 @@ describe('endpoint dispatch', () => {
 			contentType: 'application/pdf',
 			contentBase64: pdf.toString('base64'),
 		});
+	});
+
+	it('taxForms.download decodes filename* but leaves plain filenames alone', async () => {
+		const pdf = Buffer.from('%PDF-1.4 fake tax form');
+		for (const [header, expected] of [
+			['attachment; filename="50% off.pdf"', '50% off.pdf'],
+			["attachment; filename*=UTF-8''1099%2DK%202025.pdf", '1099-K 2025.pdf'],
+		] as const) {
+			fetchMock.mockResolvedValueOnce(
+				new Response(new Uint8Array(pdf), {
+					status: 200,
+					headers: {
+						'Content-Type': 'application/pdf',
+						'Content-Disposition': header,
+					},
+				}),
+			);
+
+			const result = (await invoke(TaxForms.download, {
+				year: '2025',
+				tax_form_type: 'us_1099_k',
+			})) as { filename?: string };
+
+			expect(result.filename).toBe(expected);
+		}
 	});
 
 	it('public.product reads from the seller subdomain, not the API host', async () => {
@@ -1357,6 +1391,17 @@ describe('endpoint dispatch', () => {
 		expect(String(lastRequest().init.body)).toBe(
 			'valid_at=&expires_at=2026-12-01T00%3A00%3A00Z',
 		);
+	});
+
+	it('offerCodes.update can clear expires_at without valid_at', async () => {
+		respond({ success: true, offer_code: offerCode });
+
+		await invoke(OfferCodes.update, {
+			id: 'mN7CdHiwHaR9FlxKvF-n-g==',
+			expires_at: '',
+		});
+
+		expect(String(lastRequest().init.body)).toBe('expires_at=');
 	});
 
 	it('sales.list sends every filter and the page cursor', async () => {
@@ -1520,6 +1565,16 @@ describe('input schemas: accept and reject', () => {
 		expect(accepts('salesList', { after: '2020-09-03' })).toBe(true);
 		expect(accepts('salesList', { after: '2020-9-3' })).toBe(false);
 		expect(accepts('salesList', { after: '03-09-2020' })).toBe(false);
+	});
+
+	it('rejects dot path segments in path-carrier ids', () => {
+		expect(accepts('productsGet', { id: '.' })).toBe(false);
+		expect(accepts('productsGet', { id: '..' })).toBe(false);
+		expect(accepts('salesGet', { id: '..' })).toBe(false);
+		expect(
+			accepts('customFieldsDelete', { product_id: PRODUCT_ID, name: '.' }),
+		).toBe(false);
+		expect(accepts('productsGet', { id: '.hidden' })).toBe(true);
 	});
 
 	it('accepts only the documented "true"/"false" flag strings', () => {

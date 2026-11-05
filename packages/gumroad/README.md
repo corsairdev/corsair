@@ -107,9 +107,13 @@ token covers most endpoints; media requires its specific scope, and sales,
 payouts and tax data require `view_sales`, `view_payouts` and `view_tax_data`
 respectively.
 
-`public.product` and `public.profile` are unauthenticated public reads served
-from the seller subdomain (`https://<seller>.gumroad.com/l/<permalink>.json`);
-the plugin still sends the stored token, which Gumroad ignores there.
+`public.product` and `public.profile` are unauthenticated public reads: the
+product page is served from the seller subdomain
+(`https://<seller>.gumroad.com/l/<permalink>.json`) and the profile from the
+apex host (`https://gumroad.com/<username>.json`; the subdomain form in
+Gumroad's docs 404s live). When a token is stored it is sent on both calls and
+ignored; `public.product`, `public.profile` and `licenses.verify` also work
+with no stored token.
 
 ### Scope exclusions
 

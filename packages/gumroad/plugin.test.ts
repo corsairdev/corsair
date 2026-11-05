@@ -259,7 +259,11 @@ describe('gumroad key builder', () => {
 	});
 
 	it('returns an empty key for token-free operations without stored credentials', async () => {
-		for (const operation of ['public.product', 'public.profile', 'licenses.verify']) {
+		for (const operation of [
+			'public.product',
+			'public.profile',
+			'licenses.verify',
+		]) {
 			const ctx = {
 				...keyContext({ authType: 'api_key', apiKey: null }),
 				meteredOperationId: operation,
