@@ -30,17 +30,10 @@ export const getConfig: CodacyEndpoints['analysisConfigGet'] = async (
 		token,
 	);
 
+	// Not saved to the `tools` entity: these rows carry one repository's
+	// settings, and an upsert would replace the tool definition that
+	// Tools.list stored under the same UUID.
 	const parsed = AnalysisConfigGetOutputSchema.parse(response);
-
-	if (ctx.db.tools) {
-		try {
-			for (const tool of parsed.data) {
-				await ctx.db.tools.upsertByEntityId(tool.uuid, { ...tool });
-			}
-		} catch (error) {
-			console.warn('Failed to save analysis tools to database:', error);
-		}
-	}
 
 	await logEventFromContext(
 		ctx,

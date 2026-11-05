@@ -269,10 +269,17 @@ describe('repository handlers', () => {
 });
 
 describe('analysis handlers', () => {
-	it('gets repository analysis configuration and persists tools', async () => {
+	it('gets repository analysis configuration without overwriting saved tools', async () => {
 		const { ctx, upserts } = makeCtx();
 		mockRequest.mockResolvedValueOnce({
-			data: [{ uuid: TOOL.uuid, name: 'ESLint', isClientSide: false }],
+			data: [
+				{
+					uuid: TOOL.uuid,
+					name: 'ESLint',
+					isClientSide: false,
+					settings: { isEnabled: true, followsStandard: true },
+				},
+			],
 		});
 
 		const result = await Endpoints.analysisConfigGet(ctx, {
@@ -286,10 +293,9 @@ describe('analysis handlers', () => {
 			'test-token',
 		);
 		expect(result.data).toHaveLength(1);
-		expect(upserts.tools).toHaveBeenCalledWith(
-			TOOL.uuid,
-			expect.objectContaining({ name: 'ESLint' }),
-		);
+		// These rows hold one repository's settings; saving them would
+		// replace the tool definition Tools.list keeps under the same UUID.
+		expect(upserts.tools).not.toHaveBeenCalled();
 	});
 });
 
