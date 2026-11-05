@@ -396,6 +396,7 @@ export const BaseProviders = [
 	'uploadcare',
 	'vapi',
 	'vaquill',
+	'veo',
 	'vercel',
 	'veriphone',
 	'vestaboard',
@@ -811,6 +812,7 @@ export const ProviderDisplayNames = {
 	uploadcare: 'Uploadcare',
 	vapi: 'Vapi',
 	vaquill: 'Vaquill',
+	veo: 'Veo',
 	vercel: 'Vercel',
 	veriphone: 'Veriphone',
 	vestaboard: 'Vestaboard',
@@ -1233,6 +1235,7 @@ export type AllProviders =
 	| 'uploadcare'
 	| 'vapi'
 	| 'vaquill'
+	| 'veo'
 	| 'vercel'
 	| 'veriphone'
 	| 'vestaboard'
