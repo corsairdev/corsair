@@ -69,10 +69,25 @@ query BrandsGet(
           node {
             id
             names(first: 3) { edges { node { name } } }
-            addresses(first: 1) { edges { node { fullAddress city state zip latitude longitude } } }
+            addresses(first: 1) {
+              edges {
+                node {
+                  fullAddress
+                  streetAddress1
+                  streetAddress2
+                  city
+                  state
+                  zip
+                  county
+                  country
+                  latitude
+                  longitude
+                }
+              }
+            }
             operatingStatuses(first: 1) { edges { node { operatingStatus } } }
             cardTransactions(first: 1, conditions: $cardTransactions) {
-              edges { node { quantityType period projectedQuantity } }
+              edges { node { quantityType period projectedQuantity periodStartDate periodEndDate } }
             }
           }
         }
@@ -95,6 +110,7 @@ query BrandsGet(
   }
 }`;
 
+// unknown: the generic input schema's output, spread into the searchInput.
 function toBrandSearchInput(
 	parsed: Record<string, unknown>,
 ): Record<string, unknown> {

@@ -91,23 +91,21 @@ const OperatingLocationSummarySchema = z
 	})
 	.loose();
 
+const RegisteredEntitySchema = z
+	.object({
+		name: z.string().nullish(),
+		registeredEntityType: z.string().nullish(),
+		formationDate: z.string().nullish(),
+	})
+	.loose();
+
 const LegalEntitySummarySchema = z
 	.object({
 		id: z.string(),
 		enigmaId: z.string().nullish(),
 		names: z.array(z.string()),
 		legalEntityType: z.string().nullish(),
-		registeredEntities: z
-			.array(
-				z
-					.object({
-						name: z.string().nullish(),
-						registeredEntityType: z.string().nullish(),
-						formationDate: z.string().nullish(),
-					})
-					.loose(),
-			)
-			.default([]),
+		registeredEntities: z.array(RegisteredEntitySchema).default([]),
 	})
 	.loose();
 
@@ -130,18 +128,23 @@ const LegalEntityDetailSchema = z
 		names: z.array(z.string()),
 		legalEntityType: z.string().nullish(),
 		registeredEntities: z
-			.array(
-				z
-					.object({
-						name: z.string().nullish(),
-						registeredEntityType: z.string().nullish(),
-						formationDate: z.string().nullish(),
-					})
-					.loose(),
-			)
-			.default([]),
-		addresses: z.array(EnigmaAddressSchema),
-		brands: z.array(BrandReferenceSchema),
+			.object({
+				items: z.array(RegisteredEntitySchema),
+				pageInfo: PageInfoSchema,
+			})
+			.loose(),
+		addresses: z
+			.object({
+				items: z.array(EnigmaAddressSchema),
+				pageInfo: PageInfoSchema,
+			})
+			.loose(),
+		brands: z
+			.object({
+				items: z.array(BrandReferenceSchema),
+				pageInfo: PageInfoSchema,
+			})
+			.loose(),
 	})
 	.loose();
 

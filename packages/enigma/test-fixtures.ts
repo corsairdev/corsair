@@ -2,6 +2,7 @@
 // https://documentation.enigma.com, with made-up companies. They were not
 // captured from the live API.
 
+// unknown: fixture nodes mirror the GraphQL responses, which are untyped.
 function connection(
 	nodes: Record<string, unknown>[],
 	pageInfo: Record<string, unknown> = { hasNextPage: false, endCursor: null },
@@ -42,9 +43,12 @@ export const brandLocation = {
 		{
 			fullAddress: '462 7th Ave, New York, NY 10018',
 			streetAddress1: '462 7th Ave',
+			streetAddress2: null,
 			city: 'New York',
 			state: 'NY',
 			zip: '10018',
+			county: 'New York County',
+			country: 'US',
 			latitude: 40.7538,
 			longitude: -73.9919,
 		},
@@ -55,6 +59,8 @@ export const brandLocation = {
 			quantityType: 'card_revenue_amount',
 			period: '12m',
 			projectedQuantity: 2867450.12,
+			periodStartDate: '2025-10-01',
+			periodEndDate: '2026-09-30',
 		},
 	]),
 };
@@ -133,10 +139,15 @@ export const legalEntityDetail = {
 	addresses: connection([
 		{
 			fullAddress: '2401 Utah Ave S, Seattle, WA 98134',
+			streetAddress1: '2401 Utah Ave S',
+			streetAddress2: null,
 			city: 'Seattle',
 			state: 'WA',
 			zip: '98134',
 			county: 'King County',
+			country: 'US',
+			latitude: 47.5814,
+			longitude: -122.3342,
 		},
 	]),
 	brands: connection([
@@ -148,6 +159,7 @@ export const legalEntityDetail = {
 	]),
 };
 
+// unknown: each match is one SearchUnion member with untyped fields.
 export function searchResponse(
 	...matches: Record<string, unknown>[]
 ): Record<string, unknown> {

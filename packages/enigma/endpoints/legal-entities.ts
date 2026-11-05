@@ -1,7 +1,13 @@
 import { asRecord } from 'corsair/core';
 import type { EnigmaEndpoints } from '..';
 import { firstSearchResult } from '../client';
-import { call, connectionNodes, nodeStrings, readString } from './call';
+import {
+	call,
+	connectionNodes,
+	connectionPageInfo,
+	nodeStrings,
+	readString,
+} from './call';
 import {
 	EnigmaEndpointInputSchemas as Inputs,
 	EnigmaEndpointOutputSchemas as Outputs,
@@ -17,9 +23,24 @@ query LegalEntitiesGet($searchInput: SearchInput!) {
       names(first: 3) { edges { node { name legalEntityType } } }
       registeredEntities(first: 3) {
         edges { node { name registeredEntityType formationDate } }
+        pageInfo { hasNextPage endCursor }
       }
       addresses(first: 3) {
-        edges { node { fullAddress city state zip county } }
+        edges {
+          node {
+            fullAddress
+            streetAddress1
+            streetAddress2
+            city
+            state
+            zip
+            county
+            country
+            latitude
+            longitude
+          }
+        }
+        pageInfo { hasNextPage endCursor }
       }
       brands(first: 3) {
         edges {
@@ -29,6 +50,7 @@ query LegalEntitiesGet($searchInput: SearchInput!) {
             names(first: 1) { edges { node { name } } }
           }
         }
+        pageInfo { hasNextPage endCursor }
       }
     }
   }
@@ -58,13 +80,22 @@ export const get: EnigmaEndpoints['legalEntitiesGet'] = (ctx, input) =>
 								names: nodeStrings(node.names, 'name'),
 								legalEntityType:
 									nodeStrings(node.names, 'legalEntityType')[0] ?? null,
-								registeredEntities: connectionNodes(node.registeredEntities),
-								addresses: connectionNodes(node.addresses),
-								brands: connectionNodes(node.brands).map((brand) => ({
-									id: readString(brand, 'id') ?? '',
-									enigmaId: readString(brand, 'enigmaId'),
-									names: nodeStrings(brand.names, 'name'),
-								})),
+								registeredEntities: {
+									items: connectionNodes(node.registeredEntities),
+									pageInfo: connectionPageInfo(node.registeredEntities),
+								},
+								addresses: {
+									items: connectionNodes(node.addresses),
+									pageInfo: connectionPageInfo(node.addresses),
+								},
+								brands: {
+									items: connectionNodes(node.brands).map((brand) => ({
+										id: readString(brand, 'id') ?? '',
+										enigmaId: readString(brand, 'enigmaId'),
+										names: nodeStrings(brand.names, 'name'),
+									})),
+									pageInfo: connectionPageInfo(node.brands),
+								},
 							}
 						: null,
 				};

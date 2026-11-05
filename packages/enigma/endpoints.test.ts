@@ -244,9 +244,12 @@ describe('brands.get', () => {
 							address: {
 								fullAddress: '462 7th Ave, New York, NY 10018',
 								streetAddress1: '462 7th Ave',
+								streetAddress2: null,
 								city: 'New York',
 								state: 'NY',
 								zip: '10018',
+								county: 'New York County',
+								country: 'US',
 								latitude: 40.7538,
 								longitude: -73.9919,
 							},
@@ -255,6 +258,8 @@ describe('brands.get', () => {
 								quantityType: 'card_revenue_amount',
 								period: '12m',
 								projectedQuantity: 2867450.12,
+								periodStartDate: '2025-10-01',
+								periodEndDate: '2026-09-30',
 							},
 						},
 					],
@@ -438,29 +443,43 @@ describe('legalEntities.get', () => {
 				enigmaId: legalEntityDetail.enigmaId,
 				names: ['STARBUCKS CORPORATION'],
 				legalEntityType: 'Corporation',
-				registeredEntities: [
-					{
-						name: 'STARBUCKS CORPORATION',
-						registeredEntityType: 'Corporation',
-						formationDate: '1985-11-04',
-					},
-				],
-				addresses: [
-					{
-						fullAddress: '2401 Utah Ave S, Seattle, WA 98134',
-						city: 'Seattle',
-						state: 'WA',
-						zip: '98134',
-						county: 'King County',
-					},
-				],
-				brands: [
-					{
-						id: brand.id,
-						enigmaId: brand.enigmaId,
-						names: ['STARBUCKS'],
-					},
-				],
+				registeredEntities: {
+					items: [
+						{
+							name: 'STARBUCKS CORPORATION',
+							registeredEntityType: 'Corporation',
+							formationDate: '1985-11-04',
+						},
+					],
+					pageInfo: { hasNextPage: false, endCursor: null },
+				},
+				addresses: {
+					items: [
+						{
+							fullAddress: '2401 Utah Ave S, Seattle, WA 98134',
+							streetAddress1: '2401 Utah Ave S',
+							streetAddress2: null,
+							city: 'Seattle',
+							state: 'WA',
+							zip: '98134',
+							county: 'King County',
+							country: 'US',
+							latitude: 47.5814,
+							longitude: -122.3342,
+						},
+					],
+					pageInfo: { hasNextPage: false, endCursor: null },
+				},
+				brands: {
+					items: [
+						{
+							id: brand.id,
+							enigmaId: brand.enigmaId,
+							names: ['STARBUCKS'],
+						},
+					],
+					pageInfo: { hasNextPage: false, endCursor: null },
+				},
 			},
 		});
 		expect(mockLog).toHaveBeenCalledWith(

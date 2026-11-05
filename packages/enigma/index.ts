@@ -108,7 +108,7 @@ const enigmaEndpointMeta = {
 	'legalEntities.get': {
 		riskLevel: 'read',
 		description:
-			'Get a legal entity by ID or name, with its registered entities, formation dates, addresses and brands',
+			'Get a legal entity by ID or name, with its registered entities, formation dates, addresses and brands; each list returns up to three entries with a pageInfo flag when more exist',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof enigmaEndpointsNested>;
 
