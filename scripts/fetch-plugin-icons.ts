@@ -67,6 +67,10 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// is the current black knot on pink.
 	typesafe:
 		'https://framerusercontent.com/images/kcuF2BEp5XaVfkmFB634IPRKQH0.png',
+	// plugin-docs.yaml names zoho.com, whose icon is the generic 32px Zoho mark.
+	// Zoho Desk's own mark is its App Store icon (zoho.com/desk has no touch icon).
+	zohodesk:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/a9/08/3e/a9083ec8-1697-2db1-92d4-d175d9121cac/AppIcon-0-0-1x_U007emarketing-0-0-0-8-0-0-85-220.png/180x180bb.png',
 };
 
 type FetchResult =
