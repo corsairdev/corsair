@@ -509,13 +509,40 @@ const renderEndpointsNested = {
 		updateAutoscaling,
 		deleteAutoscaling,
 		createPreview: createServicePreview,
-		deleteHeader: deleteServiceHeader,
-		patchRoute: patchServiceRoute,
-		deleteRoute: deleteServiceRoute,
-		envVars: { list: listServiceEnvVars, delete: deleteServiceEnvVar },
-		headers: { list: listServiceHeaders },
+		retrieveDeploy,
+		listInstances,
+		envVars: {
+			list: listServiceEnvVars,
+			retrieve: retrieveEnvVar,
+			upsert: updateEnvVar,
+			update: updateEnvVarsForService,
+			delete: deleteServiceEnvVar,
+		},
+		secretFiles: {
+			list: listSecretFiles,
+			retrieve: retrieveSecretFile,
+			upsert: addOrUpdateSecretFile,
+			update: updateSecretFilesForService,
+			delete: deleteSecretFile,
+		},
+		headers: {
+			list: listServiceHeaders,
+			add: addHeaders,
+			update: updateHeaders,
+			delete: deleteServiceHeader,
+		},
+		routes: {
+			list: listRoutes,
+			add: addRoute,
+			update: updateRoutes,
+			updatePriority: patchServiceRoute,
+			delete: deleteServiceRoute,
+		},
 		customDomains: {
 			list: listServiceCustomDomains,
+			create: createCustomDomain,
+			retrieve: retrieveCustomDomain,
+			verify: verifyCustomDomain,
 			delete: deleteServiceCustomDomain,
 		},
 		environments: {
@@ -524,6 +551,7 @@ const renderEndpointsNested = {
 			retrieve: retrieveEnvironment,
 			update: updateEnvironment,
 			delete: deleteEnvironment,
+			addResources: addResourcesToEnvironment,
 			removeResources: removeResourcesFromEnvironment,
 		},
 		envGroups: {
@@ -532,7 +560,18 @@ const renderEndpointsNested = {
 			retrieve: retrieveEnvGroup,
 			update: updateEnvGroup,
 			delete: deleteEnvGroup,
+			linkService: linkServiceToEnvGroup,
 			unlinkService: unlinkServiceFromEnvGroup,
+			envVars: {
+				retrieve: retrieveEnvGroupEnvVar,
+				upsert: updateEnvGroupEnvVar,
+				delete: deleteEnvGroupEnvVar,
+			},
+			secretFiles: {
+				retrieve: retrieveEnvGroupSecretFile,
+				upsert: updateEnvGroupSecretFile,
+				delete: deleteEnvGroupSecretFile,
+			},
 		},
 	},
 	projects: {
@@ -562,6 +601,8 @@ const renderEndpointsNested = {
 		topQueries: listPostgresTopQueries,
 		sizes: listPostgresSizes,
 		tableScans: listPostgresTableScans,
+		listExports: listPostgresExport,
+		listUsers: listPostgresUsers,
 	},
 	registryCredentials: {
 		list: listRegistryCredentials,
@@ -582,18 +623,22 @@ const renderEndpointsNested = {
 		auditLogs: listOrganizationAuditLogs,
 	},
 	keyValue: {
+		list: listKeyValue,
 		create: createKeyValue,
 		retrieve: retrieveKeyValue,
 		update: updateKeyValue,
 		suspend: suspendKeyValue,
 		resume: resumeKeyValue,
 		connectionInfo: retrieveKeyValueConnectionInfo,
+		delete: deleteKeyValue,
 	},
 	blueprints: {
+		list: listBlueprints,
 		listSyncs: listBlueprintSyncs,
 		validate: validateBlueprint,
 		retrieve: retrieveBlueprint,
 		update: updateBlueprint,
+		disconnect: disconnectBlueprint,
 	},
 	dedicatedIps: {
 		list: listDedicatedIps,
@@ -641,6 +686,7 @@ const renderEndpointsNested = {
 		updateOwnerStream: updateOwnerLogStream,
 		retrieveOwnerStream: retrieveOwnerLogStream,
 		retrieveResourceStream: retrieveResourceLogStream,
+		updateResourceStream: updateResourceLogStream,
 		deleteResourceStream: deleteResourceLogStream,
 	},
 	metrics: {
@@ -664,6 +710,16 @@ const renderEndpointsNested = {
 		pathFilterValues: listPathFilterValues,
 		taskRunsQueued: getTaskRunsQueued,
 		taskRunsCompleted: getTaskRunsCompleted,
+		retrieveOwnerStream: retrieveOwnerMetricsStream,
+		upsertOwnerStream: upsertOwnerMetricsStream,
+		deleteOwnerStream: deleteOwnerMetricsStream,
+	},
+	notifications: {
+		retrieveOwnerSettings: retrieveOwnerNotificationSettings,
+		updateOwnerSettings: updateOwnerNotificationSettings,
+		listOverrides: listNotificationOverrides,
+		retrieveServiceOverrides: retrieveServiceNotificationOverrides,
+		updateServiceOverrides: updateServiceNotificationOverrides,
 	},
 	events: { retrieve: retrieveEvent },
 	automation: {
@@ -700,49 +756,6 @@ const renderEndpointsNested = {
 		createTaskRun,
 		retrieveTaskRun,
 		cancelTaskRun,
-	},
-	final: {
-		addHeaders,
-		addOrUpdateSecretFile,
-		addResourcesToEnvironment,
-		addRoute,
-		createCustomDomain,
-		deleteEnvGroupEnvVar,
-		deleteEnvGroupSecretFile,
-		deleteKeyValue,
-		deleteSecretFile,
-		disconnectBlueprint,
-		linkServiceToEnvGroup,
-		listBlueprints,
-		listInstances,
-		listKeyValue,
-		listNotificationOverrides,
-		retrieveServiceNotificationOverrides,
-		listPostgresExport,
-		listPostgresUsers,
-		listRoutes,
-		listSecretFiles,
-		retrieveCustomDomain,
-		retrieveDeploy,
-		retrieveEnvGroupEnvVar,
-		retrieveEnvGroupSecretFile,
-		retrieveEnvVar,
-		retrieveOwnerNotificationSettings,
-		retrieveSecretFile,
-		updateEnvGroupEnvVar,
-		updateEnvGroupSecretFile,
-		updateEnvVar,
-		updateEnvVarsForService,
-		updateHeaders,
-		updateResourceLogStream,
-		updateSecretFilesForService,
-		verifyCustomDomain,
-		deleteOwnerMetricsStream,
-		retrieveOwnerMetricsStream,
-		upsertOwnerMetricsStream,
-		updateOwnerNotificationSettings,
-		updateServiceNotificationOverrides,
-		updateRoutes,
 	},
 } as const;
 
@@ -839,15 +852,15 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.createServicePreview,
 		output: RenderEndpointOutputSchemas.createServicePreview,
 	},
-	'services.deleteHeader': {
+	'services.headers.delete': {
 		input: RenderEndpointInputSchemas.deleteServiceHeader,
 		output: RenderEndpointOutputSchemas.deleteServiceHeader,
 	},
-	'services.patchRoute': {
+	'services.routes.updatePriority': {
 		input: RenderEndpointInputSchemas.patchServiceRoute,
 		output: RenderEndpointOutputSchemas.patchServiceRoute,
 	},
-	'services.deleteRoute': {
+	'services.routes.delete': {
 		input: RenderEndpointInputSchemas.deleteServiceRoute,
 		output: RenderEndpointOutputSchemas.deleteServiceRoute,
 	},
@@ -1247,59 +1260,59 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.deleteWebhook,
 		output: RenderEndpointOutputSchemas.deleteWebhook,
 	},
-	'final.addHeaders': {
+	'services.headers.add': {
 		input: RenderEndpointInputSchemas.addHeaders,
 		output: RenderEndpointOutputSchemas.addHeaders,
 	},
-	'final.addOrUpdateSecretFile': {
+	'services.secretFiles.upsert': {
 		input: RenderEndpointInputSchemas.addOrUpdateSecretFile,
 		output: RenderEndpointOutputSchemas.addOrUpdateSecretFile,
 	},
-	'final.addResourcesToEnvironment': {
+	'services.environments.addResources': {
 		input: RenderEndpointInputSchemas.addResourcesToEnvironment,
 		output: RenderEndpointOutputSchemas.addResourcesToEnvironment,
 	},
-	'final.addRoute': {
+	'services.routes.add': {
 		input: RenderEndpointInputSchemas.addRoute,
 		output: RenderEndpointOutputSchemas.addRoute,
 	},
-	'final.createCustomDomain': {
+	'services.customDomains.create': {
 		input: RenderEndpointInputSchemas.createCustomDomain,
 		output: RenderEndpointOutputSchemas.createCustomDomain,
 	},
-	'final.deleteEnvGroupEnvVar': {
+	'services.envGroups.envVars.delete': {
 		input: RenderEndpointInputSchemas.deleteEnvGroupEnvVar,
 		output: RenderEndpointOutputSchemas.deleteEnvGroupEnvVar,
 	},
-	'final.deleteEnvGroupSecretFile': {
+	'services.envGroups.secretFiles.delete': {
 		input: RenderEndpointInputSchemas.deleteEnvGroupSecretFile,
 		output: RenderEndpointOutputSchemas.deleteEnvGroupSecretFile,
 	},
-	'final.deleteKeyValue': {
+	'keyValue.delete': {
 		input: RenderEndpointInputSchemas.deleteKeyValue,
 		output: RenderEndpointOutputSchemas.deleteKeyValue,
 	},
-	'final.deleteSecretFile': {
+	'services.secretFiles.delete': {
 		input: RenderEndpointInputSchemas.deleteSecretFile,
 		output: RenderEndpointOutputSchemas.deleteSecretFile,
 	},
-	'final.disconnectBlueprint': {
+	'blueprints.disconnect': {
 		input: RenderEndpointInputSchemas.disconnectBlueprint,
 		output: RenderEndpointOutputSchemas.disconnectBlueprint,
 	},
-	'final.linkServiceToEnvGroup': {
+	'services.envGroups.linkService': {
 		input: RenderEndpointInputSchemas.linkServiceToEnvGroup,
 		output: RenderEndpointOutputSchemas.linkServiceToEnvGroup,
 	},
-	'final.listBlueprints': {
+	'blueprints.list': {
 		input: RenderEndpointInputSchemas.listBlueprints,
 		output: RenderEndpointOutputSchemas.listBlueprints,
 	},
-	'final.listInstances': {
+	'services.listInstances': {
 		input: RenderEndpointInputSchemas.listInstances,
 		output: RenderEndpointOutputSchemas.listInstances,
 	},
-	'final.listKeyValue': {
+	'keyValue.list': {
 		input: RenderEndpointInputSchemas.listKeyValue,
 		output: RenderEndpointOutputSchemas.listKeyValue,
 	},
@@ -1331,111 +1344,111 @@ export const renderEndpointSchemas = {
 		input: RenderEndpointInputSchemas.listBlueprintSyncs,
 		output: RenderEndpointOutputSchemas.listBlueprintSyncs,
 	},
-	'final.listNotificationOverrides': {
+	'notifications.listOverrides': {
 		input: RenderEndpointInputSchemas.listNotificationOverrides,
 		output: RenderEndpointOutputSchemas.listNotificationOverrides,
 	},
-	'final.retrieveServiceNotificationOverrides': {
+	'notifications.retrieveServiceOverrides': {
 		input: RenderEndpointInputSchemas.retrieveServiceNotificationOverrides,
 		output: RenderEndpointOutputSchemas.retrieveServiceNotificationOverrides,
 	},
-	'final.updateServiceNotificationOverrides': {
+	'notifications.updateServiceOverrides': {
 		input: RenderEndpointInputSchemas.updateServiceNotificationOverrides,
 		output: RenderEndpointOutputSchemas.updateServiceNotificationOverrides,
 	},
-	'final.listPostgresExport': {
+	'postgres.listExports': {
 		input: RenderEndpointInputSchemas.listPostgresExport,
 		output: RenderEndpointOutputSchemas.listPostgresExport,
 	},
-	'final.listPostgresUsers': {
+	'postgres.listUsers': {
 		input: RenderEndpointInputSchemas.listPostgresUsers,
 		output: RenderEndpointOutputSchemas.listPostgresUsers,
 	},
-	'final.listRoutes': {
+	'services.routes.list': {
 		input: RenderEndpointInputSchemas.listRoutes,
 		output: RenderEndpointOutputSchemas.listRoutes,
 	},
-	'final.listSecretFiles': {
+	'services.secretFiles.list': {
 		input: RenderEndpointInputSchemas.listSecretFiles,
 		output: RenderEndpointOutputSchemas.listSecretFiles,
 	},
-	'final.retrieveCustomDomain': {
+	'services.customDomains.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveCustomDomain,
 		output: RenderEndpointOutputSchemas.retrieveCustomDomain,
 	},
-	'final.retrieveDeploy': {
+	'services.retrieveDeploy': {
 		input: RenderEndpointInputSchemas.retrieveDeploy,
 		output: RenderEndpointOutputSchemas.retrieveDeploy,
 	},
-	'final.retrieveEnvGroupEnvVar': {
+	'services.envGroups.envVars.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveEnvGroupEnvVar,
 		output: RenderEndpointOutputSchemas.retrieveEnvGroupEnvVar,
 	},
-	'final.retrieveEnvGroupSecretFile': {
+	'services.envGroups.secretFiles.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveEnvGroupSecretFile,
 		output: RenderEndpointOutputSchemas.retrieveEnvGroupSecretFile,
 	},
-	'final.retrieveEnvVar': {
+	'services.envVars.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveEnvVar,
 		output: RenderEndpointOutputSchemas.retrieveEnvVar,
 	},
-	'final.retrieveOwnerNotificationSettings': {
+	'notifications.retrieveOwnerSettings': {
 		input: RenderEndpointInputSchemas.retrieveOwnerNotificationSettings,
 		output: RenderEndpointOutputSchemas.retrieveOwnerNotificationSettings,
 	},
-	'final.retrieveSecretFile': {
+	'services.secretFiles.retrieve': {
 		input: RenderEndpointInputSchemas.retrieveSecretFile,
 		output: RenderEndpointOutputSchemas.retrieveSecretFile,
 	},
-	'final.updateEnvGroupEnvVar': {
+	'services.envGroups.envVars.upsert': {
 		input: RenderEndpointInputSchemas.updateEnvGroupEnvVar,
 		output: RenderEndpointOutputSchemas.updateEnvGroupEnvVar,
 	},
-	'final.updateEnvGroupSecretFile': {
+	'services.envGroups.secretFiles.upsert': {
 		input: RenderEndpointInputSchemas.updateEnvGroupSecretFile,
 		output: RenderEndpointOutputSchemas.updateEnvGroupSecretFile,
 	},
-	'final.updateEnvVar': {
+	'services.envVars.upsert': {
 		input: RenderEndpointInputSchemas.updateEnvVar,
 		output: RenderEndpointOutputSchemas.updateEnvVar,
 	},
-	'final.updateEnvVarsForService': {
+	'services.envVars.update': {
 		input: RenderEndpointInputSchemas.updateEnvVarsForService,
 		output: RenderEndpointOutputSchemas.updateEnvVarsForService,
 	},
-	'final.updateHeaders': {
+	'services.headers.update': {
 		input: RenderEndpointInputSchemas.updateHeaders,
 		output: RenderEndpointOutputSchemas.updateHeaders,
 	},
-	'final.updateResourceLogStream': {
+	'logs.updateResourceStream': {
 		input: RenderEndpointInputSchemas.updateResourceLogStream,
 		output: RenderEndpointOutputSchemas.updateResourceLogStream,
 	},
-	'final.updateSecretFilesForService': {
+	'services.secretFiles.update': {
 		input: RenderEndpointInputSchemas.updateSecretFilesForService,
 		output: RenderEndpointOutputSchemas.updateSecretFilesForService,
 	},
-	'final.verifyCustomDomain': {
+	'services.customDomains.verify': {
 		input: RenderEndpointInputSchemas.verifyCustomDomain,
 		output: RenderEndpointOutputSchemas.verifyCustomDomain,
 	},
-	'final.deleteOwnerMetricsStream': {
+	'metrics.deleteOwnerStream': {
 		input: RenderEndpointInputSchemas.deleteOwnerMetricsStream,
 		output: RenderEndpointOutputSchemas.deleteOwnerMetricsStream,
 	},
-	'final.retrieveOwnerMetricsStream': {
+	'metrics.retrieveOwnerStream': {
 		input: RenderEndpointInputSchemas.retrieveOwnerMetricsStream,
 		output: RenderEndpointOutputSchemas.retrieveOwnerMetricsStream,
 	},
-	'final.upsertOwnerMetricsStream': {
+	'metrics.upsertOwnerStream': {
 		input: RenderEndpointInputSchemas.upsertOwnerMetricsStream,
 		output: RenderEndpointOutputSchemas.upsertOwnerMetricsStream,
 	},
-	'final.updateOwnerNotificationSettings': {
+	'notifications.updateOwnerSettings': {
 		input: RenderEndpointInputSchemas.updateOwnerNotificationSettings,
 		output: RenderEndpointOutputSchemas.updateOwnerNotificationSettings,
 	},
-	'final.updateRoutes': {
+	'services.routes.update': {
 		input: RenderEndpointInputSchemas.updateRoutes,
 		output: RenderEndpointOutputSchemas.updateRoutes,
 	},
@@ -1801,15 +1814,16 @@ const renderEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create an image-backed preview for a Render service',
 	},
-	'services.deleteHeader': {
+	'services.headers.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a header from a Render service',
 	},
-	'services.patchRoute': {
+	'services.routes.updatePriority': {
 		riskLevel: 'write',
-		description: 'Update a route on a Render service',
+		description:
+			'Change the priority of one redirect or rewrite rule on a Render service',
 	},
-	'services.deleteRoute': {
+	'services.routes.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a route from a Render service',
 	},
@@ -2164,68 +2178,60 @@ const renderEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete a Render webhook',
 	},
-	'final.addHeaders': {
+	'services.headers.add': {
+		riskLevel: 'write',
+		description: 'Add a response header rule to a Render service',
+	},
+	'services.secretFiles.upsert': {
+		riskLevel: 'write',
+		description: 'Add or update one secret file on a Render service',
+	},
+	'services.environments.addResources': {
 		riskLevel: 'write',
 		description:
-			'Add a response header rule to a Render service (id: service ID)',
+			'Move services, databases or env groups into a Render environment',
 	},
-	'final.addOrUpdateSecretFile': {
+	'services.routes.add': {
 		riskLevel: 'write',
-		description:
-			'Add or update one secret file on a Render service (id: service ID, key: file name)',
+		description: 'Add a redirect or rewrite rule to a Render service',
 	},
-	'final.addResourcesToEnvironment': {
+	'services.customDomains.create': {
 		riskLevel: 'write',
-		description:
-			'Move services, databases or env groups into a Render environment (id: environment ID)',
+		description: 'Add a custom domain to a Render service',
 	},
-	'final.addRoute': {
-		riskLevel: 'write',
-		description:
-			'Add a redirect or rewrite rule to a Render service (id: service ID)',
-	},
-	'final.createCustomDomain': {
-		riskLevel: 'write',
-		description: 'Add a custom domain to a Render service (id: service ID)',
-	},
-	'final.deleteEnvGroupEnvVar': {
+	'services.envGroups.envVars.delete': {
 		riskLevel: 'destructive',
-		description:
-			'Delete one environment variable from a Render env group (id: env group ID, key: variable name)',
+		description: 'Delete one environment variable from a Render env group',
 	},
-	'final.deleteEnvGroupSecretFile': {
+	'services.envGroups.secretFiles.delete': {
 		riskLevel: 'destructive',
-		description:
-			'Delete one secret file from a Render env group (id: env group ID, key: file name)',
+		description: 'Delete one secret file from a Render env group',
 	},
-	'final.deleteKeyValue': {
+	'keyValue.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Render Key Value instance (id: Key Value ID)',
+		description: 'Delete a Render Key Value instance',
 	},
-	'final.deleteSecretFile': {
+	'services.secretFiles.delete': {
 		riskLevel: 'destructive',
-		description:
-			'Delete one secret file from a Render service (id: service ID, key: file name)',
+		description: 'Delete one secret file from a Render service',
 	},
-	'final.disconnectBlueprint': {
+	'blueprints.disconnect': {
 		riskLevel: 'destructive',
-		description:
-			'Disconnect a Render Blueprint; its resources are kept (id: Blueprint ID)',
+		description: 'Disconnect a Render Blueprint; its resources are kept',
 	},
-	'final.linkServiceToEnvGroup': {
+	'services.envGroups.linkService': {
 		riskLevel: 'write',
-		description: 'Link a Render service to an env group (id: env group ID)',
+		description: 'Link a Render service to an env group',
 	},
-	'final.listBlueprints': {
+	'blueprints.list': {
 		riskLevel: 'read',
 		description: 'List Render Blueprints',
 	},
-	'final.listInstances': {
+	'services.listInstances': {
 		riskLevel: 'read',
-		description:
-			'List the running instances of a Render service (id: service ID)',
+		description: 'List the running instances of a Render service',
 	},
-	'final.listKeyValue': {
+	'keyValue.list': {
 		riskLevel: 'read',
 		description: 'List Render Key Value instances',
 	},
@@ -2245,133 +2251,123 @@ const renderEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List syncs for a Render blueprint',
 	},
-	'final.listNotificationOverrides': {
+	'notifications.listOverrides': {
 		riskLevel: 'read',
 		description: 'List per-service notification overrides',
 	},
-	'final.retrieveServiceNotificationOverrides': {
+	'notifications.retrieveServiceOverrides': {
 		riskLevel: 'read',
 		description: 'Retrieve notification overrides for a Render service',
 	},
-	'final.updateServiceNotificationOverrides': {
+	'notifications.updateServiceOverrides': {
 		riskLevel: 'write',
 		description: 'Update notification overrides for a Render service',
 	},
-	'final.listPostgresExport': {
+	'postgres.listExports': {
 		riskLevel: 'read',
-		description: 'List exports of a Render Postgres database (id: Postgres ID)',
+		description: 'List exports of a Render Postgres database',
 	},
-	'final.listPostgresUsers': {
+	'postgres.listUsers': {
 		riskLevel: 'read',
-		description: 'List users of a Render Postgres database (id: Postgres ID)',
+		description: 'List users of a Render Postgres database',
 	},
-	'final.listRoutes': {
+	'services.routes.list': {
 		riskLevel: 'read',
-		description:
-			'List the redirect and rewrite rules of a Render service (id: service ID)',
+		description: 'List the redirect and rewrite rules of a Render service',
 	},
-	'final.listSecretFiles': {
-		riskLevel: 'read',
-		description:
-			'List secret files on a Render service, including their contents (id: service ID)',
-	},
-	'final.retrieveCustomDomain': {
+	'services.secretFiles.list': {
 		riskLevel: 'read',
 		description:
-			'Retrieve a custom domain on a Render service (id: service ID, key: domain name or ID)',
+			'List secret files on a Render service, including their contents',
 	},
-	'final.retrieveDeploy': {
+	'services.customDomains.retrieve': {
+		riskLevel: 'read',
+		description: 'Retrieve a custom domain on a Render service',
+	},
+	'services.retrieveDeploy': {
+		riskLevel: 'read',
+		description: 'Retrieve one deploy of a Render service',
+	},
+	'services.envGroups.envVars.retrieve': {
 		riskLevel: 'read',
 		description:
-			'Retrieve one deploy of a Render service (id: service ID, key: deploy ID)',
+			'Retrieve one environment variable, including its value, from a Render env group',
 	},
-	'final.retrieveEnvGroupEnvVar': {
+	'services.envGroups.secretFiles.retrieve': {
 		riskLevel: 'read',
 		description:
-			'Retrieve one environment variable, including its value, from a Render env group (id: env group ID, key: variable name)',
+			'Retrieve one secret file, including its contents, from a Render env group',
 	},
-	'final.retrieveEnvGroupSecretFile': {
+	'services.envVars.retrieve': {
 		riskLevel: 'read',
 		description:
-			'Retrieve one secret file, including its contents, from a Render env group (id: env group ID, key: file name)',
+			'Retrieve one environment variable, including its value, from a Render service',
 	},
-	'final.retrieveEnvVar': {
+	'notifications.retrieveOwnerSettings': {
+		riskLevel: 'read',
+		description: 'Retrieve notification settings for a Render workspace',
+	},
+	'services.secretFiles.retrieve': {
 		riskLevel: 'read',
 		description:
-			'Retrieve one environment variable, including its value, from a Render service (id: service ID, key: variable name)',
+			'Retrieve one secret file, including its contents, from a Render service',
 	},
-	'final.retrieveOwnerNotificationSettings': {
-		riskLevel: 'read',
-		description:
-			'Retrieve notification settings for a Render workspace (id: owner ID)',
-	},
-	'final.retrieveSecretFile': {
-		riskLevel: 'read',
-		description:
-			'Retrieve one secret file, including its contents, from a Render service (id: service ID, key: file name)',
-	},
-	'final.updateEnvGroupEnvVar': {
+	'services.envGroups.envVars.upsert': {
 		riskLevel: 'write',
-		description:
-			'Add or update one environment variable in a Render env group (id: env group ID, key: variable name)',
+		description: 'Add or update one environment variable in a Render env group',
 	},
-	'final.updateEnvGroupSecretFile': {
+	'services.envGroups.secretFiles.upsert': {
 		riskLevel: 'write',
-		description:
-			'Add or update one secret file in a Render env group (id: env group ID, key: file name)',
+		description: 'Add or update one secret file in a Render env group',
 	},
-	'final.updateEnvVar': {
+	'services.envVars.upsert': {
 		riskLevel: 'write',
-		description:
-			'Add or update one environment variable on a Render service (id: service ID, key: variable name)',
+		description: 'Add or update one environment variable on a Render service',
 	},
-	'final.updateEnvVarsForService': {
+	'services.envVars.update': {
 		riskLevel: 'destructive',
 		description:
-			'Replace all environment variables on a Render service with the given list; variables not listed are deleted (id: service ID)',
+			'Replace all environment variables on a Render service with the given list; variables not listed are deleted',
 	},
-	'final.updateHeaders': {
+	'services.headers.update': {
 		riskLevel: 'destructive',
 		description:
-			'Replace all response header rules on a Render service with the given list; rules not listed are deleted (id: service ID)',
+			'Replace all response header rules on a Render service with the given list; rules not listed are deleted',
 	},
-	'final.updateResourceLogStream': {
+	'logs.updateResourceStream': {
+		riskLevel: 'write',
+		description: 'Set the log stream setting for one Render resource',
+	},
+	'services.secretFiles.update': {
+		riskLevel: 'destructive',
+		description:
+			'Replace all secret files on a Render service with the given list; files not listed are deleted',
+	},
+	'services.customDomains.verify': {
 		riskLevel: 'write',
 		description:
-			'Set the log stream setting for one Render resource (id: resource ID)',
+			'Re-run DNS verification for a custom domain on a Render service',
 	},
-	'final.updateSecretFilesForService': {
+	'metrics.deleteOwnerStream': {
 		riskLevel: 'destructive',
-		description:
-			'Replace all secret files on a Render service with the given list; files not listed are deleted (id: service ID)',
+		description: 'Delete the metrics stream of a Render workspace',
 	},
-	'final.verifyCustomDomain': {
-		riskLevel: 'write',
-		description:
-			'Re-run DNS verification for a custom domain on a Render service (id: service ID, key: domain name or ID)',
-	},
-	'final.deleteOwnerMetricsStream': {
-		riskLevel: 'destructive',
-		description:
-			'Delete the metrics stream of a Render workspace (id: owner ID)',
-	},
-	'final.retrieveOwnerMetricsStream': {
+	'metrics.retrieveOwnerStream': {
 		riskLevel: 'read',
 		description: 'Retrieve metrics stream settings for a Render owner',
 	},
-	'final.upsertOwnerMetricsStream': {
+	'metrics.upsertOwnerStream': {
 		riskLevel: 'write',
 		description: 'Create or update metrics stream settings for a Render owner',
 	},
-	'final.updateOwnerNotificationSettings': {
+	'notifications.updateOwnerSettings': {
 		riskLevel: 'write',
-		description:
-			'Update notification settings for a Render workspace (id: owner ID)',
+		description: 'Update notification settings for a Render workspace',
 	},
-	'final.updateRoutes': {
+	'services.routes.update': {
 		riskLevel: 'destructive',
 		description:
-			'Replace all redirect and rewrite rules on a Render service with the given list; rules not listed are deleted (id: service ID)',
+			'Replace all redirect and rewrite rules on a Render service with the given list; rules not listed are deleted',
 	},
 	'buildSources.create': {
 		riskLevel: 'write',

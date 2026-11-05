@@ -254,7 +254,7 @@ export const patchServiceRoute: RenderEndpoints['patchServiceRoute'] = (
 		input.serviceId,
 		`/routes/${encodeServiceId(input.routeId)}`,
 		'PATCH',
-		input.body,
+		{ priority: input.priority },
 	);
 
 export const deleteServiceRoute: RenderEndpoints['deleteServiceRoute'] = (

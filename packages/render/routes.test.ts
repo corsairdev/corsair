@@ -31,14 +31,42 @@ const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
 	'services.updateAutoscaling': 'PUT /v1/services/{serviceId}/autoscaling', // autoscale-service
 	'services.deleteAutoscaling': 'DELETE /v1/services/{serviceId}/autoscaling', // delete-autoscaling-config
 	'services.createPreview': 'POST /v1/services/{serviceId}/preview', // preview-service
-	'services.deleteHeader': 'DELETE /v1/services/{serviceId}/headers/{headerId}', // delete-header
-	'services.patchRoute': 'PATCH /v1/services/{serviceId}/routes/{routeId}', // patch-route
-	'services.deleteRoute': 'DELETE /v1/services/{serviceId}/routes/{routeId}', // delete-route
+	'services.retrieveDeploy': 'GET /v1/services/{serviceId}/deploys/{deployId}', // retrieve-deploy
+	'services.listInstances': 'GET /v1/services/{serviceId}/instances', // list-instances
 	'services.envVars.list': 'GET /v1/services/{serviceId}/env-vars', // get-env-vars-for-service
+	'services.envVars.retrieve':
+		'GET /v1/services/{serviceId}/env-vars/{envVarKey}', // retrieve-env-var
+	'services.envVars.upsert':
+		'PUT /v1/services/{serviceId}/env-vars/{envVarKey}', // update-env-var
+	'services.envVars.update': 'PUT /v1/services/{serviceId}/env-vars', // update-env-vars-for-service
 	'services.envVars.delete':
 		'DELETE /v1/services/{serviceId}/env-vars/{envVarKey}', // delete-env-var
+	'services.secretFiles.list': 'GET /v1/services/{serviceId}/secret-files', // list-secret-files-for-service
+	'services.secretFiles.retrieve':
+		'GET /v1/services/{serviceId}/secret-files/{secretFileName}', // retrieve-secret-file
+	'services.secretFiles.upsert':
+		'PUT /v1/services/{serviceId}/secret-files/{secretFileName}', // add-or-update-secret-file
+	'services.secretFiles.update': 'PUT /v1/services/{serviceId}/secret-files', // update-secret-files-for-service
+	'services.secretFiles.delete':
+		'DELETE /v1/services/{serviceId}/secret-files/{secretFileName}', // delete-secret-file
 	'services.headers.list': 'GET /v1/services/{serviceId}/headers', // list-headers
+	'services.headers.add': 'POST /v1/services/{serviceId}/headers', // add-headers
+	'services.headers.update': 'PUT /v1/services/{serviceId}/headers', // update-headers
+	'services.headers.delete':
+		'DELETE /v1/services/{serviceId}/headers/{headerId}', // delete-header
+	'services.routes.list': 'GET /v1/services/{serviceId}/routes', // list-routes
+	'services.routes.add': 'POST /v1/services/{serviceId}/routes', // add-route
+	'services.routes.update': 'PUT /v1/services/{serviceId}/routes', // put-routes
+	'services.routes.updatePriority':
+		'PATCH /v1/services/{serviceId}/routes/{routeId}', // patch-route
+	'services.routes.delete': 'DELETE /v1/services/{serviceId}/routes/{routeId}', // delete-route
 	'services.customDomains.list': 'GET /v1/services/{serviceId}/custom-domains', // list-custom-domains
+	'services.customDomains.create':
+		'POST /v1/services/{serviceId}/custom-domains', // create-custom-domain
+	'services.customDomains.retrieve':
+		'GET /v1/services/{serviceId}/custom-domains/{customDomainNameOrID}', // retrieve-custom-domain
+	'services.customDomains.verify':
+		'POST /v1/services/{serviceId}/custom-domains/{customDomainNameOrID}/verify', // refresh-custom-domain
 	'services.customDomains.delete':
 		'DELETE /v1/services/{serviceId}/custom-domains/{customDomainNameOrID}', // delete-custom-domain
 	'services.environments.list': 'GET /v1/environments', // list-environments
@@ -46,6 +74,8 @@ const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
 	'services.environments.retrieve': 'GET /v1/environments/{id}', // retrieve-environment
 	'services.environments.update': 'PATCH /v1/environments/{id}', // update-environment
 	'services.environments.delete': 'DELETE /v1/environments/{id}', // delete-environment
+	'services.environments.addResources':
+		'POST /v1/environments/{environmentId}/resources', // add-resources-to-environment
 	'services.environments.removeResources':
 		'DELETE /v1/environments/{environmentId}/resources', // remove-resources-from-environment
 	'services.envGroups.list': 'GET /v1/env-groups', // list-env-groups
@@ -53,8 +83,22 @@ const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
 	'services.envGroups.retrieve': 'GET /v1/env-groups/{id}', // retrieve-env-group
 	'services.envGroups.update': 'PATCH /v1/env-groups/{id}', // update-env-group
 	'services.envGroups.delete': 'DELETE /v1/env-groups/{id}', // delete-env-group
+	'services.envGroups.linkService':
+		'POST /v1/env-groups/{envGroupId}/services/{serviceId}', // link-service-to-env-group
 	'services.envGroups.unlinkService':
 		'DELETE /v1/env-groups/{envGroupId}/services/{serviceId}', // unlink-service-from-env-group
+	'services.envGroups.envVars.retrieve':
+		'GET /v1/env-groups/{envGroupId}/env-vars/{envVarKey}', // retrieve-env-group-env-var
+	'services.envGroups.envVars.upsert':
+		'PUT /v1/env-groups/{envGroupId}/env-vars/{envVarKey}', // update-env-group-env-var
+	'services.envGroups.envVars.delete':
+		'DELETE /v1/env-groups/{envGroupId}/env-vars/{envVarKey}', // delete-env-group-env-var
+	'services.envGroups.secretFiles.retrieve':
+		'GET /v1/env-groups/{envGroupId}/secret-files/{secretFileName}', // retrieve-env-group-secret-file
+	'services.envGroups.secretFiles.upsert':
+		'PUT /v1/env-groups/{envGroupId}/secret-files/{secretFileName}', // update-env-group-secret-file
+	'services.envGroups.secretFiles.delete':
+		'DELETE /v1/env-groups/{envGroupId}/secret-files/{secretFileName}', // delete-env-group-secret-file
 	'projects.list': 'GET /v1/projects', // list-projects
 	'projects.create': 'POST /v1/projects', // create-project
 	'projects.retrieve': 'GET /v1/projects/{id}', // retrieve-project
@@ -79,6 +123,8 @@ const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
 	'postgres.topQueries': 'GET /v1/postgres/{id}/query/top-queries', // list-postgres-top-queries
 	'postgres.sizes': 'GET /v1/postgres/{id}/query/sizes', // list-postgres-sizes
 	'postgres.tableScans': 'GET /v1/postgres/{id}/query/table-scans', // list-postgres-table-scans
+	'postgres.listExports': 'GET /v1/postgres/{id}/export', // list-postgres-export
+	'postgres.listUsers': 'GET /v1/postgres/{id}/credentials', // list-postgres-users
 	'registryCredentials.list': 'GET /v1/registrycredentials', // list-registry-credentials
 	'registryCredentials.create': 'POST /v1/registrycredentials', // create-registry-credential
 	'registryCredentials.retrieve': 'GET /v1/registrycredentials/{id}', // retrieve-registry-credential
@@ -91,16 +137,20 @@ const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
 	'owners.removeMember': 'DELETE /v1/owners/{ownerId}/members/{userId}', // remove-workspace-member
 	'owners.auditLogs': 'GET /v1/owners/{id}/audit-logs', // list-owner-audit-logs
 	'organizations.auditLogs': 'GET /v1/organizations/{id}/audit-logs', // list-organization-audit-logs
+	'keyValue.list': 'GET /v1/key-value', // list-key-value
 	'keyValue.create': 'POST /v1/key-value', // create-key-value
 	'keyValue.retrieve': 'GET /v1/key-value/{redisId}', // retrieve-key-value
 	'keyValue.update': 'PATCH /v1/key-value/{redisId}', // update-key-value
 	'keyValue.suspend': 'POST /v1/key-value/{id}/suspend', // suspend-key-value
 	'keyValue.resume': 'POST /v1/key-value/{id}/resume', // resume-key-value
 	'keyValue.connectionInfo': 'GET /v1/key-value/{id}/connection-info', // retrieve-key-value-connection-info
+	'keyValue.delete': 'DELETE /v1/key-value/{id}', // delete-key-value
+	'blueprints.list': 'GET /v1/blueprints', // list-blueprints
 	'blueprints.listSyncs': 'GET /v1/blueprints/{id}/syncs', // list-blueprint-syncs
 	'blueprints.validate': 'POST /v1/blueprints/validate', // validate-blueprint
 	'blueprints.retrieve': 'GET /v1/blueprints/{id}', // retrieve-blueprint
 	'blueprints.update': 'PATCH /v1/blueprints/{id}', // update-blueprint
+	'blueprints.disconnect': 'DELETE /v1/blueprints/{id}', // disconnect-blueprint
 	'dedicatedIps.list': 'GET /v1/dedicated-ips', // list-dedicated-ips
 	'dedicatedIps.create': 'POST /v1/dedicated-ips', // create-dedicated-ip
 	'dedicatedIps.retrieve': 'GET /v1/dedicated-ips/{id}', // retrieve-dedicated-ip
@@ -147,6 +197,7 @@ const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
 	'logs.updateOwnerStream': 'PUT /v1/logs/streams/owner/{id}', // update-owner-log-stream
 	'logs.retrieveOwnerStream': 'GET /v1/logs/streams/owner/{ownerId}', // get-owner-log-stream
 	'logs.retrieveResourceStream': 'GET /v1/logs/streams/resource/{resourceId}', // get-resource-log-stream
+	'logs.updateResourceStream': 'PUT /v1/logs/streams/resource/{resourceId}', // update-resource-log-stream
 	'logs.deleteResourceStream': 'DELETE /v1/logs/streams/resource/{resourceId}', // delete-resource-log-stream
 	'metrics.activeConnections': 'GET /v1/metrics/active-connections', // get-active-connections
 	'metrics.bandwidthSources': 'GET /v1/metrics/bandwidth-sources', // get-bandwidth-sources
@@ -168,6 +219,18 @@ const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
 	'metrics.pathFilterValues': 'GET /v1/metrics/filters/path', // list-path-filter-values
 	'metrics.taskRunsQueued': 'GET /v1/metrics/task-runs-queued', // get-task-runs-queued
 	'metrics.taskRunsCompleted': 'GET /v1/metrics/task-runs-completed', // get-task-runs-completed
+	'metrics.retrieveOwnerStream': 'GET /v1/metrics-stream/{ownerId}', // getOwnerMetricsStream
+	'metrics.upsertOwnerStream': 'PUT /v1/metrics-stream/{ownerId}', // upsertOwnerMetricsStream
+	'metrics.deleteOwnerStream': 'DELETE /v1/metrics-stream/{ownerId}', // deleteOwnerMetricsStream
+	'notifications.retrieveOwnerSettings':
+		'GET /v1/notification-settings/owners/{ownerId}', // retrieve-owner-notification-settings
+	'notifications.updateOwnerSettings':
+		'PATCH /v1/notification-settings/owners/{ownerId}', // patch-owner-notification-settings
+	'notifications.listOverrides': 'GET /v1/notification-settings/overrides', // list-notification-overrides
+	'notifications.retrieveServiceOverrides':
+		'GET /v1/notification-settings/overrides/services/{serviceId}', // retrieve-service-notification-overrides
+	'notifications.updateServiceOverrides':
+		'PATCH /v1/notification-settings/overrides/services/{serviceId}', // patch-service-notification-overrides
 	'events.retrieve': 'GET /v1/events/{eventId}', // retrieve-event
 	'automation.listDisks': 'GET /v1/disks', // list-disks
 	'automation.listMaintenance': 'GET /v1/maintenance', // list-maintenance
@@ -202,56 +265,6 @@ const ROUTES: Record<keyof typeof renderEndpointSchemas, string> = {
 	'automation.createTaskRun': 'POST /v1/task-runs', // createTask
 	'automation.retrieveTaskRun': 'GET /v1/task-runs/{id}', // getTaskRun
 	'automation.cancelTaskRun': 'DELETE /v1/task-runs/{id}', // cancelTaskRun
-	'final.addHeaders': 'POST /v1/services/{id}/headers', // add-headers
-	'final.addOrUpdateSecretFile': 'PUT /v1/services/{id}/secret-files/{key}', // add-or-update-secret-file
-	'final.addResourcesToEnvironment': 'POST /v1/environments/{id}/resources', // add-resources-to-environment
-	'final.addRoute': 'POST /v1/services/{id}/routes', // add-route
-	'final.createCustomDomain': 'POST /v1/services/{id}/custom-domains', // create-custom-domain
-	'final.deleteEnvGroupEnvVar': 'DELETE /v1/env-groups/{id}/env-vars/{key}', // delete-env-group-env-var
-	'final.deleteEnvGroupSecretFile':
-		'DELETE /v1/env-groups/{id}/secret-files/{key}', // delete-env-group-secret-file
-	'final.deleteKeyValue': 'DELETE /v1/key-value/{id}', // delete-key-value
-	'final.deleteSecretFile': 'DELETE /v1/services/{id}/secret-files/{key}', // delete-secret-file
-	'final.disconnectBlueprint': 'DELETE /v1/blueprints/{id}', // disconnect-blueprint
-	'final.linkServiceToEnvGroup':
-		'POST /v1/env-groups/{id}/services/{serviceId}', // link-service-to-env-group
-	'final.listBlueprints': 'GET /v1/blueprints', // list-blueprints
-	'final.listInstances': 'GET /v1/services/{id}/instances', // list-instances
-	'final.listKeyValue': 'GET /v1/key-value', // list-key-value
-	'final.listNotificationOverrides': 'GET /v1/notification-settings/overrides', // list-notification-overrides
-	'final.retrieveServiceNotificationOverrides':
-		'GET /v1/notification-settings/overrides/services/{serviceId}', // retrieve-service-notification-overrides
-	'final.listPostgresExport': 'GET /v1/postgres/{id}/export', // list-postgres-export
-	'final.listPostgresUsers': 'GET /v1/postgres/{id}/credentials', // list-postgres-users
-	'final.listRoutes': 'GET /v1/services/{id}/routes', // list-routes
-	'final.listSecretFiles': 'GET /v1/services/{id}/secret-files', // list-secret-files-for-service
-	'final.retrieveCustomDomain': 'GET /v1/services/{id}/custom-domains/{key}', // retrieve-custom-domain
-	'final.retrieveDeploy': 'GET /v1/services/{id}/deploys/{key}', // retrieve-deploy
-	'final.retrieveEnvGroupEnvVar': 'GET /v1/env-groups/{id}/env-vars/{key}', // retrieve-env-group-env-var
-	'final.retrieveEnvGroupSecretFile':
-		'GET /v1/env-groups/{id}/secret-files/{key}', // retrieve-env-group-secret-file
-	'final.retrieveEnvVar': 'GET /v1/services/{id}/env-vars/{key}', // retrieve-env-var
-	'final.retrieveOwnerNotificationSettings':
-		'GET /v1/notification-settings/owners/{id}', // retrieve-owner-notification-settings
-	'final.retrieveSecretFile': 'GET /v1/services/{id}/secret-files/{key}', // retrieve-secret-file
-	'final.updateEnvGroupEnvVar': 'PUT /v1/env-groups/{id}/env-vars/{key}', // update-env-group-env-var
-	'final.updateEnvGroupSecretFile':
-		'PUT /v1/env-groups/{id}/secret-files/{key}', // update-env-group-secret-file
-	'final.updateEnvVar': 'PUT /v1/services/{id}/env-vars/{key}', // update-env-var
-	'final.updateEnvVarsForService': 'PUT /v1/services/{id}/env-vars', // update-env-vars-for-service
-	'final.updateHeaders': 'PUT /v1/services/{id}/headers', // update-headers
-	'final.updateResourceLogStream': 'PUT /v1/logs/streams/resource/{id}', // update-resource-log-stream
-	'final.updateSecretFilesForService': 'PUT /v1/services/{id}/secret-files', // update-secret-files-for-service
-	'final.verifyCustomDomain':
-		'POST /v1/services/{id}/custom-domains/{key}/verify', // refresh-custom-domain
-	'final.deleteOwnerMetricsStream': 'DELETE /v1/metrics-stream/{id}', // deleteOwnerMetricsStream
-	'final.retrieveOwnerMetricsStream': 'GET /v1/metrics-stream/{ownerId}', // getOwnerMetricsStream
-	'final.upsertOwnerMetricsStream': 'PUT /v1/metrics-stream/{ownerId}', // upsertOwnerMetricsStream
-	'final.updateOwnerNotificationSettings':
-		'PATCH /v1/notification-settings/owners/{id}', // patch-owner-notification-settings
-	'final.updateServiceNotificationOverrides':
-		'PATCH /v1/notification-settings/overrides/services/{serviceId}', // patch-service-notification-overrides
-	'final.updateRoutes': 'PUT /v1/services/{id}/routes', // put-routes
 };
 
 // Zod v4 exposes each schema's definition on `.def`; the sampler only needs
@@ -314,8 +327,16 @@ const sample = (schema: SchemaNode, key: string): unknown => {
 
 // Inputs the sampler cannot build (cross-field refinements).
 const INPUT_OVERRIDES: Partial<Record<keyof typeof ROUTES, unknown>> = {
-	'final.updateEnvVar': { id: 'Xid', key: 'Xkey', value: 'v' },
-	'final.updateEnvGroupEnvVar': { id: 'Xid', key: 'Xkey', value: 'v' },
+	'services.envVars.upsert': {
+		serviceId: 'XserviceId',
+		envVarKey: 'XenvVarKey',
+		value: 'v',
+	},
+	'services.envGroups.envVars.upsert': {
+		envGroupId: 'XenvGroupId',
+		envVarKey: 'XenvVarKey',
+		value: 'v',
+	},
 };
 
 const flatten = (tree: object, prefix = ''): [string, unknown][] =>

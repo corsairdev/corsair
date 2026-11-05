@@ -92,14 +92,8 @@ describe('Render schema', () => {
 			'suspendKeyValue',
 			'resumeKeyValue',
 			'retrieveKeyValueConnectionInfo',
-			'listInstances',
 			'listPostgresExport',
 			'listPostgresUsers',
-			'listRoutes',
-			'listSecretFiles',
-			'retrieveOwnerNotificationSettings',
-			'deleteOwnerMetricsStream',
-			'updateOwnerNotificationSettings',
 			'retrieveDisk',
 			'updateDisk',
 			'deleteDisk',
@@ -126,46 +120,73 @@ describe('Render schema', () => {
 		}
 
 		// Operations with required body fields (per Render's OpenAPI spec)
-		// reject a bare id and accept the documented payload.
-		for (const [operation, valid] of [
-			['updateEnvGroup', { id: 'evg-1', name: 'shared' }],
+		// reject their path identifiers alone and accept the documented payload.
+		for (const [operation, ids, valid] of [
+			['updateEnvGroup', { id: 'evg-1' }, { name: 'shared' }],
 			[
 				'updateRegistryCredential',
+				{ id: 'rgc-1' },
 				{
-					id: 'rgc-1',
 					registry: 'GITHUB',
 					name: 'ghcr',
 					username: 'bot',
 					authToken: 'token',
 				},
 			],
-			['updateOwnerLogStream', { id: 'tea-1', preview: 'drop' }],
-			['updateResourceLogStream', { id: 'srv-1', setting: 'send' }],
-			['addHeaders', { id: 'srv-1', path: '/*', name: 'X-A', value: '1' }],
-			['addResourcesToEnvironment', { id: 'evm-1', resourceIds: ['srv-1'] }],
+			['updateOwnerLogStream', { id: 'tea-1' }, { preview: 'drop' }],
+			['updateResourceLogStream', { resourceId: 'srv-1' }, { setting: 'send' }],
+			[
+				'addHeaders',
+				{ serviceId: 'srv-1' },
+				{ path: '/*', name: 'X-A', value: '1' },
+			],
+			[
+				'addResourcesToEnvironment',
+				{ environmentId: 'evm-1' },
+				{ resourceIds: ['srv-1'] },
+			],
 			[
 				'addRoute',
-				{ id: 'srv-1', type: 'redirect', source: '/a', destination: '/b' },
+				{ serviceId: 'srv-1' },
+				{ type: 'redirect', source: '/a', destination: '/b' },
 			],
-			['createCustomDomain', { id: 'srv-1', name: 'www.example.com' }],
-			['updateEnvVar', { id: 'srv-1', key: 'A', value: 'B' }],
-			['updateEnvGroupEnvVar', { id: 'evg-1', key: 'A', generateValue: true }],
+			[
+				'createCustomDomain',
+				{ serviceId: 'srv-1' },
+				{ name: 'www.example.com' },
+			],
+			['updateEnvVar', { serviceId: 'srv-1', envVarKey: 'A' }, { value: 'B' }],
+			[
+				'updateEnvGroupEnvVar',
+				{ envGroupId: 'evg-1', envVarKey: 'A' },
+				{ generateValue: true },
+			],
+			[
+				'addOrUpdateSecretFile',
+				{ serviceId: 'srv-1', secretFileName: 'a.json' },
+				{ content: '{}' },
+			],
+			[
+				'updateEnvGroupSecretFile',
+				{ envGroupId: 'evg-1', secretFileName: 'a.json' },
+				{ content: '{}' },
+			],
 		] as const) {
 			const schema = RenderEndpointInputSchemas[operation];
-			expect(schema.safeParse({ id: valid.id }).success).toBe(false);
-			expect(schema.safeParse(valid).success).toBe(true);
+			expect(schema.safeParse(ids).success).toBe(false);
+			expect(schema.safeParse({ ...ids, ...valid }).success).toBe(true);
 		}
 		expect(
 			RenderEndpointInputSchemas.updateEnvVar.safeParse({
-				id: 'srv-1',
-				key: 'A',
+				serviceId: 'srv-1',
+				envVarKey: 'A',
 				value: 'B',
 				generateValue: true,
 			}).success,
 		).toBe(false);
 
-		// Replace operations send a raw JSON array: the id and an array body
-		// are both required, and an object body is rejected.
+		// Replace operations send a raw JSON array: the service ID and an array
+		// body are both required, and an object body is rejected.
 		for (const [operation, entry] of [
 			['updateEnvVarsForService', { key: 'A', value: 'B' }],
 			['updateHeaders', { path: '/*', name: 'X-Frame-Options', value: 'DENY' }],
@@ -173,49 +194,60 @@ describe('Render schema', () => {
 			['updateRoutes', { type: 'rewrite', source: '/a', destination: '/b' }],
 		] as const) {
 			const schema = RenderEndpointInputSchemas[operation];
-			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(false);
+			expect(schema.safeParse({ serviceId: 'srv-1' }).success).toBe(false);
 			expect(schema.safeParse({ body: [entry] }).success).toBe(false);
-			expect(schema.safeParse({ id: 'resource-1', body: entry }).success).toBe(
+			expect(
+				schema.safeParse({ serviceId: 'srv-1', body: entry }).success,
+			).toBe(false);
+			expect(
+				schema.safeParse({ serviceId: 'srv-1', body: [entry] }).success,
+			).toBe(true);
+		}
+
+		// Sub-resource operations name each path value after its resource and
+		// need all of them.
+		for (const [operation, ids] of [
+			['listInstances', { serviceId: 'srv-1' }],
+			['listRoutes', { serviceId: 'srv-1' }],
+			['listSecretFiles', { serviceId: 'srv-1' }],
+			['retrieveDeploy', { serviceId: 'srv-1', deployId: 'dep-1' }],
+			['retrieveEnvVar', { serviceId: 'srv-1', envVarKey: 'A' }],
+			['retrieveSecretFile', { serviceId: 'srv-1', secretFileName: 'a.json' }],
+			['deleteSecretFile', { serviceId: 'srv-1', secretFileName: 'a.json' }],
+			[
+				'retrieveCustomDomain',
+				{ serviceId: 'srv-1', customDomainNameOrID: 'www.example.com' },
+			],
+			[
+				'verifyCustomDomain',
+				{ serviceId: 'srv-1', customDomainNameOrID: 'www.example.com' },
+			],
+			['retrieveEnvGroupEnvVar', { envGroupId: 'evg-1', envVarKey: 'A' }],
+			['deleteEnvGroupEnvVar', { envGroupId: 'evg-1', envVarKey: 'A' }],
+			[
+				'retrieveEnvGroupSecretFile',
+				{ envGroupId: 'evg-1', secretFileName: 'a.json' },
+			],
+			[
+				'deleteEnvGroupSecretFile',
+				{ envGroupId: 'evg-1', secretFileName: 'a.json' },
+			],
+			['linkServiceToEnvGroup', { envGroupId: 'evg-1', serviceId: 'srv-1' }],
+			['retrieveOwnerNotificationSettings', { ownerId: 'tea-1' }],
+			['updateOwnerNotificationSettings', { ownerId: 'tea-1' }],
+			['deleteOwnerMetricsStream', { ownerId: 'tea-1' }],
+		] as const) {
+			const schema = RenderEndpointInputSchemas[operation];
+			expect(schema.safeParse(ids).success).toBe(true);
+			const names = Object.keys(ids);
+			const withoutLast = Object.fromEntries(
+				Object.entries(ids).filter(([name]) => name !== names.at(-1)),
+			);
+			expect(schema.safeParse(withoutLast).success).toBe(false);
+			expect(schema.safeParse({ id: 'resource-1', key: 'k' }).success).toBe(
 				false,
 			);
-			expect(
-				schema.safeParse({ id: 'resource-1', body: [entry] }).success,
-			).toBe(true);
 		}
-
-		const keyOperations = [
-			'addOrUpdateSecretFile',
-			'deleteEnvGroupEnvVar',
-			'deleteEnvGroupSecretFile',
-			'deleteSecretFile',
-			'retrieveCustomDomain',
-			'retrieveDeploy',
-			'retrieveEnvGroupEnvVar',
-			'retrieveEnvGroupSecretFile',
-			'retrieveEnvVar',
-			'retrieveSecretFile',
-			'updateEnvGroupSecretFile',
-			'verifyCustomDomain',
-		] as const;
-		for (const operation of keyOperations) {
-			const schema = RenderEndpointInputSchemas[operation];
-			expect(schema.safeParse({ id: 'resource-1' }).success).toBe(false);
-			expect(
-				schema.safeParse({ id: 'resource-1', key: 'resource-key' }).success,
-			).toBe(true);
-		}
-
-		expect(
-			RenderEndpointInputSchemas.linkServiceToEnvGroup.safeParse({
-				id: 'group-1',
-			}).success,
-		).toBe(false);
-		expect(
-			RenderEndpointInputSchemas.linkServiceToEnvGroup.safeParse({
-				id: 'group-1',
-				serviceId: 'service-1',
-			}).success,
-		).toBe(true);
 
 		// Multi-parameter paths require every segment identifier.
 		expect(
@@ -398,6 +430,25 @@ describe('Render schema', () => {
 			{ id: 'resource-1', resourceIds: ['service-1'] },
 			{ id: 'resource-1', type: 'redirect', source: '/a', destination: '/b' },
 			{ id: 'resource-1', key: 'resource-key', value: 'v' },
+			{ serviceId: 'service-1', envVarKey: 'API_KEY', value: 'v' },
+			{ envGroupId: 'env-group-1', envVarKey: 'API_KEY', value: 'v' },
+			{ envGroupId: 'env-group-1', envVarKey: 'API_KEY' },
+			{ envGroupId: 'env-group-1', secretFileName: 'a.json', content: '{}' },
+			{ envGroupId: 'env-group-1', secretFileName: 'a.json' },
+			{ serviceId: 'service-1', secretFileName: 'a.json', content: '{}' },
+			{ serviceId: 'service-1', secretFileName: 'a.json' },
+			{ serviceId: 'service-1', body: [] },
+			{ serviceId: 'service-1', path: '/*', name: 'X-A', value: '1' },
+			{
+				serviceId: 'service-1',
+				type: 'redirect',
+				source: '/a',
+				destination: '/b',
+			},
+			{ serviceId: 'service-1', name: 'www.example.com' },
+			{ serviceId: 'service-1', routeId: 'route-1', priority: 0 },
+			{ resourceId: 'resource-1', setting: 'send' },
+			{ ownerId: 'owner-1', emailEnabled: true },
 			{
 				id: 'resource-1',
 				registry: 'GITHUB',

@@ -45,6 +45,8 @@ pnpm add @corsair-dev/render
 | `automation.updateMaintenance` | `render.api.automation.updateMaintenance` | `write` | Update a Render maintenance run |
 | `automation.updateWebhook` | `render.api.automation.updateWebhook` | `write` | Update a Render webhook |
 | `automation.updateWorkflow` | `render.api.automation.updateWorkflow` | `write` | Update a Render workflow |
+| `blueprints.disconnect` | `render.api.blueprints.disconnect` | `destructive` | Disconnect a Render Blueprint; its resources are kept |
+| `blueprints.list` | `render.api.blueprints.list` | `read` | List Render Blueprints |
 | `blueprints.listSyncs` | `render.api.blueprints.listSyncs` | `read` | List syncs for a Render blueprint |
 | `blueprints.retrieve` | `render.api.blueprints.retrieve` | `read` | Retrieve a Render Blueprint |
 | `blueprints.update` | `render.api.blueprints.update` | `write` | Update a Render Blueprint |
@@ -75,49 +77,10 @@ pnpm add @corsair-dev/render
 | `dedicatedIps.retrieve` | `render.api.dedicatedIps.retrieve` | `read` | Retrieve a Render dedicated IP set |
 | `dedicatedIps.update` | `render.api.dedicatedIps.update` | `write` | Update a Render dedicated IP set |
 | `events.retrieve` | `render.api.events.retrieve` | `read` | Retrieve a Render event |
-| `final.addHeaders` | `render.api.final.addHeaders` | `write` | Add a response header rule to a Render service (id: service ID) |
-| `final.addOrUpdateSecretFile` | `render.api.final.addOrUpdateSecretFile` | `write` | Add or update one secret file on a Render service (id: service ID, key: file name) |
-| `final.addResourcesToEnvironment` | `render.api.final.addResourcesToEnvironment` | `write` | Move services, databases or env groups into a Render environment (id: environment ID) |
-| `final.addRoute` | `render.api.final.addRoute` | `write` | Add a redirect or rewrite rule to a Render service (id: service ID) |
-| `final.createCustomDomain` | `render.api.final.createCustomDomain` | `write` | Add a custom domain to a Render service (id: service ID) |
-| `final.deleteEnvGroupEnvVar` | `render.api.final.deleteEnvGroupEnvVar` | `destructive` | Delete one environment variable from a Render env group (id: env group ID, key: variable name) |
-| `final.deleteEnvGroupSecretFile` | `render.api.final.deleteEnvGroupSecretFile` | `destructive` | Delete one secret file from a Render env group (id: env group ID, key: file name) |
-| `final.deleteKeyValue` | `render.api.final.deleteKeyValue` | `destructive` | Delete a Render Key Value instance (id: Key Value ID) |
-| `final.deleteOwnerMetricsStream` | `render.api.final.deleteOwnerMetricsStream` | `destructive` | Delete the metrics stream of a Render workspace (id: owner ID) |
-| `final.deleteSecretFile` | `render.api.final.deleteSecretFile` | `destructive` | Delete one secret file from a Render service (id: service ID, key: file name) |
-| `final.disconnectBlueprint` | `render.api.final.disconnectBlueprint` | `destructive` | Disconnect a Render Blueprint; its resources are kept (id: Blueprint ID) |
-| `final.linkServiceToEnvGroup` | `render.api.final.linkServiceToEnvGroup` | `write` | Link a Render service to an env group (id: env group ID) |
-| `final.listBlueprints` | `render.api.final.listBlueprints` | `read` | List Render Blueprints |
-| `final.listInstances` | `render.api.final.listInstances` | `read` | List the running instances of a Render service (id: service ID) |
-| `final.listKeyValue` | `render.api.final.listKeyValue` | `read` | List Render Key Value instances |
-| `final.listNotificationOverrides` | `render.api.final.listNotificationOverrides` | `read` | List per-service notification overrides |
-| `final.listPostgresExport` | `render.api.final.listPostgresExport` | `read` | List exports of a Render Postgres database (id: Postgres ID) |
-| `final.listPostgresUsers` | `render.api.final.listPostgresUsers` | `read` | List users of a Render Postgres database (id: Postgres ID) |
-| `final.listRoutes` | `render.api.final.listRoutes` | `read` | List the redirect and rewrite rules of a Render service (id: service ID) |
-| `final.listSecretFiles` | `render.api.final.listSecretFiles` | `read` | List secret files on a Render service, including their contents (id: service ID) |
-| `final.retrieveCustomDomain` | `render.api.final.retrieveCustomDomain` | `read` | Retrieve a custom domain on a Render service (id: service ID, key: domain name or ID) |
-| `final.retrieveDeploy` | `render.api.final.retrieveDeploy` | `read` | Retrieve one deploy of a Render service (id: service ID, key: deploy ID) |
-| `final.retrieveEnvGroupEnvVar` | `render.api.final.retrieveEnvGroupEnvVar` | `read` | Retrieve one environment variable, including its value, from a Render env group (id: env group ID, key: variable name) |
-| `final.retrieveEnvGroupSecretFile` | `render.api.final.retrieveEnvGroupSecretFile` | `read` | Retrieve one secret file, including its contents, from a Render env group (id: env group ID, key: file name) |
-| `final.retrieveEnvVar` | `render.api.final.retrieveEnvVar` | `read` | Retrieve one environment variable, including its value, from a Render service (id: service ID, key: variable name) |
-| `final.retrieveOwnerMetricsStream` | `render.api.final.retrieveOwnerMetricsStream` | `read` | Retrieve metrics stream settings for a Render owner |
-| `final.retrieveOwnerNotificationSettings` | `render.api.final.retrieveOwnerNotificationSettings` | `read` | Retrieve notification settings for a Render workspace (id: owner ID) |
-| `final.retrieveSecretFile` | `render.api.final.retrieveSecretFile` | `read` | Retrieve one secret file, including its contents, from a Render service (id: service ID, key: file name) |
-| `final.retrieveServiceNotificationOverrides` | `render.api.final.retrieveServiceNotificationOverrides` | `read` | Retrieve notification overrides for a Render service |
-| `final.updateEnvGroupEnvVar` | `render.api.final.updateEnvGroupEnvVar` | `write` | Add or update one environment variable in a Render env group (id: env group ID, key: variable name) |
-| `final.updateEnvGroupSecretFile` | `render.api.final.updateEnvGroupSecretFile` | `write` | Add or update one secret file in a Render env group (id: env group ID, key: file name) |
-| `final.updateEnvVar` | `render.api.final.updateEnvVar` | `write` | Add or update one environment variable on a Render service (id: service ID, key: variable name) |
-| `final.updateEnvVarsForService` | `render.api.final.updateEnvVarsForService` | `destructive` | Replace all environment variables on a Render service with the given list; variables not listed are deleted (id: service ID) |
-| `final.updateHeaders` | `render.api.final.updateHeaders` | `destructive` | Replace all response header rules on a Render service with the given list; rules not listed are deleted (id: service ID) |
-| `final.updateOwnerNotificationSettings` | `render.api.final.updateOwnerNotificationSettings` | `write` | Update notification settings for a Render workspace (id: owner ID) |
-| `final.updateResourceLogStream` | `render.api.final.updateResourceLogStream` | `write` | Set the log stream setting for one Render resource (id: resource ID) |
-| `final.updateRoutes` | `render.api.final.updateRoutes` | `destructive` | Replace all redirect and rewrite rules on a Render service with the given list; rules not listed are deleted (id: service ID) |
-| `final.updateSecretFilesForService` | `render.api.final.updateSecretFilesForService` | `destructive` | Replace all secret files on a Render service with the given list; files not listed are deleted (id: service ID) |
-| `final.updateServiceNotificationOverrides` | `render.api.final.updateServiceNotificationOverrides` | `write` | Update notification overrides for a Render service |
-| `final.upsertOwnerMetricsStream` | `render.api.final.upsertOwnerMetricsStream` | `write` | Create or update metrics stream settings for a Render owner |
-| `final.verifyCustomDomain` | `render.api.final.verifyCustomDomain` | `write` | Re-run DNS verification for a custom domain on a Render service (id: service ID, key: domain name or ID) |
 | `keyValue.connectionInfo` | `render.api.keyValue.connectionInfo` | `read` | Retrieve connection info for a Render Key Value instance |
 | `keyValue.create` | `render.api.keyValue.create` | `write` | Create a Render Key Value instance |
+| `keyValue.delete` | `render.api.keyValue.delete` | `destructive` | Delete a Render Key Value instance |
+| `keyValue.list` | `render.api.keyValue.list` | `read` | List Render Key Value instances |
 | `keyValue.resume` | `render.api.keyValue.resume` | `write` | Resume a Render Key Value instance |
 | `keyValue.retrieve` | `render.api.keyValue.retrieve` | `read` | Retrieve a Render Key Value instance |
 | `keyValue.suspend` | `render.api.keyValue.suspend` | `write` | Suspend a Render Key Value instance |
@@ -129,6 +92,7 @@ pnpm add @corsair-dev/render
 | `logs.retrieveOwnerStream` | `render.api.logs.retrieveOwnerStream` | `read` | Retrieve a Render owner log stream |
 | `logs.retrieveResourceStream` | `render.api.logs.retrieveResourceStream` | `read` | Retrieve a Render resource log stream |
 | `logs.updateOwnerStream` | `render.api.logs.updateOwnerStream` | `write` | Update an owner log stream |
+| `logs.updateResourceStream` | `render.api.logs.updateResourceStream` | `write` | Set the log stream setting for one Render resource |
 | `logs.values` | `render.api.logs.values` | `read` | List Render log values |
 | `metrics.activeConnections` | `render.api.metrics.activeConnections` | `read` | Read active Render connections |
 | `metrics.applicationFilterValues` | `render.api.metrics.applicationFilterValues` | `read` | List Render application metric filter values |
@@ -137,6 +101,7 @@ pnpm add @corsair-dev/render
 | `metrics.cpu` | `render.api.metrics.cpu` | `read` | Read Render CPU metrics |
 | `metrics.cpuLimit` | `render.api.metrics.cpuLimit` | `read` | Read Render CPU limits |
 | `metrics.cpuTarget` | `render.api.metrics.cpuTarget` | `read` | Read Render CPU target metrics |
+| `metrics.deleteOwnerStream` | `render.api.metrics.deleteOwnerStream` | `destructive` | Delete the metrics stream of a Render workspace |
 | `metrics.diskCapacity` | `render.api.metrics.diskCapacity` | `read` | Read Render disk capacity |
 | `metrics.diskUsage` | `render.api.metrics.diskUsage` | `read` | Read Render disk usage |
 | `metrics.httpFilterValues` | `render.api.metrics.httpFilterValues` | `read` | List Render HTTP metric filter values |
@@ -148,8 +113,15 @@ pnpm add @corsair-dev/render
 | `metrics.memoryTarget` | `render.api.metrics.memoryTarget` | `read` | Read Render memory targets |
 | `metrics.pathFilterValues` | `render.api.metrics.pathFilterValues` | `read` | List Render path metric filter values |
 | `metrics.replicationLag` | `render.api.metrics.replicationLag` | `read` | Read Render replication lag metrics |
+| `metrics.retrieveOwnerStream` | `render.api.metrics.retrieveOwnerStream` | `read` | Retrieve metrics stream settings for a Render owner |
 | `metrics.taskRunsCompleted` | `render.api.metrics.taskRunsCompleted` | `read` | Read completed Render task run metrics |
 | `metrics.taskRunsQueued` | `render.api.metrics.taskRunsQueued` | `read` | Read queued Render task run metrics |
+| `metrics.upsertOwnerStream` | `render.api.metrics.upsertOwnerStream` | `write` | Create or update metrics stream settings for a Render owner |
+| `notifications.listOverrides` | `render.api.notifications.listOverrides` | `read` | List per-service notification overrides |
+| `notifications.retrieveOwnerSettings` | `render.api.notifications.retrieveOwnerSettings` | `read` | Retrieve notification settings for a Render workspace |
+| `notifications.retrieveServiceOverrides` | `render.api.notifications.retrieveServiceOverrides` | `read` | Retrieve notification overrides for a Render service |
+| `notifications.updateOwnerSettings` | `render.api.notifications.updateOwnerSettings` | `write` | Update notification settings for a Render workspace |
+| `notifications.updateServiceOverrides` | `render.api.notifications.updateServiceOverrides` | `write` | Update notification overrides for a Render service |
 | `organizations.auditLogs` | `render.api.organizations.auditLogs` | `read` | List audit logs for a Render organization |
 | `owners.auditLogs` | `render.api.owners.auditLogs` | `read` | List audit logs for a Render owner |
 | `owners.list` | `render.api.owners.list` | `read` | List Render owners |
@@ -165,6 +137,8 @@ pnpm add @corsair-dev/render
 | `postgres.deleteUser` | `render.api.postgres.deleteUser` | `destructive` | Delete a user on a Render Postgres instance |
 | `postgres.failover` | `render.api.postgres.failover` | `write` | Trigger a failover for a Render Postgres instance |
 | `postgres.list` | `render.api.postgres.list` | `read` | List Render Postgres databases |
+| `postgres.listExports` | `render.api.postgres.listExports` | `read` | List exports of a Render Postgres database |
+| `postgres.listUsers` | `render.api.postgres.listUsers` | `read` | List users of a Render Postgres database |
 | `postgres.processes` | `render.api.postgres.processes` | `read` | List active queries for a Render Postgres database |
 | `postgres.recover` | `render.api.postgres.recover` | `write` | Trigger point-in-time recovery for a Render Postgres instance |
 | `postgres.recoveryInfo` | `render.api.postgres.recoveryInfo` | `read` | Retrieve point-in-time recovery status for a Render Postgres instance |
@@ -189,18 +163,27 @@ pnpm add @corsair-dev/render
 | `services.cancelDeploy` | `render.api.services.cancelDeploy` | `write` | Cancel a Render deployment |
 | `services.create` | `render.api.services.create` | `write` | Create a Render service |
 | `services.createPreview` | `render.api.services.createPreview` | `write` | Create an image-backed preview for a Render service |
+| `services.customDomains.create` | `render.api.services.customDomains.create` | `write` | Add a custom domain to a Render service |
 | `services.customDomains.delete` | `render.api.services.customDomains.delete` | `destructive` | Delete a custom domain from a Render service |
 | `services.customDomains.list` | `render.api.services.customDomains.list` | `read` | List custom domains for a Render service |
+| `services.customDomains.retrieve` | `render.api.services.customDomains.retrieve` | `read` | Retrieve a custom domain on a Render service |
+| `services.customDomains.verify` | `render.api.services.customDomains.verify` | `write` | Re-run DNS verification for a custom domain on a Render service |
 | `services.delete` | `render.api.services.delete` | `destructive` | Delete a Render service |
 | `services.deleteAutoscaling` | `render.api.services.deleteAutoscaling` | `destructive` | Delete autoscaling configuration for a Render service |
-| `services.deleteHeader` | `render.api.services.deleteHeader` | `destructive` | Delete a header from a Render service |
-| `services.deleteRoute` | `render.api.services.deleteRoute` | `destructive` | Delete a route from a Render service |
 | `services.envGroups.create` | `render.api.services.envGroups.create` | `write` | Create a Render environment group |
 | `services.envGroups.delete` | `render.api.services.envGroups.delete` | `destructive` | Delete a Render environment group |
+| `services.envGroups.envVars.delete` | `render.api.services.envGroups.envVars.delete` | `destructive` | Delete one environment variable from a Render env group |
+| `services.envGroups.envVars.retrieve` | `render.api.services.envGroups.envVars.retrieve` | `read` | Retrieve one environment variable, including its value, from a Render env group |
+| `services.envGroups.envVars.upsert` | `render.api.services.envGroups.envVars.upsert` | `write` | Add or update one environment variable in a Render env group |
+| `services.envGroups.linkService` | `render.api.services.envGroups.linkService` | `write` | Link a Render service to an env group |
 | `services.envGroups.list` | `render.api.services.envGroups.list` | `read` | List Render environment groups |
 | `services.envGroups.retrieve` | `render.api.services.envGroups.retrieve` | `read` | Retrieve a Render environment group |
+| `services.envGroups.secretFiles.delete` | `render.api.services.envGroups.secretFiles.delete` | `destructive` | Delete one secret file from a Render env group |
+| `services.envGroups.secretFiles.retrieve` | `render.api.services.envGroups.secretFiles.retrieve` | `read` | Retrieve one secret file, including its contents, from a Render env group |
+| `services.envGroups.secretFiles.upsert` | `render.api.services.envGroups.secretFiles.upsert` | `write` | Add or update one secret file in a Render env group |
 | `services.envGroups.unlinkService` | `render.api.services.envGroups.unlinkService` | `destructive` | Unlink a Render service from an environment group |
 | `services.envGroups.update` | `render.api.services.envGroups.update` | `write` | Update a Render environment group |
+| `services.environments.addResources` | `render.api.services.environments.addResources` | `write` | Move services, databases or env groups into a Render environment |
 | `services.environments.create` | `render.api.services.environments.create` | `write` | Create a Render environment |
 | `services.environments.delete` | `render.api.services.environments.delete` | `destructive` | Delete a Render environment |
 | `services.environments.list` | `render.api.services.environments.list` | `read` | List Render environments |
@@ -209,7 +192,13 @@ pnpm add @corsair-dev/render
 | `services.environments.update` | `render.api.services.environments.update` | `write` | Update a Render environment |
 | `services.envVars.delete` | `render.api.services.envVars.delete` | `destructive` | Delete an environment variable from a Render service |
 | `services.envVars.list` | `render.api.services.envVars.list` | `read` | List environment variables for a Render service |
+| `services.envVars.retrieve` | `render.api.services.envVars.retrieve` | `read` | Retrieve one environment variable, including its value, from a Render service |
+| `services.envVars.update` | `render.api.services.envVars.update` | `destructive` | Replace all environment variables on a Render service with the given list; variables not listed are deleted |
+| `services.envVars.upsert` | `render.api.services.envVars.upsert` | `write` | Add or update one environment variable on a Render service |
+| `services.headers.add` | `render.api.services.headers.add` | `write` | Add a response header rule to a Render service |
+| `services.headers.delete` | `render.api.services.headers.delete` | `destructive` | Delete a header from a Render service |
 | `services.headers.list` | `render.api.services.headers.list` | `read` | List headers for a Render service |
+| `services.headers.update` | `render.api.services.headers.update` | `destructive` | Replace all response header rules on a Render service with the given list; rules not listed are deleted |
 | `services.jobs.cancel` | `render.api.services.jobs.cancel` | `write` | Cancel a running job on a Render service |
 | `services.jobs.create` | `render.api.services.jobs.create` | `write` | Create a job run for a Render service |
 | `services.jobs.list` | `render.api.services.jobs.list` | `read` | List jobs for a Render service |
@@ -217,14 +206,25 @@ pnpm add @corsair-dev/render
 | `services.list` | `render.api.services.list` | `read` | List Render services accessible to the authenticated owner |
 | `services.listDeploys` | `render.api.services.listDeploys` | `read` | List deployments for a Render service |
 | `services.listEvents` | `render.api.services.listEvents` | `read` | List events for a Render service |
+| `services.listInstances` | `render.api.services.listInstances` | `read` | List the running instances of a Render service |
 | `services.listOutboundIps` | `render.api.services.listOutboundIps` | `read` | List outbound IPs for a Render service |
-| `services.patchRoute` | `render.api.services.patchRoute` | `write` | Update a route on a Render service |
 | `services.purgeCache` | `render.api.services.purgeCache` | `write` | Purge the cache for a Render service |
 | `services.restart` | `render.api.services.restart` | `write` | Restart a Render service |
 | `services.resume` | `render.api.services.resume` | `write` | Resume a Render service |
 | `services.retrieve` | `render.api.services.retrieve` | `read` | Retrieve a Render service |
+| `services.retrieveDeploy` | `render.api.services.retrieveDeploy` | `read` | Retrieve one deploy of a Render service |
 | `services.rollbackDeploy` | `render.api.services.rollbackDeploy` | `write` | Roll back a Render service deployment |
+| `services.routes.add` | `render.api.services.routes.add` | `write` | Add a redirect or rewrite rule to a Render service |
+| `services.routes.delete` | `render.api.services.routes.delete` | `destructive` | Delete a route from a Render service |
+| `services.routes.list` | `render.api.services.routes.list` | `read` | List the redirect and rewrite rules of a Render service |
+| `services.routes.update` | `render.api.services.routes.update` | `destructive` | Replace all redirect and rewrite rules on a Render service with the given list; rules not listed are deleted |
+| `services.routes.updatePriority` | `render.api.services.routes.updatePriority` | `write` | Change the priority of one redirect or rewrite rule on a Render service |
 | `services.scale` | `render.api.services.scale` | `write` | Scale a Render service to a fixed instance count |
+| `services.secretFiles.delete` | `render.api.services.secretFiles.delete` | `destructive` | Delete one secret file from a Render service |
+| `services.secretFiles.list` | `render.api.services.secretFiles.list` | `read` | List secret files on a Render service, including their contents |
+| `services.secretFiles.retrieve` | `render.api.services.secretFiles.retrieve` | `read` | Retrieve one secret file, including its contents, from a Render service |
+| `services.secretFiles.update` | `render.api.services.secretFiles.update` | `destructive` | Replace all secret files on a Render service with the given list; files not listed are deleted |
+| `services.secretFiles.upsert` | `render.api.services.secretFiles.upsert` | `write` | Add or update one secret file on a Render service |
 | `services.suspend` | `render.api.services.suspend` | `write` | Suspend a Render service |
 | `services.triggerDeploy` | `render.api.services.triggerDeploy` | `write` | Trigger a Render deployment |
 | `services.update` | `render.api.services.update` | `write` | Update a Render service |

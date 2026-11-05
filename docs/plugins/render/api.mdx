@@ -1346,6 +1346,78 @@ await corsair.render.api.automation.updateWorkflow({});
 
 ## Blueprints
 
+### disconnect
+
+`blueprints.disconnect`
+
+Disconnect a Render Blueprint; its resources are kept
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.blueprints.disconnect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`blueprints.list`
+
+List Render Blueprints
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.blueprints.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string[]` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### listSyncs
 
 `blueprints.listSyncs`
@@ -2581,1705 +2653,6 @@ await corsair.render.api.events.retrieve({});
 
 ---
 
-## Final
-
-### addHeaders
-
-`final.addHeaders`
-
-Add a response header rule to a Render service (id: service ID)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.addHeaders({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `path` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-| `value` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### addOrUpdateSecretFile
-
-`final.addOrUpdateSecretFile`
-
-Add or update one secret file on a Render service (id: service ID, key: file name)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.addOrUpdateSecretFile({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### addResourcesToEnvironment
-
-`final.addResourcesToEnvironment`
-
-Move services, databases or env groups into a Render environment (id: environment ID)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.addResourcesToEnvironment({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `resourceIds` | `string[]` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### addRoute
-
-`final.addRoute`
-
-Add a redirect or rewrite rule to a Render service (id: service ID)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.addRoute({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `type` | `redirect \| rewrite` | Yes | — |
-| `source` | `string` | Yes | — |
-| `destination` | `string` | Yes | — |
-| `priority` | `number` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### createCustomDomain
-
-`final.createCustomDomain`
-
-Add a custom domain to a Render service (id: service ID)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.createCustomDomain({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### deleteEnvGroupEnvVar
-
-`final.deleteEnvGroupEnvVar`
-
-Delete one environment variable from a Render env group (id: env group ID, key: variable name)
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.final.deleteEnvGroupEnvVar({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | undefined
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### deleteEnvGroupSecretFile
-
-`final.deleteEnvGroupSecretFile`
-
-Delete one secret file from a Render env group (id: env group ID, key: file name)
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.final.deleteEnvGroupSecretFile({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | undefined
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### deleteKeyValue
-
-`final.deleteKeyValue`
-
-Delete a Render Key Value instance (id: Key Value ID)
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.final.deleteKeyValue({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | undefined
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### deleteOwnerMetricsStream
-
-`final.deleteOwnerMetricsStream`
-
-Delete the metrics stream of a Render workspace (id: owner ID)
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.final.deleteOwnerMetricsStream({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | undefined
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### deleteSecretFile
-
-`final.deleteSecretFile`
-
-Delete one secret file from a Render service (id: service ID, key: file name)
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.final.deleteSecretFile({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | undefined
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### disconnectBlueprint
-
-`final.disconnectBlueprint`
-
-Disconnect a Render Blueprint; its resources are kept (id: Blueprint ID)
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.final.disconnectBlueprint({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | undefined
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### linkServiceToEnvGroup
-
-`final.linkServiceToEnvGroup`
-
-Link a Render service to an env group (id: env group ID)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.linkServiceToEnvGroup({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `serviceId` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### listBlueprints
-
-`final.listBlueprints`
-
-List Render Blueprints
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.listBlueprints({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### listInstances
-
-`final.listInstances`
-
-List the running instances of a Render service (id: service ID)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.listInstances({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### listKeyValue
-
-`final.listKeyValue`
-
-List Render Key Value instances
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.listKeyValue({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### listNotificationOverrides
-
-`final.listNotificationOverrides`
-
-List per-service notification overrides
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.listNotificationOverrides({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### listPostgresExport
-
-`final.listPostgresExport`
-
-List exports of a Render Postgres database (id: Postgres ID)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.listPostgresExport({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### listPostgresUsers
-
-`final.listPostgresUsers`
-
-List users of a Render Postgres database (id: Postgres ID)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.listPostgresUsers({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### listRoutes
-
-`final.listRoutes`
-
-List the redirect and rewrite rules of a Render service (id: service ID)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.listRoutes({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### listSecretFiles
-
-`final.listSecretFiles`
-
-List secret files on a Render service, including their contents (id: service ID)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.listSecretFiles({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### retrieveCustomDomain
-
-`final.retrieveCustomDomain`
-
-Retrieve a custom domain on a Render service (id: service ID, key: domain name or ID)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.retrieveCustomDomain({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### retrieveDeploy
-
-`final.retrieveDeploy`
-
-Retrieve one deploy of a Render service (id: service ID, key: deploy ID)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.retrieveDeploy({ id: 'srv-d0k1q2r3s4t5u6v7w8x9', key: 'dep-d0k1q2r3s4t5u6v7w8y0' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### retrieveEnvGroupEnvVar
-
-`final.retrieveEnvGroupEnvVar`
-
-Retrieve one environment variable, including its value, from a Render env group (id: env group ID, key: variable name)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.retrieveEnvGroupEnvVar({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### retrieveEnvGroupSecretFile
-
-`final.retrieveEnvGroupSecretFile`
-
-Retrieve one secret file, including its contents, from a Render env group (id: env group ID, key: file name)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.retrieveEnvGroupSecretFile({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### retrieveEnvVar
-
-`final.retrieveEnvVar`
-
-Retrieve one environment variable, including its value, from a Render service (id: service ID, key: variable name)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.retrieveEnvVar({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### retrieveOwnerMetricsStream
-
-`final.retrieveOwnerMetricsStream`
-
-Retrieve metrics stream settings for a Render owner
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.retrieveOwnerMetricsStream({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `ownerId` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### retrieveOwnerNotificationSettings
-
-`final.retrieveOwnerNotificationSettings`
-
-Retrieve notification settings for a Render workspace (id: owner ID)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.retrieveOwnerNotificationSettings({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### retrieveSecretFile
-
-`final.retrieveSecretFile`
-
-Retrieve one secret file, including its contents, from a Render service (id: service ID, key: file name)
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.retrieveSecretFile({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### retrieveServiceNotificationOverrides
-
-`final.retrieveServiceNotificationOverrides`
-
-Retrieve notification overrides for a Render service
-
-**Risk:** `read`
-
-```ts
-await corsair.render.api.final.retrieveServiceNotificationOverrides({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `serviceId` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### updateEnvGroupEnvVar
-
-`final.updateEnvGroupEnvVar`
-
-Add or update one environment variable in a Render env group (id: env group ID, key: variable name)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.updateEnvGroupEnvVar({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-| `value` | `string` | No | — |
-| `generateValue` | `boolean` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### updateEnvGroupSecretFile
-
-`final.updateEnvGroupSecretFile`
-
-Add or update one secret file in a Render env group (id: env group ID, key: file name)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.updateEnvGroupSecretFile({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### updateEnvVar
-
-`final.updateEnvVar`
-
-Add or update one environment variable on a Render service (id: service ID, key: variable name)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.updateEnvVar({ id: 'srv-d0k1q2r3s4t5u6v7w8x9', key: 'LOG_LEVEL', value: 'debug' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-| `value` | `string` | No | — |
-| `generateValue` | `boolean` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### updateEnvVarsForService
-
-`final.updateEnvVarsForService`
-
-Replace all environment variables on a Render service with the given list; variables not listed are deleted (id: service ID)
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.final.updateEnvVarsForService({ id: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ key: 'LOG_LEVEL', value: 'info' }, { key: 'SESSION_SECRET', generateValue: true }] });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | Render service ID (srv-...) |
-| `body` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-(
-  {
-    key: string,
-    value: string
-  } | {
-    key: string,
-    generateValue: boolean
-  }
-)[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### updateHeaders
-
-`final.updateHeaders`
-
-Replace all response header rules on a Render service with the given list; rules not listed are deleted (id: service ID)
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.final.updateHeaders({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | Render service ID (srv-...) |
-| `body` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-  path: string,
-  name: string,
-  value: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### updateOwnerNotificationSettings
-
-`final.updateOwnerNotificationSettings`
-
-Update notification settings for a Render workspace (id: owner ID)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.updateOwnerNotificationSettings({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### updateResourceLogStream
-
-`final.updateResourceLogStream`
-
-Set the log stream setting for one Render resource (id: resource ID)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.updateResourceLogStream({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `setting` | `send \| drop` | Yes | — |
-| `endpoint` | `string` | No | — |
-| `token` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### updateRoutes
-
-`final.updateRoutes`
-
-Replace all redirect and rewrite rules on a Render service with the given list; rules not listed are deleted (id: service ID)
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.final.updateRoutes({ id: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ type: 'rewrite', source: '/app/*', destination: '/index.html' }] });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | Render service ID (srv-...) |
-| `body` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-  type: redirect | rewrite,
-  source: string,
-  destination: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### updateSecretFilesForService
-
-`final.updateSecretFilesForService`
-
-Replace all secret files on a Render service with the given list; files not listed are deleted (id: service ID)
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.final.updateSecretFilesForService({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | Render service ID (srv-...) |
-| `body` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-  name: string,
-  content: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### updateServiceNotificationOverrides
-
-`final.updateServiceNotificationOverrides`
-
-Update notification overrides for a Render service
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.updateServiceNotificationOverrides({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `serviceId` | `string` | Yes | — |
-| `previewNotificationsEnabled` | `default \| false \| true` | No | — |
-| `notificationsToSend` | `default \| none \| failure \| all` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### upsertOwnerMetricsStream
-
-`final.upsertOwnerMetricsStream`
-
-Create or update metrics stream settings for a Render owner
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.upsertOwnerMetricsStream({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `ownerId` | `string` | Yes | — |
-| `provider` | `BETTER_STACK \| GRAFANA \| DATADOG \| NEW_RELIC \| HONEYCOMB \| SIGNOZ \| GROUNDCOVER \| LOGFIRE \| CUSTOM` | No | — |
-| `url` | `string` | No | — |
-| `token` | `string` | No | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### verifyCustomDomain
-
-`final.verifyCustomDomain`
-
-Re-run DNS verification for a custom domain on a Render service (id: service ID, key: domain name or ID)
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.final.verifyCustomDomain({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `ownerId` | `string` | No | — |
-| `projectId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
-| `key` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
 ## Key Value
 
 ### connectionInfo
@@ -4353,6 +2726,85 @@ await corsair.render.api.keyValue.create({});
 ```ts
 {
 } | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`keyValue.delete`
+
+Delete a Render Key Value instance
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.keyValue.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`keyValue.list`
+
+List Render Key Value instances
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.keyValue.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string[]` | No | — |
+| `region` | `frankfurt \| oregon \| ohio \| singapore \| virginia[]` | No | — |
+| `ownerId` | `string[]` | No | — |
+| `environmentId` | `string[]` | No | — |
+| `createdBefore` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+| `updatedBefore` | `string` | No | — |
+| `updatedAfter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
 }[]
 ```
 </Accordion>
@@ -4778,6 +3230,45 @@ await corsair.render.api.logs.updateOwnerStream({});
 
 ---
 
+### updateResourceStream
+
+`logs.updateResourceStream`
+
+Set the log stream setting for one Render resource
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.logs.updateResourceStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceId` | `string` | Yes | — |
+| `setting` | `send \| drop` | Yes | — |
+| `endpoint` | `string` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### values
 
 `logs.values`
@@ -5102,6 +3593,41 @@ await corsair.render.api.metrics.cpuTarget({});
 {
 } | {
 }[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteOwnerStream
+
+`metrics.deleteOwnerStream`
+
+Delete the metrics stream of a Render workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.metrics.deleteOwnerStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -5558,6 +4084,42 @@ await corsair.render.api.metrics.replicationLag({});
 
 ---
 
+### retrieveOwnerStream
+
+`metrics.retrieveOwnerStream`
+
+Retrieve metrics stream settings for a Render owner
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.retrieveOwnerStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### taskRunsCompleted
 
 `metrics.taskRunsCompleted`
@@ -5621,6 +4183,234 @@ await corsair.render.api.metrics.taskRunsQueued({});
 | `projectId` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### upsertOwnerStream
+
+`metrics.upsertOwnerStream`
+
+Create or update metrics stream settings for a Render owner
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.metrics.upsertOwnerStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+| `provider` | `BETTER_STACK \| GRAFANA \| DATADOG \| NEW_RELIC \| HONEYCOMB \| SIGNOZ \| GROUNDCOVER \| LOGFIRE \| CUSTOM` | No | — |
+| `url` | `string` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Notifications
+
+### listOverrides
+
+`notifications.listOverrides`
+
+List per-service notification overrides
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.notifications.listOverrides({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string[]` | No | — |
+| `serviceId` | `string[]` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveOwnerSettings
+
+`notifications.retrieveOwnerSettings`
+
+Retrieve notification settings for a Render workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.notifications.retrieveOwnerSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveServiceOverrides
+
+`notifications.retrieveServiceOverrides`
+
+Retrieve notification overrides for a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.notifications.retrieveServiceOverrides({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateOwnerSettings
+
+`notifications.updateOwnerSettings`
+
+Update notification settings for a Render workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.notifications.updateOwnerSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+| `emailEnabled` | `boolean` | No | — |
+| `previewNotificationsEnabled` | `boolean` | No | — |
+| `notificationsToSend` | `none \| failure \| all` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateServiceOverrides
+
+`notifications.updateServiceOverrides`
+
+Update notification overrides for a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.notifications.updateServiceOverrides({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `previewNotificationsEnabled` | `default \| false \| true` | No | — |
+| `notificationsToSend` | `default \| none \| failure \| all` | No | — |
 
 
 
@@ -6227,6 +5017,76 @@ await corsair.render.api.postgres.list({});
 | `projectId` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listExports
+
+`postgres.listExports`
+
+List exports of a Render Postgres database
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.listExports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUsers
+
+`postgres.listUsers`
+
+List users of a Render Postgres database
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
 
 
 
@@ -7202,6 +6062,43 @@ await corsair.render.api.services.createPreview({});
 
 ---
 
+### customDomains.create
+
+`services.customDomains.create`
+
+Add a custom domain to a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.customDomains.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### customDomains.delete
 
 `services.customDomains.delete`
@@ -7280,6 +6177,80 @@ await corsair.render.api.services.customDomains.list({});
 
 ---
 
+### customDomains.retrieve
+
+`services.customDomains.retrieve`
+
+Retrieve a custom domain on a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.customDomains.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `customDomainNameOrID` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### customDomains.verify
+
+`services.customDomains.verify`
+
+Re-run DNS verification for a custom domain on a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.customDomains.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `customDomainNameOrID` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### delete
 
 `services.delete`
@@ -7332,78 +6303,6 @@ await corsair.render.api.services.deleteAutoscaling({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `serviceId` | `string` | Yes | — |
-
-
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | undefined
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### deleteHeader
-
-`services.deleteHeader`
-
-Delete a header from a Render service
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.services.deleteHeader({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `serviceId` | `string` | Yes | — |
-| `headerId` | `string` | Yes | — |
-
-
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | undefined
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### deleteRoute
-
-`services.deleteRoute`
-
-Delete a route from a Render service
-
-**Risk:** `destructive`
-
-```ts
-await corsair.render.api.services.deleteRoute({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `serviceId` | `string` | Yes | — |
-| `routeId` | `string` | Yes | — |
 
 
 
@@ -7530,6 +6429,155 @@ await corsair.render.api.services.envGroups.delete({});
 
 ---
 
+### envGroups.envVars.delete
+
+`services.envGroups.envVars.delete`
+
+Delete one environment variable from a Render env group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.envGroups.envVars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.envVars.retrieve
+
+`services.envGroups.envVars.retrieve`
+
+Retrieve one environment variable, including its value, from a Render env group
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.envGroups.envVars.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.envVars.upsert
+
+`services.envGroups.envVars.upsert`
+
+Add or update one environment variable in a Render env group
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.envGroups.envVars.upsert({ envGroupId: 'evg-d0k1q2r3s4t5u6v7w8x9', envVarKey: 'LOG_LEVEL', value: 'info' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+| `value` | `string` | No | — |
+| `generateValue` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.linkService
+
+`services.envGroups.linkService`
+
+Link a Render service to an env group
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.envGroups.linkService({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### envGroups.list
 
 `services.envGroups.list`
@@ -7611,6 +6659,117 @@ await corsair.render.api.services.envGroups.retrieve({});
 
 ---
 
+### envGroups.secretFiles.delete
+
+`services.envGroups.secretFiles.delete`
+
+Delete one secret file from a Render env group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.envGroups.secretFiles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.secretFiles.retrieve
+
+`services.envGroups.secretFiles.retrieve`
+
+Retrieve one secret file, including its contents, from a Render env group
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.envGroups.secretFiles.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.secretFiles.upsert
+
+`services.envGroups.secretFiles.upsert`
+
+Add or update one secret file in a Render env group
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.envGroups.secretFiles.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### envGroups.unlinkService
 
 `services.envGroups.unlinkService`
@@ -7665,6 +6824,43 @@ await corsair.render.api.services.envGroups.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### environments.addResources
+
+`services.environments.addResources`
+
+Move services, databases or env groups into a Render environment
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.environments.addResources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+| `resourceIds` | `string[]` | Yes | — |
 
 
 
@@ -7994,6 +7190,211 @@ await corsair.render.api.services.envVars.list({});
 
 ---
 
+### envVars.retrieve
+
+`services.envVars.retrieve`
+
+Retrieve one environment variable, including its value, from a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.envVars.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.update
+
+`services.envVars.update`
+
+Replace all environment variables on a Render service with the given list; variables not listed are deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.envVars.update({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ key: 'LOG_LEVEL', value: 'info' }, { key: 'SESSION_SECRET', generateValue: true }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+(
+  {
+    key: string,
+    value: string
+  } | {
+    key: string,
+    generateValue: boolean
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.upsert
+
+`services.envVars.upsert`
+
+Add or update one environment variable on a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.envVars.upsert({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', envVarKey: 'LOG_LEVEL', value: 'debug' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+| `value` | `string` | No | — |
+| `generateValue` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### headers.add
+
+`services.headers.add`
+
+Add a response header rule to a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.headers.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### headers.delete
+
+`services.headers.delete`
+
+Delete a header from a Render service
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.headers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `headerId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### headers.list
 
 `services.headers.list`
@@ -8026,6 +7427,56 @@ await corsair.render.api.services.headers.list({});
 
 ```ts
 {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### headers.update
+
+`services.headers.update`
+
+Replace all response header rules on a Render service with the given list; rules not listed are deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.headers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  path: string,
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
 }[]
 ```
 </Accordion>
@@ -8318,6 +7769,41 @@ await corsair.render.api.services.listEvents({});
 
 ---
 
+### listInstances
+
+`services.listInstances`
+
+List the running instances of a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.listInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### listOutboundIps
 
 `services.listOutboundIps`
@@ -8346,55 +7832,6 @@ await corsair.render.api.services.listOutboundIps({});
 | `dedicatedIpId` | `string` | No | — |
 | `ips` | `string[]` | Yes | — |
 
-
-
----
-
-### patchRoute
-
-`services.patchRoute`
-
-Update a route on a Render service
-
-**Risk:** `write`
-
-```ts
-await corsair.render.api.services.patchRoute({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `serviceId` | `string` | Yes | — |
-| `routeId` | `string` | Yes | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-  priority: number
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -8510,6 +7947,43 @@ await corsair.render.api.services.retrieve({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x
 
 ---
 
+### retrieveDeploy
+
+`services.retrieveDeploy`
+
+Retrieve one deploy of a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.retrieveDeploy({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', deployId: 'dep-d0k1q2r3s4t5u6v7w8y0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `deployId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### rollbackDeploy
 
 `services.rollbackDeploy`
@@ -8536,6 +8010,210 @@ await corsair.render.api.services.rollbackDeploy({ serviceId: 'srv-d0k1q2r3s4t5u
 
 ---
 
+### routes.add
+
+`services.routes.add`
+
+Add a redirect or rewrite rule to a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.routes.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `type` | `redirect \| rewrite` | Yes | — |
+| `source` | `string` | Yes | — |
+| `destination` | `string` | Yes | — |
+| `priority` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### routes.delete
+
+`services.routes.delete`
+
+Delete a route from a Render service
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.routes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `routeId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### routes.list
+
+`services.routes.list`
+
+List the redirect and rewrite rules of a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.routes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `type` | `redirect \| rewrite[]` | No | — |
+| `source` | `string[]` | No | — |
+| `destination` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### routes.update
+
+`services.routes.update`
+
+Replace all redirect and rewrite rules on a Render service with the given list; rules not listed are deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.routes.update({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ type: 'rewrite', source: '/app/*', destination: '/index.html' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: redirect | rewrite,
+  source: string,
+  destination: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### routes.updatePriority
+
+`services.routes.updatePriority`
+
+Change the priority of one redirect or rewrite rule on a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.routes.updatePriority({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `routeId` | `string` | Yes | — |
+| `priority` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### scale
 
 `services.scale`
@@ -8558,6 +8236,203 @@ await corsair.render.api.services.scale({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9',
 
 
 **Output:** `any`
+
+
+---
+
+### secretFiles.delete
+
+`services.secretFiles.delete`
+
+Delete one secret file from a Render service
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.secretFiles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.list
+
+`services.secretFiles.list`
+
+List secret files on a Render service, including their contents
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.secretFiles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.retrieve
+
+`services.secretFiles.retrieve`
+
+Retrieve one secret file, including its contents, from a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.secretFiles.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.update
+
+`services.secretFiles.update`
+
+Replace all secret files on a Render service with the given list; files not listed are deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.secretFiles.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.upsert
+
+`services.secretFiles.upsert`
+
+Add or update one secret file on a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.secretFiles.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---

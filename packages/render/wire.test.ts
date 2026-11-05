@@ -56,9 +56,9 @@ type Call = (context: never, input: unknown) => Promise<unknown>;
 describe('Render replace operations', () => {
 	it.each([
 		[
-			'final.updateEnvVarsForService',
-			api.final.updateEnvVarsForService,
-			{ id: 'srv-1' },
+			'services.envVars.update',
+			api.services.envVars.update,
+			{ serviceId: 'srv-1' },
 			'/v1/services/srv-1/env-vars',
 			[
 				{ key: 'DATABASE_URL', value: 'postgres://x' },
@@ -66,23 +66,23 @@ describe('Render replace operations', () => {
 			],
 		],
 		[
-			'final.updateHeaders',
-			api.final.updateHeaders,
-			{ id: 'srv-1' },
+			'services.headers.update',
+			api.services.headers.update,
+			{ serviceId: 'srv-1' },
 			'/v1/services/srv-1/headers',
 			[{ path: '/*', name: 'X-Frame-Options', value: 'DENY' }],
 		],
 		[
-			'final.updateSecretFilesForService',
-			api.final.updateSecretFilesForService,
-			{ id: 'srv-1' },
+			'services.secretFiles.update',
+			api.services.secretFiles.update,
+			{ serviceId: 'srv-1' },
 			'/v1/services/srv-1/secret-files',
 			[{ name: 'config.json', content: '{}' }],
 		],
 		[
-			'final.updateRoutes',
-			api.final.updateRoutes,
-			{ id: 'srv-1' },
+			'services.routes.update',
+			api.services.routes.update,
+			{ serviceId: 'srv-1' },
 			'/v1/services/srv-1/routes',
 			[{ type: 'rewrite', source: '/app/*', destination: '/index.html' }],
 		],
@@ -116,8 +116,8 @@ describe('Render replace operations', () => {
 
 	it('rejects a replace call without the list before any request is sent', async () => {
 		await expect(
-			(api.final.updateEnvVarsForService as unknown as Call)(ctx, {
-				id: 'srv-1',
+			(api.services.envVars.update as unknown as Call)(ctx, {
+				serviceId: 'srv-1',
 				key: 'A',
 				value: 'B',
 			}),
@@ -226,9 +226,9 @@ describe('Render documented response shapes', () => {
 			'/v1/workflowversions',
 		],
 		[
-			'final.verifyCustomDomain',
-			api.final.verifyCustomDomain,
-			{ id: 'srv-1', key: 'www.example.com' },
+			'services.customDomains.verify',
+			api.services.customDomains.verify,
+			{ serviceId: 'srv-1', customDomainNameOrID: 'www.example.com' },
 			'/v1/services/srv-1/custom-domains/www.example.com/verify',
 		],
 	] as const)(
@@ -292,11 +292,15 @@ describe('Render required request fields', () => {
 			{ ownerId: 'tea-1', name: 'flow' },
 		],
 		[
-			'final.addRoute',
-			api.final.addRoute,
-			{ id: 'srv-1', source: '/a', destination: '/b' },
+			'services.routes.add',
+			api.services.routes.add,
+			{ serviceId: 'srv-1', source: '/a', destination: '/b' },
 		],
-		['final.createCustomDomain', api.final.createCustomDomain, { id: 'srv-1' }],
+		[
+			'services.customDomains.create',
+			api.services.customDomains.create,
+			{ serviceId: 'srv-1' },
+		],
 		[
 			'services.environments.list',
 			api.services.environments.list,

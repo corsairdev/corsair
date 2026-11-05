@@ -272,7 +272,7 @@ describe('Render service endpoints', () => {
 		).toThrow('Invalid Render service ID');
 	});
 
-	it('covers the resource, observability, metrics, automation, and final groups', async () => {
+	it('covers the resource, observability, metrics, automation, and blueprint groups', async () => {
 		const ctx = { key: 'secret' } as never;
 		await listEnvironments(ctx, { projectId: 'prj-1' });
 		await listProjects(ctx, {});
@@ -471,7 +471,7 @@ describe('Render service endpoints', () => {
 		await patchServiceRoute(ctx, {
 			serviceId: 'srv-1',
 			routeId: 'rte-1',
-			body: { priority: 0 },
+			priority: 0,
 		});
 		await deleteServiceRoute(ctx, { serviceId: 'srv-1', routeId: 'rte-1' });
 
@@ -853,7 +853,7 @@ describe('Render service endpoints', () => {
 				options: {},
 				$getAccountId: jest.fn().mockResolvedValue('account-1'),
 			} as never,
-			{ id: 'srv-1', body: [] },
+			{ serviceId: 'srv-1', body: [] },
 		);
 
 		expect(request).toHaveBeenCalledWith(
@@ -1248,13 +1248,13 @@ describe('Render service endpoints', () => {
 		expect(request).not.toHaveBeenCalled();
 	});
 
-	it('rejects missing and unsafe final-route identifiers', async () => {
+	it('rejects missing and unsafe service sub-resource identifiers', async () => {
 		expect(() => listRoutes({ key: 'secret' } as never, {} as never)).toThrow(
-			'Invalid Render id',
+			'Invalid Render serviceId',
 		);
 		expect(() =>
-			listRoutes({ key: 'secret' } as never, { id: '../services' }),
-		).toThrow('Invalid Render id');
+			listRoutes({ key: 'secret' } as never, { serviceId: '../services' }),
+		).toThrow('Invalid Render serviceId');
 		expect(request).not.toHaveBeenCalled();
 	});
 

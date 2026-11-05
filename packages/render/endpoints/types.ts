@@ -108,12 +108,6 @@ const ResourceInputSchema = z
 const ResourceIdInputSchema = ResourceInputSchema.extend({
 	id: z.string().min(1),
 });
-const ResourceIdKeyInputSchema = ResourceIdInputSchema.extend({
-	key: z.string().min(1),
-});
-const ResourceIdServiceIdInputSchema = ResourceIdInputSchema.extend({
-	serviceId: z.string().min(1),
-});
 const ServiceNotificationOverrideInputSchema = z.object({
 	serviceId: z.string().min(1),
 });
@@ -192,7 +186,7 @@ const ServiceRouteInputSchema = ServiceIdInputSchema.extend({
 	routeId: z.string().min(1),
 });
 const PatchServiceRouteInputSchema = ServiceRouteInputSchema.extend({
-	body: z.object({ priority: z.number().int().min(0) }),
+	priority: z.number().int().min(0),
 });
 const CreateDiskInputSchema = z.object({
 	name: z.string().min(1),
@@ -356,19 +350,16 @@ const BuildSourceEnvVarsReplaceInputSchema = BuildSourceIdInputSchema.extend({
 });
 const BuildSourceSecretFilesReplaceInputSchema =
 	BuildSourceIdInputSchema.extend({ body: SecretFileReplacementSchema });
-const ServiceIdPathInputSchema = z.object({
-	id: z.string().min(1).describe('Render service ID (srv-...)'),
-});
-const ServiceEnvVarsReplaceInputSchema = ServiceIdPathInputSchema.extend({
+const ServiceEnvVarsReplaceInputSchema = ServiceIdInputSchema.extend({
 	body: EnvVarReplacementSchema,
 });
-const ServiceSecretFilesReplaceInputSchema = ServiceIdPathInputSchema.extend({
+const ServiceSecretFilesReplaceInputSchema = ServiceIdInputSchema.extend({
 	body: SecretFileReplacementSchema,
 });
-const ServiceHeadersReplaceInputSchema = ServiceIdPathInputSchema.extend({
+const ServiceHeadersReplaceInputSchema = ServiceIdInputSchema.extend({
 	body: HeaderReplacementSchema,
 });
-const ServiceRoutesReplaceInputSchema = ServiceIdPathInputSchema.extend({
+const ServiceRoutesReplaceInputSchema = ServiceIdInputSchema.extend({
 	body: RouteReplacementSchema,
 });
 const BuildSourceEnvVarBodyInputSchema = BuildSourceEnvVarInputSchema.extend({
@@ -463,36 +454,93 @@ const UpdateOwnerLogStreamInputSchema = IdInputSchema.extend({
 	endpoint: z.string().min(1).optional(),
 	token: z.string().min(1).optional(),
 });
-const UpdateResourceLogStreamInputSchema = IdInputSchema.extend({
+const UpdateResourceLogStreamInputSchema = ResourceIdPathInputSchema.extend({
 	setting: LogStreamSettingSchema,
 	endpoint: z.string().min(1).optional(),
 	token: z.string().min(1).optional(),
 });
-const AddHeaderInputSchema = IdInputSchema.extend({
+const AddHeaderInputSchema = ServiceIdInputSchema.extend({
 	path: z.string().min(1),
 	name: z.string().min(1),
 	value: z.string(),
 });
-const AddResourcesToEnvironmentInputSchema = IdInputSchema.extend({
-	resourceIds: z.array(z.string().min(1)).min(1),
-});
-const AddRouteInputSchema = IdInputSchema.extend({
+const AddRouteInputSchema = ServiceIdInputSchema.extend({
 	type: z.enum(['redirect', 'rewrite']),
 	source: z.string().min(1),
 	destination: z.string().min(1),
 	priority: z.number().int().min(0).optional(),
 });
-const CreateCustomDomainInputSchema = IdInputSchema.extend({
+const CreateCustomDomainInputSchema = ServiceIdInputSchema.extend({
 	name: z.string().min(1),
 });
-const PutEnvVarInputSchema = ResourceIdKeyInputSchema.extend({
+const EnvVarValueFields = {
 	value: z.string().optional(),
 	generateValue: z.boolean().optional(),
-}).refine(
-	(input) =>
-		(input.value === undefined) !== (input.generateValue === undefined),
-	{ message: 'Pass exactly one of value or generateValue' },
-);
+};
+const hasOneEnvVarValue = (input: {
+	value?: string;
+	generateValue?: boolean;
+}) => (input.value === undefined) !== (input.generateValue === undefined);
+const oneEnvVarValue = {
+	message: 'Pass exactly one of value or generateValue',
+};
+const ServiceEnvVarUpsertInputSchema = ServiceEnvVarInputSchema.extend(
+	EnvVarValueFields,
+).refine(hasOneEnvVarValue, oneEnvVarValue);
+const ServiceDeployInputSchema = ServiceIdInputSchema.extend({
+	deployId: z.string().min(1),
+});
+const ServiceSecretFileInputSchema = ServiceIdInputSchema.extend({
+	secretFileName: z.string().min(1),
+});
+const ServiceSecretFileUpsertInputSchema = ServiceSecretFileInputSchema.extend({
+	content: z.string(),
+});
+const ListServiceRoutesInputSchema = ServiceQueryInputSchema.extend({
+	type: z.array(z.enum(['redirect', 'rewrite'])).optional(),
+	source: z.array(z.string()).optional(),
+	destination: z.array(z.string()).optional(),
+});
+const EnvGroupIdInputSchema = z.object({ envGroupId: z.string().min(1) });
+const EnvGroupEnvVarInputSchema = EnvGroupIdInputSchema.extend({
+	envVarKey: z.string().min(1),
+});
+const EnvGroupEnvVarUpsertInputSchema = EnvGroupEnvVarInputSchema.extend(
+	EnvVarValueFields,
+).refine(hasOneEnvVarValue, oneEnvVarValue);
+const EnvGroupSecretFileInputSchema = EnvGroupIdInputSchema.extend({
+	secretFileName: z.string().min(1),
+});
+const EnvGroupSecretFileUpsertInputSchema =
+	EnvGroupSecretFileInputSchema.extend({ content: z.string() });
+const ListKeyValueInputSchema = z.object({
+	name: z.array(z.string()).optional(),
+	region: z.array(RenderRegionSchema).optional(),
+	ownerId: z.array(z.string()).optional(),
+	environmentId: z.array(z.string()).optional(),
+	createdBefore: z.string().datetime().optional(),
+	createdAfter: z.string().datetime().optional(),
+	updatedBefore: z.string().datetime().optional(),
+	updatedAfter: z.string().datetime().optional(),
+	cursor: z.string().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
+});
+const ListBlueprintsInputSchema = z.object({
+	ownerId: z.array(z.string()).optional(),
+	cursor: z.string().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
+});
+const ListNotificationOverridesInputSchema = z.object({
+	ownerId: z.array(z.string()).optional(),
+	serviceId: z.array(z.string()).optional(),
+	cursor: z.string().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
+});
+const UpdateOwnerNotificationSettingsInputSchema = OwnerIdInputSchema.extend({
+	emailEnabled: z.boolean().optional(),
+	previewNotificationsEnabled: z.boolean().optional(),
+	notificationsToSend: z.enum(['none', 'failure', 'all']).optional(),
+});
 const ValidateBlueprintInputSchema = z.object({
 	ownerId: z.string().min(1),
 	file: z.string().min(1).describe('Contents of the render.yaml to validate'),
@@ -544,7 +592,6 @@ export type ServiceOutput = z.infer<typeof ServiceOutputSchema>;
 export type OutboundIpsOutput = z.infer<typeof OutboundIpsOutputSchema>;
 type ResourceInput = z.infer<typeof ResourceInputSchema>;
 type ResourceIdInput = z.infer<typeof ResourceIdInputSchema>;
-type ResourceIdKeyInput = z.infer<typeof ResourceIdKeyInputSchema>;
 
 export type RenderEndpointInputs = {
 	listServices: ListServicesInput;
@@ -681,60 +728,62 @@ export type RenderEndpointInputs = {
 	updateWebhook: z.infer<typeof UpdateWebhookInputSchema>;
 	deleteWebhook: ResourceIdInput;
 	addHeaders: z.infer<typeof AddHeaderInputSchema>;
-	addOrUpdateSecretFile: ResourceIdKeyInput;
-	addResourcesToEnvironment: z.infer<
-		typeof AddResourcesToEnvironmentInputSchema
-	>;
+	addOrUpdateSecretFile: z.infer<typeof ServiceSecretFileUpsertInputSchema>;
+	addResourcesToEnvironment: z.infer<typeof EnvironmentResourcesInputSchema>;
 	addRoute: z.infer<typeof AddRouteInputSchema>;
 	createCustomDomain: z.infer<typeof CreateCustomDomainInputSchema>;
-	deleteEnvGroupEnvVar: ResourceIdKeyInput;
-	deleteEnvGroupSecretFile: ResourceIdKeyInput;
-	deleteKeyValue: ResourceIdInput;
-	deleteSecretFile: ResourceIdKeyInput;
-	disconnectBlueprint: ResourceIdInput;
-	linkServiceToEnvGroup: z.infer<typeof ResourceIdServiceIdInputSchema>;
-	listBlueprints: z.infer<typeof ResourceInputSchema>;
+	deleteEnvGroupEnvVar: z.infer<typeof EnvGroupEnvVarInputSchema>;
+	deleteEnvGroupSecretFile: z.infer<typeof EnvGroupSecretFileInputSchema>;
+	deleteKeyValue: z.infer<typeof IdInputSchema>;
+	deleteSecretFile: z.infer<typeof ServiceSecretFileInputSchema>;
+	disconnectBlueprint: z.infer<typeof IdInputSchema>;
+	linkServiceToEnvGroup: z.infer<typeof EnvGroupServiceInputSchema>;
+	listBlueprints: z.infer<typeof ListBlueprintsInputSchema>;
 	listBlueprintSyncs: z.infer<typeof BlueprintSyncsInputSchema>;
 	suspendKeyValue: ResourceIdInput;
 	resumeKeyValue: ResourceIdInput;
 	retrieveKeyValueConnectionInfo: ResourceIdInput;
-	listInstances: ResourceIdInput;
-	listKeyValue: z.infer<typeof ResourceInputSchema>;
+	listInstances: z.infer<typeof ServiceIdInputSchema>;
+	listKeyValue: z.infer<typeof ListKeyValueInputSchema>;
 	createKeyValue: z.infer<typeof CreateKeyValueInputSchema>;
 	retrieveKeyValue: z.infer<typeof KeyValueIdInputSchema>;
 	updateKeyValue: z.infer<typeof UpdateKeyValueInputSchema>;
-	listNotificationOverrides: z.infer<typeof ResourceInputSchema>;
+	listNotificationOverrides: z.infer<
+		typeof ListNotificationOverridesInputSchema
+	>;
 	retrieveServiceNotificationOverrides: z.infer<
 		typeof ServiceNotificationOverrideInputSchema
 	>;
 	updateServiceNotificationOverrides: z.infer<
 		typeof UpdateServiceNotificationOverrideInputSchema
 	>;
-	listPostgresExport: ResourceIdInput;
-	listPostgresUsers: ResourceIdInput;
-	listRoutes: ResourceIdInput;
-	listSecretFiles: ResourceIdInput;
-	retrieveCustomDomain: ResourceIdKeyInput;
-	retrieveDeploy: ResourceIdKeyInput;
-	retrieveEnvGroupEnvVar: ResourceIdKeyInput;
-	retrieveEnvGroupSecretFile: ResourceIdKeyInput;
-	retrieveEnvVar: ResourceIdKeyInput;
-	retrieveOwnerNotificationSettings: ResourceIdInput;
-	retrieveSecretFile: ResourceIdKeyInput;
-	updateEnvGroupEnvVar: z.infer<typeof PutEnvVarInputSchema>;
-	updateEnvGroupSecretFile: ResourceIdKeyInput;
-	updateEnvVar: z.infer<typeof PutEnvVarInputSchema>;
+	listPostgresExport: z.infer<typeof IdInputSchema>;
+	listPostgresUsers: z.infer<typeof IdInputSchema>;
+	listRoutes: z.infer<typeof ListServiceRoutesInputSchema>;
+	listSecretFiles: z.infer<typeof ServiceQueryInputSchema>;
+	retrieveCustomDomain: z.infer<typeof ServiceCustomDomainInputSchema>;
+	retrieveDeploy: z.infer<typeof ServiceDeployInputSchema>;
+	retrieveEnvGroupEnvVar: z.infer<typeof EnvGroupEnvVarInputSchema>;
+	retrieveEnvGroupSecretFile: z.infer<typeof EnvGroupSecretFileInputSchema>;
+	retrieveEnvVar: z.infer<typeof ServiceEnvVarInputSchema>;
+	retrieveOwnerNotificationSettings: z.infer<typeof OwnerIdInputSchema>;
+	retrieveSecretFile: z.infer<typeof ServiceSecretFileInputSchema>;
+	updateEnvGroupEnvVar: z.infer<typeof EnvGroupEnvVarUpsertInputSchema>;
+	updateEnvGroupSecretFile: z.infer<typeof EnvGroupSecretFileUpsertInputSchema>;
+	updateEnvVar: z.infer<typeof ServiceEnvVarUpsertInputSchema>;
 	updateEnvVarsForService: z.infer<typeof ServiceEnvVarsReplaceInputSchema>;
 	updateHeaders: z.infer<typeof ServiceHeadersReplaceInputSchema>;
 	updateResourceLogStream: z.infer<typeof UpdateResourceLogStreamInputSchema>;
 	updateSecretFilesForService: z.infer<
 		typeof ServiceSecretFilesReplaceInputSchema
 	>;
-	verifyCustomDomain: ResourceIdKeyInput;
-	deleteOwnerMetricsStream: ResourceIdInput;
+	verifyCustomDomain: z.infer<typeof ServiceCustomDomainInputSchema>;
+	deleteOwnerMetricsStream: z.infer<typeof OwnerIdInputSchema>;
 	retrieveOwnerMetricsStream: z.infer<typeof OwnerIdInputSchema>;
 	upsertOwnerMetricsStream: z.infer<typeof OwnerMetricsStreamInputSchema>;
-	updateOwnerNotificationSettings: ResourceIdInput;
+	updateOwnerNotificationSettings: z.infer<
+		typeof UpdateOwnerNotificationSettingsInputSchema
+	>;
 	updateRoutes: z.infer<typeof ServiceRoutesReplaceInputSchema>;
 	createBuildSource: z.infer<typeof CreateBuildSourceInputSchema>;
 	listBuildSources: z.infer<typeof ResourceInputSchema>;
@@ -1140,53 +1189,53 @@ export const RenderEndpointInputSchemas = {
 	updateWebhook: UpdateWebhookInputSchema,
 	deleteWebhook: ResourceIdInputSchema,
 	addHeaders: AddHeaderInputSchema,
-	addOrUpdateSecretFile: ResourceIdKeyInputSchema,
-	addResourcesToEnvironment: AddResourcesToEnvironmentInputSchema,
+	addOrUpdateSecretFile: ServiceSecretFileUpsertInputSchema,
+	addResourcesToEnvironment: EnvironmentResourcesInputSchema,
 	addRoute: AddRouteInputSchema,
 	createCustomDomain: CreateCustomDomainInputSchema,
-	deleteEnvGroupEnvVar: ResourceIdKeyInputSchema,
-	deleteEnvGroupSecretFile: ResourceIdKeyInputSchema,
-	deleteKeyValue: ResourceIdInputSchema,
-	deleteSecretFile: ResourceIdKeyInputSchema,
-	disconnectBlueprint: ResourceIdInputSchema,
-	linkServiceToEnvGroup: ResourceIdServiceIdInputSchema,
-	listBlueprints: ResourceInputSchema,
+	deleteEnvGroupEnvVar: EnvGroupEnvVarInputSchema,
+	deleteEnvGroupSecretFile: EnvGroupSecretFileInputSchema,
+	deleteKeyValue: IdInputSchema,
+	deleteSecretFile: ServiceSecretFileInputSchema,
+	disconnectBlueprint: IdInputSchema,
+	linkServiceToEnvGroup: EnvGroupServiceInputSchema,
+	listBlueprints: ListBlueprintsInputSchema,
 	listBlueprintSyncs: BlueprintSyncsInputSchema,
 	suspendKeyValue: ResourceIdInputSchema,
 	resumeKeyValue: ResourceIdInputSchema,
 	retrieveKeyValueConnectionInfo: ResourceIdInputSchema,
-	listInstances: ResourceIdInputSchema,
-	listKeyValue: ResourceInputSchema,
+	listInstances: ServiceIdInputSchema,
+	listKeyValue: ListKeyValueInputSchema,
 	createKeyValue: CreateKeyValueInputSchema,
 	retrieveKeyValue: KeyValueIdInputSchema,
 	updateKeyValue: UpdateKeyValueInputSchema,
-	listNotificationOverrides: ResourceInputSchema,
+	listNotificationOverrides: ListNotificationOverridesInputSchema,
 	retrieveServiceNotificationOverrides: ServiceNotificationOverrideInputSchema,
 	updateServiceNotificationOverrides:
 		UpdateServiceNotificationOverrideInputSchema,
-	listPostgresExport: ResourceIdInputSchema,
-	listPostgresUsers: ResourceIdInputSchema,
-	listRoutes: ResourceIdInputSchema,
-	listSecretFiles: ResourceIdInputSchema,
-	retrieveCustomDomain: ResourceIdKeyInputSchema,
-	retrieveDeploy: ResourceIdKeyInputSchema,
-	retrieveEnvGroupEnvVar: ResourceIdKeyInputSchema,
-	retrieveEnvGroupSecretFile: ResourceIdKeyInputSchema,
-	retrieveEnvVar: ResourceIdKeyInputSchema,
-	retrieveOwnerNotificationSettings: ResourceIdInputSchema,
-	retrieveSecretFile: ResourceIdKeyInputSchema,
-	updateEnvGroupEnvVar: PutEnvVarInputSchema,
-	updateEnvGroupSecretFile: ResourceIdKeyInputSchema,
-	updateEnvVar: PutEnvVarInputSchema,
+	listPostgresExport: IdInputSchema,
+	listPostgresUsers: IdInputSchema,
+	listRoutes: ListServiceRoutesInputSchema,
+	listSecretFiles: ServiceQueryInputSchema,
+	retrieveCustomDomain: ServiceCustomDomainInputSchema,
+	retrieveDeploy: ServiceDeployInputSchema,
+	retrieveEnvGroupEnvVar: EnvGroupEnvVarInputSchema,
+	retrieveEnvGroupSecretFile: EnvGroupSecretFileInputSchema,
+	retrieveEnvVar: ServiceEnvVarInputSchema,
+	retrieveOwnerNotificationSettings: OwnerIdInputSchema,
+	retrieveSecretFile: ServiceSecretFileInputSchema,
+	updateEnvGroupEnvVar: EnvGroupEnvVarUpsertInputSchema,
+	updateEnvGroupSecretFile: EnvGroupSecretFileUpsertInputSchema,
+	updateEnvVar: ServiceEnvVarUpsertInputSchema,
 	updateEnvVarsForService: ServiceEnvVarsReplaceInputSchema,
 	updateHeaders: ServiceHeadersReplaceInputSchema,
 	updateResourceLogStream: UpdateResourceLogStreamInputSchema,
 	updateSecretFilesForService: ServiceSecretFilesReplaceInputSchema,
-	verifyCustomDomain: ResourceIdKeyInputSchema,
-	deleteOwnerMetricsStream: ResourceIdInputSchema,
+	verifyCustomDomain: ServiceCustomDomainInputSchema,
+	deleteOwnerMetricsStream: OwnerIdInputSchema,
 	retrieveOwnerMetricsStream: OwnerIdInputSchema,
 	upsertOwnerMetricsStream: OwnerMetricsStreamInputSchema,
-	updateOwnerNotificationSettings: ResourceIdInputSchema,
+	updateOwnerNotificationSettings: UpdateOwnerNotificationSettingsInputSchema,
 	updateRoutes: ServiceRoutesReplaceInputSchema,
 	createBuildSource: CreateBuildSourceInputSchema,
 	listBuildSources: ResourceInputSchema,

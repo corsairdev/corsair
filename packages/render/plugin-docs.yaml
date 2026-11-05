@@ -5,9 +5,8 @@ recommendedAuth: api_key
 overviewNote: |
   Create an API key in the Render Dashboard under Account Settings, API Keys. A key can reach every workspace its user belongs to, so most create and list calls take an `ownerId` (the workspace ID, `tea-...` or `usr-...`); `owners.list` returns them. Things to know before you call:
 
-  - **Replace operations delete what you leave out.** `final.updateEnvVarsForService`, `final.updateSecretFilesForService`, `final.updateHeaders`, `final.updateRoutes`, `buildSources.envVars.update` and `buildSources.secretFiles.update` take the full list as `body`. Entries not in the list are removed. To change one variable, use `final.updateEnvVar` (or `final.updateEnvGroupEnvVar`) instead.
+  - **`update` on a list replaces it.** `services.envVars.update`, `services.secretFiles.update`, `services.headers.update`, `services.routes.update`, `buildSources.envVars.update` and `buildSources.secretFiles.update` take the full list as `body`, and entries not in the list are removed. To change one entry, use the matching `upsert` (for example `services.envVars.upsert` or `services.envGroups.envVars.upsert`).
   - **Secrets come back in plain text.** Env var and secret file reads return values and file contents.
-  - **`id` and `key` in the `final` group.** These operations name their path values generically. `id` is the parent resource (a service, env group, Postgres database or workspace) and `key` is the child: `final.retrieveDeploy` takes the service ID as `id` and the deploy ID as `key`. Each operation's description says which is which.
   - **Paging.** Lists return an array of `{ cursor, <resource> }` entries. Pass the last entry's `cursor` to get the next page; `limit` goes up to 100.
   - **Rate limits.** On a 429 the plugin waits for Render's `Retry-After` (at most 60 seconds) and retries up to five times.
   - **Not covered.** The deprecated `/redis` routes (use the Key Value operations), sandboxes, flows, and the streaming endpoints (log subscribe and task-run events). The plugin does not receive webhooks; `automation.createWebhook` and friends manage Render's outgoing webhooks.
@@ -60,13 +59,15 @@ apiExamples:
     call: "{ ownerId: 'tea-cjnxpkdhshc73d12t9i0', resource: ['srv-d0k1q2r3s4t5u6v7w8x9'], limit: 50 }"
   blueprints.validate:
     call: "{ ownerId: 'tea-cjnxpkdhshc73d12t9i0', file: 'services:\\n  - type: web\\n    name: api\\n    runtime: node\\n' }"
-  final.updateEnvVar:
-    call: "{ id: 'srv-d0k1q2r3s4t5u6v7w8x9', key: 'LOG_LEVEL', value: 'debug' }"
-  final.updateEnvVarsForService:
-    call: "{ id: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ key: 'LOG_LEVEL', value: 'info' }, { key: 'SESSION_SECRET', generateValue: true }] }"
-  final.updateRoutes:
-    call: "{ id: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ type: 'rewrite', source: '/app/*', destination: '/index.html' }] }"
-  final.retrieveDeploy:
-    call: "{ id: 'srv-d0k1q2r3s4t5u6v7w8x9', key: 'dep-d0k1q2r3s4t5u6v7w8y0' }"
+  services.envVars.upsert:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', envVarKey: 'LOG_LEVEL', value: 'debug' }"
+  services.envVars.update:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ key: 'LOG_LEVEL', value: 'info' }, { key: 'SESSION_SECRET', generateValue: true }] }"
+  services.routes.update:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ type: 'rewrite', source: '/app/*', destination: '/index.html' }] }"
+  services.retrieveDeploy:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', deployId: 'dep-d0k1q2r3s4t5u6v7w8y0' }"
+  services.envGroups.envVars.upsert:
+    call: "{ envGroupId: 'evg-d0k1q2r3s4t5u6v7w8x9', envVarKey: 'LOG_LEVEL', value: 'info' }"
   automation.createTaskRun:
     call: "{ task: 'my-workflow/send-report', input: ['weekly'] }"
