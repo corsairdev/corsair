@@ -33,29 +33,93 @@ examples:
           customfield_value: Ada
       sourcetype: Website sign-up
 apiExamples:
+  # Entries with enum or union values use `call`: the docs generator's arg
+  # check rejects valid string enums (e.g. 'Append' against Overwrite|Append|Ignore).
   subscribers.get:
-    call: "{ email: 'ada@example.com' }"
+    email: ada@example.com
+  subscribers.activate:
+    email: ada@example.com
   subscribers.insert:
-    call: "{ email: 'ada@example.com', subcategories: [12], customfields: [{ customfield_key: 'first_name', customfield_value: 'Ada' }], sourcetype: 'Website sign-up' }"
+    email: ada@example.com
+    subcategories: [12]
+    customfields:
+      - customfield_key: first_name
+        customfield_value: Ada
+    sourcetype: Website sign-up
   subscribers.update:
-    call: "{ email: 'ada@example.com', subcategories: [12, 13], subcategories_type: 1, customfields: [{ customfield_key: 'branch', customfield_value: 'KL' }], customfield_type: 0 }"
+    email: ada@example.com
+    subcategories: [12, 13]
+    subcategories_type: 1
+    customfields:
+      - customfield_key: branch
+        customfield_value: KL
+    customfield_type: 0
+  subscribers.unsubscribe:
+    email: ada@example.com
+  subscribers.getSubcategories:
+    includeActiveSubscriberCount: true
   subscribers.updateCategory:
-    call: "{ categoryID: 0, categoryName: 'Interests', subcategories: [{ subcategoryID: 0, subcategoryName: 'Hiking' }] }"
+    categoryID: 0
+    categoryName: Interests
+    subcategories:
+      - subcategoryID: 0
+        subcategoryName: Hiking
   subscribers.batchUpdateSubscribers:
-    call: "{ subscribers: [{ email: 'ada@example.com', customfields: [{ customfield_key: 'first_name', customfield_value: 'Ada' }] }], subcategories: [12], sourcetype: 'Import' }"
+    subscribers:
+      - email: ada@example.com
+        customfields:
+          - customfield_key: first_name
+            customfield_value: Ada
+    subcategories: [12]
+    sourcetype: Import
   subscribers.batchUpdateStatus:
-    call: "{ ID: 12345 }"
+    ID: 12345
+  subscribers.deleteSubscriber:
+    email: ada@example.com
   campaigns.createCampaign:
-    call: "{ CampaignName: 'November news', SenderName: 'Acme', SenderEmail: 'news@acme.example', Subject: 'What is new in November', Content: '<p>Hello</p>' }"
+    CampaignName: November news
+    SenderName: Acme
+    SenderEmail: news@acme.example
+    Subject: What is new in November
+    Content: <p>Hello</p>
+  campaigns.updateCampaign:
+    CampaignID: 2200
+    CampaignName: November news
+    SenderName: Acme
+    SenderEmail: news@acme.example
+    Subject: What is new in November
+    Content: <p>Hello again</p>
+  campaigns.deleteCampaign:
+    campaignid: 2200
   campaigns.assignRecipientList:
     call: "{ campaignid: 2200, FilterBy: 2, data: { CategoryList: [12, 13], FilterType: 'OR' } }"
+  campaigns.deleteRecipientList:
+    campaignid: 2200
+  campaigns.pauseCampaign:
+    campaignid: 2200
   campaigns.sendCampaign:
-    call: "{ campaignid: 2200 }"
+    campaignid: 2200
   n8n.addOrUpdateSubscriber:
     call: "{ email: 'ada@example.com', subcategories: [12], updatetype: 'Append' }"
+  n8n.deactivateSubscriber:
+    email: ada@example.com
+  n8n.deleteN8nSubscriber:
+    email: ada@example.com
+  n8n.findSubscriber:
+    email: ada@example.com
   n8n.sendEmail:
     call: "{ email: 'ada@example.com', type: 'template', template_id: 42, substitution_tags: [{ Key: 'firstname', Value: 'Ada' }] }"
+  n8n.tagSubscriber:
+    email: ada@example.com
+    subcategories: [12]
+  n8n.untagSubscriber:
+    email: ada@example.com
+    subcategories: [12]
   n8n.newSubscribers:
     call: "{ source: 'Form', filter_form: 7, limit: 50, lastpollingdate: '2026-11-01 00:00:00' }"
   n8n.unsubscribedSubscribers:
     call: "{ filter: 'Campaign', filter_campaign: 2200, limit: 50 }"
+  n8n.taggedSubscribers:
+    call: "{ filter_subcategory: 12, limit: 50 }"
+  n8n.autoresponderTriggered:
+    call: "{ filter_autoresponder: 3, limit: 50 }"

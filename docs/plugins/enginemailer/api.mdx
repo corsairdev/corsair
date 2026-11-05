@@ -74,7 +74,13 @@ Create an email campaign
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.campaigns.createCampaign({ CampaignName: 'November news', SenderName: 'Acme', SenderEmail: 'news@acme.example', Subject: 'What is new in November', Content: '<p>Hello</p>' });
+await corsair.enginemailer.api.campaigns.createCampaign({
+	CampaignName: 'November news',
+	SenderName: 'Acme',
+	SenderEmail: 'news@acme.example',
+	Subject: 'What is new in November',
+	Content: '<p>Hello</p>',
+});
 ```
 
 **Input**
@@ -119,7 +125,7 @@ Delete an email campaign
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.enginemailer.api.campaigns.deleteCampaign({});
+await corsair.enginemailer.api.campaigns.deleteCampaign({ campaignid: 2200 });
 ```
 
 **Input**
@@ -159,7 +165,7 @@ Remove a recipient list from a campaign
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.enginemailer.api.campaigns.deleteRecipientList({});
+await corsair.enginemailer.api.campaigns.deleteRecipientList({ campaignid: 2200 });
 ```
 
 **Input**
@@ -234,7 +240,7 @@ Pause an email campaign
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.campaigns.pauseCampaign({});
+await corsair.enginemailer.api.campaigns.pauseCampaign({ campaignid: 2200 });
 ```
 
 **Input**
@@ -314,7 +320,14 @@ Update an email campaign
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.campaigns.updateCampaign({});
+await corsair.enginemailer.api.campaigns.updateCampaign({
+	CampaignID: 2200,
+	CampaignName: 'November news',
+	SenderName: 'Acme',
+	SenderEmail: 'news@acme.example',
+	Subject: 'What is new in November',
+	Content: '<p>Hello again</p>',
+});
 ```
 
 **Input**
@@ -430,7 +443,7 @@ List subscribers who triggered an autoresponder
 **Risk:** `read`
 
 ```ts
-await corsair.enginemailer.api.n8n.autoresponderTriggered({});
+await corsair.enginemailer.api.n8n.autoresponderTriggered({ filter_autoresponder: 3, limit: 50 });
 ```
 
 **Input**
@@ -477,7 +490,7 @@ Unsubscribe a subscriber through Enginemailer N8N
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.n8n.deactivateSubscriber({});
+await corsair.enginemailer.api.n8n.deactivateSubscriber({ email: 'ada@example.com' });
 ```
 
 **Input**
@@ -528,7 +541,7 @@ Delete a subscriber through Enginemailer N8N
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.enginemailer.api.n8n.deleteN8nSubscriber({});
+await corsair.enginemailer.api.n8n.deleteN8nSubscriber({ email: 'ada@example.com' });
 ```
 
 **Input**
@@ -553,7 +566,7 @@ Find a subscriber through Enginemailer N8N
 **Risk:** `read`
 
 ```ts
-await corsair.enginemailer.api.n8n.findSubscriber({});
+await corsair.enginemailer.api.n8n.findSubscriber({ email: 'ada@example.com' });
 ```
 
 **Input**
@@ -739,7 +752,7 @@ List tagged subscribers through Enginemailer N8N
 **Risk:** `read`
 
 ```ts
-await corsair.enginemailer.api.n8n.taggedSubscribers({});
+await corsair.enginemailer.api.n8n.taggedSubscribers({ filter_subcategory: 12, limit: 50 });
 ```
 
 **Input**
@@ -766,7 +779,10 @@ Tag a subscriber through Enginemailer N8N
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.n8n.tagSubscriber({});
+await corsair.enginemailer.api.n8n.tagSubscriber({
+	email: 'ada@example.com',
+	subcategories: [12],
+});
 ```
 
 **Input**
@@ -848,7 +864,10 @@ Remove a tag from a subscriber through Enginemailer N8N
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.n8n.untagSubscriber({});
+await corsair.enginemailer.api.n8n.untagSubscriber({
+	email: 'ada@example.com',
+	subcategories: [12],
+});
 ```
 
 **Input**
@@ -876,7 +895,7 @@ Activate a subscriber
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.subscribers.activate({});
+await corsair.enginemailer.api.subscribers.activate({ email: 'ada@example.com' });
 ```
 
 **Input**
@@ -956,7 +975,14 @@ Update subscribers in a batch
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.subscribers.batchUpdateSubscribers({ subscribers: [{ email: 'ada@example.com', customfields: [{ customfield_key: 'first_name', customfield_value: 'Ada' }] }], subcategories: [12], sourcetype: 'Import' });
+await corsair.enginemailer.api.subscribers.batchUpdateSubscribers({
+	subscribers: [{
+		email: 'ada@example.com',
+		customfields: [{ customfield_key: 'first_name', customfield_value: 'Ada' }],
+	}],
+	subcategories: [12],
+	sourcetype: 'Import',
+});
 ```
 
 **Input**
@@ -1013,7 +1039,7 @@ Delete a subscriber
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.enginemailer.api.subscribers.deleteSubscriber({});
+await corsair.enginemailer.api.subscribers.deleteSubscriber({ email: 'ada@example.com' });
 ```
 
 **Input**
@@ -1128,7 +1154,7 @@ List subscriber subcategories
 **Risk:** `read`
 
 ```ts
-await corsair.enginemailer.api.subscribers.getSubcategories({});
+await corsair.enginemailer.api.subscribers.getSubcategories({ includeActiveSubscriberCount: true });
 ```
 
 **Input**
@@ -1168,7 +1194,12 @@ Insert a subscriber into Enginemailer
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.subscribers.insert({ email: 'ada@example.com', subcategories: [12], customfields: [{ customfield_key: 'first_name', customfield_value: 'Ada' }], sourcetype: 'Website sign-up' });
+await corsair.enginemailer.api.subscribers.insert({
+	email: 'ada@example.com',
+	subcategories: [12],
+	customfields: [{ customfield_key: 'first_name', customfield_value: 'Ada' }],
+	sourcetype: 'Website sign-up',
+});
 ```
 
 **Input**
@@ -1225,7 +1256,7 @@ Unsubscribe a subscriber
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.subscribers.unsubscribe({});
+await corsair.enginemailer.api.subscribers.unsubscribe({ email: 'ada@example.com' });
 ```
 
 **Input**
@@ -1265,7 +1296,13 @@ Update a subscriber record
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.subscribers.update({ email: 'ada@example.com', subcategories: [12, 13], subcategories_type: 1, customfields: [{ customfield_key: 'branch', customfield_value: 'KL' }], customfield_type: 0 });
+await corsair.enginemailer.api.subscribers.update({
+	email: 'ada@example.com',
+	subcategories: [12, 13],
+	subcategories_type: 1,
+	customfields: [{ customfield_key: 'branch', customfield_value: 'KL' }],
+	customfield_type: 0,
+});
 ```
 
 **Input**
@@ -1322,7 +1359,11 @@ Create or update a subscriber category
 **Risk:** `write`
 
 ```ts
-await corsair.enginemailer.api.subscribers.updateCategory({ categoryID: 0, categoryName: 'Interests', subcategories: [{ subcategoryID: 0, subcategoryName: 'Hiking' }] });
+await corsair.enginemailer.api.subscribers.updateCategory({
+	categoryID: 0,
+	categoryName: 'Interests',
+	subcategories: [{ subcategoryID: 0, subcategoryName: 'Hiking' }],
+});
 ```
 
 **Input**
