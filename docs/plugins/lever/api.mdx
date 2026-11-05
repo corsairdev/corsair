@@ -44,6 +44,34 @@ await corsair.lever.api.applications.list({ opportunityId: '250d8f03-738a-4bba-a
 
 ```ts
 {
+  id: string,
+  opportunityId?: string | null,
+  candidateId?: string | null,
+  createdAt?: number | string | null,
+  type?: string | null,
+  posting?: string | {
+  } | null,
+  postingHiringManager?: string | {
+  } | null,
+  postingOwner?: string | {
+  } | null,
+  user?: string | {
+  } | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: {
+    type?: string | null,
+    value?: string | null
+  } | string | null,
+  company?: string | null,
+  links?: string[] | null,
+  comments?: string | null,
+  customQuestions?: {
+  }[] | null,
+  archived?: {
+  } | null,
+  requisitionForHire?: {
+  } | null
 }[]
 ```
 </Accordion>
@@ -89,6 +117,10 @@ await corsair.lever.api.applications.listDeleted({ deleted_at_start: 17119296000
 
 ```ts
 {
+  id: string,
+  deletedAt?: number | string | null,
+  opportunityId?: string | null,
+  postingId?: string | null
 }[]
 ```
 </Accordion>
@@ -119,7 +151,50 @@ await corsair.lever.api.applications.retrieve({ opportunityId: '250d8f03-738a-4b
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  opportunityId?: string | null,
+  candidateId?: string | null,
+  createdAt?: number | string | null,
+  type?: string | null,
+  posting?: string | {
+  } | null,
+  postingHiringManager?: string | {
+  } | null,
+  postingOwner?: string | {
+  } | null,
+  user?: string | {
+  } | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: {
+    type?: string | null,
+    value?: string | null
+  } | string | null,
+  company?: string | null,
+  links?: string[] | null,
+  comments?: string | null,
+  customQuestions?: {
+  }[] | null,
+  archived?: {
+  } | null,
+  requisitionForHire?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -161,6 +236,10 @@ await corsair.lever.api.archiveReasons.list({});
 
 ```ts
 {
+  id: string,
+  text?: string | null,
+  status?: string | null,
+  type?: string | null
 }[]
 ```
 </Accordion>
@@ -190,7 +269,26 @@ await corsair.lever.api.archiveReasons.retrieve({ archiveReasonId: '63dd55b2-a99
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  status?: string | null,
+  type?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -237,6 +335,15 @@ await corsair.lever.api.auditEvents.list({ type: 'user:added' });
 
 ```ts
 {
+  id: string,
+  createdAt?: number | string | null,
+  type?: string | null,
+  user?: {
+  } | null,
+  target?: {
+  } | null,
+  meta?: {
+  } | null
 }[]
 ```
 </Accordion>
@@ -268,7 +375,33 @@ await corsair.lever.api.contacts.retrieve({ contactId: 'c38e60e9-5992-45e5-8f81-
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  isAnonymized?: boolean | null,
+  location?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -318,7 +451,33 @@ string | {
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  isAnonymized?: boolean | null,
+  location?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -351,6 +510,19 @@ await corsair.lever.api.dispositionStages.list({});
 
 ```ts
 {
+  stages: {
+    id: string,
+    text?: string | null,
+    pipeline?: string | null,
+    rank?: number | null,
+    hasInterview?: boolean | null
+  }[],
+  archiveReasons?: {
+    id: string,
+    text?: string | null,
+    type?: string | null,
+    status?: string | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -394,6 +566,31 @@ await corsair.lever.api.eeo.retrieveAnonymous({});
 
 ```ts
 {
+  eeoResponses: {
+    opportunityId?: string | null,
+    contact?: string | {
+    } | null,
+    posting?: string | {
+    } | null,
+    currentStage?: string | {
+    } | null,
+    hiringManager?: string | {
+    } | null,
+    gender?: string | null,
+    race?: string | null,
+    veteran?: string | null,
+    disability?: string | null,
+    disabilitySignatureDate?: string | null,
+    appliedAt?: number | string | null,
+    eeoSurveyRespondedAt?: number | string | null,
+    applicationArchivedAt?: number | string | null,
+    applicationArchivedBy?: string | {
+    } | null,
+    hiredDate?: number | string | null,
+    origin?: string | null,
+    source?: string | null,
+    requisitionCodes?: string[] | null
+  }[]
 }
 ```
 </Accordion>
@@ -436,6 +633,31 @@ await corsair.lever.api.eeo.retrieveWithPii({});
 
 ```ts
 {
+  eeoResponses: {
+    opportunityId?: string | null,
+    contact?: string | {
+    } | null,
+    posting?: string | {
+    } | null,
+    currentStage?: string | {
+    } | null,
+    hiringManager?: string | {
+    } | null,
+    gender?: string | null,
+    race?: string | null,
+    veteran?: string | null,
+    disability?: string | null,
+    disabilitySignatureDate?: string | null,
+    appliedAt?: number | string | null,
+    eeoSurveyRespondedAt?: number | string | null,
+    applicationArchivedAt?: number | string | null,
+    applicationArchivedBy?: string | {
+    } | null,
+    hiredDate?: number | string | null,
+    origin?: string | null,
+    source?: string | null,
+    requisitionCodes?: string[] | null
+  }[]
 }
 ```
 </Accordion>
@@ -495,7 +717,70 @@ await corsair.lever.api.feedback.create({
 
 
 
-**Output:** _empty object_
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string,
+    type?: string | null,
+    text?: string | null,
+    instructions?: string | null,
+    baseTemplateId?: string | null,
+    fields?: {
+      id?: string | null,
+      type?: string | null,
+      text?: string | null,
+      description?: string | null,
+      required?: boolean | null,
+      value?: any,
+      options?: {
+      }[] | null
+    }[] | null,
+    user?: string | {
+    } | null,
+    panel?: string | {
+    } | null,
+    interview?: string | {
+    } | null,
+    createdAt?: number | string | null,
+    updatedAt?: number | string | null,
+    completedAt?: number | string | null,
+    deletedAt?: number | string | null
+  }
+} | {
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  panel?: string | {
+  } | null,
+  interview?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -570,6 +855,31 @@ await corsair.lever.api.feedback.list({ opportunityId: '250d8f03-738a-4bba-a671-
 
 ```ts
 {
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  panel?: string | {
+  } | null,
+  interview?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
 }[]
 ```
 </Accordion>
@@ -600,7 +910,47 @@ await corsair.lever.api.feedback.retrieve({ opportunityId: '250d8f03-738a-4bba-a
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  panel?: string | {
+  } | null,
+  interview?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -650,7 +1000,47 @@ await corsair.lever.api.feedback.update({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  panel?: string | {
+  } | null,
+  interview?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -692,7 +1082,41 @@ await corsair.lever.api.feedbackTemplates.create({ text: 'Phone Screen Feedback 
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -766,6 +1190,25 @@ await corsair.lever.api.feedbackTemplates.list({});
 
 ```ts
 {
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
 }[]
 ```
 </Accordion>
@@ -795,7 +1238,41 @@ await corsair.lever.api.feedbackTemplates.retrieve({ feedbackTemplateId: '5b0f58
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -836,7 +1313,41 @@ await corsair.lever.api.feedbackTemplates.update({ feedbackTemplateId: '5b0f589c
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -947,6 +1458,13 @@ await corsair.lever.api.files.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3
 
 ```ts
 {
+  id: string,
+  downloadUrl?: string | null,
+  ext?: string | null,
+  name?: string | null,
+  uploadedAt?: number | string | null,
+  status?: string | null,
+  size?: number | string | null
 }[]
 ```
 </Accordion>
@@ -977,7 +1495,29 @@ await corsair.lever.api.files.retrieve({ opportunityId: '250d8f03-738a-4bba-a671
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  downloadUrl?: string | null,
+  ext?: string | null,
+  name?: string | null,
+  uploadedAt?: number | string | null,
+  status?: string | null,
+  size?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1029,7 +1569,70 @@ await corsair.lever.api.forms.create({
 
 
 
-**Output:** _empty object_
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string,
+    type?: string | null,
+    text?: string | null,
+    instructions?: string | null,
+    baseTemplateId?: string | null,
+    fields?: {
+      id?: string | null,
+      type?: string | null,
+      text?: string | null,
+      description?: string | null,
+      required?: boolean | null,
+      value?: any,
+      options?: {
+      }[] | null
+    }[] | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    secret?: boolean | null,
+    group?: string | {
+    } | null,
+    createdAt?: number | string | null,
+    completedAt?: number | string | null,
+    deletedAt?: number | string | null
+  }
+} | {
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  secret?: boolean | null,
+  group?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -1067,6 +1670,31 @@ await corsair.lever.api.forms.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3
 
 ```ts
 {
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  secret?: boolean | null,
+  group?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
 }[]
 ```
 </Accordion>
@@ -1097,7 +1725,47 @@ await corsair.lever.api.forms.retrieve({ opportunityId: '250d8f03-738a-4bba-a671
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  secret?: boolean | null,
+  group?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1143,7 +1811,40 @@ await corsair.lever.api.formTemplates.create({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  secretByDefault?: boolean | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1217,6 +1918,24 @@ await corsair.lever.api.formTemplates.list({});
 
 ```ts
 {
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  secretByDefault?: boolean | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
 }[]
 ```
 </Accordion>
@@ -1246,7 +1965,40 @@ await corsair.lever.api.formTemplates.retrieve({ formTemplateId: '8f1c2d3e-4a5b-
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  secretByDefault?: boolean | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1288,7 +2040,40 @@ await corsair.lever.api.formTemplates.update({ formTemplateId: '8f1c2d3e-4a5b-4c
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  secretByDefault?: boolean | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1355,7 +2140,89 @@ await corsair.lever.api.interviews.create({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (
+      string | {
+      }
+    )[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (
+      string | {
+      }
+    )[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[],
+  hasNext?: boolean,
+  next?: string
+} | {
+  id: string,
+  panel?: string | {
+  } | null,
+  subject?: string | null,
+  note?: string | null,
+  interviewers?: {
+  }[] | null,
+  timezone?: string | null,
+  createdAt?: number | string | null,
+  date?: number | string | null,
+  duration?: number | null,
+  location?: string | null,
+  feedbackTemplate?: string | {
+  } | null,
+  feedbackForms?: (
+    string | {
+    }
+  )[] | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  canceledAt?: number | string | null,
+  postings?: (
+    string | {
+    }
+  )[] | null,
+  gcalEventUrl?: string | null,
+  conferences?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1431,6 +2298,37 @@ await corsair.lever.api.interviews.list({ opportunityId: '250d8f03-738a-4bba-a67
 
 ```ts
 {
+  id: string,
+  panel?: string | {
+  } | null,
+  subject?: string | null,
+  note?: string | null,
+  interviewers?: {
+  }[] | null,
+  timezone?: string | null,
+  createdAt?: number | string | null,
+  date?: number | string | null,
+  duration?: number | null,
+  location?: string | null,
+  feedbackTemplate?: string | {
+  } | null,
+  feedbackForms?: (
+    string | {
+    }
+  )[] | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  canceledAt?: number | string | null,
+  postings?: (
+    string | {
+    }
+  )[] | null,
+  gcalEventUrl?: string | null,
+  conferences?: {
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -1461,7 +2359,53 @@ await corsair.lever.api.interviews.retrieve({ opportunityId: '250d8f03-738a-4bba
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  panel?: string | {
+  } | null,
+  subject?: string | null,
+  note?: string | null,
+  interviewers?: {
+  }[] | null,
+  timezone?: string | null,
+  createdAt?: number | string | null,
+  date?: number | string | null,
+  duration?: number | null,
+  location?: string | null,
+  feedbackTemplate?: string | {
+  } | null,
+  feedbackForms?: (
+    string | {
+    }
+  )[] | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  canceledAt?: number | string | null,
+  postings?: (
+    string | {
+    }
+  )[] | null,
+  gcalEventUrl?: string | null,
+  conferences?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1528,7 +2472,89 @@ await corsair.lever.api.interviews.update({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (
+      string | {
+      }
+    )[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (
+      string | {
+      }
+    )[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[],
+  hasNext?: boolean,
+  next?: string
+} | {
+  id: string,
+  panel?: string | {
+  } | null,
+  subject?: string | null,
+  note?: string | null,
+  interviewers?: {
+  }[] | null,
+  timezone?: string | null,
+  createdAt?: number | string | null,
+  date?: number | string | null,
+  duration?: number | null,
+  location?: string | null,
+  feedbackTemplate?: string | {
+  } | null,
+  feedbackForms?: (
+    string | {
+    }
+  )[] | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  canceledAt?: number | string | null,
+  postings?: (
+    string | {
+    }
+  )[] | null,
+  gcalEventUrl?: string | null,
+  conferences?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1562,7 +2588,23 @@ await corsair.lever.api.notes.create({ opportunityId: '250d8f03-738a-4bba-a671-8
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  noteId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1636,6 +2678,24 @@ await corsair.lever.api.notes.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3
 
 ```ts
 {
+  id: string,
+  text?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  secret?: boolean | null,
+  completedAt?: number | string | null,
+  createdAt?: number | string | null,
+  deletedAt?: number | string | null
 }[]
 ```
 </Accordion>
@@ -1666,7 +2726,40 @@ await corsair.lever.api.notes.retrieve({ opportunityId: '250d8f03-738a-4bba-a671
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  secret?: boolean | null,
+  completedAt?: number | string | null,
+  createdAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1714,7 +2807,23 @@ await corsair.lever.api.notes.update({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  noteId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1788,6 +2897,26 @@ await corsair.lever.api.offers.list({ opportunityId: '250d8f03-738a-4bba-a671-8a
 
 ```ts
 {
+  id: string,
+  createdAt?: number | string | null,
+  status?: string | null,
+  creator?: string | {
+  } | null,
+  fields?: {
+    text?: string | null,
+    identifier?: string | null,
+    value?: any
+  }[] | null,
+  sentDocument?: {
+    fileName?: string | null,
+    uploadedAt?: number | string | null,
+    downloadUrl?: string | null
+  } | null,
+  signedDocument?: {
+    fileName?: string | null,
+    uploadedAt?: number | string | null,
+    downloadUrl?: string | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -1985,7 +3114,75 @@ await corsair.lever.api.opportunities.create({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  contact?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null,
+  confidentiality?: string | null,
+  location?: string | null,
+  locationDetails?: {
+  } | null,
+  links?: string[] | null,
+  archived?: {
+    archivedAt?: number | string | null,
+    reason?: string | {
+    } | null
+  } | null,
+  tags?: string[] | null,
+  sources?: string[] | null,
+  stageChanges?: {
+  }[] | null,
+  origin?: string | null,
+  sourcedBy?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  followers?: (
+    string | {
+    }
+  )[] | null,
+  applications?: (
+    string | {
+    }
+  )[] | null,
+  stage?: string | {
+  } | null,
+  resume?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  lastInteractionAt?: number | string | null,
+  lastAdvancedAt?: number | string | null,
+  snoozedUntil?: number | string | null,
+  isAnonymized?: boolean | null,
+  dataProtection?: {
+  } | null,
+  urls?: {
+    list?: string | null,
+    show?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2046,6 +3243,59 @@ await corsair.lever.api.opportunities.list({ limit: 50, stage_id: '00922a60-7c15
 
 ```ts
 {
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  contact?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null,
+  confidentiality?: string | null,
+  location?: string | null,
+  locationDetails?: {
+  } | null,
+  links?: string[] | null,
+  archived?: {
+    archivedAt?: number | string | null,
+    reason?: string | {
+    } | null
+  } | null,
+  tags?: string[] | null,
+  sources?: string[] | null,
+  stageChanges?: {
+  }[] | null,
+  origin?: string | null,
+  sourcedBy?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  followers?: (
+    string | {
+    }
+  )[] | null,
+  applications?: (
+    string | {
+    }
+  )[] | null,
+  stage?: string | {
+  } | null,
+  resume?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  lastInteractionAt?: number | string | null,
+  lastAdvancedAt?: number | string | null,
+  snoozedUntil?: number | string | null,
+  isAnonymized?: boolean | null,
+  dataProtection?: {
+  } | null,
+  urls?: {
+    list?: string | null,
+    show?: string | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -2091,6 +3341,10 @@ await corsair.lever.api.opportunities.listDeleted({ deleted_at_start: 1711929600
 
 ```ts
 {
+  id: string,
+  deletedAt?: number | string | null,
+  opportunityId?: string | null,
+  postingId?: string | null
 }[]
 ```
 </Accordion>
@@ -2137,6 +3391,15 @@ await corsair.lever.api.opportunities.listFileActions({ opportunityId: '250d8f03
 
 ```ts
 {
+  id: string,
+  opportunityId?: string | null,
+  type?: string | null,
+  occurredAt?: number | string | null,
+  createdAt?: number | string | null,
+  user?: string | {
+  } | null,
+  meta?: {
+  } | null
 }[]
 ```
 </Accordion>
@@ -2288,7 +3551,75 @@ await corsair.lever.api.opportunities.retrieve({ opportunityId: '250d8f03-738a-4
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  contact?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null,
+  confidentiality?: string | null,
+  location?: string | null,
+  locationDetails?: {
+  } | null,
+  links?: string[] | null,
+  archived?: {
+    archivedAt?: number | string | null,
+    reason?: string | {
+    } | null
+  } | null,
+  tags?: string[] | null,
+  sources?: string[] | null,
+  stageChanges?: {
+  }[] | null,
+  origin?: string | null,
+  sourcedBy?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  followers?: (
+    string | {
+    }
+  )[] | null,
+  applications?: (
+    string | {
+    }
+  )[] | null,
+  stage?: string | {
+  } | null,
+  resume?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  lastInteractionAt?: number | string | null,
+  lastAdvancedAt?: number | string | null,
+  snoozedUntil?: number | string | null,
+  isAnonymized?: boolean | null,
+  dataProtection?: {
+  } | null,
+  urls?: {
+    list?: string | null,
+    show?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2317,7 +3648,75 @@ await corsair.lever.api.opportunities.updateArchivedState({ opportunityId: '250d
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  contact?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null,
+  confidentiality?: string | null,
+  location?: string | null,
+  locationDetails?: {
+  } | null,
+  links?: string[] | null,
+  archived?: {
+    archivedAt?: number | string | null,
+    reason?: string | {
+    } | null
+  } | null,
+  tags?: string[] | null,
+  sources?: string[] | null,
+  stageChanges?: {
+  }[] | null,
+  origin?: string | null,
+  sourcedBy?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  followers?: (
+    string | {
+    }
+  )[] | null,
+  applications?: (
+    string | {
+    }
+  )[] | null,
+  stage?: string | {
+  } | null,
+  resume?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  lastInteractionAt?: number | string | null,
+  lastAdvancedAt?: number | string | null,
+  snoozedUntil?: number | string | null,
+  isAnonymized?: boolean | null,
+  dataProtection?: {
+  } | null,
+  urls?: {
+    list?: string | null,
+    show?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2344,7 +3743,75 @@ await corsair.lever.api.opportunities.updateStage({ opportunityId: '250d8f03-738
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  contact?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null,
+  confidentiality?: string | null,
+  location?: string | null,
+  locationDetails?: {
+  } | null,
+  links?: string[] | null,
+  archived?: {
+    archivedAt?: number | string | null,
+    reason?: string | {
+    } | null
+  } | null,
+  tags?: string[] | null,
+  sources?: string[] | null,
+  stageChanges?: {
+  }[] | null,
+  origin?: string | null,
+  sourcedBy?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  followers?: (
+    string | {
+    }
+  )[] | null,
+  applications?: (
+    string | {
+    }
+  )[] | null,
+  stage?: string | {
+  } | null,
+  resume?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  lastInteractionAt?: number | string | null,
+  lastAdvancedAt?: number | string | null,
+  snoozedUntil?: number | string | null,
+  isAnonymized?: boolean | null,
+  dataProtection?: {
+  } | null,
+  urls?: {
+    list?: string | null,
+    show?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2398,7 +3865,129 @@ await corsair.lever.api.panels.create({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data: {
+    id: string,
+    applications?: (
+      string | {
+      }
+    )[] | null,
+    canceledAt?: number | string | null,
+    createdAt?: number | string | null,
+    start?: number | string | null,
+    end?: number | string | null,
+    timezone?: string | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    note?: string | null,
+    externallyManaged?: boolean | null,
+    externalUrl?: string | null,
+    interviews?: {
+      id: string,
+      panel?: string | {
+      } | null,
+      subject?: string | null,
+      note?: string | null,
+      interviewers?: {
+      }[] | null,
+      timezone?: string | null,
+      createdAt?: number | string | null,
+      date?: number | string | null,
+      duration?: number | null,
+      location?: string | null,
+      feedbackTemplate?: string | {
+      } | null,
+      feedbackForms?: (
+        string | {
+        }
+      )[] | null,
+      feedbackReminder?: string | null,
+      user?: string | {
+      } | null,
+      stage?: string | {
+      } | null,
+      canceledAt?: number | string | null,
+      postings?: (
+        string | {
+        }
+      )[] | null,
+      gcalEventUrl?: string | null,
+      conferences?: {
+      }[] | null
+    }[] | null
+  }[],
+  hasNext?: boolean,
+  next?: string
+} | {
+  id: string,
+  applications?: (
+    string | {
+    }
+  )[] | null,
+  canceledAt?: number | string | null,
+  createdAt?: number | string | null,
+  start?: number | string | null,
+  end?: number | string | null,
+  timezone?: string | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  note?: string | null,
+  externallyManaged?: boolean | null,
+  externalUrl?: string | null,
+  interviews?: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (
+      string | {
+      }
+    )[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (
+      string | {
+      }
+    )[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2473,6 +4062,57 @@ await corsair.lever.api.panels.list({ opportunityId: '250d8f03-738a-4bba-a671-8a
 
 ```ts
 {
+  id: string,
+  applications?: (
+    string | {
+    }
+  )[] | null,
+  canceledAt?: number | string | null,
+  createdAt?: number | string | null,
+  start?: number | string | null,
+  end?: number | string | null,
+  timezone?: string | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  note?: string | null,
+  externallyManaged?: boolean | null,
+  externalUrl?: string | null,
+  interviews?: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (
+      string | {
+      }
+    )[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (
+      string | {
+      }
+    )[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -2503,7 +4143,73 @@ await corsair.lever.api.panels.retrieve({ opportunityId: '250d8f03-738a-4bba-a67
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  applications?: (
+    string | {
+    }
+  )[] | null,
+  canceledAt?: number | string | null,
+  createdAt?: number | string | null,
+  start?: number | string | null,
+  end?: number | string | null,
+  timezone?: string | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  note?: string | null,
+  externallyManaged?: boolean | null,
+  externalUrl?: string | null,
+  interviews?: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (
+      string | {
+      }
+    )[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (
+      string | {
+      }
+    )[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2558,7 +4264,129 @@ await corsair.lever.api.panels.update({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data: {
+    id: string,
+    applications?: (
+      string | {
+      }
+    )[] | null,
+    canceledAt?: number | string | null,
+    createdAt?: number | string | null,
+    start?: number | string | null,
+    end?: number | string | null,
+    timezone?: string | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    note?: string | null,
+    externallyManaged?: boolean | null,
+    externalUrl?: string | null,
+    interviews?: {
+      id: string,
+      panel?: string | {
+      } | null,
+      subject?: string | null,
+      note?: string | null,
+      interviewers?: {
+      }[] | null,
+      timezone?: string | null,
+      createdAt?: number | string | null,
+      date?: number | string | null,
+      duration?: number | null,
+      location?: string | null,
+      feedbackTemplate?: string | {
+      } | null,
+      feedbackForms?: (
+        string | {
+        }
+      )[] | null,
+      feedbackReminder?: string | null,
+      user?: string | {
+      } | null,
+      stage?: string | {
+      } | null,
+      canceledAt?: number | string | null,
+      postings?: (
+        string | {
+        }
+      )[] | null,
+      gcalEventUrl?: string | null,
+      conferences?: {
+      }[] | null
+    }[] | null
+  }[],
+  hasNext?: boolean,
+  next?: string
+} | {
+  id: string,
+  applications?: (
+    string | {
+    }
+  )[] | null,
+  canceledAt?: number | string | null,
+  createdAt?: number | string | null,
+  start?: number | string | null,
+  end?: number | string | null,
+  timezone?: string | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  note?: string | null,
+  externallyManaged?: boolean | null,
+  externalUrl?: string | null,
+  interviews?: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (
+      string | {
+      }
+    )[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (
+      string | {
+      }
+    )[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2662,7 +4490,23 @@ await corsair.lever.api.postings.apply({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  applicationId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2751,7 +4595,60 @@ await corsair.lever.api.postings.create({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  user?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  hiringManager?: string | {
+  } | null,
+  confidentiality?: string | null,
+  categories?: {
+    team?: string | null,
+    department?: string | null,
+    location?: string | null,
+    commitment?: string | null,
+    level?: string | null,
+    allLocations?: string[] | null
+  } | null,
+  content?: {
+  } | null,
+  country?: string | null,
+  followers?: (
+    string | {
+    }
+  )[] | null,
+  tags?: string[] | null,
+  state?: string | null,
+  distributionChannels?: string[] | null,
+  reqCode?: string | null,
+  requisitionCodes?: string[] | null,
+  salaryDescription?: string | null,
+  salaryDescriptionHtml?: string | null,
+  salaryRange?: {
+  } | null,
+  urls?: {
+  } | null,
+  workplaceType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2804,6 +4701,44 @@ await corsair.lever.api.postings.list({ state: 'published', limit: 50 });
 
 ```ts
 {
+  id: string,
+  text?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  user?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  hiringManager?: string | {
+  } | null,
+  confidentiality?: string | null,
+  categories?: {
+    team?: string | null,
+    department?: string | null,
+    location?: string | null,
+    commitment?: string | null,
+    level?: string | null,
+    allLocations?: string[] | null
+  } | null,
+  content?: {
+  } | null,
+  country?: string | null,
+  followers?: (
+    string | {
+    }
+  )[] | null,
+  tags?: string[] | null,
+  state?: string | null,
+  distributionChannels?: string[] | null,
+  reqCode?: string | null,
+  requisitionCodes?: string[] | null,
+  salaryDescription?: string | null,
+  salaryDescriptionHtml?: string | null,
+  salaryRange?: {
+  } | null,
+  urls?: {
+  } | null,
+  workplaceType?: string | null
 }[]
 ```
 </Accordion>
@@ -2849,6 +4784,10 @@ await corsair.lever.api.postings.listDeleted({ deleted_at_start: 1711929600000, 
 
 ```ts
 {
+  id: string,
+  deletedAt?: number | string | null,
+  opportunityId?: string | null,
+  postingId?: string | null
 }[]
 ```
 </Accordion>
@@ -2878,24 +4817,58 @@ await corsair.lever.api.postings.listUsers({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `hasNext` | `boolean` | No | — |
-| `next` | `string` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-}[]
+  posting: {
+    id: string,
+    text?: string | null
+  },
+  users?: {
+    id: string,
+    name?: string | null,
+    email?: string | null,
+    inheritedFromRoleId?: string | null,
+    conditions?: {
+    } | null
+  }[] | null,
+  roles?: {
+    id: string,
+    name?: string | null,
+    isReadOnly?: boolean | null,
+    conditions?: {
+    } | null
+  }[] | null
+} | {
+  data: {
+    posting: {
+      id: string,
+      text?: string | null
+    },
+    users?: {
+      id: string,
+      name?: string | null,
+      email?: string | null,
+      inheritedFromRoleId?: string | null,
+      conditions?: {
+      } | null
+    }[] | null,
+    roles?: {
+      id: string,
+      name?: string | null,
+      isReadOnly?: boolean | null,
+      conditions?: {
+      } | null
+    }[] | null
+  }
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -2920,7 +4893,60 @@ await corsair.lever.api.postings.retrieve({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a-
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  user?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  hiringManager?: string | {
+  } | null,
+  confidentiality?: string | null,
+  categories?: {
+    team?: string | null,
+    department?: string | null,
+    location?: string | null,
+    commitment?: string | null,
+    level?: string | null,
+    allLocations?: string[] | null
+  } | null,
+  content?: {
+  } | null,
+  country?: string | null,
+  followers?: (
+    string | {
+    }
+  )[] | null,
+  tags?: string[] | null,
+  state?: string | null,
+  distributionChannels?: string[] | null,
+  reqCode?: string | null,
+  requisitionCodes?: string[] | null,
+  salaryDescription?: string | null,
+  salaryDescriptionHtml?: string | null,
+  salaryRange?: {
+  } | null,
+  urls?: {
+  } | null,
+  workplaceType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2945,7 +4971,32 @@ await corsair.lever.api.postings.retrieveApplicationQuestions({ postingId: '5d0f
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  customQuestions?: {
+  }[] | null,
+  personalInformation?: {
+  }[] | null,
+  urls?: {
+  }[] | null,
+  eeoQuestions?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3025,7 +5076,60 @@ await corsair.lever.api.postings.update({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a-5b
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  user?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  hiringManager?: string | {
+  } | null,
+  confidentiality?: string | null,
+  categories?: {
+    team?: string | null,
+    department?: string | null,
+    location?: string | null,
+    commitment?: string | null,
+    level?: string | null,
+    allLocations?: string[] | null
+  } | null,
+  content?: {
+  } | null,
+  country?: string | null,
+  followers?: (
+    string | {
+    }
+  )[] | null,
+  tags?: string[] | null,
+  state?: string | null,
+  distributionChannels?: string[] | null,
+  reqCode?: string | null,
+  requisitionCodes?: string[] | null,
+  salaryDescription?: string | null,
+  salaryDescriptionHtml?: string | null,
+  salaryRange?: {
+  } | null,
+  urls?: {
+  } | null,
+  workplaceType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3065,6 +5169,29 @@ await corsair.lever.api.referrals.list({ opportunityId: '250d8f03-738a-4bba-a671
 
 ```ts
 {
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  referrer?: string | {
+  } | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  completedAt?: number | string | null
 }[]
 ```
 </Accordion>
@@ -3095,7 +5222,45 @@ await corsair.lever.api.referrals.retrieve({ opportunityId: '250d8f03-738a-4bba-
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  referrer?: string | {
+  } | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  completedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3137,7 +5302,30 @@ await corsair.lever.api.requisitionFields.addOptions({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3194,7 +5382,30 @@ await corsair.lever.api.requisitionFields.create({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3309,6 +5520,14 @@ await corsair.lever.api.requisitionFields.list({});
 
 ```ts
 {
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -3354,7 +5573,30 @@ await corsair.lever.api.requisitionFields.replaceOptions({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3379,7 +5621,30 @@ await corsair.lever.api.requisitionFields.retrieve({ requisitionFieldId: 'work_t
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3432,7 +5697,30 @@ await corsair.lever.api.requisitionFields.update({ requisitionFieldId: 'work_typ
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3496,7 +5784,55 @@ await corsair.lever.api.requisitions.create({ requisitionCode: 'ENG-9', name: 'J
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  requisitionCode?: string | null,
+  name?: string | null,
+  backfill?: boolean | null,
+  confidentiality?: string | null,
+  createdAt?: number | string | null,
+  creator?: string | {
+  } | null,
+  headcountHired?: number | null,
+  headcountTotal?: number | string | null,
+  status?: string | null,
+  hiringManager?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  compensationBand?: {
+  } | null,
+  employmentStatus?: string | null,
+  location?: string | null,
+  internalNotes?: string | null,
+  postings?: (
+    string | {
+    }
+  )[] | null,
+  department?: string | null,
+  team?: string | null,
+  offerIds?: string[] | null,
+  approval?: {
+  } | null,
+  customFields?: {
+  } | null,
+  timeToFillStartAt?: number | string | null,
+  timeToFillEndAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3575,6 +5911,39 @@ await corsair.lever.api.requisitions.list({ status: 'open' });
 
 ```ts
 {
+  id: string,
+  requisitionCode?: string | null,
+  name?: string | null,
+  backfill?: boolean | null,
+  confidentiality?: string | null,
+  createdAt?: number | string | null,
+  creator?: string | {
+  } | null,
+  headcountHired?: number | null,
+  headcountTotal?: number | string | null,
+  status?: string | null,
+  hiringManager?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  compensationBand?: {
+  } | null,
+  employmentStatus?: string | null,
+  location?: string | null,
+  internalNotes?: string | null,
+  postings?: (
+    string | {
+    }
+  )[] | null,
+  department?: string | null,
+  team?: string | null,
+  offerIds?: string[] | null,
+  approval?: {
+  } | null,
+  customFields?: {
+  } | null,
+  timeToFillStartAt?: number | string | null,
+  timeToFillEndAt?: number | string | null
 }[]
 ```
 </Accordion>
@@ -3604,7 +5973,55 @@ await corsair.lever.api.requisitions.retrieve({ requisitionId: '52881d44-4f95-4f
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  requisitionCode?: string | null,
+  name?: string | null,
+  backfill?: boolean | null,
+  confidentiality?: string | null,
+  createdAt?: number | string | null,
+  creator?: string | {
+  } | null,
+  headcountHired?: number | null,
+  headcountTotal?: number | string | null,
+  status?: string | null,
+  hiringManager?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  compensationBand?: {
+  } | null,
+  employmentStatus?: string | null,
+  location?: string | null,
+  internalNotes?: string | null,
+  postings?: (
+    string | {
+    }
+  )[] | null,
+  department?: string | null,
+  team?: string | null,
+  offerIds?: string[] | null,
+  approval?: {
+  } | null,
+  customFields?: {
+  } | null,
+  timeToFillStartAt?: number | string | null,
+  timeToFillEndAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3673,7 +6090,55 @@ await corsair.lever.api.requisitions.update({
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  requisitionCode?: string | null,
+  name?: string | null,
+  backfill?: boolean | null,
+  confidentiality?: string | null,
+  createdAt?: number | string | null,
+  creator?: string | {
+  } | null,
+  headcountHired?: number | null,
+  headcountTotal?: number | string | null,
+  status?: string | null,
+  hiringManager?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  compensationBand?: {
+  } | null,
+  employmentStatus?: string | null,
+  location?: string | null,
+  internalNotes?: string | null,
+  postings?: (
+    string | {
+    }
+  )[] | null,
+  department?: string | null,
+  team?: string | null,
+  offerIds?: string[] | null,
+  approval?: {
+  } | null,
+  customFields?: {
+  } | null,
+  timeToFillStartAt?: number | string | null,
+  timeToFillEndAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3747,6 +6212,18 @@ await corsair.lever.api.resumes.list({ opportunityId: '250d8f03-738a-4bba-a671-8
 
 ```ts
 {
+  id: string,
+  createdAt?: number | string | null,
+  file?: {
+    name?: string | null,
+    ext?: string | null,
+    downloadUrl?: string | null,
+    uploadedAt?: number | string | null,
+    status?: string | null,
+    size?: number | string | null
+  } | null,
+  parsedData?: {
+  } | null
 }[]
 ```
 </Accordion>
@@ -3777,7 +6254,34 @@ await corsair.lever.api.resumes.retrieve({ opportunityId: '250d8f03-738a-4bba-a6
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: number | string | null,
+  file?: {
+    name?: string | null,
+    ext?: string | null,
+    downloadUrl?: string | null,
+    uploadedAt?: number | string | null,
+    status?: string | null,
+    size?: number | string | null
+  } | null,
+  parsedData?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3812,6 +6316,8 @@ await corsair.lever.api.sources.list({});
 
 ```ts
 {
+  text: string,
+  count?: number | null
 }[]
 ```
 </Accordion>
@@ -3857,6 +6363,8 @@ await corsair.lever.api.stages.list({});
 
 ```ts
 {
+  id: string,
+  text?: string | null
 }[]
 ```
 </Accordion>
@@ -3886,7 +6394,24 @@ await corsair.lever.api.stages.retrieve({ stageId: '4a2b1c3d-5e6f-4a7b-8c9d-0e1f
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3914,7 +6439,41 @@ await corsair.lever.api.surveys.retrieveDiversity({ postingId: '5d0f2f8a-1b2c-4d
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  candidateLocations?: {
+  } | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3949,6 +6508,8 @@ await corsair.lever.api.tags.list({});
 
 ```ts
 {
+  text: string,
+  count?: number | null
 }[]
 ```
 </Accordion>
@@ -3985,7 +6546,34 @@ await corsair.lever.api.users.create({ name: 'Chandler Bing', email: 'chandler@e
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -4010,7 +6598,34 @@ await corsair.lever.api.users.deactivate({ userId: '8d49b010-cc6a-4f40-ace5-e860
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -4054,6 +6669,18 @@ await corsair.lever.api.users.list({ includeDeactivated: false });
 
 ```ts
 {
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
 }[]
 ```
 </Accordion>
@@ -4083,7 +6710,34 @@ await corsair.lever.api.users.reactivate({ userId: '8d49b010-cc6a-4f40-ace5-e860
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -4108,7 +6762,34 @@ await corsair.lever.api.users.retrieve({ userId: '8d49b010-cc6a-4f40-ace5-e86061
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -4139,7 +6820,34 @@ await corsair.lever.api.users.update({ userId: '8d49b010-cc6a-4f40-ace5-e86061c6
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -4178,7 +6886,39 @@ await corsair.lever.api.webhooks.create({ url: 'https://example.test/hook', even
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data: {
+    id: string,
+    url?: string | null,
+    event?: string | null,
+    createdAt?: number | string | null,
+    updatedAt?: number | string | null,
+    configuration?: {
+    } | null
+  }
+} | {
+  id: string,
+  url?: string | null,
+  event?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  configuration?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -4246,6 +6986,13 @@ await corsair.lever.api.webhooks.list({});
 
 ```ts
 {
+  id: string,
+  url?: string | null,
+  event?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  configuration?: {
+  } | null
 }[]
 ```
 </Accordion>
@@ -4300,6 +7047,13 @@ await corsair.lever.api.webhooks.update({ webhookId: '7988b225-3cc1-44f3-8fcb-ba
 
 ```ts
 {
+  id: string,
+  url?: string | null,
+  event?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  configuration?: {
+  } | null
 }[]
 ```
 </Accordion>
