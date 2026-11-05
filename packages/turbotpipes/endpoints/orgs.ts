@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment } from '../client';
+import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -37,12 +37,11 @@ export const deleteOrg: TurbotPipesEndpoints['deleteOrg'] = async (
 
 export const listOrgWorkspaces: TurbotPipesEndpoints['listOrgWorkspaces'] =
 	async (ctx, input) => {
-		const { org_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgWorkspaces']
-		>(`org/${pathSegment(org_handle)}/workspace`, ctx.key, {
+		>(`org/${pathSegment(input.org_handle)}/workspace`, ctx.key, {
 			method: 'GET',
-			query,
+			query: pickQuery(input, ['limit', 'next_token']),
 		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
@@ -100,12 +99,11 @@ export const runOrgWorkspaceCommand: TurbotPipesEndpoints['runOrgWorkspaceComman
 
 export const listOrgProcesses: TurbotPipesEndpoints['listOrgProcesses'] =
 	async (ctx, input) => {
-		const { org_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgProcesses']
-		>(`org/${pathSegment(org_handle)}/process`, ctx.key, {
+		>(`org/${pathSegment(input.org_handle)}/process`, ctx.key, {
 			method: 'GET',
-			query,
+			query: pickQuery(input, ['where', 'limit', 'next_token']),
 		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
@@ -125,6 +123,7 @@ export const listOrgServiceAccounts: TurbotPipesEndpoints['listOrgServiceAccount
 			TurbotPipesEndpointOutputs['listOrgServiceAccounts']
 		>(`org/${pathSegment(input.org_handle)}/service_account`, ctx.key, {
 			method: 'GET',
+			query: pickQuery(input, ['limit', 'next_token', 'include']),
 		});
 		await logEventFromContext(
 			ctx,
@@ -226,7 +225,10 @@ export const listOrgUsage: TurbotPipesEndpoints['listOrgUsage'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['listOrgUsage']
-	>(`org/${pathSegment(input.org_handle)}/usage`, ctx.key, { method: 'GET' });
+	>(`org/${pathSegment(input.org_handle)}/usage`, ctx.key, {
+		method: 'GET',
+		query: pickQuery(input, ['where', 'limit', 'next_token']),
+	});
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.list_usage',

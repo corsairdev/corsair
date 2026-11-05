@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment } from '../client';
+import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -105,6 +105,7 @@ export const listUserBillingInvoices: TurbotPipesEndpoints['listUserBillingInvoi
 			TurbotPipesEndpointOutputs['listUserBillingInvoices']
 		>(`user/${pathSegment(input.user_handle)}/billing/invoice`, ctx.key, {
 			method: 'GET',
+			query: pickQuery(input, ['limit', 'next_token']),
 		});
 		await logEventFromContext(
 			ctx,

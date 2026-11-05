@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment } from '../client';
+import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -83,7 +83,7 @@ export const listOrgWorkspaceFlowpipeModVariables: TurbotPipesEndpoints['listOrg
 		>(
 			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/flowpipe/mod/${pathSegment(input.mod_alias)}/variable`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -101,7 +101,7 @@ export const listUserWorkspaceFlowpipeModVariables: TurbotPipesEndpoints['listUs
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/flowpipe/mod/${pathSegment(input.mod_alias)}/variable`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -137,7 +137,10 @@ export const listUserWorkspaceFlowpipePipelines: TurbotPipesEndpoints['listUserW
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/flowpipe/pipeline`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: pickQuery(input, ['where', 'limit', 'next_token']),
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -229,7 +232,7 @@ export const listUserWorkspaceFlowpipeInputs: TurbotPipesEndpoints['listUserWork
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/flowpipe/input`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -247,7 +250,10 @@ export const listUserWorkspacePipelineTriggers: TurbotPipesEndpoints['listUserWo
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/flowpipe/pipeline/${pathSegment(input.pipeline_id)}/trigger`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: pickQuery(input, ['where', 'limit', 'next_token']),
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -301,7 +307,10 @@ export const listUserWorkspacePipelines: TurbotPipesEndpoints['listUserWorkspace
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/pipeline`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: pickQuery(input, ['where', 'limit', 'next_token']),
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -319,7 +328,10 @@ export const listOrgWorkspacePipelines: TurbotPipesEndpoints['listOrgWorkspacePi
 		>(
 			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/pipeline`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: pickQuery(input, ['where', 'limit', 'next_token']),
+			},
 		);
 		await logEventFromContext(
 			ctx,

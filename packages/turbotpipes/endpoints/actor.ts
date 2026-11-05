@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { makeTurbotPipesRequest, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -26,7 +26,10 @@ export const listActorWorkspaces: TurbotPipesEndpoints['actorListWorkspaces'] =
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['actorListWorkspaces']
-		>('actor/workspace', ctx.key, { method: 'GET', query: input });
+		>('actor/workspace', ctx.key, {
+			method: 'GET',
+			query: pickQuery(input, ['limit', 'next_token']),
+		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
 		syncListDiscovery(ctx, ctx.db?.workspace, response?.items);
@@ -45,7 +48,10 @@ export const listActorOrgs: TurbotPipesEndpoints['actorListOrgs'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['actorListOrgs']
-	>('actor/org', ctx.key, { method: 'GET', query: input });
+	>('actor/org', ctx.key, {
+		method: 'GET',
+		query: pickQuery(input, ['limit', 'next_token']),
+	});
 	// Background insert-only discovery: populates search without
 	// erasing stored details and without delaying the response.
 	syncListDiscovery(ctx, ctx.db?.org, response?.items);
@@ -62,7 +68,10 @@ export const listActorConnections: TurbotPipesEndpoints['actorListConnections'] 
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['actorListConnections']
-		>('actor/conn', ctx.key, { method: 'GET', query: input });
+		>('actor/conn', ctx.key, {
+			method: 'GET',
+			query: pickQuery(input, ['limit', 'next_token']),
+		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
 		syncListDiscovery(ctx, ctx.db?.connection, response?.items);
@@ -79,7 +88,10 @@ export const listActorActivity: TurbotPipesEndpoints['actorListActivity'] =
 	async (ctx, input) => {
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['actorListActivity']
-		>('actor/activity', ctx.key, { method: 'GET', query: input });
+		>('actor/activity', ctx.key, {
+			method: 'GET',
+			query: pickQuery(input, ['limit', 'next_token']),
+		});
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.actor.list_activity',

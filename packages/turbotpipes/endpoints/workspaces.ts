@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment } from '../client';
+import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -51,7 +51,7 @@ export const listUserWorkspaceConnections: TurbotPipesEndpoints['listUserWorkspa
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
@@ -72,7 +72,7 @@ export const listUserWorkspaceConnectionAssociations: TurbotPipesEndpoints['list
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/conn`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -90,7 +90,10 @@ export const listUserWorkspaceConnectionTree: TurbotPipesEndpoints['listUserWork
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection_tree`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: pickQuery(input, ['prefix', 'where', 'limit', 'next_token']),
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -163,7 +166,7 @@ export const listUserWorkspaceConnectionFolders: TurbotPipesEndpoints['listUserW
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/connection_folder`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -298,7 +301,7 @@ export const listUserWorkspaceAggregators: TurbotPipesEndpoints['listUserWorkspa
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/aggregator`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -316,7 +319,7 @@ export const listUserWorkspaceAggregatorConnections: TurbotPipesEndpoints['listU
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/aggregator/${pathSegment(input.aggregator_handle)}/connection`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -334,7 +337,7 @@ export const listUserWorkspaceAuditLogs: TurbotPipesEndpoints['listUserWorkspace
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/audit_log`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -352,7 +355,7 @@ export const listUserWorkspaceDatabaseLogs: TurbotPipesEndpoints['listUserWorksp
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/db_log`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -370,7 +373,10 @@ export const listUserWorkspaceProcesses: TurbotPipesEndpoints['listUserWorkspace
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/process`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: pickQuery(input, ['where', 'limit', 'next_token']),
+			},
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
@@ -430,7 +436,10 @@ export const listOrgWorkspaceProcesses: TurbotPipesEndpoints['listOrgWorkspacePr
 		>(
 			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/process`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: pickQuery(input, ['where', 'limit', 'next_token']),
+			},
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
@@ -451,7 +460,10 @@ export const listUserWorkspaceUsage: TurbotPipesEndpoints['listUserWorkspaceUsag
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/usage`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: pickQuery(input, ['where', 'limit', 'next_token']),
+			},
 		);
 		await logEventFromContext(
 			ctx,

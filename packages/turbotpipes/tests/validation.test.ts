@@ -138,3 +138,89 @@ describe('output validation through createCorsair', () => {
 		).resolves.toBeNull();
 	});
 });
+
+describe('list pagination through createCorsair', () => {
+	it('forwards paging and filter params, and only those', async () => {
+		answers['GET /api/v1/user/bob/constraint'] = {
+			body: { items: [{ id: 'c_1' }], next_token: 'page2' },
+		};
+		const page = await api().users.listConstraints({
+			user_handle: 'bob',
+			where: "name = 'x'",
+			limit: 1,
+			next_token: 'page1',
+		});
+		expect(page.next_token).toBe('page2');
+		expect(sent[0]?.path).toBe('user/bob/constraint');
+		expect(Object.fromEntries(new URLSearchParams(sent[0]?.search))).toEqual({
+			where: "name = 'x'",
+			limit: '1',
+			next_token: 'page1',
+		});
+	});
+
+	it('sends no query when no paging params are given', async () => {
+		answers['GET /api/v1/user/bob/workspace/dev/process'] = {
+			body: { items: [] },
+		};
+		await api().workspaces.listUserWorkspaceProcesses({
+			user_handle: 'bob',
+			workspace_handle: 'dev',
+		});
+		expect(sent[0]?.search).toBe('');
+	});
+
+	it('forwards list-specific params (q, include, prefix)', async () => {
+		answers['GET /api/v1/identity'] = { body: { items: [] } };
+		answers['GET /api/v1/org/acme/service_account'] = { body: { items: [] } };
+		answers['GET /api/v1/user/bob/workspace/dev/connection_tree'] = {
+			body: { items: [] },
+		};
+		await api().identities.listIdentities({ q: 'pranay', limit: 5 });
+		await api().orgs.listServiceAccounts({
+			org_handle: 'acme',
+			include: 'tokens',
+			limit: 500,
+		});
+		await api().workspaces.listUserWorkspaceConnectionTree({
+			user_handle: 'bob',
+			workspace_handle: 'dev',
+			prefix: 'aws',
+		});
+		expect(sent.map((s) => s.search)).toEqual([
+			'?q=pranay&limit=5',
+			'?limit=500&include=tokens',
+			'?prefix=aws',
+		]);
+	});
+
+	it('pages permissions only when listing them', async () => {
+		answers['GET /api/v1/org/acme/connection/aws/permission'] = {
+			body: { items: [] },
+		};
+		answers['GET /api/v1/org/acme/connection/aws/permission/p_1'] = {
+			body: { id: 'p_1' },
+		};
+		await api().connections.getOrgConnectionPermission({
+			org_handle: 'acme',
+			connection_handle: 'aws',
+			limit: 10,
+		});
+		await api().connections.getOrgConnectionPermission({
+			org_handle: 'acme',
+			connection_handle: 'aws',
+			permission_id: 'p_1',
+			limit: 10,
+		});
+		expect(sent.map((s) => s.search)).toEqual(['?limit=10', '']);
+	});
+
+	it('rejects page sizes outside what Pipes accepts', async () => {
+		for (const limit of [0, 101, 2.5]) {
+			await expect(
+				api().users.listConstraints({ user_handle: 'bob', limit }),
+			).rejects.toThrow(/limit/);
+		}
+		expect(sent).toHaveLength(0);
+	});
+});

@@ -9,35 +9,42 @@ import {
 	TurbotPipesWorkspaceSchema,
 } from '../schema/database';
 
+// ── Shared list fields ───────────────────────────────────────────────────────
+// Pipes pages lists with limit (1-100, default 25) and next_token, the cursor
+// returned with the previous page. Many lists also take a where filter.
+const pageLimit = z.number().int().min(1).max(100).optional();
+const nextToken = z.string().optional();
+const listFilter = z.string().optional();
+
 // ── Actor Schemas ────────────────────────────────────────────────────────────
 export const ActorGetInputSchema = z.object({});
 export type ActorGetInput = z.infer<typeof ActorGetInputSchema>;
 
 export const ActorListWorkspacesInputSchema = z.object({
-	limit: z.number().optional(),
-	next_token: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ActorListWorkspacesInput = z.infer<
 	typeof ActorListWorkspacesInputSchema
 >;
 
 export const ActorListOrgsInputSchema = z.object({
-	limit: z.number().optional(),
-	next_token: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ActorListOrgsInput = z.infer<typeof ActorListOrgsInputSchema>;
 
 export const ActorListConnectionsInputSchema = z.object({
-	limit: z.number().optional(),
-	next_token: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ActorListConnectionsInput = z.infer<
 	typeof ActorListConnectionsInputSchema
 >;
 
 export const ActorListActivityInputSchema = z.object({
-	limit: z.number().optional(),
-	next_token: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ActorListActivityInput = z.infer<
 	typeof ActorListActivityInputSchema
@@ -56,8 +63,8 @@ export type UpdateUserInput = z.infer<typeof UpdateUserInputSchema>;
 
 export const ListUserWorkspacesInputSchema = z.object({
 	user_handle: z.string(),
-	limit: z.number().optional(),
-	next_token: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspacesInput = z.infer<
 	typeof ListUserWorkspacesInputSchema
@@ -91,8 +98,8 @@ export type RunUserWorkspaceCommandInput = z.infer<
 
 export const ListUserProcessesInputSchema = z.object({
 	user_handle: z.string(),
-	limit: z.number().optional(),
-	next_token: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserProcessesInput = z.infer<
 	typeof ListUserProcessesInputSchema
@@ -104,11 +111,19 @@ export const GetUserProcessInputSchema = z.object({
 });
 export type GetUserProcessInput = z.infer<typeof GetUserProcessInputSchema>;
 
-export const ListUserUsageInputSchema = z.object({ user_handle: z.string() });
+export const ListUserUsageInputSchema = z.object({
+	user_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
+});
 export type ListUserUsageInput = z.infer<typeof ListUserUsageInputSchema>;
 
 export const ListUserConstraintsInputSchema = z.object({
 	user_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserConstraintsInput = z.infer<
 	typeof ListUserConstraintsInputSchema
@@ -116,8 +131,8 @@ export type ListUserConstraintsInput = z.infer<
 
 export const ListUserAuditLogsInputSchema = z.object({
 	user_handle: z.string(),
-	limit: z.number().optional(),
-	next_token: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserAuditLogsInput = z.infer<
 	typeof ListUserAuditLogsInputSchema
@@ -129,7 +144,11 @@ export const GetUserEmailInputSchema = z.object({
 });
 export type GetUserEmailInput = z.infer<typeof GetUserEmailInputSchema>;
 
-export const ListUserEmailsInputSchema = z.object({ user_handle: z.string() });
+export const ListUserEmailsInputSchema = z.object({
+	user_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
+});
 export type ListUserEmailsInput = z.infer<typeof ListUserEmailsInputSchema>;
 
 export const GetUserPreferencesInputSchema = z.object({
@@ -164,8 +183,8 @@ export type DeleteOrgInput = z.infer<typeof DeleteOrgInputSchema>;
 
 export const ListOrgWorkspacesInputSchema = z.object({
 	org_handle: z.string(),
-	limit: z.number().optional(),
-	next_token: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListOrgWorkspacesInput = z.infer<
 	typeof ListOrgWorkspacesInputSchema
@@ -190,13 +209,17 @@ export type RunOrgWorkspaceCommandInput = z.infer<
 
 export const ListOrgProcessesInputSchema = z.object({
 	org_handle: z.string(),
-	limit: z.number().optional(),
-	next_token: z.string().optional(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListOrgProcessesInput = z.infer<typeof ListOrgProcessesInputSchema>;
 
 export const ListOrgServiceAccountsInputSchema = z.object({
 	org_handle: z.string(),
+	limit: z.number().int().min(1).max(1000).optional(),
+	next_token: nextToken,
+	include: z.string().optional(),
 });
 export type ListOrgServiceAccountsInput = z.infer<
 	typeof ListOrgServiceAccountsInputSchema
@@ -237,7 +260,12 @@ export type UpdateOrgMemberRoleInput = z.infer<
 	typeof UpdateOrgMemberRoleInputSchema
 >;
 
-export const ListOrgUsageInputSchema = z.object({ org_handle: z.string() });
+export const ListOrgUsageInputSchema = z.object({
+	org_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
+});
 export type ListOrgUsageInput = z.infer<typeof ListOrgUsageInputSchema>;
 
 // ── Connections Schemas ──────────────────────────────────────────────────────
@@ -265,8 +293,8 @@ export type GetUserConnectionInput = z.infer<
 
 export const ListUserConnectionsInputSchema = z.object({
 	user_handle: z.string(),
-	limit: z.number().optional(),
-	next_token: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserConnectionsInput = z.infer<
 	typeof ListUserConnectionsInputSchema
@@ -325,6 +353,8 @@ export const GetOrgConnectionPermissionInputSchema = z.object({
 	connection_handle: z.string(),
 	/** Omit to list every permission on the connection. */
 	permission_id: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type GetOrgConnectionPermissionInput = z.infer<
 	typeof GetOrgConnectionPermissionInputSchema
@@ -380,6 +410,8 @@ export type GetUserWorkspaceConnectionInput = z.infer<
 export const ListUserWorkspaceConnectionsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceConnectionsInput = z.infer<
 	typeof ListUserWorkspaceConnectionsInputSchema
@@ -388,6 +420,8 @@ export type ListUserWorkspaceConnectionsInput = z.infer<
 export const ListUserWorkspaceConnectionAssociationsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceConnectionAssociationsInput = z.infer<
 	typeof ListUserWorkspaceConnectionAssociationsInputSchema
@@ -396,6 +430,10 @@ export type ListUserWorkspaceConnectionAssociationsInput = z.infer<
 export const ListUserWorkspaceConnectionTreeInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	prefix: z.string().optional(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceConnectionTreeInput = z.infer<
 	typeof ListUserWorkspaceConnectionTreeInputSchema
@@ -431,6 +469,8 @@ export type GetUserWorkspaceConnectionFolderInput = z.infer<
 export const ListUserWorkspaceConnectionFoldersInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceConnectionFoldersInput = z.infer<
 	typeof ListUserWorkspaceConnectionFoldersInputSchema
@@ -494,6 +534,8 @@ export type GetUserWorkspaceAggregatorInput = z.infer<
 export const ListUserWorkspaceAggregatorsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceAggregatorsInput = z.infer<
 	typeof ListUserWorkspaceAggregatorsInputSchema
@@ -503,6 +545,8 @@ export const ListUserWorkspaceAggregatorConnectionsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
 	aggregator_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceAggregatorConnectionsInput = z.infer<
 	typeof ListUserWorkspaceAggregatorConnectionsInputSchema
@@ -511,6 +555,8 @@ export type ListUserWorkspaceAggregatorConnectionsInput = z.infer<
 export const ListUserWorkspaceAuditLogsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceAuditLogsInput = z.infer<
 	typeof ListUserWorkspaceAuditLogsInputSchema
@@ -519,6 +565,8 @@ export type ListUserWorkspaceAuditLogsInput = z.infer<
 export const ListUserWorkspaceDatabaseLogsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceDatabaseLogsInput = z.infer<
 	typeof ListUserWorkspaceDatabaseLogsInputSchema
@@ -527,6 +575,9 @@ export type ListUserWorkspaceDatabaseLogsInput = z.infer<
 export const ListUserWorkspaceProcessesInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceProcessesInput = z.infer<
 	typeof ListUserWorkspaceProcessesInputSchema
@@ -555,6 +606,9 @@ export type GetUserWorkspaceProcessLogInput = z.infer<
 export const ListOrgWorkspaceProcessesInputSchema = z.object({
 	org_handle: z.string(),
 	workspace_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListOrgWorkspaceProcessesInput = z.infer<
 	typeof ListOrgWorkspaceProcessesInputSchema
@@ -563,6 +617,9 @@ export type ListOrgWorkspaceProcessesInput = z.infer<
 export const ListUserWorkspaceUsageInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceUsageInput = z.infer<
 	typeof ListUserWorkspaceUsageInputSchema
@@ -635,6 +692,9 @@ export type RunUserWorkspaceQueryInput = z.infer<
 export const ListUserWorkspaceSnapshotsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceSnapshotsInput = z.infer<
 	typeof ListUserWorkspaceSnapshotsInputSchema
@@ -654,7 +714,11 @@ export const GetUserAiKeyInputSchema = z.object({
 });
 export type GetUserAiKeyInput = z.infer<typeof GetUserAiKeyInputSchema>;
 
-export const ListUserAiKeysInputSchema = z.object({ user_handle: z.string() });
+export const ListUserAiKeysInputSchema = z.object({
+	user_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
+});
 export type ListUserAiKeysInput = z.infer<typeof ListUserAiKeysInputSchema>;
 
 export const UpdateUserAiKeyInputSchema = z.object({
@@ -702,6 +766,9 @@ export type UpdateUserWorkspaceConversationInput = z.infer<
 export const ListUserWorkspaceConversationsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceConversationsInput = z.infer<
 	typeof ListUserWorkspaceConversationsInputSchema
@@ -745,6 +812,8 @@ export type GetUserIntegrationInput = z.infer<
 
 export const ListUserIntegrationsInputSchema = z.object({
 	user_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserIntegrationsInput = z.infer<
 	typeof ListUserIntegrationsInputSchema
@@ -797,6 +866,8 @@ export type GetUserWorkspaceIntegrationInput = z.infer<
 export const ListUserWorkspaceIntegrationsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceIntegrationsInput = z.infer<
 	typeof ListUserWorkspaceIntegrationsInputSchema
@@ -822,6 +893,9 @@ export type CreateUserNotifierInput = z.infer<
 
 export const ListUserNotifiersInputSchema = z.object({
 	user_handle: z.string(),
+	limit: z.number().int().min(1).optional(),
+	next_token: nextToken,
+	where: listFilter,
 });
 export type ListUserNotifiersInput = z.infer<
 	typeof ListUserNotifiersInputSchema
@@ -867,6 +941,9 @@ export type GetUserWorkspaceNotifierInput = z.infer<
 export const ListUserWorkspaceNotifiersInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: z.number().int().min(1).optional(),
+	next_token: nextToken,
+	where: listFilter,
 });
 export type ListUserWorkspaceNotifiersInput = z.infer<
 	typeof ListUserWorkspaceNotifiersInputSchema
@@ -904,6 +981,8 @@ export type GetUserWorkspaceDatatankInput = z.infer<
 export const ListUserWorkspaceDatatanksInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceDatatanksInput = z.infer<
 	typeof ListUserWorkspaceDatatanksInputSchema
@@ -912,6 +991,8 @@ export type ListUserWorkspaceDatatanksInput = z.infer<
 export const ListOrgWorkspaceDatatanksInputSchema = z.object({
 	org_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListOrgWorkspaceDatatanksInput = z.infer<
 	typeof ListOrgWorkspaceDatatanksInputSchema
@@ -939,6 +1020,8 @@ export const ListUserWorkspaceDatatankTablesInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
 	datatank_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceDatatankTablesInput = z.infer<
 	typeof ListUserWorkspaceDatatankTablesInputSchema
@@ -949,6 +1032,8 @@ export const ListUserWorkspaceDatatankPartitionsInputSchema = z.object({
 	workspace_handle: z.string(),
 	datatank_handle: z.string(),
 	table_name: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceDatatankPartitionsInput = z.infer<
 	typeof ListUserWorkspaceDatatankPartitionsInputSchema
@@ -966,6 +1051,8 @@ export type GetUserWorkspaceSchemaInput = z.infer<
 export const ListUserWorkspaceSchemasInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceSchemasInput = z.infer<
 	typeof ListUserWorkspaceSchemasInputSchema
@@ -1012,6 +1099,8 @@ export type GetUserWorkspaceModInput = z.infer<
 export const ListUserWorkspaceModsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceModsInput = z.infer<
 	typeof ListUserWorkspaceModsInputSchema
@@ -1020,6 +1109,8 @@ export type ListUserWorkspaceModsInput = z.infer<
 export const ListOrgWorkspaceModsInputSchema = z.object({
 	org_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListOrgWorkspaceModsInput = z.infer<
 	typeof ListOrgWorkspaceModsInputSchema
@@ -1061,6 +1152,8 @@ export const ListUserWorkspaceModVariablesInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
 	mod_alias: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceModVariablesInput = z.infer<
 	typeof ListUserWorkspaceModVariablesInputSchema
@@ -1127,6 +1220,8 @@ export const ListOrgWorkspaceFlowpipeModVariablesInputSchema = z.object({
 	org_handle: z.string(),
 	workspace_handle: z.string(),
 	mod_alias: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListOrgWorkspaceFlowpipeModVariablesInput = z.infer<
 	typeof ListOrgWorkspaceFlowpipeModVariablesInputSchema
@@ -1136,6 +1231,8 @@ export const ListUserWorkspaceFlowpipeModVariablesInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
 	mod_alias: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceFlowpipeModVariablesInput = z.infer<
 	typeof ListUserWorkspaceFlowpipeModVariablesInputSchema
@@ -1153,6 +1250,9 @@ export type GetUserWorkspaceFlowpipePipelineInput = z.infer<
 export const ListUserWorkspaceFlowpipePipelinesInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceFlowpipePipelinesInput = z.infer<
 	typeof ListUserWorkspaceFlowpipePipelinesInputSchema
@@ -1198,6 +1298,8 @@ export type RunUserWorkspaceFlowpipeTriggerCommandInput = z.infer<
 export const ListUserWorkspaceFlowpipeInputsInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspaceFlowpipeInputsInput = z.infer<
 	typeof ListUserWorkspaceFlowpipeInputsInputSchema
@@ -1207,6 +1309,9 @@ export const ListUserWorkspacePipelineTriggersInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
 	pipeline_id: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspacePipelineTriggersInput = z.infer<
 	typeof ListUserWorkspacePipelineTriggersInputSchema
@@ -1233,6 +1338,9 @@ export type GetUserWorkspacePipelineInput = z.infer<
 export const ListUserWorkspacePipelinesInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserWorkspacePipelinesInput = z.infer<
 	typeof ListUserWorkspacePipelinesInputSchema
@@ -1241,6 +1349,9 @@ export type ListUserWorkspacePipelinesInput = z.infer<
 export const ListOrgWorkspacePipelinesInputSchema = z.object({
 	org_handle: z.string(),
 	workspace_handle: z.string(),
+	where: listFilter,
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListOrgWorkspacePipelinesInput = z.infer<
 	typeof ListOrgWorkspacePipelinesInputSchema
@@ -1288,6 +1399,8 @@ export type GetUserBillingUpcomingInvoiceInput = z.infer<
 
 export const ListUserBillingInvoicesInputSchema = z.object({
 	user_handle: z.string(),
+	limit: pageLimit,
+	next_token: nextToken,
 });
 export type ListUserBillingInvoicesInput = z.infer<
 	typeof ListUserBillingInvoicesInputSchema
@@ -1366,7 +1479,10 @@ export type GetTenantSettingsInput = z.infer<
 	typeof GetTenantSettingsInputSchema
 >;
 
-export const ListTenantsInputSchema = z.object({});
+export const ListTenantsInputSchema = z.object({
+	limit: pageLimit,
+	next_token: nextToken,
+});
 export type ListTenantsInput = z.infer<typeof ListTenantsInputSchema>;
 
 // ── Identities Schemas ───────────────────────────────────────────────────────
@@ -1380,7 +1496,11 @@ export type GetIdentityAvatarInput = z.infer<
 	typeof GetIdentityAvatarInputSchema
 >;
 
-export const ListIdentitiesInputSchema = z.object({});
+export const ListIdentitiesInputSchema = z.object({
+	q: z.string().optional(),
+	limit: pageLimit,
+	next_token: nextToken,
+});
 export type ListIdentitiesInput = z.infer<typeof ListIdentitiesInputSchema>;
 
 // ── Output Schemas ───────────────────────────────────────────────────────────

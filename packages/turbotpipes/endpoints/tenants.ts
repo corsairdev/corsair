@@ -3,6 +3,7 @@ import {
 	getTurbotPipesAvatarUrl,
 	makeTurbotPipesRequest,
 	pathSegment,
+	pickQuery,
 } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -62,7 +63,10 @@ export const listTenants: TurbotPipesEndpoints['listTenants'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['listTenants']
-	>('tenant', ctx.key, { method: 'GET' });
+	>('tenant', ctx.key, {
+		method: 'GET',
+		query: pickQuery(input, ['limit', 'next_token']),
+	});
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.tenants.list',

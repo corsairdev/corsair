@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment } from '../client';
+import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -38,12 +38,11 @@ export const updateUser: TurbotPipesEndpoints['updateUser'] = async (
 
 export const listUserWorkspaces: TurbotPipesEndpoints['listUserWorkspaces'] =
 	async (ctx, input) => {
-		const { user_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaces']
-		>(`user/${pathSegment(user_handle)}/workspace`, ctx.key, {
+		>(`user/${pathSegment(input.user_handle)}/workspace`, ctx.key, {
 			method: 'GET',
-			query,
+			query: pickQuery(input, ['limit', 'next_token']),
 		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
@@ -123,12 +122,11 @@ export const runUserWorkspaceCommand: TurbotPipesEndpoints['runUserWorkspaceComm
 
 export const listUserProcesses: TurbotPipesEndpoints['listUserProcesses'] =
 	async (ctx, input) => {
-		const { user_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserProcesses']
-		>(`user/${pathSegment(user_handle)}/process`, ctx.key, {
+		>(`user/${pathSegment(input.user_handle)}/process`, ctx.key, {
 			method: 'GET',
-			query,
+			query: pickQuery(input, ['limit', 'next_token']),
 		});
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
@@ -172,7 +170,10 @@ export const listUserUsage: TurbotPipesEndpoints['listUserUsage'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['listUserUsage']
-	>(`user/${pathSegment(input.user_handle)}/usage`, ctx.key, { method: 'GET' });
+	>(`user/${pathSegment(input.user_handle)}/usage`, ctx.key, {
+		method: 'GET',
+		query: pickQuery(input, ['where', 'limit', 'next_token']),
+	});
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.list_usage',
@@ -188,6 +189,7 @@ export const listUserConstraints: TurbotPipesEndpoints['listUserConstraints'] =
 			TurbotPipesEndpointOutputs['listUserConstraints']
 		>(`user/${pathSegment(input.user_handle)}/constraint`, ctx.key, {
 			method: 'GET',
+			query: pickQuery(input, ['where', 'limit', 'next_token']),
 		});
 		await logEventFromContext(
 			ctx,
@@ -200,12 +202,11 @@ export const listUserConstraints: TurbotPipesEndpoints['listUserConstraints'] =
 
 export const listUserAuditLogs: TurbotPipesEndpoints['listUserAuditLogs'] =
 	async (ctx, input) => {
-		const { user_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserAuditLogs']
-		>(`user/${pathSegment(user_handle)}/audit_log`, ctx.key, {
+		>(`user/${pathSegment(input.user_handle)}/audit_log`, ctx.key, {
 			method: 'GET',
-			query,
+			query: pickQuery(input, ['limit', 'next_token']),
 		});
 		await logEventFromContext(
 			ctx,
@@ -244,7 +245,10 @@ export const listUserEmails: TurbotPipesEndpoints['listUserEmails'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['listUserEmails']
-	>(`user/${pathSegment(input.user_handle)}/email`, ctx.key, { method: 'GET' });
+	>(`user/${pathSegment(input.user_handle)}/email`, ctx.key, {
+		method: 'GET',
+		query: pickQuery(input, ['limit', 'next_token']),
+	});
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.list_emails',

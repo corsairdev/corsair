@@ -84,6 +84,30 @@ export function pathSegment(value: string | number): string {
 	return encodeURIComponent(segment);
 }
 
+type QueryValue = string | number | boolean | undefined;
+
+/**
+ * Picks the named query parameters from an endpoint input. Only these keys
+ * reach the query string, so path handles and body fields never leak into it.
+ */
+export function pickQuery<T extends object, K extends keyof T & string>(
+	input: T,
+	keys: readonly K[],
+): Record<string, QueryValue> {
+	const query: Record<string, QueryValue> = {};
+	for (const key of keys) {
+		const value = input[key];
+		if (
+			typeof value === 'string' ||
+			typeof value === 'number' ||
+			typeof value === 'boolean'
+		) {
+			query[key] = value;
+		}
+	}
+	return query;
+}
+
 /**
  * Performs an HTTP request to the Turbot Pipes API.
  * Auth: Bearer Token in Authorization header (e.g., Bearer tpt_...).
@@ -95,7 +119,7 @@ export async function makeTurbotPipesRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		// unknown: endpoint bodies are per-operation objects validated by zod input schemas.
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		query?: Record<string, QueryValue>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;

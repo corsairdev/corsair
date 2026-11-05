@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment } from '../client';
+import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import { syncEntityDetail } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -47,12 +47,11 @@ export const getUserConnection: TurbotPipesEndpoints['getUserConnection'] =
 
 export const listUserConnections: TurbotPipesEndpoints['listUserConnections'] =
 	async (ctx, input) => {
-		const { user_handle, ...query } = input;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserConnections']
-		>(`user/${pathSegment(user_handle)}/connection`, ctx.key, {
+		>(`user/${pathSegment(input.user_handle)}/connection`, ctx.key, {
 			method: 'GET',
-			query,
+			query: pickQuery(input, ['limit', 'next_token']),
 		});
 		await logEventFromContext(
 			ctx,
@@ -181,7 +180,13 @@ export const getOrgConnectionPermission: TurbotPipesEndpoints['getOrgConnectionP
 				? `org/${pathSegment(input.org_handle)}/connection/${pathSegment(input.connection_handle)}/permission/${pathSegment(input.permission_id)}`
 				: `org/${pathSegment(input.org_handle)}/connection/${pathSegment(input.connection_handle)}/permission`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				// Paging applies only when listing every permission.
+				query: input.permission_id
+					? undefined
+					: pickQuery(input, ['limit', 'next_token']),
+			},
 		);
 		await logEventFromContext(
 			ctx,

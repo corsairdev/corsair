@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment } from '../client';
+import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -56,6 +56,7 @@ export const listUserAiKeys: TurbotPipesEndpoints['listUserAiKeys'] = async (
 		TurbotPipesEndpointOutputs['listUserAiKeys']
 	>(`user/${pathSegment(input.user_handle)}/ai/key`, ctx.key, {
 		method: 'GET',
+		query: pickQuery(input, ['limit', 'next_token']),
 	});
 	await logEventFromContext(
 		ctx,
@@ -178,7 +179,10 @@ export const listUserWorkspaceConversations: TurbotPipesEndpoints['listUserWorks
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/ai/conversation`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: pickQuery(input, ['where', 'limit', 'next_token']),
+			},
 		);
 		await logEventFromContext(
 			ctx,

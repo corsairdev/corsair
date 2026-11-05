@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment } from '../client';
+import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -53,7 +53,7 @@ export const listUserWorkspaceDatatanks: TurbotPipesEndpoints['listUserWorkspace
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/datatank`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
@@ -74,7 +74,7 @@ export const listOrgWorkspaceDatatanks: TurbotPipesEndpoints['listOrgWorkspaceDa
 		>(
 			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/datatank`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		// Background insert-only discovery: populates search without
 		// erasing stored details and without delaying the response.
@@ -133,7 +133,7 @@ export const listUserWorkspaceDatatankTables: TurbotPipesEndpoints['listUserWork
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/datatank/${pathSegment(input.datatank_handle)}/table`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -151,7 +151,7 @@ export const listUserWorkspaceDatatankPartitions: TurbotPipesEndpoints['listUser
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/datatank/${pathSegment(input.datatank_handle)}/table/${pathSegment(input.table_name)}/part`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -187,7 +187,7 @@ export const listUserWorkspaceSchemas: TurbotPipesEndpoints['listUserWorkspaceSc
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/schema`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,

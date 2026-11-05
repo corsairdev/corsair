@@ -3,6 +3,7 @@ import {
 	getTurbotPipesAvatarUrl,
 	makeTurbotPipesRequest,
 	pathSegment,
+	pickQuery,
 } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
@@ -48,7 +49,10 @@ export const listIdentities: TurbotPipesEndpoints['listIdentities'] = async (
 ) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['listIdentities']
-	>('identity', ctx.key, { method: 'GET' });
+	>('identity', ctx.key, {
+		method: 'GET',
+		query: pickQuery(input, ['q', 'limit', 'next_token']),
+	});
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.identities.list',

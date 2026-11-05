@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment } from '../client';
+import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -27,6 +27,7 @@ export const listUserNotifiers: TurbotPipesEndpoints['listUserNotifiers'] =
 			TurbotPipesEndpointOutputs['listUserNotifiers']
 		>(`user/${pathSegment(input.user_handle)}/notifier`, ctx.key, {
 			method: 'GET',
+			query: pickQuery(input, ['limit', 'next_token', 'where']),
 		});
 		await logEventFromContext(
 			ctx,
@@ -120,7 +121,10 @@ export const listUserWorkspaceNotifiers: TurbotPipesEndpoints['listUserWorkspace
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/notifier`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: pickQuery(input, ['limit', 'next_token', 'where']),
+			},
 		);
 		await logEventFromContext(
 			ctx,

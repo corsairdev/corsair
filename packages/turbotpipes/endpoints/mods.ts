@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest, pathSegment } from '../client';
+import { makeTurbotPipesRequest, pathSegment, pickQuery } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -50,7 +50,7 @@ export const listUserWorkspaceMods: TurbotPipesEndpoints['listUserWorkspaceMods'
 		>(
 			`user/${pathSegment(input.user_handle)}/workspace/${pathSegment(input.workspace_handle)}/mod`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -68,7 +68,7 @@ export const listOrgWorkspaceMods: TurbotPipesEndpoints['listOrgWorkspaceMods'] 
 		>(
 			`org/${pathSegment(input.org_handle)}/workspace/${pathSegment(input.workspace_handle)}/mod`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
@@ -146,7 +146,7 @@ export const listUserWorkspaceModVariables: TurbotPipesEndpoints['listUserWorksp
 		>(
 			`user/${pathSegment(user_handle)}/workspace/${pathSegment(workspace_handle)}/mod/${pathSegment(mod_alias)}/variable`,
 			ctx.key,
-			{ method: 'GET' },
+			{ method: 'GET', query: pickQuery(input, ['limit', 'next_token']) },
 		);
 		await logEventFromContext(
 			ctx,
