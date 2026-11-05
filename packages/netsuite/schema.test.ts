@@ -32,7 +32,9 @@ describe('NetSuite schema', () => {
 		const customer = NetSuiteSchema.entities.customers.safeParse({
 			id: '123',
 			companyName: 'Acme Inc',
-			links: [{ rel: 'self', href: 'https://example.com/record/v1/customer/123' }],
+			links: [
+				{ rel: 'self', href: 'https://example.com/record/v1/customer/123' },
+			],
 		});
 		expect(customer.success).toBe(true);
 
