@@ -212,7 +212,7 @@ describe('Gumroad plugin through createCorsair', () => {
 		}
 	});
 
-	it('reads a public profile from the username subdomain', async () => {
+	it('reads a public profile from the apex host path form', async () => {
 		const { corsair, testDb } = await createClient({ key: 'gr-test-key' });
 		try {
 			respond({
@@ -224,7 +224,7 @@ describe('Gumroad plugin through createCorsair', () => {
 			await corsair.gumroad.api.public.profile({ username: 'sahil' });
 
 			const call = fetchMock.mock.calls[0] as [string, RequestInit];
-			expect(call[0]).toBe('https://sahil.gumroad.com/.json');
+			expect(call[0]).toBe('https://gumroad.com/sahil.json');
 		} finally {
 			testDb.cleanup();
 		}

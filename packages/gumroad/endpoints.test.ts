@@ -663,7 +663,7 @@ describe('endpoint dispatch', () => {
 			endpoint: Public.profile,
 			input: { username: 'sahil' },
 			response: publicProfile,
-			sent: { method: 'GET', path: '/.json', query: '' },
+			sent: { method: 'GET', path: '/sahil.json', query: '' },
 		},
 		{
 			name: 'media.list',
@@ -1247,13 +1247,13 @@ describe('endpoint dispatch', () => {
 		expect(call[0]).toBe('https://sahil.gumroad.com/l/pencil.json');
 	});
 
-	it('public.profile reads from the username subdomain', async () => {
+	it('public.profile reads from the apex host path form', async () => {
 		respond(publicProfile);
 
 		await invoke(Public.profile, { username: 'sahil' });
 
 		const call = fetchMock.mock.calls.at(-1) as [string, RequestInit];
-		expect(call[0]).toBe('https://sahil.gumroad.com/.json');
+		expect(call[0]).toBe('https://gumroad.com/sahil.json');
 	});
 
 	it('products.create sends repeated files[][...] keys in file order', async () => {
