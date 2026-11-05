@@ -113,3 +113,8 @@ Full docs, types, and examples: https://docs.corsair.dev/plugins/netsuite
 ## License
 
 Apache-2.0
+
+### Notes
+
+- Loose types (`.passthrough()`) are explained with rationale comments in `packages/netsuite/endpoints/types.ts`.
+- `createJwtClientAssertion` example includes all required args (`scope`, `client_id`).
