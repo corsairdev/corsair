@@ -33,11 +33,13 @@ export const subscriberEndpoints: EnginemailerSubscriberEndpoints = {
 				email: input.email,
 			},
 		),
+	// Documented as "HTTP POST with Query String": a JSON body is ignored and
+	// the API answers "Please Specific Email!".
 	activate: async (ctx, input) =>
-		post<EnginemailerEndpointOutputs['activateSubscriber']>(
-			ctx,
+		makeEnginemailerRequest<EnginemailerEndpointOutputs['activateSubscriber']>(
 			'/restapi/subscriber/emsubscriber/activateSubscriber',
-			{ email: input.email },
+			ctx.key,
+			{ method: 'POST', query: { email: input.email } },
 		),
 	insert: async (ctx, input) =>
 		post<EnginemailerEndpointOutputs['insertSubscriber']>(

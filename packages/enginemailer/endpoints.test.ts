@@ -404,6 +404,16 @@ describe('Enginemailer endpoint routes', () => {
 		);
 	});
 
+	it('sends the activateSubscriber email as a query string, not a body', async () => {
+		await subscriberEndpoints.activate(ctx, { email: 'person@example.com' });
+
+		expect(request).toHaveBeenLastCalledWith(
+			'/restapi/subscriber/emsubscriber/activateSubscriber',
+			'test-api-key',
+			{ method: 'POST', query: { email: 'person@example.com' } },
+		);
+	});
+
 	it('omits the N8N All filter while preserving numeric filters', async () => {
 		await n8nEndpoints.newSubscribers(ctx, {
 			filter_form: 'All',
