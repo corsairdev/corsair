@@ -432,7 +432,9 @@ const MemoriesDeleteAllInputSchema = z
 					value.run_id ||
 					value.org_id ||
 					value.project_id ||
-					value.metadata,
+					// An empty map reaches the wire as no query keys, so it filters
+					// nothing. Require at least one entry.
+					(value.metadata && Object.keys(value.metadata).length > 0),
 			),
 		{
 			message:
