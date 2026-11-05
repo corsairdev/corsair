@@ -374,6 +374,17 @@ describe('emailoctopus endpoints', () => {
 		).rejects.toBeInstanceOf(EmailOctopusAPIError);
 	});
 
+	it('accepts null timestamps and a null paging cursor', async () => {
+		respond({
+			data: [{ ...list, last_updated_at: null }],
+			paging: { next: { url: null, starting_after: null } },
+		});
+
+		await expect(invoke(Lists.list, {})).resolves.toMatchObject({
+			data: [{ id: 'list-1', last_updated_at: null }],
+		});
+	});
+
 	it('rejects a success body of the wrong shape', async () => {
 		respond({ data: 'nope' });
 		await expect(invoke(Lists.list, {})).rejects.toThrow();

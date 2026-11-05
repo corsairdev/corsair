@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 // Field names match the EmailOctopus v2 OpenAPI spec:
 // https://emailoctopus.com/api-documentation/v2
-// Outputs are `.loose()` and documented fields optional, so a field the API
-// adds or omits cannot fail a call that has already happened.
+// Outputs are `.loose()` and documented fields nullish, so a field the API
+// adds, omits, or sets to null cannot fail a call that has already happened.
 
 const IdSchema = z.string().min(1);
 const LimitSchema = z.number().int().min(1).max(100);
@@ -63,194 +63,194 @@ const EmptyOutputSchema = z.object({}).loose();
 
 const PagingNextSchema = z
 	.object({
-		url: z.string().optional(),
-		starting_after: z.string().optional(),
+		url: z.string().nullish(),
+		starting_after: z.string().nullish(),
 	})
 	.loose();
 
 const PagingSchema = z
 	.object({
-		next: PagingNextSchema.nullable().optional(),
+		next: PagingNextSchema.nullish(),
 	})
 	.loose();
 
 const ListFieldOutputSchema = z
 	.object({
-		label: z.string().optional(),
-		tag: z.string().optional(),
-		type: z.string().optional(),
-		choices: z.array(z.string()).optional(),
-		fallback: z.string().nullable().optional(),
+		label: z.string().nullish(),
+		tag: z.string().nullish(),
+		type: z.string().nullish(),
+		choices: z.array(z.string()).nullish(),
+		fallback: z.string().nullish(),
 	})
 	.loose();
 
 const ListCountSchema = z
 	.object({
-		pending: z.number().int().optional(),
-		subscribed: z.number().int().optional(),
-		unsubscribed: z.number().int().optional(),
+		pending: z.number().int().nullish(),
+		subscribed: z.number().int().nullish(),
+		unsubscribed: z.number().int().nullish(),
 	})
 	.loose();
 
 const ListOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		double_opt_in: z.boolean().optional(),
-		fields: z.array(ListFieldOutputSchema).optional(),
-		tags: z.array(z.string()).optional(),
-		counts: z.array(ListCountSchema).optional(),
-		created_at: z.string().optional(),
-		last_updated_at: z.string().optional(),
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		double_opt_in: z.boolean().nullish(),
+		fields: z.array(ListFieldOutputSchema).nullish(),
+		tags: z.array(z.string()).nullish(),
+		counts: z.array(ListCountSchema).nullish(),
+		created_at: z.string().nullish(),
+		last_updated_at: z.string().nullish(),
 	})
 	.loose();
 
 const ListPageOutputSchema = z
 	.object({
-		data: z.array(ListOutputSchema).optional(),
-		paging: PagingSchema.optional(),
+		data: z.array(ListOutputSchema).nullish(),
+		paging: PagingSchema.nullish(),
 	})
 	.loose();
 
 const ContactOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		email_address: z.string().optional(),
-		fields: FieldsSchema.optional(),
-		tags: z.array(z.string()).optional(),
-		status: z.string().optional(),
-		created_at: z.string().optional(),
-		last_updated_at: z.string().optional(),
+		id: z.string().nullish(),
+		email_address: z.string().nullish(),
+		fields: FieldsSchema.nullish(),
+		tags: z.array(z.string()).nullish(),
+		status: z.string().nullish(),
+		created_at: z.string().nullish(),
+		last_updated_at: z.string().nullish(),
 	})
 	.loose();
 
 const ContactPageOutputSchema = z
 	.object({
-		data: z.array(ContactOutputSchema).optional(),
-		paging: PagingSchema.optional(),
+		data: z.array(ContactOutputSchema).nullish(),
+		paging: PagingSchema.nullish(),
 	})
 	.loose();
 
-const TagOutputSchema = z.object({ tag: z.string().optional() }).loose();
+const TagOutputSchema = z.object({ tag: z.string().nullish() }).loose();
 
 const TagPageOutputSchema = z
 	.object({
-		data: z.array(TagOutputSchema).optional(),
-		paging: PagingSchema.optional(),
+		data: z.array(TagOutputSchema).nullish(),
+		paging: PagingSchema.nullish(),
 	})
 	.loose();
 
 const CampaignFromSchema = z
 	.object({
-		name: z.string().optional(),
-		email_address: z.string().optional(),
+		name: z.string().nullish(),
+		email_address: z.string().nullish(),
 	})
 	.loose();
 
 const CampaignOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		status: z.string().optional(),
-		name: z.string().optional(),
-		subject: z.string().optional(),
-		preview_text: z.string().nullable().optional(),
-		to: z.array(z.string()).optional(),
-		from: CampaignFromSchema.optional(),
-		content: z.object({ html: z.string().optional() }).loose().optional(),
-		created_at: z.string().optional(),
-		sent_at: z.string().optional(),
+		id: z.string().nullish(),
+		status: z.string().nullish(),
+		name: z.string().nullish(),
+		subject: z.string().nullish(),
+		preview_text: z.string().nullish(),
+		to: z.array(z.string()).nullish(),
+		from: CampaignFromSchema.nullish(),
+		content: z.object({ html: z.string().nullish() }).loose().nullish(),
+		created_at: z.string().nullish(),
+		sent_at: z.string().nullish(),
 	})
 	.loose();
 
 const CampaignPageOutputSchema = z
 	.object({
-		data: z.array(CampaignOutputSchema).optional(),
-		paging: PagingSchema.optional(),
+		data: z.array(CampaignOutputSchema).nullish(),
+		paging: PagingSchema.nullish(),
 	})
 	.loose();
 
 const ReportContactSchema = z
 	.object({
-		contact_id: z.string().optional(),
-		contact_email_address: z.string().optional(),
-		occurred_at: z.string().optional(),
+		contact_id: z.string().nullish(),
+		contact_email_address: z.string().nullish(),
+		occurred_at: z.string().nullish(),
 	})
 	.loose();
 
 const ReportContactsOutputSchema = z
 	.object({
-		status: z.string().optional(),
-		data: z.array(ReportContactSchema).optional(),
-		paging: PagingSchema.optional(),
+		status: z.string().nullish(),
+		data: z.array(ReportContactSchema).nullish(),
+		paging: PagingSchema.nullish(),
 	})
 	.loose();
 
 const ReportLinkSchema = z
 	.object({
-		url: z.string().optional(),
-		clicked_total: z.number().int().optional(),
-		clicked_unique: z.number().int().optional(),
+		url: z.string().nullish(),
+		clicked_total: z.number().int().nullish(),
+		clicked_unique: z.number().int().nullish(),
 	})
 	.loose();
 
 const ReportLinksOutputSchema = z
 	.object({
-		data: z.array(ReportLinkSchema).optional(),
+		data: z.array(ReportLinkSchema).nullish(),
 	})
 	.loose();
 
 const ReportSummaryOutputSchema = z
 	.object({
-		id: z.string().optional(),
-		sent: z.number().int().optional(),
+		id: z.string().nullish(),
+		sent: z.number().int().nullish(),
 		bounced: z
 			.object({
-				hard: z.number().int().optional(),
-				soft: z.number().int().optional(),
+				hard: z.number().int().nullish(),
+				soft: z.number().int().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		opened: z
 			.object({
-				total: z.number().int().optional(),
-				unique: z.number().int().optional(),
+				total: z.number().int().nullish(),
+				unique: z.number().int().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		clicked: z
 			.object({
-				total: z.number().int().optional(),
-				unique: z.number().int().optional(),
+				total: z.number().int().nullish(),
+				unique: z.number().int().nullish(),
 			})
 			.loose()
-			.optional(),
-		complained: z.number().int().optional(),
-		unsubscribed: z.number().int().optional(),
+			.nullish(),
+		complained: z.number().int().nullish(),
+		unsubscribed: z.number().int().nullish(),
 	})
 	.loose();
 
 const BatchSuccessSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: ContactOutputSchema.optional(),
+		success: z.boolean().nullish(),
+		data: ContactOutputSchema.nullish(),
 	})
 	.loose();
 
 const BatchErrorSchema = z
 	.object({
-		success: z.boolean().optional(),
-		id: z.string().optional(),
-		type: z.string().optional(),
-		title: z.string().optional(),
-		detail: z.string().optional(),
-		status: z.number().int().optional(),
+		success: z.boolean().nullish(),
+		id: z.string().nullish(),
+		type: z.string().nullish(),
+		title: z.string().nullish(),
+		detail: z.string().nullish(),
+		status: z.number().int().nullish(),
 	})
 	.loose();
 
 const BatchOutputSchema = z
 	.object({
-		success: z.array(BatchSuccessSchema).optional(),
-		errors: z.array(BatchErrorSchema).optional(),
+		success: z.array(BatchSuccessSchema).nullish(),
+		errors: z.array(BatchErrorSchema).nullish(),
 	})
 	.loose();
 
