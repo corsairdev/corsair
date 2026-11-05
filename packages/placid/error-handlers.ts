@@ -25,6 +25,25 @@ function isReadOperation(operation: string | undefined): boolean {
 	return operation !== undefined && READ_OPERATIONS.has(operation);
 }
 
+/**
+ * The Retry-After delay to honor, or undefined when Placid sent none.
+ *
+ * A `Retry-After: 0` means "retry immediately". Core tests this value for
+ * truthiness (`if (retryStrategy.headersRetryAfterMs)`), so passing 0 would be
+ * read as absent and the caller would wait the backoff instead. A zero delay is
+ * therefore passed as the shortest delay the check accepts rather than being
+ * dropped, which keeps a server-requested immediate retry from turning into a
+ * one second pause.
+ */
+function retryAfterMs(error: Error): number | undefined {
+	if (!(error instanceof PlacidAPIError)) return undefined;
+	const value = error.retryAfter;
+	if (value === undefined) return undefined;
+	// A fraction under a millisecond rounds to 0, which core would ignore, and
+	// setTimeout would treat as a tick anyway.
+	return value === 0 ? 1 : value;
+}
+
 export const errorHandlers = {
 	// 60 requests per minute. Placid queues renders rather than rejecting them,
 	// so a 429 means the request never started and a retry cannot duplicate a
@@ -33,8 +52,7 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof PlacidAPIError ? error.retryAfter : undefined,
+			headersRetryAfterMs: retryAfterMs(error),
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -90,6 +108,10 @@ export const errorHandlers = {
 // - a user handler sharing a builtin name must replace that builtin, so the
 //   value is taken from the user map.
 // Spreading one map over the other satisfies only one of the two.
+//
+// The map is built on a null prototype: on a plain object, assigning a key
+// named `__proto__` sets the prototype instead of adding a property, so that
+// handler would vanish from Object.keys and never be reached.
 export function mergeErrorHandlers(
 	builtin: CorsairErrorHandler,
 	user: CorsairErrorHandler | undefined,
@@ -100,7 +122,7 @@ export function mergeErrorHandlers(
 	const { DEFAULT: userDefault, ...userRest } = user;
 	const fallback = userDefault ?? builtinDefault;
 
-	const merged: CorsairErrorHandler = {};
+	const merged = Object.create(null) as CorsairErrorHandler;
 	for (const key of Object.keys(userRest)) merged[key] = userRest[key];
 	for (const key of Object.keys(builtinRest)) {
 		if (!(key in merged)) merged[key] = builtinRest[key];

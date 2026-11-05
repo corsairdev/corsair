@@ -204,7 +204,7 @@ describe('makePlacidRequest', () => {
 		expect(error.status).toBeUndefined();
 	});
 
-	it('leaves the API key out of errors', async () => {
+	it('keeps the API key out of errors', async () => {
 		respond(unauthenticated, 401);
 
 		const error = await failure(
@@ -212,7 +212,26 @@ describe('makePlacidRequest', () => {
 		);
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
-		expect(JSON.stringify(error.cause)).not.toContain(API_KEY);
+	});
+
+	it('does not retain the request body on an API error', async () => {
+		respond(unauthenticated, 401);
+
+		const error = await failure(
+			makePlacidRequest(API_KEY, {
+				method: 'POST',
+				path: '/images',
+				body: { layers: { title: { text: 'customer secret' } } },
+			}),
+		);
+
+		// ApiError holds `request.body`; keeping it as the cause would keep the
+		// caller's layer content alive for as long as the error is referenced.
+		expect(error.cause).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('customer secret');
+		// The details a caller branches on are still here.
+		expect(error.status).toBe(401);
+		expect(error.method).toBe('POST');
 	});
 });
 

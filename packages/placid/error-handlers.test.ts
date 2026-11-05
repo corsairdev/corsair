@@ -136,4 +136,17 @@ describe('mergeErrorHandlers', () => {
 			(await retryFor(new Error('boom'), 'images.get', merged)).maxRetries,
 		).toBe(5);
 	});
+
+	// On a plain object, assigning a key named `__proto__` sets the prototype
+	// instead of adding a property, so the handler would be dropped silently.
+	it('keeps a user handler named __proto__', () => {
+		const user = JSON.parse(
+			'{"__proto__": {"match": true, "handler": null}}',
+		) as CorsairErrorHandler;
+
+		const merged = mergeErrorHandlers(errorHandlers, user);
+
+		expect(Object.keys(merged)).toContain('__proto__');
+		expect(Object.getPrototypeOf(merged)).toBeNull();
+	});
 });

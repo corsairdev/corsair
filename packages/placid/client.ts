@@ -182,7 +182,16 @@ export async function makePlacidRequest(
 		if (error instanceof ApiError) {
 			throw new PlacidAPIError(
 				describePlacidError(error.status, error.body, error.message),
-				{ cause: error },
+				// The cause is dropped on purpose: ApiError keeps
+				// `request.body`, which for a render is the customer's layer
+				// text and image URLs. The status, method and parsed validation
+				// errors are copied onto this error instead.
+				{
+					status: error.status,
+					body: error.body,
+					retryAfter: error.retryAfter,
+					method: error.request.method,
+				},
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
