@@ -9,10 +9,12 @@ function esError(
 		errorType?: string;
 		retryAfter?: number;
 		cause?: Error;
+		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD';
 	} = {},
 ) {
 	return new ElasticsearchAPIError('test error', {
 		status,
+		method: options.method,
 		body: options.errorType
 			? { error: { type: options.errorType, reason: 'r' }, status }
 			: undefined,
@@ -92,11 +94,42 @@ describe('error handler strategies', () => {
 		).resolves.toMatchObject({ maxRetries: 3 });
 	});
 
-	it('retries a 5xx twice (3 executions, idempotent reads only)', async () => {
-		await expect(dispatch(esError(503))).resolves.toEqual({
+	it('retries a 5xx twice on a GET read (3 executions)', async () => {
+		await expect(dispatch(esError(503, { method: 'GET' }))).resolves.toEqual({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
+	});
+
+	it('retries a 5xx on a HEAD exists check (idempotent read)', async () => {
+		await expect(dispatch(esError(500, { method: 'HEAD' }))).resolves.toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it.each([
+		['POST', 'indexing a document'],
+		['PUT', 'creating an index'],
+		['DELETE', 'deleting an index'],
+	] as const)(
+		'never replays a 5xx on a %s (%s): the write may have landed',
+		async (method, _why) => {
+			await expect(dispatch(esError(503, { method }))).resolves.toEqual({
+				maxRetries: 0,
+			});
+		},
+	);
+
+	it('never replays a 5xx when the method is unknown', async () => {
+		await expect(dispatch(esError(503))).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('still retries a 429 on writes: rejected requests never executed', async () => {
+		const result = await dispatch(esError(429, { method: 'POST' }));
+
+		expect(result.maxRetries).toBe(3);
+		expect(result.retryStrategy).toBe('exponential_backoff');
 	});
 
 	it('fails fast on anything else via DEFAULT', async () => {

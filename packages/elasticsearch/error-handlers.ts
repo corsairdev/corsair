@@ -30,9 +30,23 @@ function timedOut(error: Error): boolean {
 	return name === 'TimeoutError' || name === 'AbortError';
 }
 
-// All plugin endpoints are idempotent reads, so 5xx and 429 replays are safe.
-// Retry counts below are handler retries: maxRetries 3 means 4 executions,
-// maxRetries 2 means 3.
+function methodOf(
+	error: Error,
+): 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | undefined {
+	return error instanceof ElasticsearchAPIError ? error.method : undefined;
+}
+
+// Only GET/HEAD replays are provably safe: a 5xx can strike after the cluster
+// applied a write, and resending a POST/PUT/DELETE could duplicate it.
+function replaySafe(error: Error): boolean {
+	return methodOf(error) === 'GET' || methodOf(error) === 'HEAD';
+}
+
+// Reads replay on 5xx; writes and deletes never do (a 5xx can mean the
+// mutation landed and only the response was lost). 429 retries for every
+// method: the cluster rejects the request before executing it. Retry counts
+// below are handler retries: maxRetries 3 means 4 executions, maxRetries 2
+// means 3.
 export const errorHandlers = {
 	// 400 (or a Zod rejection before the wire): resending the same malformed
 	// request cannot succeed.
@@ -83,10 +97,13 @@ export const errorHandlers = {
 			const status = statusOf(error);
 			return status !== undefined && status >= 500;
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) =>
+			replaySafe(error)
+				? {
+						maxRetries: 2,
+						retryStrategy: 'exponential_backoff' as const,
+					}
+				: { maxRetries: 0 },
 	},
 	DEFAULT: {
 		match: () => true,

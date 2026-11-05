@@ -34,14 +34,20 @@ export type ElasticsearchQuery = Record<
 	string | number | boolean | undefined
 >;
 
+// Every HTTP method the index-scoped REST API documents (HEAD exists checks,
+// PUT creates and bulk writes, DELETE removals).
+export type ElasticsearchMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD';
+
 /**
  * Elasticsearch error bodies are `{ error: { type, reason, caused_by?, ... },
  * status }` (OpenAPI `_types.ErrorResponseBase`). Some statuses also matter
  * without a body (proxies answer 502/504 with HTML), so `status` can stand
- * alone.
+ * alone. `method` rides along so error handlers can decide replay safety:
+ * only GET/HEAD requests are safe to resend blind.
  */
 export class ElasticsearchAPIError extends Error {
 	readonly status?: number;
+	readonly method?: ElasticsearchMethod;
 	readonly errorType?: string;
 	readonly reason?: string;
 	readonly retryAfter?: number;
@@ -54,6 +60,7 @@ export class ElasticsearchAPIError extends Error {
 		options: {
 			cause?: Error;
 			status?: number;
+			method?: ElasticsearchMethod;
 			// unknown: same open error body as the field above.
 			body?: unknown;
 			retryAfter?: number;
@@ -63,6 +70,7 @@ export class ElasticsearchAPIError extends Error {
 		this.name = 'ElasticsearchAPIError';
 		const cause = options.cause instanceof ApiError ? options.cause : undefined;
 		this.status = options.status ?? cause?.status;
+		this.method = options.method;
 		this.body = options.body ?? cause?.body;
 		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
 		const errorCause = asRecord(asRecord(this.body)?.error);
@@ -171,16 +179,19 @@ export async function makeElasticsearchRequest(
 	baseUrl: string,
 	authorization: string,
 	options: {
-		method?: 'GET' | 'POST';
+		method?: ElasticsearchMethod;
 		path: string;
 		query?: ElasticsearchQuery;
 		// unknown values: the JSON body is the endpoint's zod-validated query
 		// subset serialized as-is; a stricter value type here would duplicate
-		// those schemas at the transport boundary.
-		body?: Record<string, unknown>;
+		// those schemas at the transport boundary. A string body is a raw
+		// newline-delimited JSON payload (bulk, msearch) sent verbatim.
+		body?: Record<string, unknown> | string;
+		mediaType?: string;
 	},
 ): Promise<unknown> {
 	const { method = 'GET', path, query, body } = options;
+	const hasBody = body !== undefined && method !== 'GET' && method !== 'HEAD';
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl,
@@ -201,8 +212,13 @@ export async function makeElasticsearchRequest(
 		method,
 		url: path,
 		query,
-		body: method === 'POST' ? body : undefined,
-		mediaType: 'application/json',
+		body: hasBody ? body : undefined,
+		// A raw NDJSON string must not be JSON-quoted; corsair/http passes
+		// string bodies through untouched and uses mediaType for Content-Type.
+		mediaType:
+			typeof body === 'string'
+				? (options.mediaType ?? 'application/x-ndjson')
+				: 'application/json',
 	};
 
 	try {
@@ -213,15 +229,78 @@ export async function makeElasticsearchRequest(
 		if (error instanceof ApiError) {
 			throw new ElasticsearchAPIError(
 				describeElasticsearchError(error.status, error.body, error.message),
-				{ cause: error },
+				{ cause: error, method },
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || (error as Error)?.message !== undefined) {
 			throw new ElasticsearchAPIError((error as Error).message, {
 				cause: error as Error,
+				method,
 			});
 		}
-		throw new ElasticsearchAPIError('Unknown Elasticsearch API error');
+		throw new ElasticsearchAPIError('Unknown Elasticsearch API error', {
+			method,
+		});
 	}
+}
+
+/**
+ * Binary (non-JSON) responses, currently the Mapbox vector tile search. The
+ * shared client would decode the protobuf payload as text and mangle it, so
+ * this path reads raw bytes and returns them base64-encoded. One attempt,
+ * same timeout; error envelopes are mapped like every other call.
+ */
+export async function makeElasticsearchBinaryRequest(
+	baseUrl: string,
+	authorization: string,
+	options: { path: string; query?: ElasticsearchQuery },
+): Promise<{ contentType: string; base64: string }> {
+	const qs = Object.entries(options.query ?? {})
+		.filter(([, value]) => value !== undefined)
+		.map(
+			([key, value]) =>
+				`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+		)
+		.join('&');
+	const url = `${baseUrl}${options.path}${qs.length > 0 ? `?${qs}` : ''}`;
+
+	let response: Response;
+	try {
+		response = await fetch(url, {
+			headers: {
+				Accept: 'application/x-protobuf',
+				Authorization: authorization,
+			},
+			signal: AbortSignal.timeout(ELASTICSEARCH_TIMEOUT_MS),
+		});
+	} catch (error) {
+		// Error type is narrow: fetch fails with TypeError (network) or
+		// DOMException (timeout); both carry a message worth surfacing.
+		const err = error as Error;
+		throw new ElasticsearchAPIError(err.message, { cause: err, method: 'GET' });
+	}
+
+	if (!response.ok) {
+		const text = await response.text();
+		// unknown: the error body is the standard JSON envelope when the
+		// cluster answers, plain text when a proxy does.
+		let body: unknown = text;
+		try {
+			body = JSON.parse(text);
+		} catch {
+			// keep the text form
+		}
+		throw new ElasticsearchAPIError(
+			describeElasticsearchError(response.status, body, text),
+			{ status: response.status, body, method: 'GET' },
+		);
+	}
+
+	const buffer = Buffer.from(await response.arrayBuffer());
+	return {
+		contentType:
+			response.headers.get('content-type') ?? 'application/x-protobuf',
+		base64: buffer.toString('base64'),
+	};
 }

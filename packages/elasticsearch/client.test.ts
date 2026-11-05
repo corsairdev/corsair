@@ -3,6 +3,7 @@ import {
 	buildAuthorizationHeader,
 	ElasticsearchAPIError,
 	encodeIndexTarget,
+	makeElasticsearchBinaryRequest,
 	makeElasticsearchRequest,
 	resolveBaseUrl,
 } from './client';
@@ -147,6 +148,85 @@ describe('makeElasticsearchRequest', () => {
 		);
 	});
 
+	it('sends PUT and DELETE with JSON bodies', async () => {
+		respond({ acknowledged: true }, 200);
+		respond({ acknowledged: true }, 200);
+
+		await makeElasticsearchRequest(BASE, 'ApiKey k', {
+			method: 'PUT',
+			path: '/logs-2026-11',
+			body: { settings: { number_of_shards: 1 } },
+		});
+		await makeElasticsearchRequest(BASE, 'ApiKey k', {
+			method: 'DELETE',
+			path: '/logs-2026-11/_doc/1',
+		});
+
+		const [putUrl, putInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(putUrl).toBe(`${BASE}/logs-2026-11`);
+		expect(putInit.method).toBe('PUT');
+		expect(putInit.body).toBe(
+			JSON.stringify({ settings: { number_of_shards: 1 } }),
+		);
+		const [deleteUrl, deleteInit] = fetchMock.mock.calls[1] as [
+			string,
+			RequestInit,
+		];
+		expect(deleteUrl).toBe(`${BASE}/logs-2026-11/_doc/1`);
+		expect(deleteInit.method).toBe('DELETE');
+		expect(deleteInit.body).toBeUndefined();
+	});
+
+	it('sends a raw NDJSON string body verbatim with the x-ndjson content type', async () => {
+		respond({ errors: false, items: [] }, 200);
+
+		const ndjson = '{"index":{"_id":"1"}}\n{"level":"error"}\n';
+		await makeElasticsearchRequest(BASE, 'ApiKey k', {
+			method: 'PUT',
+			path: '/logs/_bulk',
+			body: ndjson,
+		});
+
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(init.method).toBe('PUT');
+		expect(init.body).toBe(ndjson);
+		expect(new Headers(init.headers).get('content-type')).toBe(
+			'application/x-ndjson',
+		);
+	});
+
+	it('never attaches a body to a HEAD request', async () => {
+		// A HEAD response has no body; no content-type keeps the shared
+		// client from trying to JSON-parse an empty payload.
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+
+		const result = await makeElasticsearchRequest(BASE, 'ApiKey k', {
+			method: 'HEAD',
+			path: '/logs-2026-11/_doc/1',
+		});
+
+		expect(result).toBeUndefined();
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(url).toBe(`${BASE}/logs-2026-11/_doc/1`);
+		expect(init.method).toBe('HEAD');
+		expect(init.body).toBeUndefined();
+	});
+
+	it('carries the request method on the wrapped error', async () => {
+		respond(esErrorBody(503, 'internal', 'boom'), 503);
+
+		const error = await failure(
+			makeElasticsearchRequest(BASE, 'ApiKey k', {
+				method: 'POST',
+				path: '/logs/_doc/1',
+				body: { a: 1 },
+			}),
+		);
+
+		expect(error.status).toBe(503);
+		expect(error.method).toBe('POST');
+	});
+
 	it('maps an error envelope to ElasticsearchAPIError with type and reason', async () => {
 		respond(
 			esErrorBody(
@@ -197,5 +277,51 @@ describe('makeElasticsearchRequest', () => {
 
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(error.retryAfter).toBe(2000);
+	});
+});
+
+describe('makeElasticsearchBinaryRequest', () => {
+	it('returns base64 bytes with the content type, auth and query intact', async () => {
+		const bytes = new Uint8Array([0x1a, 0x00, 0xff]);
+		fetchMock.mockResolvedValueOnce(
+			new Response(bytes, {
+				status: 200,
+				headers: { 'Content-Type': 'application/x-protobuf' },
+			}),
+		);
+
+		const result = await makeElasticsearchBinaryRequest(BASE, 'ApiKey k', {
+			path: '/logs/_mvt/message/3/4/5',
+			query: { extent: 4096 },
+		});
+
+		expect(result).toEqual({
+			contentType: 'application/x-protobuf',
+			base64: Buffer.from(bytes).toString('base64'),
+		});
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(url).toBe(`${BASE}/logs/_mvt/message/3/4/5?extent=4096`);
+		expect(new Headers(init.headers).get('authorization')).toBe('ApiKey k');
+	});
+
+	it('maps a JSON error envelope with status and method', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify(
+					esErrorBody(404, 'index_not_found_exception', 'no such index [x]'),
+				),
+				{ status: 404, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+
+		const error = await failure(
+			makeElasticsearchBinaryRequest(BASE, 'ApiKey k', {
+				path: '/missing/_mvt/geo/3/4/5',
+			}),
+		);
+
+		expect(error.status).toBe(404);
+		expect(error.method).toBe('GET');
+		expect(error.errorType).toBe('index_not_found_exception');
 	});
 });
