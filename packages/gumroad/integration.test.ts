@@ -54,6 +54,24 @@ describe('Gumroad plugin through createCorsair', () => {
 		}
 	});
 
+	it('calls token-free operations without an Authorization header', async () => {
+		const { corsair, testDb } = await createClient({});
+		try {
+			await corsair.gumroad.keys.issue_new_dek();
+			respond({ success: true, uses: 0, purchase });
+
+			await corsair.gumroad.api.licenses.verify({
+				product_id: 'prod',
+				license_key: 'key',
+			});
+
+			const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+			expect(new Headers(init.headers).get('authorization')).toBeNull();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('sends the API key stored for the account', async () => {
 		const { corsair, testDb } = await createClient({});
 		try {

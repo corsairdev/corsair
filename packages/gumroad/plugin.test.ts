@@ -258,6 +258,28 @@ describe('gumroad key builder', () => {
 		);
 	});
 
+	it('returns an empty key for token-free operations without stored credentials', async () => {
+		for (const operation of ['public.product', 'public.profile', 'licenses.verify']) {
+			const ctx = {
+				...keyContext({ authType: 'api_key', apiKey: null }),
+				meteredOperationId: operation,
+			};
+
+			await expect(buildKey(gumroad(), ctx)).resolves.toBe('');
+		}
+	});
+
+	it('still requires credentials for private operations', async () => {
+		const ctx = {
+			...keyContext({ authType: 'api_key', apiKey: null }),
+			meteredOperationId: 'products.list',
+		};
+
+		await expect(buildKey(gumroad(), ctx)).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+	});
+
 	it('refuses webhook keys', async () => {
 		const ctx = keyContext({ authType: 'api_key', apiKey: 'stored-key' });
 

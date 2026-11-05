@@ -1045,6 +1045,15 @@ function mergeErrorHandlers(
 		: { ...builtinRest, ...userRest };
 }
 
+// Gumroad documents these as usable without an OAuth token: the license
+// verify endpoint ("does not require an OAuth application") and the two
+// public reads. An empty key means the client sends no Authorization header.
+const TOKEN_FREE_OPERATIONS = new Set([
+	'public.product',
+	'public.profile',
+	'licenses.verify',
+]);
+
 export function gumroad<const T extends GumroadPluginOptions>(
 	incomingOptions: GumroadPluginOptions & T = {} as GumroadPluginOptions & T,
 ): ExternalGumroadPlugin<T> {
@@ -1071,6 +1080,14 @@ export function gumroad<const T extends GumroadPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (res) return res;
+			}
+
+			if (
+				source === 'endpoint' &&
+				ctx.meteredOperationId !== undefined &&
+				TOKEN_FREE_OPERATIONS.has(ctx.meteredOperationId)
+			) {
+				return '';
 			}
 
 			throw new AuthMissingError('gumroad', ctx.authType ?? 'api_key');
