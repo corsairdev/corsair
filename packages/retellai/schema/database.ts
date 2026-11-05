@@ -26,7 +26,7 @@ export const RetellChatEntity = z
 		start_timestamp: z.number().optional(),
 		end_timestamp: z.number().nullish(),
 		transcript: z.string().optional(),
-		transcript_with_tool_calls: z
+		message_with_tool_calls: z
 			.array(z.record(z.string(), z.unknown()))
 			.optional(),
 		chat_analysis: z.record(z.string(), z.unknown()).optional(),

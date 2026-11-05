@@ -54,7 +54,7 @@ const ChatSummarySchema = z
 
 const ChatDetailSchema = ChatSummarySchema.extend({
 	transcript: z.string().optional(),
-	transcript_with_tool_calls: z.array(OpaqueObjectSchema).optional(),
+	message_with_tool_calls: z.array(OpaqueObjectSchema).optional(),
 	chat_analysis: OpaqueObjectSchema.optional(),
 }).loose();
 

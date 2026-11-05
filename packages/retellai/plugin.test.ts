@@ -208,6 +208,29 @@ describe('Retell endpoints', () => {
 			{ method: 'GET' },
 		);
 	});
+
+	it('types the chat transcript as message_with_tool_calls', async () => {
+		const messages = [{ role: 'agent', content: 'Hi there' }];
+		request.mockResolvedValue({
+			chat_id: 'chat-1',
+			message_with_tool_calls: messages,
+		});
+		const result = await Chats.get(ctx, { id: 'chat-1' });
+		expect(result.message_with_tool_calls).toEqual(messages);
+		// Declared (not just passed through), so a malformed value is rejected.
+		expect(
+			RetellEndpointOutputSchemas.chatsGet.safeParse({
+				chat_id: 'chat-1',
+				message_with_tool_calls: 'not-an-array',
+			}).success,
+		).toBe(false);
+		expect(
+			RetellSchema.entities.chats.safeParse({
+				chat_id: 'chat-1',
+				message_with_tool_calls: messages,
+			}).success,
+		).toBe(true);
+	});
 });
 
 describe('Retell plugin', () => {
