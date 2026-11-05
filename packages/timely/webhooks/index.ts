@@ -1,7 +1,7 @@
-import { example } from './example';
+import { event } from './event';
 
-export const ExampleWebhooks = {
-	example: example,
+export const TimelyWebhooks = {
+	event: event,
 };
 
 export * from './oauth-tenant-link';

@@ -15,7 +15,16 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import {
+	Accounts,
+	Clients,
+	Projects,
+	Reports,
+	Tags,
+	Teams,
+	TimeEntries,
+	Users,
+} from './endpoints';
 import type {
 	TimelyEndpointInputs,
 	TimelyEndpointOutputs,
@@ -26,11 +35,14 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TimelySchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+import { TimelyWebhooks as TimelyWebhookHandlers } from './webhooks';
 import { resolveTimelyOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchTimelyTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, TimelyWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
+import type {
+	TimelyWebhookEvent,
+	TimelyWebhookOutputs,
+} from './webhooks/types';
+import { createTimelyMatch, TimelyWebhookEventSchema } from './webhooks/types';
 
 export type TimelyPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -58,7 +70,22 @@ type TimelyEndpoint<K extends keyof TimelyEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type TimelyEndpoints = {
-	exampleGet: TimelyEndpoint<'exampleGet'>;
+	accountsList: TimelyEndpoint<'accountsList'>;
+	accountsGet: TimelyEndpoint<'accountsGet'>;
+	clientsList: TimelyEndpoint<'clientsList'>;
+	clientsGet: TimelyEndpoint<'clientsGet'>;
+	projectsList: TimelyEndpoint<'projectsList'>;
+	projectsGet: TimelyEndpoint<'projectsGet'>;
+	usersList: TimelyEndpoint<'usersList'>;
+	usersGet: TimelyEndpoint<'usersGet'>;
+	teamsList: TimelyEndpoint<'teamsList'>;
+	teamsGet: TimelyEndpoint<'teamsGet'>;
+	tagsList: TimelyEndpoint<'tagsList'>;
+	tagsGet: TimelyEndpoint<'tagsGet'>;
+	timeEntriesList: TimelyEndpoint<'timeEntriesList'>;
+	timeEntriesGet: TimelyEndpoint<'timeEntriesGet'>;
+	reportsList: TimelyEndpoint<'reportsList'>;
+	reportsGet: TimelyEndpoint<'reportsGet'>;
 };
 
 type TimelyWebhook<
@@ -67,47 +94,166 @@ type TimelyWebhook<
 > = CorsairWebhook<TimelyContext, TEvent, TimelyWebhookOutputs[K]>;
 
 export type TimelyWebhooks = {
-	example: TimelyWebhook<'example', ExampleEvent>;
+	event: TimelyWebhook<'event', TimelyWebhookEvent>;
 };
 
 export type TimelyBoundWebhooks = BindWebhooks<TimelyWebhooks>;
 
 const timelyEndpointsNested = {
-	example: {
-		get: Example.get,
+	accounts: {
+		list: Accounts.list,
+		get: Accounts.get,
+	},
+	clients: {
+		list: Clients.list,
+		get: Clients.get,
+	},
+	projects: {
+		list: Projects.list,
+		get: Projects.get,
+	},
+	users: {
+		list: Users.list,
+		get: Users.get,
+	},
+	teams: {
+		list: Teams.list,
+		get: Teams.get,
+	},
+	tags: {
+		list: Tags.list,
+		get: Tags.get,
+	},
+	timeEntries: {
+		list: TimeEntries.list,
+		get: TimeEntries.get,
+	},
+	reports: {
+		list: Reports.list,
+		get: Reports.get,
 	},
 } as const;
 
 const timelyWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	event: {
+		event: TimelyWebhookHandlers.event,
 	},
 } as const;
 
 export const timelyEndpointSchemas = {
-	'example.get': {
-		input: TimelyEndpointInputSchemas.exampleGet,
-		output: TimelyEndpointOutputSchemas.exampleGet,
+	'accounts.list': {
+		input: TimelyEndpointInputSchemas.accountsList,
+		output: TimelyEndpointOutputSchemas.accountsList,
+	},
+	'accounts.get': {
+		input: TimelyEndpointInputSchemas.accountsGet,
+		output: TimelyEndpointOutputSchemas.accountsGet,
+	},
+	'clients.list': {
+		input: TimelyEndpointInputSchemas.clientsList,
+		output: TimelyEndpointOutputSchemas.clientsList,
+	},
+	'clients.get': {
+		input: TimelyEndpointInputSchemas.clientsGet,
+		output: TimelyEndpointOutputSchemas.clientsGet,
+	},
+	'projects.list': {
+		input: TimelyEndpointInputSchemas.projectsList,
+		output: TimelyEndpointOutputSchemas.projectsList,
+	},
+	'projects.get': {
+		input: TimelyEndpointInputSchemas.projectsGet,
+		output: TimelyEndpointOutputSchemas.projectsGet,
+	},
+	'users.list': {
+		input: TimelyEndpointInputSchemas.usersList,
+		output: TimelyEndpointOutputSchemas.usersList,
+	},
+	'users.get': {
+		input: TimelyEndpointInputSchemas.usersGet,
+		output: TimelyEndpointOutputSchemas.usersGet,
+	},
+	'teams.list': {
+		input: TimelyEndpointInputSchemas.teamsList,
+		output: TimelyEndpointOutputSchemas.teamsList,
+	},
+	'teams.get': {
+		input: TimelyEndpointInputSchemas.teamsGet,
+		output: TimelyEndpointOutputSchemas.teamsGet,
+	},
+	'tags.list': {
+		input: TimelyEndpointInputSchemas.tagsList,
+		output: TimelyEndpointOutputSchemas.tagsList,
+	},
+	'tags.get': {
+		input: TimelyEndpointInputSchemas.tagsGet,
+		output: TimelyEndpointOutputSchemas.tagsGet,
+	},
+	'timeEntries.list': {
+		input: TimelyEndpointInputSchemas.timeEntriesList,
+		output: TimelyEndpointOutputSchemas.timeEntriesList,
+	},
+	'timeEntries.get': {
+		input: TimelyEndpointInputSchemas.timeEntriesGet,
+		output: TimelyEndpointOutputSchemas.timeEntriesGet,
+	},
+	'reports.list': {
+		input: TimelyEndpointInputSchemas.reportsList,
+		output: TimelyEndpointOutputSchemas.reportsList,
+	},
+	'reports.get': {
+		input: TimelyEndpointInputSchemas.reportsGet,
+		output: TimelyEndpointOutputSchemas.reportsGet,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof timelyEndpointsNested
 >;
 
 const timelyWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'event.event': {
+		description: 'A Timely webhook event',
+		payload: TimelyWebhookEventSchema,
+		response: TimelyWebhookEventSchema,
 	},
 } as const satisfies RequiredPluginWebhookSchemas<typeof timelyWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const timelyEndpointMeta = {
-	'example.get': {
+	'accounts.list': { riskLevel: 'read', description: 'List Timely accounts' },
+	'accounts.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Get a Timely account by ID',
 	},
+	'clients.list': {
+		riskLevel: 'read',
+		description: 'List clients for an account',
+	},
+	'clients.get': { riskLevel: 'read', description: 'Get a client by ID' },
+	'projects.list': {
+		riskLevel: 'read',
+		description: 'List projects for an account',
+	},
+	'projects.get': { riskLevel: 'read', description: 'Get a project by ID' },
+	'users.list': { riskLevel: 'read', description: 'List users for an account' },
+	'users.get': { riskLevel: 'read', description: 'Get a user by ID' },
+	'teams.list': { riskLevel: 'read', description: 'List teams for an account' },
+	'teams.get': { riskLevel: 'read', description: 'Get a team by ID' },
+	'tags.list': { riskLevel: 'read', description: 'List labels for an account' },
+	'tags.get': { riskLevel: 'read', description: 'Get a label by ID' },
+	'timeEntries.list': {
+		riskLevel: 'read',
+		description: 'List time entries for an account',
+	},
+	'timeEntries.get': {
+		riskLevel: 'read',
+		description: 'Get a time entry by ID',
+	},
+	'reports.list': {
+		riskLevel: 'read',
+		description: 'List reports for an account',
+	},
+	'reports.get': { riskLevel: 'read', description: 'Get a report by ID' },
 } as const satisfies RequiredPluginEndpointMeta<typeof timelyEndpointsNested>;
 
 export const timelyAuthConfig = {
@@ -154,7 +300,6 @@ export function timely<const T extends TimelyPluginOptions>(
 		webhookSchemas: timelyWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
 			return 'x-timely-signature' in headers;
 		},
 		pluginTenantWebhookMatcher: matchTimelyTenantWebhook,
@@ -193,12 +338,10 @@ export function timely<const T extends TimelyPluginOptions>(
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
 	TimelyEndpointInputs,
 	TimelyEndpointOutputs,
 } from './endpoints/types';
 export type {
-	ExampleEvent,
+	TimelyWebhookEvent,
 	TimelyWebhookOutputs,
 } from './webhooks/types';

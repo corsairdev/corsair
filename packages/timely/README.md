@@ -10,9 +10,7 @@ pnpm add @corsair-dev/timely
 
 ## Endpoints
 
-| Operation | Operation ID | Risk | Description |
-|-----------|--------------|------|-------------|
-| `example.get` | `timely.api.example.get` | `read` | Get an example resource by ID |
+Resources: accounts, clients, projects, users, teams, tags (labels), time entries (events), reports. List endpoints support `page` and `per_page` (max 100).
 
 ## Auth
 
@@ -20,7 +18,7 @@ Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory
 
 ## Webhooks
 
-Handles 1 webhook event. See the reference for payloads and `webhookHooks`.
+Handles Timely webhook events. See the reference for payloads and `webhookHooks`.
 
 ## Reference
 

@@ -4,23 +4,34 @@ import { ApiError, request } from 'corsair/http';
 export class TimelyAPIError extends Error {
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly status?: number,
+		public readonly body?: unknown,
 	) {
 		super(message);
 		this.name = 'TimelyAPIError';
 	}
 }
 
-// TODO: Update with your API base URL
-const TIMELY_API_BASE = 'https://api.example.com';
+const TIMELY_API_BASE = 'https://api.timelyapp.com/1.1';
+
+function compactRecord(
+	record?: Record<string, unknown>,
+): Record<string, unknown> | undefined {
+	if (!record) return undefined;
+	const compact: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(record)) {
+		if (value !== undefined) compact[key] = value;
+	}
+	return Object.keys(compact).length > 0 ? compact : undefined;
+}
 
 export async function makeTimelyRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>; // provider payloads are dynamic; strict typing is impractical here
-		query?: Record<string, string | number | boolean | undefined>;
+		body?: Record<string, unknown>;
+		query?: Record<string, unknown>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
@@ -33,8 +44,6 @@ export async function makeTimelyRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
 		},
 	};
 
@@ -43,15 +52,15 @@ export async function makeTimelyRequest<T>(
 		url: endpoint,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
+				? compactRecord(body)
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query: method === 'GET' ? compactRecord(query) : undefined,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
-	} catch (error) {
+	} catch (error: unknown) {
 		if (error instanceof ApiError) {
 			throw error;
 		}

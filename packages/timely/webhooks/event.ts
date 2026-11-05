@@ -2,8 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import type { TimelyWebhooks } from '..';
 import { createTimelyMatch, verifyTimelyWebhookSignature } from './types';
 
-export const example: TimelyWebhooks['example'] = {
-	match: createTimelyMatch('example'),
+export const event: TimelyWebhooks['event'] = {
+	match: createTimelyMatch(),
 
 	handler: async (ctx, request) => {
 		const verification = verifyTimelyWebhookSignature(request, ctx.key);
@@ -16,13 +16,10 @@ export const example: TimelyWebhooks['example'] = {
 		}
 
 		const event = request.payload;
-		if (event.type !== 'example') {
-			return { success: true, data: undefined };
-		}
 
 		await logEventFromContext(
 			ctx,
-			'timely.webhook.example',
+			'timely.webhook.event',
 			{ ...event },
 			'completed',
 		);
