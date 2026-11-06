@@ -402,6 +402,7 @@ export const BaseProviders = [
 	'twilio',
 	'twitter',
 	'twitterapiio',
+	'twittrapi',
 	'twochat',
 	'typeform',
 	'typesafe',
@@ -836,6 +837,7 @@ export const ProviderDisplayNames = {
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
+	twittrapi: 'TwittrAPI',
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	typesafe: 'TypeSafe',
@@ -1276,6 +1278,7 @@ export type AllProviders =
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
+	| 'twittrapi'
 	| 'twochat'
 	| 'typeform'
 	| 'typesafe'
