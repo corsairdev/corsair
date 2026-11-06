@@ -1,0 +1,98 @@
+name: Release on merge
+
+# Every merge to main releases the packages it changed. A package whose shipped
+# files changed since its last release (git tag <name>@<version>) moves to the
+# next patch version in one commit on main, and deploy.yml publishes it. A
+# version raised by hand in a PR (a minor or major) is published as it is.
+# Details: scripts/release-on-merge.mjs.
+
+on:
+  push:
+    branches: [main]
+  # deploy.yml runs this after each publish, so a change merged while a
+  # release was still publishing gets released once that one lands.
+  workflow_dispatch:
+  # Backstop in case a run failed and nothing has been merged since.
+  schedule:
+    - cron: '17 4 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-on-merge
+  cancel-in-progress: false
+
+jobs:
+  release:
+    # The release commit triggers a push of its own, with nothing left to release.
+    if: ${{ github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'chore(release):') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check the deploy key
+        env:
+          KEY: ${{ secrets.RELEASE_DEPLOY_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::error::RELEASE_DEPLOY_KEY is not set. It is the deploy key the main ruleset lets push release commits."
+            exit 1
+          fi
+
+      # The main ruleset requires a PR for every other push. Its bypass list
+      # holds deploy keys, and this is the repo's only deploy key with write
+      # access, so the release commit and tags go through it.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Work out what to release
+        run: node scripts/release-on-merge.mjs --out "$RUNNER_TEMP/release-plan.json"
+
+      - name: Commit the version bumps and record the releases
+        env:
+          PLAN: ${{ runner.temp }}/release-plan.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          count=$(jq '.bumps | length' "$PLAN")
+          if [ "$count" -gt 0 ]; then
+            {
+              echo "chore(release): publish $count package(s)"
+              echo
+              jq -r '.bumps[] | "- \(.name) \(.from) -> \(.to)"' "$PLAN"
+            } > "$RUNNER_TEMP/release-message.txt"
+            git commit -q -a -F "$RUNNER_TEMP/release-message.txt"
+            # Another merge can land while this runs; it gets its own release run.
+            for attempt in 1 2 3; do
+              if git push origin HEAD:main; then break; fi
+              if [ "$attempt" = 3 ]; then exit 1; fi
+              git pull --rebase origin main
+            done
+          fi
+
+          mapfile -t tags < <(jq -r '.tags[] | "\(.tag) \(.sha)"' "$PLAN")
+          if [ "${#tags[@]}" -gt 0 ]; then
+            refs=()
+            for line in "${tags[@]}"; do
+              tag=${line% *}
+              sha=${line##* }
+              git tag "$tag" "$sha"
+              refs+=("refs/tags/$tag")
+            done
+            git push origin "${refs[@]}"
+          fi
+
+          {
+            echo "### Release on merge"
+            echo
+            echo "$count package(s) bumped, ${#tags[@]} release tag(s) recorded."
+            jq -r '.bumps[] | "- \(.name) \(.from) → \(.to)"' "$PLAN"
+          } >> "$GITHUB_STEP_SUMMARY"
