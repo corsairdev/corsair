@@ -2170,7 +2170,8 @@ const renderEndpointMeta = {
 		description: 'List snapshots for a Render disk',
 	},
 	'disks.restoreSnapshot': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Restore a snapshot to a Render disk',
 	},
 	'maintenance.retrieve': {

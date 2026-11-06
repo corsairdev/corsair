@@ -546,7 +546,7 @@ await corsair.gumroad.api.emails.schedule({ id: 'bfi_30HLgGWL8H2wo_Gzlg==', to_b
 
 Publish a draft audience email and send it to its audience
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.gumroad.api.emails.send({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
@@ -868,7 +868,7 @@ await corsair.gumroad.api.licenses.decrementUsesCount({ product_id: 'A-m3CDDC5dl
 
 Disable a license key so it fails verification, and read its purchase
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gumroad.api.licenses.disable({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
@@ -2235,7 +2235,7 @@ await corsair.gumroad.api.products.delete({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
 
 Unpublish (disable) an existing product
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gumroad.api.products.disable({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
@@ -3322,7 +3322,7 @@ await corsair.gumroad.api.sales.markAsShipped({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }
 
 Refund a sale fully, or partially with amount_cents; returns the updated sale
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.gumroad.api.sales.refund({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
@@ -3420,7 +3420,7 @@ await corsair.gumroad.api.sales.resendReceipt({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' }
 
 Revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gumroad.api.sales.revokeAccess({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });

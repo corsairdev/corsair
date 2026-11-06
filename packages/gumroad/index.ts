@@ -653,7 +653,7 @@ const gumroadEndpointMeta = {
 		description: 'Publish (enable) an existing product',
 	},
 	'products.disable': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Unpublish (disable) an existing product',
 	},
 	'products.reviewsList': {
@@ -865,7 +865,8 @@ const gumroadEndpointMeta = {
 			"Send a preview of an audience email to the seller's own address",
 	},
 	'emails.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Publish a draft audience email and send it to its audience',
 	},
 	'emails.schedule': {
@@ -934,12 +935,13 @@ const gumroadEndpointMeta = {
 			'Mark a physical sale as shipped with an optional tracking URL',
 	},
 	'sales.refund': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Refund a sale fully, or partially with amount_cents; returns the updated sale',
 	},
 	'sales.revokeAccess': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales)",
 	},
@@ -971,7 +973,7 @@ const gumroadEndpointMeta = {
 		description: 'Re-enable a disabled license key and read its purchase',
 	},
 	'licenses.disable': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Disable a license key so it fails verification, and read its purchase',
 	},

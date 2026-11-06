@@ -113,7 +113,7 @@ const defaultAuthType = 'api_key' as const;
 // const assertion: riskLevel must stay the literal union, not string.
 const snowflakeEndpointMeta = {
 	'statements.submit': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Submit SQL for execution. Returns rows, a handle while the statement is still running, or DML stats.',
 	},

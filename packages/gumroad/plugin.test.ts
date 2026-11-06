@@ -163,6 +163,11 @@ const destructiveOperations = new Set([
 	'media.delete',
 	'emails.delete',
 	'resourceSubscriptions.unsubscribe',
+	'products.disable',
+	'sales.refund',
+	'sales.revokeAccess',
+	'licenses.disable',
+	'emails.send',
 ]);
 
 describe('gumroad plugin definition', () => {

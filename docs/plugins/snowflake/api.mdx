@@ -133,7 +133,7 @@ await corsair.snowflake.api.statements.get({ statementHandle: '019c06a4-0000-df4
 
 Submit SQL for execution. Returns rows, a handle while the statement is still running, or DML stats.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.snowflake.api.statements.submit({ statement: 'SELECT 1', timeout: 10, warehouse: 'COMPUTE_WH' });

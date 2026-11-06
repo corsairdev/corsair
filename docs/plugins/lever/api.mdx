@@ -5451,7 +5451,7 @@ await corsair.lever.api.requisitionFields.delete({ requisitionFieldId: 'work_typ
 
 Remove dropdown option values from a requisition field
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.lever.api.requisitionFields.deleteOptions({
@@ -5543,7 +5543,7 @@ await corsair.lever.api.requisitionFields.list({});
 
 Replace the dropdown options of a requisition field
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.lever.api.requisitionFields.replaceOptions({
