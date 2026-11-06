@@ -1,5 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type { FollowUpBossContext } from '..';
+import type { FollowUpBossEndpoints } from '..';
 import { segment } from '../client';
 import { call, envelopeMany, envelopeMeta, envelopeOne } from './call';
 import {
@@ -7,7 +7,7 @@ import {
 	CustomFieldsOutputSchemas as Outputs,
 } from './custom-fields-types';
 
-export const list = (ctx: FollowUpBossContext, input: unknown) =>
+export const list: FollowUpBossEndpoints['customFieldsList'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -26,7 +26,7 @@ export const list = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const get = (ctx: FollowUpBossContext, input: unknown) =>
+export const get: FollowUpBossEndpoints['customFieldsGet'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -42,7 +42,10 @@ export const get = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const create = (ctx: FollowUpBossContext, input: unknown) =>
+export const create: FollowUpBossEndpoints['customFieldsCreate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -59,7 +62,10 @@ export const create = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const update = (ctx: FollowUpBossContext, input: unknown) =>
+export const update: FollowUpBossEndpoints['customFieldsUpdate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -79,7 +85,10 @@ export const update = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const remove = (ctx: FollowUpBossContext, input: unknown) =>
+export const remove: FollowUpBossEndpoints['customFieldsDelete'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{

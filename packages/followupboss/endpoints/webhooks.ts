@@ -1,5 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type { FollowUpBossContext } from '..';
+import type { FollowUpBossEndpoints } from '..';
 import { segment } from '../client';
 import { call, envelopeMany, envelopeMeta, envelopeOne } from './call';
 import {
@@ -14,7 +14,10 @@ export { WebhooksInputSchemas, WebhooksOutputSchemas } from './webhooks-types';
 // Handlers are structurally typed until the central FollowUpBossEndpoints map
 // gains the webhooks family; call() owns input parsing and output validation.
 
-export const webhooksList = (ctx: FollowUpBossContext, input: unknown) =>
+export const webhooksList: FollowUpBossEndpoints['webhooksList'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -33,7 +36,10 @@ export const webhooksList = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const webhooksCreate = (ctx: FollowUpBossContext, input: unknown) =>
+export const webhooksCreate: FollowUpBossEndpoints['webhooksCreate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -50,7 +56,7 @@ export const webhooksCreate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const webhooksGet = (ctx: FollowUpBossContext, input: unknown) =>
+export const webhooksGet: FollowUpBossEndpoints['webhooksGet'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -67,7 +73,10 @@ export const webhooksGet = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const webhooksUpdate = (ctx: FollowUpBossContext, input: unknown) =>
+export const webhooksUpdate: FollowUpBossEndpoints['webhooksUpdate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -87,7 +96,10 @@ export const webhooksUpdate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const webhooksDelete = (ctx: FollowUpBossContext, input: unknown) =>
+export const webhooksDelete: FollowUpBossEndpoints['webhooksDelete'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -111,7 +123,10 @@ export const webhooksDelete = (ctx: FollowUpBossContext, input: unknown) =>
 // one path in the spec not written with `{id}` braces; the `{id}` template
 // semantics are used here so the segment is interpolated and encoded like
 // every other path parameter.
-export const webhookEventsGet = (ctx: FollowUpBossContext, input: unknown) =>
+export const webhookEventsGet: FollowUpBossEndpoints['webhookEventsGet'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{

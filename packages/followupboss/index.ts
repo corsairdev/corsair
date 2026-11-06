@@ -1739,20 +1739,20 @@ const followUpBossEndpointMeta = {
 		description: 'List the participants of an inbox app conversation',
 	},
 	'inboxApps.createParticipant': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Add a participant to an inbox app conversation',
 	},
 	'inboxApps.addMessage': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
 			'Deliver a message from your system into an inbox app conversation',
 	},
 	'inboxApps.addNote': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Add an internal note to an inbox app conversation',
 	},
 	'inboxApps.addSystemConfirmationMessage': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
 			'Add a system confirmation message to an inbox app conversation',
 	},
@@ -1762,11 +1762,11 @@ const followUpBossEndpointMeta = {
 			'Install a published inbox app for a user with a subscription URL',
 	},
 	'inboxApps.updateConversation': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: "Update an inbox app conversation's subject or state",
 	},
 	'inboxApps.updateMessage': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
 			'Update a message previously delivered to an inbox app conversation',
 	},

@@ -1,5 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type { FollowUpBossContext } from '..';
+import type { FollowUpBossContext, FollowUpBossEndpoints } from '..';
 import { segment } from '../client';
 import { call, envelopeMany, envelopeMeta, envelopeOne } from './call';
 import {
@@ -9,7 +9,10 @@ import {
 
 // ── email templates ────────────────────────────────────────────────────────
 
-export const templatesList = (ctx: FollowUpBossContext, input: unknown) =>
+export const templatesList: FollowUpBossEndpoints['templatesList'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -28,7 +31,10 @@ export const templatesList = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const templatesGet = (ctx: FollowUpBossContext, input: unknown) =>
+export const templatesGet: FollowUpBossEndpoints['templatesGet'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -48,7 +54,10 @@ export const templatesGet = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const templatesCreate = (ctx: FollowUpBossContext, input: unknown) =>
+export const templatesCreate: FollowUpBossEndpoints['templatesCreate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -64,7 +73,10 @@ export const templatesCreate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const templatesUpdate = (ctx: FollowUpBossContext, input: unknown) =>
+export const templatesUpdate: FollowUpBossEndpoints['templatesUpdate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -84,7 +96,10 @@ export const templatesUpdate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const templatesDelete = (ctx: FollowUpBossContext, input: unknown) =>
+export const templatesDelete: FollowUpBossEndpoints['templatesDelete'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -102,7 +117,10 @@ export const templatesDelete = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const templatesMerge = (ctx: FollowUpBossContext, input: unknown) =>
+export const templatesMerge: FollowUpBossEndpoints['templatesMerge'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -255,7 +273,10 @@ export const textMessageTemplatesMerge = (
 
 // ── email marketing campaigns ──────────────────────────────────────────────
 
-export const emCampaignsList = (ctx: FollowUpBossContext, input: unknown) =>
+export const emCampaignsList: FollowUpBossEndpoints['emCampaignsList'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -274,7 +295,10 @@ export const emCampaignsList = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const emCampaignsCreate = (ctx: FollowUpBossContext, input: unknown) =>
+export const emCampaignsCreate: FollowUpBossEndpoints['emCampaignsCreate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -291,7 +315,10 @@ export const emCampaignsCreate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const emCampaignsUpdate = (ctx: FollowUpBossContext, input: unknown) =>
+export const emCampaignsUpdate: FollowUpBossEndpoints['emCampaignsUpdate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -313,7 +340,10 @@ export const emCampaignsUpdate = (ctx: FollowUpBossContext, input: unknown) =>
 
 // ── email marketing events ─────────────────────────────────────────────────
 
-export const emEventsList = (ctx: FollowUpBossContext, input: unknown) =>
+export const emEventsList: FollowUpBossEndpoints['emEventsList'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -332,7 +362,10 @@ export const emEventsList = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const emEventsCreate = (ctx: FollowUpBossContext, input: unknown) =>
+export const emEventsCreate: FollowUpBossEndpoints['emEventsCreate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{

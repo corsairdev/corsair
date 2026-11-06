@@ -6,11 +6,15 @@ import {
 	AdminOutputSchemas as Outputs,
 } from './admin-types';
 import { call, envelopeMany, envelopeMeta, envelopeOne } from './call';
+import type { FollowUpBossEndpointInputs } from './registry';
 
 // ── users ──────────────────────────────────────────────────────────────────
 
 export const Users = {
-	list: (ctx: FollowUpBossContext, input: unknown) =>
+	list: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['usersList'],
+	) =>
 		call(
 			ctx,
 			{
@@ -29,7 +33,10 @@ export const Users = {
 			},
 		),
 
-	get: (ctx: FollowUpBossContext, input: unknown) =>
+	get: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['usersGet'],
+	) =>
 		call(
 			ctx,
 			{
@@ -46,7 +53,10 @@ export const Users = {
 			},
 		),
 
-	delete: (ctx: FollowUpBossContext, input: unknown) =>
+	delete: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['usersDelete'],
+	) =>
 		call(
 			ctx,
 			{
@@ -72,7 +82,10 @@ export const Users = {
 // ── teams ──────────────────────────────────────────────────────────────────
 
 export const Teams = {
-	list: (ctx: FollowUpBossContext, input: unknown) =>
+	list: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['teamsList'],
+	) =>
 		call(
 			ctx,
 			{
@@ -91,7 +104,10 @@ export const Teams = {
 			},
 		),
 
-	create: (ctx: FollowUpBossContext, input: unknown) =>
+	create: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['teamsCreate'],
+	) =>
 		call(
 			ctx,
 			{
@@ -107,7 +123,10 @@ export const Teams = {
 			},
 		),
 
-	get: (ctx: FollowUpBossContext, input: unknown) =>
+	get: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['teamsGet'],
+	) =>
 		call(
 			ctx,
 			{
@@ -123,7 +142,10 @@ export const Teams = {
 			},
 		),
 
-	update: (ctx: FollowUpBossContext, input: unknown) =>
+	update: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['teamsUpdate'],
+	) =>
 		call(
 			ctx,
 			{
@@ -143,7 +165,10 @@ export const Teams = {
 			},
 		),
 
-	delete: (ctx: FollowUpBossContext, input: unknown) =>
+	delete: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['teamsDelete'],
+	) =>
 		call(
 			ctx,
 			{
@@ -168,7 +193,10 @@ export const Teams = {
 // ── groups ─────────────────────────────────────────────────────────────────
 
 export const Groups = {
-	list: (ctx: FollowUpBossContext, input: unknown) =>
+	list: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['groupsList'],
+	) =>
 		call(
 			ctx,
 			{
@@ -187,7 +215,10 @@ export const Groups = {
 			},
 		),
 
-	create: (ctx: FollowUpBossContext, input: unknown) =>
+	create: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['groupsCreate'],
+	) =>
 		call(
 			ctx,
 			{
@@ -203,7 +234,10 @@ export const Groups = {
 			},
 		),
 
-	get: (ctx: FollowUpBossContext, input: unknown) =>
+	get: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['groupsGet'],
+	) =>
 		call(
 			ctx,
 			{
@@ -219,7 +253,10 @@ export const Groups = {
 			},
 		),
 
-	update: (ctx: FollowUpBossContext, input: unknown) =>
+	update: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['groupsUpdate'],
+	) =>
 		call(
 			ctx,
 			{
@@ -239,7 +276,10 @@ export const Groups = {
 			},
 		),
 
-	delete: (ctx: FollowUpBossContext, input: unknown) =>
+	delete: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['groupsDelete'],
+	) =>
 		call(
 			ctx,
 			{
@@ -261,7 +301,10 @@ export const Groups = {
 
 	// The round-robin view answers with the same groups envelope behind its
 	// own path.
-	roundRobin: (ctx: FollowUpBossContext, input: unknown) =>
+	roundRobin: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['groupsRoundRobin'],
+	) =>
 		call(
 			ctx,
 			{
@@ -284,7 +327,10 @@ export const Groups = {
 // ── ponds ──────────────────────────────────────────────────────────────────
 
 export const Ponds = {
-	list: (ctx: FollowUpBossContext, input: unknown) =>
+	list: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['pondsList'],
+	) =>
 		call(
 			ctx,
 			{
@@ -303,7 +349,10 @@ export const Ponds = {
 			},
 		),
 
-	create: (ctx: FollowUpBossContext, input: unknown) =>
+	create: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['pondsCreate'],
+	) =>
 		call(
 			ctx,
 			{
@@ -319,7 +368,10 @@ export const Ponds = {
 			},
 		),
 
-	get: (ctx: FollowUpBossContext, input: unknown) =>
+	get: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['pondsGet'],
+	) =>
 		call(
 			ctx,
 			{
@@ -335,7 +387,10 @@ export const Ponds = {
 			},
 		),
 
-	update: (ctx: FollowUpBossContext, input: unknown) =>
+	update: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['pondsUpdate'],
+	) =>
 		call(
 			ctx,
 			{
@@ -355,7 +410,10 @@ export const Ponds = {
 			},
 		),
 
-	delete: (ctx: FollowUpBossContext, input: unknown) =>
+	delete: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['pondsDelete'],
+	) =>
 		call(
 			ctx,
 			{
@@ -384,7 +442,10 @@ export const Ponds = {
 // base URL already includes /v1, so the published prefix is dropped here to
 // avoid doubling it on the wire.
 export const RateLimit = {
-	limits: (ctx: FollowUpBossContext, input: unknown) =>
+	limits: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['rateLimitLimits'],
+	) =>
 		call(
 			ctx,
 			{
@@ -396,7 +457,10 @@ export const RateLimit = {
 			() => ({ method: 'GET', path: '/rateLimit/limits' }),
 		),
 
-	usage: (ctx: FollowUpBossContext, input: unknown) =>
+	usage: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['rateLimitUsage'],
+	) =>
 		call(
 			ctx,
 			{

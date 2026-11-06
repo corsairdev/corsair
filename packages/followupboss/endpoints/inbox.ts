@@ -1,5 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type { FollowUpBossContext } from '..';
+import type { FollowUpBossContext, FollowUpBossEndpoints } from '..';
 import { segment } from '../client';
 import { call, envelopeMany, envelopeMeta, envelopeOne } from './call';
 import {
@@ -16,25 +16,26 @@ export { InboxInputSchemas, InboxOutputSchemas } from './inbox-types';
 
 // ── inboxApps ──────────────────────────────────────────────────────────────
 
-export const inboxAppsDeactivate = (ctx: FollowUpBossContext, input: unknown) =>
-	call(
-		ctx,
-		{
-			event: 'inboxApps.deactivate',
-			input: Inputs.inboxAppsDeactivate,
-			output: Outputs.inboxAppsDeactivate,
-		},
-		input,
-		({ inboxAppId }) => ({
-			method: 'DELETE',
-			path: `/inboxApps/${segment(inboxAppId)}`,
-		}),
-		{
-			// Deactivation answers 204 with no body.
-			shape: (_, { inboxAppId }) => ({ success: true, inboxAppId }),
-			log: ({ inboxAppId }) => ({ inboxAppId }),
-		},
-	);
+export const inboxAppsDeactivate: FollowUpBossEndpoints['inboxAppsDeactivate'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'inboxApps.deactivate',
+				input: Inputs.inboxAppsDeactivate,
+				output: Outputs.inboxAppsDeactivate,
+			},
+			input,
+			({ inboxAppId }) => ({
+				method: 'DELETE',
+				path: `/inboxApps/${segment(inboxAppId)}`,
+			}),
+			{
+				// Deactivation answers 204 with no body.
+				shape: (_, { inboxAppId }) => ({ success: true, inboxAppId }),
+				log: ({ inboxAppId }) => ({ inboxAppId }),
+			},
+		);
 
 export const inboxAppsDeleteParticipant = (
 	ctx: FollowUpBossContext,
@@ -110,28 +111,32 @@ export const inboxAppsCreateParticipant = (
 		},
 	);
 
-export const inboxAppsAddMessage = (ctx: FollowUpBossContext, input: unknown) =>
-	call(
-		ctx,
-		{
-			event: 'inboxApps.addMessage',
-			input: Inputs.inboxAppsAddMessage,
-			output: Outputs.inboxAppsAddMessage,
-		},
-		input,
-		({ inboxAppId, ...body }) => ({
-			method: 'POST',
-			path: `/inboxApps/${segment(inboxAppId)}/message`,
-			body,
-		}),
-		{
-			// Adding a message answers 201 with the message.
-			shape: (raw) => envelopeOne(raw, 'messages'),
-			log: (_, result) => ({ messageId: result.id ?? undefined }),
-		},
-	);
+export const inboxAppsAddMessage: FollowUpBossEndpoints['inboxAppsAddMessage'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'inboxApps.addMessage',
+				input: Inputs.inboxAppsAddMessage,
+				output: Outputs.inboxAppsAddMessage,
+			},
+			input,
+			({ inboxAppId, ...body }) => ({
+				method: 'POST',
+				path: `/inboxApps/${segment(inboxAppId)}/message`,
+				body,
+			}),
+			{
+				// Adding a message answers 201 with the message.
+				shape: (raw) => envelopeOne(raw, 'messages'),
+				log: (_, result) => ({ messageId: result.id ?? undefined }),
+			},
+		);
 
-export const inboxAppsAddNote = (ctx: FollowUpBossContext, input: unknown) =>
+export const inboxAppsAddNote: FollowUpBossEndpoints['inboxAppsAddNote'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -176,7 +181,10 @@ export const inboxAppsAddSystemConfirmationMessage = (
 		},
 	);
 
-export const inboxAppsInstall = (ctx: FollowUpBossContext, input: unknown) =>
+export const inboxAppsInstall: FollowUpBossEndpoints['inboxAppsInstall'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -266,7 +274,10 @@ export const inboxAppsInstalledApp = (
 
 // ── teamInboxes ────────────────────────────────────────────────────────────
 
-export const teamInboxesList = (ctx: FollowUpBossContext, input: unknown) =>
+export const teamInboxesList: FollowUpBossEndpoints['teamInboxesList'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -287,7 +298,10 @@ export const teamInboxesList = (ctx: FollowUpBossContext, input: unknown) =>
 
 // ── reactions ──────────────────────────────────────────────────────────────
 
-export const reactionsCreate = (ctx: FollowUpBossContext, input: unknown) =>
+export const reactionsCreate: FollowUpBossEndpoints['reactionsCreate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -309,7 +323,10 @@ export const reactionsCreate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const reactionsDelete = (ctx: FollowUpBossContext, input: unknown) =>
+export const reactionsDelete: FollowUpBossEndpoints['reactionsDelete'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -333,7 +350,10 @@ export const reactionsDelete = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const reactionsGet = (ctx: FollowUpBossContext, input: unknown) =>
+export const reactionsGet: FollowUpBossEndpoints['reactionsGet'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -352,7 +372,10 @@ export const reactionsGet = (ctx: FollowUpBossContext, input: unknown) =>
 
 // ── threaded replies ───────────────────────────────────────────────────────
 
-export const threadedRepliesGet = (ctx: FollowUpBossContext, input: unknown) =>
+export const threadedRepliesGet: FollowUpBossEndpoints['threadedRepliesGet'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
