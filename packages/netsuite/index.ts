@@ -11,7 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { getOAuthAccessToken } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { netSuiteOAuthTokenUrl, normalizeAccountHost } from './client';
 import { NetSuite } from './endpoints';
 import type { NetSuiteOperationGroups } from './endpoints/groups';
@@ -236,9 +236,7 @@ export function netsuite<const T extends NetSuitePluginOptions>(
 					tokenAuthMethod: 'basic',
 				});
 			}
-			throw new Error(
-				`[auth-missing:netsuite:${ctx.authType}]: NetSuite access token or accountId is missing`,
-			);
+			throw new AuthMissingError('netsuite', ctx.authType ?? defaultAuthType);
 		},
 	} satisfies InternalNetSuitePlugin;
 }

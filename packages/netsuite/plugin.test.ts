@@ -3,6 +3,7 @@ import {
 	generateKeyPairSync,
 	verify,
 } from 'node:crypto';
+import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import {
 	makeNetSuiteRequest,
@@ -334,6 +335,31 @@ describe('NetSuite plugin', () => {
 			'endpoint',
 		);
 		expect(key).toBe(TOKEN);
+	});
+
+	it('raises AuthMissingError when there is no token to use or refresh', async () => {
+		const plugin = netsuite({ accountId: ACCOUNT });
+		const keyless = {
+			authType: 'oauth_2',
+			options: { accountId: ACCOUNT },
+			tenantId: 'default',
+			meteredOperationId: 'netsuite.customers.getCustomer',
+			keys: {
+				get_integration_credentials: async () => ({
+					client_id: 'client-id',
+					client_secret: 'client-secret',
+				}),
+				get_access_token: async () => null,
+				get_expires_at: async () => null,
+				get_refresh_token: async () => null,
+			},
+		};
+		await expect(
+			plugin.keyBuilder?.(keyless as never, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(
+			plugin.keyBuilder?.(keyless as never, 'webhook' as never),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('treats replace as a sublist-name string', () => {
