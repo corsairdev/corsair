@@ -525,7 +525,7 @@
                 ]
               },
               {
-                "group": "Apollo",
+                "group": "Apollo.io",
                 "pages": [
                   "plugins/apollo/overview",
                   "plugins/apollo/api",
@@ -827,7 +827,7 @@
                 ]
               },
               {
-                "group": "Boldsign",
+                "group": "BoldSign",
                 "pages": [
                   "plugins/boldsign/overview",
                   "plugins/boldsign/api",
@@ -1037,7 +1037,7 @@
                 ]
               },
               {
-                "group": "Bunnycdn",
+                "group": "bunny.net",
                 "pages": [
                   "plugins/bunnycdn/overview",
                   "plugins/bunnycdn/api",
@@ -1045,7 +1045,7 @@
                 ]
               },
               {
-                "group": "Bytedance",
+                "group": "ByteDance",
                 "pages": [
                   "plugins/bytedance/overview",
                   "plugins/bytedance/api",
@@ -2670,7 +2670,7 @@
                 ]
               },
               {
-                "group": "Pdfco",
+                "group": "PDF.co",
                 "pages": [
                   "plugins/pdfco/overview",
                   "plugins/pdfco/api",
@@ -2959,7 +2959,7 @@
                 ]
               },
               {
-                "group": "SemanticScholar",
+                "group": "Semantic Scholar",
                 "pages": [
                   "plugins/semanticscholar/overview",
                   "plugins/semanticscholar/api",
@@ -3519,7 +3519,7 @@
                 ]
               },
               {
-                "group": "Whoisfreaks",
+                "group": "WhoisFreaks",
                 "pages": [
                   "plugins/whoisfreaks/overview",
                   "plugins/whoisfreaks/api",

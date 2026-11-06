@@ -1,0 +1,12 @@
+displayName: PDF.co
+description: PDF API for converting, merging, splitting, editing, and parsing PDFs and documents, and uploading files.
+domain: pdf.co
+examples:
+  read:
+    path: accountBalance
+    title: Check the account balance
+  write:
+    path: pdfToText
+    title: Convert a PDF to text
+    args:
+      url: https://example.com/invoice.pdf
