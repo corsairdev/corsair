@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Spoki integration for Corsair: every `spoki.api.*` operation with input and output types."
+description: "API reference for Spoki: every `spoki.api.*` operation with input and output types."
 ---
 
 Every `spoki.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -31,17 +31,7 @@ await corsair.spoki.api.accounts.createOnboardingLink({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -75,7 +65,7 @@ await corsair.spoki.api.accounts.getAccount({});
 | `current_credit` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
 | `default_language` | `string` | Yes | — |
-| `phone` | `string` | No | — |
+| `phone` | `string \| null` | Yes | — |
 | `has_official_verification` | `boolean` | Yes | — |
 | `daily_limit` | `number` | Yes | — |
 | `phone_status` | `string` | Yes | — |
@@ -93,7 +83,7 @@ await corsair.spoki.api.accounts.getAccount({});
 | `timezone` | `string` | Yes | — |
 | `contacted_in_24h` | `number` | Yes | — |
 | `contacted_in_7d` | `number` | Yes | — |
-| `primary_channel_id` | `number` | No | — |
+| `primary_channel_id` | `number \| null` | No | — |
 | `channels` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -146,7 +136,7 @@ await corsair.spoki.api.accounts.getAccountByPhone({});
 | `current_credit` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
 | `default_language` | `string` | Yes | — |
-| `phone` | `string` | No | — |
+| `phone` | `string \| null` | Yes | — |
 | `has_official_verification` | `boolean` | Yes | — |
 | `daily_limit` | `number` | Yes | — |
 | `phone_status` | `string` | Yes | — |
@@ -164,7 +154,7 @@ await corsair.spoki.api.accounts.getAccountByPhone({});
 | `timezone` | `string` | Yes | — |
 | `contacted_in_24h` | `number` | Yes | — |
 | `contacted_in_7d` | `number` | Yes | — |
-| `primary_channel_id` | `number` | No | — |
+| `primary_channel_id` | `number \| null` | No | — |
 | `channels` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -208,18 +198,7 @@ await corsair.spoki.api.accounts.getCurrentReport({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -259,7 +238,7 @@ await corsair.spoki.api.accounts.listAccounts({});
   current_credit: number,
   status: string,
   default_language: string,
-  phone?: string | null,
+  phone: string | null,
   has_official_verification: boolean,
   daily_limit: number,
   phone_status: string,
@@ -320,18 +299,7 @@ await corsair.spoki.api.agencies.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -361,26 +329,8 @@ await corsair.spoki.api.automation.triggerAutomation({});
 | `last_name` | `string` | No | — |
 | `email` | `string` | No | — |
 | `language` | `string` | No | — |
-| `custom_fields` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `custom_fields` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -414,18 +364,7 @@ await corsair.spoki.api.automations.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -450,17 +389,7 @@ await corsair.spoki.api.automations.retrieve({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -490,18 +419,7 @@ await corsair.spoki.api.campaigns.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -529,17 +447,7 @@ await corsair.spoki.api.campaigns.update({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -568,17 +476,7 @@ await corsair.spoki.api.contacts.addOperator({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -607,17 +505,7 @@ await corsair.spoki.api.contacts.createOrUpdate({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -642,17 +530,7 @@ await corsair.spoki.api.contacts.delete({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -680,18 +558,7 @@ await corsair.spoki.api.contacts.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -716,17 +583,7 @@ await corsair.spoki.api.contacts.removeOperator({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -751,17 +608,7 @@ await corsair.spoki.api.contacts.retrieve({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -786,17 +633,7 @@ await corsair.spoki.api.contacts.syncBulk({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -821,17 +658,7 @@ await corsair.spoki.api.contacts.update({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -859,17 +686,7 @@ await corsair.spoki.api.customFields.create({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -894,17 +711,7 @@ await corsair.spoki.api.customFields.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -932,18 +739,7 @@ await corsair.spoki.api.customFields.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -968,17 +764,7 @@ await corsair.spoki.api.customFields.retrieve({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1004,17 +790,7 @@ await corsair.spoki.api.customFields.update({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1041,17 +817,7 @@ await corsair.spoki.api.invitations.resend({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1076,17 +842,7 @@ await corsair.spoki.api.invitations.updateRole({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1113,17 +869,7 @@ await corsair.spoki.api.lists.create({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1148,17 +894,7 @@ await corsair.spoki.api.lists.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1186,18 +922,7 @@ await corsair.spoki.api.lists.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -1222,17 +947,7 @@ await corsair.spoki.api.lists.removeAllContacts({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1258,17 +973,7 @@ await corsair.spoki.api.lists.removeContacts({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1293,17 +998,7 @@ await corsair.spoki.api.lists.retrieve({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1329,17 +1024,7 @@ await corsair.spoki.api.lists.syncContacts({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1361,17 +1046,7 @@ await corsair.spoki.api.media.create({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1396,17 +1071,7 @@ await corsair.spoki.api.media.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1434,18 +1099,7 @@ await corsair.spoki.api.media.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -1470,17 +1124,7 @@ await corsair.spoki.api.media.retrieve({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1505,17 +1149,7 @@ await corsair.spoki.api.media.update({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1541,17 +1175,7 @@ await corsair.spoki.api.messaging.sendMessage({});
 | `phone` | `string` | Yes | — |
 | `text` | `string` | Yes | — |
 | `channel_id` | `number` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1585,18 +1209,7 @@ await corsair.spoki.api.partners.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -1626,18 +1239,7 @@ await corsair.spoki.api.reports.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -1659,17 +1261,7 @@ await corsair.spoki.api.roles.addServiceUser({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1694,17 +1286,7 @@ await corsair.spoki.api.roles.checkPrivateKey({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1729,17 +1311,7 @@ await corsair.spoki.api.roles.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1764,17 +1336,7 @@ await corsair.spoki.api.roles.generatePrivateKey({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1802,18 +1364,7 @@ await corsair.spoki.api.roles.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -1838,17 +1389,7 @@ await corsair.spoki.api.roles.retrieve({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1873,17 +1414,7 @@ await corsair.spoki.api.roles.update({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1913,18 +1444,7 @@ await corsair.spoki.api.tags.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -1949,17 +1469,7 @@ await corsair.spoki.api.tags.retrieve({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1986,17 +1496,7 @@ await corsair.spoki.api.templates.clone({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2023,17 +1523,7 @@ await corsair.spoki.api.templates.create({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2059,17 +1549,7 @@ await corsair.spoki.api.templates.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2097,18 +1577,7 @@ await corsair.spoki.api.templates.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---
@@ -2133,17 +1602,7 @@ await corsair.spoki.api.templates.retrieve({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2168,17 +1627,7 @@ await corsair.spoki.api.templates.revertToDraft({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2203,17 +1652,7 @@ await corsair.spoki.api.templates.update({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2235,17 +1674,7 @@ await corsair.spoki.api.tickets.create({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2270,17 +1699,7 @@ await corsair.spoki.api.tickets.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2308,18 +1727,7 @@ await corsair.spoki.api.tickets.list({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| Record<string, any>`
 
 
 ---

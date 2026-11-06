@@ -51,7 +51,7 @@ A new contact was created in Intercom
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -63,8 +63,7 @@ A new contact was created in Intercom
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -119,7 +118,7 @@ A contact was deleted from Intercom
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -131,8 +130,7 @@ A contact was deleted from Intercom
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -184,7 +182,7 @@ A tag was added to a contact
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -196,8 +194,7 @@ A tag was added to a contact
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -252,7 +249,7 @@ A conversation was assigned to an admin or team
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -264,8 +261,7 @@ A conversation was assigned to an admin or team
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -320,7 +316,7 @@ A conversation was closed
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -332,8 +328,7 @@ A conversation was closed
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -385,7 +380,7 @@ A new conversation was created
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -397,8 +392,7 @@ A new conversation was created
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -453,7 +447,7 @@ Initial ping sent by Intercom when a webhook URL is first registered
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -465,8 +459,7 @@ Initial ping sent by Intercom when a webhook URL is first registered
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>

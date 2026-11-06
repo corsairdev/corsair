@@ -22,6 +22,18 @@ export function packChaserCredentials(
 	return `${apiKey}${CREDENTIAL_SEP}${apiSecret}`;
 }
 
+/**
+ * `key:secret` typed into the one key field of a form with no second field
+ * (Hub's connect forms). Null unless both halves are there.
+ */
+export function splitKeyAndSecret(
+	value: string,
+): { apiKey: string; apiSecret: string } | null {
+	const colon = value.indexOf(':');
+	if (colon <= 0 || colon === value.length - 1) return null;
+	return { apiKey: value.slice(0, colon), apiSecret: value.slice(colon + 1) };
+}
+
 export function unpackChaserCredentials(packed: string): {
 	apiKey: string;
 	apiSecret: string;

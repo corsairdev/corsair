@@ -51,7 +51,7 @@ A card was created on a board
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `action` | `object` | Yes | — |
-| `model` | `object` | Yes | — |
+| `model` | `Record<string, any>` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="action full type">
@@ -97,14 +97,6 @@ A card was created on a board
       pos?: number
     }
   }
-}
-```
-</Accordion>
-
-<Accordion title="model full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -158,8 +150,7 @@ A card was created on a board
       }
     }
   },
-  model: {
-  }
+  model: Record<string, any>
 }
 ```
 </Accordion>
@@ -196,7 +187,7 @@ A card was updated (name, desc, due date, labels, etc.)
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `action` | `object` | Yes | — |
-| `model` | `object` | Yes | — |
+| `model` | `Record<string, any>` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="action full type">
@@ -249,17 +240,8 @@ A card was updated (name, desc, due date, labels, etc.)
       id: string,
       name?: string
     },
-    old?: {
-    }
+    old?: Record<string, any>
   }
-}
-```
-</Accordion>
-
-<Accordion title="model full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -319,12 +301,10 @@ A card was updated (name, desc, due date, labels, etc.)
         id: string,
         name?: string
       },
-      old?: {
-      }
+      old?: Record<string, any>
     }
   },
-  model: {
-  }
+  model: Record<string, any>
 }
 ```
 </Accordion>
@@ -363,7 +343,7 @@ A comment was added to a card
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `action` | `object` | Yes | — |
-| `model` | `object` | Yes | — |
+| `model` | `Record<string, any>` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="action full type">
@@ -411,14 +391,6 @@ A comment was added to a card
     text?: string,
     textData?: any | null
   }
-}
-```
-</Accordion>
-
-<Accordion title="model full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -474,8 +446,7 @@ A comment was added to a card
       textData?: any | null
     }
   },
-  model: {
-  }
+  model: Record<string, any>
 }
 ```
 </Accordion>
@@ -514,7 +485,7 @@ A new list was created on a board
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `action` | `object` | Yes | — |
-| `model` | `object` | Yes | — |
+| `model` | `Record<string, any>` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="action full type">
@@ -547,14 +518,6 @@ A new list was created on a board
       name?: string
     }
   }
-}
-```
-</Accordion>
-
-<Accordion title="model full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -595,8 +558,7 @@ A new list was created on a board
       }
     }
   },
-  model: {
-  }
+  model: Record<string, any>
 }
 ```
 </Accordion>
@@ -633,7 +595,7 @@ A list was updated (name, closed status, etc.)
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `action` | `object` | Yes | — |
-| `model` | `object` | Yes | — |
+| `model` | `Record<string, any>` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="action full type">
@@ -665,17 +627,8 @@ A list was updated (name, closed status, etc.)
       id: string,
       name?: string
     },
-    old?: {
-    }
+    old?: Record<string, any>
   }
-}
-```
-</Accordion>
-
-<Accordion title="model full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -714,12 +667,10 @@ A list was updated (name, closed status, etc.)
         id: string,
         name?: string
       },
-      old?: {
-      }
+      old?: Record<string, any>
     }
   },
-  model: {
-  }
+  model: Record<string, any>
 }
 ```
 </Accordion>
@@ -758,7 +709,7 @@ A member was added to a card
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `action` | `object` | Yes | — |
-| `model` | `object` | Yes | — |
+| `model` | `Record<string, any>` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="action full type">
@@ -808,14 +759,6 @@ A member was added to a card
       initials?: string
     }
   }
-}
-```
-</Accordion>
-
-<Accordion title="model full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -873,8 +816,7 @@ A member was added to a card
       }
     }
   },
-  model: {
-  }
+  model: Record<string, any>
 }
 ```
 </Accordion>

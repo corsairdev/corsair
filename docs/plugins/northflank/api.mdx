@@ -809,12 +809,15 @@ await corsair.northflank.api.secrets.create({});
 
 ```ts
 {
-  variables?: {
-  },
-  files?: {
-  },
-  dockerSecretMounts?: {
-  }
+  variables?: Record<string, string>,
+  files?: Record<string, {
+    data: string,
+    encoding?: string
+  }>,
+  dockerSecretMounts?: Record<string, {
+    data: string,
+    encoding?: string
+  }>
 }
 ```
 </Accordion>
@@ -852,12 +855,15 @@ await corsair.northflank.api.secrets.create({});
     stageIds?: string[]
   },
   secrets?: {
-    variables?: {
-    },
-    files?: {
-    },
-    dockerSecretMounts?: {
-    }
+    variables?: Record<string, string>,
+    files?: Record<string, {
+      data: string,
+      encoding?: string
+    }>,
+    dockerSecretMounts?: Record<string, {
+      data: string,
+      encoding?: string
+    }>
   },
   createdAt?: string,
   updatedAt?: string
@@ -946,12 +952,15 @@ await corsair.northflank.api.secrets.createOrUpdate({});
 
 ```ts
 {
-  variables?: {
-  },
-  files?: {
-  },
-  dockerSecretMounts?: {
-  }
+  variables?: Record<string, string>,
+  files?: Record<string, {
+    data: string,
+    encoding?: string
+  }>,
+  dockerSecretMounts?: Record<string, {
+    data: string,
+    encoding?: string
+  }>
 }
 ```
 </Accordion>
@@ -989,12 +998,15 @@ await corsair.northflank.api.secrets.createOrUpdate({});
     stageIds?: string[]
   },
   secrets?: {
-    variables?: {
-    },
-    files?: {
-    },
-    dockerSecretMounts?: {
-    }
+    variables?: Record<string, string>,
+    files?: Record<string, {
+      data: string,
+      encoding?: string
+    }>,
+    dockerSecretMounts?: Record<string, {
+      data: string,
+      encoding?: string
+    }>
   },
   createdAt?: string,
   updatedAt?: string
@@ -1059,12 +1071,15 @@ await corsair.northflank.api.secrets.get({});
     stageIds?: string[]
   },
   secrets?: {
-    variables?: {
-    },
-    files?: {
-    },
-    dockerSecretMounts?: {
-    }
+    variables?: Record<string, string>,
+    files?: Record<string, {
+      data: string,
+      encoding?: string
+    }>,
+    dockerSecretMounts?: Record<string, {
+      data: string,
+      encoding?: string
+    }>
   },
   createdAt?: string,
   updatedAt?: string
@@ -1128,12 +1143,15 @@ await corsair.northflank.api.secrets.getDetails({});
     stageIds?: string[]
   },
   secrets?: {
-    variables?: {
-    },
-    files?: {
-    },
-    dockerSecretMounts?: {
-    }
+    variables?: Record<string, string>,
+    files?: Record<string, {
+      data: string,
+      encoding?: string
+    }>,
+    dockerSecretMounts?: Record<string, {
+      data: string,
+      encoding?: string
+    }>
   },
   createdAt?: string,
   updatedAt?: string,
@@ -1142,8 +1160,7 @@ await corsair.northflank.api.secrets.getDetails({});
     name: string,
     addonType: string,
     version: string,
-    variables?: {
-    }
+    variables?: Record<string, string>
   }[]
 }
 ```
@@ -1209,12 +1226,15 @@ await corsair.northflank.api.secrets.list({});
       stageIds?: string[]
     },
     secrets?: {
-      variables?: {
-      },
-      files?: {
-      },
-      dockerSecretMounts?: {
-      }
+      variables?: Record<string, string>,
+      files?: Record<string, {
+        data: string,
+        encoding?: string
+      }>,
+      dockerSecretMounts?: Record<string, {
+        data: string,
+        encoding?: string
+      }>
     },
     createdAt?: string,
     updatedAt?: string
@@ -1315,12 +1335,15 @@ await corsair.northflank.api.secrets.patch({});
 
 ```ts
 {
-  variables?: {
-  },
-  files?: {
-  },
-  dockerSecretMounts?: {
-  }
+  variables?: Record<string, string>,
+  files?: Record<string, {
+    data: string,
+    encoding?: string
+  }>,
+  dockerSecretMounts?: Record<string, {
+    data: string,
+    encoding?: string
+  }>
 }
 ```
 </Accordion>
@@ -1358,12 +1381,15 @@ await corsair.northflank.api.secrets.patch({});
     stageIds?: string[]
   },
   secrets?: {
-    variables?: {
-    },
-    files?: {
-    },
-    dockerSecretMounts?: {
-    }
+    variables?: Record<string, string>,
+    files?: Record<string, {
+      data: string,
+      encoding?: string
+    }>,
+    dockerSecretMounts?: Record<string, {
+      data: string,
+      encoding?: string
+    }>
   },
   createdAt?: string,
   updatedAt?: string
@@ -1450,12 +1476,15 @@ await corsair.northflank.api.secrets.update({});
 
 ```ts
 {
-  variables?: {
-  },
-  files?: {
-  },
-  dockerSecretMounts?: {
-  }
+  variables?: Record<string, string>,
+  files?: Record<string, {
+    data: string,
+    encoding?: string
+  }>,
+  dockerSecretMounts?: Record<string, {
+    data: string,
+    encoding?: string
+  }>
 }
 ```
 </Accordion>

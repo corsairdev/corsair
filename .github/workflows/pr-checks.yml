@@ -48,6 +48,7 @@ jobs:
       www_install_filter: ${{ steps.scope.outputs.www_install_filter }}
       www_test_filter: ${{ steps.scope.outputs.www_test_filter }}
       adapters_filter: ${{ steps.scope.outputs.adapters_filter }}
+      plugin: ${{ steps.scope.outputs.plugin }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,12 +64,94 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build:
-    name: Build & static checks
+      # Docs-only PRs skip the build job and its lint, so check here that the
+      # docs nav still parses; generate:docs and the docs site both read it.
+      - name: Check docs/docs.json parses
+        run: node -e "JSON.parse(require('node:fs').readFileSync('docs/docs.json', 'utf8'))"
+
+      # Docs-only PRs (one plugin's plugin-docs.yaml and its pages) also skip
+      # validate:plugins, so run its plugin-docs.yaml rule here. Only the yaml
+      # parser is installed, outside the workspace.
+      - name: Check plugin-docs.yaml (docs-only lane)
+        if: steps.scope.outputs.skip_heavy == 'true'
+        run: |
+          npm install --no-save --no-package-lock --ignore-scripts --prefix "$RUNNER_TEMP/plugin-docs-check" yaml@2.8.1
+          ln -s "$RUNNER_TEMP/plugin-docs-check/node_modules" node_modules
+          node --experimental-strip-types scripts/check-plugin-docs-yaml.ts
+
+  checks:
+    name: Static checks
     needs: scope
-    if: needs.scope.outputs.skip_heavy != 'true'
+    # plugin-gate runs only on pull requests. On a push to main it is skipped,
+    # and GitHub skips every job downstream of a skipped job unless the job's
+    # `if` checks status itself, so check the scope result directly.
+    if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.skip_heavy != 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: ./.github/actions/prepare
+        with:
+          lane: ${{ needs.scope.outputs.lane }}
+          turbo_filter: ${{ needs.scope.outputs.turbo_filter }}
+          www_install_filter: ${{ needs.scope.outputs.www_install_filter }}
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Validate Plugins
+        run: pnpm run validate:plugins
+
+      - name: Check plugin READMEs and npm metadata
+        run: pnpm generate:readmes:all --check
+
+      - name: Validate Docs
+        run: pnpm run validate:docs
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Typecheck review scripts
+        run: pnpm exec tsc -p scripts/pr-review
+
+      # parse-greptile.test.ts is left out: its fixture matches the
+      # `**/fixtures` rule in .gitignore, so it fails on every fresh checkout.
+      - name: Test review scripts
+        run: >-
+          node --experimental-strip-types --test
+          scripts/pr-review/gate.test.ts
+          scripts/pr-review/loop.test.ts
+          scripts/pr-review/package-shards.test.ts
+          scripts/pr-review/pr-scope.test.ts
+          scripts/plugin-docs-requirements.test.ts
+
+      # ts-jest only transpiles (isolatedModules in tsconfig.base.json), so test
+      # types are checked by each package's own tsc build. This covers the
+      # packages whose tsconfig leaves their tests out of that build.
+      - name: Typecheck test files the package builds skip
+        if: needs.scope.outputs.lane != 'www'
+        run: node --experimental-strip-types scripts/typecheck-test-files.ts ${PACKAGES:+"$PACKAGES"}
+        env:
+          PACKAGES: ${{ needs.scope.outputs.lane == 'plugin' && format('packages/{0}', needs.scope.outputs.plugin) || '' }}
+
+  build:
+    name: Build
+    needs: scope
+    # plugin-gate runs only on pull requests. On a push to main it is skipped,
+    # and GitHub skips every job downstream of a skipped job unless the job's
+    # `if` checks status itself, so check the scope result directly.
+    if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.skip_heavy != 'true' && needs.scope.outputs.lane != 'www' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    # The full lane builds every package, so it splits them across four jobs
+    # like the tests (package-shards.ts).
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.scope.outputs.lane == 'full' && '["1","2","3","4"]' || '["1"]') }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -84,36 +167,29 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: turbo-build-${{ runner.os }}-${{ github.event_name == 'pull_request' && format('pr-{0}-', github.event.pull_request.number) || '' }}${{ github.sha }}
-          restore-keys: turbo-build-${{ runner.os }}-
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Validate Plugins
-        run: pnpm run validate:plugins
-
-      - name: Check plugin READMEs and npm metadata
-        if: steps.scope.outputs.skip_heavy != 'true'
-        run: pnpm generate:readmes:all --check
-
-      - name: Validate Docs
-        run: pnpm run validate:docs
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Typecheck review scripts
-        run: pnpm exec tsc -p scripts/pr-review
+          key: turbo-build-${{ runner.os }}-shard${{ matrix.shard }}-${{ github.event_name == 'pull_request' && format('pr-{0}-', github.event.pull_request.number) || '' }}${{ github.sha }}
+          restore-keys: turbo-build-${{ runner.os }}-shard${{ matrix.shard }}-
 
       - name: Build
-        if: needs.scope.outputs.lane != 'www'
-        run: pnpm exec turbo build --filter="${{ needs.scope.outputs.turbo_filter }}" ${{ needs.scope.outputs.adapters_filter }}
+        run: |
+          if [ "$LANE" = full ]; then
+            mapfile -t FILTERS < <(node --experimental-strip-types scripts/pr-review/package-shards.ts "$SHARD" 4 build)
+          else
+            FILTERS=("--filter=$TURBO_FILTER")
+          fi
+          pnpm exec turbo build "${FILTERS[@]}"
+        env:
+          LANE: ${{ needs.scope.outputs.lane }}
+          SHARD: ${{ matrix.shard }}
+          TURBO_FILTER: ${{ needs.scope.outputs.turbo_filter }}
 
   test:
     name: Test
     needs: scope
-    if: needs.scope.outputs.skip_heavy != 'true'
+    # plugin-gate runs only on pull requests. On a push to main it is skipped,
+    # and GitHub skips every job downstream of a skipped job unless the job's
+    # `if` checks status itself, so check the scope result directly.
+    if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.skip_heavy != 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -135,20 +211,30 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: turbo-test-${{ runner.os }}-${{ github.event_name == 'pull_request' && format('pr-{0}-', github.event.pull_request.number) || '' }}${{ github.sha }}-${{ matrix.shard }}
-          restore-keys: turbo-test-${{ runner.os }}-
+          # Shard goes before the sha: restore-keys match on a prefix, and turbo
+          # hashes the --shard argument, so each shard can only reuse its own
+          # entries.
+          key: turbo-test-${{ runner.os }}-shard${{ matrix.shard }}-${{ github.event_name == 'pull_request' && format('pr-{0}-', github.event.pull_request.number) || '' }}${{ github.sha }}
+          restore-keys: turbo-test-${{ runner.os }}-shard${{ matrix.shard }}-
 
-      # Only the full lane's filter is pure jest packages, so --shard applies
-      # there; www runs its node:test suite separately below, never sharded.
+      # The full lane gives each shard whole packages (package-shards.ts), so a
+      # package starts jest once instead of once per shard. www runs its
+      # node:test suite separately below, never sharded.
       - name: Run tests
-        run: >-
-          pnpm exec turbo test --filter="${{ needs.scope.outputs.turbo_filter }}" ${{ needs.scope.outputs.adapters_filter }}
-          -- --passWithNoTests --ci
-          ${{ needs.scope.outputs.lane == 'full' && format('--shard={0}/4', matrix.shard) || '' }}
-          --testPathIgnorePatterns="api\.test\.ts$|(^|/)integration\.test\.ts$"
+        run: |
+          if [ "$LANE" = full ]; then
+            mapfile -t FILTERS < <(node --experimental-strip-types scripts/pr-review/package-shards.ts "$SHARD" 4 test)
+          else
+            FILTERS=("--filter=$TURBO_FILTER")
+          fi
+          pnpm exec turbo test "${FILTERS[@]}" -- --passWithNoTests --ci \
+            --testPathIgnorePatterns='api\.test\.ts$|(^|/)integration\.test\.ts$'
         env:
           CI: true
           SKIP_PG_TESTS: 1
+          LANE: ${{ needs.scope.outputs.lane }}
+          SHARD: ${{ matrix.shard }}
+          TURBO_FILTER: ${{ needs.scope.outputs.turbo_filter }}
 
       - name: Run www tests
         if: needs.scope.outputs.www_test_filter != '' && matrix.shard == '1'
@@ -162,20 +248,21 @@ jobs:
 
   ci:
     name: CI Checks
-    needs: [scope, build, test]
+    needs: [scope, checks, build, test]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       # scope must succeed (a skipped scope means the plugin gate failed);
-      # build/test may be skipped only on the docs-only skip-heavy lane.
+      # checks, build and test skip on the docs-only skip-heavy lane, and
+      # build also skips on the www lane.
       - name: Verify required jobs passed
         run: |
           if [ "${{ needs.scope.result }}" != "success" ]; then
             echo "scope did not pass (result: ${{ needs.scope.result }})"
             exit 1
           fi
-          for r in "${{ needs.build.result }}" "${{ needs.test.result }}"; do
+          for r in "${{ needs.checks.result }}" "${{ needs.build.result }}" "${{ needs.test.result }}"; do
             case "$r" in
               success|skipped) ;;
               *) echo "A required job did not pass: $r"; exit 1 ;;

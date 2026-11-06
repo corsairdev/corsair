@@ -69,7 +69,7 @@ await corsair.workiom.api.lists.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `expand` | `Fields \| Views \| Filters[]` | No | — |
+| `expand` | `(Fields \| Views \| Filters)[]` | No | — |
 
 
 
@@ -219,17 +219,7 @@ await corsair.workiom.api.records.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `listId` | `string` | Yes | — |
-| `record` | `object` | Yes | Field ID keys to values, per list metadata |
-
-<AccordionGroup>
-<Accordion title="record full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `record` | `Record<string, any>` | Yes | Field ID keys to values, per list metadata |
 
 
 
@@ -286,7 +276,7 @@ await corsair.workiom.api.records.getAll({});
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
 | `totalCount` | `number` | Yes | — |
-| `summary` | `object` | No | — |
+| `summary` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -295,14 +285,6 @@ await corsair.workiom.api.records.getAll({});
 {
   _id?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="summary full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -329,17 +311,7 @@ await corsair.workiom.api.records.update({});
 |------|------|----------|-------------|
 | `listId` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
-| `record` | `object` | Yes | Full record body; PUT replaces the record |
-
-<AccordionGroup>
-<Accordion title="record full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `record` | `Record<string, any>` | Yes | Full record body; PUT replaces the record |
 
 
 

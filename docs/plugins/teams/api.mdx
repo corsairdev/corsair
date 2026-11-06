@@ -41,12 +41,12 @@ await corsair.teams.api.channels.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
-| `description` | `string` | No | — |
-| `email` | `string` | No | — |
-| `webUrl` | `string` | No | — |
-| `membershipType` | `string` | No | — |
-| `isFavoriteByDefault` | `boolean` | No | — |
-| `createdDateTime` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `membershipType` | `string \| null` | No | — |
+| `isFavoriteByDefault` | `boolean \| null` | No | — |
+| `createdDateTime` | `string \| null` | No | — |
 
 
 
@@ -105,12 +105,12 @@ await corsair.teams.api.channels.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
-| `description` | `string` | No | — |
-| `email` | `string` | No | — |
-| `webUrl` | `string` | No | — |
-| `membershipType` | `string` | No | — |
-| `isFavoriteByDefault` | `boolean` | No | — |
-| `createdDateTime` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `membershipType` | `string \| null` | No | — |
+| `isFavoriteByDefault` | `boolean \| null` | No | — |
+| `createdDateTime` | `string \| null` | No | — |
 
 
 
@@ -237,7 +237,7 @@ await corsair.teams.api.chats.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `topic` | `string` | No | — |
+| `topic` | `string \| null` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastUpdatedDateTime` | `string` | No | — |
 | `chatType` | `string` | No | — |
@@ -273,7 +273,7 @@ await corsair.teams.api.chats.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `topic` | `string` | No | — |
+| `topic` | `string \| null` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastUpdatedDateTime` | `string` | No | — |
 | `chatType` | `string` | No | — |
@@ -383,10 +383,8 @@ await corsair.teams.api.chats.listMessages({});
   locale?: string,
   webUrl?: string | null,
   from?: {
-    application?: {
-    } | null,
-    device?: {
-    } | null,
+    application?: Record<string, any> | null,
+    device?: Record<string, any> | null,
     user?: {
       id?: string,
       displayName?: string | null,
@@ -401,12 +399,9 @@ await corsair.teams.api.chats.listMessages({});
     teamId?: string,
     channelId?: string
   } | null,
-  attachments?: {
-  }[],
-  mentions?: {
-  }[],
-  reactions?: {
-  }[]
+  attachments?: Record<string, any>[],
+  mentions?: Record<string, any>[],
+  reactions?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -455,40 +450,38 @@ await corsair.teams.api.chats.sendMessage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `replyToId` | `string` | No | — |
+| `replyToId` | `string \| null` | No | — |
 | `etag` | `string` | No | — |
 | `messageType` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `deletedDateTime` | `string` | No | — |
-| `subject` | `string` | No | — |
-| `summary` | `string` | No | — |
-| `chatId` | `string` | No | — |
+| `deletedDateTime` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `chatId` | `string \| null` | No | — |
 | `importance` | `string` | No | — |
 | `locale` | `string` | No | — |
-| `webUrl` | `string` | No | — |
-| `from` | `object` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `from` | `object \| null` | No | — |
 | `body` | `object` | No | — |
-| `channelIdentity` | `object` | No | — |
-| `attachments` | `object[]` | No | — |
-| `mentions` | `object[]` | No | — |
-| `reactions` | `object[]` | No | — |
+| `channelIdentity` | `object \| null` | No | — |
+| `attachments` | `Record<string, any>[]` | No | — |
+| `mentions` | `Record<string, any>[]` | No | — |
+| `reactions` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="from full type">
 
 ```ts
 {
-  application?: {
-  } | null,
-  device?: {
-  } | null,
+  application?: Record<string, any> | null,
+  device?: Record<string, any> | null,
   user?: {
     id?: string,
     displayName?: string | null,
     userIdentityType?: string
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -508,31 +501,7 @@ await corsair.teams.api.chats.sendMessage({});
 {
   teamId?: string,
   channelId?: string
-}
-```
-</Accordion>
-
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="mentions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="reactions full type">
-
-```ts
-{
-}[]
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -561,7 +530,7 @@ await corsair.teams.api.members.add({});
 |------|------|----------|-------------|
 | `teamId` | `string` | Yes | — |
 | `userId` | `string` | Yes | — |
-| `roles` | `owner \| member[]` | No | — |
+| `roles` | `(owner \| member)[]` | No | — |
 
 
 
@@ -570,12 +539,12 @@ await corsair.teams.api.members.add({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `displayName` | `string` | No | — |
-| `userId` | `string` | No | — |
-| `email` | `string` | No | — |
-| `tenantId` | `string` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `tenantId` | `string \| null` | No | — |
 | `roles` | `string[]` | No | — |
-| `visibleHistoryStartDateTime` | `string` | No | — |
+| `visibleHistoryStartDateTime` | `string \| null` | No | — |
 
 
 
@@ -607,12 +576,12 @@ await corsair.teams.api.members.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `displayName` | `string` | No | — |
-| `userId` | `string` | No | — |
-| `email` | `string` | No | — |
-| `tenantId` | `string` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `tenantId` | `string \| null` | No | — |
 | `roles` | `string[]` | No | — |
-| `visibleHistoryStartDateTime` | `string` | No | — |
+| `visibleHistoryStartDateTime` | `string \| null` | No | — |
 
 
 
@@ -750,40 +719,38 @@ await corsair.teams.api.messages.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `replyToId` | `string` | No | — |
+| `replyToId` | `string \| null` | No | — |
 | `etag` | `string` | No | — |
 | `messageType` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `deletedDateTime` | `string` | No | — |
-| `subject` | `string` | No | — |
-| `summary` | `string` | No | — |
-| `chatId` | `string` | No | — |
+| `deletedDateTime` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `chatId` | `string \| null` | No | — |
 | `importance` | `string` | No | — |
 | `locale` | `string` | No | — |
-| `webUrl` | `string` | No | — |
-| `from` | `object` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `from` | `object \| null` | No | — |
 | `body` | `object` | No | — |
-| `channelIdentity` | `object` | No | — |
-| `attachments` | `object[]` | No | — |
-| `mentions` | `object[]` | No | — |
-| `reactions` | `object[]` | No | — |
+| `channelIdentity` | `object \| null` | No | — |
+| `attachments` | `Record<string, any>[]` | No | — |
+| `mentions` | `Record<string, any>[]` | No | — |
+| `reactions` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="from full type">
 
 ```ts
 {
-  application?: {
-  } | null,
-  device?: {
-  } | null,
+  application?: Record<string, any> | null,
+  device?: Record<string, any> | null,
   user?: {
     id?: string,
     displayName?: string | null,
     userIdentityType?: string
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -803,31 +770,7 @@ await corsair.teams.api.messages.get({});
 {
   teamId?: string,
   channelId?: string
-}
-```
-</Accordion>
-
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="mentions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="reactions full type">
-
-```ts
-{
-}[]
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -886,10 +829,8 @@ await corsair.teams.api.messages.list({});
   locale?: string,
   webUrl?: string | null,
   from?: {
-    application?: {
-    } | null,
-    device?: {
-    } | null,
+    application?: Record<string, any> | null,
+    device?: Record<string, any> | null,
     user?: {
       id?: string,
       displayName?: string | null,
@@ -904,12 +845,9 @@ await corsair.teams.api.messages.list({});
     teamId?: string,
     channelId?: string
   } | null,
-  attachments?: {
-  }[],
-  mentions?: {
-  }[],
-  reactions?: {
-  }[]
+  attachments?: Record<string, any>[],
+  mentions?: Record<string, any>[],
+  reactions?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -969,10 +907,8 @@ await corsair.teams.api.messages.listReplies({});
   locale?: string,
   webUrl?: string | null,
   from?: {
-    application?: {
-    } | null,
-    device?: {
-    } | null,
+    application?: Record<string, any> | null,
+    device?: Record<string, any> | null,
     user?: {
       id?: string,
       displayName?: string | null,
@@ -987,12 +923,9 @@ await corsair.teams.api.messages.listReplies({});
     teamId?: string,
     channelId?: string
   } | null,
-  attachments?: {
-  }[],
-  mentions?: {
-  }[],
-  reactions?: {
-  }[]
+  attachments?: Record<string, any>[],
+  mentions?: Record<string, any>[],
+  reactions?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -1043,40 +976,38 @@ await corsair.teams.api.messages.reply({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `replyToId` | `string` | No | — |
+| `replyToId` | `string \| null` | No | — |
 | `etag` | `string` | No | — |
 | `messageType` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `deletedDateTime` | `string` | No | — |
-| `subject` | `string` | No | — |
-| `summary` | `string` | No | — |
-| `chatId` | `string` | No | — |
+| `deletedDateTime` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `chatId` | `string \| null` | No | — |
 | `importance` | `string` | No | — |
 | `locale` | `string` | No | — |
-| `webUrl` | `string` | No | — |
-| `from` | `object` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `from` | `object \| null` | No | — |
 | `body` | `object` | No | — |
-| `channelIdentity` | `object` | No | — |
-| `attachments` | `object[]` | No | — |
-| `mentions` | `object[]` | No | — |
-| `reactions` | `object[]` | No | — |
+| `channelIdentity` | `object \| null` | No | — |
+| `attachments` | `Record<string, any>[]` | No | — |
+| `mentions` | `Record<string, any>[]` | No | — |
+| `reactions` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="from full type">
 
 ```ts
 {
-  application?: {
-  } | null,
-  device?: {
-  } | null,
+  application?: Record<string, any> | null,
+  device?: Record<string, any> | null,
   user?: {
     id?: string,
     displayName?: string | null,
     userIdentityType?: string
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1096,31 +1027,7 @@ await corsair.teams.api.messages.reply({});
 {
   teamId?: string,
   channelId?: string
-}
-```
-</Accordion>
-
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="mentions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="reactions full type">
-
-```ts
-{
-}[]
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1170,40 +1077,38 @@ await corsair.teams.api.messages.send({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `replyToId` | `string` | No | — |
+| `replyToId` | `string \| null` | No | — |
 | `etag` | `string` | No | — |
 | `messageType` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `deletedDateTime` | `string` | No | — |
-| `subject` | `string` | No | — |
-| `summary` | `string` | No | — |
-| `chatId` | `string` | No | — |
+| `deletedDateTime` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `chatId` | `string \| null` | No | — |
 | `importance` | `string` | No | — |
 | `locale` | `string` | No | — |
-| `webUrl` | `string` | No | — |
-| `from` | `object` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `from` | `object \| null` | No | — |
 | `body` | `object` | No | — |
-| `channelIdentity` | `object` | No | — |
-| `attachments` | `object[]` | No | — |
-| `mentions` | `object[]` | No | — |
-| `reactions` | `object[]` | No | — |
+| `channelIdentity` | `object \| null` | No | — |
+| `attachments` | `Record<string, any>[]` | No | — |
+| `mentions` | `Record<string, any>[]` | No | — |
+| `reactions` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="from full type">
 
 ```ts
 {
-  application?: {
-  } | null,
-  device?: {
-  } | null,
+  application?: Record<string, any> | null,
+  device?: Record<string, any> | null,
   user?: {
     id?: string,
     displayName?: string | null,
     userIdentityType?: string
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1223,31 +1128,7 @@ await corsair.teams.api.messages.send({});
 {
   teamId?: string,
   channelId?: string
-}
-```
-</Accordion>
-
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="mentions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="reactions full type">
-
-```ts
-{
-}[]
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1340,7 +1221,7 @@ await corsair.teams.api.teams.create({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -1397,17 +1278,17 @@ await corsair.teams.api.teams.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
-| `description` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `classification` | `string` | No | — |
-| `specialization` | `string` | No | — |
-| `visibility` | `string` | No | — |
-| `webUrl` | `string` | No | — |
-| `isArchived` | `boolean` | No | — |
-| `memberSettings` | `object` | No | — |
-| `guestSettings` | `object` | No | — |
-| `messagingSettings` | `object` | No | — |
-| `funSettings` | `object` | No | — |
+| `description` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `classification` | `string \| null` | No | — |
+| `specialization` | `string \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `isArchived` | `boolean \| null` | No | — |
+| `memberSettings` | `object \| null` | No | — |
+| `guestSettings` | `object \| null` | No | — |
+| `messagingSettings` | `object \| null` | No | — |
+| `funSettings` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="memberSettings full type">
@@ -1419,7 +1300,7 @@ await corsair.teams.api.teams.get({});
   allowAddRemoveApps?: boolean,
   allowCreateUpdateRemoveTabs?: boolean,
   allowCreateUpdateRemoveConnectors?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1429,7 +1310,7 @@ await corsair.teams.api.teams.get({});
 {
   allowCreateUpdateChannels?: boolean,
   allowDeleteChannels?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1442,7 +1323,7 @@ await corsair.teams.api.teams.get({});
   allowOwnerDeleteMessages?: boolean,
   allowTeamMentions?: boolean,
   allowChannelMentions?: boolean
-}
+} | null
 ```
 </Accordion>
 
@@ -1454,7 +1335,7 @@ await corsair.teams.api.teams.get({});
   giphyContentRating?: string,
   allowStickersAndMemes?: boolean,
   allowCustomMemes?: boolean
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

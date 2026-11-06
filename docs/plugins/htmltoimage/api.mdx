@@ -31,12 +31,12 @@ await corsair.htmltoimage.api.account.checkUsage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `email` | `string` | Yes | — |
-| `plan` | `string` | No | — |
-| `plan_name` | `string` | No | — |
+| `plan` | `string \| null` | No | — |
+| `plan_name` | `string \| null` | No | — |
 | `active` | `boolean` | Yes | — |
 | `free_plan` | `boolean` | Yes | — |
 | `credits_remaining` | `number` | Yes | — |
-| `credits_reset_at` | `string` | No | — |
+| `credits_reset_at` | `string \| null` | No | — |
 
 
 
@@ -84,7 +84,7 @@ await corsair.htmltoimage.api.html.convertToImage({});
 | `id` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `credits_remaining` | `number` | No | — |
-| `expires_at` | `string` | No | — |
+| `expires_at` | `string \| null` | No | — |
 | `status` | `processing` | No | — |
 | `message` | `string` | No | — |
 

@@ -38,9 +38,9 @@ await corsair.dodopayments.api.customers.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 
 
@@ -72,9 +72,9 @@ await corsair.dodopayments.api.customers.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 
 
@@ -103,17 +103,7 @@ await corsair.dodopayments.api.payments.create({});
 | `currency` | `string` | Yes | — |
 | `customer_id` | `string` | No | — |
 | `payment_method` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -125,21 +115,11 @@ await corsair.dodopayments.api.payments.create({});
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `customer_id` | `string` | No | — |
-| `subscription_id` | `string` | No | — |
-| `billing` | `object` | No | — |
-| `payment_link` | `string` | No | — |
+| `customer_id` | `string \| null` | No | — |
+| `subscription_id` | `string \| null` | No | — |
+| `billing` | `Record<string, any> \| null` | No | — |
+| `payment_link` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="billing full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -173,21 +153,11 @@ await corsair.dodopayments.api.payments.get({});
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `customer_id` | `string` | No | — |
-| `subscription_id` | `string` | No | — |
-| `billing` | `object` | No | — |
-| `payment_link` | `string` | No | — |
+| `customer_id` | `string \| null` | No | — |
+| `subscription_id` | `string \| null` | No | — |
+| `billing` | `Record<string, any> \| null` | No | — |
+| `payment_link` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="billing full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -233,8 +203,7 @@ await corsair.dodopayments.api.payments.list({});
   status: string,
   customer_id?: string | null,
   subscription_id?: string | null,
-  billing?: {
-  } | null,
+  billing?: Record<string, any> | null,
   payment_link?: string | null,
   created_at?: string
 }[]
@@ -278,7 +247,7 @@ await corsair.dodopayments.api.refunds.create({});
 | `payment_id` | `string` | Yes | — |
 | `amount` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
-| `reason` | `string` | No | — |
+| `reason` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 
 
@@ -313,20 +282,10 @@ await corsair.dodopayments.api.subscriptions.cancel({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `customer_id` | `string` | Yes | — |
-| `plan_id` | `string` | No | — |
+| `plan_id` | `string \| null` | No | — |
 | `status` | `string` | Yes | — |
-| `billing_cycle` | `object` | No | — |
+| `billing_cycle` | `Record<string, any> \| null` | No | — |
 | `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="billing_cycle full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -360,20 +319,10 @@ await corsair.dodopayments.api.subscriptions.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `customer_id` | `string` | Yes | — |
-| `plan_id` | `string` | No | — |
+| `plan_id` | `string \| null` | No | — |
 | `status` | `string` | Yes | — |
-| `billing_cycle` | `object` | No | — |
+| `billing_cycle` | `Record<string, any> \| null` | No | — |
 | `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="billing_cycle full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -405,20 +354,10 @@ await corsair.dodopayments.api.subscriptions.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `customer_id` | `string` | Yes | — |
-| `plan_id` | `string` | No | — |
+| `plan_id` | `string \| null` | No | — |
 | `status` | `string` | Yes | — |
-| `billing_cycle` | `object` | No | — |
+| `billing_cycle` | `Record<string, any> \| null` | No | — |
 | `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="billing_cycle full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

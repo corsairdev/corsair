@@ -1,0 +1,138 @@
+---
+title: Overview
+description: "Cold email and LinkedIn outreach with Woodpecker - list, run, pause and stop campaigns, remove unused campaign steps, add prospects to campaigns and read them back, and look up webhook event types."
+---
+
+Use **Woodpecker Co** through Corsair: one client, typed API calls.
+
+Create a key in Woodpecker under Add-ons, API & Integrations, API keys. Your subscription needs the API add-on. Things to know before you send:
+
+- **Real outreach.** `campaigns.run` starts contacting the campaign's prospects. It also resumes a paused or stopped campaign.
+- **Pause and stop.** `campaigns.pause` and `campaigns.stop` both halt contact until `campaigns.run` is called again; they differ in the status they leave the campaign in.
+- **Adding prospects can partly succeed.** `prospects.addToCampaign` returns a result per prospect, and an entry with `status: 'ERROR'` was not added. `DUPLICATE` is not an error. If none could be added, Woodpecker answers 400: the call throws a `WoodpeckerCoAPIError` whose `body.prospects` holds the reasons.
+- **`force`.** Prospects whose global status is not `ACTIVE` are rejected unless you pass `force: true`, and with it they may be contacted again even after replying elsewhere or opting out.
+- **Deleting a step.** `campaigns.deleteStep` needs the campaign in `DRAFT` or `EDITED` status and the step's ID. Both come from Woodpecker's campaign API (`POST v2/campaigns/{id}/make_editable` and `GET v2/campaigns/{id}`), which this plugin does not wrap yet. A deleted step cannot be restored.
+- **Rate limits.** Woodpecker runs one request at a time per account and queues six more for up to 15 seconds each. Anything past that is dropped, with a 429 on v2 and a 409 `E_TOO_MANY_REQUESTS` on v1. The plugin retries both up to three times with backoff. Every other 409 is a real conflict and is not retried.
+- **Paging.** `prospects.listInCampaigns` returns `next_page`, which stays set while pages come back full, so a full last page leads to one empty page. Woodpecker's `X-Total-Count` header is not exposed.
+- **Webhooks.** The plugin does not receive webhooks. `webhooks.listEvents` lists the event types from Woodpecker's docs without calling the API.
+
+**What you get:**
+
+- 8 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/woodpeckerco
+```
+```bash yarn
+yarn add corsair @corsair-dev/woodpeckerco
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/woodpeckerco
+```
+```bash bun
+bun add corsair @corsair-dev/woodpeckerco
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { woodpeckerco } from '@corsair-dev/woodpeckerco';
+
+export const corsair = createCorsair({
+	plugins: [
+		woodpeckerco(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+woodpeckerco()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'woodpeckerco',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List running campaigns**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.woodpeckerco.api.campaigns.list({
+	status: ['RUNNING'],
+});
+```
+
+
+**Add a prospect to a campaign**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.woodpeckerco.api.prospects.addToCampaign({
+	campaign: { campaign_id: 1234567 },
+	prospects: [{ email: 'jordan@acme-logistics.com', first_name: 'Jordan', company: 'Acme Logistics' }],
+});
+```
+
+
+See the full list on the [API](/plugins/woodpeckerco/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/woodpeckerco/api">
+    Every `woodpeckerco.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

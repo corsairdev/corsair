@@ -3,6 +3,7 @@ import type { CorsairPluginSchema } from '../../db/orm';
 import { BaseProviders } from '../constants';
 import type {
 	CorsairPlugin,
+	EndpointJob,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
 } from '../plugins';
@@ -127,6 +128,122 @@ function isOptionalish(typeName: string | undefined): boolean {
 }
 
 /**
+ * True when a rendered type has a top-level `|` or `&`, i.e. it must be wrapped
+ * in parentheses before `[]` or `&` is appended (`(a | b)[]`, not `a | b[]`).
+ */
+function needsGrouping(type: string): boolean {
+	let depth = 0;
+	let quote: string | undefined;
+	for (let i = 0; i < type.length; i++) {
+		const ch = type[i] as string;
+		if (quote) {
+			if (ch === quote) quote = undefined;
+			continue;
+		}
+		if (ch === '"' || ch === "'") quote = ch;
+		else if (ch === '(' || ch === '{' || ch === '[' || ch === '<') depth++;
+		else if (ch === ')' || ch === '}' || ch === ']' || ch === '>') depth--;
+		else if (depth === 0 && (ch === '|' || ch === '&')) return true;
+	}
+	return false;
+}
+
+function group(type: string): string {
+	return needsGrouping(type) ? `(${type})` : type;
+}
+
+/** Enum and literal values render bare (`full | none`); the empty string renders as `""`. */
+// unknown: zod enum and literal values can be any primitive (string, number,
+// boolean, bigint, null), and String() formats each one.
+function formatLiteralValue(value: unknown): string {
+	return value === '' ? '""' : String(value);
+}
+
+/** The schema a `z.lazy()` stands for (zod 4 `def.getter`, zod 3 `def.getter`). */
+function getZodLazyTarget(def: ZodDef): ZodTypeAny | undefined {
+	const getter = def.getter;
+	return typeof getter === 'function'
+		? (getter as () => ZodTypeAny)()
+		: undefined;
+}
+
+/**
+ * Lazy schemas being rendered right now. A recursive schema (Qdrant's prefetch
+ * holds more prefetches) renders its shape once and `(recursive)` where it
+ * refers to itself, instead of recursing forever or printing `lazy`.
+ */
+const lazyInProgress = new Set<ZodTypeAny>();
+
+/** Splits a rendered type on its top-level `|`. */
+function topLevelMembers(type: string): string[] {
+	const members: string[] = [];
+	let depth = 0;
+	let start = 0;
+	for (let i = 0; i < type.length; i++) {
+		const ch = type[i];
+		if (ch === '(' || ch === '{' || ch === '[' || ch === '<') depth++;
+		else if (ch === ')' || ch === '}' || ch === ']' || ch === '>') depth--;
+		else if (depth === 0 && ch === '|') {
+			members.push(type.slice(start, i).trim());
+			start = i + 1;
+		}
+	}
+	members.push(type.slice(start).trim());
+	return members;
+}
+
+const JSON_VALUE_MEMBERS = [
+	'string',
+	'number',
+	'boolean',
+	'null',
+	'(recursive)[]',
+	'Record<string, (recursive)>',
+];
+
+/** The usual recursive "any JSON value" schema reads better by name. */
+function nameJsonValue(type: string): string {
+	const members = new Set(topLevelMembers(type));
+	return members.size === JSON_VALUE_MEMBERS.length &&
+		JSON_VALUE_MEMBERS.every((m) => members.has(m))
+		? 'JsonValue'
+		: type;
+}
+
+function renderLazy<T>(
+	schema: ZodTypeAny,
+	render: (target: ZodTypeAny) => T,
+	onRecursion: T,
+): T {
+	if (lazyInProgress.has(schema)) return onRecursion;
+	const target = getZodLazyTarget(getZodDef(schema));
+	if (!target) return onRecursion;
+	lazyInProgress.add(schema);
+	try {
+		return render(target);
+	} finally {
+		lazyInProgress.delete(schema);
+	}
+}
+
+/**
+ * True for `.optional()`, also under `.nullable()` (`.nullish()`,
+ * `.optional().nullable()`). `.nullable()` alone keeps a key required, and a
+ * `.default()` stays as it was rendered before (not optional).
+ */
+function hasOptionalWrapper(schema: ZodTypeAny): boolean {
+	let current: ZodTypeAny | undefined = schema;
+	while (current) {
+		const def = getZodDef(current);
+		const typeName = getZodTypeName(def);
+		if (typeName === 'ZodOptional') return true;
+		if (typeName !== 'ZodNullable') return false;
+		current = getZodInner(def);
+	}
+	return false;
+}
+
+/**
  * Produces a compact single-line TypeScript-like type string.
  * Used for array item types, union members, and simple inline fields.
  *
@@ -151,12 +268,14 @@ function zodToInlineType(schema: ZodTypeAny): string {
 		case 'ZodUnknown':
 		case 'ZodAny':
 			return 'any';
-		case 'ZodLiteral':
-			return String(def.value ?? getZodOptions(def)[0] ?? 'unknown');
+		case 'ZodLiteral': {
+			const values = 'value' in def ? [def.value] : getZodOptions(def);
+			return values.length > 0
+				? values.map(formatLiteralValue).join(' | ')
+				: 'unknown';
+		}
 		case 'ZodEnum':
-			return getZodOptions(def)
-				.map((v) => String(v))
-				.join(' | ');
+			return getZodOptions(def).map(formatLiteralValue).join(' | ');
 		case 'ZodOptional': {
 			const inner = getZodInner(def);
 			return inner ? zodToInlineType(inner) : 'unknown';
@@ -173,22 +292,36 @@ function zodToInlineType(schema: ZodTypeAny): string {
 		case 'ZodArray': {
 			const itemType = getZodArrayItem(def);
 			if (!itemType) return 'unknown[]';
-			const itemDef = getZodDef(itemType);
-			const isUnion = getZodTypeName(itemDef) === 'ZodUnion';
-			const inner = zodToInlineType(itemType);
-			return `${isUnion ? `(${inner})` : inner}[]`;
+			return `${group(zodToInlineType(itemType))}[]`;
 		}
-		case 'ZodRecord':
-			return '{}';
+		case 'ZodRecord': {
+			const keyType = def.keyType as ZodTypeAny | undefined;
+			const valueType = def.valueType as ZodTypeAny | undefined;
+			const key = keyType ? zodToInlineType(keyType) : 'string';
+			const value = valueType ? zodToInlineType(valueType) : 'any';
+			return `Record<${key}, ${value}>`;
+		}
+		case 'ZodLazy':
+			return renderLazy(
+				schema,
+				(target) => nameJsonValue(zodToInlineType(target)),
+				'(recursive)',
+			);
+		case 'ZodTuple': {
+			const items = Array.isArray(def.items) ? def.items : [];
+			const rest = def.rest as ZodTypeAny | undefined | null;
+			const rendered = items.map((item) => zodToInlineType(item as ZodTypeAny));
+			if (rest) rendered.push(`...${group(zodToInlineType(rest))}[]`);
+			return `[${rendered.join(', ')}]`;
+		}
 		case 'ZodObject': {
 			const shape = getZodShape(schema, def);
 			const entries = Object.entries(shape);
 			if (entries.length === 0) return '{}';
-			const fields = entries.map(([key, val]) => {
-				const ft = getZodTypeName(getZodDef(val));
-				const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
-				return `${optional ? key + '?' : key}: ${zodToInlineType(val)}`;
-			});
+			const fields = entries.map(
+				([key, val]) =>
+					`${hasOptionalWrapper(val) ? `${key}?` : key}: ${zodToInlineType(val)}`,
+			);
 			return `{ ${fields.join(', ')} }`;
 		}
 		case 'ZodUnion':
@@ -196,7 +329,7 @@ function zodToInlineType(schema: ZodTypeAny): string {
 				.map((option) => zodToInlineType(option as ZodTypeAny))
 				.join(' | ');
 		case 'ZodIntersection':
-			return `${zodToInlineType(def.left as ZodTypeAny)} & ${zodToInlineType(def.right as ZodTypeAny)}`;
+			return `${group(zodToInlineType(def.left as ZodTypeAny))} & ${group(zodToInlineType(def.right as ZodTypeAny))}`;
 		case 'ZodPipe':
 		case 'ZodTransform':
 		case 'ZodEffects': {
@@ -234,8 +367,7 @@ function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
 	for (const [key, val] of entries) {
 		const valDef = getZodDef(val);
 		const ft = getZodTypeName(valDef);
-		const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
-		const k = optional ? `${key}?` : key;
+		const k = hasOptionalWrapper(val) ? `${key}?` : key;
 
 		// Unwrap optional/nullable to check whether the inner type is an object worth expanding
 		const innerVal =
@@ -246,10 +378,11 @@ function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
 		const innerTypeName = getZodTypeName(innerDef);
 		const description = collectZodDescription(val);
 		const comment = description ? `  // ${description}` : '';
+		const nullable = ft === 'ZodNullable';
 
 		if (innerTypeName === 'ZodObject') {
 			lines.push(
-				`${pad}${k}: ${zodToExpandedType(innerVal, depth + 1)}${comment}`,
+				`${pad}${k}: ${zodToExpandedType(innerVal, depth + 1)}${nullable ? ' | null' : ''}${comment}`,
 			);
 		} else {
 			lines.push(`${pad}${k}: ${zodToInlineType(val)}${comment}`);
@@ -445,9 +578,26 @@ const DATE_OPERATORS = ['equals', 'before', 'after', 'between'];
 
 type DbFieldType = 'string' | 'number' | 'boolean' | 'date';
 
+// unknown: a literal can hold any primitive; typeof picks its filter type.
+function literalLeafType(value: unknown): DbFieldType | null {
+	if (typeof value === 'string') return 'string';
+	if (typeof value === 'number') return 'number';
+	if (typeof value === 'boolean') return 'boolean';
+	return null;
+}
+
+/** The one leaf type every value shares, or null when they differ or one has none. */
+function sameLeafType(types: (DbFieldType | null)[]): DbFieldType | null {
+	const first = types[0];
+	if (!first) return null;
+	return types.every((t) => t === first) ? first : null;
+}
+
 /**
  * Unwraps Optional/Nullable/Default wrappers to find the primitive leaf type.
- * Returns null for complex types (objects, arrays, unions) that are not directly filterable.
+ * Enums, literals and unions whose members all share one primitive type count as
+ * that type: the ORM's typed `data` filter accepts them (`'open' | 'closed'`
+ * extends string). Objects, arrays and mixed unions return null.
  */
 function getSchemaLeafType(schema: ZodTypeAny): DbFieldType | null {
 	const def = getZodDef(schema);
@@ -468,6 +618,19 @@ function getSchemaLeafType(schema: ZodTypeAny): DbFieldType | null {
 			return 'boolean';
 		case 'ZodDate':
 			return 'date';
+		case 'ZodEnum':
+		case 'ZodLiteral': {
+			const values = 'value' in def ? [def.value] : getZodOptions(def);
+			return sameLeafType(values.map(literalLeafType));
+		}
+		case 'ZodUnion':
+			return sameLeafType(
+				getZodOptions(def)
+					.filter(
+						(o) => getZodTypeName(getZodDef(o as ZodTypeAny)) !== 'ZodNull',
+					)
+					.map((o) => getSchemaLeafType(o as ZodTypeAny)),
+			);
 		default:
 			return null;
 	}
@@ -503,7 +666,7 @@ function buildFilterableFields(
 		} else if (leafType === 'date') {
 			result[key] = { type: 'date', operators: DATE_OPERATORS };
 		}
-		// Nested objects, arrays, unions — not filterable via ORM, omit them
+		// Nested objects, arrays, mixed unions — not filterable via ORM, omit them
 	}
 	return result;
 }
@@ -1009,6 +1172,8 @@ export type DocsApiEndpoint = {
 	description?: string;
 	riskLevel?: EndpointRiskLevel;
 	irreversible?: boolean;
+	/** The long job this operation starts, when its plugin declares one. */
+	job?: EndpointJob;
 	input: DocSchemaShape;
 	output: DocSchemaShape;
 };
@@ -1057,11 +1222,56 @@ function unwrapZodForDocs(schema: ZodTypeAny): ZodTypeAny {
 			current = inner;
 			continue;
 		}
+		if (typeName === 'ZodLazy') {
+			const target = getZodLazyTarget(def);
+			if (!target || target === current) return current;
+			current = target;
+			continue;
+		}
 		return current;
 	}
 }
 
-function zodToDocSchemaShape(schema: ZodTypeAny | undefined): DocSchemaShape {
+/** The value a `.default()` on the way in supplies, if there is one. */
+// unknown: a default is whatever the field's own type is (number, string,
+// array, object); callers only JSON.stringify it.
+function findDefault(schema: ZodTypeAny): { value: unknown } | undefined {
+	let current: ZodTypeAny | undefined = schema;
+	while (current) {
+		const def = getZodDef(current);
+		const typeName = getZodTypeName(def);
+		if (typeName === 'ZodDefault') {
+			const raw = def.defaultValue;
+			// zod 3 stores a function; zod 4 a value (read through a getter).
+			return { value: typeof raw === 'function' ? raw() : raw };
+		}
+		if (!isOptionalish(typeName)) return undefined;
+		current = getZodInner(def);
+	}
+	return undefined;
+}
+
+const MAX_DEFAULT_TEXT = 40;
+
+/** `Defaults to 10.` appended to an input description, unless it already says so. */
+function describeDefault(
+	description: string | undefined,
+	// unknown: the default from findDefault, any JSON value; it is only stringified.
+	value: unknown,
+): string | undefined {
+	if (description && /\bdefault/i.test(description)) return description;
+	const text = JSON.stringify(value);
+	if (text === undefined || text.length > MAX_DEFAULT_TEXT) return description;
+	const sentence = `Defaults to ${text}.`;
+	if (!description) return sentence;
+	const trimmed = description.trimEnd();
+	return `${trimmed}${/[.!?]$/.test(trimmed) ? '' : '.'} ${sentence}`;
+}
+
+function zodToDocSchemaShape(
+	schema: ZodTypeAny | undefined,
+	side: 'input' | 'output' = 'output',
+): DocSchemaShape {
 	if (schema === undefined) {
 		return { kind: 'inline', type: 'unknown' };
 	}
@@ -1072,21 +1282,23 @@ function zodToDocSchemaShape(schema: ZodTypeAny | undefined): DocSchemaShape {
 		const shape = getZodShape(base, def);
 		const fields: DocSchemaFieldRow[] = [];
 		for (const [key, val] of Object.entries(shape)) {
-			const valDef = getZodDef(val);
-			const ft = getZodTypeName(valDef);
-			const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
-			const inner = unwrapZodForDocs(val);
-			const description = collectZodDescription(val);
+			let description = collectZodDescription(val);
+			// An input with a `.default()` can be left out; say what it falls back to.
+			const fallback = side === 'input' ? findDefault(val) : undefined;
+			if (fallback) description = describeDefault(description, fallback.value);
 			fields.push({
 				key,
-				optional,
-				type: zodToInlineType(inner),
+				// Only `.optional()` (or, on inputs, `.default()`) makes a key optional;
+				// `.nullable()` keeps it required and shows up as `| null` instead.
+				optional: hasOptionalWrapper(val) || fallback !== undefined,
+				type: zodToInlineType(val),
 				...(description !== undefined ? { description } : {}),
 			});
 		}
 		return { kind: 'object', fields };
 	}
-	return { kind: 'inline', type: zodToInlineType(base) };
+	// zodToInlineType unwraps `.optional()` itself and keeps `| null`.
+	return { kind: 'inline', type: zodToInlineType(schema) };
 }
 
 /**
@@ -1172,7 +1384,8 @@ export function introspectPluginForDocs(
 			description: meta?.description,
 			riskLevel: meta?.riskLevel,
 			irreversible: meta?.irreversible,
-			input: zodToDocSchemaShape(schemas?.input),
+			...(meta?.job ? { job: meta.job } : {}),
+			input: zodToDocSchemaShape(schemas?.input, 'input'),
 			output: zodToDocSchemaShape(schemas?.output),
 		});
 	}

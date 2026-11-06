@@ -81,13 +81,13 @@ await corsair.altoviz.api.account.getCurrentUser({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `displayName` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `profile` | `string` | No | — |
-| `status` | `string` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `profile` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
 
 
 
@@ -108,17 +108,7 @@ await corsair.altoviz.api.account.getSettings({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -213,11 +203,11 @@ await corsair.altoviz.api.account.testApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `apiKeyName` | `string` | No | — |
-| `companyName` | `string` | No | — |
-| `message` | `string` | No | — |
-| `serverTimestamp` | `string` | No | — |
-| `url` | `string` | No | — |
+| `apiKeyName` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `serverTimestamp` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
 
 
 
@@ -281,30 +271,20 @@ await corsair.altoviz.api.colleagues.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `cellPhone` | `string` | No | — |
-| `title` | `string` | No | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `isPartner` | `boolean` | No | — |
-| `initialPartnerBalance` | `number` | No | — |
-| `homecareServiceNumber` | `string` | No | — |
-| `userId` | `string` | No | — |
-| `metadatas` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadatas full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `cellPhone` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `isPartner` | `boolean \| null` | No | — |
+| `initialPartnerBalance` | `number \| null` | No | — |
+| `homecareServiceNumber` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `metadatas` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -326,7 +306,7 @@ await corsair.altoviz.api.colleagues.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageIndex` | `number` | Yes | — |
+| `pageIndex` | `number` | No | Defaults to 1. |
 | `pageSize` | `number` | No | — |
 | `orderBy` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -354,8 +334,7 @@ await corsair.altoviz.api.colleagues.list({});
   initialPartnerBalance?: number | null,
   homecareServiceNumber?: string | null,
   userId?: string | null,
-  metadatas?: {
-  } | null
+  metadatas?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -394,17 +373,7 @@ await corsair.altoviz.api.colleagues.update({});
 | `initialPartnerBalance` | `number` | No | — |
 | `homecareServiceNumber` | `string` | No | — |
 | `userId` | `string` | No | — |
-| `metadatas` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadatas full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadatas` | `Record<string, any>` | No | — |
 
 
 
@@ -413,30 +382,20 @@ await corsair.altoviz.api.colleagues.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `cellPhone` | `string` | No | — |
-| `title` | `string` | No | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `isPartner` | `boolean` | No | — |
-| `initialPartnerBalance` | `number` | No | — |
-| `homecareServiceNumber` | `string` | No | — |
-| `userId` | `string` | No | — |
-| `metadatas` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadatas full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `cellPhone` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `isPartner` | `boolean \| null` | No | — |
+| `initialPartnerBalance` | `number \| null` | No | — |
+| `homecareServiceNumber` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `metadatas` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -480,19 +439,19 @@ await corsair.altoviz.api.contacts.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `displayName` | `string` | No | — |
-| `invertedDisplayName` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `companyName` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `cellPhone` | `string` | No | — |
-| `function` | `string` | No | — |
-| `service` | `string` | No | — |
-| `title` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `isMain` | `boolean` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `invertedDisplayName` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `cellPhone` | `string \| null` | No | — |
+| `function` | `string \| null` | No | — |
+| `service` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `isMain` | `boolean \| null` | No | — |
 
 
 
@@ -573,19 +532,19 @@ await corsair.altoviz.api.contacts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `displayName` | `string` | No | — |
-| `invertedDisplayName` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `companyName` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `cellPhone` | `string` | No | — |
-| `function` | `string` | No | — |
-| `service` | `string` | No | — |
-| `title` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `isMain` | `boolean` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `invertedDisplayName` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `cellPhone` | `string \| null` | No | — |
+| `function` | `string \| null` | No | — |
+| `service` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `isMain` | `boolean \| null` | No | — |
 
 
 
@@ -607,7 +566,7 @@ await corsair.altoviz.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageIndex` | `number` | Yes | — |
+| `pageIndex` | `number` | No | Defaults to 1. |
 | `pageSize` | `number` | No | — |
 | `orderBy` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -672,9 +631,9 @@ await corsair.altoviz.api.customerFamilies.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `label` | `string` | No | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
+| `label` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
 
 
 
@@ -736,9 +695,9 @@ await corsair.altoviz.api.customerFamilies.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `label` | `string` | No | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
+| `label` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
 
 
 
@@ -760,7 +719,7 @@ await corsair.altoviz.api.customerFamilies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageIndex` | `number` | Yes | — |
+| `pageIndex` | `number` | No | Defaults to 1. |
 | `pageSize` | `number` | No | — |
 | `orderBy` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -817,8 +776,8 @@ await corsair.altoviz.api.customers.create({});
 | `active` | `boolean` | No | — |
 | `billingAddress` | `object` | No | — |
 | `shippingAddress` | `object` | No | — |
-| `billingOptions` | `object` | No | — |
-| `companyInformations` | `object` | No | — |
+| `billingOptions` | `Record<string, any>` | No | — |
+| `companyInformations` | `Record<string, any>` | No | — |
 | `familyId` | `number` | No | — |
 | `internalNotes` | `string` | No | — |
 
@@ -848,22 +807,6 @@ await corsair.altoviz.api.customers.create({});
 }
 ```
 </Accordion>
-
-<Accordion title="billingOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="companyInformations full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -873,24 +816,24 @@ await corsair.altoviz.api.customers.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `type` | `string` | No | — |
-| `companyName` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `cellPhone` | `string` | No | — |
-| `title` | `string` | No | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `active` | `boolean` | No | — |
-| `billingAddress` | `object` | No | — |
-| `shippingAddress` | `object` | No | — |
-| `billingOptions` | `object` | No | — |
-| `companyInformations` | `object` | No | — |
-| `family` | `object` | No | — |
+| `type` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `cellPhone` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `billingAddress` | `object \| null` | No | — |
+| `shippingAddress` | `object \| null` | No | — |
+| `billingOptions` | `Record<string, any> \| null` | No | — |
+| `companyInformations` | `Record<string, any> \| null` | No | — |
+| `family` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="billingAddress full type">
@@ -904,7 +847,7 @@ await corsair.altoviz.api.customers.create({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -919,23 +862,7 @@ await corsair.altoviz.api.customers.create({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="billingOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="companyInformations full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 
@@ -946,7 +873,7 @@ await corsair.altoviz.api.customers.create({});
   id?: number | null,
   label?: string | null,
   number?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1047,10 +974,8 @@ await corsair.altoviz.api.customers.find({});
     street?: string | null,
     zipcode?: string | null
   } | null,
-  billingOptions?: {
-  } | null,
-  companyInformations?: {
-  } | null,
+  billingOptions?: Record<string, any> | null,
+  companyInformations?: Record<string, any> | null,
   family?: {
     id?: number | null,
     label?: string | null,
@@ -1089,24 +1014,24 @@ await corsair.altoviz.api.customers.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `type` | `string` | No | — |
-| `companyName` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `cellPhone` | `string` | No | — |
-| `title` | `string` | No | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `active` | `boolean` | No | — |
-| `billingAddress` | `object` | No | — |
-| `shippingAddress` | `object` | No | — |
-| `billingOptions` | `object` | No | — |
-| `companyInformations` | `object` | No | — |
-| `family` | `object` | No | — |
+| `type` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `cellPhone` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `billingAddress` | `object \| null` | No | — |
+| `shippingAddress` | `object \| null` | No | — |
+| `billingOptions` | `Record<string, any> \| null` | No | — |
+| `companyInformations` | `Record<string, any> \| null` | No | — |
+| `family` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="billingAddress full type">
@@ -1120,7 +1045,7 @@ await corsair.altoviz.api.customers.get({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1135,23 +1060,7 @@ await corsair.altoviz.api.customers.get({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="billingOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="companyInformations full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 
@@ -1162,7 +1071,7 @@ await corsair.altoviz.api.customers.get({});
   id?: number | null,
   label?: string | null,
   number?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1196,24 +1105,24 @@ await corsair.altoviz.api.customers.getByInternalId({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `type` | `string` | No | — |
-| `companyName` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `cellPhone` | `string` | No | — |
-| `title` | `string` | No | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `active` | `boolean` | No | — |
-| `billingAddress` | `object` | No | — |
-| `shippingAddress` | `object` | No | — |
-| `billingOptions` | `object` | No | — |
-| `companyInformations` | `object` | No | — |
-| `family` | `object` | No | — |
+| `type` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `cellPhone` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `billingAddress` | `object \| null` | No | — |
+| `shippingAddress` | `object \| null` | No | — |
+| `billingOptions` | `Record<string, any> \| null` | No | — |
+| `companyInformations` | `Record<string, any> \| null` | No | — |
+| `family` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="billingAddress full type">
@@ -1227,7 +1136,7 @@ await corsair.altoviz.api.customers.getByInternalId({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1242,23 +1151,7 @@ await corsair.altoviz.api.customers.getByInternalId({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="billingOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="companyInformations full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 
@@ -1269,7 +1162,7 @@ await corsair.altoviz.api.customers.getByInternalId({});
   id?: number | null,
   label?: string | null,
   number?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1343,7 +1236,7 @@ await corsair.altoviz.api.customers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageIndex` | `number` | Yes | — |
+| `pageIndex` | `number` | No | Defaults to 1. |
 | `pageSize` | `number` | No | — |
 | `orderBy` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -1389,10 +1282,8 @@ await corsair.altoviz.api.customers.list({});
     street?: string | null,
     zipcode?: string | null
   } | null,
-  billingOptions?: {
-  } | null,
-  companyInformations?: {
-  } | null,
+  billingOptions?: Record<string, any> | null,
+  companyInformations?: Record<string, any> | null,
   family?: {
     id?: number | null,
     label?: string | null,
@@ -1436,8 +1327,8 @@ await corsair.altoviz.api.customers.update({});
 | `active` | `boolean` | No | — |
 | `billingAddress` | `object` | No | — |
 | `shippingAddress` | `object` | No | — |
-| `billingOptions` | `object` | No | — |
-| `companyInformations` | `object` | No | — |
+| `billingOptions` | `Record<string, any>` | No | — |
+| `companyInformations` | `Record<string, any>` | No | — |
 | `familyId` | `number` | No | — |
 | `internalNotes` | `string` | No | — |
 
@@ -1467,22 +1358,6 @@ await corsair.altoviz.api.customers.update({});
 }
 ```
 </Accordion>
-
-<Accordion title="billingOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="companyInformations full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -1492,24 +1367,24 @@ await corsair.altoviz.api.customers.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `type` | `string` | No | — |
-| `companyName` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `cellPhone` | `string` | No | — |
-| `title` | `string` | No | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `active` | `boolean` | No | — |
-| `billingAddress` | `object` | No | — |
-| `shippingAddress` | `object` | No | — |
-| `billingOptions` | `object` | No | — |
-| `companyInformations` | `object` | No | — |
-| `family` | `object` | No | — |
+| `type` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `cellPhone` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `billingAddress` | `object \| null` | No | — |
+| `shippingAddress` | `object \| null` | No | — |
+| `billingOptions` | `Record<string, any> \| null` | No | — |
+| `companyInformations` | `Record<string, any> \| null` | No | — |
+| `family` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="billingAddress full type">
@@ -1523,7 +1398,7 @@ await corsair.altoviz.api.customers.update({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1538,23 +1413,7 @@ await corsair.altoviz.api.customers.update({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="billingOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="companyInformations full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 
@@ -1565,7 +1424,7 @@ await corsair.altoviz.api.customers.update({});
   id?: number | null,
   label?: string | null,
   number?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1602,8 +1461,8 @@ await corsair.altoviz.api.productFamilies.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `label` | `string` | No | — |
-| `number` | `string` | No | — |
+| `label` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
 
 
 
@@ -1665,8 +1524,8 @@ await corsair.altoviz.api.productFamilies.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `label` | `string` | No | — |
-| `number` | `string` | No | — |
+| `label` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
 
 
 
@@ -1688,7 +1547,7 @@ await corsair.altoviz.api.productFamilies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageIndex` | `number` | Yes | — |
+| `pageIndex` | `number` | No | Defaults to 1. |
 | `pageSize` | `number` | No | — |
 | `orderBy` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -1753,21 +1612,21 @@ await corsair.altoviz.api.products.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `number` | `string` | No | — |
-| `description` | `string` | No | — |
-| `type` | `string` | No | — |
-| `unitPrice` | `number` | No | — |
-| `purchasePrice` | `number` | No | — |
-| `isUnitPriceTaxIncluded` | `boolean` | No | — |
-| `defaultQuantity` | `number` | No | — |
-| `unit` | `object` | No | — |
-| `vat` | `object` | No | — |
-| `family` | `object` | No | — |
-| `imageUrl` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `active` | `boolean` | No | — |
+| `name` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `unitPrice` | `number \| null` | No | — |
+| `purchasePrice` | `number \| null` | No | — |
+| `isUnitPriceTaxIncluded` | `boolean \| null` | No | — |
+| `defaultQuantity` | `number \| null` | No | — |
+| `unit` | `object \| null` | No | — |
+| `vat` | `object \| null` | No | — |
+| `family` | `object \| null` | No | — |
+| `imageUrl` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="unit full type">
@@ -1780,7 +1639,7 @@ await corsair.altoviz.api.products.create({});
   id?: number | null,
   name?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1793,7 +1652,7 @@ await corsair.altoviz.api.products.create({});
   label?: string | null,
   rate?: number | null,
   region?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1804,7 +1663,7 @@ await corsair.altoviz.api.products.create({});
   id?: number | null,
   label?: string | null,
   number?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2006,21 +1865,21 @@ await corsair.altoviz.api.products.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `number` | `string` | No | — |
-| `description` | `string` | No | — |
-| `type` | `string` | No | — |
-| `unitPrice` | `number` | No | — |
-| `purchasePrice` | `number` | No | — |
-| `isUnitPriceTaxIncluded` | `boolean` | No | — |
-| `defaultQuantity` | `number` | No | — |
-| `unit` | `object` | No | — |
-| `vat` | `object` | No | — |
-| `family` | `object` | No | — |
-| `imageUrl` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `active` | `boolean` | No | — |
+| `name` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `unitPrice` | `number \| null` | No | — |
+| `purchasePrice` | `number \| null` | No | — |
+| `isUnitPriceTaxIncluded` | `boolean \| null` | No | — |
+| `defaultQuantity` | `number \| null` | No | — |
+| `unit` | `object \| null` | No | — |
+| `vat` | `object \| null` | No | — |
+| `family` | `object \| null` | No | — |
+| `imageUrl` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="unit full type">
@@ -2033,7 +1892,7 @@ await corsair.altoviz.api.products.get({});
   id?: number | null,
   name?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2046,7 +1905,7 @@ await corsair.altoviz.api.products.get({});
   label?: string | null,
   rate?: number | null,
   region?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2057,7 +1916,7 @@ await corsair.altoviz.api.products.get({});
   id?: number | null,
   label?: string | null,
   number?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2092,7 +1951,7 @@ await corsair.altoviz.api.purchaseInvoices.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contentType` | `string` | No | — |
+| `contentType` | `string \| null` | Yes | — |
 | `body` | `string` | Yes | PDF bytes decoded through response.text() by the shared transport - may not be byte-exact. See the core-limitation note in client.ts. |
 
 
@@ -2117,7 +1976,7 @@ await corsair.altoviz.api.purchaseInvoices.upload({});
 |------|------|----------|-------------|
 | `fileBase64` | `string` | Yes | — |
 | `fileName` | `string` | Yes | — |
-| `mimeType` | `string` | Yes | — |
+| `mimeType` | `string` | No | Defaults to "application/pdf". |
 
 
 
@@ -2126,16 +1985,16 @@ await corsair.altoviz.api.purchaseInvoices.upload({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `date` | `string` | No | — |
-| `reference` | `string` | No | — |
-| `subject` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `region` | `string` | No | — |
-| `status` | `string` | No | — |
-| `supplier` | `any` | No | — |
-| `taxIncludedAmount` | `number` | No | — |
-| `vatReverseCharge` | `boolean` | No | — |
-| `pdfUrl` | `string` | No | — |
+| `date` | `string \| null` | No | — |
+| `reference` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `supplier` | `any \| null` | No | — |
+| `taxIncludedAmount` | `number \| null` | No | — |
+| `vatReverseCharge` | `boolean \| null` | No | — |
+| `pdfUrl` | `string \| null` | No | — |
 
 
 
@@ -2171,7 +2030,7 @@ await corsair.altoviz.api.receipts.create({});
 | `customerInternalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
 | `internalId` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="links full type">
@@ -2183,14 +2042,6 @@ await corsair.altoviz.api.receipts.create({});
 }[]
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -2200,37 +2051,19 @@ await corsair.altoviz.api.receipts.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `amount` | `number` | No | — |
-| `date` | `string` | No | — |
-| `paymentMethod` | `string` | No | — |
-| `status` | `string` | No | — |
-| `reference` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `customerId` | `number` | No | — |
-| `customerName` | `string` | No | — |
-| `customerNumber` | `string` | No | — |
-| `customerInternalId` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `links` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="links full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `amount` | `number \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `paymentMethod` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `reference` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `customerId` | `number \| null` | No | — |
+| `customerName` | `string \| null` | No | — |
+| `customerNumber` | `string \| null` | No | — |
+| `customerInternalId` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `links` | `Record<string, any>[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -2306,10 +2139,8 @@ await corsair.altoviz.api.receipts.find({});
   customerNumber?: string | null,
   customerInternalId?: string | null,
   internalId?: string | null,
-  links?: {
-  }[] | null,
-  metadata?: {
-  } | null
+  links?: Record<string, any>[] | null,
+  metadata?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2343,37 +2174,19 @@ await corsair.altoviz.api.receipts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `amount` | `number` | No | — |
-| `date` | `string` | No | — |
-| `paymentMethod` | `string` | No | — |
-| `status` | `string` | No | — |
-| `reference` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `customerId` | `number` | No | — |
-| `customerName` | `string` | No | — |
-| `customerNumber` | `string` | No | — |
-| `customerInternalId` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `links` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="links full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `amount` | `number \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `paymentMethod` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `reference` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `customerId` | `number \| null` | No | — |
+| `customerName` | `string \| null` | No | — |
+| `customerNumber` | `string \| null` | No | — |
+| `customerInternalId` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `links` | `Record<string, any>[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -2395,7 +2208,7 @@ await corsair.altoviz.api.receipts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageIndex` | `number` | Yes | — |
+| `pageIndex` | `number` | No | Defaults to 1. |
 | `pageSize` | `number` | No | — |
 | `orderBy` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -2421,10 +2234,8 @@ await corsair.altoviz.api.receipts.list({});
   customerNumber?: string | null,
   customerInternalId?: string | null,
   internalId?: string | null,
-  links?: {
-  }[] | null,
-  metadata?: {
-  } | null
+  links?: Record<string, any>[] | null,
+  metadata?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2478,37 +2289,19 @@ await corsair.altoviz.api.receipts.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `amount` | `number` | No | — |
-| `date` | `string` | No | — |
-| `paymentMethod` | `string` | No | — |
-| `status` | `string` | No | — |
-| `reference` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `customerId` | `number` | No | — |
-| `customerName` | `string` | No | — |
-| `customerNumber` | `string` | No | — |
-| `customerInternalId` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `links` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="links full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `amount` | `number \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `paymentMethod` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `reference` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `customerId` | `number \| null` | No | — |
+| `customerName` | `string \| null` | No | — |
+| `customerNumber` | `string \| null` | No | — |
+| `customerInternalId` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `links` | `Record<string, any>[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -2545,7 +2338,7 @@ await corsair.altoviz.api.saleCredits.create({});
 | `region` | `FR \| EU \| IE \| DOM \| Corse \| Monaco` | No | — |
 | `isDraft` | `boolean` | No | — |
 | `internalId` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="lines full type">
@@ -2573,14 +2366,6 @@ await corsair.altoviz.api.saleCredits.create({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -2590,56 +2375,56 @@ await corsair.altoviz.api.saleCredits.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `date` | `string` | No | — |
-| `subject` | `string` | No | — |
-| `customerId` | `number` | No | — |
-| `customerName` | `string` | No | — |
-| `customerNumber` | `string` | No | — |
-| `customerType` | `string` | No | — |
-| `customerElectronicAddress` | `string` | No | — |
-| `customerOrderReference` | `string` | No | — |
-| `customerSiret` | `string` | No | — |
-| `customerVatNumber` | `string` | No | — |
-| `billingAddress` | `object` | No | — |
-| `shippingAddress` | `object` | No | — |
-| `billingContact` | `object` | No | — |
-| `shippingContact` | `object` | No | — |
-| `headerNotes` | `string` | No | — |
-| `footerNotes` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `lines` | `object[]` | No | — |
-| `globalDiscount` | `object` | No | — |
-| `shippingAmount` | `number` | No | — |
-| `shippingVat` | `any` | No | — |
-| `balance` | `number` | No | — |
-| `grossTaxExcludedAmount` | `number` | No | — |
-| `taxAmount` | `number` | No | — |
-| `taxExcludedAmount` | `number` | No | — |
-| `taxIncludedAmount` | `number` | No | — |
-| `useTaxIncludedPrices` | `boolean` | No | — |
-| `liableToVat` | `boolean` | No | — |
-| `vatMode` | `string` | No | — |
-| `vatNote` | `string` | No | — |
-| `vatReverseCharge` | `boolean` | No | — |
-| `region` | `string` | No | — |
-| `vats` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-| `pdfUrl` | `string` | No | — |
-| `publicLink` | `string` | No | — |
-| `sentAt` | `string` | No | — |
-| `commitments` | `object[]` | No | — |
-| `overdue` | `number` | No | — |
-| `vendorReference` | `string` | No | — |
-| `isDraft` | `boolean` | No | — |
-| `isPaid` | `boolean` | No | — |
-| `isCancelled` | `boolean` | No | — |
-| `cancelledInvoicetId` | `number` | No | — |
-| `cancelledInvoicetNumber` | `string` | No | — |
-| `cancellationInvoiceId` | `number` | No | — |
-| `cancellationInvoiceNumber` | `string` | No | — |
-| `replacedBy` | `any` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `customerId` | `number \| null` | No | — |
+| `customerName` | `string \| null` | No | — |
+| `customerNumber` | `string \| null` | No | — |
+| `customerType` | `string \| null` | No | — |
+| `customerElectronicAddress` | `string \| null` | No | — |
+| `customerOrderReference` | `string \| null` | No | — |
+| `customerSiret` | `string \| null` | No | — |
+| `customerVatNumber` | `string \| null` | No | — |
+| `billingAddress` | `object \| null` | No | — |
+| `shippingAddress` | `object \| null` | No | — |
+| `billingContact` | `object \| null` | No | — |
+| `shippingContact` | `object \| null` | No | — |
+| `headerNotes` | `string \| null` | No | — |
+| `footerNotes` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `lines` | `object[] \| null` | No | — |
+| `globalDiscount` | `object \| null` | No | — |
+| `shippingAmount` | `number \| null` | No | — |
+| `shippingVat` | `any \| null` | No | — |
+| `balance` | `number \| null` | No | — |
+| `grossTaxExcludedAmount` | `number \| null` | No | — |
+| `taxAmount` | `number \| null` | No | — |
+| `taxExcludedAmount` | `number \| null` | No | — |
+| `taxIncludedAmount` | `number \| null` | No | — |
+| `useTaxIncludedPrices` | `boolean \| null` | No | — |
+| `liableToVat` | `boolean \| null` | No | — |
+| `vatMode` | `string \| null` | No | — |
+| `vatNote` | `string \| null` | No | — |
+| `vatReverseCharge` | `boolean \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `vats` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `pdfUrl` | `string \| null` | No | — |
+| `publicLink` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `commitments` | `object[] \| null` | No | — |
+| `overdue` | `number \| null` | No | — |
+| `vendorReference` | `string \| null` | No | — |
+| `isDraft` | `boolean \| null` | No | — |
+| `isPaid` | `boolean \| null` | No | — |
+| `isCancelled` | `boolean \| null` | No | — |
+| `cancelledInvoicetId` | `number \| null` | No | — |
+| `cancelledInvoicetNumber` | `string \| null` | No | — |
+| `cancellationInvoiceId` | `number \| null` | No | — |
+| `cancellationInvoiceNumber` | `string \| null` | No | — |
+| `replacedBy` | `any \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="billingAddress full type">
@@ -2653,7 +2438,7 @@ await corsair.altoviz.api.saleCredits.create({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2668,7 +2453,7 @@ await corsair.altoviz.api.saleCredits.create({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2687,7 +2472,7 @@ await corsair.altoviz.api.saleCredits.create({});
   phone?: string | null,
   service?: string | null,
   title?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2706,7 +2491,7 @@ await corsair.altoviz.api.saleCredits.create({});
   phone?: string | null,
   service?: string | null,
   title?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2784,7 +2569,7 @@ await corsair.altoviz.api.saleCredits.create({});
     rate?: number | null,
     region?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2794,7 +2579,7 @@ await corsair.altoviz.api.saleCredits.create({});
 {
   type?: string | null,
   value?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2811,15 +2596,7 @@ await corsair.altoviz.api.saleCredits.create({});
     region?: string | null
   } | null,
   vatAmount?: number | null
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 
@@ -2832,7 +2609,7 @@ await corsair.altoviz.api.saleCredits.create({});
   dueAmount?: number | null,
   id?: number | null,
   thirdId?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2896,7 +2673,7 @@ await corsair.altoviz.api.saleCredits.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contentType` | `string` | No | — |
+| `contentType` | `string \| null` | Yes | — |
 | `body` | `string` | Yes | PDF bytes decoded through response.text() by the shared transport - may not be byte-exact. See the core-limitation note in client.ts. |
 
 
@@ -3090,8 +2867,7 @@ await corsair.altoviz.api.saleCredits.find({});
     } | null,
     vatAmount?: number | null
   }[] | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   pdfUrl?: string | null,
   publicLink?: string | null,
   sentAt?: string | null,
@@ -3145,56 +2921,56 @@ await corsair.altoviz.api.saleCredits.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `date` | `string` | No | — |
-| `subject` | `string` | No | — |
-| `customerId` | `number` | No | — |
-| `customerName` | `string` | No | — |
-| `customerNumber` | `string` | No | — |
-| `customerType` | `string` | No | — |
-| `customerElectronicAddress` | `string` | No | — |
-| `customerOrderReference` | `string` | No | — |
-| `customerSiret` | `string` | No | — |
-| `customerVatNumber` | `string` | No | — |
-| `billingAddress` | `object` | No | — |
-| `shippingAddress` | `object` | No | — |
-| `billingContact` | `object` | No | — |
-| `shippingContact` | `object` | No | — |
-| `headerNotes` | `string` | No | — |
-| `footerNotes` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `lines` | `object[]` | No | — |
-| `globalDiscount` | `object` | No | — |
-| `shippingAmount` | `number` | No | — |
-| `shippingVat` | `any` | No | — |
-| `balance` | `number` | No | — |
-| `grossTaxExcludedAmount` | `number` | No | — |
-| `taxAmount` | `number` | No | — |
-| `taxExcludedAmount` | `number` | No | — |
-| `taxIncludedAmount` | `number` | No | — |
-| `useTaxIncludedPrices` | `boolean` | No | — |
-| `liableToVat` | `boolean` | No | — |
-| `vatMode` | `string` | No | — |
-| `vatNote` | `string` | No | — |
-| `vatReverseCharge` | `boolean` | No | — |
-| `region` | `string` | No | — |
-| `vats` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-| `pdfUrl` | `string` | No | — |
-| `publicLink` | `string` | No | — |
-| `sentAt` | `string` | No | — |
-| `commitments` | `object[]` | No | — |
-| `overdue` | `number` | No | — |
-| `vendorReference` | `string` | No | — |
-| `isDraft` | `boolean` | No | — |
-| `isPaid` | `boolean` | No | — |
-| `isCancelled` | `boolean` | No | — |
-| `cancelledInvoicetId` | `number` | No | — |
-| `cancelledInvoicetNumber` | `string` | No | — |
-| `cancellationInvoiceId` | `number` | No | — |
-| `cancellationInvoiceNumber` | `string` | No | — |
-| `replacedBy` | `any` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `customerId` | `number \| null` | No | — |
+| `customerName` | `string \| null` | No | — |
+| `customerNumber` | `string \| null` | No | — |
+| `customerType` | `string \| null` | No | — |
+| `customerElectronicAddress` | `string \| null` | No | — |
+| `customerOrderReference` | `string \| null` | No | — |
+| `customerSiret` | `string \| null` | No | — |
+| `customerVatNumber` | `string \| null` | No | — |
+| `billingAddress` | `object \| null` | No | — |
+| `shippingAddress` | `object \| null` | No | — |
+| `billingContact` | `object \| null` | No | — |
+| `shippingContact` | `object \| null` | No | — |
+| `headerNotes` | `string \| null` | No | — |
+| `footerNotes` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `lines` | `object[] \| null` | No | — |
+| `globalDiscount` | `object \| null` | No | — |
+| `shippingAmount` | `number \| null` | No | — |
+| `shippingVat` | `any \| null` | No | — |
+| `balance` | `number \| null` | No | — |
+| `grossTaxExcludedAmount` | `number \| null` | No | — |
+| `taxAmount` | `number \| null` | No | — |
+| `taxExcludedAmount` | `number \| null` | No | — |
+| `taxIncludedAmount` | `number \| null` | No | — |
+| `useTaxIncludedPrices` | `boolean \| null` | No | — |
+| `liableToVat` | `boolean \| null` | No | — |
+| `vatMode` | `string \| null` | No | — |
+| `vatNote` | `string \| null` | No | — |
+| `vatReverseCharge` | `boolean \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `vats` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `pdfUrl` | `string \| null` | No | — |
+| `publicLink` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `commitments` | `object[] \| null` | No | — |
+| `overdue` | `number \| null` | No | — |
+| `vendorReference` | `string \| null` | No | — |
+| `isDraft` | `boolean \| null` | No | — |
+| `isPaid` | `boolean \| null` | No | — |
+| `isCancelled` | `boolean \| null` | No | — |
+| `cancelledInvoicetId` | `number \| null` | No | — |
+| `cancelledInvoicetNumber` | `string \| null` | No | — |
+| `cancellationInvoiceId` | `number \| null` | No | — |
+| `cancellationInvoiceNumber` | `string \| null` | No | — |
+| `replacedBy` | `any \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="billingAddress full type">
@@ -3208,7 +2984,7 @@ await corsair.altoviz.api.saleCredits.get({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3223,7 +2999,7 @@ await corsair.altoviz.api.saleCredits.get({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3242,7 +3018,7 @@ await corsair.altoviz.api.saleCredits.get({});
   phone?: string | null,
   service?: string | null,
   title?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3261,7 +3037,7 @@ await corsair.altoviz.api.saleCredits.get({});
   phone?: string | null,
   service?: string | null,
   title?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3339,7 +3115,7 @@ await corsair.altoviz.api.saleCredits.get({});
     rate?: number | null,
     region?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3349,7 +3125,7 @@ await corsair.altoviz.api.saleCredits.get({});
 {
   type?: string | null,
   value?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3366,15 +3142,7 @@ await corsair.altoviz.api.saleCredits.get({});
     region?: string | null
   } | null,
   vatAmount?: number | null
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 
@@ -3387,7 +3155,7 @@ await corsair.altoviz.api.saleCredits.get({});
   dueAmount?: number | null,
   id?: number | null,
   thirdId?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3412,7 +3180,7 @@ await corsair.altoviz.api.saleCredits.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageIndex` | `number` | Yes | — |
+| `pageIndex` | `number` | No | Defaults to 1. |
 | `pageSize` | `number` | No | — |
 | `orderBy` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -3589,8 +3357,7 @@ await corsair.altoviz.api.saleCredits.list({});
     } | null,
     vatAmount?: number | null
   }[] | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   pdfUrl?: string | null,
   publicLink?: string | null,
   sentAt?: string | null,
@@ -3669,56 +3436,56 @@ await corsair.altoviz.api.saleCredits.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `date` | `string` | No | — |
-| `subject` | `string` | No | — |
-| `customerId` | `number` | No | — |
-| `customerName` | `string` | No | — |
-| `customerNumber` | `string` | No | — |
-| `customerType` | `string` | No | — |
-| `customerElectronicAddress` | `string` | No | — |
-| `customerOrderReference` | `string` | No | — |
-| `customerSiret` | `string` | No | — |
-| `customerVatNumber` | `string` | No | — |
-| `billingAddress` | `object` | No | — |
-| `shippingAddress` | `object` | No | — |
-| `billingContact` | `object` | No | — |
-| `shippingContact` | `object` | No | — |
-| `headerNotes` | `string` | No | — |
-| `footerNotes` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `lines` | `object[]` | No | — |
-| `globalDiscount` | `object` | No | — |
-| `shippingAmount` | `number` | No | — |
-| `shippingVat` | `any` | No | — |
-| `balance` | `number` | No | — |
-| `grossTaxExcludedAmount` | `number` | No | — |
-| `taxAmount` | `number` | No | — |
-| `taxExcludedAmount` | `number` | No | — |
-| `taxIncludedAmount` | `number` | No | — |
-| `useTaxIncludedPrices` | `boolean` | No | — |
-| `liableToVat` | `boolean` | No | — |
-| `vatMode` | `string` | No | — |
-| `vatNote` | `string` | No | — |
-| `vatReverseCharge` | `boolean` | No | — |
-| `region` | `string` | No | — |
-| `vats` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-| `pdfUrl` | `string` | No | — |
-| `publicLink` | `string` | No | — |
-| `sentAt` | `string` | No | — |
-| `commitments` | `object[]` | No | — |
-| `overdue` | `number` | No | — |
-| `vendorReference` | `string` | No | — |
-| `isDraft` | `boolean` | No | — |
-| `isPaid` | `boolean` | No | — |
-| `isCancelled` | `boolean` | No | — |
-| `cancelledInvoicetId` | `number` | No | — |
-| `cancelledInvoicetNumber` | `string` | No | — |
-| `cancellationInvoiceId` | `number` | No | — |
-| `cancellationInvoiceNumber` | `string` | No | — |
-| `replacedBy` | `any` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `customerId` | `number \| null` | No | — |
+| `customerName` | `string \| null` | No | — |
+| `customerNumber` | `string \| null` | No | — |
+| `customerType` | `string \| null` | No | — |
+| `customerElectronicAddress` | `string \| null` | No | — |
+| `customerOrderReference` | `string \| null` | No | — |
+| `customerSiret` | `string \| null` | No | — |
+| `customerVatNumber` | `string \| null` | No | — |
+| `billingAddress` | `object \| null` | No | — |
+| `shippingAddress` | `object \| null` | No | — |
+| `billingContact` | `object \| null` | No | — |
+| `shippingContact` | `object \| null` | No | — |
+| `headerNotes` | `string \| null` | No | — |
+| `footerNotes` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `lines` | `object[] \| null` | No | — |
+| `globalDiscount` | `object \| null` | No | — |
+| `shippingAmount` | `number \| null` | No | — |
+| `shippingVat` | `any \| null` | No | — |
+| `balance` | `number \| null` | No | — |
+| `grossTaxExcludedAmount` | `number \| null` | No | — |
+| `taxAmount` | `number \| null` | No | — |
+| `taxExcludedAmount` | `number \| null` | No | — |
+| `taxIncludedAmount` | `number \| null` | No | — |
+| `useTaxIncludedPrices` | `boolean \| null` | No | — |
+| `liableToVat` | `boolean \| null` | No | — |
+| `vatMode` | `string \| null` | No | — |
+| `vatNote` | `string \| null` | No | — |
+| `vatReverseCharge` | `boolean \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `vats` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `pdfUrl` | `string \| null` | No | — |
+| `publicLink` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `commitments` | `object[] \| null` | No | — |
+| `overdue` | `number \| null` | No | — |
+| `vendorReference` | `string \| null` | No | — |
+| `isDraft` | `boolean \| null` | No | — |
+| `isPaid` | `boolean \| null` | No | — |
+| `isCancelled` | `boolean \| null` | No | — |
+| `cancelledInvoicetId` | `number \| null` | No | — |
+| `cancelledInvoicetNumber` | `string \| null` | No | — |
+| `cancellationInvoiceId` | `number \| null` | No | — |
+| `cancellationInvoiceNumber` | `string \| null` | No | — |
+| `replacedBy` | `any \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="billingAddress full type">
@@ -3732,7 +3499,7 @@ await corsair.altoviz.api.saleCredits.update({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3747,7 +3514,7 @@ await corsair.altoviz.api.saleCredits.update({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3766,7 +3533,7 @@ await corsair.altoviz.api.saleCredits.update({});
   phone?: string | null,
   service?: string | null,
   title?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3785,7 +3552,7 @@ await corsair.altoviz.api.saleCredits.update({});
   phone?: string | null,
   service?: string | null,
   title?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3863,7 +3630,7 @@ await corsair.altoviz.api.saleCredits.update({});
     rate?: number | null,
     region?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3873,7 +3640,7 @@ await corsair.altoviz.api.saleCredits.update({});
 {
   type?: string | null,
   value?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3890,15 +3657,7 @@ await corsair.altoviz.api.saleCredits.update({});
     region?: string | null
   } | null,
   vatAmount?: number | null
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 
@@ -3911,7 +3670,7 @@ await corsair.altoviz.api.saleCredits.update({});
   dueAmount?: number | null,
   id?: number | null,
   thirdId?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3953,7 +3712,7 @@ await corsair.altoviz.api.saleInvoices.create({});
 | `useTaxIncludedPrices` | `boolean` | No | — |
 | `isDraft` | `boolean` | No | — |
 | `internalId` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="lines full type">
@@ -3981,14 +3740,6 @@ await corsair.altoviz.api.saleInvoices.create({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -3998,60 +3749,60 @@ await corsair.altoviz.api.saleInvoices.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `date` | `string` | No | — |
-| `subject` | `string` | No | — |
-| `customerId` | `number` | No | — |
-| `customerName` | `string` | No | — |
-| `customerNumber` | `string` | No | — |
-| `customerType` | `string` | No | — |
-| `customerElectronicAddress` | `string` | No | — |
-| `customerOrderReference` | `string` | No | — |
-| `customerSiret` | `string` | No | — |
-| `customerVatNumber` | `string` | No | — |
-| `billingAddress` | `object` | No | — |
-| `shippingAddress` | `object` | No | — |
-| `billingContact` | `object` | No | — |
-| `shippingContact` | `object` | No | — |
-| `headerNotes` | `string` | No | — |
-| `footerNotes` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `lines` | `object[]` | No | — |
-| `globalDiscount` | `object` | No | — |
-| `shippingAmount` | `number` | No | — |
-| `shippingVat` | `any` | No | — |
-| `balance` | `number` | No | — |
-| `grossTaxExcludedAmount` | `number` | No | — |
-| `taxAmount` | `number` | No | — |
-| `taxExcludedAmount` | `number` | No | — |
-| `taxIncludedAmount` | `number` | No | — |
-| `useTaxIncludedPrices` | `boolean` | No | — |
-| `liableToVat` | `boolean` | No | — |
-| `vatMode` | `string` | No | — |
-| `vatNote` | `string` | No | — |
-| `vatReverseCharge` | `boolean` | No | — |
-| `region` | `string` | No | — |
-| `vats` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-| `pdfUrl` | `string` | No | — |
-| `publicLink` | `string` | No | — |
-| `sentAt` | `string` | No | — |
-| `commitments` | `object[]` | No | — |
-| `overdue` | `number` | No | — |
-| `vendorReference` | `string` | No | — |
-| `isDraft` | `boolean` | No | — |
-| `isPaid` | `boolean` | No | — |
-| `isCancelled` | `boolean` | No | — |
-| `isProforma` | `boolean` | No | — |
-| `cancellationCreditId` | `number` | No | — |
-| `cancellationCreditNumber` | `string` | No | — |
-| `cancelledCreditId` | `any` | No | — |
-| `cancelledCreditNumber` | `any` | No | — |
-| `eInvoicingInvoiceId` | `any` | No | — |
-| `eInvoicingProviderId` | `any` | No | — |
-| `eInvoicingStatus` | `any` | No | — |
-| `replacedBy` | `number` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `customerId` | `number \| null` | No | — |
+| `customerName` | `string \| null` | No | — |
+| `customerNumber` | `string \| null` | No | — |
+| `customerType` | `string \| null` | No | — |
+| `customerElectronicAddress` | `string \| null` | No | — |
+| `customerOrderReference` | `string \| null` | No | — |
+| `customerSiret` | `string \| null` | No | — |
+| `customerVatNumber` | `string \| null` | No | — |
+| `billingAddress` | `object \| null` | No | — |
+| `shippingAddress` | `object \| null` | No | — |
+| `billingContact` | `object \| null` | No | — |
+| `shippingContact` | `object \| null` | No | — |
+| `headerNotes` | `string \| null` | No | — |
+| `footerNotes` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `lines` | `object[] \| null` | No | — |
+| `globalDiscount` | `object \| null` | No | — |
+| `shippingAmount` | `number \| null` | No | — |
+| `shippingVat` | `any \| null` | No | — |
+| `balance` | `number \| null` | No | — |
+| `grossTaxExcludedAmount` | `number \| null` | No | — |
+| `taxAmount` | `number \| null` | No | — |
+| `taxExcludedAmount` | `number \| null` | No | — |
+| `taxIncludedAmount` | `number \| null` | No | — |
+| `useTaxIncludedPrices` | `boolean \| null` | No | — |
+| `liableToVat` | `boolean \| null` | No | — |
+| `vatMode` | `string \| null` | No | — |
+| `vatNote` | `string \| null` | No | — |
+| `vatReverseCharge` | `boolean \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `vats` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `pdfUrl` | `string \| null` | No | — |
+| `publicLink` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `commitments` | `object[] \| null` | No | — |
+| `overdue` | `number \| null` | No | — |
+| `vendorReference` | `string \| null` | No | — |
+| `isDraft` | `boolean \| null` | No | — |
+| `isPaid` | `boolean \| null` | No | — |
+| `isCancelled` | `boolean \| null` | No | — |
+| `isProforma` | `boolean \| null` | No | — |
+| `cancellationCreditId` | `number \| null` | No | — |
+| `cancellationCreditNumber` | `string \| null` | No | — |
+| `cancelledCreditId` | `any \| null` | No | — |
+| `cancelledCreditNumber` | `any \| null` | No | — |
+| `eInvoicingInvoiceId` | `any \| null` | No | — |
+| `eInvoicingProviderId` | `any \| null` | No | — |
+| `eInvoicingStatus` | `any \| null` | No | — |
+| `replacedBy` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="billingAddress full type">
@@ -4065,7 +3816,7 @@ await corsair.altoviz.api.saleInvoices.create({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4080,7 +3831,7 @@ await corsair.altoviz.api.saleInvoices.create({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4099,7 +3850,7 @@ await corsair.altoviz.api.saleInvoices.create({});
   phone?: string | null,
   service?: string | null,
   title?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4118,7 +3869,7 @@ await corsair.altoviz.api.saleInvoices.create({});
   phone?: string | null,
   service?: string | null,
   title?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4196,7 +3947,7 @@ await corsair.altoviz.api.saleInvoices.create({});
     rate?: number | null,
     region?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4206,7 +3957,7 @@ await corsair.altoviz.api.saleInvoices.create({});
 {
   type?: string | null,
   value?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4223,15 +3974,7 @@ await corsair.altoviz.api.saleInvoices.create({});
     region?: string | null
   } | null,
   vatAmount?: number | null
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 
@@ -4244,7 +3987,7 @@ await corsair.altoviz.api.saleInvoices.create({});
   dueAmount?: number | null,
   id?: number | null,
   thirdId?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4308,7 +4051,7 @@ await corsair.altoviz.api.saleInvoices.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contentType` | `string` | No | — |
+| `contentType` | `string \| null` | Yes | — |
 | `body` | `string` | Yes | PDF bytes decoded through response.text() by the shared transport - may not be byte-exact. See the core-limitation note in client.ts. |
 
 
@@ -4502,8 +4245,7 @@ await corsair.altoviz.api.saleInvoices.find({});
     } | null,
     vatAmount?: number | null
   }[] | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   pdfUrl?: string | null,
   publicLink?: string | null,
   sentAt?: string | null,
@@ -4561,60 +4303,60 @@ await corsair.altoviz.api.saleInvoices.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `date` | `string` | No | — |
-| `subject` | `string` | No | — |
-| `customerId` | `number` | No | — |
-| `customerName` | `string` | No | — |
-| `customerNumber` | `string` | No | — |
-| `customerType` | `string` | No | — |
-| `customerElectronicAddress` | `string` | No | — |
-| `customerOrderReference` | `string` | No | — |
-| `customerSiret` | `string` | No | — |
-| `customerVatNumber` | `string` | No | — |
-| `billingAddress` | `object` | No | — |
-| `shippingAddress` | `object` | No | — |
-| `billingContact` | `object` | No | — |
-| `shippingContact` | `object` | No | — |
-| `headerNotes` | `string` | No | — |
-| `footerNotes` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `lines` | `object[]` | No | — |
-| `globalDiscount` | `object` | No | — |
-| `shippingAmount` | `number` | No | — |
-| `shippingVat` | `any` | No | — |
-| `balance` | `number` | No | — |
-| `grossTaxExcludedAmount` | `number` | No | — |
-| `taxAmount` | `number` | No | — |
-| `taxExcludedAmount` | `number` | No | — |
-| `taxIncludedAmount` | `number` | No | — |
-| `useTaxIncludedPrices` | `boolean` | No | — |
-| `liableToVat` | `boolean` | No | — |
-| `vatMode` | `string` | No | — |
-| `vatNote` | `string` | No | — |
-| `vatReverseCharge` | `boolean` | No | — |
-| `region` | `string` | No | — |
-| `vats` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-| `pdfUrl` | `string` | No | — |
-| `publicLink` | `string` | No | — |
-| `sentAt` | `string` | No | — |
-| `commitments` | `object[]` | No | — |
-| `overdue` | `number` | No | — |
-| `vendorReference` | `string` | No | — |
-| `isDraft` | `boolean` | No | — |
-| `isPaid` | `boolean` | No | — |
-| `isCancelled` | `boolean` | No | — |
-| `isProforma` | `boolean` | No | — |
-| `cancellationCreditId` | `number` | No | — |
-| `cancellationCreditNumber` | `string` | No | — |
-| `cancelledCreditId` | `any` | No | — |
-| `cancelledCreditNumber` | `any` | No | — |
-| `eInvoicingInvoiceId` | `any` | No | — |
-| `eInvoicingProviderId` | `any` | No | — |
-| `eInvoicingStatus` | `any` | No | — |
-| `replacedBy` | `number` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `customerId` | `number \| null` | No | — |
+| `customerName` | `string \| null` | No | — |
+| `customerNumber` | `string \| null` | No | — |
+| `customerType` | `string \| null` | No | — |
+| `customerElectronicAddress` | `string \| null` | No | — |
+| `customerOrderReference` | `string \| null` | No | — |
+| `customerSiret` | `string \| null` | No | — |
+| `customerVatNumber` | `string \| null` | No | — |
+| `billingAddress` | `object \| null` | No | — |
+| `shippingAddress` | `object \| null` | No | — |
+| `billingContact` | `object \| null` | No | — |
+| `shippingContact` | `object \| null` | No | — |
+| `headerNotes` | `string \| null` | No | — |
+| `footerNotes` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `lines` | `object[] \| null` | No | — |
+| `globalDiscount` | `object \| null` | No | — |
+| `shippingAmount` | `number \| null` | No | — |
+| `shippingVat` | `any \| null` | No | — |
+| `balance` | `number \| null` | No | — |
+| `grossTaxExcludedAmount` | `number \| null` | No | — |
+| `taxAmount` | `number \| null` | No | — |
+| `taxExcludedAmount` | `number \| null` | No | — |
+| `taxIncludedAmount` | `number \| null` | No | — |
+| `useTaxIncludedPrices` | `boolean \| null` | No | — |
+| `liableToVat` | `boolean \| null` | No | — |
+| `vatMode` | `string \| null` | No | — |
+| `vatNote` | `string \| null` | No | — |
+| `vatReverseCharge` | `boolean \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `vats` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `pdfUrl` | `string \| null` | No | — |
+| `publicLink` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `commitments` | `object[] \| null` | No | — |
+| `overdue` | `number \| null` | No | — |
+| `vendorReference` | `string \| null` | No | — |
+| `isDraft` | `boolean \| null` | No | — |
+| `isPaid` | `boolean \| null` | No | — |
+| `isCancelled` | `boolean \| null` | No | — |
+| `isProforma` | `boolean \| null` | No | — |
+| `cancellationCreditId` | `number \| null` | No | — |
+| `cancellationCreditNumber` | `string \| null` | No | — |
+| `cancelledCreditId` | `any \| null` | No | — |
+| `cancelledCreditNumber` | `any \| null` | No | — |
+| `eInvoicingInvoiceId` | `any \| null` | No | — |
+| `eInvoicingProviderId` | `any \| null` | No | — |
+| `eInvoicingStatus` | `any \| null` | No | — |
+| `replacedBy` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="billingAddress full type">
@@ -4628,7 +4370,7 @@ await corsair.altoviz.api.saleInvoices.get({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4643,7 +4385,7 @@ await corsair.altoviz.api.saleInvoices.get({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4662,7 +4404,7 @@ await corsair.altoviz.api.saleInvoices.get({});
   phone?: string | null,
   service?: string | null,
   title?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4681,7 +4423,7 @@ await corsair.altoviz.api.saleInvoices.get({});
   phone?: string | null,
   service?: string | null,
   title?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4759,7 +4501,7 @@ await corsair.altoviz.api.saleInvoices.get({});
     rate?: number | null,
     region?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4769,7 +4511,7 @@ await corsair.altoviz.api.saleInvoices.get({});
 {
   type?: string | null,
   value?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4786,15 +4528,7 @@ await corsair.altoviz.api.saleInvoices.get({});
     region?: string | null
   } | null,
   vatAmount?: number | null
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+}[] | null
 ```
 </Accordion>
 
@@ -4807,7 +4541,7 @@ await corsair.altoviz.api.saleInvoices.get({});
   dueAmount?: number | null,
   id?: number | null,
   thirdId?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4832,7 +4566,7 @@ await corsair.altoviz.api.saleInvoices.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageIndex` | `number` | Yes | — |
+| `pageIndex` | `number` | No | Defaults to 1. |
 | `pageSize` | `number` | No | — |
 | `orderBy` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -5011,8 +4745,7 @@ await corsair.altoviz.api.saleInvoices.list({});
     } | null,
     vatAmount?: number | null
   }[] | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   pdfUrl?: string | null,
   publicLink?: string | null,
   sentAt?: string | null,
@@ -5265,8 +4998,7 @@ await corsair.altoviz.api.saleQuotes.find({});
     } | null,
     vatAmount?: number | null
   }[] | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   pdfUrl?: string | null,
   publicLink?: string | null,
   sentAt?: string | null,
@@ -5311,7 +5043,7 @@ await corsair.altoviz.api.saleQuotes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageIndex` | `number` | Yes | — |
+| `pageIndex` | `number` | No | Defaults to 1. |
 | `pageSize` | `number` | No | — |
 | `orderBy` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -5488,8 +5220,7 @@ await corsair.altoviz.api.saleQuotes.list({});
     } | null,
     vatAmount?: number | null
   }[] | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   pdfUrl?: string | null,
   publicLink?: string | null,
   sentAt?: string | null,
@@ -5576,24 +5307,24 @@ await corsair.altoviz.api.suppliers.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `cellPhone` | `string` | No | — |
-| `title` | `string` | No | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `active` | `boolean` | No | — |
-| `address` | `object` | No | — |
-| `defaultPaymentMethod` | `string` | No | — |
-| `companyInformations` | `object` | No | — |
-| `createdAt` | `string` | No | — |
-| `createdById` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `updatedById` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `cellPhone` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `defaultPaymentMethod` | `string \| null` | No | — |
+| `companyInformations` | `Record<string, any> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `createdById` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `updatedById` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="address full type">
@@ -5607,15 +5338,7 @@ await corsair.altoviz.api.suppliers.get({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="companyInformations full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5689,7 +5412,7 @@ await corsair.altoviz.api.suppliers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageIndex` | `number` | Yes | — |
+| `pageIndex` | `number` | No | Defaults to 1. |
 | `pageSize` | `number` | No | — |
 | `orderBy` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -5725,8 +5448,7 @@ await corsair.altoviz.api.suppliers.list({});
     zipcode?: string | null
   } | null,
   defaultPaymentMethod?: string | null,
-  companyInformations?: {
-  } | null,
+  companyInformations?: Record<string, any> | null,
   createdAt?: string | null,
   createdById?: string | null,
   updatedAt?: string | null,
@@ -5791,24 +5513,24 @@ await corsair.altoviz.api.suppliers.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `cellPhone` | `string` | No | — |
-| `title` | `string` | No | — |
-| `number` | `string` | No | — |
-| `internalId` | `string` | No | — |
-| `internalNotes` | `string` | No | — |
-| `active` | `boolean` | No | — |
-| `address` | `object` | No | — |
-| `defaultPaymentMethod` | `string` | No | — |
-| `companyInformations` | `object` | No | — |
-| `createdAt` | `string` | No | — |
-| `createdById` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `updatedById` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `cellPhone` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `internalId` | `string \| null` | No | — |
+| `internalNotes` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `defaultPaymentMethod` | `string \| null` | No | — |
+| `companyInformations` | `Record<string, any> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `createdById` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `updatedById` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="address full type">
@@ -5822,15 +5544,7 @@ await corsair.altoviz.api.suppliers.update({});
   inlineAddress?: string | null,
   street?: string | null,
   zipcode?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="companyInformations full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5894,7 +5608,7 @@ await corsair.altoviz.api.webhookSubscriptions.register({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
-| `types` | `CustomerCreated \| CustomerUpdated \| CustomerDeleted \| ContactCreated \| ContactUpdated \| ContactDeleted \| ProductCreated \| ProductUpdated \| ProductDeleted \| InvoiceCreated \| InvoiceUpdated \| InvoiceDeleted \| QuoteCreated \| QuoteUpdated \| QuoteDeleted[]` | Yes | — |
+| `types` | `(CustomerCreated \| CustomerUpdated \| CustomerDeleted \| ContactCreated \| ContactUpdated \| ContactDeleted \| ProductCreated \| ProductUpdated \| ProductDeleted \| InvoiceCreated \| InvoiceUpdated \| InvoiceDeleted \| QuoteCreated \| QuoteUpdated \| QuoteDeleted)[]` | Yes | — |
 | `secretKey` | `string` | No | — |
 
 
@@ -5904,10 +5618,10 @@ await corsair.altoviz.api.webhookSubscriptions.register({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `url` | `string` | No | — |
-| `types` | `string[]` | No | — |
-| `secretKey` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `types` | `string[] \| null` | No | — |
+| `secretKey` | `string \| null` | No | — |
 
 
 

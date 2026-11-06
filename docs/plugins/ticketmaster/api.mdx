@@ -1,0 +1,2258 @@
+---
+title: API
+description: "API reference for Ticketmaster: every `ticketmaster.api.*` operation with input and output types."
+---
+
+Every `ticketmaster.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attractions
+
+### get
+
+`attractions.get`
+
+Get one attraction by ID, including its images, classifications and aliases
+
+**Risk:** `read`
+
+```ts
+await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The attraction ID. |
+| `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
+| `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `test` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `additionalInfo` | `string \| null` | No | — |
+| `images` | `object[] \| null` | No | — |
+| `classifications` | `object[] \| null` | No | — |
+| `aliases` | `string[] \| null` | No | — |
+| `localizedAliases` | `Record<string, any> \| null` | No | — |
+| `externalLinks` | `Record<string, any> \| null` | No | — |
+| `upcomingEvents` | `Record<string, any> \| null` | No | — |
+| `_links` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  url?: string | null,
+  ratio?: string | null,
+  width?: number | null,
+  height?: number | null,
+  fallback?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="classifications full type">
+
+```ts
+{
+  primary?: boolean | null,
+  family?: boolean | null,
+  segment?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null,
+    _embedded?: {
+      genres?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null,
+        _embedded?: {
+          subgenres?: {
+            id?: string | null,
+            name?: string | null,
+            locale?: string | null,
+            href?: string | null,
+            templated?: boolean | null,
+            _links?: Record<string, any> | null
+          }[] | null
+        } | null
+      }[] | null
+    } | null
+  } | null,
+  genre?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null,
+    _embedded?: {
+      subgenres?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null
+      }[] | null
+    } | null
+  } | null,
+  subGenre?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null
+  } | null,
+  type?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null
+  } | null,
+  subType?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`attractions.search`
+
+Search attractions (artists, teams, shows) by keyword, classification or source, with paging and sorting
+
+**Risk:** `read`
+
+```ts
+await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `keyword` | `string` | No | — |
+| `source` | `string` | No | Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'. |
+| `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
+| `includeTest` | `yes \| no \| only` | No | — |
+| `includeFamily` | `yes \| no \| only` | No | — |
+| `includeSpellcheck` | `yes \| no` | No | — |
+| `classificationName` | `string[]` | No | — |
+| `classificationId` | `string[]` | No | — |
+| `segmentId` | `string[]` | No | — |
+| `genreId` | `string[]` | No | — |
+| `subGenreId` | `string[]` | No | — |
+| `typeId` | `string[]` | No | — |
+| `subTypeId` | `string[]` | No | — |
+| `sort` | `string` | No | Field and direction, such as 'name,asc' or 'relevance,desc'. Ticketmaster defaults to relevance,desc. |
+| `preferredCountry` | `us \| ca` | No | — |
+| `size` | `number` | No | Items per page. Ticketmaster defaults to 20. |
+| `page` | `number` | No | 0-based page number. |
+| `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attractions` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
+
+<AccordionGroup>
+<Accordion title="attractions full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  test?: boolean | null,
+  url?: string | null,
+  locale?: string | null,
+  description?: string | null,
+  additionalInfo?: string | null,
+  images?: {
+    url?: string | null,
+    ratio?: string | null,
+    width?: number | null,
+    height?: number | null,
+    fallback?: boolean | null
+  }[] | null,
+  classifications?: {
+    primary?: boolean | null,
+    family?: boolean | null,
+    segment?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null,
+      _embedded?: {
+        genres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              href?: string | null,
+              templated?: boolean | null,
+              _links?: Record<string, any> | null
+            }[] | null
+          } | null
+        }[] | null
+      } | null
+    } | null,
+    genre?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null,
+      _embedded?: {
+        subgenres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        }[] | null
+      } | null
+    } | null,
+    subGenre?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null,
+    type?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null,
+    subType?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null
+  }[] | null,
+  aliases?: string[] | null,
+  localizedAliases?: Record<string, any> | null,
+  externalLinks?: Record<string, any> | null,
+  upcomingEvents?: Record<string, any> | null,
+  _links?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number | null,
+  totalElements?: number | null,
+  totalPages?: number | null,
+  number?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Classifications
+
+### get
+
+`classifications.get`
+
+Get one segment, genre or sub-genre by ID, with the level below it
+
+**Risk:** `read`
+
+```ts
+await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A segment, genre or sub-genre ID. |
+| `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
+| `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `primary` | `boolean \| null` | No | — |
+| `family` | `boolean \| null` | No | — |
+| `segment` | `object \| null` | No | — |
+| `genre` | `object \| null` | No | — |
+| `subGenre` | `object \| null` | No | — |
+| `type` | `object \| null` | No | — |
+| `subType` | `object \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `_links` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="segment full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  locale?: string | null,
+  href?: string | null,
+  templated?: boolean | null,
+  _links?: Record<string, any> | null,
+  _embedded?: {
+    genres?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null,
+      _embedded?: {
+        subgenres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        }[] | null
+      } | null
+    }[] | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="genre full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  locale?: string | null,
+  href?: string | null,
+  templated?: boolean | null,
+  _links?: Record<string, any> | null,
+  _embedded?: {
+    subgenres?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    }[] | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="subGenre full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  locale?: string | null,
+  href?: string | null,
+  templated?: boolean | null,
+  _links?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="type full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  locale?: string | null,
+  href?: string | null,
+  templated?: boolean | null,
+  _links?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="subType full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  locale?: string | null,
+  href?: string | null,
+  templated?: boolean | null,
+  _links?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`classifications.search`
+
+Search the segment, genre and sub-genre tree Ticketmaster uses to classify events and attractions
+
+**Risk:** `read`
+
+```ts
+await corsair.ticketmaster.api.classifications.search({ size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `keyword` | `string` | No | — |
+| `source` | `string` | No | Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'. |
+| `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
+| `includeTest` | `yes \| no \| only` | No | — |
+| `includeSpellcheck` | `yes \| no` | No | — |
+| `sort` | `string` | No | Field and direction. Ticketmaster defaults to name,asc. |
+| `preferredCountry` | `us \| ca` | No | — |
+| `size` | `number` | No | Items per page. Ticketmaster defaults to 20. |
+| `page` | `number` | No | 0-based page number. |
+| `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `classifications` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
+
+<AccordionGroup>
+<Accordion title="classifications full type">
+
+```ts
+{
+  primary?: boolean | null,
+  family?: boolean | null,
+  segment?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null,
+    _embedded?: {
+      genres?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null,
+        _embedded?: {
+          subgenres?: {
+            id?: string | null,
+            name?: string | null,
+            locale?: string | null,
+            href?: string | null,
+            templated?: boolean | null,
+            _links?: Record<string, any> | null
+          }[] | null
+        } | null
+      }[] | null
+    } | null
+  } | null,
+  genre?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null,
+    _embedded?: {
+      subgenres?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null
+      }[] | null
+    } | null
+  } | null,
+  subGenre?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null
+  } | null,
+  type?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null
+  } | null,
+  subType?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null
+  } | null,
+  id?: string | null,
+  _links?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number | null,
+  totalElements?: number | null,
+  totalPages?: number | null,
+  number?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### get
+
+`events.get`
+
+Get one event by ID, including its dates, sales window, price ranges, images, venue and attractions
+
+**Risk:** `read`
+
+```ts
+await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event ID. |
+| `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
+| `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `test` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `additionalInfo` | `string \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `pleaseNote` | `string \| null` | No | — |
+| `productType` | `string \| null` | No | — |
+| `images` | `object[] \| null` | No | — |
+| `dates` | `object \| null` | No | — |
+| `sales` | `object \| null` | No | — |
+| `priceRanges` | `object[] \| null` | No | — |
+| `classifications` | `object[] \| null` | No | — |
+| `promoter` | `object \| null` | No | — |
+| `promoters` | `object[] \| null` | No | — |
+| `outlets` | `object[] \| null` | No | — |
+| `products` | `object[] \| null` | No | — |
+| `aliases` | `string[] \| null` | No | — |
+| `seatmap` | `Record<string, any> \| null` | No | — |
+| `accessibility` | `Record<string, any> \| null` | No | — |
+| `ticketLimit` | `Record<string, any> \| null` | No | — |
+| `place` | `Record<string, any> \| null` | No | — |
+| `externalLinks` | `Record<string, any> \| null` | No | — |
+| `localizedAliases` | `Record<string, any> \| null` | No | — |
+| `_embedded` | `object \| null` | No | — |
+| `_links` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  url?: string | null,
+  ratio?: string | null,
+  width?: number | null,
+  height?: number | null,
+  fallback?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="dates full type">
+
+```ts
+{
+  start?: {
+    localDate?: string | null,
+    localTime?: string | null,
+    dateTime?: string | null,
+    dateTBD?: boolean | null,
+    dateTBA?: boolean | null,
+    timeTBA?: boolean | null,
+    noSpecificTime?: boolean | null
+  } | null,
+  end?: {
+    localDate?: string | null,
+    localTime?: string | null,
+    dateTime?: string | null,
+    approximate?: boolean | null,
+    noSpecificTime?: boolean | null
+  } | null,
+  timezone?: string | null,
+  spanMultipleDays?: boolean | null,
+  status?: {
+    code?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="sales full type">
+
+```ts
+{
+  public?: {
+    startDateTime?: string | null,
+    endDateTime?: string | null,
+    startTBD?: boolean | null,
+    startTBA?: boolean | null
+  } | null,
+  presales?: {
+    name?: string | null,
+    description?: string | null,
+    url?: string | null,
+    startDateTime?: string | null,
+    endDateTime?: string | null,
+    startTBD?: boolean | null,
+    startTBA?: boolean | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="priceRanges full type">
+
+```ts
+{
+  type?: string | null,
+  currency?: string | null,
+  min?: number | null,
+  max?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="classifications full type">
+
+```ts
+{
+  primary?: boolean | null,
+  family?: boolean | null,
+  segment?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null,
+    _embedded?: {
+      genres?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null,
+        _embedded?: {
+          subgenres?: {
+            id?: string | null,
+            name?: string | null,
+            locale?: string | null,
+            href?: string | null,
+            templated?: boolean | null,
+            _links?: Record<string, any> | null
+          }[] | null
+        } | null
+      }[] | null
+    } | null
+  } | null,
+  genre?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null,
+    _embedded?: {
+      subgenres?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null
+      }[] | null
+    } | null
+  } | null,
+  subGenre?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null
+  } | null,
+  type?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null
+  } | null,
+  subType?: {
+    id?: string | null,
+    name?: string | null,
+    locale?: string | null,
+    href?: string | null,
+    templated?: boolean | null,
+    _links?: Record<string, any> | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="promoter full type">
+
+```ts
+{
+  id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="promoters full type">
+
+```ts
+{
+  id?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="outlets full type">
+
+```ts
+{
+  href?: string | null,
+  templated?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="products full type">
+
+```ts
+{
+  href?: string | null,
+  templated?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_embedded full type">
+
+```ts
+{
+  venues?: {
+    id: string,
+    name?: string | null,
+    type?: string | null,
+    test?: boolean | null,
+    url?: string | null,
+    locale?: string | null,
+    description?: string | null,
+    additionalInfo?: string | null,
+    postalCode?: string | null,
+    timezone?: string | null,
+    currency?: string | null,
+    city?: {
+      name?: string | null
+    } | null,
+    state?: {
+      name?: string | null,
+      stateCode?: string | null
+    } | null,
+    country?: {
+      name?: string | null,
+      countryCode?: string | null
+    } | null,
+    address?: {
+      line1?: string | null
+    } | null,
+    location?: {
+      longitude?: string | number | null,
+      latitude?: string | number | null
+    } | null,
+    markets?: {
+      id?: string | number | null
+    }[] | null,
+    dmas?: {
+      id?: number | null
+    }[] | null,
+    images?: {
+      url?: string | null,
+      ratio?: string | null,
+      width?: number | null,
+      height?: number | null,
+      fallback?: boolean | null
+    }[] | null,
+    boxOfficeInfo?: Record<string, any> | null,
+    generalInfo?: Record<string, any> | null,
+    social?: Record<string, any> | null,
+    parkingDetail?: string | null,
+    accessibleSeatingDetail?: string | null,
+    upcomingEvents?: Record<string, any> | null,
+    _links?: Record<string, any> | null
+  }[] | null,
+  attractions?: {
+    id: string,
+    name?: string | null,
+    type?: string | null,
+    test?: boolean | null,
+    url?: string | null,
+    locale?: string | null,
+    description?: string | null,
+    additionalInfo?: string | null,
+    images?: {
+      url?: string | null,
+      ratio?: string | null,
+      width?: number | null,
+      height?: number | null,
+      fallback?: boolean | null
+    }[] | null,
+    classifications?: {
+      primary?: boolean | null,
+      family?: boolean | null,
+      segment?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null,
+        _embedded?: {
+          genres?: {
+            id?: string | null,
+            name?: string | null,
+            locale?: string | null,
+            href?: string | null,
+            templated?: boolean | null,
+            _links?: Record<string, any> | null,
+            _embedded?: {
+              subgenres?: {
+                id?: string | null,
+                name?: string | null,
+                locale?: string | null,
+                href?: string | null,
+                templated?: boolean | null,
+                _links?: Record<string, any> | null
+              }[] | null
+            } | null
+          }[] | null
+        } | null
+      } | null,
+      genre?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null,
+        _embedded?: {
+          subgenres?: {
+            id?: string | null,
+            name?: string | null,
+            locale?: string | null,
+            href?: string | null,
+            templated?: boolean | null,
+            _links?: Record<string, any> | null
+          }[] | null
+        } | null
+      } | null,
+      subGenre?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null
+      } | null,
+      type?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null
+      } | null,
+      subType?: {
+        id?: string | null,
+        name?: string | null,
+        locale?: string | null,
+        href?: string | null,
+        templated?: boolean | null,
+        _links?: Record<string, any> | null
+      } | null
+    }[] | null,
+    aliases?: string[] | null,
+    localizedAliases?: Record<string, any> | null,
+    externalLinks?: Record<string, any> | null,
+    upcomingEvents?: Record<string, any> | null,
+    _links?: Record<string, any> | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getImages
+
+`events.getImages`
+
+Get the images for one event by ID, with each ratio, size and URL
+
+**Risk:** `read`
+
+```ts
+await corsair.ticketmaster.api.events.getImages({ id: 'k7vGFKzleBdwS' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event ID. |
+| `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
+| `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  url?: string | null,
+  ratio?: string | null,
+  width?: number | null,
+  height?: number | null,
+  fallback?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`events.search`
+
+Search events by keyword, attraction, venue, location, date, classification or onsale window, with paging and sorting
+
+**Risk:** `read`
+
+```ts
+await corsair.ticketmaster.api.events.search({ classificationName: ['music'], countryCode: 'US', city: ['Seattle'], startDateTime: '2026-01-01T00:00:00Z', sort: 'date,asc', size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | Only this event ID. |
+| `keyword` | `string` | No | Free-text search on the event name. |
+| `attractionId` | `string` | No | Only events by this attraction (artist, team, show). |
+| `venueId` | `string` | No | Only events at this venue. |
+| `postalCode` | `string` | No | — |
+| `latlong` | `string` | No | 'latitude,longitude'. Deprecated by Ticketmaster in favour of geoPoint. |
+| `geoPoint` | `string` | No | Geo hash to search around, with radius and unit. |
+| `radius` | `number` | No | Search radius; the unit is `unit`. |
+| `unit` | `miles \| km` | No | — |
+| `source` | `string` | No | Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'. Comma-separated values are allowed. |
+| `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
+| `marketId` | `string` | No | — |
+| `dmaId` | `string` | No | — |
+| `startDateTime` | `string` | No | Only events starting at or after this UTC time, such as 2026-01-01T00:00:00Z. |
+| `endDateTime` | `string` | No | Only events starting at or before this UTC time. |
+| `localStartDateTime` | `string` | No | A local-time range as two comma-separated timestamps. |
+| `onsaleStartDateTime` | `string` | No | — |
+| `onsaleEndDateTime` | `string` | No | — |
+| `includeTBA` | `yes \| no \| only` | No | Date to be announced events. |
+| `includeTBD` | `yes \| no \| only` | No | Date to be defined events. |
+| `includeTest` | `yes \| no \| only` | No | — |
+| `includeFamily` | `yes \| no \| only` | No | — |
+| `includeSpellcheck` | `yes \| no` | No | — |
+| `city` | `string[]` | No | — |
+| `countryCode` | `string` | No | ISO country code, such as US. |
+| `stateCode` | `string` | No | US state code, such as NY. |
+| `classificationName` | `string[]` | No | Segment, genre or sub-genre names, such as 'music'. A '-'-prefixed value excludes it. |
+| `classificationId` | `string[]` | No | — |
+| `segmentId` | `string[]` | No | — |
+| `segmentName` | `string[]` | No | — |
+| `genreId` | `string[]` | No | — |
+| `subGenreId` | `string[]` | No | — |
+| `typeId` | `string[]` | No | — |
+| `subTypeId` | `string[]` | No | — |
+| `collectionId` | `string[]` | No | — |
+| `promoterId` | `string` | No | — |
+| `sort` | `string` | No | Field and direction, such as 'date,asc' or 'relevance,desc'. Ticketmaster defaults to relevance,desc. |
+| `preferredCountry` | `us \| ca` | No | — |
+| `size` | `number` | No | Items per page. Ticketmaster defaults to 20. |
+| `page` | `number` | No | 0-based page number. |
+| `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  test?: boolean | null,
+  url?: string | null,
+  locale?: string | null,
+  description?: string | null,
+  additionalInfo?: string | null,
+  info?: string | null,
+  pleaseNote?: string | null,
+  productType?: string | null,
+  images?: {
+    url?: string | null,
+    ratio?: string | null,
+    width?: number | null,
+    height?: number | null,
+    fallback?: boolean | null
+  }[] | null,
+  dates?: {
+    start?: {
+      localDate?: string | null,
+      localTime?: string | null,
+      dateTime?: string | null,
+      dateTBD?: boolean | null,
+      dateTBA?: boolean | null,
+      timeTBA?: boolean | null,
+      noSpecificTime?: boolean | null
+    } | null,
+    end?: {
+      localDate?: string | null,
+      localTime?: string | null,
+      dateTime?: string | null,
+      approximate?: boolean | null,
+      noSpecificTime?: boolean | null
+    } | null,
+    timezone?: string | null,
+    spanMultipleDays?: boolean | null,
+    status?: {
+      code?: string | null
+    } | null
+  } | null,
+  sales?: {
+    public?: {
+      startDateTime?: string | null,
+      endDateTime?: string | null,
+      startTBD?: boolean | null,
+      startTBA?: boolean | null
+    } | null,
+    presales?: {
+      name?: string | null,
+      description?: string | null,
+      url?: string | null,
+      startDateTime?: string | null,
+      endDateTime?: string | null,
+      startTBD?: boolean | null,
+      startTBA?: boolean | null
+    }[] | null
+  } | null,
+  priceRanges?: {
+    type?: string | null,
+    currency?: string | null,
+    min?: number | null,
+    max?: number | null
+  }[] | null,
+  classifications?: {
+    primary?: boolean | null,
+    family?: boolean | null,
+    segment?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null,
+      _embedded?: {
+        genres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              href?: string | null,
+              templated?: boolean | null,
+              _links?: Record<string, any> | null
+            }[] | null
+          } | null
+        }[] | null
+      } | null
+    } | null,
+    genre?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null,
+      _embedded?: {
+        subgenres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        }[] | null
+      } | null
+    } | null,
+    subGenre?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null,
+    type?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null,
+    subType?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null
+  }[] | null,
+  promoter?: {
+    id?: string | null
+  } | null,
+  promoters?: {
+    id?: string | null
+  }[] | null,
+  outlets?: {
+    href?: string | null,
+    templated?: boolean | null
+  }[] | null,
+  products?: {
+    href?: string | null,
+    templated?: boolean | null
+  }[] | null,
+  aliases?: string[] | null,
+  seatmap?: Record<string, any> | null,
+  accessibility?: Record<string, any> | null,
+  ticketLimit?: Record<string, any> | null,
+  place?: Record<string, any> | null,
+  externalLinks?: Record<string, any> | null,
+  localizedAliases?: Record<string, any> | null,
+  _embedded?: {
+    venues?: {
+      id: string,
+      name?: string | null,
+      type?: string | null,
+      test?: boolean | null,
+      url?: string | null,
+      locale?: string | null,
+      description?: string | null,
+      additionalInfo?: string | null,
+      postalCode?: string | null,
+      timezone?: string | null,
+      currency?: string | null,
+      city?: {
+        name?: string | null
+      } | null,
+      state?: {
+        name?: string | null,
+        stateCode?: string | null
+      } | null,
+      country?: {
+        name?: string | null,
+        countryCode?: string | null
+      } | null,
+      address?: {
+        line1?: string | null
+      } | null,
+      location?: {
+        longitude?: string | number | null,
+        latitude?: string | number | null
+      } | null,
+      markets?: {
+        id?: string | number | null
+      }[] | null,
+      dmas?: {
+        id?: number | null
+      }[] | null,
+      images?: {
+        url?: string | null,
+        ratio?: string | null,
+        width?: number | null,
+        height?: number | null,
+        fallback?: boolean | null
+      }[] | null,
+      boxOfficeInfo?: Record<string, any> | null,
+      generalInfo?: Record<string, any> | null,
+      social?: Record<string, any> | null,
+      parkingDetail?: string | null,
+      accessibleSeatingDetail?: string | null,
+      upcomingEvents?: Record<string, any> | null,
+      _links?: Record<string, any> | null
+    }[] | null,
+    attractions?: {
+      id: string,
+      name?: string | null,
+      type?: string | null,
+      test?: boolean | null,
+      url?: string | null,
+      locale?: string | null,
+      description?: string | null,
+      additionalInfo?: string | null,
+      images?: {
+        url?: string | null,
+        ratio?: string | null,
+        width?: number | null,
+        height?: number | null,
+        fallback?: boolean | null
+      }[] | null,
+      classifications?: {
+        primary?: boolean | null,
+        family?: boolean | null,
+        segment?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null,
+          _embedded?: {
+            genres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              href?: string | null,
+              templated?: boolean | null,
+              _links?: Record<string, any> | null,
+              _embedded?: {
+                subgenres?: {
+                  id?: string | null,
+                  name?: string | null,
+                  locale?: string | null,
+                  href?: string | null,
+                  templated?: boolean | null,
+                  _links?: Record<string, any> | null
+                }[] | null
+              } | null
+            }[] | null
+          } | null
+        } | null,
+        genre?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              href?: string | null,
+              templated?: boolean | null,
+              _links?: Record<string, any> | null
+            }[] | null
+          } | null
+        } | null,
+        subGenre?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        } | null,
+        type?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        } | null,
+        subType?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        } | null
+      }[] | null,
+      aliases?: string[] | null,
+      localizedAliases?: Record<string, any> | null,
+      externalLinks?: Record<string, any> | null,
+      upcomingEvents?: Record<string, any> | null,
+      _links?: Record<string, any> | null
+    }[] | null
+  } | null,
+  _links?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number | null,
+  totalElements?: number | null,
+  totalPages?: number | null,
+  number?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Suggest
+
+### get
+
+`suggest.get`
+
+Suggest attractions, events, venues and products for a partial search term, as a type-ahead would
+
+**Risk:** `read`
+
+```ts
+await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | No | What the user has typed so far. |
+| `latlong` | `string` | No | — |
+| `geoPoint` | `string` | No | — |
+| `radius` | `number` | No | — |
+| `unit` | `miles \| km` | No | — |
+| `source` | `string` | No | — |
+| `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
+| `countryCode` | `string` | No | — |
+| `segmentId` | `string[]` | No | — |
+| `resource` | `(attractions \| events \| venues \| products)[]` | No | Which collections to suggest from. Ticketmaster defaults to all four. |
+| `includeTBA` | `yes \| no \| only` | No | — |
+| `includeTBD` | `yes \| no \| only` | No | — |
+| `includeTest` | `yes \| no \| only` | No | — |
+| `includeSpellcheck` | `yes \| no` | No | — |
+| `startEndDateTime` | `string` | No | — |
+| `localStartEndDateTime` | `string` | No | — |
+| `preferredCountry` | `us \| ca` | No | — |
+| `size` | `number` | No | Items per collection. Ticketmaster defaults to 5. |
+| `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attractions` | `object[]` | Yes | — |
+| `events` | `object[]` | Yes | — |
+| `venues` | `object[]` | Yes | — |
+| `products` | `Record<string, any>[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attractions full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  test?: boolean | null,
+  url?: string | null,
+  locale?: string | null,
+  description?: string | null,
+  additionalInfo?: string | null,
+  images?: {
+    url?: string | null,
+    ratio?: string | null,
+    width?: number | null,
+    height?: number | null,
+    fallback?: boolean | null
+  }[] | null,
+  classifications?: {
+    primary?: boolean | null,
+    family?: boolean | null,
+    segment?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null,
+      _embedded?: {
+        genres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              href?: string | null,
+              templated?: boolean | null,
+              _links?: Record<string, any> | null
+            }[] | null
+          } | null
+        }[] | null
+      } | null
+    } | null,
+    genre?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null,
+      _embedded?: {
+        subgenres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        }[] | null
+      } | null
+    } | null,
+    subGenre?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null,
+    type?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null,
+    subType?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null
+  }[] | null,
+  aliases?: string[] | null,
+  localizedAliases?: Record<string, any> | null,
+  externalLinks?: Record<string, any> | null,
+  upcomingEvents?: Record<string, any> | null,
+  _links?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  test?: boolean | null,
+  url?: string | null,
+  locale?: string | null,
+  description?: string | null,
+  additionalInfo?: string | null,
+  info?: string | null,
+  pleaseNote?: string | null,
+  productType?: string | null,
+  images?: {
+    url?: string | null,
+    ratio?: string | null,
+    width?: number | null,
+    height?: number | null,
+    fallback?: boolean | null
+  }[] | null,
+  dates?: {
+    start?: {
+      localDate?: string | null,
+      localTime?: string | null,
+      dateTime?: string | null,
+      dateTBD?: boolean | null,
+      dateTBA?: boolean | null,
+      timeTBA?: boolean | null,
+      noSpecificTime?: boolean | null
+    } | null,
+    end?: {
+      localDate?: string | null,
+      localTime?: string | null,
+      dateTime?: string | null,
+      approximate?: boolean | null,
+      noSpecificTime?: boolean | null
+    } | null,
+    timezone?: string | null,
+    spanMultipleDays?: boolean | null,
+    status?: {
+      code?: string | null
+    } | null
+  } | null,
+  sales?: {
+    public?: {
+      startDateTime?: string | null,
+      endDateTime?: string | null,
+      startTBD?: boolean | null,
+      startTBA?: boolean | null
+    } | null,
+    presales?: {
+      name?: string | null,
+      description?: string | null,
+      url?: string | null,
+      startDateTime?: string | null,
+      endDateTime?: string | null,
+      startTBD?: boolean | null,
+      startTBA?: boolean | null
+    }[] | null
+  } | null,
+  priceRanges?: {
+    type?: string | null,
+    currency?: string | null,
+    min?: number | null,
+    max?: number | null
+  }[] | null,
+  classifications?: {
+    primary?: boolean | null,
+    family?: boolean | null,
+    segment?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null,
+      _embedded?: {
+        genres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              href?: string | null,
+              templated?: boolean | null,
+              _links?: Record<string, any> | null
+            }[] | null
+          } | null
+        }[] | null
+      } | null
+    } | null,
+    genre?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null,
+      _embedded?: {
+        subgenres?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        }[] | null
+      } | null
+    } | null,
+    subGenre?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null,
+    type?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null,
+    subType?: {
+      id?: string | null,
+      name?: string | null,
+      locale?: string | null,
+      href?: string | null,
+      templated?: boolean | null,
+      _links?: Record<string, any> | null
+    } | null
+  }[] | null,
+  promoter?: {
+    id?: string | null
+  } | null,
+  promoters?: {
+    id?: string | null
+  }[] | null,
+  outlets?: {
+    href?: string | null,
+    templated?: boolean | null
+  }[] | null,
+  products?: {
+    href?: string | null,
+    templated?: boolean | null
+  }[] | null,
+  aliases?: string[] | null,
+  seatmap?: Record<string, any> | null,
+  accessibility?: Record<string, any> | null,
+  ticketLimit?: Record<string, any> | null,
+  place?: Record<string, any> | null,
+  externalLinks?: Record<string, any> | null,
+  localizedAliases?: Record<string, any> | null,
+  _embedded?: {
+    venues?: {
+      id: string,
+      name?: string | null,
+      type?: string | null,
+      test?: boolean | null,
+      url?: string | null,
+      locale?: string | null,
+      description?: string | null,
+      additionalInfo?: string | null,
+      postalCode?: string | null,
+      timezone?: string | null,
+      currency?: string | null,
+      city?: {
+        name?: string | null
+      } | null,
+      state?: {
+        name?: string | null,
+        stateCode?: string | null
+      } | null,
+      country?: {
+        name?: string | null,
+        countryCode?: string | null
+      } | null,
+      address?: {
+        line1?: string | null
+      } | null,
+      location?: {
+        longitude?: string | number | null,
+        latitude?: string | number | null
+      } | null,
+      markets?: {
+        id?: string | number | null
+      }[] | null,
+      dmas?: {
+        id?: number | null
+      }[] | null,
+      images?: {
+        url?: string | null,
+        ratio?: string | null,
+        width?: number | null,
+        height?: number | null,
+        fallback?: boolean | null
+      }[] | null,
+      boxOfficeInfo?: Record<string, any> | null,
+      generalInfo?: Record<string, any> | null,
+      social?: Record<string, any> | null,
+      parkingDetail?: string | null,
+      accessibleSeatingDetail?: string | null,
+      upcomingEvents?: Record<string, any> | null,
+      _links?: Record<string, any> | null
+    }[] | null,
+    attractions?: {
+      id: string,
+      name?: string | null,
+      type?: string | null,
+      test?: boolean | null,
+      url?: string | null,
+      locale?: string | null,
+      description?: string | null,
+      additionalInfo?: string | null,
+      images?: {
+        url?: string | null,
+        ratio?: string | null,
+        width?: number | null,
+        height?: number | null,
+        fallback?: boolean | null
+      }[] | null,
+      classifications?: {
+        primary?: boolean | null,
+        family?: boolean | null,
+        segment?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null,
+          _embedded?: {
+            genres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              href?: string | null,
+              templated?: boolean | null,
+              _links?: Record<string, any> | null,
+              _embedded?: {
+                subgenres?: {
+                  id?: string | null,
+                  name?: string | null,
+                  locale?: string | null,
+                  href?: string | null,
+                  templated?: boolean | null,
+                  _links?: Record<string, any> | null
+                }[] | null
+              } | null
+            }[] | null
+          } | null
+        } | null,
+        genre?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null,
+          _embedded?: {
+            subgenres?: {
+              id?: string | null,
+              name?: string | null,
+              locale?: string | null,
+              href?: string | null,
+              templated?: boolean | null,
+              _links?: Record<string, any> | null
+            }[] | null
+          } | null
+        } | null,
+        subGenre?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        } | null,
+        type?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        } | null,
+        subType?: {
+          id?: string | null,
+          name?: string | null,
+          locale?: string | null,
+          href?: string | null,
+          templated?: boolean | null,
+          _links?: Record<string, any> | null
+        } | null
+      }[] | null,
+      aliases?: string[] | null,
+      localizedAliases?: Record<string, any> | null,
+      externalLinks?: Record<string, any> | null,
+      upcomingEvents?: Record<string, any> | null,
+      _links?: Record<string, any> | null
+    }[] | null
+  } | null,
+  _links?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="venues full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  test?: boolean | null,
+  url?: string | null,
+  locale?: string | null,
+  description?: string | null,
+  additionalInfo?: string | null,
+  postalCode?: string | null,
+  timezone?: string | null,
+  currency?: string | null,
+  city?: {
+    name?: string | null
+  } | null,
+  state?: {
+    name?: string | null,
+    stateCode?: string | null
+  } | null,
+  country?: {
+    name?: string | null,
+    countryCode?: string | null
+  } | null,
+  address?: {
+    line1?: string | null
+  } | null,
+  location?: {
+    longitude?: string | number | null,
+    latitude?: string | number | null
+  } | null,
+  markets?: {
+    id?: string | number | null
+  }[] | null,
+  dmas?: {
+    id?: number | null
+  }[] | null,
+  images?: {
+    url?: string | null,
+    ratio?: string | null,
+    width?: number | null,
+    height?: number | null,
+    fallback?: boolean | null
+  }[] | null,
+  boxOfficeInfo?: Record<string, any> | null,
+  generalInfo?: Record<string, any> | null,
+  social?: Record<string, any> | null,
+  parkingDetail?: string | null,
+  accessibleSeatingDetail?: string | null,
+  upcomingEvents?: Record<string, any> | null,
+  _links?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Venues
+
+### get
+
+`venues.get`
+
+Get one venue by ID, including its address, location, timezone, markets and images
+
+**Risk:** `read`
+
+```ts
+await corsair.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The venue ID. |
+| `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
+| `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `test` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `additionalInfo` | `string \| null` | No | — |
+| `postalCode` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `city` | `object \| null` | No | — |
+| `state` | `object \| null` | No | — |
+| `country` | `object \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `location` | `object \| null` | No | — |
+| `markets` | `object[] \| null` | No | — |
+| `dmas` | `object[] \| null` | No | — |
+| `images` | `object[] \| null` | No | — |
+| `boxOfficeInfo` | `Record<string, any> \| null` | No | — |
+| `generalInfo` | `Record<string, any> \| null` | No | — |
+| `social` | `Record<string, any> \| null` | No | — |
+| `parkingDetail` | `string \| null` | No | — |
+| `accessibleSeatingDetail` | `string \| null` | No | — |
+| `upcomingEvents` | `Record<string, any> \| null` | No | — |
+| `_links` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="city full type">
+
+```ts
+{
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="state full type">
+
+```ts
+{
+  name?: string | null,
+  stateCode?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="country full type">
+
+```ts
+{
+  name?: string | null,
+  countryCode?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  line1?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  longitude?: string | number | null,
+  latitude?: string | number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="markets full type">
+
+```ts
+{
+  id?: string | number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="dmas full type">
+
+```ts
+{
+  id?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  url?: string | null,
+  ratio?: string | null,
+  width?: number | null,
+  height?: number | null,
+  fallback?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`venues.search`
+
+Search venues by keyword, country, state or geo point, with paging and sorting
+
+**Risk:** `read`
+
+```ts
+await corsair.ticketmaster.api.venues.search({ keyword: 'Madison Square Garden', countryCode: 'US', size: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `keyword` | `string` | No | — |
+| `latlong` | `string` | No | 'latitude,longitude'. Deprecated by Ticketmaster in favour of geoPoint. |
+| `geoPoint` | `string` | No | — |
+| `radius` | `number` | No | — |
+| `unit` | `miles \| km` | No | — |
+| `source` | `string` | No | Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'. |
+| `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
+| `includeTest` | `yes \| no \| only` | No | — |
+| `includeSpellcheck` | `yes \| no` | No | — |
+| `countryCode` | `string` | No | — |
+| `stateCode` | `string` | No | — |
+| `sort` | `string` | No | Field and direction, such as 'name,asc' or 'distance,asc'. Ticketmaster defaults to relevance,desc. |
+| `preferredCountry` | `us \| ca` | No | — |
+| `size` | `number` | No | Items per page. Ticketmaster defaults to 20. |
+| `page` | `number` | No | 0-based page number. |
+| `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `venues` | `object[]` | Yes | — |
+| `page` | `object \| null` | No | — |
+| `next_page` | `number \| null` | Yes | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
+
+<AccordionGroup>
+<Accordion title="venues full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  test?: boolean | null,
+  url?: string | null,
+  locale?: string | null,
+  description?: string | null,
+  additionalInfo?: string | null,
+  postalCode?: string | null,
+  timezone?: string | null,
+  currency?: string | null,
+  city?: {
+    name?: string | null
+  } | null,
+  state?: {
+    name?: string | null,
+    stateCode?: string | null
+  } | null,
+  country?: {
+    name?: string | null,
+    countryCode?: string | null
+  } | null,
+  address?: {
+    line1?: string | null
+  } | null,
+  location?: {
+    longitude?: string | number | null,
+    latitude?: string | number | null
+  } | null,
+  markets?: {
+    id?: string | number | null
+  }[] | null,
+  dmas?: {
+    id?: number | null
+  }[] | null,
+  images?: {
+    url?: string | null,
+    ratio?: string | null,
+    width?: number | null,
+    height?: number | null,
+    fallback?: boolean | null
+  }[] | null,
+  boxOfficeInfo?: Record<string, any> | null,
+  generalInfo?: Record<string, any> | null,
+  social?: Record<string, any> | null,
+  parkingDetail?: string | null,
+  accessibleSeatingDetail?: string | null,
+  upcomingEvents?: Record<string, any> | null,
+  _links?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number | null,
+  totalElements?: number | null,
+  totalPages?: number | null,
+  number?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

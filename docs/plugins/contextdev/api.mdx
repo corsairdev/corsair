@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for ContextDev: every `contextdev.api.*` operation with input and output types."
+description: "API reference for Context.dev: every `contextdev.api.*` operation with input and output types."
 ---
 
 Every `contextdev.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -31,8 +31,8 @@ await corsair.contextdev.api.account.usage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `credits_remaining` | `number` | Yes | — |
-| `period` | `object` | No | — |
-| `next_refill` | `object` | No | — |
+| `period` | `object \| null` | Yes | — |
+| `next_refill` | `object \| null` | Yes | — |
 | `auto_topup` | `object` | Yes | — |
 | `key_metadata` | `object` | No | — |
 | `request_id` | `string` | Yes | — |
@@ -44,7 +44,7 @@ await corsair.contextdev.api.account.usage({});
 {
   start: string,
   credits_used: number
-}
+} | null
 ```
 </Accordion>
 
@@ -54,7 +54,7 @@ await corsair.contextdev.api.account.usage({});
 {
   at: string,
   credits: number
-}
+} | null
 ```
 </Accordion>
 
@@ -64,7 +64,7 @@ await corsair.contextdev.api.account.usage({});
 {
   enabled: boolean,
   credits_used_this_period: number,
-  monthly_budget_credits?: number | null
+  monthly_budget_credits: number | null
 }
 ```
 </Accordion>
@@ -104,7 +104,7 @@ await corsair.contextdev.api.brand.fonts({});
 |------|------|----------|-------------|
 | `domain` | `string` | No | — |
 | `directUrl` | `string` | No | — |
-| `maxAgeMs` | `number` | No | — |
+| `maxAgeMs` | `number \| null` | No | — |
 | `timeoutOpts` | `object` | No | — |
 | `tags` | `string[]` | No | — |
 
@@ -155,8 +155,12 @@ await corsair.contextdev.api.brand.fonts({});
 <Accordion title="fontLinks full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: google | custom,
+  files: Record<string, string>,
+  category?: string,
+  displayName?: string
+}>
 ```
 </Accordion>
 
@@ -566,7 +570,7 @@ await corsair.contextdev.api.brand.search({});
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
 | `autocomplete` | `boolean` | No | — |
-| `queryBy` | `name \| domain[]` | No | — |
+| `queryBy` | `(name \| domain)[]` | No | — |
 | `typoTolerance` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 
@@ -706,7 +710,7 @@ await corsair.contextdev.api.brand.styleguide({});
 |------|------|----------|-------------|
 | `domain` | `string` | No | — |
 | `directUrl` | `string` | No | — |
-| `maxAgeMs` | `number` | No | — |
+| `maxAgeMs` | `number \| null` | No | — |
 | `timeoutOpts` | `object` | No | — |
 | `colorScheme` | `light \| dark` | No | — |
 | `zdr` | `enabled \| disabled` | No | — |
@@ -808,8 +812,12 @@ await corsair.contextdev.api.brand.styleguide({});
     xl: string,
     inner: string
   },
-  fontLinks: {
-  },
+  fontLinks: Record<string, {
+    type: google | custom,
+    files: Record<string, string>,
+    category?: string,
+    displayName?: string
+  }>,
   components: {
     button: {
       primary?: {
@@ -933,7 +941,7 @@ await corsair.contextdev.api.news.search({});
 | `filterBy` | `object` | No | — |
 | `sortBy` | `object` | No | — |
 | `limit` | `number` | No | — |
-| `cursor` | `string` | No | — |
+| `cursor` | `string \| null` | No | — |
 | `tags` | `string[]` | No | — |
 
 <AccordionGroup>
@@ -967,7 +975,7 @@ await corsair.contextdev.api.news.search({});
   sourceDomain?: string[],
   sourceCountry?: string[],
   articleLanguage?: string[],
-  articleType?: editorial | press_release | regulatory_filing | advisory[],
+  articleType?: (editorial | press_release | regulatory_filing | advisory)[],
   date?: {
     from?: number,
     to?: number
@@ -994,7 +1002,7 @@ await corsair.contextdev.api.news.search({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | Yes | — |
 | `meta` | `object` | Yes | — |
 | `key_metadata` | `object` | No | — |
 | `request_id` | `string` | Yes | — |
@@ -1008,11 +1016,11 @@ await corsair.contextdev.api.news.search({});
   story_id: string,
   url: string,
   title: string,
-  description?: string | null,
-  language?: string | null,
+  description: string | null,
+  language: string | null,
   authors: string[],
-  image_url?: string | null,
-  published_at?: string | null,
+  image_url: string | null,
+  published_at: string | null,
   type: editorial | press_release | regulatory_filing | advisory,
   source: {
     name: string,
@@ -1021,7 +1029,7 @@ await corsair.contextdev.api.news.search({});
   },
   match: {
     level: primary | secondary,
-    confidence?: number | null
+    confidence: number | null
   }
 }[]
 ```
@@ -1280,20 +1288,12 @@ await corsair.contextdev.api.web.answers({});
 |------|------|----------|-------------|
 | `task` | `string` | Yes | — |
 | `mode` | `fast \| ultra` | No | — |
-| `json_format` | `object` | No | — |
+| `json_format` | `Record<string, any>` | No | — |
 | `timeoutOpts` | `object` | No | — |
 | `zdr` | `enabled \| disabled` | No | — |
 | `tags` | `string[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="json_format full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="timeoutOpts full type">
 
 ```ts
@@ -1312,20 +1312,12 @@ await corsair.contextdev.api.web.answers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `partial` | `boolean` | No | — |
-| `json_content` | `object` | Yes | — |
+| `json_content` | `Record<string, any>` | Yes | — |
 | `sources` | `string[]` | Yes | — |
 | `key_metadata` | `object` | No | — |
 | `request_id` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="json_content full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="key_metadata full type">
 
 ```ts
@@ -1365,14 +1357,14 @@ await corsair.contextdev.api.web.crawl({});
 | `shortenBase64Images` | `boolean` | No | — |
 | `useMainContentOnly` | `boolean` | No | — |
 | `pdf` | `object` | No | — |
-| `includeSelectors` | `string[]` | No | — |
-| `excludeSelectors` | `string[]` | No | — |
+| `includeSelectors` | `string[] \| null` | No | — |
+| `excludeSelectors` | `string[] \| null` | No | — |
 | `country` | `string` | No | — |
 | `maxDepth` | `number` | No | — |
 | `followSubdomains` | `boolean` | No | — |
 | `includeFrames` | `boolean` | No | — |
-| `maxAgeMs` | `number` | No | — |
-| `waitForMs` | `number` | No | — |
+| `maxAgeMs` | `number \| null` | No | — |
+| `waitForMs` | `number \| null` | No | — |
 | `settleAnimations` | `boolean` | No | — |
 | `stopAfterMs` | `number` | No | — |
 | `timeoutOpts` | `object` | No | — |
@@ -1435,10 +1427,8 @@ await corsair.contextdev.api.web.crawl({});
     publishedTime?: string,
     modifiedTime?: string,
     robots?: string,
-    openGraph?: {
-    },
-    twitter?: {
-    },
+    openGraph?: Record<string, string | string[]>,
+    twitter?: Record<string, string | string[]>,
     alternates?: {
       href: string,
       hreflang?: string,
@@ -1449,10 +1439,8 @@ await corsair.contextdev.api.web.crawl({});
       level: number,
       text: string
     }[],
-    jsonLd?: {
-    }[],
-    additionalMeta?: {
-    },
+    jsonLd?: Record<string, any>[],
+    additionalMeta?: Record<string, string | string[]>,
     sourceUrl: string,
     finalUrl: string,
     url: string,
@@ -1519,17 +1507,17 @@ await corsair.contextdev.api.web.extract({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `schema` | `object` | Yes | — |
+| `schema` | `Record<string, any>` | Yes | — |
 | `instructions` | `string` | No | — |
 | `factCheck` | `boolean` | No | — |
 | `maxPages` | `number` | No | — |
 | `pdf` | `object` | No | — |
-| `actions` | `object[]` | No | — |
+| `actions` | `object[] \| null` | No | — |
 | `maxDepth` | `number` | No | — |
 | `followSubdomains` | `boolean` | No | — |
 | `includeFrames` | `boolean` | No | — |
-| `maxAgeMs` | `number` | No | — |
-| `waitForMs` | `number` | No | — |
+| `maxAgeMs` | `number \| null` | No | — |
+| `waitForMs` | `number \| null` | No | — |
 | `settleAnimations` | `boolean` | No | — |
 | `stopAfterMs` | `number` | No | — |
 | `timeoutOpts` | `object` | No | — |
@@ -1537,14 +1525,6 @@ await corsair.contextdev.api.web.extract({});
 | `tags` | `string[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="pdf full type">
 
 ```ts
@@ -1573,7 +1553,7 @@ await corsair.contextdev.api.web.extract({});
     container?: string,
     maxScrolls?: number
   }
-)[]
+)[] | null
 ```
 </Accordion>
 
@@ -1598,21 +1578,13 @@ await corsair.contextdev.api.web.extract({});
 | `status` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `urls_analyzed` | `string[]` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `metadata` | `object` | Yes | — |
 | `cache_metadata` | `object` | Yes | — |
 | `key_metadata` | `object` | No | — |
 | `request_id` | `string` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="metadata full type">
 
 ```ts
@@ -1742,7 +1714,7 @@ await corsair.contextdev.api.web.scrape({});
 
 ```ts
 {
-  enrich?: dimensions | classification | file[],
+  enrich?: (dimensions | classification | file)[],
   dedupe?: none | visual
 }
 ```
@@ -1762,8 +1734,7 @@ await corsair.contextdev.api.web.scrape({});
 
 ```ts
 {
-  schema: {
-  },
+  schema: Record<string, any>,
   instructions?: string
 }
 ```
@@ -1774,7 +1745,11 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   type?: custom,
-  rules: lazy
+  rules: Record<string, string | {
+    selector: string,
+    type?: item | list,
+    output?: string | (recursive)
+  }>
 } | {
   type: prebuilt,
   parser: google-maps | google-play | google-play-reviews | app-store | app-store-reviews | emails | phone-numbers | links
@@ -1796,8 +1771,7 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   country?: string,
-  headers?: {
-  },
+  headers?: Record<string, string>,
   viewport?: {
     width?: number,
     height?: number
@@ -1875,7 +1849,7 @@ await corsair.contextdev.api.web.scrape({});
 | `highlights` | `object` | Yes | — |
 | `json` | `object` | Yes | — |
 | `product` | `object` | Yes | — |
-| `profile` | `object` | No | — |
+| `profile` | `object \| null` | Yes | — |
 | `isPartial` | `true` | No | — |
 | `metadata` | `object` | Yes | — |
 | `cache_metadata` | `object` | Yes | — |
@@ -1888,8 +1862,8 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   requested: boolean,
-  success?: boolean | null,
-  data?: string | null,
+  success: boolean | null,
+  data: string | null,
   error_code?: string,
   message?: string
 }
@@ -1901,8 +1875,8 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   requested: boolean,
-  success?: boolean | null,
-  data?: string | null,
+  success: boolean | null,
+  data: string | null,
   error_code?: string,
   message?: string
 }
@@ -1914,8 +1888,8 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   requested: boolean,
-  success?: boolean | null,
-  data?: string | null,
+  success: boolean | null,
+  data: string | null,
   error_code?: string,
   message?: string
 }
@@ -1927,10 +1901,10 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   requested: boolean,
-  success?: boolean | null,
-  data?: {
+  success: boolean | null,
+  data: {
     url: string,
-    alt?: string | null,
+    alt: string | null,
     width?: number,
     height?: number,
     classification?: photography | illustration | logo | wordmark | icon | pattern | graphic | other,
@@ -1947,8 +1921,8 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   requested: boolean,
-  success?: boolean | null,
-  data?: {
+  success: boolean | null,
+  data: {
     contentType: string,
     base64: string
   } | null,
@@ -1963,9 +1937,8 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   requested: boolean,
-  success?: boolean | null,
-  data?: {
-  } | null,
+  success: boolean | null,
+  data: Record<string, any> | null,
   error_code?: string,
   message?: string,
   type: google-maps | google-play | google-play-reviews | app-store | app-store-reviews | emails | phone-numbers | links | custom
@@ -1978,8 +1951,8 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   requested: boolean,
-  success?: boolean | null,
-  data?: string[] | null,
+  success: boolean | null,
+  data: string[] | null,
   error_code?: string,
   message?: string
 }
@@ -1991,9 +1964,8 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   requested: boolean,
-  success?: boolean | null,
-  data?: {
-  } | null,
+  success: boolean | null,
+  data: Record<string, any> | null,
   error_code?: string,
   message?: string,
   isTruncated?: true
@@ -2006,30 +1978,29 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   requested: boolean,
-  success?: boolean | null,
-  data?: {
+  success: boolean | null,
+  data: {
     isProductPage: boolean,
-    product?: {
+    product: {
       name: string,
-      description?: string | null,
-      brand?: string | null,
-      sku?: string | null,
-      price?: number | null,
-      regularPrice?: number | null,
-      currency?: string | null,
-      availability?: in_stock | out_of_stock | limited_availability | preorder | backorder | made_to_order | discontinued | null,
-      category?: string | null,
-      imageUrl?: string | null,
+      description: string | null,
+      brand: string | null,
+      sku: string | null,
+      price: number | null,
+      regularPrice: number | null,
+      currency: string | null,
+      availability: in_stock | out_of_stock | limited_availability | preorder | backorder | made_to_order | discontinued | null,
+      category: string | null,
+      imageUrl: string | null,
       images: string[],
       dimensions: string[],
       features: string[],
       targetAudience: string[],
       tags: string[],
       variants: {
-        sku?: string | null,
-        attributes: {
-        },
-        url?: string | null,
+        sku: string | null,
+        attributes: Record<string, string>,
+        url: string | null,
         images: string[]
       }[]
     } | null
@@ -2045,7 +2016,7 @@ await corsair.contextdev.api.web.scrape({});
 ```ts
 {
   id: string
-}
+} | null
 ```
 </Accordion>
 
@@ -2065,10 +2036,8 @@ await corsair.contextdev.api.web.scrape({});
   publishedTime?: string,
   modifiedTime?: string,
   robots?: string,
-  openGraph?: {
-  },
-  twitter?: {
-  },
+  openGraph?: Record<string, string | string[]>,
+  twitter?: Record<string, string | string[]>,
   alternates?: {
     href: string,
     hreflang?: string,
@@ -2079,10 +2048,8 @@ await corsair.contextdev.api.web.scrape({});
     level: number,
     text: string
   }[],
-  jsonLd?: {
-  }[],
-  additionalMeta?: {
-  }
+  jsonLd?: Record<string, any>[],
+  additionalMeta?: Record<string, string | string[]>
 }
 ```
 </Accordion>
@@ -2135,9 +2102,9 @@ await corsair.contextdev.api.web.search({});
 | `freshness` | `last_24_hours \| last_week \| last_month \| last_year` | No | — |
 | `country` | `string` | No | — |
 | `queryFanout` | `boolean` | No | — |
-| `markdownOptions` | `object` | No | — |
-| `highlightsOptions` | `object` | No | — |
-| `descriptionMaxCharacters` | `number` | No | — |
+| `markdownOptions` | `object \| null` | No | — |
+| `highlightsOptions` | `object \| null` | No | — |
+| `descriptionMaxCharacters` | `number \| null` | No | — |
 | `timeoutOpts` | `object` | No | — |
 | `zdr` | `enabled \| disabled` | No | — |
 | `tags` | `string[]` | No | — |
@@ -2164,7 +2131,7 @@ await corsair.contextdev.api.web.search({});
     milliseconds: number,
     behavior?: fail | return-partial
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -2174,7 +2141,7 @@ await corsair.contextdev.api.web.search({});
 {
   enabled?: boolean,
   maxCharacters?: number
-}
+} | null
 ```
 </Accordion>
 
@@ -2213,11 +2180,11 @@ await corsair.contextdev.api.web.search({});
   relevance: high | medium | low,
   markdown: {
     finalDOMState?: loaded | still-loading,
-    markdown?: string | null,
+    markdown: string | null,
     code: SUCCESS | NOT_REQUESTED | TIMEOUT | CONTENT_TOO_LARGE | WEBSITE_ACCESS_ERROR | WEBSITE_BLOCKED | ERROR
   },
   highlights: {
-    highlights?: string[] | null,
+    highlights: string[] | null,
     code: SUCCESS | NOT_REQUESTED | TIMEOUT | CONTENT_TOO_LARGE | WEBSITE_ACCESS_ERROR | WEBSITE_BLOCKED | ERROR
   }
 }[]
@@ -2266,7 +2233,7 @@ await corsair.contextdev.api.web.urls({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `domain` | `string` | Yes | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `includeSubdomains` | `boolean` | No | — |
 | `maxLinks` | `number` | No | — |
 | `sitemapUrl` | `string` | No | — |
@@ -2277,14 +2244,6 @@ await corsair.contextdev.api.web.urls({});
 | `tags` | `string[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="timeoutOpts full type">
 
 ```ts

@@ -467,7 +467,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, message?: string, created_time?: string, from?: { id?: string, username?: string }, attachments?: { data?: { id?: string, mime_type?: string, name?: string, image_data?: {}, video_data?: {}, file_url?: string }[] } }[]",
+            "type": "{ id: string, message?: string, created_time?: string, from?: { id?: string, username?: string }, attachments?: { data?: { id?: string, mime_type?: string, name?: string, image_data?: Record<string, any>, video_data?: Record<string, any>, file_url?: string }[] } }[]",
             "description": "The list of messages contained within the specified conversation."
           }
         ]
@@ -784,13 +784,13 @@
           {
             "key": "media_url",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "The URL of the media asset. May be null or unavailable for certain media types."
           },
           {
             "key": "thumbnail_url",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "The URL of the media thumbnail image, typically available for videos and reels."
           },
           {
@@ -838,13 +838,13 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date",
+            "type": "Date | null",
             "description": "The date and time when this record was created in the local system."
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date",
+            "type": "Date | null",
             "description": "The date and time when this record was last updated in the local system."
           }
         ]
@@ -884,7 +884,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ name: string, period?: string, title?: string, description?: string, id?: string, values?: { value: number | string | {}, end_time?: string }[] }[]",
+            "type": "{ name: string, period?: string, title?: string, description?: string, id?: string, values?: { value: number | string | Record<string, any>, end_time?: string }[] }[]",
             "description": "A collection of insight metrics and values returned for the requested Instagram media."
           }
         ]
@@ -1034,7 +1034,7 @@
           {
             "key": "attachments",
             "optional": true,
-            "type": "{ data?: { id?: string, mime_type?: string, name?: string, image_data?: {}, video_data?: {}, file_url?: string }[] }",
+            "type": "{ data?: { id?: string, mime_type?: string, name?: string, image_data?: Record<string, any>, video_data?: Record<string, any>, file_url?: string }[] }",
             "description": "Attachment data associated with the message, such as images, videos, files, or other media."
           }
         ]
@@ -1097,7 +1097,7 @@
           {
             "key": "message",
             "optional": false,
-            "type": "{ text?: string, attachment?: { type: image | video | audio | file | template, payload: {} }, attachments?: { type: image | video | audio | file | template, payload: {} }[], quick_replies?: { content_type: text, title: string, payload: string }[] }",
+            "type": "{ text?: string, attachment?: { type: image | video | audio | file | template, payload: Record<string, any> }, attachments?: { type: image | video | audio | file | template, payload: Record<string, any> }[], quick_replies?: { content_type: text, title: string, payload: string }[] }",
             "description": "The message content, including text, attachments, and optional quick replies."
           },
           {
@@ -1195,7 +1195,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "persistent_menu | ice_breakers[]",
+            "type": "(persistent_menu | ice_breakers)[]",
             "description": "The Instagram Messenger Profile fields to delete."
           }
         ]
@@ -1229,7 +1229,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "persistent_menu | ice_breakers[]",
+            "type": "(persistent_menu | ice_breakers)[]",
             "description": "Instagram Messenger Profile fields to query."
           }
         ]
@@ -1356,17 +1356,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "biography",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profile_picture_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "followers_count",
@@ -1386,17 +1386,17 @@
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           }
         ]
       }
@@ -1465,7 +1465,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ name: string, period?: string, title?: string, description?: string, id?: string, values?: { value: number | string | {}, end_time?: string }[] }[]",
+            "type": "{ name: string, period?: string, title?: string, description?: string, id?: string, values?: { value: number | string | Record<string, any>, end_time?: string }[] }[]",
             "description": "A collection of insight metrics and values returned for the requested Instagram media."
           }
         ]

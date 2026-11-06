@@ -1,0 +1,214 @@
+{
+  "id": "enigma",
+  "displayName": "Enigma",
+  "description": "Business data from Enigma's small business graph - match brands by name, website, phone or a natural-language prompt, read brand details with paged operating locations and legal entities, match operating locations, and look up legal entities with their registered entities.",
+  "npmPackageName": "@corsair-dev/enigma",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "enigma.api.brands.get",
+      "shortPath": "brands.get",
+      "description": "Get a brand by ID with its operating locations (paged by cursor) and legal entities, each location with its address, operating status and 12-month card revenue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The brand ID from a brands.match call."
+          },
+          {
+            "key": "locationsFirst",
+            "optional": true,
+            "type": "number",
+            "description": "Page size for the operating locations list. Defaults to 10."
+          },
+          {
+            "key": "locationsAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous operating locations page."
+          },
+          {
+            "key": "legalEntitiesFirst",
+            "optional": true,
+            "type": "number",
+            "description": "Page size for the legal entities list. Defaults to 5."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "{ id: string, enigmaId?: string | null, names: string[], websites: string[], industries: { industryCode?: string | null, industryDesc?: string | null, industryType?: string | null }[], cardRevenue12m?: { quantityType?: string | null, period?: string | null, projectedQuantity?: number | null, periodStartDate?: string | null, periodEndDate?: string | null } | null, operatingLocations: { items: { id: string, names: string[], address?: { fullAddress?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, state?: string | null, zip?: string | null, county?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null } | null, operatingStatus?: string | null, cardRevenue12m?: { quantityType?: string | null, period?: string | null, projectedQuantity?: number | null, periodStartDate?: string | null, periodEndDate?: string | null } | null }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } }, legalEntities: { items: { id: string, enigmaId?: string | null, names: string[], legalEntityType?: string | null, registeredEntities: { name?: string | null, registeredEntityType?: string | null, formationDate?: string | null }[] }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } } } | null",
+            "description": "`null` when nothing matched."
+          }
+        ]
+      }
+    },
+    {
+      "path": "enigma.api.brands.match",
+      "shortPath": "brands.match",
+      "description": "Match a business by name, website, phone number or a natural-language prompt, with an optional address and confidence threshold; returns the best-matching brand with its industries, location count and 12-month card revenue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Business name to match."
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string",
+            "description": "Website to match, any format."
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string",
+            "description": "Phone number to match, 10-digit US number."
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string",
+            "description": "Natural-language business description; cannot be combined with name, website, phoneNumber or address."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ street1?: string, street2?: string, city?: string, state?: string, postalCode?: string }",
+            "description": "Address to narrow the match."
+          },
+          {
+            "key": "matchThreshold",
+            "optional": true,
+            "type": "number",
+            "description": "Confidence threshold between 0.0 and 1.0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brand",
+            "optional": true,
+            "type": "{ id: string, enigmaId?: string | null, names: string[], websites: string[], industries: { industryCode?: string | null, industryDesc?: string | null, industryType?: string | null }[], operatingLocationCount?: number | null, cardRevenue12m?: { quantityType?: string | null, period?: string | null, projectedQuantity?: number | null, periodStartDate?: string | null, periodEndDate?: string | null } | null } | null",
+            "description": "`null` when nothing matched."
+          }
+        ]
+      }
+    },
+    {
+      "path": "enigma.api.legalEntities.get",
+      "shortPath": "legalEntities.get",
+      "description": "Get a legal entity by ID or name, with its registered entities, formation dates, addresses and brands; each list returns up to three entries with a pageInfo flag when more exist",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "The legal entity ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Legal entity name to match instead of an ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "legalEntity",
+            "optional": true,
+            "type": "{ id: string, enigmaId?: string | null, names: string[], legalEntityType?: string | null, registeredEntities: { items: { name?: string | null, registeredEntityType?: string | null, formationDate?: string | null }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } }, addresses: { items: { fullAddress?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, state?: string | null, zip?: string | null, county?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } }, brands: { items: { id: string, enigmaId?: string | null, names: string[] }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } } } | null",
+            "description": "`null` when nothing matched."
+          }
+        ]
+      }
+    },
+    {
+      "path": "enigma.api.locations.match",
+      "shortPath": "locations.match",
+      "description": "Match a business location by name, address, website or phone number; returns the address, phone numbers, operating status and parent brands",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Business name to match."
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string",
+            "description": "Website to match."
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string",
+            "description": "Phone number to match, 10-digit US number."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ street1?: string, street2?: string, city?: string, state?: string, postalCode?: string }",
+            "description": "Address to match."
+          },
+          {
+            "key": "matchThreshold",
+            "optional": true,
+            "type": "number",
+            "description": "Confidence threshold between 0.0 and 1.0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ id: string, names: string[], address?: { fullAddress?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, state?: string | null, zip?: string | null, county?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null } | null, phoneNumbers: string[], websites: string[], operatingStatus?: string | null, brands: { id: string, enigmaId?: string | null, names: string[] }[] } | null",
+            "description": "`null` when nothing matched."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

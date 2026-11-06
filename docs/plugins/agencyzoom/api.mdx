@@ -30,26 +30,8 @@ await corsair.agencyzoom.api.auth.logTheUserIn({});
 | `password` | `string` | Yes | — |
 | `username` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -81,40 +63,12 @@ await corsair.agencyzoom.api.auth.logTheUserOut({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -138,26 +92,8 @@ await corsair.agencyzoom.api.auth.v4SsoLogTheUserIn({});
 | `password` | `string` | Yes | — |
 | `username` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -192,40 +128,12 @@ await corsair.agencyzoom.api.contact.batchCreateContact({});
 |------|------|----------|-------------|
 | `contactDataRequests` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -251,40 +159,12 @@ await corsair.agencyzoom.api.customers.createACustomerNote({});
 | `note` | `string` | Yes | — |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -307,40 +187,12 @@ await corsair.agencyzoom.api.customers.deleteACustomer({});
 |------|------|----------|-------------|
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -364,40 +216,12 @@ await corsair.agencyzoom.api.customers.deleteACustomerFile({});
 | `fileId` | `number` | Yes | — |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -421,40 +245,12 @@ await corsair.agencyzoom.api.customers.deleteACustomerPolicy({});
 | `policyId` | `number` | Yes | — |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -477,40 +273,12 @@ await corsair.agencyzoom.api.customers.getAmsPoliciesForACustomer({});
 |------|------|----------|-------------|
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -533,40 +301,12 @@ await corsair.agencyzoom.api.customers.getPoliciesForACustomer({});
 |------|------|----------|-------------|
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -589,26 +329,8 @@ await corsair.agencyzoom.api.customers.getTheCustomerDetails({});
 |------|------|----------|-------------|
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -646,40 +368,12 @@ await corsair.agencyzoom.api.customers.getTheCustomerTasks({});
 |------|------|----------|-------------|
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -706,40 +400,12 @@ await corsair.agencyzoom.api.customers.searchCustomers({});
 | `order` | `string` | No | — |
 | `location` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -786,26 +452,8 @@ await corsair.agencyzoom.api.customers.updateCustomer({});
 | `contactMiddlename` | `string` | No | — |
 | `numberOfEmployees` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -850,40 +498,12 @@ await corsair.agencyzoom.api.emailThreads.deleteMessage({});
 | `order` | `string` | No | — |
 | `location` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -911,40 +531,12 @@ await corsair.agencyzoom.api.emailThreads.deleteThread({});
 | `order` | `string` | No | — |
 | `location` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -975,40 +567,12 @@ await corsair.agencyzoom.api.emailThreads.getThreadDetails({});
 | `status` | `number` | No | — |
 | `lastDateUTC` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1032,40 +596,12 @@ await corsair.agencyzoom.api.emailThreads.markThreadAsUnreadApiEndpoint({});
 | `threadId` | `string` | Yes | — |
 | `markUnread` | `boolean` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1092,40 +628,12 @@ await corsair.agencyzoom.api.emailThreads.searchEmailThreads({});
 | `order` | `string` | No | — |
 | `location` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1150,40 +658,12 @@ await corsair.agencyzoom.api.leads.batchCreateLead({});
 |------|------|----------|-------------|
 | `leadDataRequests` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1217,40 +697,12 @@ await corsair.agencyzoom.api.leads.changeStatusForLead({});
 | `recycleToPipeline` | `number` | No | — |
 | `changeLeadSourceTo` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1274,40 +726,12 @@ await corsair.agencyzoom.api.leads.createALeadNote({});
 | `note` | `string` | Yes | — |
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1335,40 +759,12 @@ await corsair.agencyzoom.api.leads.createALeadOpportunity({});
 | `customFields` | `any[]` | No | — |
 | `productLineId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1396,40 +792,12 @@ await corsair.agencyzoom.api.leads.createALeadQuote({});
 | `customFields` | `any[]` | No | — |
 | `productLineId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1493,40 +861,12 @@ await corsair.agencyzoom.api.leads.createBizLead({});
 | `businessClassification` | `number` | No | — |
 | `yearsOfManagementExperience` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1585,26 +925,8 @@ await corsair.agencyzoom.api.leads.createLead({});
 | `nextExpirationDate` | `string` | No | — |
 | `streetAddressLine2` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1646,40 +968,12 @@ await corsair.agencyzoom.api.leads.deleteALeadFile({});
 | `fileId` | `number` | Yes | — |
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1703,40 +997,12 @@ await corsair.agencyzoom.api.leads.deleteALeadOpportunity({});
 | `leadId` | `number` | Yes | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1760,40 +1026,12 @@ await corsair.agencyzoom.api.leads.deleteALeadQuote({});
 | `leadId` | `number` | Yes | — |
 | `quoteId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1823,40 +1061,12 @@ await corsair.agencyzoom.api.leads.getLeadFiles({});
 | `fileType` | `number` | No | — |
 | `customerReferralId` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1879,40 +1089,12 @@ await corsair.agencyzoom.api.leads.getLeadNotes({});
 |------|------|----------|-------------|
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1935,40 +1117,12 @@ await corsair.agencyzoom.api.leads.getLeadQuotes({});
 |------|------|----------|-------------|
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -1991,40 +1145,12 @@ await corsair.agencyzoom.api.leads.getLeadTasks({});
 |------|------|----------|-------------|
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2047,26 +1173,8 @@ await corsair.agencyzoom.api.leads.getTheLeadDetails({});
 |------|------|----------|-------------|
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2107,40 +1215,12 @@ await corsair.agencyzoom.api.leads.getTheOpportunitiesForALead({});
 |------|------|----------|-------------|
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2165,40 +1245,12 @@ await corsair.agencyzoom.api.leads.moveLeadToSold({});
 | `keepOpen` | `boolean` | No | — |
 | `soldProducts` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2225,26 +1277,8 @@ await corsair.agencyzoom.api.leads.searchLeads({});
 | `order` | `string` | No | — |
 | `location` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2303,40 +1337,12 @@ await corsair.agencyzoom.api.leads.searchLeadsCount({});
 | `order` | `string` | No | — |
 | `location` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2362,40 +1368,12 @@ await corsair.agencyzoom.api.leads.updateALeadFileName({});
 | `newFileName` | `string` | Yes | — |
 | `customerReferralId` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2424,40 +1402,12 @@ await corsair.agencyzoom.api.leads.updateALeadOpportunity({});
 | `customFields` | `any[]` | No | — |
 | `productLineId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2486,40 +1436,12 @@ await corsair.agencyzoom.api.leads.updateALeadQuote({});
 | `customFields` | `any[]` | No | — |
 | `productLineId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2584,40 +1506,12 @@ await corsair.agencyzoom.api.leads.updateBusinessLead({});
 | `businessClassification` | `number` | No | — |
 | `yearsOfManagementExperience` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2677,26 +1571,8 @@ await corsair.agencyzoom.api.leads.updateLead({});
 | `nextExpirationDate` | `string` | No | — |
 | `streetAddressLine2` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2748,40 +1624,12 @@ await corsair.agencyzoom.api.leads.updateLeadStatusById({});
 | `recycleToPipeline` | `number` | No | — |
 | `changeLeadSourceTo` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2810,40 +1658,12 @@ await corsair.agencyzoom.api.life.searchLifeAndHealthLeads({});
 | `order` | `string` | No | — |
 | `location` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2877,40 +1697,12 @@ await corsair.agencyzoom.api.opportunities.createADriverForAnOpportunity({});
 | `opportunityId` | `number` | Yes | — |
 | `stateLicensed` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -2946,26 +1738,8 @@ await corsair.agencyzoom.api.opportunities.createAnOpportunity({});
 | `property__address2` | `string` | No | — |
 | `property__useMailingAddressAsLocation` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3007,40 +1781,12 @@ await corsair.agencyzoom.api.opportunities.createAVehicleForAnOpportunity({});
 | `ownership` | `string` | No | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3063,40 +1809,12 @@ await corsair.agencyzoom.api.opportunities.deleteADriver({});
 |------|------|----------|-------------|
 | `driverId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3119,40 +1837,12 @@ await corsair.agencyzoom.api.opportunities.deleteAnOpportunity({});
 |------|------|----------|-------------|
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3175,40 +1865,12 @@ await corsair.agencyzoom.api.opportunities.deleteAVehicle({});
 |------|------|----------|-------------|
 | `vehicleId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3231,40 +1893,12 @@ await corsair.agencyzoom.api.opportunities.getAListOfDriversForAnOpportunity({})
 |------|------|----------|-------------|
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3287,40 +1921,12 @@ await corsair.agencyzoom.api.opportunities.getAListOfVehiclesForAnOpportunity({}
 |------|------|----------|-------------|
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3343,40 +1949,12 @@ await corsair.agencyzoom.api.opportunities.getTheDriverDetails({});
 |------|------|----------|-------------|
 | `driverId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3399,26 +1977,8 @@ await corsair.agencyzoom.api.opportunities.getTheOpportunityDetails({});
 |------|------|----------|-------------|
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3455,40 +2015,12 @@ await corsair.agencyzoom.api.opportunities.getTheVehicleDetails({});
 |------|------|----------|-------------|
 | `vehicleId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3512,40 +2044,12 @@ await corsair.agencyzoom.api.opportunities.linkADriverToOpportunity({});
 | `driverId` | `number` | Yes | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3569,40 +2073,12 @@ await corsair.agencyzoom.api.opportunities.linkAVehicleToOpportunity({});
 | `vehicleId` | `number` | Yes | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3626,40 +2102,12 @@ await corsair.agencyzoom.api.opportunities.unlinkADriverFromOpportunity({});
 | `driverId` | `number` | Yes | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3683,40 +2131,12 @@ await corsair.agencyzoom.api.opportunities.unlinkAVehicleFromOpportunity({});
 | `vehicleId` | `number` | Yes | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3748,40 +2168,12 @@ await corsair.agencyzoom.api.opportunities.updateADriverSDetails({});
 | `maritalStatus` | `number` | No | — |
 | `stateLicensed` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3817,26 +2209,8 @@ await corsair.agencyzoom.api.opportunities.updateAnOpportunity({});
 | `property__address2` | `string` | No | — |
 | `property__useMailingAddressAsLocation` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3878,40 +2252,12 @@ await corsair.agencyzoom.api.opportunities.updateAVehicleSDetails({});
 | `ownership` | `string` | No | — |
 | `vehicleId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -3955,40 +2301,12 @@ await corsair.agencyzoom.api.policies.updateAPolicy({});
 | `priorPolicyNumber` | `string` | No | — |
 | `productCategoryId` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4013,40 +2331,12 @@ await corsair.agencyzoom.api.policies.updateTagsForAPolicy({});
 | `tagNames` | `string` | Yes | — |
 | `amsPolicyId` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4074,40 +2364,12 @@ await corsair.agencyzoom.api.profile.updateMyProfile({});
 | `lastname` | `string` | Yes | — |
 | `firstname` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4131,40 +2393,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfAssignGroups({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4186,40 +2420,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfCarriers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4241,40 +2447,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfCsrs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4296,40 +2474,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfCustomFields({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4351,40 +2501,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfEmployees({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4406,40 +2528,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfLeadSourceCategories({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4461,40 +2555,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfLeadSources({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4516,40 +2582,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfLifeProfessionals({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4571,40 +2609,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfLocations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4626,40 +2636,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfLossReasons({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4681,40 +2663,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfPipelines({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4736,40 +2690,12 @@ await corsair.agencyzoom.api.referenceData.getAListOfProductLinesPolicyTypes({})
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4792,26 +2718,8 @@ await corsair.agencyzoom.api.referenceData.getAListOfRecycleEvents({});
 |------|------|----------|-------------|
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4844,40 +2752,12 @@ await corsair.agencyzoom.api.referenceData.getDepartmentsGroups({});
 |------|------|----------|-------------|
 | `agencyNumber` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4899,40 +2779,12 @@ await corsair.agencyzoom.api.referenceData.getListOfEndStages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4954,40 +2806,12 @@ await corsair.agencyzoom.api.referenceData.listProductCategories({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5014,40 +2838,12 @@ await corsair.agencyzoom.api.referenceData.searchBusinessClassifications({});
 | `order` | `string` | No | — |
 | `location` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5076,40 +2872,12 @@ await corsair.agencyzoom.api.serviceTickets.serviceTicketList({});
 | `categoryId` | `number` | No | — |
 | `priorityId` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5134,40 +2902,12 @@ await corsair.agencyzoom.api.tasks.batchDeleteTask({});
 |------|------|----------|-------------|
 | `taskIds` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5190,40 +2930,12 @@ await corsair.agencyzoom.api.tasks.completeTask({});
 |------|------|----------|-------------|
 | `taskId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5257,26 +2969,8 @@ await corsair.agencyzoom.api.tasks.createTask({});
 | `timeSpecific` | `boolean` | No | — |
 | `lifeProfessionalId` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5314,40 +3008,12 @@ await corsair.agencyzoom.api.tasks.deleteATask({});
 |------|------|----------|-------------|
 | `taskId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5370,26 +3036,8 @@ await corsair.agencyzoom.api.tasks.getTheTaskDetails({});
 |------|------|----------|-------------|
 | `taskId` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5428,40 +3076,12 @@ await corsair.agencyzoom.api.tasks.reopenATask({});
 | `taskId` | `number` | Yes | — |
 | `comments` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5497,40 +3117,12 @@ await corsair.agencyzoom.api.tasks.searchTasks({});
 | `lifeProfessionalId` | `number` | No | — |
 | `leadSourceCategoryId` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5565,26 +3157,8 @@ await corsair.agencyzoom.api.tasks.updateTask({});
 | `timeSpecific` | `boolean` | No | — |
 | `lifeProfessionalId` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5623,40 +3197,12 @@ await corsair.agencyzoom.api.textThreads.getAListOfProducer({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5684,40 +3230,12 @@ await corsair.agencyzoom.api.textThreads.removeTextThreadEndpoint({});
 | `order` | `string` | No | — |
 | `location` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5744,40 +3262,12 @@ await corsair.agencyzoom.api.textThreads.searchSmsThreads({});
 | `order` | `string` | No | — |
 | `location` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5808,40 +3298,12 @@ await corsair.agencyzoom.api.textThreads.textDetailThread({});
 | `status` | `number` | No | — |
 | `lastDateUTC` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5865,40 +3327,12 @@ await corsair.agencyzoom.api.textThreads.unreadThread({});
 | `threadId` | `string` | Yes | — |
 | `markUnread` | `boolean` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -5923,26 +3357,8 @@ await corsair.agencyzoom.api.v4sso.authenticateForJwtviaV4Sso({});
 |------|------|----------|-------------|
 | `code` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5974,40 +3390,12 @@ await corsair.agencyzoom.api.v4sso.getAuthUrlForV4Sso({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---

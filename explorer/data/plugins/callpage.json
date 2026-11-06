@@ -44,52 +44,52 @@
           {
             "key": "to",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "to_formatted",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "human_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "scheduled_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancelled_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "scheduled_success",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "leadable_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "leadable_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leadable_description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "utm",
@@ -230,7 +230,7 @@
           {
             "key": "business_times",
             "optional": true,
-            "type": "{ day_of_week: number, enabled: boolean, start_time?: string | null, end_time?: string | null }[]"
+            "type": "{ day_of_week: number, enabled: boolean, start_time: string | null, end_time: string | null }[]"
           }
         ]
       },
@@ -326,7 +326,7 @@
           {
             "key": "business_times",
             "optional": true,
-            "type": "{ day_of_week: number, enabled: boolean, timezone?: string | null, start_time?: string | null, end_time?: string | null }[]"
+            "type": "{ day_of_week: number, enabled: boolean, timezone?: string | null, start_time: string | null, end_time: string | null }[]"
           }
         ]
       }
@@ -358,7 +358,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, widget_id?: number, user_id?: number, enabled?: boolean, user?: { id: number, name?: string | null, tel?: string | null, email?: string | null, avatar?: string | null }, departments?: { id: number, name: string }[], business_times?: { day_of_week: number, enabled: boolean, timezone?: string | null, start_time?: string | null, end_time?: string | null }[] }[]"
+        "type": "{ id: number, widget_id?: number, user_id?: number, enabled?: boolean, user?: { id: number, name?: string | null, tel?: string | null, email?: string | null, avatar?: string | null }, departments?: { id: number, name: string }[], business_times?: { day_of_week: number, enabled: boolean, timezone?: string | null, start_time: string | null, end_time: string | null }[] }[]"
       }
     },
     {
@@ -423,7 +423,7 @@
           {
             "key": "business_times",
             "optional": true,
-            "type": "{ day_of_week: number, enabled: boolean, start_time?: string | null, end_time?: string | null }[]"
+            "type": "{ day_of_week: number, enabled: boolean, start_time: string | null, end_time: string | null }[]"
           }
         ]
       },
@@ -677,57 +677,57 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tel",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tel_formatted",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tel_extension",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_online",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parent_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "activated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "{ slug: string }"
+            "type": "{ slug: string } | null"
           },
           {
             "key": "avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "caller_id",
             "optional": true,
-            "type": "{ id?: number, tel?: string | null, activated_at?: string | null, updated_at?: string | null, tel_formatted?: string | null }"
+            "type": "{ id?: number, tel?: string | null, activated_at?: string | null, updated_at?: string | null, tel_formatted?: string | null } | null"
           }
         ]
       }
@@ -951,7 +951,7 @@
           {
             "key": "business_times",
             "optional": true,
-            "type": "{ day_of_week: number, enabled: boolean, start_time?: string | null, end_time?: string | null }[] | { day_of_week: number, enabled: boolean, start_time?: string | null, end_time?: string | null }[][]"
+            "type": "{ day_of_week: number, enabled: boolean, start_time: string | null, end_time: string | null }[] | { day_of_week: number, enabled: boolean, start_time: string | null, end_time: string | null }[][]"
           }
         ]
       },
@@ -1058,7 +1058,7 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "locale_code",
@@ -1139,12 +1139,12 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enabled",
@@ -1154,32 +1154,32 @@
           {
             "key": "locale_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "installation_status",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "installed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "company_sms_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "call_requests_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "managers",
             "optional": true,
-            "type": "{ id: number, widget_id?: number, user_id?: number, enabled?: boolean, user?: { id: number, name?: string | null, tel?: string | null, email?: string | null, avatar?: string | null }, departments?: { id: number, name: string }[], business_times?: { day_of_week: number, enabled: boolean, timezone?: string | null, start_time?: string | null, end_time?: string | null }[] }[]"
+            "type": "{ id: number, widget_id?: number, user_id?: number, enabled?: boolean, user?: { id: number, name?: string | null, tel?: string | null, email?: string | null, avatar?: string | null }, departments?: { id: number, name: string }[], business_times?: { day_of_week: number, enabled: boolean, timezone?: string | null, start_time: string | null, end_time: string | null }[] }[]"
           }
         ]
       }
@@ -1206,7 +1206,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, description?: string | null, url?: string | null, enabled?: boolean, locale_code?: string | null, installation_status?: number | null, installed_at?: string | null, company_sms_name?: string | null, call_requests_count?: number | null, managers?: { id: number, widget_id?: number, user_id?: number, enabled?: boolean, user?: { id: number, name?: string | null, tel?: string | null, email?: string | null, avatar?: string | null }, departments?: { id: number, name: string }[], business_times?: { day_of_week: number, enabled: boolean, timezone?: string | null, start_time?: string | null, end_time?: string | null }[] }[] }[]"
+        "type": "{ id: number, description?: string | null, url?: string | null, enabled?: boolean, locale_code?: string | null, installation_status?: number | null, installed_at?: string | null, company_sms_name?: string | null, call_requests_count?: number | null, managers?: { id: number, widget_id?: number, user_id?: number, enabled?: boolean, user?: { id: number, name?: string | null, tel?: string | null, email?: string | null, avatar?: string | null }, departments?: { id: number, name: string }[], business_times?: { day_of_week: number, enabled: boolean, timezone?: string | null, start_time: string | null, end_time: string | null }[] }[] }[]"
       }
     },
     {
@@ -1235,7 +1235,7 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "locale_code",

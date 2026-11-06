@@ -28,22 +28,12 @@ await corsair.agilitycms.api.content.getApiTypes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
-| `locale` | `string` | Yes | Language locale code |
-| `apiType` | `fetch \| preview` | Yes | API access mode |
+| `locale` | `string` | No | Language locale code. Defaults to "en-us". |
+| `apiType` | `fetch \| preview` | No | API access mode. Defaults to "fetch". |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, string[] \| Record<string, any>>`
 
 
 ---
@@ -66,7 +56,7 @@ await corsair.agilitycms.api.content.getContentModels({});
 |------|------|----------|-------------|
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
-| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+| `apiType` | `fetch \| preview` | No | API access mode: fetch for live, preview for staging. Defaults to "fetch". |
 
 
 
@@ -81,8 +71,7 @@ await corsair.agilitycms.api.content.getContentModels({});
   referenceName?: string | null,
   displayName: string,
   description?: string | null,
-  fields?: {
-  }[]
+  fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -110,7 +99,7 @@ await corsair.agilitycms.api.content.getItem({});
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `contentId` | `number` | Yes | Content item ID to retrieve |
-| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+| `apiType` | `fetch \| preview` | No | API access mode: fetch for live, preview for staging. Defaults to "fetch". |
 | `contentLinkDepth` | `number` | No | Depth of linked content items to expand (0-5) |
 | `expandAllContentLinks` | `boolean` | No | Whether to automatically expand all nested content links |
 
@@ -122,7 +111,7 @@ await corsair.agilitycms.api.content.getItem({});
 |------|------|----------|-------------|
 | `contentID` | `number` | Yes | Unique identifier for the content item |
 | `properties` | `object` | No | System metadata properties |
-| `fields` | `object` | Yes | Dynamic content fields key-value dictionary |
+| `fields` | `Record<string, any>` | Yes | Dynamic content fields key-value dictionary |
 
 <AccordionGroup>
 <Accordion title="properties full type">
@@ -135,14 +124,6 @@ await corsair.agilitycms.api.content.getItem({});
   referenceName?: string,
   definitionName?: string,
   itemOrder?: number
-}
-```
-</Accordion>
-
-<Accordion title="fields full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -171,7 +152,7 @@ await corsair.agilitycms.api.content.getList({});
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `referenceName` | `string` | Yes | Content list reference name (e.g. posts, authors) |
-| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+| `apiType` | `fetch \| preview` | No | API access mode: fetch for live, preview for staging. Defaults to "fetch". |
 | `contentLinkDepth` | `number` | No | Depth of linked content items to expand (0-5) |
 | `expandAllContentLinks` | `boolean` | No | Whether to automatically expand all nested content links |
 | `take` | `number` | No | Maximum number of items to return (page size) |
@@ -203,8 +184,7 @@ await corsair.agilitycms.api.content.getList({});
     definitionName?: string,
     itemOrder?: number
   },
-  fields: {
-  }
+  fields: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -232,9 +212,9 @@ await corsair.agilitycms.api.content.getLogs({});
 |------|------|----------|-------------|
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
-| `syncToken` | `string` | Yes | Sync token for incremental change sync; use '0' for initial sync |
+| `syncToken` | `string` | No | Sync token for incremental change sync; use '0' for initial sync. Defaults to "0". |
 | `pageSize` | `number` | No | Number of sync items to return per page (max 500) |
-| `apiType` | `fetch \| preview` | Yes | API access mode |
+| `apiType` | `fetch \| preview` | No | API access mode. Defaults to "fetch". |
 
 
 
@@ -259,8 +239,7 @@ await corsair.agilitycms.api.content.getLogs({});
     definitionName?: string,
     itemOrder?: number
   },
-  fields?: {
-  }
+  fields?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -289,7 +268,7 @@ await corsair.agilitycms.api.content.getPage({});
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `pageId` | `number` | Yes | Page ID to retrieve |
-| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+| `apiType` | `fetch \| preview` | No | API access mode: fetch for live, preview for staging. Defaults to "fetch". |
 | `contentLinkDepth` | `number` | No | Depth of linked content items to expand (0-5) |
 | `expandAllContentLinks` | `boolean` | No | Whether to automatically expand all nested content links |
 
@@ -301,12 +280,12 @@ await corsair.agilitycms.api.content.getPage({});
 |------|------|----------|-------------|
 | `pageID` | `number` | Yes | Unique identifier for the page |
 | `name` | `string` | Yes | Page name |
-| `path` | `string` | No | URL path of the page |
+| `path` | `string \| null` | No | URL path of the page |
 | `title` | `string` | Yes | Browser title of the page |
 | `menuText` | `string` | No | Menu label text |
 | `pageType` | `string` | No | Page type (e.g. static, dynamic) |
 | `templateName` | `string` | Yes | Page template layout name |
-| `redirectUrl` | `string` | No | Redirect URL if configured |
+| `redirectUrl` | `string \| null` | No | Redirect URL if configured |
 | `securePage` | `boolean` | No | Whether the page requires authentication |
 | `seo` | `object` | No | SEO and visibility configuration |
 | `zones` | `object` | No | Content zones dictionary mapping zone name to components |
@@ -329,8 +308,10 @@ await corsair.agilitycms.api.content.getPage({});
 <Accordion title="zones full type">
 
 ```ts
-{
-}
+Record<string, {
+  module?: string,
+  item?: Record<string, any>
+}[]>
 ```
 </Accordion>
 
@@ -371,7 +352,7 @@ await corsair.agilitycms.api.content.getPageModules({});
 |------|------|----------|-------------|
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
-| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+| `apiType` | `fetch \| preview` | No | API access mode: fetch for live, preview for staging. Defaults to "fetch". |
 
 
 
@@ -386,8 +367,7 @@ await corsair.agilitycms.api.content.getPageModules({});
   referenceName?: string | null,
   displayName: string,
   description?: string | null,
-  fields?: {
-  }[]
+  fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -415,7 +395,7 @@ await corsair.agilitycms.api.content.getSitemapFlat({});
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `channelName` | `string` | Yes | Digital channel name (e.g. website) |
-| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+| `apiType` | `fetch \| preview` | No | API access mode: fetch for live, preview for staging. Defaults to "fetch". |
 
 
 
@@ -425,8 +405,18 @@ await corsair.agilitycms.api.content.getSitemapFlat({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  pageID: number,
+  title: string,
+  menuText: string,
+  path: string,
+  isFolder?: boolean,
+  redirectUrl?: string | null,
+  visible?: {
+    menu?: boolean,
+    sitemap?: boolean
+  }
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -452,9 +442,9 @@ await corsair.agilitycms.api.content.syncPages({});
 |------|------|----------|-------------|
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
-| `syncToken` | `string` | Yes | Sync token for incremental page sync; use '0' for initial sync |
+| `syncToken` | `string` | No | Sync token for incremental page sync; use '0' for initial sync. Defaults to "0". |
 | `pageSize` | `number` | No | Number of sync pages to return per page (max 500) |
-| `apiType` | `fetch \| preview` | Yes | API access mode |
+| `apiType` | `fetch \| preview` | No | API access mode. Defaults to "fetch". |
 
 
 

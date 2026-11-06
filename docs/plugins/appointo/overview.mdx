@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Appointo plugin for Corsair"
+description: "Appointment scheduling platform. List products, appointments, bookings and subscriptions, check availability, and create, update, reschedule, or cancel bookings."
 ---
 
 Use **Appointo** through Corsair: one client, typed API calls.
@@ -43,6 +43,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -50,7 +51,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -88,19 +89,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`appointments.getAvailability`**
+**List products**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.appointo.api.appointments.getAvailability({});
+await tenant.appointo.api.products.list({});
 ```
 
 
-**`appointments.upsertConfig`**
+**Create a booking**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.appointo.api.appointments.upsertConfig({});
+await tenant.appointo.api.bookings.create({
+	appointment_id: 12345,
+	timestring: '2026-01-15T10:00:00Z',
+	email: 'you@example.com',
+	name: 'Octo Cat',
+});
 ```
 
 

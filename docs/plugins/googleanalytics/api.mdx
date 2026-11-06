@@ -41,7 +41,7 @@ await corsair.googleanalytics.api.accounts.get({});
 | `countryCode` | `string` | No | — |
 | `createTime` | `string` | No | — |
 | `updateTime` | `string` | No | — |
-| `createdAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
 
 
 
@@ -67,17 +67,7 @@ await corsair.googleanalytics.api.accounts.getDataSharingSettings({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -108,18 +98,8 @@ await corsair.googleanalytics.api.accounts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `accounts` | `object[]` | No | — |
+| `accounts` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="accounts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -151,18 +131,8 @@ await corsair.googleanalytics.api.accounts.listSummaries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `accountSummaries` | `object[]` | No | — |
+| `accountSummaries` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="accountSummaries full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -194,18 +164,8 @@ await corsair.googleanalytics.api.accounts.listV1Beta({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `accounts` | `object[]` | No | — |
+| `accounts` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="accounts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -232,17 +192,7 @@ await corsair.googleanalytics.api.accounts.provisionAccountTicket({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -270,17 +220,7 @@ await corsair.googleanalytics.api.audienceExports.create({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -305,17 +245,7 @@ await corsair.googleanalytics.api.audienceExports.get({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -347,18 +277,8 @@ await corsair.googleanalytics.api.audienceExports.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `audienceExports` | `object[]` | No | — |
+| `audienceExports` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="audienceExports full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -386,17 +306,7 @@ await corsair.googleanalytics.api.audienceExports.query({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -424,17 +334,7 @@ await corsair.googleanalytics.api.audienceLists.create({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -459,17 +359,7 @@ await corsair.googleanalytics.api.audienceLists.get({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -501,18 +391,8 @@ await corsair.googleanalytics.api.audienceLists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `audienceLists` | `object[]` | No | — |
+| `audienceLists` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="audienceLists full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -541,17 +421,7 @@ await corsair.googleanalytics.api.audienceLists.query({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -578,17 +448,7 @@ await corsair.googleanalytics.api.audiences.get({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -620,18 +480,8 @@ await corsair.googleanalytics.api.audiences.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `audiences` | `object[]` | No | — |
+| `audiences` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="audiences full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -666,18 +516,8 @@ await corsair.googleanalytics.api.calculatedMetrics.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `calculatedMetrics` | `object[]` | No | — |
+| `calculatedMetrics` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="calculatedMetrics full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -712,18 +552,8 @@ await corsair.googleanalytics.api.channelGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `channelGroups` | `object[]` | No | — |
+| `channelGroups` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="channelGroups full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -758,18 +588,8 @@ await corsair.googleanalytics.api.conversionEvents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `conversionEvents` | `object[]` | No | — |
+| `conversionEvents` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="conversionEvents full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -797,17 +617,7 @@ await corsair.googleanalytics.api.customDimensions.archive({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -833,17 +643,7 @@ await corsair.googleanalytics.api.customDimensions.create({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -868,17 +668,7 @@ await corsair.googleanalytics.api.customDimensions.get({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -910,18 +700,8 @@ await corsair.googleanalytics.api.customDimensions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `customDimensions` | `object[]` | No | — |
+| `customDimensions` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="customDimensions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -950,17 +730,7 @@ await corsair.googleanalytics.api.customMetrics.create({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -992,18 +762,8 @@ await corsair.googleanalytics.api.customMetrics.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `customMetrics` | `object[]` | No | — |
+| `customMetrics` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="customMetrics full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1038,18 +798,8 @@ await corsair.googleanalytics.api.dataStreams.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `dataStreams` | `object[]` | No | — |
+| `dataStreams` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="dataStreams full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1082,18 +832,8 @@ await corsair.googleanalytics.api.dataStreams.listEventCreateRules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `eventCreateRules` | `object[]` | No | — |
+| `eventCreateRules` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="eventCreateRules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1126,18 +866,8 @@ await corsair.googleanalytics.api.dataStreams.listMeasurementProtocolSecrets({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `measurementProtocolSecrets` | `object[]` | No | — |
+| `measurementProtocolSecrets` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="measurementProtocolSecrets full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1170,18 +900,8 @@ await corsair.googleanalytics.api.dataStreams.listSKAdNetworkConversionValueSche
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `sKAdNetworkConversionValueSchemas` | `object[]` | No | — |
+| `sKAdNetworkConversionValueSchemas` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="sKAdNetworkConversionValueSchemas full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1210,17 +930,7 @@ await corsair.googleanalytics.api.expandedDataSets.create({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1252,18 +962,8 @@ await corsair.googleanalytics.api.expandedDataSets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `expandedDataSets` | `object[]` | No | — |
+| `expandedDataSets` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="expandedDataSets full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1291,17 +991,7 @@ await corsair.googleanalytics.api.keyEvents.get({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1333,18 +1023,8 @@ await corsair.googleanalytics.api.keyEvents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `keyEvents` | `object[]` | No | — |
+| `keyEvents` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="keyEvents full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1379,18 +1059,8 @@ await corsair.googleanalytics.api.links.listAdSense({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `adSenseLinks` | `object[]` | No | — |
+| `adSenseLinks` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="adSenseLinks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1423,18 +1093,8 @@ await corsair.googleanalytics.api.links.listBigQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bigqueryLinks` | `object[]` | No | — |
+| `bigqueryLinks` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="bigqueryLinks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1467,18 +1127,8 @@ await corsair.googleanalytics.api.links.listDV360Advertiser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `displayVideo360AdvertiserLinks` | `object[]` | No | — |
+| `displayVideo360AdvertiserLinks` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="displayVideo360AdvertiserLinks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1511,18 +1161,8 @@ await corsair.googleanalytics.api.links.listDV360Proposals({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `displayVideo360AdvertiserLinkProposals` | `object[]` | No | — |
+| `displayVideo360AdvertiserLinkProposals` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="displayVideo360AdvertiserLinkProposals full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1555,18 +1195,8 @@ await corsair.googleanalytics.api.links.listFirebase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `firebaseLinks` | `object[]` | No | — |
+| `firebaseLinks` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="firebaseLinks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1599,18 +1229,8 @@ await corsair.googleanalytics.api.links.listGoogleAds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `googleAdsLinks` | `object[]` | No | — |
+| `googleAdsLinks` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="googleAdsLinks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1643,18 +1263,8 @@ await corsair.googleanalytics.api.links.listSearchAds360({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `searchAds360Links` | `object[]` | No | — |
+| `searchAds360Links` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="searchAds360Links full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1685,19 +1295,11 @@ await corsair.googleanalytics.api.measurementProtocol.sendEvents({});
 | `appInstanceId` | `string` | No | — |
 | `userId` | `string` | No | — |
 | `timestampMicros` | `number` | No | — |
-| `userProperties` | `object` | No | — |
+| `userProperties` | `Record<string, any>` | No | — |
 | `consent` | `any` | No | — |
 | `events` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="userProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="events full type">
 
 ```ts
@@ -1711,17 +1313,7 @@ await corsair.googleanalytics.api.measurementProtocol.sendEvents({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1749,19 +1341,11 @@ await corsair.googleanalytics.api.measurementProtocol.validateEvents({});
 | `appInstanceId` | `string` | No | — |
 | `userId` | `string` | No | — |
 | `timestampMicros` | `number` | No | — |
-| `userProperties` | `object` | No | — |
+| `userProperties` | `Record<string, any>` | No | — |
 | `consent` | `any` | No | — |
 | `events` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="userProperties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="events full type">
 
 ```ts
@@ -1775,17 +1359,7 @@ await corsair.googleanalytics.api.measurementProtocol.validateEvents({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1813,17 +1387,7 @@ await corsair.googleanalytics.api.properties.createRollup({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1862,7 +1426,7 @@ await corsair.googleanalytics.api.properties.get({});
 | `account` | `string` | No | — |
 | `createTime` | `string` | No | — |
 | `updateTime` | `string` | No | — |
-| `createdAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
 
 
 
@@ -1888,17 +1452,7 @@ await corsair.googleanalytics.api.properties.getAttributionSettings({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1923,17 +1477,7 @@ await corsair.googleanalytics.api.properties.getDataRetentionSettings({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1958,17 +1502,7 @@ await corsair.googleanalytics.api.properties.getGoogleSignalsSettings({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1993,17 +1527,7 @@ await corsair.googleanalytics.api.properties.getPropertyQuotasSnapshot({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2035,18 +1559,8 @@ await corsair.googleanalytics.api.properties.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `properties` | `object[]` | No | — |
+| `properties` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2079,18 +1593,8 @@ await corsair.googleanalytics.api.properties.listFiltered({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `properties` | `object[]` | No | — |
+| `properties` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2128,17 +1632,7 @@ await corsair.googleanalytics.api.properties.update({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2166,17 +1660,7 @@ await corsair.googleanalytics.api.recurringAudienceLists.create({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2201,17 +1685,7 @@ await corsair.googleanalytics.api.recurringAudienceLists.get({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2243,18 +1717,8 @@ await corsair.googleanalytics.api.recurringAudienceLists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `recurringAudienceLists` | `object[]` | No | — |
+| `recurringAudienceLists` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="recurringAudienceLists full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2289,18 +1753,8 @@ await corsair.googleanalytics.api.reportingData.listAnnotations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `reportingDataAnnotations` | `object[]` | No | — |
+| `reportingDataAnnotations` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="reportingDataAnnotations full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2333,18 +1787,8 @@ await corsair.googleanalytics.api.reportingData.listSubpropertyEventFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `subpropertyEventFilters` | `object[]` | No | — |
+| `subpropertyEventFilters` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="subpropertyEventFilters full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2377,18 +1821,8 @@ await corsair.googleanalytics.api.reportingData.listSubpropertySyncConfigs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `subpropertySyncConfigs` | `object[]` | No | — |
+| `subpropertySyncConfigs` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="subpropertySyncConfigs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2450,17 +1884,7 @@ await corsair.googleanalytics.api.reports.batchRun({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2486,17 +1910,7 @@ await corsair.googleanalytics.api.reports.batchRunPivot({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2564,17 +1978,7 @@ await corsair.googleanalytics.api.reports.checkCompatibility({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2599,17 +2003,7 @@ await corsair.googleanalytics.api.reports.getMetadata({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2680,17 +2074,7 @@ await corsair.googleanalytics.api.reports.run({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2716,17 +2100,7 @@ await corsair.googleanalytics.api.reports.runFunnel({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2795,17 +2169,7 @@ await corsair.googleanalytics.api.reports.runPivot({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2862,17 +2226,7 @@ await corsair.googleanalytics.api.reports.runRealtime({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2900,17 +2254,7 @@ await corsair.googleanalytics.api.reportTasks.create({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2935,17 +2279,7 @@ await corsair.googleanalytics.api.reportTasks.get({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2977,18 +2311,8 @@ await corsair.googleanalytics.api.reportTasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `reportTasks` | `object[]` | No | — |
+| `reportTasks` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="reportTasks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3016,17 +2340,7 @@ await corsair.googleanalytics.api.reportTasks.query({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---

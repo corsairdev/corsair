@@ -133,7 +133,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ content: { id: string, type: string, status?: string, title: string, childTypes?: {}, macroRenderedOutput?: {}, restrictions?: {}, _expandable?: {}, _links?: { webui?: string, self?: string, tinyui?: string } }, title: string, excerpt?: string, url?: string, resultGlobalContainer?: { title: string, displayUrl: string }, breadcrumbs?: any[], entityType?: string, iconCssClass?: string, lastModified?: string, friendlyLastModified?: string, score?: number }[]"
+            "type": "{ content: { id: string, type: string, status?: string, title: string, childTypes?: Record<string, any>, macroRenderedOutput?: Record<string, any>, restrictions?: Record<string, any>, _expandable?: Record<string, string>, _links?: { webui?: string, self?: string, tinyui?: string } }, title: string, excerpt?: string, url?: string, resultGlobalContainer?: { title: string, displayUrl: string }, breadcrumbs?: any[], entityType?: string, iconCssClass?: string, lastModified?: string, friendlyLastModified?: string, score?: number }[]"
           },
           {
             "key": "start",
@@ -230,7 +230,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ id?: string, ari?: string, key: string, alias?: string, name: string, type?: string, status?: string, description?: any, homepage?: any, _expandable?: {}, _links?: {} }[]"
+            "type": "{ id?: string, ari?: string, key: string, alias?: string, name: string, type?: string, status?: string, description?: any, homepage?: any, _expandable?: Record<string, string>, _links?: Record<string, string> }[]"
           },
           {
             "key": "start",
@@ -250,7 +250,7 @@
           {
             "key": "_links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }

@@ -1,7 +1,7 @@
 {
   "id": "countdownapi",
-  "displayName": "CountdownApi",
-  "description": "CountdownApi plugin for Corsair",
+  "displayName": "Countdown API",
+  "description": "eBay data API. Search products, get product details, and fetch search autocomplete suggestions.",
   "npmPackageName": "@corsair-dev/countdownapi",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -33,8 +33,9 @@
           },
           {
             "key": "ebay_domain",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"ebay.com\"."
           }
         ]
       },
@@ -89,8 +90,9 @@
           },
           {
             "key": "ebay_domain",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"ebay.com\"."
           },
           {
             "key": "include_html",
@@ -129,8 +131,9 @@
           },
           {
             "key": "ebay_domain",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"ebay.com\"."
           },
           {
             "key": "page",

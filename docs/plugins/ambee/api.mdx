@@ -502,8 +502,7 @@ await corsair.ambee.api.disasters.getHistoryByContinent({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -523,8 +522,7 @@ await corsair.ambee.api.disasters.getHistoryByContinent({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -586,8 +584,7 @@ await corsair.ambee.api.disasters.getHistoryByCountryCode({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -607,8 +604,7 @@ await corsair.ambee.api.disasters.getHistoryByCountryCode({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -669,8 +665,7 @@ await corsair.ambee.api.disasters.getHistoryByDateRange({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -690,8 +685,7 @@ await corsair.ambee.api.disasters.getHistoryByDateRange({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -754,8 +748,7 @@ await corsair.ambee.api.disasters.getHistoryByLatLng({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -775,8 +768,7 @@ await corsair.ambee.api.disasters.getHistoryByLatLng({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -836,8 +828,7 @@ await corsair.ambee.api.disasters.getLatestByContinent({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -857,8 +848,7 @@ await corsair.ambee.api.disasters.getLatestByContinent({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -918,8 +908,7 @@ await corsair.ambee.api.disasters.getLatestByCountryCode({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -939,8 +928,7 @@ await corsair.ambee.api.disasters.getLatestByCountryCode({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1001,8 +989,7 @@ await corsair.ambee.api.disasters.getLatestByLatLng({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1022,8 +1009,7 @@ await corsair.ambee.api.disasters.getLatestByLatLng({});
   updated_at?: string | number | null,
   severity?: string | number | null,
   source?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1487,8 +1473,7 @@ await corsair.ambee.api.ili.getForecastByLatLng({});
   time?: number | null,
   risk?: string | number | null,
   riskCategory?: string | null,
-  details?: {
-  }
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1559,10 +1544,8 @@ await corsair.ambee.api.pollen.getForecast({});
     tree_pollen?: string | null,
     weed_pollen?: string | null
   },
-  Species?: {
-  },
-  Risks?: {
-  }
+  Species?: Record<string, any>,
+  Risks?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1633,10 +1616,8 @@ await corsair.ambee.api.pollen.getHistory({});
     tree_pollen?: string | null,
     weed_pollen?: string | null
   },
-  Species?: {
-  },
-  Risks?: {
-  }
+  Species?: Record<string, any>,
+  Risks?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1703,10 +1684,8 @@ await corsair.ambee.api.pollen.getLatest({});
     tree_pollen?: string | null,
     weed_pollen?: string | null
   },
-  Species?: {
-  },
-  Risks?: {
-  }
+  Species?: Record<string, any>,
+  Risks?: Record<string, any>
 }[]
 ```
 </Accordion>

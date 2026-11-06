@@ -1,0 +1,1170 @@
+{
+  "id": "enginemailer",
+  "displayName": "Enginemailer",
+  "description": "Manage Enginemailer subscribers, categories and custom fields, build and send email campaigns, and read subscriber activity through Enginemailer's N8N API.",
+  "npmPackageName": "@corsair-dev/enginemailer",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 38,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "enginemailer.api.campaigns.assignRecipientList",
+      "shortPath": "campaigns.assignRecipientList",
+      "description": "Assign a recipient list to a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ CategoryList: number[], FilterType: AND | OR }"
+          },
+          {
+            "key": "FilterBy",
+            "optional": true,
+            "type": "1 | 2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.campaigns.createCampaign",
+      "shortPath": "campaigns.createCampaign",
+      "description": "Create an email campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CampaignName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "SenderName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "SenderEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ReplyTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.campaigns.deleteCampaign",
+      "shortPath": "campaigns.deleteCampaign",
+      "description": "Delete an email campaign",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignid",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.campaigns.deleteRecipientList",
+      "shortPath": "campaigns.deleteRecipientList",
+      "description": "Remove a recipient list from a campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignid",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.campaigns.listCampaigns",
+      "shortPath": "campaigns.listCampaigns",
+      "description": "List campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.campaigns.pauseCampaign",
+      "shortPath": "campaigns.pauseCampaign",
+      "description": "Pause an email campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignid",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.campaigns.sendCampaign",
+      "shortPath": "campaigns.sendCampaign",
+      "description": "Send an email campaign to its recipient list now",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignid",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.campaigns.updateCampaign",
+      "shortPath": "campaigns.updateCampaign",
+      "description": "Update an email campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CampaignName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "SenderName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "SenderEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ReplyTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "CampaignID",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.addOrUpdateSubscriber",
+      "shortPath": "n8n.addOrUpdateSubscriber",
+      "description": "Add or update a subscriber through Enginemailer N8N",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sourcetype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subcategories",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "customfields",
+            "optional": true,
+            "type": "{ customfield_key: string, customfield_value: string | number }[]"
+          },
+          {
+            "key": "updatetype",
+            "optional": true,
+            "type": "Overwrite | Append | Ignore"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.autoresponderCompleted",
+      "shortPath": "n8n.autoresponderCompleted",
+      "description": "List subscribers who completed an autoresponder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastpollingdate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_autoresponder",
+            "optional": true,
+            "type": "number | All"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.autoresponderTriggered",
+      "shortPath": "n8n.autoresponderTriggered",
+      "description": "List subscribers who triggered an autoresponder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastpollingdate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_autoresponder",
+            "optional": true,
+            "type": "number | All"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.connect",
+      "shortPath": "n8n.connect",
+      "description": "Test the Enginemailer N8N connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.deactivateSubscriber",
+      "shortPath": "n8n.deactivateSubscriber",
+      "description": "Unsubscribe a subscriber through Enginemailer N8N",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.deletedSubscribers",
+      "shortPath": "n8n.deletedSubscribers",
+      "description": "List deleted subscribers through Enginemailer N8N",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastpollingdate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.deleteN8nSubscriber",
+      "shortPath": "n8n.deleteN8nSubscriber",
+      "description": "Delete a subscriber through Enginemailer N8N",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.findSubscriber",
+      "shortPath": "n8n.findSubscriber",
+      "description": "Find a subscriber through Enginemailer N8N",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.listForms",
+      "shortPath": "n8n.listForms",
+      "description": "List Enginemailer forms through N8N",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.listPages",
+      "shortPath": "n8n.listPages",
+      "description": "List Enginemailer pages through N8N",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.listPopups",
+      "shortPath": "n8n.listPopups",
+      "description": "List Enginemailer popups through N8N",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.modifiedSubscribers",
+      "shortPath": "n8n.modifiedSubscribers",
+      "description": "List modified subscribers through Enginemailer N8N",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastpollingdate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.newSubscribers",
+      "shortPath": "n8n.newSubscribers",
+      "description": "List new subscribers through Enginemailer N8N",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastpollingdate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "All | API | Form | Import | LandingPage | Manual | Popup | WhatsApp"
+          },
+          {
+            "key": "filter_form",
+            "optional": true,
+            "type": "number | All"
+          },
+          {
+            "key": "filter_page",
+            "optional": true,
+            "type": "number | All"
+          },
+          {
+            "key": "filter_popups",
+            "optional": true,
+            "type": "number | All"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.sendEmail",
+      "shortPath": "n8n.sendEmail",
+      "description": "Send an email through Enginemailer N8N",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "html | template"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "substitution_tags",
+            "optional": true,
+            "type": "{ Key: string, Value: string | number }[]"
+          },
+          {
+            "key": "cc_emails",
+            "optional": true,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.taggedSubscribers",
+      "shortPath": "n8n.taggedSubscribers",
+      "description": "List tagged subscribers through Enginemailer N8N",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastpollingdate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_subcategory",
+            "optional": true,
+            "type": "number | All"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.tagSubscriber",
+      "shortPath": "n8n.tagSubscriber",
+      "description": "Tag a subscriber through Enginemailer N8N",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subcategories",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.unsubscribedSubscribers",
+      "shortPath": "n8n.unsubscribedSubscribers",
+      "description": "List unsubscribed subscribers through Enginemailer N8N",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastpollingdate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "All | Autoresponder | Campaign"
+          },
+          {
+            "key": "filter_autoresponder",
+            "optional": true,
+            "type": "number | All"
+          },
+          {
+            "key": "filter_campaign",
+            "optional": true,
+            "type": "number | All"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.untaggedSubscribers",
+      "shortPath": "n8n.untaggedSubscribers",
+      "description": "List untagged subscribers through Enginemailer N8N",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastpollingdate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_subcategory",
+            "optional": true,
+            "type": "number | All"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[]"
+      }
+    },
+    {
+      "path": "enginemailer.api.n8n.untagSubscriber",
+      "shortPath": "n8n.untagSubscriber",
+      "description": "Remove a tag from a subscriber through Enginemailer N8N",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subcategories",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.activate",
+      "shortPath": "subscribers.activate",
+      "description": "Activate a subscriber",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.batchUpdateStatus",
+      "shortPath": "subscribers.batchUpdateStatus",
+      "description": "Get the status of a batch subscriber update by its job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Status: string, StatusCode: string } | { Result: {} }"
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.batchUpdateSubscribers",
+      "shortPath": "subscribers.batchUpdateSubscribers",
+      "description": "Update subscribers in a batch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ email: string, customfields?: { customfield_key: string, customfield_value: string | number }[] }[]"
+          },
+          {
+            "key": "subcategories",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "sourcetype",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.deleteSubscriber",
+      "shortPath": "subscribers.deleteSubscriber",
+      "description": "Delete a subscriber",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.get",
+      "shortPath": "subscribers.get",
+      "description": "Retrieve a subscriber by email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.getCustomFields",
+      "shortPath": "subscribers.getCustomFields",
+      "description": "List subscriber custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.getSubcategories",
+      "shortPath": "subscribers.getSubcategories",
+      "description": "List subscriber subcategories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeActiveSubscriberCount",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.insert",
+      "shortPath": "subscribers.insert",
+      "description": "Insert a subscriber into Enginemailer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subcategories",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "customfields",
+            "optional": true,
+            "type": "{ customfield_key: string, customfield_value: string | number }[]"
+          },
+          {
+            "key": "sourcetype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subcategories_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customfield_type",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.unsubscribe",
+      "shortPath": "subscribers.unsubscribe",
+      "description": "Unsubscribe a subscriber",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.update",
+      "shortPath": "subscribers.update",
+      "description": "Update a subscriber record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subcategories",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "customfields",
+            "optional": true,
+            "type": "{ customfield_key: string, customfield_value: string | number }[]"
+          },
+          {
+            "key": "sourcetype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subcategories_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customfield_type",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "enginemailer.api.subscribers.updateCategory",
+      "shortPath": "subscribers.updateCategory",
+      "description": "Create or update a subscriber category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categoryID",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "categoryName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isvisible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subcategories",
+            "optional": true,
+            "type": "{ subcategoryID: number, subcategoryName: string, description?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

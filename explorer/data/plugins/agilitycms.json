@@ -34,21 +34,21 @@
           },
           {
             "key": "locale",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Language locale code"
+            "description": "Language locale code. Defaults to \"en-us\"."
           },
           {
             "key": "apiType",
-            "optional": false,
+            "optional": true,
             "type": "fetch | preview",
-            "description": "API access mode"
+            "description": "API access mode. Defaults to \"fetch\"."
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string[] | Record<string, any>>"
       }
     },
     {
@@ -73,15 +73,15 @@
           },
           {
             "key": "apiType",
-            "optional": false,
+            "optional": true,
             "type": "fetch | preview",
-            "description": "API access mode: fetch for live, preview for staging"
+            "description": "API access mode: fetch for live, preview for staging. Defaults to \"fetch\"."
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, referenceName?: string | null, displayName: string, description?: string | null, fields?: {}[] }[]"
+        "type": "{ id: number, referenceName?: string | null, displayName: string, description?: string | null, fields?: Record<string, any>[] }[]"
       }
     },
     {
@@ -112,9 +112,9 @@
           },
           {
             "key": "apiType",
-            "optional": false,
+            "optional": true,
             "type": "fetch | preview",
-            "description": "API access mode: fetch for live, preview for staging"
+            "description": "API access mode: fetch for live, preview for staging. Defaults to \"fetch\"."
           },
           {
             "key": "contentLinkDepth",
@@ -148,7 +148,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Dynamic content fields key-value dictionary"
           }
         ]
@@ -182,9 +182,9 @@
           },
           {
             "key": "apiType",
-            "optional": false,
+            "optional": true,
             "type": "fetch | preview",
-            "description": "API access mode: fetch for live, preview for staging"
+            "description": "API access mode: fetch for live, preview for staging. Defaults to \"fetch\"."
           },
           {
             "key": "contentLinkDepth",
@@ -242,7 +242,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ contentID: number, properties?: { state?: number, modified?: string, versionID?: number, referenceName?: string, definitionName?: string, itemOrder?: number }, fields: {} }[]",
+            "type": "{ contentID: number, properties?: { state?: number, modified?: string, versionID?: number, referenceName?: string, definitionName?: string, itemOrder?: number }, fields: Record<string, any> }[]",
             "description": "Array of retrieved content items"
           }
         ]
@@ -270,9 +270,9 @@
           },
           {
             "key": "syncToken",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Sync token for incremental change sync; use '0' for initial sync"
+            "description": "Sync token for incremental change sync; use '0' for initial sync. Defaults to \"0\"."
           },
           {
             "key": "pageSize",
@@ -282,9 +282,9 @@
           },
           {
             "key": "apiType",
-            "optional": false,
+            "optional": true,
             "type": "fetch | preview",
-            "description": "API access mode"
+            "description": "API access mode. Defaults to \"fetch\"."
           }
         ]
       },
@@ -300,7 +300,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ contentID: number, properties?: { state?: number, modified?: string, versionID?: number, referenceName?: string, definitionName?: string, itemOrder?: number }, fields?: {} }[]",
+            "type": "{ contentID: number, properties?: { state?: number, modified?: string, versionID?: number, referenceName?: string, definitionName?: string, itemOrder?: number }, fields?: Record<string, any> }[]",
             "description": "List of content items created or updated since last sync"
           }
         ]
@@ -334,9 +334,9 @@
           },
           {
             "key": "apiType",
-            "optional": false,
+            "optional": true,
             "type": "fetch | preview",
-            "description": "API access mode: fetch for live, preview for staging"
+            "description": "API access mode: fetch for live, preview for staging. Defaults to \"fetch\"."
           },
           {
             "key": "contentLinkDepth",
@@ -370,7 +370,7 @@
           {
             "key": "path",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "URL path of the page"
           },
           {
@@ -400,7 +400,7 @@
           {
             "key": "redirectUrl",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Redirect URL if configured"
           },
           {
@@ -418,7 +418,7 @@
           {
             "key": "zones",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, { module?: string, item?: Record<string, any> }[]>",
             "description": "Content zones dictionary mapping zone name to components"
           },
           {
@@ -452,15 +452,15 @@
           },
           {
             "key": "apiType",
-            "optional": false,
+            "optional": true,
             "type": "fetch | preview",
-            "description": "API access mode: fetch for live, preview for staging"
+            "description": "API access mode: fetch for live, preview for staging. Defaults to \"fetch\"."
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, referenceName?: string | null, displayName: string, description?: string | null, fields?: {}[] }[]"
+        "type": "{ id: number, referenceName?: string | null, displayName: string, description?: string | null, fields?: Record<string, any>[] }[]"
       }
     },
     {
@@ -491,15 +491,15 @@
           },
           {
             "key": "apiType",
-            "optional": false,
+            "optional": true,
             "type": "fetch | preview",
-            "description": "API access mode: fetch for live, preview for staging"
+            "description": "API access mode: fetch for live, preview for staging. Defaults to \"fetch\"."
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { pageID: number, title: string, menuText: string, path: string, isFolder?: boolean, redirectUrl?: string | null, visible?: { menu?: boolean, sitemap?: boolean } }>"
       }
     },
     {
@@ -524,9 +524,9 @@
           },
           {
             "key": "syncToken",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Sync token for incremental page sync; use '0' for initial sync"
+            "description": "Sync token for incremental page sync; use '0' for initial sync. Defaults to \"0\"."
           },
           {
             "key": "pageSize",
@@ -536,9 +536,9 @@
           },
           {
             "key": "apiType",
-            "optional": false,
+            "optional": true,
             "type": "fetch | preview",
-            "description": "API access mode"
+            "description": "API access mode. Defaults to \"fetch\"."
           }
         ]
       },

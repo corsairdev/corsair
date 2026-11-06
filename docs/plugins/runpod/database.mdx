@@ -28,6 +28,7 @@ const rows = await corsair.runpod.db.clusters.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -81,6 +82,7 @@ const rows = await corsair.runpod.db.pods.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `image` | `string` | equals, contains, startsWith, endsWith, in |
+| `desiredStatus` | `string` | equals, contains, startsWith, endsWith, in |
 | `costPerHr` | `number` | equals, gt, gte, lt, lte, in |
 | `memoryInGb` | `number` | equals, gt, gte, lt, lte, in |
 | `vcpuCount` | `number` | equals, gt, gte, lt, lte, in |

@@ -96,7 +96,7 @@ await corsair.composio.api.connections.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `toolkit_slugs` | `string[]` | No | — |
-| `statuses` | `INITIALIZING \| INITIATED \| ACTIVE \| FAILED \| EXPIRED \| INACTIVE \| REVOKED[]` | No | — |
+| `statuses` | `(INITIALIZING \| INITIATED \| ACTIVE \| FAILED \| EXPIRED \| INACTIVE \| REVOKED)[]` | No | — |
 | `user_ids` | `string[]` | No | — |
 | `auth_config_ids` | `string[]` | No | — |
 | `limit` | `number` | No | — |
@@ -110,7 +110,7 @@ await corsair.composio.api.connections.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `total_pages` | `number` | Yes | — |
 | `current_page` | `number` | Yes | — |
 | `total_items` | `number` | Yes | — |
@@ -188,20 +188,10 @@ await corsair.composio.api.meta.checkActiveConnection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -247,20 +237,10 @@ await corsair.composio.api.meta.checkActiveConnections({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -309,20 +289,10 @@ await corsair.composio.api.meta.createPlan({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -356,8 +326,7 @@ await corsair.composio.api.meta.enableTrigger({});
   connected_account_id: string,
   toolkit_slug: string,
   trigger_name: string,
-  config_params?: {
-  },
+  config_params?: Record<string, JsonValue>,
   user_id?: string
 }
 ```
@@ -370,20 +339,10 @@ await corsair.composio.api.meta.enableTrigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -415,8 +374,7 @@ await corsair.composio.api.meta.executeTool({});
 ```ts
 {
   tool_slug: string,
-  arguments: {
-  },
+  arguments: Record<string, JsonValue>,
   connected_account_id?: string,
   allow_destructive?: boolean
 }
@@ -430,20 +388,10 @@ await corsair.composio.api.meta.executeTool({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -486,20 +434,10 @@ await corsair.composio.api.meta.getDependencyGraph({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -542,20 +480,10 @@ await corsair.composio.api.meta.getRequiredParameters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -598,20 +526,10 @@ await corsair.composio.api.meta.getResponseSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -642,7 +560,7 @@ await corsair.composio.api.meta.getToolSchemas({});
 ```ts
 {
   tool_slugs: string[],
-  include?: input_schema | output_schema[],
+  include?: (input_schema | output_schema)[],
   session_id?: string
 }
 ```
@@ -659,14 +577,12 @@ await corsair.composio.api.meta.getToolSchemas({});
 ```ts
 {
   result_type: completed | failed,
-  data: {
-  },
-  error?: string | null,
+  data: Record<string, JsonValue>,
+  error: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: {
-  },
+  input_requests: Record<string, Record<string, JsonValue>>,
   request_state?: string
 }
 ```
@@ -702,8 +618,7 @@ await corsair.composio.api.meta.initiateConnection({});
 ```ts
 {
   toolkit: string,
-  parameters?: {
-  }
+  parameters?: Record<string, string>
 }
 ```
 </Accordion>
@@ -715,20 +630,10 @@ await corsair.composio.api.meta.initiateConnection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -775,20 +680,10 @@ await corsair.composio.api.meta.listToolkits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -831,20 +726,10 @@ await corsair.composio.api.meta.listTriggers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -892,14 +777,12 @@ await corsair.composio.api.meta.manageConnections({});
 ```ts
 {
   result_type: completed | failed,
-  data: {
-  },
-  error?: string | null,
+  data: Record<string, JsonValue>,
+  error: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: {
-  },
+  input_requests: Record<string, Record<string, JsonValue>>,
   request_state?: string
 }
 ```
@@ -935,12 +818,10 @@ await corsair.composio.api.meta.multiExecuteTool({});
 {
   tools: {
     tool_slug: string,
-    arguments: {
-    }
+    arguments: Record<string, JsonValue>
   }[],
   sync_response_to_workbench: boolean,
-  memory?: {
-  },
+  memory?: Record<string, string[]>,
   thought?: string,
   current_step?: string,
   current_step_metric?: string,
@@ -960,14 +841,12 @@ await corsair.composio.api.meta.multiExecuteTool({});
 ```ts
 {
   result_type: completed | failed,
-  data: {
-  },
-  error?: string | null,
+  data: Record<string, JsonValue>,
+  error: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: {
-  },
+  input_requests: Record<string, Record<string, JsonValue>>,
   request_state?: string
 }
 ```
@@ -1018,14 +897,12 @@ await corsair.composio.api.meta.remoteBashTool({});
 ```ts
 {
   result_type: completed | failed,
-  data: {
-  },
-  error?: string | null,
+  data: Record<string, JsonValue>,
+  error: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: {
-  },
+  input_requests: Record<string, Record<string, JsonValue>>,
   request_state?: string
 }
 ```
@@ -1079,14 +956,12 @@ await corsair.composio.api.meta.remoteWorkbench({});
 ```ts
 {
   result_type: completed | failed,
-  data: {
-  },
-  error?: string | null,
+  data: Record<string, JsonValue>,
+  error: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: {
-  },
+  input_requests: Record<string, Record<string, JsonValue>>,
   request_state?: string
 }
 ```
@@ -1146,14 +1021,12 @@ await corsair.composio.api.meta.searchTools({});
 ```ts
 {
   result_type: completed | failed,
-  data: {
-  },
-  error?: string | null,
+  data: Record<string, JsonValue>,
+  error: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: {
-  },
+  input_requests: Record<string, Record<string, JsonValue>>,
   request_state?: string
 }
 ```
@@ -1202,20 +1075,10 @@ await corsair.composio.api.meta.waitForConnection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1263,14 +1126,12 @@ await corsair.composio.api.meta.waitForConnections({});
 ```ts
 {
   result_type: completed | failed,
-  data: {
-  },
-  error?: string | null,
+  data: Record<string, JsonValue>,
+  error: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: {
-  },
+  input_requests: Record<string, Record<string, JsonValue>>,
   request_state?: string
 }
 ```
@@ -1385,7 +1246,7 @@ await corsair.composio.api.toolkits.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `total_pages` | `number` | Yes | — |
 | `current_page` | `number` | Yes | — |
 | `total_items` | `number` | Yes | — |
@@ -1445,20 +1306,10 @@ await corsair.composio.api.tools.execute({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `tool_slug` | `string` | Yes | — |
-| `arguments` | `object` | Yes | Arguments the tool takes |
+| `arguments` | `Record<string, JsonValue>` | Yes | Arguments the tool takes |
 | `connected_account_id` | `string` | No | — |
 | `user_id` | `string` | No | — |
 | `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
-
-<AccordionGroup>
-<Accordion title="arguments full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1466,20 +1317,10 @@ await corsair.composio.api.tools.execute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `error` | `string` | No | — |
+| `data` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string \| null` | Yes | — |
 | `successful` | `boolean` | Yes | — |
 | `log_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1514,8 +1355,8 @@ await corsair.composio.api.tools.get({});
 | `name` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
 | `toolkit` | `object` | Yes | — |
-| `input_parameters` | `object` | Yes | JSON object mapping string keys to JSON values |
-| `output_parameters` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `input_parameters` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
+| `output_parameters` | `Record<string, JsonValue>` | Yes | JSON object mapping string keys to JSON values |
 | `no_auth` | `boolean` | Yes | — |
 | `version` | `string` | Yes | — |
 | `available_versions` | `string[]` | Yes | — |
@@ -1532,22 +1373,6 @@ await corsair.composio.api.tools.get({});
   slug: string,
   name: string,
   logo?: string
-}
-```
-</Accordion>
-
-<Accordion title="input_parameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="output_parameters full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1589,7 +1414,7 @@ await corsair.composio.api.tools.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `total_pages` | `number` | Yes | — |
 | `current_page` | `number` | Yes | — |
 | `total_items` | `number` | Yes | — |
@@ -1607,10 +1432,8 @@ await corsair.composio.api.tools.list({});
     name: string,
     logo?: string
   },
-  input_parameters: {
-  },
-  output_parameters: {
-  },
+  input_parameters: Record<string, JsonValue>,
+  output_parameters: Record<string, JsonValue>,
   no_auth: boolean,
   version: string,
   available_versions: string[],

@@ -1,0 +1,475 @@
+---
+title: API
+description: "API reference for Woodpecker Co: every `woodpeckerco.api.*` operation with input and output types."
+---
+
+Every `woodpeckerco.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaigns
+
+### deleteStep
+
+`campaigns.deleteStep`
+
+Permanently delete an unused EMAIL or LINKEDIN step that is not the first step; the campaign must be DRAFT or EDITED
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woodpeckerco.api.campaigns.deleteStep({ campaign_id: 1234567, step_id: '36c4fb2c-6f4f-45bf-aeae-4903501193hd' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `number` | Yes | The campaign, in DRAFT or EDITED status. |
+| `step_id` | `string \| number` | Yes | The EMAIL or LINKEDIN step's `id` from the campaign's `steps`. It cannot be the first step after START or a step that has processed prospects. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `campaign_id` | `number` | Yes | — |
+| `step_id` | `string \| number` | Yes | — |
+| `campaign` | `object` | No | The campaign as it stands after the deletion. |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  status?: string | null,
+  bounce_shield_autopaused_at?: string | null,
+  email_account_ids?: number[] | null,
+  settings?: Record<string, any> | null,
+  steps?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns, optionally filtered by status or ID; asking for exactly one ID also returns its statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.woodpeckerco.api.campaigns.list({ status: ['RUNNING', 'PAUSED'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `(RUNNING \| DRAFT \| EDITED \| PAUSED \| STOPPED \| COMPLETED)[]` | No | Only campaigns in these statuses. |
+| `id` | `number[]` | No | Only these campaigns. Exactly one ID also returns its `stats`; several return the plain list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  status?: string | null,
+  created?: string | null,
+  from_name?: string | null,
+  from_names?: string[] | null,
+  from_email?: string | null,
+  from_emails?: string[] | null,
+  gdpr_unsubscribe?: boolean | null,
+  folder_name?: string | null,
+  folder_id?: number | null,
+  per_day?: number | null,
+  bcc?: string | null,
+  cc?: string | null,
+  stats?: {
+    prospects?: number | null,
+    delivery?: number | null,
+    invalid?: number | null,
+    bounced?: number | null,
+    queue?: number | null,
+    sent?: number | null,
+    check?: number | null,
+    autoreplied?: number | null,
+    opened?: number | null,
+    optout?: number | null,
+    clicked?: number | null,
+    replied?: number | null,
+    interested?: number | null,
+    maybe_later?: number | null,
+    not_interested?: number | null,
+    emails?: Record<string, any>[] | null
+  } | null,
+  timestamp?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`campaigns.pause`
+
+Pause a campaign: no further contact with prospects until it is run again
+
+**Risk:** `write`
+
+```ts
+await corsair.woodpeckerco.api.campaigns.pause({ campaign_id: 1234567 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `number` | Yes | The campaign to change. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `campaign_id` | `number` | Yes | — |
+
+
+
+---
+
+### run
+
+`campaigns.run`
+
+Start or resume a campaign: it becomes RUNNING and Woodpecker starts contacting its prospects
+
+**Risk:** `write`
+
+```ts
+await corsair.woodpeckerco.api.campaigns.run({ campaign_id: 1234567 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `number` | Yes | The campaign to change. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `campaign_id` | `number` | Yes | — |
+
+
+
+---
+
+### stop
+
+`campaigns.stop`
+
+Stop a campaign: no further contact with prospects until it is run again
+
+**Risk:** `write`
+
+```ts
+await corsair.woodpeckerco.api.campaigns.stop({ campaign_id: 1234567 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `number` | Yes | The campaign to change. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `campaign_id` | `number` | Yes | — |
+
+
+
+---
+
+## Prospects
+
+### addToCampaign
+
+`prospects.addToCampaign`
+
+Add up to 20,000 prospects to a campaign, also creating them in the global list; each result says if that prospect was a duplicate or rejected
+
+**Risk:** `write`
+
+```ts
+await corsair.woodpeckerco.api.prospects.addToCampaign({ campaign: { campaign_id: 1234567 }, prospects: [{ email: 'jordan@acme-logistics.com', first_name: 'Jordan', snippet1: 'Saw your talk in Austin' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+| `force` | `boolean` | No | Add prospects whose global status is not ACTIVE. Use with caution: they may be contacted again even after replying elsewhere or opting out. |
+| `file_name` | `string` | No | Name of the import batch, shown in the imported column. |
+| `prospects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  campaign_id: number,
+  send_after?: string
+}
+```
+</Accordion>
+
+<Accordion title="prospects full type">
+
+```ts
+{
+  email: string,
+  status?: ACTIVE | PAUSED | TO-REVIEW | TO-CHECK | BLACKLIST | BOUNCED | INVALID | REPLIED,
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  website?: string,
+  linkedin_url?: string,
+  tags?: string,
+  title?: string,
+  phone?: string,
+  address?: string,
+  city?: string,
+  state?: string,
+  country?: string,
+  industry?: string,
+  snippet1?: string,
+  snippet2?: string,
+  snippet3?: string,
+  snippet4?: string,
+  snippet5?: string,
+  snippet6?: string,
+  snippet7?: string,
+  snippet8?: string,
+  snippet9?: string,
+  snippet10?: string,
+  snippet11?: string,
+  snippet12?: string,
+  snippet13?: string,
+  snippet14?: string,
+  snippet15?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prospects` | `object[]` | Yes | — |
+| `status` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="prospects full type">
+
+```ts
+{
+  email?: string | null,
+  id?: number | null,
+  prospect?: string | null,
+  prospect_campaign?: string | null,
+  status?: string | null,
+  code?: string | null,
+  msg?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  status?: string | null,
+  code?: string | null,
+  msg?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listInCampaigns
+
+`prospects.listInCampaigns`
+
+List the prospects in one or more campaigns with their campaign status and interest level, with filters, sorting and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.woodpeckerco.api.prospects.listInCampaigns({ campaigns_id: [1234567], status: 'REPLIED', sort: '-updated', per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns_id` | `number[]` | Yes | The campaigns to read prospects from. |
+| `id` | `number[]` | No | Only these prospects. |
+| `status` | `ACTIVE \| BOUNCED \| TO-CHECK \| TO-REVIEW \| REPLIED \| AUTOREPLIED \| BLACKLIST \| PAUSED \| INVALID` | No | The prospect's status in the campaign. |
+| `contacted` | `boolean` | No | — |
+| `interested` | `INTERESTED \| MAYBE-LATER \| NOT-INTERESTED \| NOT-MARKED` | No | — |
+| `activity` | `OPENED \| NOT-OPENED \| CLICKED \| NOT-CLICKED` | No | — |
+| `diff` | `string` | No | Only prospects with an activity timestamp after this date, such as 2025-01-15T00:00:00+0200. The + is percent-encoded for you. |
+| `sort` | `string` | No | Fields with + (ascending) or - (descending), comma-separated, such as +company,-last_contacted. |
+| `page` | `number` | No | 1-based page. |
+| `per_page` | `number` | No | Defaults to 100. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prospects` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `per_page` | `number` | Yes | — |
+| `next_page` | `number \| null` | Yes | The next page while this one is full; null once a page comes back short. A full last page leads to one empty page. |
+| `message` | `string` | No | Woodpecker's note when nothing matched. |
+
+<AccordionGroup>
+<Accordion title="prospects full type">
+
+```ts
+{
+  id?: number | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  company?: string | null,
+  organization_id?: number | null,
+  industry?: string | null,
+  website?: string | null,
+  linkedin_url?: string | null,
+  tags?: string | null,
+  title?: string | null,
+  phone?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  last_contacted?: string | null,
+  last replied?: string | null,
+  updated?: string | null,
+  encrypted?: boolean | null,
+  snippet_labels?: Record<string, any> | null,
+  status?: string | null,
+  interested?: string | null,
+  interest_level?: {
+    level?: string | null,
+    ai_detected?: boolean | null
+  } | null,
+  campaign_id?: number | null,
+  campaign_name?: string | null,
+  campaign_email?: string | null,
+  campaign_emails?: string[] | null,
+  followup_after?: string | null,
+  campaign_status?: string | null,
+  sent_mails?: number | null,
+  last_open?: string | null,
+  last_clicked?: string | null,
+  click_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### listEvents
+
+`webhooks.listEvents`
+
+List the event types Woodpecker can send to a webhook, from Woodpecker's docs; makes no API call
+
+**Risk:** `read`
+
+```ts
+await corsair.woodpeckerco.api.webhooks.listEvents({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  event: string,
+  description: string,
+  docs_url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

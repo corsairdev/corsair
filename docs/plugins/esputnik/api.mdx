@@ -1,0 +1,3136 @@
+---
+title: API
+description: "API reference for eSputnik: every `esputnik.api.*` operation with input and output types."
+---
+
+Every `esputnik.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### generateApiToken
+
+`account.generateApiToken`
+
+Generate a bearer token for the eSputnik event endpoints (returns a secret)
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.account.generateApiToken({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### getAccountInfo
+
+`account.getAccountInfo`
+
+Get the eSputnik account name and organisation ID
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.account.getAccountInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `number` | No | — |
+| `userEmail` | `string` | No | — |
+| `organisationName` | `string` | No | — |
+
+
+
+---
+
+### getBalance
+
+`account.getBalance`
+
+Get the eSputnik organisation balance
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.account.getBalance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currentBalance` | `number` | No | — |
+| `creditLimit` | `number` | No | — |
+| `currency` | `string` | No | — |
+
+
+
+---
+
+### getOrganisationBalanceHistory
+
+`account.getOrganisationBalanceHistory`
+
+Get daily eSputnik billing costs for a period of up to 90 days
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.account.getOrganisationBalanceHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+## App Inbox
+
+### addAppInboxMessage
+
+`appInbox.addAppInboxMessage`
+
+Create a eSputnik App Inbox message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.appInbox.addAppInboxMessage({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### deleteAppInboxMessage
+
+`appInbox.deleteAppInboxMessage`
+
+Delete a eSputnik App Inbox message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.appInbox.deleteAppInboxMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### deleteTranslatedAppInboxMessage
+
+`appInbox.deleteTranslatedAppInboxMessage`
+
+Delete a language version of a eSputnik App Inbox message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.appInbox.deleteTranslatedAppInboxMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `language` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### getAppInboxMessage
+
+`appInbox.getAppInboxMessage`
+
+Get a eSputnik App Inbox message with its language versions
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.appInbox.getAppInboxMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### searchAppInboxMessages
+
+`appInbox.searchAppInboxMessages`
+
+Search eSputnik App Inbox messages by name
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.appInbox.searchAppInboxMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### updateBaseAppInboxMessage
+
+`appInbox.updateBaseAppInboxMessage`
+
+Update a eSputnik App Inbox message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.appInbox.updateBaseAppInboxMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number
+}& Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### updateTranslatedAppInboxMessage
+
+`appInbox.updateTranslatedAppInboxMessage`
+
+Add or update a language version of a eSputnik App Inbox message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.appInbox.updateTranslatedAppInboxMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number,
+  language: string
+}& Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Apps
+
+### addAppTokens
+
+`apps.addAppTokens`
+
+Add Telegram application tokens to eSputnik
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.apps.addAppTokens({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_uuid` | `string` | Yes | — |
+| `tokens` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tokens full type">
+
+```ts
+{
+  token: string,
+  contactId?: number,
+  externalCustomerId?: string,
+  phone?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### muteAppToken
+
+`apps.muteAppToken`
+
+Mute eSputnik notifications for an application token
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.apps.muteAppToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_uuid` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+| `duration` | `number` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### unmuteAppToken
+
+`apps.unmuteAppToken`
+
+Unmute eSputnik notifications for an application token
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.apps.unmuteAppToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_uuid` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Broadcasts
+
+### cancelBroadcast
+
+`broadcasts.cancelBroadcast`
+
+Cancel a scheduled eSputnik broadcast
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.broadcasts.cancelBroadcast({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### createBroadcast
+
+`broadcasts.createBroadcast`
+
+Create an eSputnik broadcast for a prepared message and segments
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.broadcasts.createBroadcast({ messageId: '4512', groups: [200400], startDate: '2026-11-10T09:00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `messageId` | `string` | Yes | — |
+| `groups` | `number[]` | Yes | — |
+| `excludedGroups` | `number[]` | No | — |
+| `startDate` | `string` | No | — |
+| `batchSize` | `number` | No | — |
+| `batchIntervalUnit` | `MINUTE \| HOUR \| DAY \| MONTH` | No | — |
+| `domain` | `string` | No | — |
+| `appId` | `string` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### getBroadcast
+
+`broadcasts.getBroadcast`
+
+Get an eSputnik broadcast
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.broadcasts.getBroadcast({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### getBroadcasts
+
+`broadcasts.getBroadcasts`
+
+List eSputnik broadcasts
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.broadcasts.getBroadcasts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+## Contacts
+
+### addContact
+
+`contacts.addContact`
+
+Create or update an eSputnik contact
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.contacts.addContact({ firstName: 'Ada', channels: [{ type: 'email', value: 'ada@example.com' }], fields: [{ id: 79814, value: 'gold' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `channels` | `object[]` | Yes | — |
+| `address` | `object` | No | — |
+| `fields` | `object[]` | No | — |
+| `addressBookId` | `number` | No | — |
+| `externalCustomerId` | `string` | No | — |
+| `languageCode` | `string` | No | — |
+| `timeZone` | `string` | No | — |
+| `marketId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  type: string,
+  value: string,
+  device?: Record<string, JsonValue>,
+  webPushSubscription?: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  region?: string,
+  town?: string,
+  address?: string,
+  postcode?: string,
+  countryCode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  id: number,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### addToUnsubscribed
+
+`contacts.addToUnsubscribed`
+
+Add emails to the eSputnik unsubscribe list
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.contacts.addToUnsubscribed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### attachContactsToGroup
+
+`contacts.attachContactsToGroup`
+
+Add contacts to an eSputnik static segment
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.contacts.attachContactsToGroup({ id: 200400, contactIds: [12345] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `contactIds` | `number[]` | No | — |
+| `externalCustomerIds` | `string[]` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### changeContactSubscriptionCategories
+
+`contacts.changeContactSubscriptionCategories`
+
+Replace an eSputnik contact's subscription categories
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.contacts.changeContactSubscriptionCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `subscriptions` | `string[]` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### changeTokenActivated
+
+`contacts.changeTokenActivated`
+
+Activate or deactivate an eSputnik mobile push token
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.contacts.changeTokenActivated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_uuid` | `string` | Yes | — |
+| `token_id` | `string` | Yes | — |
+| `active` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `active` | `boolean` | Yes | — |
+
+
+
+---
+
+### contactActivity
+
+`contacts.contactActivity`
+
+Get delivery, read and click activity for messages sent to eSputnik contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.contactActivity({ dateFrom: '2026-10-01', dateTo: '2026-10-31T23:59:59', email: 'ada@example.com', activityStatus: 'CLICKED' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dateFrom` | `string` | Yes | — |
+| `dateTo` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `sms` | `string` | No | — |
+| `webPushToken` | `string` | No | — |
+| `mobPushToken` | `string` | No | — |
+| `telegramToken` | `string` | No | — |
+| `messageTag` | `string` | No | — |
+| `activityStatus` | `string` | No | — |
+| `offset` | `string` | No | — |
+| `maxrows` | `number` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### contactMessages
+
+`contacts.contactMessages`
+
+Get an eSputnik contact's message history
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.contactMessages({ email: 'ada@example.com', dateFrom: '2026-10-01', dateTo: '2026-11-01', maxrows: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dateFrom` | `string` | Yes | — |
+| `dateTo` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `contactId` | `number` | No | — |
+| `externalCustomerId` | `string` | No | — |
+| `channelTypes` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### contactRecoms
+
+`contacts.contactRecoms`
+
+Get product recommendations for an eSputnik contact
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.contactRecoms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataSourceId` | `number` | Yes | — |
+| `contactId` | `number` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `externalCustomerId` | `string` | No | — |
+| `webId` | `string` | No | — |
+| `products` | `string` | No | — |
+| `category` | `string` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### contactsBulkUpdate
+
+`contacts.contactsBulkUpdate`
+
+Bulk create or update eSputnik contacts
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.contacts.contactsBulkUpdate({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### deleteContactByExternalCustomerId
+
+`contacts.deleteContactByExternalCustomerId`
+
+Delete an eSputnik contact by external customer ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.contacts.deleteContactByExternalCustomerId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalCustomerId` | `string` | Yes | — |
+| `erase` | `boolean` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### deleteContactById
+
+`contacts.deleteContactById`
+
+Delete an eSputnik contact by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.contacts.deleteContactById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `erase` | `boolean` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### deleteFromUnsubscribed
+
+`contacts.deleteFromUnsubscribed`
+
+Remove emails from the eSputnik unsubscribe list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.contacts.deleteFromUnsubscribed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### detachContactsFromGroup
+
+`contacts.detachContactsFromGroup`
+
+Remove contacts from an eSputnik static segment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.contacts.detachContactsFromGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `contactIds` | `number[]` | No | — |
+| `externalCustomerIds` | `string[]` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### fileContactsBulkUpdate
+
+`contacts.fileContactsBulkUpdate`
+
+Import eSputnik contacts from a file link
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.contacts.fileContactsBulkUpdate({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### getAdditionalFields
+
+`contacts.getAdditionalFields`
+
+List eSputnik contact additional fields
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.getAdditionalFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### getContact
+
+`contacts.getContact`
+
+Get an eSputnik contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.getContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
+
+
+---
+
+### getContactEmails
+
+`contacts.getContactEmails`
+
+Get email addresses for eSputnik contact IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.getContactEmails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `JsonValue[]` | Yes | — |
+
+
+
+---
+
+### getContactIdByToken
+
+`contacts.getContactIdByToken`
+
+Get an eSputnik contact ID by mobile push token
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.getContactIdByToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_uuid` | `string` | Yes | — |
+| `token_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### getContactSubscriptionCategories
+
+`contacts.getContactSubscriptionCategories`
+
+Get an eSputnik contact's subscription categories
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.getContactSubscriptionCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### getGroupContacts
+
+`contacts.getGroupContacts`
+
+Get contacts in an eSputnik segment
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.getGroupContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+| `orderByTs` | `boolean` | No | — |
+| `asc` | `boolean` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### getImportSessionStatus
+
+`contacts.getImportSessionStatus`
+
+Get eSputnik contact import status
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.getImportSessionStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessionId` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### getSubscriptionCategories
+
+`contacts.getSubscriptionCategories`
+
+List the organisation's eSputnik subscription categories
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.getSubscriptionCategories({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### getTokenActivated
+
+`contacts.getTokenActivated`
+
+Get whether an eSputnik mobile push token is active
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.getTokenActivated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_uuid` | `string` | Yes | — |
+| `token_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `active` | `boolean` | Yes | — |
+
+
+
+---
+
+### searchContacts
+
+`contacts.searchContacts`
+
+Search eSputnik contacts (up to 500 per page)
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.searchContacts({ email: 'ada@example.com', maxrows: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+| `externalCustomerId` | `string` | No | — |
+| `email` | `string` | No | — |
+| `sms` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `sortBy` | `contactId` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchGroups
+
+`contacts.searchGroups`
+
+Search eSputnik segments
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.searchGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### searchWorkflows
+
+`contacts.searchWorkflows`
+
+Search eSputnik workflows
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.contacts.searchWorkflows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### subscribeContact
+
+`contacts.subscribeContact`
+
+Subscribe an eSputnik contact
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.contacts.subscribeContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+| `groups` | `string[]` | No | — |
+| `subscriptions` | `string[]` | No | — |
+| `formType` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: number,
+  firstName?: string,
+  lastName?: string,
+  channels: {
+    type: string,
+    value: string,
+    device?: Record<string, JsonValue>,
+    webPushSubscription?: Record<string, JsonValue>
+  }[],
+  address?: {
+    region?: string,
+    town?: string,
+    address?: string,
+    postcode?: string,
+    countryCode?: string | null
+  },
+  fields?: {
+    id: number,
+    value: string
+  }[],
+  addressBookId?: number,
+  externalCustomerId?: string,
+  languageCode?: string,
+  timeZone?: string,
+  marketId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `emailStatus` | `string` | No | — |
+| `isNew` | `boolean` | No | — |
+
+
+
+---
+
+### updateContact
+
+`contacts.updateContact`
+
+Update an eSputnik contact by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.contacts.updateContact({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number
+}& {
+  id?: number,
+  firstName?: string,
+  lastName?: string,
+  channels: {
+    type: string,
+    value: string,
+    device?: Record<string, JsonValue>,
+    webPushSubscription?: Record<string, JsonValue>
+  }[],
+  address?: {
+    region?: string,
+    town?: string,
+    address?: string,
+    postcode?: string,
+    countryCode?: string | null
+  },
+  fields?: {
+    id: number,
+    value: string
+  }[],
+  addressBookId?: number,
+  externalCustomerId?: string,
+  languageCode?: string,
+  timeZone?: string,
+  marketId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Emails
+
+### addEmail
+
+`emails.addEmail`
+
+Create an eSputnik email message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.emails.addEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `htmlText` | `string` | Yes | — |
+| `template` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### deleteEmail
+
+`emails.deleteEmail`
+
+Delete an eSputnik email message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.emails.deleteEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### deleteTranslatedEmail
+
+`emails.deleteTranslatedEmail`
+
+Delete a language version of an eSputnik email message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.emails.deleteTranslatedEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `language` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### getEmail
+
+`emails.getEmail`
+
+Get an eSputnik email message
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.emails.getEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### getEmailMessageViewLink
+
+`emails.getEmailMessageViewLink`
+
+Get a link to view an eSputnik email message
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.emails.getEmailMessageViewLink({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### searchEmails
+
+`emails.searchEmails`
+
+Search eSputnik email messages by name or tag
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.emails.searchEmails({ search: 'welcome', maxrows: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### sendEmail
+
+`emails.sendEmail`
+
+Send an email to eSputnik recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.emails.sendEmail({ from: '"Shop" <news@shop.example.com>', subject: 'Your order', htmlText: '<p>Thanks!</p>', emails: ['ada@example.com'] });
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `JsonValue[]` | Yes | — |
+
+
+
+---
+
+### updateMessage
+
+`emails.updateMessage`
+
+Update an eSputnik email message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.emails.updateMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number
+}& {
+  name: string,
+  from: string,
+  subject: string,
+  htmlText: string,
+  template?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### updateTranslatedMessage
+
+`emails.updateTranslatedMessage`
+
+Add or update a language version of an eSputnik email message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.emails.updateTranslatedMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number,
+  language: string
+}& {
+  name: string,
+  from: string,
+  subject: string,
+  htmlText: string,
+  template?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Events
+
+### registerEvent
+
+`events.registerEvent`
+
+Send an eSputnik event
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.events.registerEvent({ eventTypeKey: 'cart_abandoned', params: { email: 'ada@example.com', cartUrl: 'https://shop.example.com/cart/42' } });
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### removeHistoryEvents
+
+`events.removeHistoryEvents`
+
+Delete eSputnik events in a period
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.events.removeHistoryEvents({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### sendHistoryEvents
+
+`events.sendHistoryEvents`
+
+Send past eSputnik events
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.events.sendHistoryEvents({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+## Interfaces
+
+### getEmailInterfaces
+
+`interfaces.getEmailInterfaces`
+
+List eSputnik email sender addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.interfaces.getEmailInterfaces({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### getSmsInterfaces
+
+`interfaces.getSmsInterfaces`
+
+List eSputnik SMS sender names
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.interfaces.getSmsInterfaces({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+## Messages
+
+### sendPreparedMessage
+
+`messages.sendPreparedMessage`
+
+Send a prepared eSputnik message to one or more contacts
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.messages.sendPreparedMessage({ id: 4512, recipients: [{ locator: 'ada@example.com', jsonParam: JSON.stringify({ orderId: 42 }) }], email: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `recipients` | `object[]` | Yes | — |
+| `email` | `boolean` | No | — |
+| `fromName` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  contactId?: number,
+  externalCustomerId?: string,
+  locator?: string,
+  jsonParam?: string,
+  externalRequestId?: string,
+  languageCode?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `JsonValue[]` | Yes | — |
+
+
+
+---
+
+### updateInteractionStatus
+
+`messages.updateInteractionStatus`
+
+Report a delivery, open or click status for an eSputnik message interaction
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.messages.updateInteractionStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interactionId` | `string` | Yes | — |
+| `token` | `string` | No | — |
+| `status` | `DELIVERED \| OPENED \| CLICKED \| UNDELIVERED` | No | — |
+| `time` | `string` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Mobile Push
+
+### addMobilePushMessage
+
+`mobilePush.addMobilePushMessage`
+
+Create a eSputnik mobile push message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.mobilePush.addMobilePushMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `languageCode` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `link` | `string` | No | — |
+| `imageSource` | `string` | No | — |
+| `customData` | `string` | No | — |
+| `ttlSec` | `number` | No | — |
+| `soundEnabled` | `boolean` | No | — |
+| `badgeCount` | `number` | No | — |
+| `images` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### deleteMobilePushMessage
+
+`mobilePush.deleteMobilePushMessage`
+
+Delete a eSputnik mobile push message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.mobilePush.deleteMobilePushMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### deleteTranslatedMobilePushMessage
+
+`mobilePush.deleteTranslatedMobilePushMessage`
+
+Delete a language version of a eSputnik mobile push message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.mobilePush.deleteTranslatedMobilePushMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `language` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### getMobilePushMessage
+
+`mobilePush.getMobilePushMessage`
+
+Get a eSputnik mobile push message with its language versions
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.mobilePush.getMobilePushMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### searchMobilePushMessages
+
+`mobilePush.searchMobilePushMessages`
+
+Search eSputnik mobile push messages by name
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.mobilePush.searchMobilePushMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### updateBaseMobilePushMessage
+
+`mobilePush.updateBaseMobilePushMessage`
+
+Update a eSputnik mobile push message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.mobilePush.updateBaseMobilePushMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number
+}& {
+  name: string,
+  title: string,
+  text: string,
+  languageCode?: string,
+  tags?: string[],
+  link?: string,
+  imageSource?: string,
+  customData?: string,
+  ttlSec?: number,
+  soundEnabled?: boolean,
+  badgeCount?: number,
+  images?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### updateTranslatedMobilePushMessage
+
+`mobilePush.updateTranslatedMobilePushMessage`
+
+Add or update a language version of a eSputnik mobile push message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.mobilePush.updateTranslatedMobilePushMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number,
+  language: string
+}& {
+  name: string,
+  title: string,
+  text: string,
+  languageCode?: string,
+  tags?: string[],
+  link?: string,
+  imageSource?: string,
+  customData?: string,
+  ttlSec?: number,
+  soundEnabled?: boolean,
+  badgeCount?: number,
+  images?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Orders
+
+### ordersBulkInsert
+
+`orders.ordersBulkInsert`
+
+Add or update eSputnik orders
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.orders.ordersBulkInsert({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+## Preprocessor
+
+### getPreprocessorFileStatus
+
+`preprocessor.getPreprocessorFileStatus`
+
+Get the status of an eSputnik preprocessor file upload
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.preprocessor.getPreprocessorFileStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessionId` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### updatePreprocessorFile
+
+`preprocessor.updatePreprocessorFile`
+
+Replace the data of an eSputnik preprocessor file
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.preprocessor.updatePreprocessorFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+| `link` | `string` | Yes | — |
+| `ttlHours` | `number` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### uploadPreprocessorFile
+
+`preprocessor.uploadPreprocessorFile`
+
+Upload an eSputnik preprocessor file from a link
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.preprocessor.uploadPreprocessorFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link` | `string` | Yes | — |
+| `preprocessorType` | `string` | Yes | — |
+| `ttlHours` | `number` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+## Product Feeds
+
+### configureProductFeeds
+
+`productFeeds.configureProductFeeds`
+
+Configure eSputnik product feeds
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.productFeeds.configureProductFeeds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feeds` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="feeds full type">
+
+```ts
+{
+  url: string,
+  language?: string,
+  default?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### getProductFeedsConfiguration
+
+`productFeeds.getProductFeedsConfiguration`
+
+Get eSputnik product feed configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.productFeeds.getProductFeedsConfiguration({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+## Promocodes
+
+### getPromocodes
+
+`promocodes.getPromocodes`
+
+Get available eSputnik promotional codes
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.promocodes.getPromocodes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `inUse` | `boolean` | No | — |
+| `activeDueDays` | `number` | No | — |
+| `discount` | `number` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### getPromocodesCount
+
+`promocodes.getPromocodesCount`
+
+Count available eSputnik promotional codes
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.promocodes.getPromocodesCount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `activeDueDays` | `number` | No | — |
+| `discount` | `number` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### insertPromocodes
+
+`promocodes.insertPromocodes`
+
+Upload eSputnik promotional codes
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.promocodes.insertPromocodes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `promocodes` | `string[]` | Yes | — |
+| `expirationDate` | `string` | Yes | — |
+| `discount` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `inUse` | `boolean` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Site
+
+### addWebPushDomain
+
+`site.addWebPushDomain`
+
+Register an eSputnik web push domain
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.site.addWebPushDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `serviceWorkerName` | `string` | Yes | — |
+| `serviceWorkerPath` | `string` | Yes | — |
+| `serviceWorkerScope` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### createDomain
+
+`site.createDomain`
+
+Register a domain for eSputnik web tracking
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.site.createDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### deleteWebPushDomain
+
+`site.deleteWebPushDomain`
+
+Delete an eSputnik web push domain
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.site.deleteWebPushDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### getDomains
+
+`site.getDomains`
+
+Get the organisation's eSputnik web tracking domain
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.site.getDomains({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### getScript
+
+`site.getScript`
+
+Get the eSputnik web tracking script
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.site.getScript({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string`
+
+
+---
+
+### getWebPushDomains
+
+`site.getWebPushDomains`
+
+List eSputnik web push domains
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.site.getWebPushDomains({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### getWebPushScript
+
+`site.getWebPushScript`
+
+Get the eSputnik web push script for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.site.getWebPushScript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+## Sms
+
+### addSmsMessage
+
+`sms.addSmsMessage`
+
+Create a eSputnik SMS message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.sms.addSmsMessage({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### deleteSmsMessage
+
+`sms.deleteSmsMessage`
+
+Delete a eSputnik SMS message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.sms.deleteSmsMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### deleteTranslatedSmsMessage
+
+`sms.deleteTranslatedSmsMessage`
+
+Delete a language version of a eSputnik SMS message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.sms.deleteTranslatedSmsMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `language` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### getSms
+
+`sms.getSms`
+
+Get a eSputnik SMS message with its language versions
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.sms.getSms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### searchSmsMessages
+
+`sms.searchSmsMessages`
+
+Search eSputnik SMS messages by name
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.sms.searchSmsMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### sendSms
+
+`sms.sendSms`
+
+Send an SMS to eSputnik recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.sms.sendSms({ from: 'Shop', text: 'Your code is 4821', phoneNumbers: ['380501234567'] });
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `JsonValue[]` | Yes | — |
+
+
+
+---
+
+### updateBaseSmsMessage
+
+`sms.updateBaseSmsMessage`
+
+Update a eSputnik SMS message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.sms.updateBaseSmsMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number
+}& Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### updateTranslatedSmsMessage
+
+`sms.updateTranslatedSmsMessage`
+
+Add or update a language version of a eSputnik SMS message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.sms.updateTranslatedSmsMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number,
+  language: string
+}& Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Telegram Bot
+
+### addTelegramBotMessage
+
+`telegramBot.addTelegramBotMessage`
+
+Create a eSputnik Telegram bot message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.telegramBot.addTelegramBotMessage({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### deleteTelegramBotMessage
+
+`telegramBot.deleteTelegramBotMessage`
+
+Delete a eSputnik Telegram bot message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.telegramBot.deleteTelegramBotMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### deleteTranslatedTelegramMessage
+
+`telegramBot.deleteTranslatedTelegramMessage`
+
+Delete a language version of a eSputnik Telegram bot message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.telegramBot.deleteTranslatedTelegramMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `language` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### getTelegramBotMessage
+
+`telegramBot.getTelegramBotMessage`
+
+Get a eSputnik Telegram bot message with its language versions
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.telegramBot.getTelegramBotMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### searchTelegramBotMessages
+
+`telegramBot.searchTelegramBotMessages`
+
+Search eSputnik Telegram bot messages by name
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.telegramBot.searchTelegramBotMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### updateBaseTelegramBotMessage
+
+`telegramBot.updateBaseTelegramBotMessage`
+
+Update a eSputnik Telegram bot message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.telegramBot.updateBaseTelegramBotMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number
+}& Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### updateTranslatedTelegramMessage
+
+`telegramBot.updateTranslatedTelegramMessage`
+
+Add or update a language version of a eSputnik Telegram bot message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.telegramBot.updateTranslatedTelegramMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number,
+  language: string
+}& Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Viber
+
+### addViberMessage
+
+`viber.addViberMessage`
+
+Create a eSputnik Viber message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.viber.addViberMessage({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### deleteTranslatedViberMessage
+
+`viber.deleteTranslatedViberMessage`
+
+Delete a language version of a eSputnik Viber message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.viber.deleteTranslatedViberMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `language` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### deleteViberMessage
+
+`viber.deleteViberMessage`
+
+Delete a eSputnik Viber message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.esputnik.api.viber.deleteViberMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### getViberMessage
+
+`viber.getViberMessage`
+
+Get a eSputnik Viber message with its language versions
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.viber.getViberMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### searchViberMessages
+
+`viber.searchViberMessages`
+
+Search eSputnik Viber messages by name
+
+**Risk:** `read`
+
+```ts
+await corsair.esputnik.api.viber.searchViberMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startindex` | `number` | No | — |
+| `maxrows` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+### sendViber
+
+`viber.sendViber`
+
+Send a Viber message to eSputnik recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.viber.sendViber({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `JsonValue[]` | Yes | — |
+
+
+
+---
+
+### updateBaseViberMessage
+
+`viber.updateBaseViberMessage`
+
+Update a eSputnik Viber message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.viber.updateBaseViberMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number
+}& Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### updateTranslatedViberMessage
+
+`viber.updateTranslatedViberMessage`
+
+Add or update a language version of a eSputnik Viber message
+
+**Risk:** `write`
+
+```ts
+await corsair.esputnik.api.viber.updateTranslatedViberMessage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  id: number,
+  language: string
+}& Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `JsonValue`
+
+
+---
+

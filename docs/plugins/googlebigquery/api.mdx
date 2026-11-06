@@ -151,17 +151,7 @@ await corsair.googlebigquery.api.analyticsHub.createQueryTemplate({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -353,18 +343,8 @@ await corsair.googlebigquery.api.analyticsHub.listQueryTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `queryTemplates` | `object[]` | No | — |
+| `queryTemplates` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="queryTemplates full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -835,7 +815,7 @@ await corsair.googlebigquery.api.datasets.create({});
 | `friendlyName` | `string` | No | — |
 | `description` | `string` | No | — |
 | `location` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `defaultTableExpirationMs` | `string` | No | — |
 | `defaultPartitionExpirationMs` | `string` | No | — |
 | `access` | `object[]` | No | — |
@@ -847,14 +827,6 @@ await corsair.googlebigquery.api.datasets.create({});
 {
   datasetId: string,
   projectId?: string
-}
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -906,7 +878,7 @@ await corsair.googlebigquery.api.datasets.create({});
 | `description` | `string` | No | — |
 | `defaultTableExpirationMs` | `string` | No | — |
 | `defaultPartitionExpirationMs` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `access` | `object[]` | No | — |
 | `location` | `string` | No | — |
 | `maxTimeTravelHours` | `string` | No | — |
@@ -920,14 +892,6 @@ await corsair.googlebigquery.api.datasets.create({});
 {
   datasetId: string,
   projectId?: string
-}
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1030,7 +994,7 @@ await corsair.googlebigquery.api.datasets.get({});
 | `description` | `string` | No | — |
 | `defaultTableExpirationMs` | `string` | No | — |
 | `defaultPartitionExpirationMs` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `access` | `object[]` | No | — |
 | `location` | `string` | No | — |
 | `maxTimeTravelHours` | `string` | No | — |
@@ -1044,14 +1008,6 @@ await corsair.googlebigquery.api.datasets.get({});
 {
   datasetId: string,
   projectId?: string
-}
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1136,8 +1092,7 @@ await corsair.googlebigquery.api.datasets.list({});
     datasetId: string,
     projectId?: string
   },
-  labels?: {
-  },
+  labels?: Record<string, string>,
   friendlyName?: string,
   location?: string
 }[]
@@ -1186,8 +1141,7 @@ await corsair.googlebigquery.api.datasets.patch({});
   description?: string,
   defaultTableExpirationMs?: string,
   defaultPartitionExpirationMs?: string,
-  labels?: {
-  },
+  labels?: Record<string, string>,
   access?: {
     role?: string,
     userByEmail?: string,
@@ -1237,7 +1191,7 @@ await corsair.googlebigquery.api.datasets.patch({});
 | `description` | `string` | No | — |
 | `defaultTableExpirationMs` | `string` | No | — |
 | `defaultPartitionExpirationMs` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `access` | `object[]` | No | — |
 | `location` | `string` | No | — |
 | `maxTimeTravelHours` | `string` | No | — |
@@ -1251,14 +1205,6 @@ await corsair.googlebigquery.api.datasets.patch({});
 {
   datasetId: string,
   projectId?: string
-}
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1334,7 +1280,7 @@ await corsair.googlebigquery.api.datasets.undelete({});
 | `description` | `string` | No | — |
 | `defaultTableExpirationMs` | `string` | No | — |
 | `defaultPartitionExpirationMs` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `access` | `object[]` | No | — |
 | `location` | `string` | No | — |
 | `maxTimeTravelHours` | `string` | No | — |
@@ -1348,14 +1294,6 @@ await corsair.googlebigquery.api.datasets.undelete({});
 {
   datasetId: string,
   projectId?: string
-}
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1433,8 +1371,7 @@ await corsair.googlebigquery.api.datasets.update({});
   description?: string,
   defaultTableExpirationMs?: string,
   defaultPartitionExpirationMs?: string,
-  labels?: {
-  },
+  labels?: Record<string, string>,
   access?: {
     role?: string,
     userByEmail?: string,
@@ -1484,7 +1421,7 @@ await corsair.googlebigquery.api.datasets.update({});
 | `description` | `string` | No | — |
 | `defaultTableExpirationMs` | `string` | No | — |
 | `defaultPartitionExpirationMs` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `access` | `object[]` | No | — |
 | `location` | `string` | No | — |
 | `maxTimeTravelHours` | `string` | No | — |
@@ -1498,14 +1435,6 @@ await corsair.googlebigquery.api.datasets.update({});
 {
   datasetId: string,
   projectId?: string
-}
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2076,13 +2005,13 @@ await corsair.googlebigquery.api.ml.getBigqueryModel({});
 | `lastModifiedTime` | `string` | No | — |
 | `description` | `string` | No | — |
 | `friendlyName` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `expirationTime` | `string` | No | — |
 | `location` | `string` | No | — |
 | `modelType` | `string` | No | — |
 | `featureColumns` | `object[]` | No | — |
 | `labelColumns` | `object[]` | No | — |
-| `trainingRuns` | `object[]` | No | — |
+| `trainingRuns` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="modelReference full type">
@@ -2096,21 +2025,12 @@ await corsair.googlebigquery.api.ml.getBigqueryModel({});
 ```
 </Accordion>
 
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="featureColumns full type">
 
 ```ts
 {
   name?: string,
-  type?: {
-  }
+  type?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2120,16 +2040,7 @@ await corsair.googlebigquery.api.ml.getBigqueryModel({});
 ```ts
 {
   name?: string,
-  type?: {
-  }
-}[]
-```
-</Accordion>
-
-<Accordion title="trainingRuns full type">
-
-```ts
-{
+  type?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2231,23 +2142,19 @@ await corsair.googlebigquery.api.ml.listModels({});
   lastModifiedTime?: string,
   description?: string,
   friendlyName?: string,
-  labels?: {
-  },
+  labels?: Record<string, string>,
   expirationTime?: string,
   location?: string,
   modelType?: string,
   featureColumns?: {
     name?: string,
-    type?: {
-    }
+    type?: Record<string, any>
   }[],
   labelColumns?: {
     name?: string,
-    type?: {
-    }
+    type?: Record<string, any>
   }[],
-  trainingRuns?: {
-  }[]
+  trainingRuns?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -2330,18 +2237,8 @@ await corsair.googlebigquery.api.ml.patchModel({});
 | `modelId` | `string` | Yes | — |
 | `friendlyName` | `string` | No | — |
 | `description` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `expirationTime` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2355,13 +2252,13 @@ await corsair.googlebigquery.api.ml.patchModel({});
 | `lastModifiedTime` | `string` | No | — |
 | `description` | `string` | No | — |
 | `friendlyName` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `expirationTime` | `string` | No | — |
 | `location` | `string` | No | — |
 | `modelType` | `string` | No | — |
 | `featureColumns` | `object[]` | No | — |
 | `labelColumns` | `object[]` | No | — |
-| `trainingRuns` | `object[]` | No | — |
+| `trainingRuns` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="modelReference full type">
@@ -2375,21 +2272,12 @@ await corsair.googlebigquery.api.ml.patchModel({});
 ```
 </Accordion>
 
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="featureColumns full type">
 
 ```ts
 {
   name?: string,
-  type?: {
-  }
+  type?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2399,16 +2287,7 @@ await corsair.googlebigquery.api.ml.patchModel({});
 ```ts
 {
   name?: string,
-  type?: {
-  }
-}[]
-```
-</Accordion>
-
-<Accordion title="trainingRuns full type">
-
-```ts
-{
+  type?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2492,8 +2371,7 @@ await corsair.googlebigquery.api.queries.cancelJob({});
         parameterValue: {
           value?: any,
           arrayValues?: any[],
-          structValues?: {
-          }
+          structValues?: Record<string, any>
         }
       }[],
       parameterMode?: POSITIONAL | NAMED
@@ -2511,7 +2389,13 @@ await corsair.googlebigquery.api.queries.cancelJob({});
           type: string,
           mode?: string,
           description?: string,
-          fields?: lazy
+          fields?: {
+            name: string,
+            type: string,
+            mode?: string,
+            description?: string,
+            fields?: (recursive)
+          }[]
         }[]
       },
       sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
@@ -2554,8 +2438,7 @@ await corsair.googlebigquery.api.queries.cancelJob({});
     },
     dryRun?: boolean,
     jobTimeoutMs?: string,
-    labels?: {
-    }
+    labels?: Record<string, string>
   },
   status?: {
     state?: PENDING | RUNNING | DONE,
@@ -2572,8 +2455,7 @@ await corsair.googlebigquery.api.queries.cancelJob({});
       message?: string
     }[]
   },
-  statistics?: {
-  },
+  statistics?: Record<string, any>,
   user_email?: string
 }
 ```
@@ -2644,7 +2526,7 @@ await corsair.googlebigquery.api.queries.getJob({});
 | `jobReference` | `object` | No | — |
 | `configuration` | `object` | No | — |
 | `status` | `object` | No | — |
-| `statistics` | `object` | No | — |
+| `statistics` | `Record<string, any>` | No | — |
 | `user_email` | `string` | No | — |
 
 <AccordionGroup>
@@ -2691,8 +2573,7 @@ await corsair.googlebigquery.api.queries.getJob({});
       parameterValue: {
         value?: any,
         arrayValues?: any[],
-        structValues?: {
-        }
+        structValues?: Record<string, any>
       }
     }[],
     parameterMode?: POSITIONAL | NAMED
@@ -2710,7 +2591,13 @@ await corsair.googlebigquery.api.queries.getJob({});
         type: string,
         mode?: string,
         description?: string,
-        fields?: lazy
+        fields?: {
+          name: string,
+          type: string,
+          mode?: string,
+          description?: string,
+          fields?: (recursive)
+        }[]
       }[]
     },
     sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
@@ -2753,8 +2640,7 @@ await corsair.googlebigquery.api.queries.getJob({});
   },
   dryRun?: boolean,
   jobTimeoutMs?: string,
-  labels?: {
-  }
+  labels?: Record<string, string>
 }
 ```
 </Accordion>
@@ -2776,14 +2662,6 @@ await corsair.googlebigquery.api.queries.getJob({});
     debugInfo?: string,
     message?: string
   }[]
-}
-```
-</Accordion>
-
-<Accordion title="statistics full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2846,7 +2724,13 @@ await corsair.googlebigquery.api.queries.getQueryResults({});
     type: string,
     mode?: string,
     description?: string,
-    fields?: lazy
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: (recursive)
+    }[]
   }[]
 }
 ```
@@ -2921,8 +2805,7 @@ await corsair.googlebigquery.api.queries.insertAll({});
 ```ts
 {
   insertId?: string,
-  json: {
-  }
+  json: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -3022,8 +2905,7 @@ await corsair.googlebigquery.api.queries.insertJob({});
       parameterValue: {
         value?: any,
         arrayValues?: any[],
-        structValues?: {
-        }
+        structValues?: Record<string, any>
       }
     }[],
     parameterMode?: POSITIONAL | NAMED
@@ -3041,7 +2923,13 @@ await corsair.googlebigquery.api.queries.insertJob({});
         type: string,
         mode?: string,
         description?: string,
-        fields?: lazy
+        fields?: {
+          name: string,
+          type: string,
+          mode?: string,
+          description?: string,
+          fields?: (recursive)
+        }[]
       }[]
     },
     sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
@@ -3084,8 +2972,7 @@ await corsair.googlebigquery.api.queries.insertJob({});
   },
   dryRun?: boolean,
   jobTimeoutMs?: string,
-  labels?: {
-  }
+  labels?: Record<string, string>
 }
 ```
 </Accordion>
@@ -3104,7 +2991,7 @@ await corsair.googlebigquery.api.queries.insertJob({});
 | `jobReference` | `object` | No | — |
 | `configuration` | `object` | No | — |
 | `status` | `object` | No | — |
-| `statistics` | `object` | No | — |
+| `statistics` | `Record<string, any>` | No | — |
 | `user_email` | `string` | No | — |
 
 <AccordionGroup>
@@ -3151,8 +3038,7 @@ await corsair.googlebigquery.api.queries.insertJob({});
       parameterValue: {
         value?: any,
         arrayValues?: any[],
-        structValues?: {
-        }
+        structValues?: Record<string, any>
       }
     }[],
     parameterMode?: POSITIONAL | NAMED
@@ -3170,7 +3056,13 @@ await corsair.googlebigquery.api.queries.insertJob({});
         type: string,
         mode?: string,
         description?: string,
-        fields?: lazy
+        fields?: {
+          name: string,
+          type: string,
+          mode?: string,
+          description?: string,
+          fields?: (recursive)
+        }[]
       }[]
     },
     sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
@@ -3213,8 +3105,7 @@ await corsair.googlebigquery.api.queries.insertJob({});
   },
   dryRun?: boolean,
   jobTimeoutMs?: string,
-  labels?: {
-  }
+  labels?: Record<string, string>
 }
 ```
 </Accordion>
@@ -3236,14 +3127,6 @@ await corsair.googlebigquery.api.queries.insertJob({});
     debugInfo?: string,
     message?: string
   }[]
-}
-```
-</Accordion>
-
-<Accordion title="statistics full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3320,8 +3203,7 @@ await corsair.googlebigquery.api.queries.insertJobWithUpload({});
       parameterValue: {
         value?: any,
         arrayValues?: any[],
-        structValues?: {
-        }
+        structValues?: Record<string, any>
       }
     }[],
     parameterMode?: POSITIONAL | NAMED
@@ -3339,7 +3221,13 @@ await corsair.googlebigquery.api.queries.insertJobWithUpload({});
         type: string,
         mode?: string,
         description?: string,
-        fields?: lazy
+        fields?: {
+          name: string,
+          type: string,
+          mode?: string,
+          description?: string,
+          fields?: (recursive)
+        }[]
       }[]
     },
     sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
@@ -3382,8 +3270,7 @@ await corsair.googlebigquery.api.queries.insertJobWithUpload({});
   },
   dryRun?: boolean,
   jobTimeoutMs?: string,
-  labels?: {
-  }
+  labels?: Record<string, string>
 }
 ```
 </Accordion>
@@ -3402,7 +3289,7 @@ await corsair.googlebigquery.api.queries.insertJobWithUpload({});
 | `jobReference` | `object` | No | — |
 | `configuration` | `object` | No | — |
 | `status` | `object` | No | — |
-| `statistics` | `object` | No | — |
+| `statistics` | `Record<string, any>` | No | — |
 | `user_email` | `string` | No | — |
 
 <AccordionGroup>
@@ -3449,8 +3336,7 @@ await corsair.googlebigquery.api.queries.insertJobWithUpload({});
       parameterValue: {
         value?: any,
         arrayValues?: any[],
-        structValues?: {
-        }
+        structValues?: Record<string, any>
       }
     }[],
     parameterMode?: POSITIONAL | NAMED
@@ -3468,7 +3354,13 @@ await corsair.googlebigquery.api.queries.insertJobWithUpload({});
         type: string,
         mode?: string,
         description?: string,
-        fields?: lazy
+        fields?: {
+          name: string,
+          type: string,
+          mode?: string,
+          description?: string,
+          fields?: (recursive)
+        }[]
       }[]
     },
     sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
@@ -3511,8 +3403,7 @@ await corsair.googlebigquery.api.queries.insertJobWithUpload({});
   },
   dryRun?: boolean,
   jobTimeoutMs?: string,
-  labels?: {
-  }
+  labels?: Record<string, string>
 }
 ```
 </Accordion>
@@ -3534,14 +3425,6 @@ await corsair.googlebigquery.api.queries.insertJobWithUpload({});
     debugInfo?: string,
     message?: string
   }[]
-}
-```
-</Accordion>
-
-<Accordion title="statistics full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3574,7 +3457,7 @@ await corsair.googlebigquery.api.queries.listJobs({});
 | `maxCreationTime` | `string` | No | — |
 | `pageToken` | `string` | No | — |
 | `projection` | `full \| minimal` | No | — |
-| `stateFilter` | `done \| pending \| running[]` | No | — |
+| `stateFilter` | `(done \| pending \| running)[]` | No | — |
 | `parentJobId` | `string` | No | — |
 
 
@@ -3631,8 +3514,7 @@ await corsair.googlebigquery.api.queries.listJobs({});
         parameterValue: {
           value?: any,
           arrayValues?: any[],
-          structValues?: {
-          }
+          structValues?: Record<string, any>
         }
       }[],
       parameterMode?: POSITIONAL | NAMED
@@ -3650,7 +3532,13 @@ await corsair.googlebigquery.api.queries.listJobs({});
           type: string,
           mode?: string,
           description?: string,
-          fields?: lazy
+          fields?: {
+            name: string,
+            type: string,
+            mode?: string,
+            description?: string,
+            fields?: (recursive)
+          }[]
         }[]
       },
       sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
@@ -3693,8 +3581,7 @@ await corsair.googlebigquery.api.queries.listJobs({});
     },
     dryRun?: boolean,
     jobTimeoutMs?: string,
-    labels?: {
-    }
+    labels?: Record<string, string>
   },
   status?: {
     state?: PENDING | RUNNING | DONE,
@@ -3711,8 +3598,7 @@ await corsair.googlebigquery.api.queries.listJobs({});
       message?: string
     }[]
   },
-  statistics?: {
-  },
+  statistics?: Record<string, any>,
   user_email?: string
 }[]
 ```
@@ -3777,8 +3663,7 @@ await corsair.googlebigquery.api.queries.query({});
   parameterValue: {
     value?: any,
     arrayValues?: any[],
-    structValues?: {
-    }
+    structValues?: Record<string, any>
   }
 }[]
 ```
@@ -3813,7 +3698,13 @@ await corsair.googlebigquery.api.queries.query({});
     type: string,
     mode?: string,
     description?: string,
-    fields?: lazy
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: (recursive)
+    }[]
   }[]
 }
 ```
@@ -4278,7 +4169,7 @@ await corsair.googlebigquery.api.routines.create({});
 | `definitionBody` | `string` | Yes | — |
 | `language` | `SQL \| JAVASCRIPT \| PYTHON \| JAVA \| SCALA` | No | — |
 | `arguments` | `object[]` | No | — |
-| `returnType` | `object` | No | — |
+| `returnType` | `Record<string, any>` | No | — |
 | `description` | `string` | No | — |
 | `determinismLevel` | `DETERMINISM_LEVEL_UNSPECIFIED \| DETERMINISTIC \| NOT_DETERMINISTIC` | No | — |
 
@@ -4301,17 +4192,8 @@ await corsair.googlebigquery.api.routines.create({});
   name?: string,
   argumentKind?: FIXED_TYPE | ANY_TYPE,
   mode?: IN | OUT | INOUT,
-  dataType?: {
-  }
+  dataType?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="returnType full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4329,7 +4211,7 @@ await corsair.googlebigquery.api.routines.create({});
 | `lastModifiedTime` | `string` | No | — |
 | `language` | `SQL \| JAVASCRIPT \| PYTHON \| JAVA \| SCALA` | No | — |
 | `arguments` | `object[]` | No | — |
-| `returnType` | `object` | No | — |
+| `returnType` | `Record<string, any>` | No | — |
 | `importedLibraries` | `string[]` | No | — |
 | `definitionBody` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -4354,17 +4236,8 @@ await corsair.googlebigquery.api.routines.create({});
   name?: string,
   argumentKind?: FIXED_TYPE | ANY_TYPE,
   mode?: IN | OUT | INOUT,
-  dataType?: {
-  }
+  dataType?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="returnType full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4434,7 +4307,7 @@ await corsair.googlebigquery.api.routines.get({});
 | `lastModifiedTime` | `string` | No | — |
 | `language` | `SQL \| JAVASCRIPT \| PYTHON \| JAVA \| SCALA` | No | — |
 | `arguments` | `object[]` | No | — |
-| `returnType` | `object` | No | — |
+| `returnType` | `Record<string, any>` | No | — |
 | `importedLibraries` | `string[]` | No | — |
 | `definitionBody` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -4459,17 +4332,8 @@ await corsair.googlebigquery.api.routines.get({});
   name?: string,
   argumentKind?: FIXED_TYPE | ANY_TYPE,
   mode?: IN | OUT | INOUT,
-  dataType?: {
-  }
+  dataType?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="returnType full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4529,11 +4393,9 @@ await corsair.googlebigquery.api.routines.list({});
     name?: string,
     argumentKind?: FIXED_TYPE | ANY_TYPE,
     mode?: IN | OUT | INOUT,
-    dataType?: {
-    }
+    dataType?: Record<string, any>
   }[],
-  returnType?: {
-  },
+  returnType?: Record<string, any>,
   importedLibraries?: string[],
   definitionBody?: string,
   description?: string,
@@ -4587,11 +4449,9 @@ await corsair.googlebigquery.api.routines.update({});
     name?: string,
     argumentKind?: FIXED_TYPE | ANY_TYPE,
     mode?: IN | OUT | INOUT,
-    dataType?: {
-    }
+    dataType?: Record<string, any>
   }[],
-  returnType?: {
-  },
+  returnType?: Record<string, any>,
   importedLibraries?: string[],
   definitionBody?: string,
   description?: string,
@@ -4614,7 +4474,7 @@ await corsair.googlebigquery.api.routines.update({});
 | `lastModifiedTime` | `string` | No | — |
 | `language` | `SQL \| JAVASCRIPT \| PYTHON \| JAVA \| SCALA` | No | — |
 | `arguments` | `object[]` | No | — |
-| `returnType` | `object` | No | — |
+| `returnType` | `Record<string, any>` | No | — |
 | `importedLibraries` | `string[]` | No | — |
 | `definitionBody` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -4639,17 +4499,8 @@ await corsair.googlebigquery.api.routines.update({});
   name?: string,
   argumentKind?: FIXED_TYPE | ANY_TYPE,
   mode?: IN | OUT | INOUT,
-  dataType?: {
-  }
+  dataType?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="returnType full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4682,7 +4533,7 @@ await corsair.googlebigquery.api.tables.create({});
 | `schema` | `object` | No | — |
 | `friendlyName` | `string` | No | — |
 | `description` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `timePartitioning` | `object` | No | — |
 | `clustering` | `object` | No | — |
 | `view` | `object` | No | — |
@@ -4709,16 +4560,14 @@ await corsair.googlebigquery.api.tables.create({});
     type: string,
     mode?: string,
     description?: string,
-    fields?: lazy
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: (recursive)
+    }[]
   }[]
-}
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -4765,7 +4614,13 @@ await corsair.googlebigquery.api.tables.create({});
       type: string,
       mode?: string,
       description?: string,
-      fields?: lazy
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: (recursive)
+      }[]
     }[]
   },
   autodetect?: boolean
@@ -4787,7 +4642,7 @@ await corsair.googlebigquery.api.tables.create({});
 | `tableReference` | `object` | Yes | — |
 | `friendlyName` | `string` | No | — |
 | `description` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `schema` | `object` | No | — |
 | `timePartitioning` | `object` | No | — |
 | `clustering` | `object` | No | — |
@@ -4813,14 +4668,6 @@ await corsair.googlebigquery.api.tables.create({});
 ```
 </Accordion>
 
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="schema full type">
 
 ```ts
@@ -4830,7 +4677,13 @@ await corsair.googlebigquery.api.tables.create({});
     type: string,
     mode?: string,
     description?: string,
-    fields?: lazy
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: (recursive)
+    }[]
   }[]
 }
 ```
@@ -4878,7 +4731,13 @@ await corsair.googlebigquery.api.tables.create({});
       type: string,
       mode?: string,
       description?: string,
-      fields?: lazy
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: (recursive)
+      }[]
     }[]
   },
   autodetect?: boolean
@@ -4953,7 +4812,7 @@ await corsair.googlebigquery.api.tables.getSchema({});
 | `tableReference` | `object` | Yes | — |
 | `friendlyName` | `string` | No | — |
 | `description` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `schema` | `object` | No | — |
 | `timePartitioning` | `object` | No | — |
 | `clustering` | `object` | No | — |
@@ -4979,14 +4838,6 @@ await corsair.googlebigquery.api.tables.getSchema({});
 ```
 </Accordion>
 
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="schema full type">
 
 ```ts
@@ -4996,7 +4847,13 @@ await corsair.googlebigquery.api.tables.getSchema({});
     type: string,
     mode?: string,
     description?: string,
-    fields?: lazy
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: (recursive)
+    }[]
   }[]
 }
 ```
@@ -5044,7 +4901,13 @@ await corsair.googlebigquery.api.tables.getSchema({});
       type: string,
       mode?: string,
       description?: string,
-      fields?: lazy
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: (recursive)
+      }[]
     }[]
   },
   autodetect?: boolean
@@ -5106,8 +4969,7 @@ await corsair.googlebigquery.api.tables.list({});
   type?: string,
   creationTime?: string,
   expirationTime?: string,
-  labels?: {
-  },
+  labels?: Record<string, string>,
   view?: {
     query?: string,
     useLegacySql?: boolean
@@ -5211,15 +5073,20 @@ await corsair.googlebigquery.api.tables.patch({});
   },
   friendlyName?: string,
   description?: string,
-  labels?: {
-  },
+  labels?: Record<string, string>,
   schema?: {
     fields?: {
       name: string,
       type: string,
       mode?: string,
       description?: string,
-      fields?: lazy
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: (recursive)
+      }[]
     }[]
   },
   timePartitioning?: {
@@ -5243,7 +5110,13 @@ await corsair.googlebigquery.api.tables.patch({});
         type: string,
         mode?: string,
         description?: string,
-        fields?: lazy
+        fields?: {
+          name: string,
+          type: string,
+          mode?: string,
+          description?: string,
+          fields?: (recursive)
+        }[]
       }[]
     },
     autodetect?: boolean
@@ -5273,7 +5146,7 @@ await corsair.googlebigquery.api.tables.patch({});
 | `tableReference` | `object` | Yes | — |
 | `friendlyName` | `string` | No | — |
 | `description` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `schema` | `object` | No | — |
 | `timePartitioning` | `object` | No | — |
 | `clustering` | `object` | No | — |
@@ -5299,14 +5172,6 @@ await corsair.googlebigquery.api.tables.patch({});
 ```
 </Accordion>
 
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="schema full type">
 
 ```ts
@@ -5316,7 +5181,13 @@ await corsair.googlebigquery.api.tables.patch({});
     type: string,
     mode?: string,
     description?: string,
-    fields?: lazy
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: (recursive)
+    }[]
   }[]
 }
 ```
@@ -5364,7 +5235,13 @@ await corsair.googlebigquery.api.tables.patch({});
       type: string,
       mode?: string,
       description?: string,
-      fields?: lazy
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: (recursive)
+      }[]
     }[]
   },
   autodetect?: boolean
@@ -5414,15 +5291,20 @@ await corsair.googlebigquery.api.tables.update({});
   },
   friendlyName?: string,
   description?: string,
-  labels?: {
-  },
+  labels?: Record<string, string>,
   schema?: {
     fields?: {
       name: string,
       type: string,
       mode?: string,
       description?: string,
-      fields?: lazy
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: (recursive)
+      }[]
     }[]
   },
   timePartitioning?: {
@@ -5446,7 +5328,13 @@ await corsair.googlebigquery.api.tables.update({});
         type: string,
         mode?: string,
         description?: string,
-        fields?: lazy
+        fields?: {
+          name: string,
+          type: string,
+          mode?: string,
+          description?: string,
+          fields?: (recursive)
+        }[]
       }[]
     },
     autodetect?: boolean
@@ -5476,7 +5364,7 @@ await corsair.googlebigquery.api.tables.update({});
 | `tableReference` | `object` | Yes | — |
 | `friendlyName` | `string` | No | — |
 | `description` | `string` | No | — |
-| `labels` | `object` | No | — |
+| `labels` | `Record<string, string>` | No | — |
 | `schema` | `object` | No | — |
 | `timePartitioning` | `object` | No | — |
 | `clustering` | `object` | No | — |
@@ -5502,14 +5390,6 @@ await corsair.googlebigquery.api.tables.update({});
 ```
 </Accordion>
 
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="schema full type">
 
 ```ts
@@ -5519,7 +5399,13 @@ await corsair.googlebigquery.api.tables.update({});
     type: string,
     mode?: string,
     description?: string,
-    fields?: lazy
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: (recursive)
+    }[]
   }[]
 }
 ```
@@ -5567,7 +5453,13 @@ await corsair.googlebigquery.api.tables.update({});
       type: string,
       mode?: string,
       description?: string,
-      fields?: lazy
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: (recursive)
+      }[]
     }[]
   },
   autodetect?: boolean

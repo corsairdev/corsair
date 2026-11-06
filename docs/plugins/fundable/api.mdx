@@ -458,8 +458,8 @@ await corsair.fundable.api.companies.post({});
   locations?: string[],
   industries?: string[],
   super_categories?: string[],
-  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
-  ipo_status?: public | private[],
+  employee_count?: (1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[],
+  ipo_status?: (public | private)[],
   total_raised_min?: number,
   total_raised_max?: number
 }
@@ -919,8 +919,8 @@ await corsair.fundable.api.deals.post({});
   locations?: string[],
   industries?: string[],
   super_categories?: string[],
-  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
-  ipo_status?: public | private[],
+  employee_count?: (1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[],
+  ipo_status?: (public | private)[],
   total_raised_min?: number,
   total_raised_max?: number
 }
@@ -1399,7 +1399,7 @@ await corsair.fundable.api.investors.post({});
 ```ts
 {
   locations?: string[],
-  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[]
+  employee_count?: (1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[]
 }
 ```
 </Accordion>
@@ -1414,8 +1414,8 @@ await corsair.fundable.api.investors.post({});
   locations?: string[],
   industries?: string[],
   super_categories?: string[],
-  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
-  ipo_status?: public | private[],
+  employee_count?: (1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[],
+  ipo_status?: (public | private)[],
   total_raised_min?: number,
   total_raised_max?: number,
   financing_types?: {
@@ -1802,17 +1802,17 @@ await corsair.fundable.api.people.get({});
 {
   person: {
     id: string,
-    name?: string | null,
-    title?: string | null,
-    linkedin_url?: string | null,
-    crunchbase_url?: string | null,
-    twitter_url?: string | null,
-    location?: string | null,
-    city?: string | null,
-    country_code?: string | null,
-    about?: string | null,
+    name: string | null,
+    title: string | null,
+    linkedin_url: string | null,
+    crunchbase_url: string | null,
+    twitter_url: string | null,
+    location: string | null,
+    city: string | null,
+    country_code: string | null,
+    about: string | null,
     is_founder: boolean,
-    current_company?: {
+    current_company: {
       id?: string | null,
       name?: string | null,
       permalink?: string | null,
@@ -1850,7 +1850,7 @@ await corsair.fundable.api.people.get({});
       deal_count?: number | null,
       last_deal_date?: string | null
     }[],
-    investor_highlights?: {
+    investor_highlights: {
       total_deal_count?: number | null,
       lead_deal_count?: number | null,
       deal_count_last_12_months?: number | null,
@@ -2006,8 +2006,8 @@ await corsair.fundable.api.people.post({});
 
 ```ts
 {
-  roles?: founder | ceo | key_person[],
-  contact_types?: linkedin | email | phone | twitter[],
+  roles?: (founder | ceo | key_person)[],
+  contact_types?: (linkedin | email | phone | twitter)[],
   job_titles?: string[],
   education_schools?: string[],
   linkedin_companies?: string[]
@@ -2025,8 +2025,8 @@ await corsair.fundable.api.people.post({});
   locations?: string[],
   industries?: string[],
   super_categories?: string[],
-  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
-  ipo_status?: public | private | acquired | delisted[],
+  employee_count?: (1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[],
+  ipo_status?: (public | private | acquired | delisted)[],
   total_raised_min?: number,
   total_raised_max?: number,
   investor_people_ids?: string[],
@@ -2057,7 +2057,7 @@ await corsair.fundable.api.people.post({});
   crunchbase_urls?: string[],
   permalinks?: string[],
   locations?: string[],
-  employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
+  employee_count?: (1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[],
   deals?: {
     search_query?: string,
     min_relevance?: number,
@@ -2076,8 +2076,8 @@ await corsair.fundable.api.people.post({});
     industries?: string[],
     super_categories?: string[],
     portfolio_locations?: string[],
-    portfolio_employee_count?: 1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+[],
-    ipo_status?: public | private[],
+    portfolio_employee_count?: (1-10 | 11-50 | 51-100 | 101-250 | 251-500 | 501-1000 | 1001-5000 | 5001-10000 | 10001+)[],
+    ipo_status?: (public | private)[],
     total_raised_min?: number,
     total_raised_max?: number
   }
@@ -2103,17 +2103,17 @@ await corsair.fundable.api.people.post({});
 {
   people: {
     id: string,
-    name?: string | null,
-    title?: string | null,
-    linkedin_url?: string | null,
-    crunchbase_url?: string | null,
-    twitter_url?: string | null,
-    location?: string | null,
-    city?: string | null,
-    country_code?: string | null,
-    about?: string | null,
+    name: string | null,
+    title: string | null,
+    linkedin_url: string | null,
+    crunchbase_url: string | null,
+    twitter_url: string | null,
+    location: string | null,
+    city: string | null,
+    country_code: string | null,
+    about: string | null,
     is_founder: boolean,
-    current_company?: {
+    current_company: {
       id?: string | null,
       name?: string | null,
       permalink?: string | null,
@@ -2151,7 +2151,7 @@ await corsair.fundable.api.people.post({});
       deal_count?: number | null,
       last_deal_date?: string | null
     }[],
-    investor_highlights?: {
+    investor_highlights: {
       total_deal_count?: number | null,
       lead_deal_count?: number | null,
       deal_count_last_12_months?: number | null,

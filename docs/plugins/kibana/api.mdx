@@ -28,17 +28,7 @@ await corsair.kibana.api.alerting.createRule({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
@@ -74,17 +64,7 @@ await corsair.kibana.api.alerting.deleteRule({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -121,17 +101,7 @@ await corsair.kibana.api.alerting.listRules({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `total` | `number` | No | — |
-| `data` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | No | — |
 
 
 
@@ -156,17 +126,7 @@ await corsair.kibana.api.alerting.listRuleTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rule_types` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rule_types full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rule_types` | `Record<string, any>[]` | No | — |
 
 
 
@@ -193,34 +153,18 @@ await corsair.kibana.api.cases.create({});
 | `title` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
 | `owner` | `cases \| observability \| securitySolution` | Yes | — |
-| `connector` | `object` | Yes | — |
+| `connector` | `Record<string, any>` | Yes | — |
 | `settings` | `object` | Yes | — |
 | `tags` | `string[]` | Yes | — |
-| `body` | `object` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
-<Accordion title="connector full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="settings full type">
 
 ```ts
 {
   syncAlerts: boolean,
   extractObservables?: boolean
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -275,17 +219,7 @@ await corsair.kibana.api.cases.list({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `total` | `number` | No | — |
-| `cases` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="cases full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `cases` | `Record<string, any>[]` | No | — |
 
 
 
@@ -312,26 +246,8 @@ await corsair.kibana.api.connectors.create({});
 | `id` | `string` | Yes | — |
 | `connector_type_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `config` | `object` | No | — |
-| `secrets` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="secrets full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | No | — |
+| `secrets` | `Record<string, any>` | No | — |
 
 
 
@@ -367,17 +283,7 @@ await corsair.kibana.api.connectors.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -429,17 +335,7 @@ await corsair.kibana.api.connectors.list({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -468,17 +364,7 @@ await corsair.kibana.api.connectors.listTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `connector_types` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="connector_types full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `connector_types` | `Record<string, any>[]` | No | — |
 
 
 
@@ -504,18 +390,8 @@ await corsair.kibana.api.dashboards.create({});
 |------|------|----------|-------------|
 | `title` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `panels` | `object[]` | No | — |
+| `panels` | `Record<string, any>[]` | No | — |
 | `dashboard_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="panels full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -550,17 +426,7 @@ await corsair.kibana.api.dashboards.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -621,18 +487,10 @@ await corsair.kibana.api.dashboards.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `Record<string, any>[]` | No | — |
 | `meta` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="meta full type">
 
 ```ts
@@ -668,17 +526,7 @@ await corsair.kibana.api.dashboards.upsert({});
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
-| `panels` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="panels full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `panels` | `Record<string, any>[]` | No | — |
 
 
 
@@ -776,8 +624,7 @@ await corsair.kibana.api.dataViews.get({});
   title: string,
   name?: string,
   timeFieldName?: string,
-  sourceFilters?: {
-  }[]
+  sourceFilters?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -806,17 +653,7 @@ await corsair.kibana.api.dataViews.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data_view` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_view full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data_view` | `Record<string, any>[]` | No | — |
 
 
 
@@ -840,27 +677,9 @@ await corsair.kibana.api.detection.findAlerts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
-| `aggs` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `aggs` | `Record<string, any>` | No | — |
 | `size` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="aggs full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -868,28 +687,10 @@ await corsair.kibana.api.detection.findAlerts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `hits` | `object` | No | — |
-| `aggregations` | `object` | No | — |
+| `hits` | `Record<string, any>` | No | — |
+| `aggregations` | `Record<string, any>` | No | — |
 | `took` | `number` | No | — |
 | `timed_out` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="hits full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="aggregations full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -927,17 +728,7 @@ await corsair.kibana.api.detection.findRules({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `total` | `number` | No | — |
-| `data` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | No | — |
 
 
 
@@ -974,18 +765,8 @@ await corsair.kibana.api.fleet.agentPoliciesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `total` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1096,17 +877,7 @@ await corsair.kibana.api.fleet.enrollmentKeyGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `item` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="item full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `item` | `Record<string, any>` | No | — |
 
 
 
@@ -1138,18 +909,8 @@ await corsair.kibana.api.fleet.enrollmentKeysList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `total` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1179,17 +940,7 @@ await corsair.kibana.api.fleet.epmCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `response` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="response full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `response` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1220,17 +971,7 @@ await corsair.kibana.api.fleet.epmDataStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data_streams` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_streams full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data_streams` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1262,17 +1003,7 @@ await corsair.kibana.api.fleet.epmPackageDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `response` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `response` | `Record<string, any>` | No | — |
 
 
 
@@ -1330,17 +1061,7 @@ await corsair.kibana.api.fleet.epmPackagesInstalled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `response` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="response full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `response` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1390,17 +1111,7 @@ await corsair.kibana.api.fleet.epmPackagesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `response` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="response full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `response` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1430,17 +1141,7 @@ await corsair.kibana.api.fleet.epmPackageStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `response` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `response` | `Record<string, any>` | No | — |
 
 
 
@@ -1466,17 +1167,7 @@ await corsair.kibana.api.fleet.outputDelete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1509,18 +1200,8 @@ await corsair.kibana.api.fleet.packagePoliciesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `total` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1546,17 +1227,7 @@ await corsair.kibana.api.fleet.proxyDelete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1585,17 +1256,7 @@ await corsair.kibana.api.fleet.serverHostGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `item` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="item full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `item` | `Record<string, any>` | No | — |
 
 
 
@@ -1620,17 +1281,7 @@ await corsair.kibana.api.fleet.serverHostsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `items` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1662,17 +1313,7 @@ await corsair.kibana.api.index.listIndices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `indices` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="indices full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `indices` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1702,17 +1343,7 @@ await corsair.kibana.api.lists.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1744,17 +1375,7 @@ await corsair.kibana.api.metrics.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `nodes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="nodes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `nodes` | `Record<string, any>` | No | — |
 
 
 
@@ -1782,17 +1403,7 @@ await corsair.kibana.api.osquery.deleteSavedQuery({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1824,18 +1435,8 @@ await corsair.kibana.api.reporting.listJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `jobs` | `object[]` | No | — |
+| `jobs` | `Record<string, any>[]` | No | — |
 | `total` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="jobs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1861,27 +1462,9 @@ await corsair.kibana.api.savedObjects.create({});
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `id` | `string` | No | — |
-| `attributes` | `object` | Yes | — |
-| `references` | `object[]` | No | — |
+| `attributes` | `Record<string, any>` | Yes | — |
+| `references` | `Record<string, any>[]` | No | — |
 | `overwrite` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="references full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1891,28 +1474,10 @@ await corsair.kibana.api.savedObjects.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
-| `attributes` | `object` | Yes | — |
-| `references` | `object[]` | No | — |
+| `attributes` | `Record<string, any>` | Yes | — |
+| `references` | `Record<string, any>[]` | No | — |
 | `updated_at` | `string` | No | — |
 | `version` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="references full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1939,17 +1504,7 @@ await corsair.kibana.api.savedObjects.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2007,10 +1562,8 @@ await corsair.kibana.api.savedObjects.find({});
 {
   id: string,
   type: string,
-  attributes: {
-  },
-  references?: {
-  }[],
+  attributes: Record<string, any>,
+  references?: Record<string, any>[],
   updated_at?: string,
   version?: string
 }[]
@@ -2049,28 +1602,10 @@ await corsair.kibana.api.savedObjects.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
-| `attributes` | `object` | Yes | — |
-| `references` | `object[]` | No | — |
+| `attributes` | `Record<string, any>` | Yes | — |
+| `references` | `Record<string, any>[]` | No | — |
 | `updated_at` | `string` | No | — |
 | `version` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="references full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2094,26 +1629,8 @@ await corsair.kibana.api.savedObjects.update({});
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
-| `attributes` | `object` | Yes | — |
-| `references` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="references full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `attributes` | `Record<string, any>` | Yes | — |
+| `references` | `Record<string, any>[]` | No | — |
 
 
 
@@ -2123,28 +1640,10 @@ await corsair.kibana.api.savedObjects.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
-| `attributes` | `object` | Yes | — |
-| `references` | `object[]` | No | — |
+| `attributes` | `Record<string, any>` | Yes | — |
+| `references` | `Record<string, any>[]` | No | — |
 | `updated_at` | `string` | No | — |
 | `version` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="references full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2186,18 +1685,8 @@ await corsair.kibana.api.security.entitiesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | No | — |
+| `records` | `Record<string, any>[]` | No | — |
 | `total` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2222,17 +1711,7 @@ await corsair.kibana.api.security.entityStoreEngines({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engines` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="engines full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `engines` | `Record<string, any>[]` | No | — |
 
 
 
@@ -2263,17 +1742,7 @@ await corsair.kibana.api.security.entityStoreStatus({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string` | No | — |
-| `engines` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="engines full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `engines` | `Record<string, any>[]` | No | — |
 
 
 
@@ -2310,17 +1779,7 @@ await corsair.kibana.api.security.listEndpointItems({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `total` | `number` | No | — |
-| `data` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | No | — |
 
 
 

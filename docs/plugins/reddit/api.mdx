@@ -39,8 +39,8 @@ await corsair.reddit.api.feeds.getAll({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -111,8 +111,8 @@ await corsair.reddit.api.feeds.getPopular({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -185,8 +185,8 @@ await corsair.reddit.api.listings.subredditsNew({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `subreddits` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -257,8 +257,8 @@ await corsair.reddit.api.listings.subredditsPopular({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `subreddits` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -328,8 +328,8 @@ await corsair.reddit.api.posts.getById({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -400,10 +400,10 @@ await corsair.reddit.api.posts.getComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `post` | `object` | Yes | — |
+| `post` | `object \| null` | Yes | — |
 | `comments` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="post full type">
@@ -436,7 +436,7 @@ await corsair.reddit.api.posts.getComments({});
   permalink: string,
   thumbnail: string,
   total_awards_received?: number
-}
+} | null
 ```
 </Accordion>
 
@@ -514,8 +514,8 @@ await corsair.reddit.api.search.global({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -590,8 +590,8 @@ await corsair.reddit.api.search.subreddit({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -663,8 +663,8 @@ await corsair.reddit.api.search.subreddits({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `subreddits` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -742,8 +742,8 @@ await corsair.reddit.api.subreddits.getAbout({});
 | `description_html` | `string \| null` | Yes | — |
 | `public_description` | `string \| null` | Yes | — |
 | `subscribers` | `number` | Yes | — |
-| `active_user_count` | `number` | No | — |
-| `accounts_active` | `number` | No | — |
+| `active_user_count` | `number \| null` | No | — |
+| `accounts_active` | `number \| null` | No | — |
 | `over18` | `boolean` | Yes | — |
 | `quarantine` | `boolean` | Yes | — |
 | `restrict_posting` | `boolean` | No | — |
@@ -794,8 +794,8 @@ await corsair.reddit.api.subreddits.getControversial({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -867,8 +867,8 @@ await corsair.reddit.api.subreddits.getHot({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -940,8 +940,8 @@ await corsair.reddit.api.subreddits.getNew({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -1013,8 +1013,8 @@ await corsair.reddit.api.subreddits.getRising({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -1087,8 +1087,8 @@ await corsair.reddit.api.subreddits.getTop({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -1208,8 +1208,8 @@ await corsair.reddit.api.users.getComments({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `comments` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -1282,8 +1282,8 @@ await corsair.reddit.api.users.getOverview({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -1385,8 +1385,8 @@ await corsair.reddit.api.users.getSubmitted({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `posts` | `object[]` | Yes | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
+| `after` | `string \| null` | Yes | — |
+| `before` | `string \| null` | Yes | — |
 | `dist` | `number` | Yes | — |
 
 <AccordionGroup>

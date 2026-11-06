@@ -484,6 +484,9 @@ export function buildCorsairClient<
 							entityTypeName,
 							schema.version,
 							dataSchema,
+							internalConfig?.encryptDataAtRest
+								? { encryptDataAtRest: true, kek: kek ?? '' }
+								: undefined,
 						)
 					: createEntityClient(
 							undefined,
@@ -535,6 +538,9 @@ export function buildCorsairClient<
 				: {}),
 			// Include tenantId in context for keyBuilder and webhook hooks
 			tenantId: effectiveTenantId,
+			...(internalConfig?.encryptDataAtRest
+				? { encryptDataAtRest: true, kek }
+				: {}),
 			...(hubConfig ? { hub: hubConfig } : {}),
 		};
 
@@ -588,6 +594,7 @@ export function buildCorsairClient<
 			kek,
 			allPlugins: plugins,
 			multiTenancy: internalConfig?.multiTenancy,
+			encryptDataAtRest: internalConfig?.encryptDataAtRest === true,
 		});
 
 		if (Object.keys(boundTree).length > 0) {

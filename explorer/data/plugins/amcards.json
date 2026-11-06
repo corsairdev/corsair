@@ -71,12 +71,12 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "parent",
@@ -195,22 +195,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "price",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "shipping_cost",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "available",
@@ -250,7 +250,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -264,7 +264,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -293,7 +293,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category",

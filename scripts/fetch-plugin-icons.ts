@@ -56,8 +56,48 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	starton: 'https://github.com/starton-io.png?size=200',
 	// twenty-icons only has a 32px blur; the site apple touch icon is 180px.
 	turso: 'https://turso.tech/apple-touch-icon.png',
+	// twenty-icons only has a 32px blur; the site apple touch icon is 180px.
+	browseruse: 'https://browser-use.com/apple-touch-icon.png',
+	// plugin-docs.yaml names graph.microsoft.com (the API host), whose icon is the
+	// Microsoft logo; excel.cloud.microsoft carries Excel's own mark.
+	excel: 'https://twenty-icons.com/excel.cloud.microsoft/128',
 	// twenty-icons returns a 32px blur; Google's favicon is the sharp site mark.
 	octen: 'https://www.google.com/s2/favicons?domain=octen.ai&sz=128',
+	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
+	// is the current black knot on pink.
+	typesafe:
+		'https://framerusercontent.com/images/kcuF2BEp5XaVfkmFB634IPRKQH0.png',
+	// plugin-docs.yaml names zoho.com, whose icon is the generic 32px Zoho mark.
+	// Zoho Desk's own mark is its App Store icon (zoho.com/desk has no touch icon).
+	zohodesk:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/a9/08/3e/a9083ec8-1697-2db1-92d4-d175d9121cac/AppIcon-0-0-1x_U007emarketing-0-0-0-8-0-0-85-220.png/180x180bb.png',
+	// dnsfilter.com only has a 32px favicon, so twenty-icons returns a blur.
+	// DNSFilter's App Store icon (Roaming Client) is the same mark at 180px.
+	dnsfilter:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4f/32/b4/4f32b46f-f35c-8b7c-6784-c862067f7400/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/180x180bb.png',
+	// twenty-icons has Retell's old dot grid; the site's apple touch icon is the
+	// current ring of dots.
+	retellai:
+		'https://cdn.prod.website-files.com/64ada0f2685b2d18caa5e699/69d7b35ce160f153aa823cf0_output-Retellai%20(2).png',
+	// twenty-icons has Qdrant's old cube mark; the site's apple touch icon is the
+	// current red hexagon.
+	qdrant: 'https://qdrant.tech/favicon/apple-touch-icon.png',
+	// twenty-icons returns a blur; mem0.ai only has an SVG favicon, and the
+	// GitHub org mark is the same logo as a PNG.
+	mem0: 'https://github.com/mem0ai.png?size=200',
+	// twenty-icons returns a screenshot of the homepage, not the logo.
+	emailoctopus: 'https://emailoctopus.com/apple-touch-icon.png',
+	// twenty-icons only has a 32px blur; the site's 192px favicon is the same mark.
+	esignatures: 'https://esignatures.com/favicon-192.png',
+	// ticketmaster.com only has a 32px favicon, so twenty-icons returns a blur.
+	// Ticketmaster's App Store icon is the same mark at 180px.
+	ticketmaster:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b6/1c/09/b61c097d-c719-f0a7-9062-d602b89e8161/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/180x180bb.png',
+	// netsuite.com only has a 32px favicon (and blocks scripted fetches), so
+	// twenty-icons returns a blur. Oracle's NetSuite App Store icon is the same
+	// mark at 180px.
+	netsuite:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/19/ca/fb/19cafb9e-8f0b-d237-e0ea-a4b3ed3f88e4/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/180x180bb.png',
 };
 
 type FetchResult =

@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Clickup: every `clickup.api.*` operation with input and output types."
+description: "API reference for ClickUp: every `clickup.api.*` operation with input and output types."
 ---
 
 Every `clickup.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -3556,17 +3556,7 @@ await corsair.clickup.api.tasks.create({});
 | `notify_all` | `boolean` | No | — |
 | `parent` | `string` | No | — |
 | `links_to` | `string` | No | — |
-| `custom_fields` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_fields full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `custom_fields` | `Record<string, any>[]` | No | — |
 
 
 
@@ -4476,14 +4466,14 @@ await corsair.clickup.api.timeEntries.running({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

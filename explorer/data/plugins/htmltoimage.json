@@ -38,12 +38,12 @@
           {
             "key": "plan",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "plan_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
@@ -63,7 +63,7 @@
           {
             "key": "credits_reset_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -169,7 +169,7 @@
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -269,6 +269,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "success",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
           "field": "id",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -285,6 +290,11 @@
         },
         {
           "field": "expires_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

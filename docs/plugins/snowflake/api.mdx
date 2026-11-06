@@ -1,0 +1,251 @@
+---
+title: API
+description: "API reference for Snowflake: every `snowflake.api.*` operation with input and output types."
+---
+
+Every `snowflake.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Statements
+
+### cancel
+
+`statements.cancel`
+
+Cancel a running SQL statement.
+
+**Risk:** `write`
+
+```ts
+await corsair.snowflake.api.statements.cancel({ statementHandle: '019c06a4-0000-df4f-0000-00100006589e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statementHandle` | `string` | Yes | UUID-shaped handle (8-4-4-4-12 hex). |
+| `requestId` | `string` | No | UUID-shaped request ID (8-4-4-4-12 hex). |
+| `retry` | `boolean` | No | Requires `requestId`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | No | — |
+| `sqlState` | `string` | No | — |
+| `message` | `string` | No | — |
+| `statementHandle` | `string` | Yes | — |
+| `statementStatusUrl` | `string` | No | — |
+| `createdOn` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`statements.get`
+
+Fetch the status of a statement and one partition of its result.
+
+**Risk:** `read`
+
+```ts
+await corsair.snowflake.api.statements.get({ statementHandle: '019c06a4-0000-df4f-0000-00100006589e', partition: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statementHandle` | `string` | Yes | UUID-shaped handle (8-4-4-4-12 hex). |
+| `requestId` | `string` | No | UUID-shaped request ID (8-4-4-4-12 hex). |
+| `partition` | `number` | No | Partition index, starting at 0. |
+| `retry` | `boolean` | No | Requires `requestId`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | No | — |
+| `sqlState` | `string` | No | — |
+| `message` | `string` | No | — |
+| `statementHandle` | `string` | Yes | — |
+| `statementHandles` | `string[]` | No | — |
+| `createdOn` | `number` | No | — |
+| `statementStatusUrl` | `string` | No | — |
+| `resultSetMetaData` | `object` | No | — |
+| `data` | `(string \| null)[][]` | No | Rows. Each cell is a string or null. |
+| `stats` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resultSetMetaData full type">
+
+```ts
+{
+  format?: string,
+  numRows?: number,
+  rowType?: {
+    name?: string,
+    type?: string,
+    length?: number | null,
+    precision?: number | null,
+    scale?: number | null,
+    nullable?: boolean
+  }[],
+  partitionInfo?: {
+    rowCount?: number,
+    uncompressedSize?: number,
+    compressedSize?: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  numRowsInserted?: number,
+  numRowsUpdated?: number,
+  numRowsDeleted?: number,
+  numDuplicateRowsUpdated?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submit
+
+`statements.submit`
+
+Submit SQL for execution. Returns rows, a handle while the statement is still running, or DML stats.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snowflake.api.statements.submit({ statement: 'SELECT 1', timeout: 10, warehouse: 'COMPUTE_WH' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | No | UUID-shaped request ID (8-4-4-4-12 hex). |
+| `async` | `boolean` | No | Return the handle immediately when true. |
+| `nullable` | `boolean` | No | `false` returns SQL NULL as the string `"null"`. |
+| `retry` | `boolean` | No | Requires `requestId`. Set `true` with the `requestId` of the original request to resubmit it; Snowflake does not run it twice. A new `requestId` runs the statement again. |
+| `statement` | `string` | Yes | — |
+| `timeout` | `number` | No | — |
+| `database` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `warehouse` | `string` | No | — |
+| `role` | `string` | No | — |
+| `bindings` | `object` | No | — |
+| `parameters` | `object` | No | — |
+
+`parameters.client_result_chunk_size` is in megabytes, from 16 to 160.
+
+<AccordionGroup>
+<Accordion title="bindings full type">
+
+```ts
+Record<string, {
+  type: FIXED | REAL | DECFLOAT | TEXT | BINARY | BOOLEAN | DATE | TIME | TIMESTAMP_TZ | TIMESTAMP_LTZ | TIMESTAMP_NTZ,
+  value: string
+}>
+```
+</Accordion>
+
+<Accordion title="parameters full type">
+
+```ts
+{
+  timezone?: string,
+  query_tag?: string,
+  binary_output_format?: string,
+  date_output_format?: string,
+  time_output_format?: string,
+  timestamp_output_format?: string,
+  timestamp_ltz_output_format?: string,
+  timestamp_ntz_output_format?: string,
+  timestamp_tz_output_format?: string,
+  multi_statement_count?: number | string,
+  client_result_chunk_size?: number,
+  rows_per_resultset?: number,
+  use_cached_result?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | No | — |
+| `sqlState` | `string` | No | — |
+| `message` | `string` | No | — |
+| `statementHandle` | `string` | Yes | — |
+| `statementHandles` | `string[]` | No | — |
+| `createdOn` | `number` | No | — |
+| `statementStatusUrl` | `string` | No | — |
+| `resultSetMetaData` | `object` | No | — |
+| `data` | `(string \| null)[][]` | No | Rows. Each cell is a string or null. |
+| `stats` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resultSetMetaData full type">
+
+```ts
+{
+  format?: string,
+  numRows?: number,
+  rowType?: {
+    name?: string,
+    type?: string,
+    length?: number | null,
+    precision?: number | null,
+    scale?: number | null,
+    nullable?: boolean
+  }[],
+  partitionInfo?: {
+    rowCount?: number,
+    uncompressedSize?: number,
+    compressedSize?: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  numRowsInserted?: number,
+  numRowsUpdated?: number,
+  numRowsDeleted?: number,
+  numDuplicateRowsUpdated?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

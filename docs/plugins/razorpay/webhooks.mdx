@@ -71,8 +71,7 @@ A Razorpay order was paid
       offer_id?: string | null,
       status: string,
       attempts?: number,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       created_at?: number
     }
   },
@@ -90,8 +89,7 @@ A Razorpay order was paid
       description?: string | null,
       email?: string | null,
       contact?: string | null,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       created_at?: number
     }
   }
@@ -125,8 +123,7 @@ A Razorpay order was paid
         offer_id?: string | null,
         status: string,
         attempts?: number,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         created_at?: number
       }
     },
@@ -144,8 +141,7 @@ A Razorpay order was paid
         description?: string | null,
         email?: string | null,
         contact?: string | null,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         created_at?: number
       }
     }
@@ -213,8 +209,7 @@ A Razorpay payment was captured
       description?: string | null,
       email?: string | null,
       contact?: string | null,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       created_at?: number
     }
   }
@@ -250,8 +245,7 @@ A Razorpay payment was captured
         description?: string | null,
         email?: string | null,
         contact?: string | null,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         created_at?: number
       }
     }
@@ -317,8 +311,7 @@ A Razorpay payment failed
       description?: string | null,
       email?: string | null,
       contact?: string | null,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       created_at?: number
     }
   }
@@ -354,8 +347,7 @@ A Razorpay payment failed
         description?: string | null,
         email?: string | null,
         contact?: string | null,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         created_at?: number
       }
     }
@@ -416,8 +408,7 @@ A Razorpay refund was processed
       payment_id: string,
       amount: number,
       currency?: string | null,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       receipt?: string | null,
       speed_processed?: string | null,
       speed_requested?: string | null,
@@ -439,8 +430,7 @@ A Razorpay refund was processed
       description?: string | null,
       email?: string | null,
       contact?: string | null,
-      notes?: {
-      } | any[],
+      notes?: Record<string, string> | any[],
       created_at?: number
     }
   }
@@ -469,8 +459,7 @@ A Razorpay refund was processed
         payment_id: string,
         amount: number,
         currency?: string | null,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         receipt?: string | null,
         speed_processed?: string | null,
         speed_requested?: string | null,
@@ -492,8 +481,7 @@ A Razorpay refund was processed
         description?: string | null,
         email?: string | null,
         contact?: string | null,
-        notes?: {
-        } | any[],
+        notes?: Record<string, string> | any[],
         created_at?: number
       }
     }

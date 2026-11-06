@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "CountdownApi plugin for Corsair"
+description: "eBay data API. Search products, get product details, and fetch search autocomplete suggestions."
 ---
 
-Use **CountdownApi** through Corsair: one client, typed API calls.
+Use **Countdown API** through Corsair: one client, typed API calls.
 
 **What you get:**
 
@@ -43,6 +43,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -50,7 +51,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -88,17 +89,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`autocomplete.get`**
+**Search eBay listings**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.countdownapi.api.autocomplete.get({});
+await tenant.countdownapi.api.search.get({ query: 'vintage camera', ebay_domain: 'ebay.com' });
 ```
 
 
-**Write**
+**Get a product**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/countdownapi/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.countdownapi.api.product.get({ url: 'https://www.ebay.com/itm/123456789012', ebay_domain: 'ebay.com' });
+```
 
 
 See the full list on the [API](/plugins/countdownapi/api) page.

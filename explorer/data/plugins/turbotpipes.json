@@ -1,0 +1,6972 @@
+{
+  "id": "turbotpipes",
+  "displayName": "Turbot Pipes",
+  "description": "Cloud intelligence and DevOps data platform for managing workspaces, connections, and queries.",
+  "npmPackageName": "@corsair-dev/turbotpipes",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 170,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "turbotpipes.api.actor.get",
+      "shortPath": "actor.get",
+      "description": "Get authenticated actor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.actor.listActivity",
+      "shortPath": "actor.listActivity",
+      "description": "List activity for actor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.actor.listConnections",
+      "shortPath": "actor.listConnections",
+      "description": "List connections for actor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.actor.listOrgs",
+      "shortPath": "actor.listOrgs",
+      "description": "List organizations for actor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.actor.listWorkspaces",
+      "shortPath": "actor.listWorkspaces",
+      "description": "List workspaces accessible by actor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.ai.createUserAiKey",
+      "shortPath": "ai.createUserAiKey",
+      "description": "Create user AI key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.ai.deleteOrgWorkspaceConversation",
+      "shortPath": "ai.deleteOrgWorkspaceConversation",
+      "description": "Delete AI conversation in org workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.ai.getUserAiKey",
+      "shortPath": "ai.getUserAiKey",
+      "description": "Get user AI key metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.ai.getUserWorkspaceConversation",
+      "shortPath": "ai.getUserWorkspaceConversation",
+      "description": "Get AI conversation details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.ai.listUserAiKeys",
+      "shortPath": "ai.listUserAiKeys",
+      "description": "List user AI keys",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.ai.listUserWorkspaceConversations",
+      "shortPath": "ai.listUserWorkspaceConversations",
+      "description": "List AI conversations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.ai.sendUserWorkspaceChatMessage",
+      "shortPath": "ai.sendUserWorkspaceChatMessage",
+      "description": "Send chat message to workspace AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversation_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.ai.testUserAiKey",
+      "shortPath": "ai.testUserAiKey",
+      "description": "Test user AI key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.ai.updateUserAiKey",
+      "shortPath": "ai.updateUserAiKey",
+      "description": "Update user AI key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.ai.updateUserWorkspaceConversation",
+      "shortPath": "ai.updateUserWorkspaceConversation",
+      "description": "Update AI conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.auth.createLoginTokenEmail",
+      "shortPath": "auth.createLoginTokenEmail",
+      "description": "Send login token to email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.auth.createSignup",
+      "shortPath": "auth.createSignup",
+      "description": "Create new user signup",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.auth.createUserPassword",
+      "shortPath": "auth.createUserPassword",
+      "description": "Create user password",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires_in_minutes",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.auth.deleteUserToken",
+      "shortPath": "auth.deleteUserToken",
+      "description": "Delete user token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.auth.getAuthProvider",
+      "shortPath": "auth.getAuthProvider",
+      "description": "Get OAuth provider details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.auth.getUserPassword",
+      "shortPath": "auth.getUserPassword",
+      "description": "Get user password status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.auth.getUserToken",
+      "shortPath": "auth.getUserToken",
+      "description": "Get user token metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.auth.initiateLogin",
+      "shortPath": "auth.initiateLogin",
+      "description": "Initiate user login",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.auth.updateUserToken",
+      "shortPath": "auth.updateUserToken",
+      "description": "Update user token status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.billing.deleteOrgBillingSubscription",
+      "shortPath": "billing.deleteOrgBillingSubscription",
+      "description": "Delete org billing subscription",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscription_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.billing.getOrgBillingInvoice",
+      "shortPath": "billing.getOrgBillingInvoice",
+      "description": "Get org billing invoice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.billing.getUserBillingPlan",
+      "shortPath": "billing.getUserBillingPlan",
+      "description": "Get user billing plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.billing.getUserBillingUpcomingInvoice",
+      "shortPath": "billing.getUserBillingUpcomingInvoice",
+      "description": "Get user upcoming invoice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | null"
+      }
+    },
+    {
+      "path": "turbotpipes.api.billing.listUserBillingInvoices",
+      "shortPath": "billing.listUserBillingInvoices",
+      "description": "List user billing invoices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.billing.listUserBillingPaymentMethods",
+      "shortPath": "billing.listUserBillingPaymentMethods",
+      "description": "List user payment methods",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.billing.listUserBillingSubscriptions",
+      "shortPath": "billing.listUserBillingSubscriptions",
+      "description": "List user billing subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.billing.updateOrgBillingSubscription",
+      "shortPath": "billing.updateOrgBillingSubscription",
+      "description": "Update org billing subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscription_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.createOrgConnection",
+      "shortPath": "connections.createOrgConnection",
+      "description": "Create org connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.createOrgConnectionFolder",
+      "shortPath": "connections.createOrgConnectionFolder",
+      "description": "Create org connection folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.createUserConnection",
+      "shortPath": "connections.createUserConnection",
+      "description": "Create user connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.deleteOrgConnectionPermission",
+      "shortPath": "connections.deleteOrgConnectionPermission",
+      "description": "Delete org connection permission",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permission_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.deleteUserConnectionDeprecated",
+      "shortPath": "connections.deleteUserConnectionDeprecated",
+      "description": "Delete user connection (deprecated)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.getOrgConnectionPermission",
+      "shortPath": "connections.getOrgConnectionPermission",
+      "description": "Get org connection permission",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permission_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.getUserConnection",
+      "shortPath": "connections.getUserConnection",
+      "description": "Get user connection details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.listUserConnections",
+      "shortPath": "connections.listUserConnections",
+      "description": "List connections for user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.testUserConnection",
+      "shortPath": "connections.testUserConnection",
+      "description": "Test user connection credentials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.updateOrgConnection",
+      "shortPath": "connections.updateOrgConnection",
+      "description": "Update org connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.updateOrgConnectionFolder",
+      "shortPath": "connections.updateOrgConnectionFolder",
+      "description": "Update org connection folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.connections.updateUserConnection",
+      "shortPath": "connections.updateUserConnection",
+      "description": "Update user connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.createUserWorkspaceDatatank",
+      "shortPath": "datatanks.createUserWorkspaceDatatank",
+      "description": "Create user workspace Datatank",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.createUserWorkspaceDatatankTable",
+      "shortPath": "datatanks.createUserWorkspaceDatatankTable",
+      "description": "Create Datatank table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datatank_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "table | query"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desired_state",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "{ type: interval | cron | manual, schedule?: string }"
+          },
+          {
+            "key": "part_per",
+            "optional": true,
+            "type": "connection"
+          },
+          {
+            "key": "skip_initial_refresh",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source_query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_schema",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_table",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.getDatatankTable",
+      "shortPath": "datatanks.getDatatankTable",
+      "description": "Get Datatank table details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datatank_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "table_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.getUserWorkspaceDatatank",
+      "shortPath": "datatanks.getUserWorkspaceDatatank",
+      "description": "Get user workspace Datatank",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datatank_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.getUserWorkspaceSchema",
+      "shortPath": "datatanks.getUserWorkspaceSchema",
+      "description": "Get user workspace schema",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.getUserWorkspaceSchemaTable",
+      "shortPath": "datatanks.getUserWorkspaceSchemaTable",
+      "description": "Get schema table details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "table_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.listOrgWorkspaceDatatanks",
+      "shortPath": "datatanks.listOrgWorkspaceDatatanks",
+      "description": "List org workspace Datatanks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.listUserWorkspaceDatatankPartitions",
+      "shortPath": "datatanks.listUserWorkspaceDatatankPartitions",
+      "description": "List Datatank partitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datatank_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "table_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.listUserWorkspaceDatatanks",
+      "shortPath": "datatanks.listUserWorkspaceDatatanks",
+      "description": "List user workspace Datatanks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.listUserWorkspaceDatatankTables",
+      "shortPath": "datatanks.listUserWorkspaceDatatankTables",
+      "description": "List Datatank tables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datatank_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.listUserWorkspaceSchemas",
+      "shortPath": "datatanks.listUserWorkspaceSchemas",
+      "description": "List user workspace schemas",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.datatanks.listUserWorkspaceSchemaTables",
+      "shortPath": "datatanks.listUserWorkspaceSchemaTables",
+      "description": "List schema tables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.identities.getIdentity",
+      "shortPath": "identities.getIdentity",
+      "description": "Get identity details by handle",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.identities.getIdentityAvatar",
+      "shortPath": "identities.getIdentityAvatar",
+      "description": "Get identity avatar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "avatar_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.identities.listIdentities",
+      "shortPath": "identities.listIdentities",
+      "description": "List identities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.createUserIntegration",
+      "shortPath": "integrations.createUserIntegration",
+      "description": "Create user integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "aws | azure | gcp | github | slack | gitlab"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.deleteUserIntegration",
+      "shortPath": "integrations.deleteUserIntegration",
+      "description": "Delete user integration",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.getOrgIntegration",
+      "shortPath": "integrations.getOrgIntegration",
+      "description": "Get org integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.getOrgWorkspaceIntegration",
+      "shortPath": "integrations.getOrgWorkspaceIntegration",
+      "description": "Get org workspace integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.getUserIntegration",
+      "shortPath": "integrations.getUserIntegration",
+      "description": "Get user integration details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.getUserWorkspaceIntegration",
+      "shortPath": "integrations.getUserWorkspaceIntegration",
+      "description": "Get user workspace integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.installUserSlackIntegration",
+      "shortPath": "integrations.installUserSlackIntegration",
+      "description": "Install Slack integration for user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.listUserIntegrations",
+      "shortPath": "integrations.listUserIntegrations",
+      "description": "List integrations for user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.listUserWorkspaceIntegrations",
+      "shortPath": "integrations.listUserWorkspaceIntegrations",
+      "description": "List user workspace integrations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.testUserIntegration",
+      "shortPath": "integrations.testUserIntegration",
+      "description": "Test user integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.integrations.updateUserIntegration",
+      "shortPath": "integrations.updateUserIntegration",
+      "description": "Update user integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.mods.createUserWorkspaceModVariableSetting",
+      "shortPath": "mods.createUserWorkspaceModVariableSetting",
+      "description": "Create mod variable setting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.mods.deleteOrgWorkspaceModVariableSetting",
+      "shortPath": "mods.deleteOrgWorkspaceModVariableSetting",
+      "description": "Delete org mod variable setting",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.mods.deleteUserWorkspaceModVariableSetting",
+      "shortPath": "mods.deleteUserWorkspaceModVariableSetting",
+      "description": "Delete mod variable setting",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.mods.getOrgWorkspaceModVariableSetting",
+      "shortPath": "mods.getOrgWorkspaceModVariableSetting",
+      "description": "Get org mod variable setting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.mods.getUserWorkspaceMod",
+      "shortPath": "mods.getUserWorkspaceMod",
+      "description": "Get installed mod details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.mods.getUserWorkspaceModVariableSetting",
+      "shortPath": "mods.getUserWorkspaceModVariableSetting",
+      "description": "Get mod variable setting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.mods.installUserWorkspaceMod",
+      "shortPath": "mods.installUserWorkspaceMod",
+      "description": "Install mod in user workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.mods.listOrgWorkspaceMods",
+      "shortPath": "mods.listOrgWorkspaceMods",
+      "description": "List installed mods in org workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.mods.listUserWorkspaceMods",
+      "shortPath": "mods.listUserWorkspaceMods",
+      "description": "List installed mods in workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.mods.listUserWorkspaceModVariables",
+      "shortPath": "mods.listUserWorkspaceModVariables",
+      "description": "List mod variables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.notifiers.createUserNotifier",
+      "shortPath": "notifiers.createUserNotifier",
+      "description": "Create user notifier",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notifies",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "enabled | disabled"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.notifiers.createUserWorkspaceNotifier",
+      "shortPath": "notifiers.createUserWorkspaceNotifier",
+      "description": "Create workspace notifier",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notifies",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "enabled | disabled"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.notifiers.deleteUserWorkspaceNotifier",
+      "shortPath": "notifiers.deleteUserWorkspaceNotifier",
+      "description": "Delete workspace notifier",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notifier_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.notifiers.getOrgWorkspaceNotifier",
+      "shortPath": "notifiers.getOrgWorkspaceNotifier",
+      "description": "Get org workspace notifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notifier_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.notifiers.getUserWorkspaceNotifier",
+      "shortPath": "notifiers.getUserWorkspaceNotifier",
+      "description": "Get workspace notifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notifier_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.notifiers.listUserNotifiers",
+      "shortPath": "notifiers.listUserNotifiers",
+      "description": "List user notifiers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.notifiers.listUserWorkspaceNotifiers",
+      "shortPath": "notifiers.listUserWorkspaceNotifiers",
+      "description": "List workspace notifiers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.notifiers.postUserWorkspaceNotifierCommand",
+      "shortPath": "notifiers.postUserWorkspaceNotifierCommand",
+      "description": "Post command to workspace notifier",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notifier_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.delete",
+      "shortPath": "orgs.delete",
+      "description": "Delete an organization",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.deleteWorkspace",
+      "shortPath": "orgs.deleteWorkspace",
+      "description": "Delete organization workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.get",
+      "shortPath": "orgs.get",
+      "description": "Get organization details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.getMember",
+      "shortPath": "orgs.getMember",
+      "description": "Get organization member details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.listProcesses",
+      "shortPath": "orgs.listProcesses",
+      "description": "List organization processes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.listServiceAccounts",
+      "shortPath": "orgs.listServiceAccounts",
+      "description": "List organization service accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.listUsage",
+      "shortPath": "orgs.listUsage",
+      "description": "List organization usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.listWorkspaces",
+      "shortPath": "orgs.listWorkspaces",
+      "description": "List organization workspaces",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.runWorkspaceCommand",
+      "shortPath": "orgs.runWorkspaceCommand",
+      "description": "Run command on org workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.updateMemberRole",
+      "shortPath": "orgs.updateMemberRole",
+      "description": "Update organization member role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.updateServiceAccount",
+      "shortPath": "orgs.updateServiceAccount",
+      "description": "Update service account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "service_account_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.orgs.updateServiceAccountToken",
+      "shortPath": "orgs.updateServiceAccountToken",
+      "description": "Update service account token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "service_account_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.deleteUserWorkspacePipeline",
+      "shortPath": "pipelines.deleteUserWorkspacePipeline",
+      "description": "Delete pipeline from workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.getOrgWorkspaceFlowpipeTrigger",
+      "shortPath": "pipelines.getOrgWorkspaceFlowpipeTrigger",
+      "description": "Get Flowpipe trigger details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.getUserWorkspaceFlowpipeMod",
+      "shortPath": "pipelines.getUserWorkspaceFlowpipeMod",
+      "description": "Get Flowpipe mod details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.getUserWorkspaceFlowpipePipeline",
+      "shortPath": "pipelines.getUserWorkspaceFlowpipePipeline",
+      "description": "Get Flowpipe pipeline details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.getUserWorkspacePipeline",
+      "shortPath": "pipelines.getUserWorkspacePipeline",
+      "description": "Get pipeline details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.installUserWorkspaceFlowpipeMod",
+      "shortPath": "pipelines.installUserWorkspaceFlowpipeMod",
+      "description": "Install Flowpipe mod",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.listOrgWorkspaceFlowpipeModVariables",
+      "shortPath": "pipelines.listOrgWorkspaceFlowpipeModVariables",
+      "description": "List org Flowpipe mod variables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.listOrgWorkspacePipelines",
+      "shortPath": "pipelines.listOrgWorkspacePipelines",
+      "description": "List pipelines in org workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.listUserWorkspaceFlowpipeInputs",
+      "shortPath": "pipelines.listUserWorkspaceFlowpipeInputs",
+      "description": "List Flowpipe inputs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.listUserWorkspaceFlowpipeModVariables",
+      "shortPath": "pipelines.listUserWorkspaceFlowpipeModVariables",
+      "description": "List user Flowpipe mod variables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.listUserWorkspaceFlowpipePipelines",
+      "shortPath": "pipelines.listUserWorkspaceFlowpipePipelines",
+      "description": "List Flowpipe pipelines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.listUserWorkspaceFlowpipeTriggers",
+      "shortPath": "pipelines.listUserWorkspaceFlowpipeTriggers",
+      "description": "List Flowpipe triggers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.listUserWorkspacePipelines",
+      "shortPath": "pipelines.listUserWorkspacePipelines",
+      "description": "List pipelines in workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.listUserWorkspacePipelineTriggers",
+      "shortPath": "pipelines.listUserWorkspacePipelineTriggers",
+      "description": "List triggers for pipeline",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.runUserWorkspaceFlowpipePipelineCommand",
+      "shortPath": "pipelines.runUserWorkspaceFlowpipePipelineCommand",
+      "description": "Run Flowpipe pipeline command",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.runUserWorkspaceFlowpipeTriggerCommand",
+      "shortPath": "pipelines.runUserWorkspaceFlowpipeTriggerCommand",
+      "description": "Run Flowpipe trigger command",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.uninstallFlowpipeMod",
+      "shortPath": "pipelines.uninstallFlowpipeMod",
+      "description": "Uninstall Flowpipe mod",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.pipelines.uninstallOrgWorkspaceFlowpipeMod",
+      "shortPath": "pipelines.uninstallOrgWorkspaceFlowpipeMod",
+      "description": "Uninstall org Flowpipe mod",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mod_alias",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.query.createOrgWorkspaceQuery",
+      "shortPath": "query.createOrgWorkspaceQuery",
+      "description": "Execute query in org workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.query.createOrgWorkspaceSnapshot",
+      "shortPath": "query.createOrgWorkspaceSnapshot",
+      "description": "Create workspace snapshot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ schema_version: string, start_time: string, end_time: string, layout: { name: string, panel_type: string }, panels: Record<string, any>, inputs?: Record<string, any>, variables?: Record<string, any>, metadata?: Record<string, any> }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "workspace | anyone_with_link"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.query.getOrgWorkspaceQueryData",
+      "shortPath": "query.getOrgWorkspaceQueryData",
+      "description": "Get query data from org workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.query.getUserWorkspaceQuery",
+      "shortPath": "query.getUserWorkspaceQuery",
+      "description": "Execute query in user workspace (GET)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.query.getUserWorkspaceQueryData",
+      "shortPath": "query.getUserWorkspaceQueryData",
+      "description": "Get query data from user workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.query.listUserWorkspaceSnapshots",
+      "shortPath": "query.listUserWorkspaceSnapshots",
+      "description": "List workspace snapshots",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.query.postUserWorkspaceQuery",
+      "shortPath": "query.postUserWorkspaceQuery",
+      "description": "Execute query in user workspace (POST)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.query.runUserWorkspaceQuery",
+      "shortPath": "query.runUserWorkspaceQuery",
+      "description": "Run query in user workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.tenants.getTenant",
+      "shortPath": "tenants.getTenant",
+      "description": "Get tenant information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenant_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.tenants.getTenantAvatar",
+      "shortPath": "tenants.getTenantAvatar",
+      "description": "Get tenant avatar image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tenant_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "avatar_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.tenants.getTenantSettings",
+      "shortPath": "tenants.getTenantSettings",
+      "description": "Get tenant settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.tenants.listTenants",
+      "shortPath": "tenants.listTenants",
+      "description": "List accessible tenants",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.deleteUserAvatar",
+      "shortPath": "users.deleteUserAvatar",
+      "description": "Delete custom user avatar",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get user details by handle",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.getUserEmail",
+      "shortPath": "users.getUserEmail",
+      "description": "Get user email details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.getUserPreferences",
+      "shortPath": "users.getUserPreferences",
+      "description": "Get user preferences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.getUserProcess",
+      "shortPath": "users.getUserProcess",
+      "description": "Get user process details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "process_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.getUserWorkspace",
+      "shortPath": "users.getUserWorkspace",
+      "description": "Get user workspace details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instance_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.listAuditLogs",
+      "shortPath": "users.listAuditLogs",
+      "description": "List user audit logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.listConstraints",
+      "shortPath": "users.listConstraints",
+      "description": "List user constraints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.listProcesses",
+      "shortPath": "users.listProcesses",
+      "description": "List processes for user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.listUsage",
+      "shortPath": "users.listUsage",
+      "description": "List user usage metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.listUserEmails",
+      "shortPath": "users.listUserEmails",
+      "description": "List user emails",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.listWorkspaces",
+      "shortPath": "users.listWorkspaces",
+      "description": "List workspaces for user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.runUserWorkspaceCommand",
+      "shortPath": "users.runUserWorkspaceCommand",
+      "description": "Run command on user workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update user information",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.updateUserPreferences",
+      "shortPath": "users.updateUserPreferences",
+      "description": "Update user preferences",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "communication_community_updates",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "communication_product_updates",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "communication_tips_and_tricks",
+            "optional": true,
+            "type": "enabled | disabled"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.users.updateUserWorkspace",
+      "shortPath": "users.updateUserWorkspace",
+      "description": "Update user workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desired_state",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "instance_type",
+            "optional": true,
+            "type": "db1.shared | db1.small | db1.medium"
+          },
+          {
+            "key": "db_volume_size_bytes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_path_prefix",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instance_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.createOrgWorkspaceAggregator",
+      "shortPath": "workspaces.createOrgWorkspaceAggregator",
+      "description": "Create org workspace aggregator",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connections",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.createOrgWorkspaceConnection",
+      "shortPath": "workspaces.createOrgWorkspaceConnection",
+      "description": "Create org workspace connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.createOrgWorkspaceConnectionFolder",
+      "shortPath": "workspaces.createOrgWorkspaceConnectionFolder",
+      "description": "Create org workspace connection folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.createUserWorkspaceConnection",
+      "shortPath": "workspaces.createUserWorkspaceConnection",
+      "description": "Create user workspace connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.createUserWorkspaceConnectionFolder",
+      "shortPath": "workspaces.createUserWorkspaceConnectionFolder",
+      "description": "Create user workspace connection folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.getOrgWorkspaceConnection",
+      "shortPath": "workspaces.getOrgWorkspaceConnection",
+      "description": "Get org workspace connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.getOrgWorkspaceConnectionFolder",
+      "shortPath": "workspaces.getOrgWorkspaceConnectionFolder",
+      "description": "Get org workspace connection folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.getUserWorkspaceAggregator",
+      "shortPath": "workspaces.getUserWorkspaceAggregator",
+      "description": "Get user workspace aggregator",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "aggregator_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.getUserWorkspaceConnection",
+      "shortPath": "workspaces.getUserWorkspaceConnection",
+      "description": "Get user workspace connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.getUserWorkspaceConnectionFolder",
+      "shortPath": "workspaces.getUserWorkspaceConnectionFolder",
+      "description": "Get user workspace connection folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.getUserWorkspaceProcess",
+      "shortPath": "workspaces.getUserWorkspaceProcess",
+      "description": "Get workspace process",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "process_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.getUserWorkspaceProcessLog",
+      "shortPath": "workspaces.getUserWorkspaceProcessLog",
+      "description": "Get workspace process logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "process_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "log_file",
+            "optional": true,
+            "type": "process"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "jsonl"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listOrgWorkspaceProcesses",
+      "shortPath": "workspaces.listOrgWorkspaceProcesses",
+      "description": "List org workspace processes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listUserWorkspaceAggregatorConnections",
+      "shortPath": "workspaces.listUserWorkspaceAggregatorConnections",
+      "description": "List user workspace aggregator connections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "aggregator_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listUserWorkspaceAggregators",
+      "shortPath": "workspaces.listUserWorkspaceAggregators",
+      "description": "List user workspace aggregators",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listUserWorkspaceAuditLogs",
+      "shortPath": "workspaces.listUserWorkspaceAuditLogs",
+      "description": "List workspace audit logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listUserWorkspaceConnectionAssociations",
+      "shortPath": "workspaces.listUserWorkspaceConnectionAssociations",
+      "description": "List user workspace connection associations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listUserWorkspaceConnectionFolders",
+      "shortPath": "workspaces.listUserWorkspaceConnectionFolders",
+      "description": "List user workspace connection folders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listUserWorkspaceConnections",
+      "shortPath": "workspaces.listUserWorkspaceConnections",
+      "description": "List user workspace connections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listUserWorkspaceConnectionTree",
+      "shortPath": "workspaces.listUserWorkspaceConnectionTree",
+      "description": "List user workspace connection tree",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listUserWorkspaceDatabaseLogs",
+      "shortPath": "workspaces.listUserWorkspaceDatabaseLogs",
+      "description": "List workspace database logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listUserWorkspaceProcesses",
+      "shortPath": "workspaces.listUserWorkspaceProcesses",
+      "description": "List workspace processes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.listUserWorkspaceUsage",
+      "shortPath": "workspaces.listUserWorkspaceUsage",
+      "description": "List user workspace usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "turbotpipes.api.workspaces.testUserWorkspaceConnection",
+      "shortPath": "workspaces.testUserWorkspaceConnection",
+      "description": "Test user workspace connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plugin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "turbotpipes.db.actor.search",
+      "entityName": "actor",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "handle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "turbotpipes.db.connection.search",
+      "entityName": "connection",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "handle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "plugin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "turbotpipes.db.datatank.search",
+      "entityName": "datatank",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "handle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "turbotpipes.db.org.search",
+      "entityName": "org",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "handle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "turbotpipes.db.process.search",
+      "entityName": "process",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "turbotpipes.db.query.search",
+      "entityName": "query",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sql",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rows_returned",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "execution_time_ms",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "turbotpipes.db.user.search",
+      "entityName": "user",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "handle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "turbotpipes.db.workspace.search",
+      "entityName": "workspace",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "handle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "instance_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

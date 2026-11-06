@@ -1,0 +1,115 @@
+displayName: Zoho Desk
+description: Read tickets, threads, contacts, agents, departments and roles in Zoho Desk, update tasks in bulk and manage department logos.
+domain: zoho.com
+recommendedAuth: oauth_2
+factory:
+  note: |
+    Set `region` to your Zoho data center (see below). It defaults to `us`.
+  options:
+    region: us
+overviewNote: |
+  **Data center.** Zoho keeps each account in one data center, and both sign-in and API calls have to go there. Pass `region` to the plugin factory: `us` (default), `eu`, `in`, `au`, `jp`, `cn`, `ca`, `sa`, `sg` or `ae`. To tell which one you are on, check the address you use for Zoho Desk (`desk.zoho.eu` is `eu`). You can pass the `api_domain` from a Zoho token response as `apiDomain` instead; it is only read to pick the data center, and a value that names no Zoho data center throws when the plugin is created.
+
+  ```ts
+  zohodesk({ region: 'eu' })
+  ```
+
+  One plugin instance serves one data center, because the OAuth token URL is fixed when the plugin is created. Zoho's UK data center is not supported yet: the Zoho Desk API reference lists no host for it.
+
+  **Organization.** Zoho Desk calls carry an `orgId` header. You rarely need to set it. After OAuth the plugin stores the ID of your organization, and if that step did not run it looks the ID up on the first call and keeps it. If your Zoho user belongs to several organizations it cannot tell which one you picked on the consent screen, so it sends no header and Zoho uses the one the token was issued for. To name one yourself with a single tenant, pass `orgId` to the factory or call `corsair.zohodesk.keys.set_tenant_external_id(orgId)`. With `multiTenancy: true`, set it per tenant with `corsair.withTenant(id).zohodesk.keys.set_tenant_external_id(orgId)`: the factory `orgId` applies to every tenant and wins over the stored ID, so tenants in other organizations would fail with `OAUTH_ORG_MISMATCH`. List them with `organizations.list`. A mismatch fails with `OAUTH_ORG_MISMATCH`.
+
+  **OAuth setup.** Create a Server-based Application in the [Zoho API Console](https://api-console.zoho.com) and add your redirect URL. If the app serves users in several data centers, turn on Multi-DC support there. The plugin requests these scopes:
+
+  | Scope | Used by |
+  |-------|---------|
+  | `Desk.tickets.READ` | `tickets.*` |
+  | `Desk.contacts.READ` | `contacts.list`, `contacts.get`, `contacts.getByIds` |
+  | `Desk.accounts.READ` | `contacts.listAccounts` |
+  | `Desk.agents.READ` | `agents.*` |
+  | `Desk.basic.READ` | `agents.getCount`, `departments.*`, `organizations.list`, `roles.*` |
+  | `Desk.departments.READ` | `departments.*` |
+  | `Desk.departments.UPDATE` | `departments.uploadLogo` |
+  | `Desk.teams.READ` | `departments.listTeams` |
+  | `Desk.organization.READ` | `organizations.list` |
+  | `Desk.permissions.READ` | `roles.*` |
+  | `Desk.activities.tasks.UPDATE` | `tasks.updateMany` |
+
+  Access tokens last an hour. The plugin refreshes them when they expire, and once more if Zoho rejects one early. A token passed as `key` is never refreshed.
+
+  **Things to know:**
+
+  - **IDs are strings.** Zoho IDs are 64-bit and do not fit a JavaScript number, so inputs take them as strings. Response fields keep the type Zoho sent, and Zoho sends many counts and some booleans as strings.
+  - **Empty lists.** Zoho answers `204` when a list has nothing in it. List operations return an empty array, and `tickets.getLatestThread` and `tickets.getResolution` return `null`.
+  - **API credits.** Zoho meters calls in daily credits: 1 for most single records, 3 or more for lists, 50 for `agents.getCount` and `departments.getCount`, and 1 for every 2 tasks in `tasks.updateMany`. When credits run out and the wait is over a minute, the call fails straight away rather than holding on, with the wait in `error.retryAfter` (milliseconds) and the credits left in `error.creditsRemaining`.
+  - **Concurrency.** Zoho also limits simultaneous calls per organization (5 on a trial, up to 25). Calls that hit it retry with backoff.
+  - **Partial updates.** `tasks.updateMany` can succeed for some tasks and fail for others. Check `success` on each entry in `results`.
+  - **Logos.** `departments.getLogo` returns base64. `departments.uploadLogo` takes base64 in `contentBase64` and a `fileName` ending in jpg, jpeg, png or gif, 2MB at most.
+  - **Local sync.** `tickets.list`, `tickets.get`, `contacts.list`, `contacts.get` and `contacts.getByIds` save rows to the local database. Calls using `fields` do not, because a partial row would replace the full one.
+examples:
+  read:
+    path: tickets.list
+    title: List open tickets
+    args:
+      status:
+        - Open
+      sortBy: -createdTime
+      limit: 20
+  write:
+    path: tasks.updateMany
+    title: Update tasks in bulk
+    args:
+      ids:
+        - '1892000000093303'
+        - '1892000000085009'
+      fieldName: priority
+      fieldValue: High
+dbExample:
+  entity: tickets
+  note: Tickets are saved when you list or fetch them.
+  data:
+    status: Open
+  limit: 20
+apiExamples:
+  tickets.list:
+    call: "{ status: ['Open'], sortBy: '-createdTime', limit: 20, include: ['contacts', 'assignee'] }"
+  tickets.get:
+    call: "{ ticketId: '1892000000042034', include: ['contacts'] }"
+  tickets.getResolution:
+    call: "{ ticketId: '1892000000042034' }"
+  tickets.getLatestThread:
+    call: "{ ticketId: '1892000000042034', needPublic: true, include: ['plainText'] }"
+  tickets.getThread:
+    call: "{ ticketId: '1892000000042034', threadId: '1892000000135387', include: ['plainText'] }"
+  tickets.listConversations:
+    call: "{ ticketId: '1892000000042034', from: 0, limit: 50 }"
+  contacts.list:
+    call: "{ limit: 50, sortBy: '-createdTime', fields: ['firstName', 'lastName', 'email'] }"
+  contacts.get:
+    call: "{ contactId: '1892000000042032', include: ['accounts', 'owner'] }"
+  contacts.getByIds:
+    call: "{ ids: ['1892000000042032', '1892000000772003'] }"
+  contacts.listAccounts:
+    call: "{ contactId: '1892000000042032', limit: 20, sortBy: 'accountName' }"
+  agents.get:
+    call: "{ agentId: '1892000000056096', include: ['role', 'associatedDepartments'] }"
+  agents.getCount:
+    call: "{ status: 'ACTIVE', isConfirmed: true, includeLightAgent: false }"
+  departments.list:
+    call: "{ isEnabled: true, limit: 50 }"
+  departments.get:
+    call: "{ departmentId: '1892000000082069' }"
+  departments.getCount:
+    call: "{ isEnabled: true }"
+  departments.listTeams:
+    call: "{ departmentId: '1892000000082069', from: 0, limit: 50 }"
+  departments.getLogo:
+    call: "{ departmentId: '1892000000082069', fileSize: 'THUMBNAIL' }"
+  departments.uploadLogo:
+    call: "{ departmentId: '1892000000082069', fileName: 'logo.png', contentBase64: logoBytes.toString('base64') }"
+  organizations.list: {}
+  roles.list:
+    call: "{ isVisible: true, limit: 50 }"
+  roles.listByIds:
+    call: "{ roleIds: ['4000000012423', '4000000012420'] }"
+  tasks.updateMany:
+    call: "{ ids: ['1892000000093303', '1892000000085009'], fieldName: 'priority', fieldValue: 'High' }"

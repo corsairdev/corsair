@@ -27,17 +27,7 @@ await corsair.linkedin.api.ads.getAudienceCounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `target` | `object` | Yes | Targeting criteria to estimate audience size for, as a LinkedIn targeting object (e.g. { and: [ { or: [...] }] }). |
-
-<AccordionGroup>
-<Accordion title="target full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `target` | `Record<string, any>` | Yes | Targeting criteria to estimate audience size for, as a LinkedIn targeting object (e.g. &#123; and: [ &#123; or: [...] &#125;] &#125;). |
 
 
 
@@ -45,18 +35,10 @@ await corsair.linkedin.api.ads.getAudienceCounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `elements` | `object[]` | No | Audience size entries for the given targeting criteria. |
+| `elements` | `Record<string, any>[]` | No | Audience size entries for the given targeting criteria. |
 | `paging` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="elements full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="paging full type">
 
 ```ts
@@ -64,8 +46,7 @@ await corsair.linkedin.api.ads.getAudienceCounts({});
   start?: number,
   count?: number,
   total?: number,
-  links?: {
-  }[]
+  links?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -94,26 +75,8 @@ await corsair.linkedin.api.ads.getTargetingFacets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `facets` | `object[]` | No | Available targeting facets. |
-| `elements` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="facets full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="elements full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `facets` | `Record<string, any>[]` | No | Available targeting facets. |
+| `elements` | `Record<string, any>[]` | No | — |
 
 
 
@@ -144,18 +107,10 @@ await corsair.linkedin.api.ads.searchTargetingEntities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `elements` | `object[]` | No | Matching targeting entities. |
+| `elements` | `Record<string, any>[]` | No | Matching targeting entities. |
 | `paging` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="elements full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="paging full type">
 
 ```ts
@@ -163,8 +118,7 @@ await corsair.linkedin.api.ads.searchTargetingEntities({});
   start?: number,
   count?: number,
   total?: number,
-  links?: {
-  }[]
+  links?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -205,17 +159,7 @@ await corsair.linkedin.api.comments.create({});
 | `id` | `string` | No | The URN of the created comment. |
 | `message` | `string` | No | The comment text. |
 | `object` | `string` | No | The URN the comment was posted on. |
-| `lastModified` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="lastModified full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `lastModified` | `Record<string, any>` | No | — |
 
 
 
@@ -250,7 +194,7 @@ await corsair.linkedin.api.images.get({});
 | `id` | `string` | Yes | The image URN. |
 | `owner` | `string` | No | — |
 | `status` | `string` | No | UPLOADING, AVAILABLE, WAITING_UPLOAD, etc. |
-| `downloadUrl` | `string` | No | — |
+| `downloadUrl` | `string \| null` | No | — |
 | `original` | `object` | No | — |
 
 <AccordionGroup>
@@ -368,8 +312,7 @@ await corsair.linkedin.api.images.list({});
   start?: number,
   count?: number,
   total?: number,
-  links?: {
-  }[]
+  links?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -412,8 +355,7 @@ await corsair.linkedin.api.images.registerUpload({});
 {
   asset: string,
   mediaArtifact?: string,
-  uploadMechanism?: {
-  }
+  uploadMechanism?: Record<string, any>
 }
 ```
 </Accordion>
@@ -442,7 +384,7 @@ await corsair.linkedin.api.organizations.getCompanyInfo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `role_assignee` | `string` | No | Person URN whose organization roles to list. Defaults to the authenticated member. |
-| `role` | `ADMINISTRATOR \| DIRECT_SPONSORED_CONTENT_POSTER \| RECRUITING_POSTER \| LEAD_GEN_FORMS_MANAGER \| CONTENT_ADMIN \| ANALYTICS_ROLE[]` | No | Filter to specific organization roles. |
+| `role` | `(ADMINISTRATOR \| DIRECT_SPONSORED_CONTENT_POSTER \| RECRUITING_POSTER \| LEAD_GEN_FORMS_MANAGER \| CONTENT_ADMIN \| ANALYTICS_ROLE)[]` | No | Filter to specific organization roles. |
 | `state` | `APPROVED \| PENDING \| REVOKED` | No | Filter to ACLs in a given state. Defaults to APPROVED. |
 | `start` | `number` | No | Zero-based pagination offset into the role list. |
 | `count` | `number` | No | Maximum number of roles to return per page. |
@@ -476,8 +418,7 @@ await corsair.linkedin.api.organizations.getCompanyInfo({});
   start?: number,
   count?: number,
   total?: number,
-  links?: {
-  }[]
+  links?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -513,18 +454,10 @@ await corsair.linkedin.api.organizations.getNetworkSize({});
 |------|------|----------|-------------|
 | `totalFollowerCount` | `number` | No | Total followers of the organization. |
 | `organizationFollowerCount` | `number` | No | — |
-| `elements` | `object[]` | No | — |
+| `elements` | `Record<string, any>[]` | No | — |
 | `paging` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="elements full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="paging full type">
 
 ```ts
@@ -532,8 +465,7 @@ await corsair.linkedin.api.organizations.getNetworkSize({});
   start?: number,
   count?: number,
   total?: number,
-  links?: {
-  }[]
+  links?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -582,18 +514,10 @@ await corsair.linkedin.api.organizations.getPageStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `elements` | `object[]` | Yes | Page statistics entries. |
+| `elements` | `Record<string, any>[]` | Yes | Page statistics entries. |
 | `paging` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="elements full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="paging full type">
 
 ```ts
@@ -601,8 +525,7 @@ await corsair.linkedin.api.organizations.getPageStats({});
   start?: number,
   count?: number,
   total?: number,
-  links?: {
-  }[]
+  links?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -651,18 +574,10 @@ await corsair.linkedin.api.organizations.getShareStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `elements` | `object[]` | Yes | Share statistics entries. |
+| `elements` | `Record<string, any>[]` | Yes | Share statistics entries. |
 | `paging` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="elements full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="paging full type">
 
 ```ts
@@ -670,8 +585,7 @@ await corsair.linkedin.api.organizations.getShareStats({});
   start?: number,
   count?: number,
   total?: number,
-  links?: {
-  }[]
+  links?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -878,36 +792,10 @@ await corsair.linkedin.api.posts.getContent({});
 | `commentary` | `string` | No | — |
 | `visibility` | `string` | No | — |
 | `lifecycleState` | `string` | No | — |
-| `createdAt` | `object` | No | — |
+| `createdAt` | `Record<string, any>` | No | — |
 | `isReshareDisabledByAuthor` | `boolean` | No | — |
-| `media` | `object` | No | — |
-| `content` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="createdAt full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="media full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="content full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `media` | `Record<string, any>` | No | — |
+| `content` | `Record<string, any>` | No | — |
 
 
 
@@ -941,12 +829,12 @@ await corsair.linkedin.api.profile.getMyInfo({});
 |------|------|----------|-------------|
 | `sub` | `string` | No | — |
 | `id` | `string` | No | — |
-| `name` | `string` | No | — |
-| `given_name` | `string` | No | — |
-| `family_name` | `string` | No | — |
-| `picture` | `string` | No | — |
-| `email` | `string` | No | — |
-| `locale` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `given_name` | `string \| null` | No | — |
+| `family_name` | `string \| null` | No | — |
+| `picture` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
 | `vanityName` | `string` | No | — |
 | `headline` | `string` | No | — |
 
@@ -984,43 +872,18 @@ await corsair.linkedin.api.profile.getPerson({});
 | `localizedLastName` | `string` | No | — |
 | `localizedHeadline` | `string` | No | — |
 | `vanityName` | `string` | No | — |
-| `firstName` | `object` | No | — |
-| `lastName` | `object` | No | — |
-| `headline` | `object` | No | — |
+| `firstName` | `Record<string, any>` | No | — |
+| `lastName` | `Record<string, any>` | No | — |
+| `headline` | `Record<string, any>` | No | — |
 | `profilePicture` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="firstName full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="lastName full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headline full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="profilePicture full type">
 
 ```ts
 {
   displayImage~?: string,
-  displayImage~:playableStreams?: {
-  }[]
+  displayImage~:playableStreams?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -1068,8 +931,7 @@ await corsair.linkedin.api.reactions.list({});
 {
   actor?: string,
   type?: string,
-  created?: {
-  }
+  created?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1081,8 +943,7 @@ await corsair.linkedin.api.reactions.list({});
   start?: number,
   count?: number,
   total?: number,
-  links?: {
-  }[]
+  links?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -1150,8 +1011,7 @@ await corsair.linkedin.api.videos.list({});
   start?: number,
   count?: number,
   total?: number,
-  links?: {
-  }[]
+  links?: Record<string, any>[]
 }
 ```
 </Accordion>

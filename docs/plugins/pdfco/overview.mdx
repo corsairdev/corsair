@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Pdfco plugin for Corsair"
+description: "PDF API for converting, merging, splitting, editing, and parsing PDFs and documents, and uploading files."
 ---
 
-Use **Pdfco** through Corsair: one client, typed API calls.
+Use **PDF.co** through Corsair: one client, typed API calls.
 
 **What you get:**
 
@@ -43,6 +43,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -50,7 +51,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -88,7 +89,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`accountBalance`**
+**Check the account balance**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -96,11 +97,11 @@ await tenant.pdfco.api.accountBalance({});
 ```
 
 
-**`barcodeGenerate`**
+**Convert a PDF to text**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.pdfco.api.barcodeGenerate({});
+await tenant.pdfco.api.pdfToText({ url: 'https://example.com/invoice.pdf' });
 ```
 
 

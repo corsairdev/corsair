@@ -54,15 +54,15 @@ await corsair.pdfmonkey.api.documents.createDocument({});
 | `document_template_id` | `string` | Yes | — |
 | `document_template_identifier` | `string` | No | — |
 | `status` | `draft \| pending \| generating \| success \| failure` | Yes | — |
-| `payload` | `any` | No | — |
-| `meta` | `any` | No | — |
-| `filename` | `string` | No | — |
-| `download_url` | `string` | No | — |
-| `preview_url` | `string` | No | — |
-| `public_share_link` | `string` | No | — |
-| `checksum` | `string` | No | — |
+| `payload` | `any \| null` | Yes | — |
+| `meta` | `any \| null` | Yes | — |
+| `filename` | `string \| null` | Yes | — |
+| `download_url` | `string \| null` | Yes | — |
+| `preview_url` | `string \| null` | Yes | — |
+| `public_share_link` | `string \| null` | Yes | — |
+| `checksum` | `string \| null` | Yes | — |
 | `generation_logs` | `any[]` | No | — |
-| `failure_cause` | `string` | No | — |
+| `failure_cause` | `string \| null` | Yes | — |
 | `output_type` | `pdf \| image` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
@@ -114,12 +114,12 @@ await corsair.pdfmonkey.api.documents.createDocumentSync({});
 | `document_template_id` | `string` | No | — |
 | `document_template_identifier` | `string` | No | — |
 | `status` | `draft \| pending \| generating \| success \| failure` | Yes | — |
-| `filename` | `string` | No | — |
-| `download_url` | `string` | No | — |
-| `preview_url` | `string` | No | — |
-| `public_share_link` | `string` | No | — |
-| `failure_cause` | `string` | No | — |
-| `meta` | `any` | No | — |
+| `filename` | `string \| null` | No | — |
+| `download_url` | `string \| null` | No | — |
+| `preview_url` | `string \| null` | No | — |
+| `public_share_link` | `string \| null` | No | — |
+| `failure_cause` | `string \| null` | No | — |
+| `meta` | `any \| null` | No | — |
 | `output_type` | `pdf \| image` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
@@ -187,15 +187,15 @@ await corsair.pdfmonkey.api.documents.getDocument({});
 | `document_template_id` | `string` | Yes | — |
 | `document_template_identifier` | `string` | No | — |
 | `status` | `draft \| pending \| generating \| success \| failure` | Yes | — |
-| `payload` | `any` | No | — |
-| `meta` | `any` | No | — |
-| `filename` | `string` | No | — |
-| `download_url` | `string` | No | — |
-| `preview_url` | `string` | No | — |
-| `public_share_link` | `string` | No | — |
-| `checksum` | `string` | No | — |
+| `payload` | `any \| null` | Yes | — |
+| `meta` | `any \| null` | Yes | — |
+| `filename` | `string \| null` | Yes | — |
+| `download_url` | `string \| null` | Yes | — |
+| `preview_url` | `string \| null` | Yes | — |
+| `public_share_link` | `string \| null` | Yes | — |
+| `checksum` | `string \| null` | Yes | — |
 | `generation_logs` | `any[]` | No | — |
-| `failure_cause` | `string` | No | — |
+| `failure_cause` | `string \| null` | Yes | — |
 | `output_type` | `pdf \| image` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
@@ -233,12 +233,12 @@ await corsair.pdfmonkey.api.documents.getDocumentCard({});
 | `document_template_id` | `string` | No | — |
 | `document_template_identifier` | `string` | No | — |
 | `status` | `draft \| pending \| generating \| success \| failure` | Yes | — |
-| `filename` | `string` | No | — |
-| `download_url` | `string` | No | — |
-| `preview_url` | `string` | No | — |
-| `public_share_link` | `string` | No | — |
-| `failure_cause` | `string` | No | — |
-| `meta` | `any` | No | — |
+| `filename` | `string \| null` | No | — |
+| `download_url` | `string \| null` | No | — |
+| `preview_url` | `string \| null` | No | — |
+| `public_share_link` | `string \| null` | No | — |
+| `failure_cause` | `string \| null` | No | — |
+| `meta` | `any \| null` | No | — |
 | `output_type` | `pdf \| image` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
@@ -263,7 +263,7 @@ await corsair.pdfmonkey.api.documents.listDocumentCards({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | Yes | — |
+| `page` | `number` | No | Defaults to 1. |
 | `q` | `object` | No | — |
 
 <AccordionGroup>
@@ -318,8 +318,8 @@ await corsair.pdfmonkey.api.documents.listDocumentCards({});
 ```ts
 {
   current_page: number,
-  next_page?: number | null,
-  prev_page?: number | null,
+  next_page: number | null,
+  prev_page: number | null,
   total_pages: number
 }
 ```
@@ -374,15 +374,15 @@ await corsair.pdfmonkey.api.documents.updateDocument({});
 | `document_template_id` | `string` | Yes | — |
 | `document_template_identifier` | `string` | No | — |
 | `status` | `draft \| pending \| generating \| success \| failure` | Yes | — |
-| `payload` | `any` | No | — |
-| `meta` | `any` | No | — |
-| `filename` | `string` | No | — |
-| `download_url` | `string` | No | — |
-| `preview_url` | `string` | No | — |
-| `public_share_link` | `string` | No | — |
-| `checksum` | `string` | No | — |
+| `payload` | `any \| null` | Yes | — |
+| `meta` | `any \| null` | Yes | — |
+| `filename` | `string \| null` | Yes | — |
+| `download_url` | `string \| null` | Yes | — |
+| `preview_url` | `string \| null` | Yes | — |
+| `public_share_link` | `string \| null` | Yes | — |
+| `checksum` | `string \| null` | Yes | — |
 | `generation_logs` | `any[]` | No | — |
-| `failure_cause` | `string` | No | — |
+| `failure_cause` | `string \| null` | Yes | — |
 | `output_type` | `pdf \| image` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
@@ -566,7 +566,7 @@ await corsair.pdfmonkey.api.templates.listTemplateCards({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | Yes | — |
+| `page` | `number` | No | Defaults to 1. |
 | `q` | `object` | Yes | — |
 | `sort` | `string` | No | — |
 
@@ -613,8 +613,8 @@ await corsair.pdfmonkey.api.templates.listTemplateCards({});
 ```ts
 {
   current_page: number,
-  next_page?: number | null,
-  prev_page?: number | null,
+  next_page: number | null,
+  prev_page: number | null,
   total_pages: number
 }
 ```

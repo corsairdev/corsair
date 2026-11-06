@@ -77,15 +77,15 @@ await corsair.figma.api.comments.add({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `uuid` | `string` | No | — |
+| `uuid` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `file_key` | `string` | No | — |
-| `order_id` | `string` | No | — |
-| `parent_id` | `string` | No | — |
+| `order_id` | `string \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
 | `reactions` | `object[]` | No | — |
 | `created_at` | `string` | No | — |
 | `client_meta` | `any` | No | — |
-| `resolved_at` | `string` | No | — |
+| `resolved_at` | `string \| null` | No | — |
 | `user` | `object` | No | — |
 
 <AccordionGroup>
@@ -683,20 +683,10 @@ await corsair.figma.api.designTools.designTokensToTailwind({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `tokens` | `object` | Yes | — |
+| `tokens` | `Record<string, any>` | Yes | — |
 | `prefix` | `string` | No | — |
 | `config_format` | `string` | No | — |
 | `include_font_imports` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="tokens full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -787,17 +777,7 @@ await corsair.figma.api.designTools.downloadImages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `images` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="images full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `images` | `Record<string, string \| null>` | No | — |
 
 
 
@@ -830,17 +810,7 @@ await corsair.figma.api.designTools.extractDesignTokens({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `tokens` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="tokens full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `tokens` | `Record<string, any>` | No | — |
 
 
 
@@ -1125,8 +1095,7 @@ await corsair.figma.api.files.getImageFills({});
 
 ```ts
 {
-  images?: {
-  }
+  images?: Record<string, string>
 }
 ```
 </Accordion>
@@ -1175,26 +1144,8 @@ await corsair.figma.api.files.getJSON({});
 | `thumbnailUrl` | `string` | No | — |
 | `version` | `string` | No | — |
 | `document` | `any` | No | — |
-| `components` | `object` | No | — |
-| `styles` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="components full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="styles full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `components` | `Record<string, any>` | No | — |
+| `styles` | `Record<string, any>` | No | — |
 
 
 
@@ -1265,17 +1216,7 @@ await corsair.figma.api.files.getNodes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `nodes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="nodes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `nodes` | `Record<string, any>` | No | — |
 
 
 
@@ -1471,18 +1412,8 @@ await corsair.figma.api.files.renderImages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `images` | `object` | No | — |
-| `err` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="images full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `images` | `Record<string, string \| null>` | No | — |
+| `err` | `string \| null` | No | — |
 
 
 
@@ -1960,8 +1891,7 @@ await corsair.figma.api.variables.createModifyDelete({});
 
 ```ts
 {
-  tempIdToRealId?: {
-  }
+  tempIdToRealId?: Record<string, string>
 }
 ```
 </Accordion>
@@ -2004,10 +1934,8 @@ await corsair.figma.api.variables.getLocal({});
 
 ```ts
 {
-  variables?: {
-  },
-  variableCollections?: {
-  }
+  variables?: Record<string, any>,
+  variableCollections?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2050,10 +1978,8 @@ await corsair.figma.api.variables.getPublished({});
 
 ```ts
 {
-  variables?: {
-  },
-  variableCollections?: {
-  }
+  variables?: Record<string, any>,
+  variableCollections?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2098,14 +2024,14 @@ await corsair.figma.api.webhooks.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `status` | `ACTIVE \| PAUSED` | No | — |
-| `context` | `team \| project \| file` | No | — |
-| `team_id` | `string` | No | — |
+| `context` | `team \| project \| file \| null` | No | — |
+| `team_id` | `string \| null` | No | — |
 | `endpoint` | `string` | No | — |
 | `passcode` | `string` | No | — |
-| `client_id` | `string` | No | — |
-| `context_id` | `string` | No | — |
+| `client_id` | `string \| null` | No | — |
+| `context_id` | `string \| null` | No | — |
 | `event_type` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -2137,14 +2063,14 @@ await corsair.figma.api.webhooks.delete({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `status` | `ACTIVE \| PAUSED` | No | — |
-| `context` | `team \| project \| file` | No | — |
-| `team_id` | `string` | No | — |
+| `context` | `team \| project \| file \| null` | No | — |
+| `team_id` | `string \| null` | No | — |
 | `endpoint` | `string` | No | — |
 | `passcode` | `string` | No | — |
-| `client_id` | `string` | No | — |
-| `context_id` | `string` | No | — |
+| `client_id` | `string \| null` | No | — |
+| `context_id` | `string \| null` | No | — |
 | `event_type` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -2176,14 +2102,14 @@ await corsair.figma.api.webhooks.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `status` | `ACTIVE \| PAUSED` | No | — |
-| `context` | `team \| project \| file` | No | — |
-| `team_id` | `string` | No | — |
+| `context` | `team \| project \| file \| null` | No | — |
+| `team_id` | `string \| null` | No | — |
 | `endpoint` | `string` | No | — |
 | `passcode` | `string` | No | — |
-| `client_id` | `string` | No | — |
-| `context_id` | `string` | No | — |
+| `client_id` | `string \| null` | No | — |
+| `context_id` | `string \| null` | No | — |
 | `event_type` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -2317,14 +2243,14 @@ await corsair.figma.api.webhooks.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `status` | `ACTIVE \| PAUSED` | No | — |
-| `context` | `team \| project \| file` | No | — |
-| `team_id` | `string` | No | — |
+| `context` | `team \| project \| file \| null` | No | — |
+| `team_id` | `string \| null` | No | — |
 | `endpoint` | `string` | No | — |
 | `passcode` | `string` | No | — |
-| `client_id` | `string` | No | — |
-| `context_id` | `string` | No | — |
+| `client_id` | `string \| null` | No | — |
+| `context_id` | `string \| null` | No | — |
 | `event_type` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 

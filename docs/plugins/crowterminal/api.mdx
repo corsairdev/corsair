@@ -67,17 +67,7 @@ await corsair.crowterminal.api.data.getTypes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | No | — |
-| `dataTypes` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="dataTypes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `dataTypes` | `Record<string, string[]>` | Yes | — |
 
 
 
@@ -103,18 +93,8 @@ await corsair.crowterminal.api.data.ingest({});
 | `platform` | `TIKTOK \| INSTAGRAM \| YOUTUBE` | Yes | — |
 | `dataType` | `retention \| demographics \| traffic_sources \| watch_time \| audience_activity \| follower_growth \| video_performance \| sound_performance \| hashtag_performance \| reach_sources \| content_interactions \| story_metrics \| reel_metrics \| subscriber_growth \| click_through_rate \| impression_sources \| end_screen_performance` | Yes | — |
 | `videoId` | `string` | No | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `confidence` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -155,8 +135,7 @@ await corsair.crowterminal.api.data.ingestBulk({});
   platform: TIKTOK | INSTAGRAM | YOUTUBE,
   dataType: retention | demographics | traffic_sources | watch_time | audience_activity | follower_growth | video_performance | sound_performance | hashtag_performance | reach_sources | content_interactions | story_metrics | reel_metrics | subscriber_growth | click_through_rate | impression_sources | end_screen_performance,
   videoId?: string,
-  data: {
-  },
+  data: Record<string, any>,
   confidence?: number
 }[]
 ```
@@ -251,17 +230,7 @@ await corsair.crowterminal.api.memory.compareMd({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `clientId` | `string` | Yes | — |
-| `agentMd` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="agentMd full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `agentMd` | `Record<string, any>` | Yes | — |
 
 
 
@@ -298,17 +267,7 @@ await corsair.crowterminal.api.memory.engagementAnalysis({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `clientId` | `string` | Yes | — |
-| `agentMd` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="agentMd full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `agentMd` | `Record<string, any>` | Yes | — |
 
 
 
@@ -367,7 +326,7 @@ await corsair.crowterminal.api.memory.get({});
 | `clientName` | `string` | No | — |
 | `version` | `number` | No | — |
 | `updatedAt` | `string` | No | — |
-| `skill` | `object` | No | — |
+| `skill` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="skill full type">
@@ -385,7 +344,7 @@ await corsair.crowterminal.api.memory.get({});
     hour?: number,
     score?: number
   }[]
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -587,17 +546,7 @@ await corsair.crowterminal.api.sandbox.engagementAnalysis({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `agentMd` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="agentMd full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `agentMd` | `Record<string, any>` | No | — |
 
 
 
@@ -796,26 +745,21 @@ await corsair.crowterminal.api.status.get({});
 | `version` | `string` | No | — |
 | `services` | `object` | No | — |
 | `metrics` | `object` | No | — |
-| `endpoints` | `object` | No | — |
+| `endpoints` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="services full type">
 
 ```ts
-{
-}
+Record<string, {
+  status: string,
+  latency?: string,
+  description?: string
+}>
 ```
 </Accordion>
 
 <Accordion title="metrics full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="endpoints full type">
 
 ```ts
 {
@@ -1049,7 +993,7 @@ await corsair.crowterminal.api.webhooks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `events` | `skill.updated \| skill.version_created \| data.ingested \| validation.blocked \| posting.completed \| posting.failed[]` | Yes | — |
+| `events` | `(skill.updated \| skill.version_created \| data.ingested \| validation.blocked \| posting.completed \| posting.failed)[]` | Yes | — |
 | `secret` | `string` | No | — |
 
 
@@ -1182,7 +1126,7 @@ await corsair.crowterminal.api.webhooks.update({});
 |------|------|----------|-------------|
 | `webhookId` | `string` | Yes | — |
 | `url` | `string` | No | — |
-| `events` | `skill.updated \| skill.version_created \| data.ingested \| validation.blocked \| posting.completed \| posting.failed[]` | No | — |
+| `events` | `(skill.updated \| skill.version_created \| data.ingested \| validation.blocked \| posting.completed \| posting.failed)[]` | No | — |
 | `isActive` | `boolean` | No | — |
 
 

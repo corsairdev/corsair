@@ -1,0 +1,20 @@
+displayName: Clay
+description: Go-to-market data platform. Create and run people and company searches, run routines on items, and check workspace credits.
+domain: clay.com
+examples:
+  read:
+    path: account.me
+    title: Get your account
+  write:
+    path: routines.run
+    title: Run a routine
+    args:
+      routine_id: rt_0123456789
+      items:
+        - id: item-1
+          inputs:
+            domain: example.com
+dbExample:
+  entity: routineRuns
+  note: Search synced routineRuns without hitting Clay.
+  limit: 50

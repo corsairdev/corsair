@@ -1,0 +1,1298 @@
+---
+title: API
+description: "API reference for Workable: every `workable.api.*` operation with input and output types."
+---
+
+Every `workable.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### get
+
+`accounts.get`
+
+Get account metadata by subdomain
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.accounts.get({ subdomain: 'acme' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subdomain` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `subdomain` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `website_url` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List all Workable accounts accessible to the authenticated token
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.accounts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accounts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="accounts full type">
+
+```ts
+{
+  id?: string,
+  name?: string | null,
+  subdomain?: string | null,
+  description?: string | null,
+  summary?: string | null,
+  website_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Candidates
+
+### list
+
+`candidates.list`
+
+List candidates across all jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.candidates.list({ shortcode: 'GROOV003', stage: 'interview', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `shortcode` | `string` | No | — |
+| `stage` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `since_id` | `string` | No | — |
+| `max_id` | `string` | No | — |
+| `created_after` | `string` | No | — |
+| `updated_after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidates` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="candidates full type">
+
+```ts
+{
+  id?: string,
+  name?: string | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  email?: string | null,
+  job?: {
+    shortcode?: string | null,
+    title?: string | null
+  } | null,
+  stage?: string | null,
+  disqualified?: boolean | null,
+  created_at?: Date | null,
+  updated_at?: Date | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Attributes
+
+### list
+
+`customAttributes.list`
+
+List custom attributes configured on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.customAttributes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_attributes` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Departments
+
+### create
+
+`departments.create`
+
+Create a department
+
+**Risk:** `write`
+
+```ts
+await corsair.workable.api.departments.create({ name: 'Engineering', parent_id: '3ff4d64b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `parent_id` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`departments.delete`
+
+Delete a department
+
+**Risk:** `destructive`
+
+```ts
+await corsair.workable.api.departments.delete({ id: '3ff4d641', force: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`departments.list`
+
+List all departments
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.departments.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string | null,
+  parent_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### merge
+
+`departments.merge`
+
+Merge a department into another department
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.workable.api.departments.merge({ id: '3ff4d641', target_department_id: '3ff4d64b', force: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `target_department_id` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+
+
+
+---
+
+### update
+
+`departments.update`
+
+Update a department's name or parent
+
+**Risk:** `write`
+
+```ts
+await corsair.workable.api.departments.update({ id: '3ff4d641', name: 'Platform Engineering', parent_id: null });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `parent_id` | `string \| null` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+
+
+
+---
+
+## Disqualification Reasons
+
+### list
+
+`disqualificationReasons.list`
+
+List disqualification reasons
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.disqualificationReasons.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `Record<string, any>[]`
+
+
+---
+
+## Employee Fields
+
+### list
+
+`employeeFields.list`
+
+List employee field definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.employeeFields.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `Record<string, any>[]`
+
+
+---
+
+## Employees
+
+### create
+
+`employees.create`
+
+Create an employee in draft or published state
+
+**Risk:** `write`
+
+```ts
+await corsair.workable.api.employees.create({ state: 'draft', employee: { firstname: 'Jordan', lastname: 'Lee', work_email: 'jordan@acme.com', start_date: '2026-12-01T00:00:00.000Z' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `draft \| published` | Yes | — |
+| `member_id` | `string` | No | — |
+| `employee` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `state` | `draft \| published \| string \| null` | No | — |
+| `job_title` | `string \| null` | No | — |
+| `department_id` | `string \| null` | No | — |
+| `manager_id` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`employees.get`
+
+Get a specific employee by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.employees.get({ id: '375b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `state` | `draft \| published \| string \| null` | No | — |
+| `job_title` | `string \| null` | No | — |
+| `department_id` | `string \| null` | No | — |
+| `manager_id` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`employees.list`
+
+List/search employees
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.employees.list({ query: 'doe', limit: 50, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `10 \| 20 \| 50 \| 100` | No | — |
+| `offset` | `number` | No | — |
+| `query` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `member_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employees` | `object[]` | Yes | — |
+| `total_count` | `number` | No | — |
+| `totalCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="employees full type">
+
+```ts
+{
+  id?: string,
+  firstname?: string | null,
+  lastname?: string | null,
+  email?: string | null,
+  state?: draft | published | string | null,
+  job_title?: string | null,
+  department_id?: string | null,
+  manager_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`employees.update`
+
+Update an employee's details
+
+**Risk:** `write`
+
+```ts
+await corsair.workable.api.employees.update({ id: '375b', employee: { job_title: 'Account Manager' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `employee` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `state` | `draft \| published \| string \| null` | No | — |
+| `job_title` | `string \| null` | No | — |
+| `department_id` | `string \| null` | No | — |
+| `manager_id` | `string \| null` | No | — |
+
+
+
+---
+
+### uploadDocuments
+
+`employees.uploadDocuments`
+
+Upload documents for an employee
+
+**Risk:** `write`
+
+```ts
+await corsair.workable.api.employees.uploadDocuments({ id: '375b', documents: [{ url: 'https://files.acme.com/signed/offer.pdf', name: 'Offer letter' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `documents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  url: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Events
+
+### list
+
+`events.list`
+
+List scheduled events
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.events.list({ type: 'interview', start_date: '2026-11-01', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `call \| interview \| meeting` | No | — |
+| `limit` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `candidate_id` | `string` | No | — |
+| `shortcode` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `context` | `user \| team \| all` | No | — |
+| `include_cancelled` | `boolean` | No | — |
+| `since_id` | `string` | No | — |
+| `max_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Jobs
+
+### list
+
+`jobs.list`
+
+List jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.jobs.list({ state: 'published', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `state` | `draft \| published \| archived \| closed` | No | — |
+| `created_after` | `string` | No | — |
+| `updated_after` | `string` | No | — |
+| `since_id` | `string` | No | — |
+| `max_id` | `string` | No | — |
+| `include_fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+  id?: string,
+  title?: string | null,
+  shortcode?: string | null,
+  state?: draft | published | closed | archived | string | null,
+  department?: string | null,
+  url?: string | null,
+  created_at?: Date | null,
+  updated_at?: Date | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Legal Entities
+
+### list
+
+`legalEntities.list`
+
+List account legal entities
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.legalEntities.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `Record<string, any>[]`
+
+
+---
+
+## Members
+
+### enable
+
+`members.enable`
+
+Reactivate a deactivated member
+
+**Risk:** `write`
+
+```ts
+await corsair.workable.api.members.enable({ id: '3dae63e5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### invite
+
+`members.invite`
+
+Invite a new member by email
+
+**Risk:** `write`
+
+```ts
+await corsair.workable.api.members.invite({ email: 'jordan@acme.com', roles: ['ats.simple'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `roles` | `(ats.admin \| ats.simple \| ats.reviewer \| hris.admin \| hris.employee \| hris.limited \| workable.superadmin)[]` | Yes | — |
+| `member_id` | `string` | No | — |
+| `collaboration_rules` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `headline` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `roles` | `string[] \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `collaboration_rules` | `any[]` | No | — |
+
+
+
+---
+
+### list
+
+`members.list`
+
+List account members
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.members.list({ status: 'active', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `since_id` | `string` | No | — |
+| `max_id` | `string` | No | — |
+| `role` | `string` | No | — |
+| `shortcode` | `string` | No | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `status` | `active \| inactive \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id?: string,
+  name?: string | null,
+  headline?: string | null,
+  email?: string | null,
+  roles?: string[] | null,
+  active?: boolean | null,
+  collaboration_rules?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`members.update`
+
+Update a member's roles or collaboration rules
+
+**Risk:** `write`
+
+```ts
+await corsair.workable.api.members.update({ id: '3dae63e5', roles: ['ats.admin'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `roles` | `(ats.admin \| ats.simple \| ats.reviewer \| hris.admin \| hris.employee \| hris.limited \| workable.superadmin)[]` | Yes | — |
+| `collaboration_rules` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `headline` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `roles` | `string[] \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `collaboration_rules` | `any[]` | No | — |
+
+
+
+---
+
+## Permission Sets
+
+### list
+
+`permissionSets.list`
+
+List permission sets
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.permissionSets.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `Record<string, any>[]`
+
+
+---
+
+## Public Jobs
+
+### list
+
+`publicJobs.list`
+
+List an account's public job postings (no authentication required)
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.publicJobs.list({ subdomain: 'acme', details: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subdomain` | `string` | No | — |
+| `details` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `jobs` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+## Public Locations
+
+### list
+
+`publicLocations.list`
+
+List the locations of an account's public jobs with per-country counts (no authentication required)
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.publicLocations.list({ subdomain: 'acme' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subdomain` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  code?: string | null,
+  name?: string | null,
+  count?: number | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Recruiters
+
+### list
+
+`recruiters.list`
+
+List external recruiters
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.recruiters.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shortcode` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recruiters` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Requisitions
+
+### list
+
+`requisitions.list`
+
+List requisitions
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.requisitions.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `since_id` | `string` | No | — |
+| `max_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requisitions` | `Record<string, any>[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stages
+
+### list
+
+`stages.list`
+
+List recruitment pipeline stages
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.stages.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stages` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Subscriptions
+
+### create
+
+`subscriptions.create`
+
+Subscribe to a candidate or employee webhook event
+
+**Risk:** `write`
+
+```ts
+await corsair.workable.api.subscriptions.create({ target: 'https://example.com/workable/webhooks', event: 'candidate_created' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target` | `string` | Yes | — |
+| `event` | `candidate_created \| candidate_moved \| employee_created \| employee_updated \| employee_published \| onboarding_completed \| timeoff_updated` | Yes | — |
+| `args` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="args full type">
+
+```ts
+{
+  account_id?: string,
+  job_shortcode?: string,
+  stage_slug?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | No | — |
+
+
+
+---
+
+### delete
+
+`subscriptions.delete`
+
+Delete a webhook subscription
+
+**Risk:** `destructive`
+
+```ts
+await corsair.workable.api.subscriptions.delete({ id: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`subscriptions.list`
+
+List webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.subscriptions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptions` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Timeoff Balances
+
+### list
+
+`timeoffBalances.list`
+
+List employee time-off balances
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.timeoffBalances.list({ employee_id: '375b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employee_id` | `string` | No | The employee whose balances to read. Required with an account token; a user token defaults to its own employee. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `balances` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Timeoff Categories
+
+### list
+
+`timeoffCategories.list`
+
+List time-off categories
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.timeoffCategories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Work Schedules
+
+### list
+
+`workSchedules.list`
+
+List work schedules
+
+**Risk:** `read`
+
+```ts
+await corsair.workable.api.workSchedules.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `Record<string, any>[]`
+
+
+---
+

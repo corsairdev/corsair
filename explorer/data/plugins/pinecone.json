@@ -43,8 +43,9 @@
           },
           {
             "key": "stream",
-            "optional": false,
-            "type": "false"
+            "optional": true,
+            "type": "false",
+            "description": "Defaults to false."
           },
           {
             "key": "model",
@@ -59,7 +60,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "json_response",
@@ -129,8 +130,9 @@
           },
           {
             "key": "stream",
-            "optional": false,
-            "type": "false"
+            "optional": true,
+            "type": "false",
+            "description": "Defaults to false."
           },
           {
             "key": "model",
@@ -145,7 +147,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -206,7 +208,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "top_k",
@@ -298,7 +300,7 @@
           {
             "key": "file_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "percent_complete",
@@ -308,7 +310,7 @@
           {
             "key": "error_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -364,7 +366,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "status",
@@ -384,7 +386,7 @@
           {
             "key": "signed_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "multimodal",
@@ -435,7 +437,7 @@
           {
             "key": "files",
             "optional": false,
-            "type": "{ id: string, name: string, size?: number, metadata?: {} | null, status?: Processing | Available | Deleting | ProcessingFailed, created_on?: string, updated_on?: string, signed_url?: string | null, multimodal?: boolean }[]"
+            "type": "{ id: string, name: string, size?: number, metadata?: Record<string, any> | null, status?: Processing | Available | Deleting | ProcessingFailed, created_on?: string, updated_on?: string, signed_url?: string | null, multimodal?: boolean }[]"
           },
           {
             "key": "pagination",
@@ -481,7 +483,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "multimodal",
@@ -516,7 +518,7 @@
           {
             "key": "file_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "percent_complete",
@@ -526,7 +528,7 @@
           {
             "key": "error_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -547,12 +549,12 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "region",
@@ -582,12 +584,12 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "region",
@@ -625,7 +627,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} |  | undefined"
+        "type": "{} | \"\" | undefined"
       }
     },
     {
@@ -664,12 +666,12 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "region",
@@ -715,7 +717,7 @@
           {
             "key": "assistants",
             "optional": false,
-            "type": "{ name: string, status: Initializing | Failed | Ready | Terminating | InitializationFailed, host?: string, instructions?: string | null, metadata?: {} | null, region?: us | eu, created_at?: string, updated_at?: string }[]"
+            "type": "{ name: string, status: Initializing | Failed | Ready | Terminating | InitializationFailed, host?: string, instructions?: string | null, metadata?: Record<string, any> | null, region?: us | eu, created_at?: string, updated_at?: string }[]"
           },
           {
             "key": "pagination",
@@ -741,12 +743,12 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       },
@@ -771,12 +773,12 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "region",
@@ -923,7 +925,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -961,7 +963,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} |  | undefined"
+        "type": "{} | \"\" | undefined"
       }
     },
     {
@@ -1096,7 +1098,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           }
         ]
       }
@@ -1132,7 +1134,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           }
         ]
       }
@@ -1159,7 +1161,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} |  | undefined"
+        "type": "{} | \"\" | undefined"
       }
     },
     {
@@ -1213,7 +1215,7 @@
           {
             "key": "finishedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recordsImported",
@@ -1351,7 +1353,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "spec",
@@ -1386,7 +1388,7 @@
           {
             "key": "dimension",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "vector_type",
@@ -1411,7 +1413,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -1457,7 +1459,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1482,7 +1484,7 @@
           {
             "key": "dimension",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "vector_type",
@@ -1507,7 +1509,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -1538,7 +1540,7 @@
           {
             "key": "embed",
             "optional": false,
-            "type": "{ model: string, field_map: {}, metric?: cosine | euclidean | dotproduct, read_parameters?: {}, write_parameters?: {} }"
+            "type": "{ model: string, field_map: Record<string, string>, metric?: cosine | euclidean | dotproduct, read_parameters?: {}, write_parameters?: {} }"
           },
           {
             "key": "deletion_protection",
@@ -1548,7 +1550,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1573,7 +1575,7 @@
           {
             "key": "dimension",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "vector_type",
@@ -1598,7 +1600,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -1621,7 +1623,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} |  | undefined"
+        "type": "{} | \"\" | undefined"
       }
     },
     {
@@ -1660,7 +1662,7 @@
           {
             "key": "dimension",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "vector_type",
@@ -1685,7 +1687,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -1705,7 +1707,7 @@
           {
             "key": "indexes",
             "optional": false,
-            "type": "{ name: string, metric?: string, host?: string, dimension?: number | null, vector_type?: dense | sparse, deletion_protection?: enabled | disabled, status?: { ready?: boolean, state?: string }, spec?: {}, tags?: {} | null }[]"
+            "type": "{ name: string, metric?: string, host?: string, dimension?: number | null, vector_type?: dense | sparse, deletion_protection?: enabled | disabled, status?: { ready?: boolean, state?: string }, spec?: {}, tags?: Record<string, string> | null }[]"
           }
         ]
       }
@@ -1925,7 +1927,7 @@
           {
             "key": "schema",
             "optional": true,
-            "type": "{ fields: {} }"
+            "type": "{ fields: Record<string, { filterable: boolean }> }"
           }
         ]
       },
@@ -1968,7 +1970,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} |  | undefined"
+        "type": "{} | \"\" | undefined"
       }
     },
     {
@@ -2074,7 +2076,7 @@
           {
             "key": "query",
             "optional": false,
-            "type": "{ top_k: number, inputs?: { text: string }, vector?: number[], id?: string, filter?: {} }"
+            "type": "{ top_k: number, inputs?: { text: string }, vector?: number[], id?: string, filter?: Record<string, any> }"
           },
           {
             "key": "fields",
@@ -2126,7 +2128,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} |  | undefined"
+        "type": "{} | \"\" | undefined"
       }
     },
     {
@@ -2180,7 +2182,7 @@
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "percent_complete",
@@ -2221,7 +2223,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           }
         ]
       }
@@ -2258,13 +2260,13 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} |  | undefined"
+        "type": "{} | \"\" | undefined"
       }
     },
     {
@@ -2283,7 +2285,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2308,7 +2310,7 @@
           {
             "key": "namespaces",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, {}>"
           }
         ]
       }
@@ -2344,7 +2346,7 @@
           {
             "key": "vectors",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { id: string, values?: number[], sparse_values?: { indices: number[], values: number[] }, metadata?: Record<string, any> }>"
           },
           {
             "key": "namespace",
@@ -2446,7 +2448,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "includeValues",
@@ -2466,7 +2468,7 @@
           {
             "key": "matches",
             "optional": false,
-            "type": "{ id: string, score?: number, values?: number[], metadata?: {} }[]"
+            "type": "{ id: string, score?: number, values?: number[], metadata?: Record<string, any> }[]"
           },
           {
             "key": "namespace",
@@ -2512,7 +2514,7 @@
           {
             "key": "setMetadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "namespace",
@@ -2523,7 +2525,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} |  | undefined"
+        "type": "{} | \"\" | undefined"
       }
     },
     {
@@ -2542,7 +2544,7 @@
           {
             "key": "vectors",
             "optional": false,
-            "type": "{ id: string, values?: number[], sparse_values?: { indices: number[], values: number[] }, metadata?: {} }[]"
+            "type": "{ id: string, values?: number[], sparse_values?: { indices: number[], values: number[] }, metadata?: Record<string, any> }[]"
           },
           {
             "key": "namespace",
@@ -2637,6 +2639,11 @@
         },
         {
           "field": "instructions",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2802,6 +2809,16 @@
           "field": "metric",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "vector_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deletion_protection",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },
@@ -2821,6 +2838,16 @@
         },
         {
           "field": "short_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "vector_type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

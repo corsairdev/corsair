@@ -1339,7 +1339,7 @@ await corsair.hunterio.api.companyLists.create({});
 | `name` | `string` | Yes | — |
 | `type` | `static \| dynamic` | No | — |
 | `filters` | `any` | No | — |
-| `company_list_folder_id` | `number \| string` | No | — |
+| `company_list_folder_id` | `number \| string \| null` | No | — |
 
 
 
@@ -1405,7 +1405,7 @@ await corsair.hunterio.api.companyLists.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1667,7 +1667,7 @@ await corsair.hunterio.api.companyLists.replace({});
 | `name` | `string` | No | — |
 | `type` | `static \| dynamic` | No | — |
 | `filters` | `any` | No | — |
-| `company_list_folder_id` | `number \| string` | No | — |
+| `company_list_folder_id` | `number \| string \| null` | No | — |
 
 
 
@@ -1753,7 +1753,7 @@ await corsair.hunterio.api.companyLists.update({});
 | `name` | `string` | No | — |
 | `type` | `static \| dynamic` | No | — |
 | `filters` | `any` | No | — |
-| `company_list_folder_id` | `number \| string` | No | — |
+| `company_list_folder_id` | `number \| string \| null` | No | — |
 
 
 
@@ -2564,7 +2564,7 @@ await corsair.hunterio.api.discover.companies({});
 | `organization` | `object` | No | — |
 | `headquarters_location` | `object` | No | — |
 | `industry` | `object` | No | — |
-| `headcount` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+[]` | No | — |
+| `headcount` | `(1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+)[]` | No | — |
 | `company_type` | `object` | No | — |
 | `keywords` | `object` | No | — |
 | `year_founded` | `object` | No | — |
@@ -2666,7 +2666,7 @@ await corsair.hunterio.api.discover.companies({});
 
 ```ts
 {
-  series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[],
+  series?: (pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other)[],
   amount?: {
     from?: number,
     to?: number
@@ -2801,7 +2801,7 @@ await corsair.hunterio.api.discover.people({});
 | `organization` | `object` | No | — |
 | `headquarters_location` | `object` | No | — |
 | `industry` | `object` | No | — |
-| `headcount` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+[]` | No | — |
+| `headcount` | `(1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+)[]` | No | — |
 | `company_type` | `object` | No | — |
 | `keywords` | `object` | No | — |
 | `year_founded` | `object` | No | — |
@@ -2903,7 +2903,7 @@ await corsair.hunterio.api.discover.people({});
 
 ```ts
 {
-  series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[],
+  series?: (pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other)[],
   amount?: {
     from?: number,
     to?: number
@@ -3019,7 +3019,7 @@ await corsair.hunterio.api.discover.peoplePost({});
 | `organization` | `object` | No | — |
 | `headquarters_location` | `object` | No | — |
 | `industry` | `object` | No | — |
-| `headcount` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+[]` | No | — |
+| `headcount` | `(1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+)[]` | No | — |
 | `company_type` | `object` | No | — |
 | `keywords` | `object` | No | — |
 | `year_founded` | `object` | No | — |
@@ -3121,7 +3121,7 @@ await corsair.hunterio.api.discover.peoplePost({});
 
 ```ts
 {
-  series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[],
+  series?: (pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other)[],
   amount?: {
     from?: number,
     to?: number
@@ -3236,17 +3236,7 @@ await corsair.hunterio.api.discoverViews.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `filters` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="filters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `filters` | `Record<string, any>` | No | — |
 
 
 
@@ -3265,8 +3255,7 @@ await corsair.hunterio.api.discoverViews.create({});
 {
   id?: number,
   name?: string,
-  filters?: {
-  },
+  filters?: Record<string, any>,
   created_at?: string,
   updated_at?: string
 }
@@ -3351,8 +3340,7 @@ await corsair.hunterio.api.discoverViews.get({});
 {
   id?: number,
   name?: string,
-  filters?: {
-  },
+  filters?: Record<string, any>,
   created_at?: string,
   updated_at?: string
 }
@@ -3407,8 +3395,7 @@ await corsair.hunterio.api.discoverViews.list({});
 {
   id?: number,
   name?: string,
-  filters?: {
-  },
+  filters?: Record<string, any>,
   created_at?: string,
   updated_at?: string
 }[]
@@ -3455,7 +3442,7 @@ await corsair.hunterio.api.domainCount.get({});
 | `organization` | `object` | No | — |
 | `headquarters_location` | `object` | No | — |
 | `industry` | `object` | No | — |
-| `headcount` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+[]` | No | — |
+| `headcount` | `(1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10001+)[]` | No | — |
 | `company_type` | `object` | No | — |
 | `keywords` | `object` | No | — |
 | `year_founded` | `object` | No | — |
@@ -3557,7 +3544,7 @@ await corsair.hunterio.api.domainCount.get({});
 
 ```ts
 {
-  series?: pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other[],
+  series?: (pre_seed | seed | pre_series_a | series_a | pre_series_b | series_b | pre_series_c | series_c+ | other)[],
   amount?: {
     from?: number,
     to?: number
@@ -4733,12 +4720,9 @@ await corsair.hunterio.api.emailCount.get({});
   total?: number,
   personal_emails?: number,
   generic_emails?: number,
-  department?: {
-  },
-  seniority?: {
-  },
-  job_titles?: {
-  }
+  department?: Record<string, number>,
+  seniority?: Record<string, number>,
+  job_titles?: Record<string, number>
 }
 ```
 </Accordion>
@@ -5305,8 +5289,7 @@ await corsair.hunterio.api.enrichment.combined({});
       location?: string | null,
       timeZone?: string | null,
       utcOffset?: number | null,
-      geo?: {
-      } | null,
+      geo?: Record<string, any> | null,
       logo?: string | null,
       facebook?: {
         handle?: string | null,
@@ -5476,8 +5459,7 @@ await corsair.hunterio.api.enrichment.combined({});
     location?: string | null,
     timeZone?: string | null,
     utcOffset?: number | null,
-    geo?: {
-    } | null,
+    geo?: Record<string, any> | null,
     logo?: string | null,
     facebook?: {
       handle?: string | null,
@@ -5601,8 +5583,7 @@ await corsair.hunterio.api.enrichment.company({});
     location?: string | null,
     timeZone?: string | null,
     utcOffset?: number | null,
-    geo?: {
-    } | null,
+    geo?: Record<string, any> | null,
     logo?: string | null,
     facebook?: {
       handle?: string | null,
@@ -5696,8 +5677,7 @@ await corsair.hunterio.api.enrichment.company({});
   location?: string | null,
   timeZone?: string | null,
   utcOffset?: number | null,
-  geo?: {
-  } | null,
+  geo?: Record<string, any> | null,
   logo?: string | null,
   facebook?: {
     handle?: string | null,
@@ -6110,7 +6090,7 @@ await corsair.hunterio.api.leads.bulkExist({});
 ```ts
 {
   email: string,
-  id?: number | null
+  id: number | null
 }[]
 ```
 </Accordion>
@@ -6236,12 +6216,9 @@ await corsair.hunterio.api.leads.bulkUpsert({});
   notes?: string,
   source?: string,
   leads_list_id?: number | string,
-  leads_list_ids?: (
-    number | string
-  )[],
+  leads_list_ids?: (number | string)[],
   leads_list_name?: string,
-  custom_attributes?: {
-  }
+  custom_attributes?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -6301,8 +6278,7 @@ await corsair.hunterio.api.leads.bulkUpsert({});
       name?: string,
       leads_count?: number
     }[],
-    custom_attributes?: {
-    },
+    custom_attributes?: Record<string, any>,
     created_at?: string | null,
     created_by?: number | null
   } | null,
@@ -6367,21 +6343,11 @@ await corsair.hunterio.api.leads.create({});
 | `leads_list_id` | `number \| string` | No | — |
 | `leads_list_ids` | `(number \| string)[]` | No | — |
 | `leads_list_name` | `string` | No | — |
-| `custom_attributes` | `object` | No | — |
+| `custom_attributes` | `Record<string, string>` | No | — |
 | `company_type` | `string` | No | — |
 | `lead_country_code` | `string` | No | — |
 | `lead_city` | `string` | No | — |
 | `lead_state` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6433,8 +6399,7 @@ await corsair.hunterio.api.leads.create({});
     name?: string,
     leads_count?: number
   }[],
-  custom_attributes?: {
-  },
+  custom_attributes?: Record<string, any>,
   created_at?: string | null,
   created_by?: number | null
 }
@@ -6552,8 +6517,7 @@ await corsair.hunterio.api.leads.enrich({});
     name?: string,
     leads_count?: number
   }[],
-  custom_attributes?: {
-  },
+  custom_attributes?: Record<string, any>,
   created_at?: string | null,
   created_by?: number | null
 }
@@ -6611,9 +6575,9 @@ await corsair.hunterio.api.leads.exist({});
 
 ```ts
 {
-  id?: number | null,
-  leads_list_id?: number | null,
-  leads_list_name?: string | null
+  id: number | null,
+  leads_list_id: number | null,
+  leads_list_name: string | null
 }
 ```
 </Accordion>
@@ -6704,8 +6668,7 @@ await corsair.hunterio.api.leads.get({});
     name?: string,
     leads_count?: number
   }[],
-  custom_attributes?: {
-  },
+  custom_attributes?: Record<string, any>,
   created_at?: string | null,
   created_by?: number | null
 }
@@ -6810,21 +6773,21 @@ await corsair.hunterio.api.leads.list({});
 | `linkedin_url` | `string` | No | — |
 | `phone_number` | `string` | No | — |
 | `sync_status` | `pending \| error \| success` | No | — |
-| `sending_status` | `clicked \| opened \| sent \| pending \| error \| bounced \| unsubscribed \| replied \| ~[]` | No | — |
-| `verification_status` | `accept_all \| disposable \| invalid \| unknown \| valid \| webmail \| pending[]` | No | — |
-| `last_activity_at` | `object` | No | — |
-| `last_contacted_at` | `object` | No | — |
-| `last_exported_at` | `object` | No | — |
-| `created_at` | `object` | No | — |
-| `updated_at` | `object` | No | — |
-| `verification_date` | `object` | No | — |
-| `department` | `executive \| it \| finance \| management \| sales \| legal \| support \| hr \| marketing \| communication \| education \| design \| health \| operations[]` | No | — |
+| `sending_status` | `(clicked \| opened \| sent \| pending \| error \| bounced \| unsubscribed \| replied \| ~)[]` | No | — |
+| `verification_status` | `(accept_all \| disposable \| invalid \| unknown \| valid \| webmail \| pending)[]` | No | — |
+| `last_activity_at` | `* \| ~ \| last1h \| today \| this_week \| last7d \| last30d \| current_year \| object` | No | — |
+| `last_contacted_at` | `* \| ~ \| last1h \| today \| this_week \| last7d \| last30d \| current_year \| object` | No | — |
+| `last_exported_at` | `* \| ~ \| last1h \| today \| this_week \| last7d \| last30d \| current_year \| object` | No | — |
+| `created_at` | `* \| ~ \| last1h \| today \| this_week \| last7d \| last30d \| current_year \| object` | No | — |
+| `updated_at` | `* \| ~ \| last1h \| today \| this_week \| last7d \| last30d \| current_year \| object` | No | — |
+| `verification_date` | `* \| ~ \| last1h \| today \| this_week \| last7d \| last30d \| current_year \| object` | No | — |
+| `department` | `(executive \| it \| finance \| management \| sales \| legal \| support \| hr \| marketing \| communication \| education \| design \| health \| operations)[]` | No | — |
 | `tags` | `number[]` | No | — |
 | `sequence_ids` | `number[] \| * \| ~` | No | — |
 | `campaign_ids` | `number[] \| * \| ~` | No | — |
 | `user_id` | `number[]` | No | — |
-| `confidence_score` | `object` | No | — |
-| `custom_attributes` | `object` | No | — |
+| `confidence_score` | `* \| ~ \| object` | No | — |
+| `custom_attributes` | `Record<string, string>` | No | — |
 | `query` | `string` | No | — |
 | `location` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -6897,14 +6860,6 @@ await corsair.hunterio.api.leads.list({});
 * | ~ | {
   from?: number,
   to?: number
-}
-```
-</Accordion>
-
-<Accordion title="custom_attributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -6989,8 +6944,7 @@ await corsair.hunterio.api.leads.list({});
       name?: string,
       leads_count?: number
     }[],
-    custom_attributes?: {
-    },
+    custom_attributes?: Record<string, any>,
     created_at?: string | null,
     created_by?: number | null
   }[]
@@ -7052,21 +7006,11 @@ await corsair.hunterio.api.leads.replace({});
 | `leads_list_id` | `number \| string` | No | — |
 | `leads_list_ids` | `(number \| string)[]` | No | — |
 | `leads_list_name` | `string` | No | — |
-| `custom_attributes` | `object` | No | — |
+| `custom_attributes` | `Record<string, string>` | No | — |
 | `company_type` | `string` | No | — |
 | `lead_country_code` | `string` | No | — |
 | `lead_city` | `string` | No | — |
 | `lead_state` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -7111,21 +7055,11 @@ await corsair.hunterio.api.leads.update({});
 | `leads_list_id` | `number \| string` | No | — |
 | `leads_list_ids` | `(number \| string)[]` | No | — |
 | `leads_list_name` | `string` | No | — |
-| `custom_attributes` | `object` | No | — |
+| `custom_attributes` | `Record<string, string>` | No | — |
 | `company_type` | `string` | No | — |
 | `lead_country_code` | `string` | No | — |
 | `lead_city` | `string` | No | — |
 | `lead_state` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -7169,17 +7103,7 @@ await corsair.hunterio.api.leads.upsert({});
 | `leads_list_id` | `number \| string` | No | — |
 | `leads_list_ids` | `(number \| string)[]` | No | — |
 | `leads_list_name` | `string` | No | — |
-| `custom_attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `custom_attributes` | `Record<string, string>` | No | — |
 
 
 
@@ -7231,8 +7155,7 @@ await corsair.hunterio.api.leads.upsert({});
     name?: string,
     leads_count?: number
   }[],
-  custom_attributes?: {
-  },
+  custom_attributes?: Record<string, any>,
   created_at?: string | null,
   created_by?: number | null
 }
@@ -7541,7 +7464,7 @@ await corsair.hunterio.api.leadsLists.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `leads_list_folder_id` | `number \| string` | No | — |
+| `leads_list_folder_id` | `number \| string \| null` | No | — |
 
 
 
@@ -7606,7 +7529,7 @@ await corsair.hunterio.api.leadsLists.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -7764,8 +7687,7 @@ await corsair.hunterio.api.leadsLists.get({});
       name?: string,
       leads_count?: number
     }[],
-    custom_attributes?: {
-    },
+    custom_attributes?: Record<string, any>,
     created_at?: string | null,
     created_by?: number | null
   }[]
@@ -7898,7 +7820,7 @@ await corsair.hunterio.api.leadsLists.replace({});
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `leads_list_folder_id` | `number \| string` | No | — |
+| `leads_list_folder_id` | `number \| string \| null` | No | — |
 
 
 
@@ -7982,7 +7904,7 @@ await corsair.hunterio.api.leadsLists.update({});
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `leads_list_folder_id` | `number \| string` | No | — |
+| `leads_list_folder_id` | `number \| string \| null` | No | — |
 
 
 
@@ -9499,8 +9421,8 @@ await corsair.hunterio.api.sequences.create({});
 | `tracked` | `boolean` | No | — |
 | `tracked_links` | `boolean` | No | — |
 | `ai_assistant_enabled` | `boolean` | No | — |
-| `bcc_recipient` | `string` | No | — |
-| `start_at` | `string` | No | — |
+| `bcc_recipient` | `string \| null` | No | — |
+| `start_at` | `string \| null` | No | — |
 
 
 
@@ -9878,8 +9800,8 @@ await corsair.hunterio.api.sequences.replace({});
 | `tracked` | `boolean` | No | — |
 | `tracked_links` | `boolean` | No | — |
 | `ai_assistant_enabled` | `boolean` | No | — |
-| `bcc_recipient` | `string` | No | — |
-| `start_at` | `string` | No | — |
+| `bcc_recipient` | `string \| null` | No | — |
+| `start_at` | `string \| null` | No | — |
 | `id` | `number \| string` | Yes | — |
 
 
@@ -10145,8 +10067,8 @@ await corsair.hunterio.api.sequences.update({});
 | `tracked` | `boolean` | No | — |
 | `tracked_links` | `boolean` | No | — |
 | `ai_assistant_enabled` | `boolean` | No | — |
-| `bcc_recipient` | `string` | No | — |
-| `start_at` | `string` | No | — |
+| `bcc_recipient` | `string \| null` | No | — |
+| `start_at` | `string \| null` | No | — |
 | `id` | `number \| string` | Yes | — |
 
 

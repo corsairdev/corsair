@@ -1,0 +1,1781 @@
+---
+title: API
+description: "API reference for Zoho Desk: every `zohodesk.api.*` operation with input and output types."
+---
+
+Every `zohodesk.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agents
+
+### get
+
+`agents.get`
+
+Get an agent, optionally with its profile, role, departments and verified emails
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.agents.get({ agentId: '1892000000056096', include: ['role', 'associatedDepartments'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string` | Yes | — |
+| `include` | `(profile \| role \| associatedDepartments \| associatedChatDepartments \| verifiedEmails)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `zuid` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `emailId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `isConfirmed` | `boolean \| string \| null` | No | — |
+| `roleId` | `string \| number \| null` | No | — |
+| `profileId` | `string \| number \| null` | No | — |
+| `rolePermissionType` | `string \| null` | No | — |
+| `langCode` | `string \| null` | No | — |
+| `countryCode` | `string \| null` | No | — |
+| `timeZone` | `string \| null` | No | — |
+| `aboutInfo` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `mobile` | `string \| null` | No | — |
+| `extn` | `string \| null` | No | — |
+| `photoURL` | `string \| null` | No | — |
+| `channelExpert` | `(string \| null)[] \| null` | No | — |
+| `associatedDepartmentIds` | `(string \| number \| null)[] \| null` | No | — |
+| `associatedChatDepartmentIds` | `(string \| number \| null)[] \| null` | No | — |
+| `cf` | `Record<string, any> \| null` | No | — |
+| `role` | `object \| null` | No | — |
+| `profile` | `object \| null` | No | — |
+| `associatedDepartments` | `object[] \| null` | No | — |
+| `associatedChatDepartments` | `object[] \| null` | No | — |
+| `verifiedEmails` | `(string \| null)[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="role full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="profile full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="associatedDepartments full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="associatedChatDepartments full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCount
+
+`agents.getCount`
+
+Count agents, optionally by status, confirmation and light agent inclusion
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.agents.getCount({ status: 'ACTIVE', isConfirmed: true, includeLightAgent: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ACTIVE \| DISABLED` | No | — |
+| `isConfirmed` | `boolean` | No | — |
+| `includeLightAgent` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| string \| null` | No | — |
+
+
+
+---
+
+## Contacts
+
+### get
+
+`contacts.get`
+
+Get a contact, optionally with its accounts and owner
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.contacts.get({ contactId: '1892000000042032', include: ['accounts', 'owner'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+| `include` | `(accounts \| owner)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `secondaryEmail` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `mobile` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `street` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `zip` | `number \| string \| null` | No | — |
+| `facebook` | `string \| null` | No | — |
+| `twitter` | `string \| null` | No | — |
+| `photoURL` | `string \| null` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `accountId` | `string \| number \| null` | No | — |
+| `ownerId` | `string \| number \| null` | No | — |
+| `layoutId` | `string \| number \| null` | No | — |
+| `accountCount` | `number \| string \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `modifiedTime` | `string \| null` | No | — |
+| `isSpam` | `boolean \| string \| null` | No | — |
+| `isAnonymous` | `boolean \| string \| null` | No | — |
+| `isEndUser` | `boolean \| string \| null` | No | — |
+| `isFollowing` | `boolean \| string \| null` | No | — |
+| `isDeleted` | `boolean \| string \| null` | No | — |
+| `isTrashed` | `boolean \| string \| null` | No | — |
+| `cf` | `Record<string, any> \| null` | No | — |
+| `customFields` | `Record<string, any> \| null` | No | — |
+| `customerHappiness` | `object \| null` | No | — |
+| `zohoCRMContact` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | — |
+| `account` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="customerHappiness full type">
+
+```ts
+{
+  badPercentage?: number | string | null,
+  okPercentage?: number | string | null,
+  goodPercentage?: number | string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="zohoCRMContact full type">
+
+```ts
+{
+  id?: string | number | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  photoURL?: string | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="account full type">
+
+```ts
+{
+  id?: string | number | null,
+  accountName?: string | null,
+  website?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByIds
+
+`contacts.getByIds`
+
+Get up to 20 contacts by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.contacts.getByIds({ ids: ['1892000000042032', '1892000000772003'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | Up to 20 contact IDs |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  secondaryEmail?: string | null,
+  phone?: string | null,
+  mobile?: string | null,
+  type?: string | null,
+  title?: string | null,
+  description?: string | null,
+  street?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  zip?: number | string | null,
+  facebook?: string | null,
+  twitter?: string | null,
+  photoURL?: string | null,
+  webUrl?: string | null,
+  accountId?: string | number | null,
+  ownerId?: string | number | null,
+  layoutId?: string | number | null,
+  accountCount?: number | string | null,
+  createdTime?: string | null,
+  modifiedTime?: string | null,
+  isSpam?: boolean | string | null,
+  isAnonymous?: boolean | string | null,
+  isEndUser?: boolean | string | null,
+  isFollowing?: boolean | string | null,
+  isDeleted?: boolean | string | null,
+  isTrashed?: boolean | string | null,
+  cf?: Record<string, any> | null,
+  customFields?: Record<string, any> | null,
+  customerHappiness?: {
+    badPercentage?: number | string | null,
+    okPercentage?: number | string | null,
+    goodPercentage?: number | string | null
+  } | null,
+  zohoCRMContact?: {
+    id?: string | number | null,
+    type?: string | null
+  } | null,
+  owner?: {
+    id?: string | number | null,
+    name?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    photoURL?: string | null,
+    type?: string | null
+  } | null,
+  account?: {
+    id?: string | number | null,
+    accountName?: string | null,
+    website?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts with view and saved filter, paging, sorting and field selection
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.contacts.list({ limit: 50, sortBy: '-createdTime', fields: ['firstName', 'lastName', 'email'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | Index of the first record to return |
+| `limit` | `number` | No | Number of records to return, up to 100 |
+| `viewId` | `string` | No | View to apply |
+| `filterId` | `string` | No | Saved filter to apply |
+| `sortBy` | `string` | No | firstName, lastName or createdTime. Prefix with - for descending |
+| `include` | `accounts[]` | No | — |
+| `fields` | `string[]` | No | Fields to return, up to 30. Multi-line text fields are excluded |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  secondaryEmail?: string | null,
+  phone?: string | null,
+  mobile?: string | null,
+  type?: string | null,
+  title?: string | null,
+  description?: string | null,
+  street?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  zip?: number | string | null,
+  facebook?: string | null,
+  twitter?: string | null,
+  photoURL?: string | null,
+  webUrl?: string | null,
+  accountId?: string | number | null,
+  ownerId?: string | number | null,
+  layoutId?: string | number | null,
+  accountCount?: number | string | null,
+  createdTime?: string | null,
+  modifiedTime?: string | null,
+  isSpam?: boolean | string | null,
+  isAnonymous?: boolean | string | null,
+  isEndUser?: boolean | string | null,
+  isFollowing?: boolean | string | null,
+  isDeleted?: boolean | string | null,
+  isTrashed?: boolean | string | null,
+  cf?: Record<string, any> | null,
+  customFields?: Record<string, any> | null,
+  customerHappiness?: {
+    badPercentage?: number | string | null,
+    okPercentage?: number | string | null,
+    goodPercentage?: number | string | null
+  } | null,
+  zohoCRMContact?: {
+    id?: string | number | null,
+    type?: string | null
+  } | null,
+  owner?: {
+    id?: string | number | null,
+    name?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    photoURL?: string | null,
+    type?: string | null
+  } | null,
+  account?: {
+    id?: string | number | null,
+    accountName?: string | null,
+    website?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAccounts
+
+`contacts.listAccounts`
+
+List the accounts of a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.contacts.listAccounts({ contactId: '1892000000042032', limit: 20, sortBy: 'accountName' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+| `from` | `number` | No | Index of the first record to return |
+| `limit` | `number` | No | Number of records to return, up to 100 |
+| `sortBy` | `string` | No | accountName, createdTime or mappingType. Prefix with - for descending |
+| `startsWith` | `string` | No | Letter account names must start with |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  accountName?: string | null,
+  website?: string | null,
+  phone?: string | null,
+  email?: string | null,
+  webUrl?: string | null,
+  createdTime?: string | null,
+  mappingType?: string | null,
+  mappingInfo?: {
+    mappingId?: string | number | null,
+    mappingType?: string | null,
+    isAccountTicketsViewable?: boolean | string | null
+  } | null,
+  zohoCRMAccount?: {
+    id?: string | number | null
+  } | null,
+  customerHappiness?: {
+    badPercentage?: number | string | null,
+    okPercentage?: number | string | null,
+    goodPercentage?: number | string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Departments
+
+### get
+
+`departments.get`
+
+Get a department by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.departments.get({ departmentId: '1892000000082069' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `departmentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `nameInCustomerPortal` | `string \| null` | No | — |
+| `sanitizedName` | `string \| null` | No | — |
+| `chatStatus` | `string \| null` | No | — |
+| `creatorId` | `string \| number \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `isDefault` | `boolean \| string \| null` | No | — |
+| `isEnabled` | `boolean \| string \| null` | No | — |
+| `hasLogo` | `boolean \| string \| null` | No | — |
+| `isAssignToTeamEnabled` | `boolean \| string \| null` | No | — |
+| `isVisibleInCustomerPortal` | `boolean \| string \| null` | No | — |
+| `associatedAgentIds` | `(string \| number \| null)[] \| null` | No | — |
+
+
+
+---
+
+### getCount
+
+`departments.getCount`
+
+Count departments, optionally only enabled or disabled ones
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.departments.getCount({ isEnabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isEnabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### getLogo
+
+`departments.getLogo`
+
+Download the logo of a department as base64
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.departments.getLogo({ departmentId: '1892000000082069', fileSize: 'THUMBNAIL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `departmentId` | `string` | Yes | — |
+| `fileSize` | `ACTUAL \| THUMBNAIL` | No | Image size. Zoho defaults to ACTUAL |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `contentBase64` | `string` | Yes | Image bytes as base64 |
+| `size` | `number` | Yes | Size of the image in bytes |
+
+
+
+---
+
+### list
+
+`departments.list`
+
+List departments
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.departments.list({ isEnabled: true, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | Index of the first record to return |
+| `limit` | `number` | No | Number of records to return, up to 200 |
+| `isEnabled` | `boolean` | No | — |
+| `searchStr` | `string` | No | Use term* for starts with, *term* for contains, term for exact |
+| `chatStatus` | `AVAILABLE \| DISABLED \| NOT_CREATED \| object` | No | $&#123;UNAVAILABLE&#125; means departments not available for chat |
+
+<AccordionGroup>
+<Accordion title="chatStatus full type">
+
+```ts
+AVAILABLE | DISABLED | NOT_CREATED | ${
+  UNAVAILABLE
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  description?: string | null,
+  nameInCustomerPortal?: string | null,
+  sanitizedName?: string | null,
+  chatStatus?: string | null,
+  creatorId?: string | number | null,
+  createdTime?: string | null,
+  isDefault?: boolean | string | null,
+  isEnabled?: boolean | string | null,
+  hasLogo?: boolean | string | null,
+  isAssignToTeamEnabled?: boolean | string | null,
+  isVisibleInCustomerPortal?: boolean | string | null,
+  associatedAgentIds?: (string | number | null)[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTeams
+
+`departments.listTeams`
+
+List the teams in a department
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.departments.listTeams({ departmentId: '1892000000082069', from: 0, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `departmentId` | `string` | Yes | — |
+| `from` | `number` | No | Index of the first record to return |
+| `limit` | `number` | No | Up to 200. Omit or pass 0 for every team |
+| `searchStr` | `string` | No | Team name search |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teams` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="teams full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  description?: string | null,
+  departmentId?: string | number | null,
+  logoUrl?: string | null,
+  agents?: (string | number | null)[] | null,
+  derivedAgents?: (string | number | null)[] | null,
+  roles?: (string | number | null)[] | null,
+  rolesWithSubordinates?: (string | number | null)[] | null,
+  subTeams?: (string | number | null)[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadLogo
+
+`departments.uploadLogo`
+
+Replace the logo of a department with a jpg, png or gif of up to 2MB
+
+**Risk:** `write`
+
+```ts
+await corsair.zohodesk.api.departments.uploadLogo({ departmentId: '1892000000082069', fileName: 'logo.png', contentBase64: logoBytes.toString('base64') });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `departmentId` | `string` | Yes | — |
+| `fileName` | `string` | Yes | File name ending in jpg, jpeg, png or gif |
+| `contentBase64` | `string` | Yes | Image bytes as base64, 2MB at most |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uploaded` | `boolean` | Yes | — |
+
+
+
+---
+
+## Organizations
+
+### list
+
+`organizations.list`
+
+List the organizations the user belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.organizations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  companyName?: string | null,
+  portalName?: string | null,
+  portalURL?: string | null,
+  alias?: string | null,
+  edition?: string | null,
+  description?: string | null,
+  website?: string | null,
+  phoneNumber?: string | null,
+  dialCode?: string | null,
+  mobile?: string | null,
+  fax?: string | null,
+  primaryContact?: string | null,
+  street?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  zip?: number | string | null,
+  timeZone?: string | null,
+  currencyCode?: string | null,
+  currencyLocale?: string | null,
+  currencySymbol?: string | null,
+  employeeCount?: number | string | null,
+  employeeCountRange?: string | null,
+  industry?: string | null,
+  logoURL?: string | null,
+  faviconURL?: string | null,
+  isDefault?: boolean | string | null,
+  isAdminInOrg?: boolean | string | null,
+  isSandboxPortal?: boolean | string | null,
+  isPayloadEncryptionEnabled?: boolean | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Roles
+
+### list
+
+`roles.list`
+
+List roles
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.roles.list({ isVisible: true, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | Index of the first record to return |
+| `limit` | `number` | No | Number of records to return, up to 500 |
+| `isVisible` | `boolean` | No | — |
+| `isDefault` | `boolean` | No | — |
+| `searchStr` | `string` | No | Use term* for starts with, *term* for contains, term for exact |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  description?: string | null,
+  reportsTo?: string | number | null,
+  isDefault?: boolean | string | null,
+  isVisible?: boolean | string | null,
+  shareDataWithPeers?: boolean | string | null,
+  immediateSubRoles?: (string | number | null)[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByIds
+
+`roles.listByIds`
+
+Get up to 50 roles by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.roles.listByIds({ roleIds: ['4000000012423', '4000000012420'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roleIds` | `string[]` | Yes | Up to 50 role IDs |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  description?: string | null,
+  reportsTo?: string | number | null,
+  isDefault?: boolean | string | null,
+  isVisible?: boolean | string | null,
+  shareDataWithPeers?: boolean | string | null,
+  immediateSubRoles?: (string | number | null)[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### updateMany
+
+`tasks.updateMany`
+
+Set one field on up to 50 tasks
+
+**Risk:** `write`
+
+```ts
+await corsair.zohodesk.api.tasks.updateMany({ ids: ['1892000000093303', '1892000000085009'], fieldName: 'priority', fieldValue: 'High' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | Up to 50 task IDs |
+| `fieldName` | `string` | Yes | Field to update |
+| `fieldValue` | `string` | No | New value of the field |
+| `isCustomField` | `boolean` | No | Whether fieldName is a user-defined field |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | number | null,
+  success?: boolean | string | null,
+  errors?: {
+    errorCode?: string | null,
+    errorMessage?: string | null,
+    httpCode?: number | string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tickets
+
+### get
+
+`tickets.get`
+
+Get a ticket by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.tickets.get({ ticketId: '1892000000042034', include: ['contacts'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | — |
+| `include` | `(contacts \| products \| assignee \| departments \| team \| contract \| isRead \| skills)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `ticketNumber` | `number \| string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `statusType` | `string \| null` | No | — |
+| `priority` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `channelCode` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `subCategory` | `string \| null` | No | — |
+| `classification` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `sentiment` | `string \| null` | No | — |
+| `resolution` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `departmentId` | `string \| number \| null` | No | — |
+| `contactId` | `string \| number \| null` | No | — |
+| `accountId` | `string \| number \| null` | No | — |
+| `assigneeId` | `string \| number \| null` | No | — |
+| `teamId` | `string \| number \| null` | No | — |
+| `productId` | `string \| number \| null` | No | — |
+| `createdBy` | `string \| number \| null` | No | — |
+| `modifiedBy` | `string \| number \| null` | No | — |
+| `layoutId` | `string \| number \| null` | No | — |
+| `slaId` | `string \| number \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `responseDueDate` | `string \| null` | No | — |
+| `customerResponseTime` | `string \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `modifiedTime` | `string \| null` | No | — |
+| `closedTime` | `string \| null` | No | — |
+| `onholdTime` | `string \| null` | No | — |
+| `lockedTime` | `string \| null` | No | — |
+| `threadCount` | `number \| string \| null` | No | — |
+| `commentCount` | `number \| string \| null` | No | — |
+| `attachmentCount` | `number \| string \| null` | No | — |
+| `taskCount` | `number \| string \| null` | No | — |
+| `tagCount` | `number \| string \| null` | No | — |
+| `followerCount` | `number \| string \| null` | No | — |
+| `isSpam` | `boolean \| string \| null` | No | — |
+| `isOverDue` | `boolean \| string \| null` | No | — |
+| `isEscalated` | `boolean \| string \| null` | No | — |
+| `isRead` | `boolean \| string \| null` | No | — |
+| `isArchived` | `boolean \| string \| null` | No | — |
+| `isDeleted` | `boolean \| string \| null` | No | — |
+| `isTrashed` | `boolean \| string \| null` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `cf` | `Record<string, any> \| null` | No | — |
+| `customFields` | `Record<string, any> \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `department` | `object \| null` | No | — |
+| `team` | `object \| null` | No | — |
+| `product` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="source full type">
+
+```ts
+{
+  appName?: string | null,
+  extId?: string | null,
+  permalink?: string | null,
+  type?: string | null,
+  appPhotoURL?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  photoURL?: string | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  photoURL?: string | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="department full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="product full type">
+
+```ts
+{
+  id?: string | number | null,
+  productName?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatestThread
+
+`tickets.getLatestThread`
+
+Get the most recent thread of a ticket, or null if it has none
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.tickets.getLatestThread({ ticketId: '1892000000042034', needPublic: true, include: ['plainText'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | — |
+| `needPublic` | `boolean` | No | Only a public thread |
+| `needIncomingThread` | `boolean` | No | Only an incoming thread |
+| `include` | `(plainText \| source)[]` | No | Extra data to include. plainText adds the plain text content |
+| `threadStatus` | `success \| failed` | No | Delivery status of the thread |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `plainText` | `string \| null` | No | — |
+| `contentType` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `direction` | `string \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `sentiment` | `string \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `canReply` | `boolean \| string \| null` | No | — |
+| `hasAttach` | `boolean \| string \| null` | No | — |
+| `isForward` | `boolean \| string \| null` | No | — |
+| `isDescriptionThread` | `boolean \| string \| null` | No | — |
+| `isContentTruncated` | `boolean \| string \| null` | No | — |
+| `fullContentURL` | `string \| null` | No | — |
+| `fromEmailAddress` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `cc` | `string \| null` | No | — |
+| `bcc` | `string \| null` | No | — |
+| `replyTo` | `string \| null` | No | — |
+| `facebookProfile` | `string \| null` | No | — |
+| `twitterProfile` | `string \| null` | No | — |
+| `attachmentCount` | `number \| string \| null` | No | — |
+| `attachments` | `object[] \| null` | No | — |
+| `readReceipts` | `object[] \| null` | No | — |
+| `actions` | `object[] \| null` | No | — |
+| `keyWords` | `(string \| null)[] \| null` | No | — |
+| `aspects` | `(string \| null)[] \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `impersonatedUser` | `object \| null` | No | — |
+| `source` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  size?: number | string | null,
+  status?: string | null,
+  href?: string | null,
+  previewurl?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="readReceipts full type">
+
+```ts
+{
+  senderName?: string | null,
+  recipientType?: string | null,
+  from?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="actions full type">
+
+```ts
+{
+  method?: string | null,
+  rel?: string | null,
+  href?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  photoURL?: string | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="impersonatedUser full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  photoURL?: string | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  appName?: string | null,
+  extId?: string | null,
+  permalink?: string | null,
+  type?: string | null,
+  appPhotoURL?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getResolution
+
+`tickets.getResolution`
+
+Get the resolution of a ticket, or null if it has none
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.tickets.getResolution({ ticketId: '1892000000042034' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string \| null` | No | — |
+| `modifiedTime` | `string \| null` | No | — |
+| `author` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  photoURL?: string | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getThread
+
+`tickets.getThread`
+
+Get one thread of a ticket
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.tickets.getThread({ ticketId: '1892000000042034', threadId: '1892000000135387', include: ['plainText'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | — |
+| `threadId` | `string` | Yes | — |
+| `include` | `(plainText \| source)[]` | No | Extra data to include. plainText adds the plain text content |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `plainText` | `string \| null` | No | — |
+| `contentType` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `direction` | `string \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `sentiment` | `string \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `canReply` | `boolean \| string \| null` | No | — |
+| `hasAttach` | `boolean \| string \| null` | No | — |
+| `isForward` | `boolean \| string \| null` | No | — |
+| `isDescriptionThread` | `boolean \| string \| null` | No | — |
+| `isContentTruncated` | `boolean \| string \| null` | No | — |
+| `fullContentURL` | `string \| null` | No | — |
+| `fromEmailAddress` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `cc` | `string \| null` | No | — |
+| `bcc` | `string \| null` | No | — |
+| `replyTo` | `string \| null` | No | — |
+| `facebookProfile` | `string \| null` | No | — |
+| `twitterProfile` | `string \| null` | No | — |
+| `attachmentCount` | `number \| string \| null` | No | — |
+| `attachments` | `object[] \| null` | No | — |
+| `readReceipts` | `object[] \| null` | No | — |
+| `actions` | `object[] \| null` | No | — |
+| `keyWords` | `(string \| null)[] \| null` | No | — |
+| `aspects` | `(string \| null)[] \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `impersonatedUser` | `object \| null` | No | — |
+| `source` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  size?: number | string | null,
+  status?: string | null,
+  href?: string | null,
+  previewurl?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="readReceipts full type">
+
+```ts
+{
+  senderName?: string | null,
+  recipientType?: string | null,
+  from?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="actions full type">
+
+```ts
+{
+  method?: string | null,
+  rel?: string | null,
+  href?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  photoURL?: string | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="impersonatedUser full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  photoURL?: string | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  appName?: string | null,
+  extId?: string | null,
+  permalink?: string | null,
+  type?: string | null,
+  appPhotoURL?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tickets.list`
+
+List tickets, filtered by department, view, assignee, team, channel, status or priority
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.tickets.list({ status: ['Open'], sortBy: '-createdTime', limit: 20, include: ['contacts', 'assignee'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | Index of the first record to return |
+| `limit` | `number` | No | Number of records to return, up to 100 |
+| `departmentIds` | `string[]` | No | Departments to list from. Needed for an all-departments view |
+| `viewId` | `string` | No | View to list tickets from |
+| `assignee` | `string[]` | No | Assignee IDs, or Unassigned |
+| `teamIds` | `string[]` | No | Team IDs, or Unassigned |
+| `channel` | `string[]` | No | — |
+| `status` | `string[]` | No | — |
+| `priority` | `string[]` | No | Priorities such as High, Medium, Low, or custom values |
+| `sortBy` | `string` | No | responseDueDate, customerResponseTime or createdTime. Prefix with - for descending |
+| `receivedInDays` | `15 \| 30 \| 90` | No | Only tickets with a customerResponseTime in this many days |
+| `include` | `(contacts \| products \| assignee \| departments \| team \| isRead)[]` | No | — |
+| `fields` | `string[]` | No | Fields to return, up to 30. Multi-line text fields are excluded |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  ticketNumber?: number | string | null,
+  subject?: string | null,
+  description?: string | null,
+  status?: string | null,
+  statusType?: string | null,
+  priority?: string | null,
+  channel?: string | null,
+  channelCode?: string | null,
+  category?: string | null,
+  subCategory?: string | null,
+  classification?: string | null,
+  language?: string | null,
+  sentiment?: string | null,
+  resolution?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  departmentId?: string | number | null,
+  contactId?: string | number | null,
+  accountId?: string | number | null,
+  assigneeId?: string | number | null,
+  teamId?: string | number | null,
+  productId?: string | number | null,
+  createdBy?: string | number | null,
+  modifiedBy?: string | number | null,
+  layoutId?: string | number | null,
+  slaId?: string | number | null,
+  dueDate?: string | null,
+  responseDueDate?: string | null,
+  customerResponseTime?: string | null,
+  createdTime?: string | null,
+  modifiedTime?: string | null,
+  closedTime?: string | null,
+  onholdTime?: string | null,
+  lockedTime?: string | null,
+  threadCount?: number | string | null,
+  commentCount?: number | string | null,
+  attachmentCount?: number | string | null,
+  taskCount?: number | string | null,
+  tagCount?: number | string | null,
+  followerCount?: number | string | null,
+  isSpam?: boolean | string | null,
+  isOverDue?: boolean | string | null,
+  isEscalated?: boolean | string | null,
+  isRead?: boolean | string | null,
+  isArchived?: boolean | string | null,
+  isDeleted?: boolean | string | null,
+  isTrashed?: boolean | string | null,
+  webUrl?: string | null,
+  source?: {
+    appName?: string | null,
+    extId?: string | null,
+    permalink?: string | null,
+    type?: string | null,
+    appPhotoURL?: string | null
+  } | null,
+  cf?: Record<string, any> | null,
+  customFields?: Record<string, any> | null,
+  contact?: {
+    id?: string | number | null,
+    name?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    photoURL?: string | null,
+    type?: string | null
+  } | null,
+  assignee?: {
+    id?: string | number | null,
+    name?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    photoURL?: string | null,
+    type?: string | null
+  } | null,
+  department?: {
+    id?: string | number | null,
+    name?: string | null
+  } | null,
+  team?: {
+    id?: string | number | null,
+    name?: string | null
+  } | null,
+  product?: {
+    id?: string | number | null,
+    productName?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listConversations
+
+`tickets.listConversations`
+
+List the threads and comments of a ticket
+
+**Risk:** `read`
+
+```ts
+await corsair.zohodesk.api.tickets.listConversations({ ticketId: '1892000000042034', from: 0, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | — |
+| `from` | `number` | No | Index of the first record to return |
+| `limit` | `number` | No | Up to 200. Defaults to 100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  summary?: string | null,
+  content?: string | null,
+  plainText?: string | null,
+  contentType?: string | null,
+  status?: string | null,
+  direction?: string | null,
+  visibility?: string | null,
+  channel?: string | null,
+  sentiment?: string | null,
+  createdTime?: string | null,
+  canReply?: boolean | string | null,
+  hasAttach?: boolean | string | null,
+  isForward?: boolean | string | null,
+  isDescriptionThread?: boolean | string | null,
+  isContentTruncated?: boolean | string | null,
+  fullContentURL?: string | null,
+  fromEmailAddress?: string | null,
+  to?: string | null,
+  cc?: string | null,
+  bcc?: string | null,
+  replyTo?: string | null,
+  facebookProfile?: string | null,
+  twitterProfile?: string | null,
+  attachmentCount?: number | string | null,
+  attachments?: {
+    id?: string | number | null,
+    name?: string | null,
+    size?: number | string | null,
+    status?: string | null,
+    href?: string | null,
+    previewurl?: string | null
+  }[] | null,
+  readReceipts?: {
+    senderName?: string | null,
+    recipientType?: string | null,
+    from?: string | null
+  }[] | null,
+  actions?: {
+    method?: string | null,
+    rel?: string | null,
+    href?: string | null
+  }[] | null,
+  keyWords?: (string | null)[] | null,
+  aspects?: (string | null)[] | null,
+  author?: {
+    id?: string | number | null,
+    name?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    photoURL?: string | null,
+    type?: string | null
+  } | null,
+  impersonatedUser?: {
+    id?: string | number | null,
+    name?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    photoURL?: string | null,
+    type?: string | null
+  } | null,
+  source?: {
+    appName?: string | null,
+    extId?: string | null,
+    permalink?: string | null,
+    type?: string | null,
+    appPhotoURL?: string | null
+  } | null,
+  type?: string | null,
+  commentedTime?: string | null,
+  modifiedTime?: string | null,
+  isPublic?: boolean | string | null,
+  commenterId?: string | number | null,
+  commenter?: {
+    id?: string | number | null,
+    name?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    photoURL?: string | null,
+    type?: string | null
+  } | null,
+  responderId?: string | number | null,
+  respondedIn?: string | null,
+  lastRatingIconURL?: string | null,
+  attachmentIds?: (string | number | null)[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,1647 @@
+{
+  "id": "finerworks",
+  "displayName": "FinerWorks",
+  "description": "Print-on-demand fulfilment - manage images, virtual inventory products, framing options, pricing, shipping rates and orders.",
+  "npmPackageName": "@corsair-dev/finerworks",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 33,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "app_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "finerworks.api.account.getCompanyInfo",
+      "shortPath": "account.getCompanyInfo",
+      "description": "Get FinerWorks' site identifier, company address and business hours",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ first_name?: string | null, last_name?: string | null, company_name?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state_code?: string | null, province?: string | null, zip_postal_code?: string | null, country_code?: string | null, phone?: string | null, email?: string | null, address_order_po?: string | null } | null"
+          },
+          {
+            "key": "lobby_hours",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.account.getUser",
+      "shortPath": "account.getUser",
+      "description": "Get the authenticated FinerWorks account profile, including billing and business addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "user_account",
+            "optional": true,
+            "type": "{ account_id?: number | null, account_username?: string | null, account_email?: string | null, account_title?: string | null, account_firstname?: string | null, account_lastname?: string | null, billing_info?: { first_name?: string | null, last_name?: string | null, company_name?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state_code?: string | null, province?: string | null, zip_postal_code?: string | null, country_code?: string | null, phone?: string | null, email?: string | null, address_order_po?: string | null } | null, business_info?: { first_name?: string | null, last_name?: string | null, company_name?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state_code?: string | null, province?: string | null, zip_postal_code?: string | null, country_code?: string | null, phone?: string | null, email?: string | null, address_order_po?: string | null } | null, logo_url?: string | null, payment_profile_id?: string | null, shipping_preferences?: number[] | null, connections?: { name?: string | null, id?: string | null, data?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.account.updateAppDetails",
+      "shortPath": "account.updateAppDetails",
+      "description": "Update the calling application's name, description and live mode",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_details",
+            "optional": false,
+            "type": "{ app_key?: string | null, app_name?: string | null, app_description?: string | null, app_misc_data?: string | null, app_live_mode?: boolean | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.account.updateUser",
+      "shortPath": "account.updateUser",
+      "description": "Update the FinerWorks account profile, including billing and payment information",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billing_info",
+            "optional": true,
+            "type": "{ first_name?: string | null, last_name?: string | null, company_name?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state_code?: string | null, province?: string | null, zip_postal_code?: string | null, country_code?: string | null, phone?: string | null, email?: string | null, address_order_po?: string | null } | null"
+          },
+          {
+            "key": "business_info",
+            "optional": true,
+            "type": "{ first_name?: string | null, last_name?: string | null, company_name?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state_code?: string | null, province?: string | null, zip_postal_code?: string | null, country_code?: string | null, phone?: string | null, email?: string | null, address_order_po?: string | null } | null"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logo_data",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "portrait_data",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payment_profile_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shipping_preferences",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "connections",
+            "optional": true,
+            "type": "{ name?: string | null, id?: string | null, data?: string | null }[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.framing.getFrameDetails",
+      "shortPath": "framing.getFrameDetails",
+      "description": "Get dimensions, pricing, materials and imagery for a specific frame",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "product_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "frame",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, thickness?: number | null, depth?: number | null, float_offset?: number | null, rabbet?: number | null, lip?: number | null, profile_svg_url?: string | null, sample_image_url_1?: string | null, sample_image_url_2?: string | null, sample_image_url_3?: string | null, min_width?: number | null, min_height?: number | null, max_width?: number | null, max_height?: number | null, price_level?: number | null, allow_glazing?: boolean | null, allow_matting?: boolean | null, color?: string | null, composite?: string | null, segment_url?: string | null, sample_length?: number | null, class_alias?: string | null, starting_price?: number | null, type?: string | null, type_description?: string | null } | null"
+          },
+          {
+            "key": "frame_details",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, thickness?: number | null, depth?: number | null, float_offset?: number | null, rabbet?: number | null, lip?: number | null, profile_svg_url?: string | null, sample_image_url_1?: string | null, sample_image_url_2?: string | null, sample_image_url_3?: string | null, min_width?: number | null, min_height?: number | null, max_width?: number | null, max_height?: number | null, price_level?: number | null, allow_glazing?: boolean | null, allow_matting?: boolean | null, color?: string | null, composite?: string | null, segment_url?: string | null, sample_length?: number | null, class_alias?: string | null, starting_price?: number | null, type?: string | null, type_description?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.framing.listCollections",
+      "shortPath": "framing.listCollections",
+      "description": "List available frame collections and categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "product_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "collections",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, alias?: string | null, icon_url_1?: string | null, icon_url_2?: string | null, icon_url_3?: string | null, starting_price?: number | null, frames?: { id?: number | null, name?: string | null, thickness?: number | null, depth?: number | null, float_offset?: number | null, rabbet?: number | null, lip?: number | null, profile_svg_url?: string | null, sample_image_url_1?: string | null, sample_image_url_2?: string | null, sample_image_url_3?: string | null, min_width?: number | null, min_height?: number | null, max_width?: number | null, max_height?: number | null, price_level?: number | null, allow_glazing?: boolean | null, allow_matting?: boolean | null, color?: string | null, composite?: string | null, segment_url?: string | null, sample_length?: number | null, class_alias?: string | null, starting_price?: number | null, type?: string | null, type_description?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "frame_collections",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, alias?: string | null, icon_url_1?: string | null, icon_url_2?: string | null, icon_url_3?: string | null, starting_price?: number | null, frames?: { id?: number | null, name?: string | null, thickness?: number | null, depth?: number | null, float_offset?: number | null, rabbet?: number | null, lip?: number | null, profile_svg_url?: string | null, sample_image_url_1?: string | null, sample_image_url_2?: string | null, sample_image_url_3?: string | null, min_width?: number | null, min_height?: number | null, max_width?: number | null, max_height?: number | null, price_level?: number | null, allow_glazing?: boolean | null, allow_matting?: boolean | null, color?: string | null, composite?: string | null, segment_url?: string | null, sample_length?: number | null, class_alias?: string | null, starting_price?: number | null, type?: string | null, type_description?: string | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.framing.listGlazing",
+      "shortPath": "framing.listGlazing",
+      "description": "List available glazing and glass options",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "product_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "glazing",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, composite?: number | null, image_1?: string | null, starting_price?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.framing.listMats",
+      "shortPath": "framing.listMats",
+      "description": "List matting specifications, colours and pricing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "product_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "mats",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, color?: string | null, core_color?: string | null, thickness?: number | null, min_width?: number | null, min_height?: number | null, max_width?: number | null, max_height?: number | null, composite?: string | null, starting_price?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.galleries.addOrUpdateCollection",
+      "shortPath": "galleries.addOrUpdateCollection",
+      "description": "Create a personal gallery collection, or update one by supplying its id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.galleries.list",
+      "shortPath": "galleries.list",
+      "description": "List GeoGalleries.com galleries, with optional filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personal",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "gallery_ids",
+            "optional": true,
+            "type": "number[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "galleries",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, alias?: string | null, personal?: boolean | null, visible?: boolean | null, url?: string | null, description?: string | null, keywords?: string | null, image_count?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.galleries.listThemes",
+      "shortPath": "galleries.listThemes",
+      "description": "List the theme options available for gallery customisation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "themes",
+            "optional": true,
+            "type": "{ slug?: string | null, name?: string | null, background?: string | null, foreground?: string | null, primary_color?: string | null, secondary_color?: string | null, accent_color?: string | null, surface?: string | null, muted?: string | null, description?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.images.add",
+      "shortPath": "images.add",
+      "description": "Add up to five prepared images to a FinerWorks library",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ title?: string | null, description?: string | null, file_name?: string | null, file_size?: number | null, thumbnail_file_name?: string | null, preview_file_name?: string | null, hires_file_name?: string | null, public_thumbnail_uri?: string | null, public_preview_uri?: string | null, private_hires_uri?: string | null, pix_w?: number | null, pix_h?: number | null, guid?: string | null }[]"
+          },
+          {
+            "key": "library",
+            "optional": false,
+            "type": "{ name: string, session_id?: string | null, account_key?: string | null, site_id?: number | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ id?: number | null, guid?: string | null, title?: string | null, description?: string | null, file_name?: string | null, file_size?: number | null, thumbnail_file_name?: string | null, preview_file_name?: string | null, hires_file_name?: string | null, public_thumbnail_uri?: string | null, public_preview_uri?: string | null, private_hires_uri?: string | null, personal_gallery_title?: string | null, members_gallery_category?: string | null, pix_w?: number | null, pix_h?: number | null, date_added?: string | null, date_updated?: string | null, date_expires?: string | null, active?: boolean | null, assigned_gallery_subcategory_ids?: number[] | null, assigned_personal_gallery_ids?: number[] | null, username?: string | null, account_key?: string | null, artistname?: string | null, rank?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.images.delete",
+      "shortPath": "images.delete",
+      "description": "Delete image files by GUID, along with any virtual inventory products assigned to them",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "library",
+            "optional": true,
+            "type": "{ name: string, session_id?: string | null, account_key?: string | null, site_id?: number | null } | null"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.images.list",
+      "shortPath": "images.list",
+      "description": "List image files uploaded to the FinerWorks account, with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "library",
+            "optional": false,
+            "type": "{ name: string, session_id?: string | null, account_key?: string | null, site_id?: number | null }"
+          },
+          {
+            "key": "search_filter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "guid_filter",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "personal_gallery_id_filter",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "public_gallery_id_filter",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "ASC | DESC | null"
+          },
+          {
+            "key": "upload_date_from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "upload_date_to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "list_products",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ id?: number | null, guid?: string | null, title?: string | null, description?: string | null, file_name?: string | null, file_size?: number | null, thumbnail_file_name?: string | null, preview_file_name?: string | null, hires_file_name?: string | null, public_thumbnail_uri?: string | null, public_preview_uri?: string | null, private_hires_uri?: string | null, personal_gallery_title?: string | null, members_gallery_category?: string | null, pix_w?: number | null, pix_h?: number | null, date_added?: string | null, date_updated?: string | null, date_expires?: string | null, active?: boolean | null, assigned_gallery_subcategory_ids?: number[] | null, assigned_personal_gallery_ids?: number[] | null, username?: string | null, account_key?: string | null, artistname?: string | null, rank?: number | null }[] | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.images.listFileSelection",
+      "shortPath": "images.listFileSelection",
+      "description": "List the image GUIDs grouped under a file-selection key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "guids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "guid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.images.update",
+      "shortPath": "images.update",
+      "description": "Update image metadata by GUID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ guid: string, title?: string | null, description?: string | null, visible?: boolean | null, assigned_gallery_subcategory_ids?: number[] | null, assigned_personal_gallery_ids?: number[] | null, rank?: number | null }[]"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ id?: number | null, guid?: string | null, title?: string | null, description?: string | null, file_name?: string | null, file_size?: number | null, thumbnail_file_name?: string | null, preview_file_name?: string | null, hires_file_name?: string | null, public_thumbnail_uri?: string | null, public_preview_uri?: string | null, private_hires_uri?: string | null, personal_gallery_title?: string | null, members_gallery_category?: string | null, pix_w?: number | null, pix_h?: number | null, date_added?: string | null, date_updated?: string | null, date_expires?: string | null, active?: boolean | null, assigned_gallery_subcategory_ids?: number[] | null, assigned_personal_gallery_ids?: number[] | null, username?: string | null, account_key?: string | null, artistname?: string | null, rank?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.images.updateFileSelection",
+      "shortPath": "images.updateFileSelection",
+      "description": "Replace the image files held under a selection GUID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "guid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "guid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.inventory.delete",
+      "shortPath": "inventory.delete",
+      "description": "Delete virtual inventory products by SKU and disconnect their third-party sync",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skus",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.inventory.disconnect",
+      "shortPath": "inventory.disconnect",
+      "description": "Disconnect every virtual inventory item from a third-party platform",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.inventory.list",
+      "shortPath": "inventory.list",
+      "description": "List the virtual inventory products on the account, with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_filter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "third_party_connections_filter",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "sku_filter",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "product_code_filter",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "product_type_ids_filter",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "guid_filter",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "ASC | DESC | null"
+          },
+          {
+            "key": "created_date_from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_date_to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ id?: number | null, sku?: string | null, product_code?: string | null, product_guid?: string | null, image_guid?: string | null, name?: string | null, description_short?: string | null, description_long?: string | null, artist?: string | null, monetary_format?: string | null, quantity?: number | null, quantity_in_stock?: number | null, track_inventory?: boolean | null, per_item_price?: number | null, total_price?: number | null, asking_price?: number | null, geo_price?: number | null, third_party_integrations?: { etsy_product_id?: number | null, shopify_product_id?: number | null, shopify_variant_id?: number | null, shopify_graphql_product_id?: string | null, shopify_graphql_variant_id?: string | null, squarespace_product_id?: string | null, squarespace_variant_id?: string | null, square_product_id?: string | null, square_variant_id?: string | null, bigcommerce_id?: number | null, bigcommerce_variant_id?: number | null, wix_inventory_id?: string | null, wix_product_id?: string | null, wix_variant_id?: string | null, woocommerce_product_id?: number | null, woocommerce_variant_id?: number | null } | null, price_details?: any | null, framing_options?: any | null, product_size?: any | null, updated?: string | null, valid?: boolean | null }[] | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.inventory.update",
+      "shortPath": "inventory.update",
+      "description": "Update virtual inventory pricing, stock and third-party integrations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "virtual_inventory",
+            "optional": false,
+            "type": "{ sku: string, asking_price?: number | null, name?: string | null, description?: string | null, quantity_in_stock?: number | null, track_inventory?: boolean | null, third_party_integrations?: { etsy_product_id?: number | null, shopify_product_id?: number | null, shopify_variant_id?: number | null, shopify_graphql_product_id?: string | null, shopify_graphql_variant_id?: string | null, squarespace_product_id?: string | null, squarespace_variant_id?: string | null, square_product_id?: string | null, square_variant_id?: string | null, bigcommerce_id?: number | null, bigcommerce_variant_id?: number | null, wix_inventory_id?: string | null, wix_product_id?: string | null, wix_variant_id?: string | null, woocommerce_product_id?: number | null, woocommerce_variant_id?: number | null } | null }[]"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ id?: number | null, sku?: string | null, product_code?: string | null, product_guid?: string | null, image_guid?: string | null, name?: string | null, description_short?: string | null, description_long?: string | null, artist?: string | null, monetary_format?: string | null, quantity?: number | null, quantity_in_stock?: number | null, track_inventory?: boolean | null, per_item_price?: number | null, total_price?: number | null, asking_price?: number | null, geo_price?: number | null, third_party_integrations?: { etsy_product_id?: number | null, shopify_product_id?: number | null, shopify_variant_id?: number | null, shopify_graphql_product_id?: string | null, shopify_graphql_variant_id?: string | null, squarespace_product_id?: string | null, squarespace_variant_id?: string | null, square_product_id?: string | null, square_variant_id?: string | null, bigcommerce_id?: number | null, bigcommerce_variant_id?: number | null, wix_inventory_id?: string | null, wix_product_id?: string | null, wix_variant_id?: string | null, woocommerce_product_id?: number | null, woocommerce_variant_id?: number | null } | null, price_details?: any | null, framing_options?: any | null, product_size?: any | null, updated?: string | null, valid?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.orders.deletePending",
+      "shortPath": "orders.deletePending",
+      "description": "Remove orders that were saved as pending",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.orders.fetchStatus",
+      "shortPath": "orders.fetchStatus",
+      "description": "Get production status and tracking information for orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_pos",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "order_ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "orders",
+            "optional": true,
+            "type": "{ order_confirmation_id?: number | null, order_po?: string | null, order_id?: number | null, order_status_id?: number | null, order_status_label?: string | null, order_source?: string | null, shipments?: { creation_date?: string | null, shipment_date?: string | null, eta_date?: string | null, delivery_date?: string | null, weight?: number | null, width?: number | null, height?: number | null, depth?: number | null, tracking_number?: string | null, tracking_url?: string | null, carrier?: string | null, service?: string | null, history?: any | null }[] | null, processing?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.orders.listStatusDefinitions",
+      "shortPath": "orders.listStatusDefinitions",
+      "description": "List every production status an order can have",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "definitions",
+            "optional": true,
+            "type": "{ order_status_id?: number | null, order_status_label?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.orders.savePending",
+      "shortPath": "orders.savePending",
+      "description": "Save orders to temporary storage for review before submission",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ order_po: string, order_key?: string | null, recipient: { first_name: string, last_name: string, company_name?: string | null, address_1: string, address_2?: string | null, address_3?: string | null, city: string, state_code?: string | null, province?: string | null, zip_postal_code: string, country_code: string, phone?: string | null, email?: string | null, address_order_po?: string | null }, order_items: { product_order_po?: string | null, product_qty: number, product_sku: string, product_image?: any | null, product_title?: string | null, template?: any | null, product_guid?: string | null, custom_data_1?: string | null, custom_data_2?: string | null, custom_data_3?: string | null, coa?: any | null }[], shipping_code?: string | null, ship_by_date?: string | null, customs_tax_info?: any | null, gift_message?: string | null, test_mode?: boolean, webhook_order_status_url?: string | null, webhook_url?: string | null, document_url?: string | null, acct_number_ups?: string | null, acct_number_fedex?: string | null, custom_data_1?: string | null, custom_data_2?: string | null, custom_data_3?: string | null, source?: string | null, fulfillment_id?: number | null }[]"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "orders",
+            "optional": true,
+            "type": "{ order_po?: string | null, order_id?: number | null, order_confirmation_id?: number | null, order_guid?: string | null, order_email?: string | null, order_confirmation_datetime?: string | null, order_source?: string | null, order_status?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.orders.submit",
+      "shortPath": "orders.submit",
+      "description": "Submit up to five new orders for production",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ order_po: string, order_key?: string | null, recipient: { first_name: string, last_name: string, company_name?: string | null, address_1: string, address_2?: string | null, address_3?: string | null, city: string, state_code?: string | null, province?: string | null, zip_postal_code: string, country_code: string, phone?: string | null, email?: string | null, address_order_po?: string | null }, order_items: { product_order_po?: string | null, product_qty: number, product_sku: string, product_image?: any | null, product_title?: string | null, template?: any | null, product_guid?: string | null, custom_data_1?: string | null, custom_data_2?: string | null, custom_data_3?: string | null, coa?: any | null }[], shipping_code?: string | null, ship_by_date?: string | null, customs_tax_info?: any | null, gift_message?: string | null, test_mode?: boolean, webhook_order_status_url?: string | null, webhook_url?: string | null, document_url?: string | null, acct_number_ups?: string | null, acct_number_fedex?: string | null, custom_data_1?: string | null, custom_data_2?: string | null, custom_data_3?: string | null, source?: string | null, fulfillment_id?: number | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "orders",
+            "optional": true,
+            "type": "{ order_po?: string | null, order_id?: number | null, order_confirmation_id?: number | null, order_guid?: string | null, order_email?: string | null, order_confirmation_datetime?: string | null, order_source?: string | null, order_status?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.orders.validateRecipientAddress",
+      "shortPath": "orders.validateRecipientAddress",
+      "description": "Validate a recipient address before submitting an order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "{ first_name: string, last_name: string, company_name?: string | null, address_1: string, address_2?: string | null, address_3?: string | null, city: string, state_code?: string | null, province?: string | null, zip_postal_code: string, country_code: string, phone?: string | null, email?: string | null, address_order_po?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ first_name?: string | null, last_name?: string | null, company_name?: string | null, address_1?: string | null, address_2?: string | null, address_3?: string | null, city?: string | null, state_code?: string | null, province?: string | null, zip_postal_code?: string | null, country_code?: string | null, phone?: string | null, email?: string | null, address_order_po?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.products.getPrices",
+      "shortPath": "products.getPrices",
+      "description": "Get pricing for a set of FinerWorks product SKUs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": false,
+            "type": "{ product_qty: number, product_sku: string }[]"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "prices",
+            "optional": true,
+            "type": "{ product_qty?: number | null, product_sku?: string | null, product_code?: string | null, product_price?: number | null, add_frame_price?: number | null, add_mat_1_price?: number | null, add_mat_2_price?: number | null, add_glazing_price?: number | null, add_color_correct_price?: number | null, total_price?: number | null, geo_price?: number | null, info?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.products.listMediaTypes",
+      "shortPath": "products.listMediaTypes",
+      "description": "List printing substrates (canvas, paper, vinyl) and their product information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "media_types",
+            "optional": true,
+            "type": "{ id?: number | null, product_type_id?: number | null, name?: string | null, description?: string | null, style_ids?: number[] | null, icon_url?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.products.listProductTypes",
+      "shortPath": "products.listProductTypes",
+      "description": "List printing categories such as Canvas Prints and Metal Prints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "product_types",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, media_ids?: number[] | null, printable_ids?: number[] | null, icon_url?: string | null, color_code?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.products.listStyleTypes",
+      "shortPath": "products.listStyleTypes",
+      "description": "List print formatting options including borders and canvas wraps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "style_types",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, can_frame?: boolean | null, can_mat?: boolean | null, can_glaze?: boolean | null, frame_class_ids?: number[] | null, custom_sizing?: boolean | null, min?: { width?: number | null, height?: number | null } | null, max?: { width?: number | null, height?: number | null } | null, available_sizes?: { width?: number | null, height?: number | null }[] | null, border_size?: number | null, bleed_amt?: number | null, corner_radius?: number | null, depth?: number | null, icon_url?: string | null, allow_decimal?: boolean | null, mounting_add_ons?: { id?: number | null, name?: string | null, description?: string | null, icon_url?: string | null, rate?: number | null, price?: number | null, min?: { width?: number | null, height?: number | null } | null, max?: { width?: number | null, height?: number | null } | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.shipping.getOptionIds",
+      "shortPath": "shipping.getOptionIds",
+      "description": "List shipping method identifiers for cross-reference",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "shipping_options_ids",
+            "optional": true,
+            "type": "number[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "finerworks.api.shipping.listOptionsMultiple",
+      "shortPath": "shipping.listOptionsMultiple",
+      "description": "Get shipping options and rates for a batch of orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ order_po: string, order_key?: string | null, recipient: { first_name: string, last_name: string, company_name?: string | null, address_1: string, address_2?: string | null, address_3?: string | null, city: string, state_code?: string | null, province?: string | null, zip_postal_code: string, country_code: string, phone?: string | null, email?: string | null, address_order_po?: string | null }, order_items: { product_order_po?: string | null, product_qty: number, product_sku: string, product_image?: any | null, product_title?: string | null, template?: any | null, product_guid?: string | null, custom_data_1?: string | null, custom_data_2?: string | null, custom_data_3?: string | null, coa?: any | null }[], shipping_code?: string | null, ship_by_date?: string | null, customs_tax_info?: any | null, gift_message?: string | null, test_mode?: boolean, webhook_order_status_url?: string | null, webhook_url?: string | null, document_url?: string | null, acct_number_ups?: string | null, acct_number_fedex?: string | null, custom_data_1?: string | null, custom_data_2?: string | null, custom_data_3?: string | null, source?: string | null, fulfillment_id?: number | null }[]"
+          },
+          {
+            "key": "account_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ success?: boolean, status_code?: number, message?: string | null, debug?: any | null, reference_id?: string | null, domain?: string | null }"
+          },
+          {
+            "key": "orders",
+            "optional": true,
+            "type": "{ order_po?: string | null, options?: { id?: number | null, rate?: number | null, shipping_method?: string | null, shipping_code?: string | null, shipping_class_code?: string | null, calculated_total?: { order_po?: string | null, order_subtotal?: number | null, order_shipping_rate?: number | null, order_discount?: number | null, order_sales_tax?: number | null, order_sales_tax_rate?: number | null, order_expedite_fee?: number | null, order_credits_used?: number | null, order_grand_total?: number | null, product_pricing?: { product_qty?: number | null, product_sku?: string | null }[] | null } | null }[] | null }[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "finerworks.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "guid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "thumbnail_file_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "preview_file_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hires_file_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "public_thumbnail_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "public_preview_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "private_hires_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "personal_gallery_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "members_gallery_category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pix_w",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pix_h",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "date_added",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_expires",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "artistname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "finerworks.db.orders.search",
+      "entityName": "orders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "order_confirmation_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "order_po",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "order_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "order_status_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "order_status_label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "order_source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "processing",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "finerworks.db.virtualInventoryProducts.search",
+      "entityName": "virtualInventoryProducts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sku",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product_guid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image_guid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description_short",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description_long",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "artist",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "monetary_format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quantity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "quantity_in_stock",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "track_inventory",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "per_item_price",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_price",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "asking_price",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "geo_price",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "valid",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

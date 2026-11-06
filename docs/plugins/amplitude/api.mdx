@@ -501,8 +501,7 @@ await corsair.amplitude.api.events.identifyUser({});
 {
   user_id?: string,
   device_id?: string,
-  user_properties: {
-  }
+  user_properties: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -550,10 +549,8 @@ await corsair.amplitude.api.events.upload({});
   user_id?: string,
   device_id?: string,
   time?: number,
-  event_properties?: {
-  },
-  user_properties?: {
-  },
+  event_properties?: Record<string, any>,
+  user_properties?: Record<string, any>,
   app_version?: string,
   platform?: string,
   os_name?: string,
@@ -627,10 +624,8 @@ await corsair.amplitude.api.events.uploadBatch({});
   user_id?: string,
   device_id?: string,
   time?: number,
-  event_properties?: {
-  },
-  user_properties?: {
-  },
+  event_properties?: Record<string, any>,
+  user_properties?: Record<string, any>,
   app_version?: string,
   platform?: string,
   os_name?: string,
@@ -747,8 +742,7 @@ await corsair.amplitude.api.users.getActivity({});
 {
   event_type?: string,
   event_time?: string,
-  event_properties?: {
-  },
+  event_properties?: Record<string, any>,
   session_id?: number,
   amplitude_id?: number
 }[]
@@ -810,8 +804,7 @@ await corsair.amplitude.api.users.getProfile({});
   canonical_amplitude_id?: number,
   merged_amplitude_ids?: number[],
   is_identified?: boolean,
-  user_properties?: {
-  },
+  user_properties?: Record<string, any>,
   country?: string,
   region?: string,
   city?: string,

@@ -1,7 +1,7 @@
 {
   "id": "campayn",
   "displayName": "Campayn",
-  "description": "Campayn plugin for Corsair",
+  "description": "Email marketing platform. Manage contact lists, contacts, and webforms, read messages and message statistics, view reports, and sign up contacts.",
   "npmPackageName": "@corsair-dev/campayn",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -177,62 +177,62 @@
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "company",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "birthday",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phones",
@@ -257,7 +257,7 @@
           {
             "key": "image_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -454,7 +454,7 @@
           {
             "key": "scheduled_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "send_now",
@@ -469,7 +469,7 @@
           {
             "key": "campaign_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -509,7 +509,7 @@
           {
             "key": "report_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -536,7 +536,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, name: string, scheduled_date?: string | null, status: string, preview_url: string, report_url?: string | null }[]"
+        "type": "{ id: string, name: string, scheduled_date: string | null, status: string, preview_url: string, report_url: string | null }[]"
       }
     },
     {

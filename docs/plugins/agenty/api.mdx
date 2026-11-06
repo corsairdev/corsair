@@ -32,13 +32,13 @@ await corsair.agenty.api.agents.agentsControllerCreateAgent({});
 | `tags` | `any[]` | No | — |
 | `type` | `string` | No | — |
 | `start` | `boolean` | No | — |
-| `config` | `object` | Yes | — |
-| `scripts` | `object` | No | — |
+| `config` | `Record<string, any>` | Yes | — |
+| `scripts` | `Record<string, any>` | No | — |
 | `user_id` | `number` | No | — |
 | `version` | `number` | No | — |
 | `agent_id` | `string` | No | — |
 | `is_public` | `boolean` | No | — |
-| `scheduler` | `object` | No | — |
+| `scheduler` | `Record<string, any>` | No | — |
 | `account_id` | `number` | No | — |
 | `created_at` | `string` | No | — |
 | `is_managed` | `boolean` | No | — |
@@ -46,50 +46,8 @@ await corsair.agenty.api.agents.agentsControllerCreateAgent({});
 | `updated_at` | `string` | No | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="scripts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="scheduler full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -119,26 +77,8 @@ await corsair.agenty.api.agents.agentsControllerGetTemplates({});
 | `order` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -165,26 +105,8 @@ await corsair.agenty.api.agents.agentsDeleteById({});
 |------|------|----------|-------------|
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -214,26 +136,8 @@ await corsair.agenty.api.agents.agentsGetAll({});
 | `order` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -260,26 +164,8 @@ await corsair.agenty.api.agents.agentsGetById({});
 |------|------|----------|-------------|
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -308,13 +194,13 @@ await corsair.agenty.api.agents.agentsUpdateById({});
 | `name` | `string` | Yes | — |
 | `tags` | `any[]` | No | — |
 | `type` | `string` | No | — |
-| `config` | `object` | Yes | — |
-| `scripts` | `object` | No | — |
+| `config` | `Record<string, any>` | Yes | — |
+| `scripts` | `Record<string, any>` | No | — |
 | `user_id` | `number` | No | — |
 | `version` | `number` | No | — |
 | `agent_id` | `string` | Yes | — |
 | `is_public` | `boolean` | No | — |
-| `scheduler` | `object` | No | — |
+| `scheduler` | `Record<string, any>` | No | — |
 | `account_id` | `number` | No | — |
 | `created_at` | `string` | No | — |
 | `is_managed` | `boolean` | No | — |
@@ -322,50 +208,8 @@ await corsair.agenty.api.agents.agentsUpdateById({});
 | `updated_at` | `string` | No | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="scripts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="scheduler full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -393,26 +237,8 @@ await corsair.agenty.api.agents.copyAgent({});
 | `name` | `string` | Yes | — |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -440,26 +266,8 @@ await corsair.agenty.api.agents.transferAgentOwnership({});
 | `email` | `string` | Yes | — |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -490,26 +298,8 @@ await corsair.agenty.api.apiKeys.apiKeysControllerCreateApiKeys({});
 | `role` | `string` | No | — |
 | `is_enabled` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -536,26 +326,8 @@ await corsair.agenty.api.apiKeys.apiKeysDeleteById({});
 |------|------|----------|-------------|
 | `key_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -585,26 +357,8 @@ await corsair.agenty.api.apiKeys.apiKeysDownload({});
 | `order` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -634,26 +388,8 @@ await corsair.agenty.api.apiKeys.apiKeysGetAll({});
 | `order` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -680,26 +416,8 @@ await corsair.agenty.api.apiKeys.apiKeysGetById({});
 |------|------|----------|-------------|
 | `key_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -726,26 +444,8 @@ await corsair.agenty.api.apiKeys.apiKeysResetById({});
 |------|------|----------|-------------|
 | `key_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -774,26 +474,8 @@ await corsair.agenty.api.apiKeys.apiKeysUpdateById({});
 | `role` | `string` | No | — |
 | `key_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -820,26 +502,8 @@ await corsair.agenty.api.apiKeys.changeApiKeyStatusById({});
 |------|------|----------|-------------|
 | `key_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -868,26 +532,8 @@ await corsair.agenty.api.browser.captureScreenshot({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -914,74 +560,16 @@ await corsair.agenty.api.browser.captureScreenshotWithOptions({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `html` | `string` | No | — |
-| `options` | `object` | No | — |
+| `options` | `Record<string, any>` | No | — |
 | `blockAds` | `boolean` | No | — |
-| `viewport` | `object` | No | — |
-| `anonymous` | `object` | No | — |
+| `viewport` | `Record<string, any>` | No | — |
+| `anonymous` | `Record<string, any>` | No | — |
 | `userAgent` | `string` | No | — |
-| `manipulate` | `object` | No | — |
-| `gotoOptions` | `object` | No | — |
+| `manipulate` | `Record<string, any>` | No | — |
+| `gotoOptions` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="viewport full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="anonymous full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="manipulate full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="gotoOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1008,26 +596,8 @@ await corsair.agenty.api.browser.convertUrlToPdf({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1055,57 +625,15 @@ await corsair.agenty.api.browser.convertUrlToPdfWithOptions({});
 | `url` | `string` | No | — |
 | `html` | `string` | No | — |
 | `rotate` | `number` | No | — |
-| `options` | `object` | No | — |
-| `anonymous` | `object` | No | — |
+| `options` | `Record<string, any>` | No | — |
+| `anonymous` | `Record<string, any>` | No | — |
 | `block_ads` | `boolean` | No | — |
 | `user_agent` | `string` | No | — |
-| `goto_options` | `object` | No | — |
+| `goto_options` | `Record<string, any>` | No | — |
 | `emulate_media` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="anonymous full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="goto_options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1131,36 +659,10 @@ await corsair.agenty.api.browser.extractBrowserStructuredData({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `gotoOptions` | `object` | No | — |
+| `gotoOptions` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="gotoOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1187,26 +689,8 @@ await corsair.agenty.api.browser.extractStructuredData({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1233,26 +717,8 @@ await corsair.agenty.api.browser.getBrowserRedirects({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1279,26 +745,8 @@ await corsair.agenty.api.browser.getPageContent({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1326,26 +774,8 @@ await corsair.agenty.api.browser.getPageContentWithOptions({});
 | `url` | `string` | Yes | — |
 | `block_ads` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1371,36 +801,10 @@ await corsair.agenty.api.browser.getRedirectsWithOptions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `gotoOptions` | `object` | No | — |
+| `gotoOptions` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="gotoOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1426,47 +830,13 @@ await corsair.agenty.api.browser.scrapeWebpageData({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `debug` | `object` | No | — |
-| `query` | `object` | Yes | — |
+| `debug` | `Record<string, any>` | No | — |
+| `query` | `Record<string, any>` | Yes | — |
 | `blockAds` | `boolean` | No | — |
 | `userAgent` | `string` | No | — |
-| `gotoOptions` | `object` | No | — |
+| `gotoOptions` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="debug full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="gotoOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1498,26 +868,8 @@ await corsair.agenty.api.connections.connectionsGetAll({});
 | `order` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1547,26 +899,8 @@ await corsair.agenty.api.dashboard.dashboardGetReportsUsage({});
 | `end` | `string` | No | — |
 | `start` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1595,26 +929,8 @@ await corsair.agenty.api.inputs.inputsGetByAgentId({});
 |------|------|----------|-------------|
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1646,26 +962,8 @@ await corsair.agenty.api.inputs.inputsUpdateByAgentId({});
 | `agent_id` | `string` | Yes | — |
 | `collection` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1701,26 +999,8 @@ await corsair.agenty.api.jobs.downloadAgentResult({});
 | `agent_id` | `string` | Yes | — |
 | `collection` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1753,26 +1033,8 @@ await corsair.agenty.api.jobs.getAgentResult({});
 | `agent_id` | `string` | Yes | — |
 | `collection` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1806,26 +1068,8 @@ await corsair.agenty.api.jobs.getJobResult({});
 | `search` | `string` | No | — |
 | `collection` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1856,26 +1100,8 @@ await corsair.agenty.api.jobs.jobsDownload({});
 | `offset` | `number` | No | — |
 | `agent_id` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1903,26 +1129,8 @@ await corsair.agenty.api.jobs.jobsDownloadFilesById({});
 | `name` | `string` | Yes | — |
 | `job_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1955,26 +1163,8 @@ await corsair.agenty.api.jobs.jobsDownloadResultById({});
 | `offset` | `number` | No | — |
 | `collection` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2005,26 +1195,8 @@ await corsair.agenty.api.jobs.jobsGetAll({});
 | `offset` | `number` | No | — |
 | `agent_id` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2051,26 +1223,8 @@ await corsair.agenty.api.jobs.jobsGetById({});
 |------|------|----------|-------------|
 | `job_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2099,26 +1253,8 @@ await corsair.agenty.api.jobs.jobsGetLogsById({});
 | `job_id` | `number` | Yes | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2145,26 +1281,8 @@ await corsair.agenty.api.jobs.jobsListFilesById({});
 |------|------|----------|-------------|
 | `job_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2191,26 +1309,8 @@ await corsair.agenty.api.jobs.jobsStart({});
 |------|------|----------|-------------|
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2237,26 +1337,8 @@ await corsair.agenty.api.jobs.jobsStopById({});
 |------|------|----------|-------------|
 | `job_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2286,26 +1368,8 @@ await corsair.agenty.api.lists.addListRows({});
 | `rows` | `any[]` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2333,26 +1397,8 @@ await corsair.agenty.api.lists.deleteListRow({});
 | `id` | `string` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2380,26 +1426,8 @@ await corsair.agenty.api.lists.deleteListRows({});
 | `id` | `any[]` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2426,26 +1454,8 @@ await corsair.agenty.api.lists.downloadListRows({});
 |------|------|----------|-------------|
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2472,26 +1482,8 @@ await corsair.agenty.api.lists.getListById({});
 |------|------|----------|-------------|
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2519,26 +1511,8 @@ await corsair.agenty.api.lists.getListRowById({});
 | `id` | `string` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2565,26 +1539,8 @@ await corsair.agenty.api.lists.listsClearRows({});
 |------|------|----------|-------------|
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2612,26 +1568,8 @@ await corsair.agenty.api.lists.listsControllerCreateList({});
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2659,26 +1597,8 @@ await corsair.agenty.api.lists.listsDeleteById({});
 | `list_id` | `string \| number` | Yes | — |
 | `id` | `string \| number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2708,26 +1628,8 @@ await corsair.agenty.api.lists.listsDownload({});
 | `order` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2757,26 +1659,8 @@ await corsair.agenty.api.lists.listsGetAll({});
 | `order` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2807,26 +1691,8 @@ await corsair.agenty.api.lists.listsGetRowsById({});
 | `offset` | `number` | No | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2855,26 +1721,8 @@ await corsair.agenty.api.lists.listsUpdateById({});
 | `list_id` | `string \| number` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2899,37 +1747,11 @@ await corsair.agenty.api.lists.listsUploadCsv({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `object` | Yes | — |
+| `file` | `Record<string, any>` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2956,36 +1778,10 @@ await corsair.agenty.api.lists.updateListRow({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
-| `row_data` | `object` | Yes | — |
+| `row_data` | `Record<string, any>` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="row_data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3014,26 +1810,8 @@ await corsair.agenty.api.projects.deleteProject({});
 |------|------|----------|-------------|
 | `project_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3060,26 +1838,8 @@ await corsair.agenty.api.projects.getProjectById({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3107,26 +1867,8 @@ await corsair.agenty.api.projects.projectsAddAgents({});
 | `agent_ids` | `string[]` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3154,26 +1896,8 @@ await corsair.agenty.api.projects.projectsControllerCreateProject({});
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3203,26 +1927,8 @@ await corsair.agenty.api.projects.projectsGetAll({});
 | `order` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3250,26 +1956,8 @@ await corsair.agenty.api.projects.removeAgentFromProject({});
 | `agent_id` | `string` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3298,26 +1986,8 @@ await corsair.agenty.api.projects.updateProject({});
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3346,26 +2016,8 @@ await corsair.agenty.api.scheduler.deleteSchedule({});
 |------|------|----------|-------------|
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3392,26 +2044,8 @@ await corsair.agenty.api.scheduler.getSchedule({});
 |------|------|----------|-------------|
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3439,26 +2073,8 @@ await corsair.agenty.api.scheduler.toggleSchedule({});
 | `enabled` | `boolean` | Yes | — |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3490,26 +2106,8 @@ await corsair.agenty.api.scheduler.updateSchedule({});
 | `is_enabled` | `boolean` | No | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3541,26 +2139,8 @@ await corsair.agenty.api.users.downloadUsers({});
 | `order` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3591,26 +2171,8 @@ await corsair.agenty.api.users.getAllTeamMembers({});
 | `offset` | `number` | No | — |
 | `search` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3637,26 +2199,8 @@ await corsair.agenty.api.users.getUserById({});
 |------|------|----------|-------------|
 | `user_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3690,26 +2234,8 @@ await corsair.agenty.api.users.updateUserById({});
 | `is_email_verified` | `boolean` | No | — |
 | `is_email_subscribed` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3737,46 +2263,12 @@ await corsair.agenty.api.workflows.createWorkflow({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `agents` | `object` | Yes | — |
+| `agents` | `Record<string, any>` | Yes | — |
 | `actions` | `any[]` | Yes | — |
-| `trigger` | `object` | Yes | — |
+| `trigger` | `Record<string, any>` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="agents full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="trigger full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3804,26 +2296,8 @@ await corsair.agenty.api.workflows.deleteWorkflow({});
 | `workflow_id` | `string` | Yes | — |
 | `id` | `string \| number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3849,26 +2323,8 @@ await corsair.agenty.api.workflows.downloadWorkflows({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3896,26 +2352,8 @@ await corsair.agenty.api.workflows.getWorkflowById({});
 | `workflow_id` | `string` | Yes | — |
 | `id` | `string \| number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3944,26 +2382,8 @@ await corsair.agenty.api.workflows.patchWorkflow({});
 | `id` | `string \| number` | No | — |
 | `name` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3991,46 +2411,12 @@ await corsair.agenty.api.workflows.updateWorkflow({});
 | `workflow_id` | `string` | Yes | — |
 | `id` | `string \| number` | No | — |
 | `name` | `string` | Yes | — |
-| `agents` | `object` | Yes | — |
+| `agents` | `Record<string, any>` | Yes | — |
 | `actions` | `any[]` | Yes | — |
-| `trigger` | `object` | Yes | — |
+| `trigger` | `Record<string, any>` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="agents full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="trigger full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 

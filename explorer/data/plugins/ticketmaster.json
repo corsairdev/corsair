@@ -1,0 +1,1348 @@
+{
+  "id": "ticketmaster",
+  "displayName": "Ticketmaster",
+  "description": "Live event discovery with Ticketmaster - search events, attractions, venues and the classification tree, read any of them by ID, fetch event images, and suggest collections for a partial search term.",
+  "npmPackageName": "@corsair-dev/ticketmaster",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ticketmaster.api.attractions.get",
+      "shortPath": "attractions.get",
+      "description": "Get one attraction by ID, including its images, classifications and aliases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The attraction ID."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only entities available on these domains, such as ticketmaster.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "additionalInfo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null"
+          },
+          {
+            "key": "classifications",
+            "optional": true,
+            "type": "{ primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "localizedAliases",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "externalLinks",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "upcomingEvents",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticketmaster.api.attractions.search",
+      "shortPath": "attractions.search",
+      "description": "Search attractions (artists, teams, shows) by keyword, classification or source, with paging and sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string",
+            "description": "Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list."
+          },
+          {
+            "key": "includeTest",
+            "optional": true,
+            "type": "yes | no | only"
+          },
+          {
+            "key": "includeFamily",
+            "optional": true,
+            "type": "yes | no | only"
+          },
+          {
+            "key": "includeSpellcheck",
+            "optional": true,
+            "type": "yes | no"
+          },
+          {
+            "key": "classificationName",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "classificationId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "genreId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subGenreId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "typeId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subTypeId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field and direction, such as 'name,asc' or 'relevance,desc'. Ticketmaster defaults to relevance,desc."
+          },
+          {
+            "key": "preferredCountry",
+            "optional": true,
+            "type": "us | ca"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Ticketmaster defaults to 20."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "0-based page number."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only entities available on these domains, such as ticketmaster.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attractions",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: Record<string, any> | null, externalLinks?: Record<string, any> | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticketmaster.api.classifications.get",
+      "shortPath": "classifications.get",
+      "description": "Get one segment, genre or sub-genre by ID, with the level below it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "A segment, genre or sub-genre ID."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only entities available on these domains, such as ticketmaster.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "segment",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null"
+          },
+          {
+            "key": "genre",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null"
+          },
+          {
+            "key": "subGenre",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "subType",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticketmaster.api.classifications.search",
+      "shortPath": "classifications.search",
+      "description": "Search the segment, genre and sub-genre tree Ticketmaster uses to classify events and attractions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string",
+            "description": "Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list."
+          },
+          {
+            "key": "includeTest",
+            "optional": true,
+            "type": "yes | no | only"
+          },
+          {
+            "key": "includeSpellcheck",
+            "optional": true,
+            "type": "yes | no"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field and direction. Ticketmaster defaults to name,asc."
+          },
+          {
+            "key": "preferredCountry",
+            "optional": true,
+            "type": "us | ca"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Ticketmaster defaults to 20."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "0-based page number."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only entities available on these domains, such as ticketmaster.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "classifications",
+            "optional": false,
+            "type": "{ primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, id?: string | null, _links?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticketmaster.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get one event by ID, including its dates, sales window, price ranges, images, venue and attractions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The event ID."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only entities available on these domains, such as ticketmaster.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "additionalInfo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pleaseNote",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "productType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null"
+          },
+          {
+            "key": "dates",
+            "optional": true,
+            "type": "{ start?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, dateTBD?: boolean | null, dateTBA?: boolean | null, timeTBA?: boolean | null, noSpecificTime?: boolean | null } | null, end?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, approximate?: boolean | null, noSpecificTime?: boolean | null } | null, timezone?: string | null, spanMultipleDays?: boolean | null, status?: { code?: string | null } | null } | null"
+          },
+          {
+            "key": "sales",
+            "optional": true,
+            "type": "{ public?: { startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null } | null, presales?: { name?: string | null, description?: string | null, url?: string | null, startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null }[] | null } | null"
+          },
+          {
+            "key": "priceRanges",
+            "optional": true,
+            "type": "{ type?: string | null, currency?: string | null, min?: number | null, max?: number | null }[] | null"
+          },
+          {
+            "key": "classifications",
+            "optional": true,
+            "type": "{ primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null"
+          },
+          {
+            "key": "promoter",
+            "optional": true,
+            "type": "{ id?: string | null } | null"
+          },
+          {
+            "key": "promoters",
+            "optional": true,
+            "type": "{ id?: string | null }[] | null"
+          },
+          {
+            "key": "outlets",
+            "optional": true,
+            "type": "{ href?: string | null, templated?: boolean | null }[] | null"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ href?: string | null, templated?: boolean | null }[] | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "seatmap",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "accessibility",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "ticketLimit",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "place",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "externalLinks",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "localizedAliases",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "{ venues?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: Record<string, any> | null, generalInfo?: Record<string, any> | null, social?: Record<string, any> | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null, attractions?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: Record<string, any> | null, externalLinks?: Record<string, any> | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null } | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticketmaster.api.events.getImages",
+      "shortPath": "events.getImages",
+      "description": "Get the images for one event by ID, with each ratio, size and URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The event ID."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only entities available on these domains, such as ticketmaster.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticketmaster.api.events.search",
+      "shortPath": "events.search",
+      "description": "Search events by keyword, attraction, venue, location, date, classification or onsale window, with paging and sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Only this event ID."
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search on the event name."
+          },
+          {
+            "key": "attractionId",
+            "optional": true,
+            "type": "string",
+            "description": "Only events by this attraction (artist, team, show)."
+          },
+          {
+            "key": "venueId",
+            "optional": true,
+            "type": "string",
+            "description": "Only events at this venue."
+          },
+          {
+            "key": "postalCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "latlong",
+            "optional": true,
+            "type": "string",
+            "description": "'latitude,longitude'. Deprecated by Ticketmaster in favour of geoPoint."
+          },
+          {
+            "key": "geoPoint",
+            "optional": true,
+            "type": "string",
+            "description": "Geo hash to search around, with radius and unit."
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Search radius; the unit is `unit`."
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "miles | km"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string",
+            "description": "Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'. Comma-separated values are allowed."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list."
+          },
+          {
+            "key": "marketId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dmaId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDateTime",
+            "optional": true,
+            "type": "string",
+            "description": "Only events starting at or after this UTC time, such as 2026-01-01T00:00:00Z."
+          },
+          {
+            "key": "endDateTime",
+            "optional": true,
+            "type": "string",
+            "description": "Only events starting at or before this UTC time."
+          },
+          {
+            "key": "localStartDateTime",
+            "optional": true,
+            "type": "string",
+            "description": "A local-time range as two comma-separated timestamps."
+          },
+          {
+            "key": "onsaleStartDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "onsaleEndDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeTBA",
+            "optional": true,
+            "type": "yes | no | only",
+            "description": "Date to be announced events."
+          },
+          {
+            "key": "includeTBD",
+            "optional": true,
+            "type": "yes | no | only",
+            "description": "Date to be defined events."
+          },
+          {
+            "key": "includeTest",
+            "optional": true,
+            "type": "yes | no | only"
+          },
+          {
+            "key": "includeFamily",
+            "optional": true,
+            "type": "yes | no | only"
+          },
+          {
+            "key": "includeSpellcheck",
+            "optional": true,
+            "type": "yes | no"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string",
+            "description": "ISO country code, such as US."
+          },
+          {
+            "key": "stateCode",
+            "optional": true,
+            "type": "string",
+            "description": "US state code, such as NY."
+          },
+          {
+            "key": "classificationName",
+            "optional": true,
+            "type": "string[]",
+            "description": "Segment, genre or sub-genre names, such as 'music'. A '-'-prefixed value excludes it."
+          },
+          {
+            "key": "classificationId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "segmentName",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "genreId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subGenreId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "typeId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subTypeId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "collectionId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "promoterId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field and direction, such as 'date,asc' or 'relevance,desc'. Ticketmaster defaults to relevance,desc."
+          },
+          {
+            "key": "preferredCountry",
+            "optional": true,
+            "type": "us | ca"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Ticketmaster defaults to 20."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "0-based page number."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only entities available on these domains, such as ticketmaster.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, info?: string | null, pleaseNote?: string | null, productType?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, dates?: { start?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, dateTBD?: boolean | null, dateTBA?: boolean | null, timeTBA?: boolean | null, noSpecificTime?: boolean | null } | null, end?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, approximate?: boolean | null, noSpecificTime?: boolean | null } | null, timezone?: string | null, spanMultipleDays?: boolean | null, status?: { code?: string | null } | null } | null, sales?: { public?: { startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null } | null, presales?: { name?: string | null, description?: string | null, url?: string | null, startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null }[] | null } | null, priceRanges?: { type?: string | null, currency?: string | null, min?: number | null, max?: number | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, promoter?: { id?: string | null } | null, promoters?: { id?: string | null }[] | null, outlets?: { href?: string | null, templated?: boolean | null }[] | null, products?: { href?: string | null, templated?: boolean | null }[] | null, aliases?: string[] | null, seatmap?: Record<string, any> | null, accessibility?: Record<string, any> | null, ticketLimit?: Record<string, any> | null, place?: Record<string, any> | null, externalLinks?: Record<string, any> | null, localizedAliases?: Record<string, any> | null, _embedded?: { venues?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: Record<string, any> | null, generalInfo?: Record<string, any> | null, social?: Record<string, any> | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null, attractions?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: Record<string, any> | null, externalLinks?: Record<string, any> | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null } | null, _links?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticketmaster.api.suggest.get",
+      "shortPath": "suggest.get",
+      "description": "Suggest attractions, events, venues and products for a partial search term, as a type-ahead would",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "What the user has typed so far."
+          },
+          {
+            "key": "latlong",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "geoPoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "miles | km"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list."
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "(attractions | events | venues | products)[]",
+            "description": "Which collections to suggest from. Ticketmaster defaults to all four."
+          },
+          {
+            "key": "includeTBA",
+            "optional": true,
+            "type": "yes | no | only"
+          },
+          {
+            "key": "includeTBD",
+            "optional": true,
+            "type": "yes | no | only"
+          },
+          {
+            "key": "includeTest",
+            "optional": true,
+            "type": "yes | no | only"
+          },
+          {
+            "key": "includeSpellcheck",
+            "optional": true,
+            "type": "yes | no"
+          },
+          {
+            "key": "startEndDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "localStartEndDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preferredCountry",
+            "optional": true,
+            "type": "us | ca"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per collection. Ticketmaster defaults to 5."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only entities available on these domains, such as ticketmaster.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attractions",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: Record<string, any> | null, externalLinks?: Record<string, any> | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, info?: string | null, pleaseNote?: string | null, productType?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, dates?: { start?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, dateTBD?: boolean | null, dateTBA?: boolean | null, timeTBA?: boolean | null, noSpecificTime?: boolean | null } | null, end?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, approximate?: boolean | null, noSpecificTime?: boolean | null } | null, timezone?: string | null, spanMultipleDays?: boolean | null, status?: { code?: string | null } | null } | null, sales?: { public?: { startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null } | null, presales?: { name?: string | null, description?: string | null, url?: string | null, startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null }[] | null } | null, priceRanges?: { type?: string | null, currency?: string | null, min?: number | null, max?: number | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, promoter?: { id?: string | null } | null, promoters?: { id?: string | null }[] | null, outlets?: { href?: string | null, templated?: boolean | null }[] | null, products?: { href?: string | null, templated?: boolean | null }[] | null, aliases?: string[] | null, seatmap?: Record<string, any> | null, accessibility?: Record<string, any> | null, ticketLimit?: Record<string, any> | null, place?: Record<string, any> | null, externalLinks?: Record<string, any> | null, localizedAliases?: Record<string, any> | null, _embedded?: { venues?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: Record<string, any> | null, generalInfo?: Record<string, any> | null, social?: Record<string, any> | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null, attractions?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: Record<string, any> | null, externalLinks?: Record<string, any> | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null } | null, _links?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "venues",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: Record<string, any> | null, generalInfo?: Record<string, any> | null, social?: Record<string, any> | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "products",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticketmaster.api.venues.get",
+      "shortPath": "venues.get",
+      "description": "Get one venue by ID, including its address, location, timezone, markets and images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The venue ID."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only entities available on these domains, such as ticketmaster.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "additionalInfo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postalCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "{ name?: string | null } | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "{ name?: string | null, stateCode?: string | null } | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "{ name?: string | null, countryCode?: string | null } | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ line1?: string | null } | null"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ longitude?: string | number | null, latitude?: string | number | null } | null"
+          },
+          {
+            "key": "markets",
+            "optional": true,
+            "type": "{ id?: string | number | null }[] | null"
+          },
+          {
+            "key": "dmas",
+            "optional": true,
+            "type": "{ id?: number | null }[] | null"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null"
+          },
+          {
+            "key": "boxOfficeInfo",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "generalInfo",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "social",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "parkingDetail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "accessibleSeatingDetail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "upcomingEvents",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticketmaster.api.venues.search",
+      "shortPath": "venues.search",
+      "description": "Search venues by keyword, country, state or geo point, with paging and sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "latlong",
+            "optional": true,
+            "type": "string",
+            "description": "'latitude,longitude'. Deprecated by Ticketmaster in favour of geoPoint."
+          },
+          {
+            "key": "geoPoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "miles | km"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string",
+            "description": "Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list."
+          },
+          {
+            "key": "includeTest",
+            "optional": true,
+            "type": "yes | no | only"
+          },
+          {
+            "key": "includeSpellcheck",
+            "optional": true,
+            "type": "yes | no"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stateCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field and direction, such as 'name,asc' or 'distance,asc'. Ticketmaster defaults to relevance,desc."
+          },
+          {
+            "key": "preferredCountry",
+            "optional": true,
+            "type": "us | ca"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Ticketmaster defaults to 20."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "0-based page number."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only entities available on these domains, such as ticketmaster.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "venues",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: Record<string, any> | null, generalInfo?: Record<string, any> | null, social?: Record<string, any> | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

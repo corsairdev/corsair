@@ -42,8 +42,8 @@ await corsair.writer.api.applications.list({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
-| `first_id` | `string` | No | — |
-| `last_id` | `string` | No | — |
+| `first_id` | `string \| null` | No | — |
+| `last_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -118,7 +118,7 @@ await corsair.writer.api.chat.create({});
   finish_reason?: string | null,
   message: {
     role: string,
-    content?: string | null
+    content: string | null
   }
 }[]
 ```
@@ -315,8 +315,8 @@ await corsair.writer.api.files.list({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
-| `first_id` | `string` | No | — |
-| `last_id` | `string` | No | — |
+| `first_id` | `string \| null` | No | — |
+| `last_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -468,7 +468,7 @@ await corsair.writer.api.knowledgeGraphs.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -535,8 +535,8 @@ await corsair.writer.api.knowledgeGraphs.list({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
-| `first_id` | `string` | No | — |
-| `last_id` | `string` | No | — |
+| `first_id` | `string \| null` | No | — |
+| `last_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -613,7 +613,7 @@ await corsair.writer.api.knowledgeGraphs.retrieve({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -649,7 +649,7 @@ await corsair.writer.api.knowledgeGraphs.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -750,7 +750,7 @@ await corsair.writer.api.tools.detectAiContent({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| any`
 
 <AccordionGroup>
 <Accordion title="Output full type">

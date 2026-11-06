@@ -1,0 +1,20 @@
+displayName: ClassMarker
+description: Online exam platform. Manage tests, users, groups, question banks, categories, and access lists, and read results, certificates, and webhooks.
+domain: classmarker.com
+examples:
+  read:
+    path: tests.list
+    title: List tests
+  write:
+    path: users.create
+    title: Create a user
+    args:
+      first_name: Jane
+      last_name: Doe
+      email: you@example.com
+dbExample:
+  entity: results
+  note: >-
+    This table exists, but ClassMarker calls don't fill it yet. This returns only rows
+    you have written yourself.
+  limit: 50

@@ -69,7 +69,7 @@ await corsair.apipie.api.chat.createCompletion({});
 | `created` | `number` | No | — |
 | `model` | `string` | No | — |
 | `choices` | `object[]` | Yes | — |
-| `usage` | `object` | No | — |
+| `usage` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="choices full type">
@@ -84,14 +84,6 @@ await corsair.apipie.api.chat.createCompletion({});
   finish_reason?: string,
   finishReason?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="usage full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -131,7 +123,7 @@ await corsair.apipie.api.embeddings.create({});
 | `object` | `string` | No | — |
 | `model` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
-| `usage` | `object` | No | — |
+| `usage` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -142,14 +134,6 @@ await corsair.apipie.api.embeddings.create({});
   index?: number,
   embedding: number[]
 }[]
-```
-</Accordion>
-
-<Accordion title="usage full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -193,7 +177,7 @@ await corsair.apipie.api.images.generate({});
 |------|------|----------|-------------|
 | `created` | `number` | No | — |
 | `data` | `object[]` | Yes | — |
-| `usage` | `object` | No | — |
+| `usage` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -204,14 +188,6 @@ await corsair.apipie.api.images.generate({});
   b64_json?: string,
   revised_prompt?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="usage full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -246,7 +222,7 @@ await corsair.apipie.api.models.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -267,8 +243,7 @@ await corsair.apipie.api.models.list({});
   output_cost?: string | null,
   price_type?: string | null,
   img_price?: any | null,
-  img_json?: {
-  } | null,
+  img_json?: Record<string, any> | null,
   latency?: string | null,
   query_count?: string | null,
   max_tokens?: number | null,
@@ -290,8 +265,7 @@ await corsair.apipie.api.models.list({});
     output_cost?: string | null,
     price_type?: string | null,
     img_price?: any | null,
-    img_json?: {
-    } | null,
+    img_json?: Record<string, any> | null,
     latency?: string | null,
     query_count?: string | null,
     max_tokens?: number | null,
@@ -368,10 +342,8 @@ await corsair.apipie.api.models.listDetailed({});
   max_pdf_size_mb?: number | null,
   latency?: string | null,
   query_count?: string | null,
-  pricing?: {
-  } | null,
-  supported_input_parameters?: {
-  } | null
+  pricing?: Record<string, any> | null,
+  supported_input_parameters?: Record<string, any> | null
 }[]
 ```
 </Accordion>

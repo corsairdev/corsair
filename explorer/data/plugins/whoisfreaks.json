@@ -1,7 +1,7 @@
 {
   "id": "whoisfreaks",
-  "displayName": "Whoisfreaks",
-  "description": "Whoisfreaks plugin for Corsair",
+  "displayName": "WhoisFreaks",
+  "description": "Domain and network intelligence API for WHOIS, DNS, SSL, subdomains, domain availability, typosquatting, IP and ASN data, geolocation, and reputation lookups.",
   "npmPackageName": "@corsair-dev/whoisfreaks",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -39,7 +39,7 @@
           {
             "key": "asn",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -95,13 +95,15 @@
           },
           {
             "key": "sug",
-            "optional": false,
-            "type": "boolean"
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false."
           },
           {
             "key": "count",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 5."
           }
         ]
       },
@@ -177,8 +179,9 @@
           },
           {
             "key": "type",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"all\"."
           }
         ]
       },
@@ -188,7 +191,7 @@
           {
             "key": "bulk_dns_info",
             "optional": true,
-            "type": "{ domainName?: string, ipAddress?: string, queryTime?: string, status?: boolean, dnsTypes?: {} }[]"
+            "type": "{ domainName?: string, ipAddress?: string, queryTime?: string, status?: boolean, dnsTypes?: Record<string, any> }[]"
           }
         ]
       }
@@ -208,13 +211,15 @@
           },
           {
             "key": "type",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"all\"."
           },
           {
             "key": "page",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           }
         ]
       },
@@ -239,7 +244,7 @@
           {
             "key": "historicalDns",
             "optional": true,
-            "type": "{ domainName?: string, ipAddress?: string, queryTime?: string, status?: boolean, dnsTypes?: {} }[]"
+            "type": "{ domainName?: string, ipAddress?: string, queryTime?: string, status?: boolean, dnsTypes?: Record<string, any> }[]"
           }
         ]
       }
@@ -264,8 +269,9 @@
           },
           {
             "key": "type",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"all\"."
           }
         ]
       },
@@ -295,7 +301,7 @@
           {
             "key": "dnsTypes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -320,13 +326,15 @@
           },
           {
             "key": "exact",
-            "optional": false,
-            "type": "boolean"
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true."
           },
           {
             "key": "page",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           }
         ]
       },
@@ -351,7 +359,7 @@
           {
             "key": "reverseDnsRecords",
             "optional": true,
-            "type": "{ domainName?: string, ipAddress?: string, queryTime?: string, status?: boolean, dnsTypes?: {} }[]"
+            "type": "{ domainName?: string, ipAddress?: string, queryTime?: string, status?: boolean, dnsTypes?: Record<string, any> }[]"
           }
         ]
       }
@@ -437,12 +445,12 @@
           {
             "key": "risk_category",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "dga_score",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -464,7 +472,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ip?: string, location?: {}, country_metadata?: {}, network?: {}, currency?: {} }[]"
+        "type": "{ ip?: string, location?: Record<string, any>, country_metadata?: Record<string, any>, network?: Record<string, any>, currency?: Record<string, any> }[]"
       }
     },
     {
@@ -493,22 +501,22 @@
           {
             "key": "location",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "country_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "network",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -530,7 +538,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ ip?: string, location?: {}, network?: {}, asn?: {}, security?: {} }[]"
+        "type": "{ ip?: string, location?: Record<string, any>, network?: Record<string, any>, asn?: Record<string, any>, security?: Record<string, any> }[]"
       }
     },
     {
@@ -559,22 +567,22 @@
           {
             "key": "location",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "network",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asn",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "security",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -645,13 +653,15 @@
           },
           {
             "key": "chain",
-            "optional": false,
-            "type": "boolean"
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false."
           },
           {
             "key": "sslRaw",
-            "optional": false,
-            "type": "boolean"
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false."
           }
         ]
       },
@@ -671,7 +681,7 @@
           {
             "key": "sslCertificates",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "sslRaw",
@@ -711,8 +721,9 @@
           },
           {
             "key": "page",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           }
         ]
       },
@@ -752,7 +763,7 @@
           {
             "key": "subdomains",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }

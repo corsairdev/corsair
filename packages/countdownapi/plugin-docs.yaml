@@ -1,0 +1,16 @@
+displayName: Countdown API
+description: eBay data API. Search products, get product details, and fetch search autocomplete suggestions.
+domain: trajectdata.com
+examples:
+  read:
+    path: search.get
+    title: Search eBay listings
+    args:
+      query: vintage camera
+      ebay_domain: ebay.com
+  write:
+    path: product.get
+    title: Get a product
+    args:
+      url: https://www.ebay.com/itm/123456789012
+      ebay_domain: ebay.com

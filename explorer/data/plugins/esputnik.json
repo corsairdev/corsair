@@ -1,0 +1,2771 @@
+{
+  "id": "esputnik",
+  "displayName": "eSputnik",
+  "description": "Manage eSputnik contacts and segments, send events and orders, edit and send email, SMS, Viber, push and Telegram messages, and run broadcasts.",
+  "npmPackageName": "@corsair-dev/esputnik",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 108,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "esputnik.api.account.generateApiToken",
+      "shortPath": "account.generateApiToken",
+      "description": "Generate a bearer token for the eSputnik event endpoints (returns a secret)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.account.getAccountInfo",
+      "shortPath": "account.getAccountInfo",
+      "description": "Get the eSputnik account name and organisation ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "userEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organisationName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.account.getBalance",
+      "shortPath": "account.getBalance",
+      "description": "Get the eSputnik organisation balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currentBalance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.account.getOrganisationBalanceHistory",
+      "shortPath": "account.getOrganisationBalanceHistory",
+      "description": "Get daily eSputnik billing costs for a period of up to 90 days",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.appInbox.addAppInboxMessage",
+      "shortPath": "appInbox.addAppInboxMessage",
+      "description": "Create a eSputnik App Inbox message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.appInbox.deleteAppInboxMessage",
+      "shortPath": "appInbox.deleteAppInboxMessage",
+      "description": "Delete a eSputnik App Inbox message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.appInbox.deleteTranslatedAppInboxMessage",
+      "shortPath": "appInbox.deleteTranslatedAppInboxMessage",
+      "description": "Delete a language version of a eSputnik App Inbox message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.appInbox.getAppInboxMessage",
+      "shortPath": "appInbox.getAppInboxMessage",
+      "description": "Get a eSputnik App Inbox message with its language versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.appInbox.searchAppInboxMessages",
+      "shortPath": "appInbox.searchAppInboxMessages",
+      "description": "Search eSputnik App Inbox messages by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.appInbox.updateBaseAppInboxMessage",
+      "shortPath": "appInbox.updateBaseAppInboxMessage",
+      "description": "Update a eSputnik App Inbox message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number } & Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.appInbox.updateTranslatedAppInboxMessage",
+      "shortPath": "appInbox.updateTranslatedAppInboxMessage",
+      "description": "Add or update a language version of a eSputnik App Inbox message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number, language: string } & Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.apps.addAppTokens",
+      "shortPath": "apps.addAppTokens",
+      "description": "Add Telegram application tokens to eSputnik",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tokens",
+            "optional": false,
+            "type": "{ token: string, contactId?: number, externalCustomerId?: string, phone?: string, email?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.apps.muteAppToken",
+      "shortPath": "apps.muteAppToken",
+      "description": "Mute eSputnik notifications for an application token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.apps.unmuteAppToken",
+      "shortPath": "apps.unmuteAppToken",
+      "description": "Unmute eSputnik notifications for an application token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.broadcasts.cancelBroadcast",
+      "shortPath": "broadcasts.cancelBroadcast",
+      "description": "Cancel a scheduled eSputnik broadcast",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.broadcasts.createBroadcast",
+      "shortPath": "broadcasts.createBroadcast",
+      "description": "Create an eSputnik broadcast for a prepared message and segments",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "excludedGroups",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "batchIntervalUnit",
+            "optional": true,
+            "type": "MINUTE | HOUR | DAY | MONTH"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.broadcasts.getBroadcast",
+      "shortPath": "broadcasts.getBroadcast",
+      "description": "Get an eSputnik broadcast",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.broadcasts.getBroadcasts",
+      "shortPath": "broadcasts.getBroadcasts",
+      "description": "List eSputnik broadcasts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.addContact",
+      "shortPath": "contacts.addContact",
+      "description": "Create or update an eSputnik contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channels",
+            "optional": false,
+            "type": "{ type: string, value: string, device?: Record<string, JsonValue>, webPushSubscription?: Record<string, JsonValue> }[]"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ region?: string, town?: string, address?: string, postcode?: string, countryCode?: string | null }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id: number, value: string }[]"
+          },
+          {
+            "key": "addressBookId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "externalCustomerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marketId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.addToUnsubscribed",
+      "shortPath": "contacts.addToUnsubscribed",
+      "description": "Add emails to the eSputnik unsubscribe list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.attachContactsToGroup",
+      "shortPath": "contacts.attachContactsToGroup",
+      "description": "Add contacts to an eSputnik static segment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "externalCustomerIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.changeContactSubscriptionCategories",
+      "shortPath": "contacts.changeContactSubscriptionCategories",
+      "description": "Replace an eSputnik contact's subscription categories",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.changeTokenActivated",
+      "shortPath": "contacts.changeTokenActivated",
+      "description": "Activate or deactivate an eSputnik mobile push token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.contactActivity",
+      "shortPath": "contacts.contactActivity",
+      "description": "Get delivery, read and click activity for messages sent to eSputnik contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dateFrom",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sms",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webPushToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobPushToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "telegramToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activityStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.contactMessages",
+      "shortPath": "contacts.contactMessages",
+      "description": "Get an eSputnik contact's message history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dateFrom",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "externalCustomerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channelTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.contactRecoms",
+      "shortPath": "contacts.contactRecoms",
+      "description": "Get product recommendations for an eSputnik contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataSourceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalCustomerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.contactsBulkUpdate",
+      "shortPath": "contacts.contactsBulkUpdate",
+      "description": "Bulk create or update eSputnik contacts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.deleteContactByExternalCustomerId",
+      "shortPath": "contacts.deleteContactByExternalCustomerId",
+      "description": "Delete an eSputnik contact by external customer ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalCustomerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "erase",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.deleteContactById",
+      "shortPath": "contacts.deleteContactById",
+      "description": "Delete an eSputnik contact by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "erase",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.deleteFromUnsubscribed",
+      "shortPath": "contacts.deleteFromUnsubscribed",
+      "description": "Remove emails from the eSputnik unsubscribe list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.detachContactsFromGroup",
+      "shortPath": "contacts.detachContactsFromGroup",
+      "description": "Remove contacts from an eSputnik static segment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "externalCustomerIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.fileContactsBulkUpdate",
+      "shortPath": "contacts.fileContactsBulkUpdate",
+      "description": "Import eSputnik contacts from a file link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.getAdditionalFields",
+      "shortPath": "contacts.getAdditionalFields",
+      "description": "List eSputnik contact additional fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.getContact",
+      "shortPath": "contacts.getContact",
+      "description": "Get an eSputnik contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.getContactEmails",
+      "shortPath": "contacts.getContactEmails",
+      "description": "Get email addresses for eSputnik contact IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "JsonValue[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.getContactIdByToken",
+      "shortPath": "contacts.getContactIdByToken",
+      "description": "Get an eSputnik contact ID by mobile push token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.getContactSubscriptionCategories",
+      "shortPath": "contacts.getContactSubscriptionCategories",
+      "description": "Get an eSputnik contact's subscription categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.getGroupContacts",
+      "shortPath": "contacts.getGroupContacts",
+      "description": "Get contacts in an eSputnik segment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderByTs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "asc",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.getImportSessionStatus",
+      "shortPath": "contacts.getImportSessionStatus",
+      "description": "Get eSputnik contact import status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.getSubscriptionCategories",
+      "shortPath": "contacts.getSubscriptionCategories",
+      "description": "List the organisation's eSputnik subscription categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.getTokenActivated",
+      "shortPath": "contacts.getTokenActivated",
+      "description": "Get whether an eSputnik mobile push token is active",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.searchContacts",
+      "shortPath": "contacts.searchContacts",
+      "description": "Search eSputnik contacts (up to 500 per page)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "externalCustomerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sms",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "contactId"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number }[]"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.searchGroups",
+      "shortPath": "contacts.searchGroups",
+      "description": "Search eSputnik segments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.searchWorkflows",
+      "shortPath": "contacts.searchWorkflows",
+      "description": "Search eSputnik workflows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.subscribeContact",
+      "shortPath": "contacts.subscribeContact",
+      "description": "Subscribe an eSputnik contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id?: number, firstName?: string, lastName?: string, channels: { type: string, value: string, device?: Record<string, JsonValue>, webPushSubscription?: Record<string, JsonValue> }[], address?: { region?: string, town?: string, address?: string, postcode?: string, countryCode?: string | null }, fields?: { id: number, value: string }[], addressBookId?: number, externalCustomerId?: string, languageCode?: string, timeZone?: string, marketId?: string }"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subscriptions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "formType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emailStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isNew",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.contacts.updateContact",
+      "shortPath": "contacts.updateContact",
+      "description": "Update an eSputnik contact by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number } & { id?: number, firstName?: string, lastName?: string, channels: { type: string, value: string, device?: Record<string, JsonValue>, webPushSubscription?: Record<string, JsonValue> }[], address?: { region?: string, town?: string, address?: string, postcode?: string, countryCode?: string | null }, fields?: { id: number, value: string }[], addressBookId?: number, externalCustomerId?: string, languageCode?: string, timeZone?: string, marketId?: string }"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.emails.addEmail",
+      "shortPath": "emails.addEmail",
+      "description": "Create an eSputnik email message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "htmlText",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.emails.deleteEmail",
+      "shortPath": "emails.deleteEmail",
+      "description": "Delete an eSputnik email message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.emails.deleteTranslatedEmail",
+      "shortPath": "emails.deleteTranslatedEmail",
+      "description": "Delete a language version of an eSputnik email message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.emails.getEmail",
+      "shortPath": "emails.getEmail",
+      "description": "Get an eSputnik email message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.emails.getEmailMessageViewLink",
+      "shortPath": "emails.getEmailMessageViewLink",
+      "description": "Get a link to view an eSputnik email message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.emails.searchEmails",
+      "shortPath": "emails.searchEmails",
+      "description": "Search eSputnik email messages by name or tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.emails.sendEmail",
+      "shortPath": "emails.sendEmail",
+      "description": "Send an email to eSputnik recipients",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "JsonValue[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.emails.updateMessage",
+      "shortPath": "emails.updateMessage",
+      "description": "Update an eSputnik email message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number } & { name: string, from: string, subject: string, htmlText: string, template?: boolean }"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.emails.updateTranslatedMessage",
+      "shortPath": "emails.updateTranslatedMessage",
+      "description": "Add or update a language version of an eSputnik email message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number, language: string } & { name: string, from: string, subject: string, htmlText: string, template?: boolean }"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.events.registerEvent",
+      "shortPath": "events.registerEvent",
+      "description": "Send an eSputnik event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.events.removeHistoryEvents",
+      "shortPath": "events.removeHistoryEvents",
+      "description": "Delete eSputnik events in a period",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.events.sendHistoryEvents",
+      "shortPath": "events.sendHistoryEvents",
+      "description": "Send past eSputnik events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.interfaces.getEmailInterfaces",
+      "shortPath": "interfaces.getEmailInterfaces",
+      "description": "List eSputnik email sender addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.interfaces.getSmsInterfaces",
+      "shortPath": "interfaces.getSmsInterfaces",
+      "description": "List eSputnik SMS sender names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.messages.sendPreparedMessage",
+      "shortPath": "messages.sendPreparedMessage",
+      "description": "Send a prepared eSputnik message to one or more contacts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{ contactId?: number, externalCustomerId?: string, locator?: string, jsonParam?: string, externalRequestId?: string, languageCode?: string }[]"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fromName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "JsonValue[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.messages.updateInteractionStatus",
+      "shortPath": "messages.updateInteractionStatus",
+      "description": "Report a delivery, open or click status for an eSputnik message interaction",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "DELIVERED | OPENED | CLICKED | UNDELIVERED"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.mobilePush.addMobilePushMessage",
+      "shortPath": "mobilePush.addMobilePushMessage",
+      "description": "Create a eSputnik mobile push message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ttlSec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soundEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "badgeCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.mobilePush.deleteMobilePushMessage",
+      "shortPath": "mobilePush.deleteMobilePushMessage",
+      "description": "Delete a eSputnik mobile push message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.mobilePush.deleteTranslatedMobilePushMessage",
+      "shortPath": "mobilePush.deleteTranslatedMobilePushMessage",
+      "description": "Delete a language version of a eSputnik mobile push message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.mobilePush.getMobilePushMessage",
+      "shortPath": "mobilePush.getMobilePushMessage",
+      "description": "Get a eSputnik mobile push message with its language versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.mobilePush.searchMobilePushMessages",
+      "shortPath": "mobilePush.searchMobilePushMessages",
+      "description": "Search eSputnik mobile push messages by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.mobilePush.updateBaseMobilePushMessage",
+      "shortPath": "mobilePush.updateBaseMobilePushMessage",
+      "description": "Update a eSputnik mobile push message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number } & { name: string, title: string, text: string, languageCode?: string, tags?: string[], link?: string, imageSource?: string, customData?: string, ttlSec?: number, soundEnabled?: boolean, badgeCount?: number, images?: string[] }"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.mobilePush.updateTranslatedMobilePushMessage",
+      "shortPath": "mobilePush.updateTranslatedMobilePushMessage",
+      "description": "Add or update a language version of a eSputnik mobile push message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number, language: string } & { name: string, title: string, text: string, languageCode?: string, tags?: string[], link?: string, imageSource?: string, customData?: string, ttlSec?: number, soundEnabled?: boolean, badgeCount?: number, images?: string[] }"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.orders.ordersBulkInsert",
+      "shortPath": "orders.ordersBulkInsert",
+      "description": "Add or update eSputnik orders",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.preprocessor.getPreprocessorFileStatus",
+      "shortPath": "preprocessor.getPreprocessorFileStatus",
+      "description": "Get the status of an eSputnik preprocessor file upload",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.preprocessor.updatePreprocessorFile",
+      "shortPath": "preprocessor.updatePreprocessorFile",
+      "description": "Replace the data of an eSputnik preprocessor file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ttlHours",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.preprocessor.uploadPreprocessorFile",
+      "shortPath": "preprocessor.uploadPreprocessorFile",
+      "description": "Upload an eSputnik preprocessor file from a link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "preprocessorType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ttlHours",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.productFeeds.configureProductFeeds",
+      "shortPath": "productFeeds.configureProductFeeds",
+      "description": "Configure eSputnik product feeds",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "feeds",
+            "optional": false,
+            "type": "{ url: string, language?: string, default?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.productFeeds.getProductFeedsConfiguration",
+      "shortPath": "productFeeds.getProductFeedsConfiguration",
+      "description": "Get eSputnik product feed configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.promocodes.getPromocodes",
+      "shortPath": "promocodes.getPromocodes",
+      "description": "Get available eSputnik promotional codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inUse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "activeDueDays",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.promocodes.getPromocodesCount",
+      "shortPath": "promocodes.getPromocodesCount",
+      "description": "Count available eSputnik promotional codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activeDueDays",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.promocodes.insertPromocodes",
+      "shortPath": "promocodes.insertPromocodes",
+      "description": "Upload eSputnik promotional codes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "promocodes",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "expirationDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "discount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inUse",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.site.addWebPushDomain",
+      "shortPath": "site.addWebPushDomain",
+      "description": "Register an eSputnik web push domain",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "serviceWorkerName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "serviceWorkerPath",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "serviceWorkerScope",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.site.createDomain",
+      "shortPath": "site.createDomain",
+      "description": "Register a domain for eSputnik web tracking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.site.deleteWebPushDomain",
+      "shortPath": "site.deleteWebPushDomain",
+      "description": "Delete an eSputnik web push domain",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.site.getDomains",
+      "shortPath": "site.getDomains",
+      "description": "Get the organisation's eSputnik web tracking domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.site.getScript",
+      "shortPath": "site.getScript",
+      "description": "Get the eSputnik web tracking script",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "esputnik.api.site.getWebPushDomains",
+      "shortPath": "site.getWebPushDomains",
+      "description": "List eSputnik web push domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.site.getWebPushScript",
+      "shortPath": "site.getWebPushScript",
+      "description": "Get the eSputnik web push script for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.sms.addSmsMessage",
+      "shortPath": "sms.addSmsMessage",
+      "description": "Create a eSputnik SMS message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.sms.deleteSmsMessage",
+      "shortPath": "sms.deleteSmsMessage",
+      "description": "Delete a eSputnik SMS message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.sms.deleteTranslatedSmsMessage",
+      "shortPath": "sms.deleteTranslatedSmsMessage",
+      "description": "Delete a language version of a eSputnik SMS message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.sms.getSms",
+      "shortPath": "sms.getSms",
+      "description": "Get a eSputnik SMS message with its language versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.sms.searchSmsMessages",
+      "shortPath": "sms.searchSmsMessages",
+      "description": "Search eSputnik SMS messages by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.sms.sendSms",
+      "shortPath": "sms.sendSms",
+      "description": "Send an SMS to eSputnik recipients",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "JsonValue[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.sms.updateBaseSmsMessage",
+      "shortPath": "sms.updateBaseSmsMessage",
+      "description": "Update a eSputnik SMS message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number } & Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.sms.updateTranslatedSmsMessage",
+      "shortPath": "sms.updateTranslatedSmsMessage",
+      "description": "Add or update a language version of a eSputnik SMS message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number, language: string } & Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.telegramBot.addTelegramBotMessage",
+      "shortPath": "telegramBot.addTelegramBotMessage",
+      "description": "Create a eSputnik Telegram bot message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.telegramBot.deleteTelegramBotMessage",
+      "shortPath": "telegramBot.deleteTelegramBotMessage",
+      "description": "Delete a eSputnik Telegram bot message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.telegramBot.deleteTranslatedTelegramMessage",
+      "shortPath": "telegramBot.deleteTranslatedTelegramMessage",
+      "description": "Delete a language version of a eSputnik Telegram bot message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.telegramBot.getTelegramBotMessage",
+      "shortPath": "telegramBot.getTelegramBotMessage",
+      "description": "Get a eSputnik Telegram bot message with its language versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.telegramBot.searchTelegramBotMessages",
+      "shortPath": "telegramBot.searchTelegramBotMessages",
+      "description": "Search eSputnik Telegram bot messages by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.telegramBot.updateBaseTelegramBotMessage",
+      "shortPath": "telegramBot.updateBaseTelegramBotMessage",
+      "description": "Update a eSputnik Telegram bot message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number } & Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.telegramBot.updateTranslatedTelegramMessage",
+      "shortPath": "telegramBot.updateTranslatedTelegramMessage",
+      "description": "Add or update a language version of a eSputnik Telegram bot message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number, language: string } & Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.viber.addViberMessage",
+      "shortPath": "viber.addViberMessage",
+      "description": "Create a eSputnik Viber message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.viber.deleteTranslatedViberMessage",
+      "shortPath": "viber.deleteTranslatedViberMessage",
+      "description": "Delete a language version of a eSputnik Viber message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.viber.deleteViberMessage",
+      "shortPath": "viber.deleteViberMessage",
+      "description": "Delete a eSputnik Viber message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.viber.getViberMessage",
+      "shortPath": "viber.getViberMessage",
+      "description": "Get a eSputnik Viber message with its language versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "esputnik.api.viber.searchViberMessages",
+      "shortPath": "viber.searchViberMessages",
+      "description": "Search eSputnik Viber messages by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startindex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxrows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "esputnik.api.viber.sendViber",
+      "shortPath": "viber.sendViber",
+      "description": "Send a Viber message to eSputnik recipients",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "JsonValue[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "esputnik.api.viber.updateBaseViberMessage",
+      "shortPath": "viber.updateBaseViberMessage",
+      "description": "Update a eSputnik Viber message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number } & Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "esputnik.api.viber.updateTranslatedViberMessage",
+      "shortPath": "viber.updateTranslatedViberMessage",
+      "description": "Add or update a language version of a eSputnik Viber message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: number, language: string } & Record<string, any>"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

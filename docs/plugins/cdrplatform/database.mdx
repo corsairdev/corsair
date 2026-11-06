@@ -52,6 +52,8 @@ const rows = await corsair.cdrplatform.db.priceQuotes.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `weight_unit` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -75,6 +77,8 @@ const rows = await corsair.cdrplatform.db.removalRequests.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `transaction_uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `weight_unit` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
 | `client_reference_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `certificate_display_name` | `string` | equals, contains, startsWith, endsWith, in |
 

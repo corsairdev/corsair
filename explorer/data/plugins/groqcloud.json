@@ -275,7 +275,7 @@
           {
             "key": "choices",
             "optional": false,
-            "type": "{ index: number, message: { role: system | user | assistant | tool, content: string | any[], name?: string, tool_call_id?: string }, finish_reason?: string | null }[]"
+            "type": "{ index: number, message: { role: system | user | assistant | tool, content: string | any[], name?: string, tool_call_id?: string }, finish_reason: string | null }[]"
           },
           {
             "key": "usage",
@@ -373,12 +373,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "incomplete_details",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -403,7 +403,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: string, created?: number, owned_by?: string, active?: boolean, name?: string, context_window?: number, context_length?: number, max_completion_tokens?: number, max_output_length?: number, hugging_face_id?: string | null, input_modalities?: string[], output_modalities?: string[], supported_features?: string[], supported_sampling_parameters?: string[], public_apps?: any | null, pricing?: {} | null }[]"
+            "type": "{ id: string, object: string, created?: number, owned_by?: string, active?: boolean, name?: string, context_window?: number, context_length?: number, max_completion_tokens?: number, max_output_length?: number, hugging_face_id?: string | null, input_modalities?: string[], output_modalities?: string[], supported_features?: string[], supported_sampling_parameters?: string[], public_apps?: any | null, pricing?: Record<string, any> | null }[]"
           }
         ]
       }
@@ -480,7 +480,7 @@
           {
             "key": "hugging_face_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "input_modalities",
@@ -505,12 +505,12 @@
           {
             "key": "public_apps",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "pricing",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }

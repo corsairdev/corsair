@@ -66,8 +66,7 @@ await corsair.studiobyai21labs.api.chat.completions({});
   function: {
     name: string,
     description?: string,
-    parameters?: {
-    }
+    parameters?: Record<string, any>
   }
 }[]
 ```
@@ -78,8 +77,7 @@ await corsair.studiobyai21labs.api.chat.completions({});
 ```ts
 {
   content: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -350,13 +348,13 @@ await corsair.studiobyai21labs.api.maestro.createRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object[]` | Yes | — |
+| `input` | `string \| object[]` | Yes | — |
 | `system_prompt` | `string` | No | — |
 | `requirements` | `object[]` | No | — |
 | `tools` | `object[]` | No | — |
 | `models` | `string[]` | No | — |
 | `budget` | `low \| medium \| high` | No | — |
-| `include` | `data_sources \| requirements_result[]` | No | — |
+| `include` | `(data_sources \| requirements_result)[]` | No | — |
 | `response_language` | `arabic \| dutch \| english \| french \| german \| hebrew \| italian \| portuguese \| spanish` | No | — |
 
 <AccordionGroup>
@@ -389,21 +387,18 @@ string | {
     type: mcp,
     server_label: string,
     server_url: string,
-    headers?: {
-    },
+    headers?: Record<string, string>,
     allowed_tools?: string[]
   } | {
     type: http,
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      }
+      parameters?: Record<string, any>
     },
     endpoint: {
       url: string,
-      headers?: {
-      }
+      headers?: Record<string, string>
     }
   } | {
     type: file_search,
@@ -429,7 +424,7 @@ string | {
 | `result` | `any` | No | — |
 | `requirements_result` | `object` | No | — |
 | `data_sources` | `object` | No | — |
-| `error` | `object` | No | — |
+| `error` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="requirements_result full type">
@@ -459,7 +454,7 @@ string | {
 ```ts
 {
   message?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -497,7 +492,7 @@ await corsair.studiobyai21labs.api.maestro.retrieveRun({});
 | `result` | `any` | No | — |
 | `requirements_result` | `object` | No | — |
 | `data_sources` | `object` | No | — |
-| `error` | `object` | No | — |
+| `error` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="requirements_result full type">
@@ -527,7 +522,7 @@ await corsair.studiobyai21labs.api.maestro.retrieveRun({});
 ```ts
 {
   message?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

@@ -115,7 +115,7 @@
           {
             "key": "uuid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -130,12 +130,12 @@
           {
             "key": "order_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reactions",
@@ -155,7 +155,7 @@
           {
             "key": "resolved_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
@@ -577,7 +577,7 @@
           {
             "key": "tokens",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "prefix",
@@ -714,7 +714,7 @@
           {
             "key": "images",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           }
         ]
       }
@@ -755,7 +755,7 @@
           {
             "key": "tokens",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -940,7 +940,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ images?: {} }"
+            "type": "{ images?: Record<string, string> }"
           },
           {
             "key": "error",
@@ -1046,12 +1046,12 @@
           {
             "key": "components",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "styles",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1158,7 +1158,7 @@
           {
             "key": "nodes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1342,12 +1342,12 @@
           {
             "key": "images",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "err",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1883,7 +1883,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ tempIdToRealId?: {} }"
+            "type": "{ tempIdToRealId?: Record<string, string> }"
           },
           {
             "key": "status",
@@ -1919,7 +1919,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ variables?: {}, variableCollections?: {} }"
+            "type": "{ variables?: Record<string, any>, variableCollections?: Record<string, any> }"
           },
           {
             "key": "status",
@@ -1955,7 +1955,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ variables?: {}, variableCollections?: {} }"
+            "type": "{ variables?: Record<string, any>, variableCollections?: Record<string, any> }"
           },
           {
             "key": "status",
@@ -2036,12 +2036,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "team | project | file"
+            "type": "team | project | file | null"
           },
           {
             "key": "team_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endpoint",
@@ -2056,12 +2056,12 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "context_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "event_type",
@@ -2071,7 +2071,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2107,12 +2107,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "team | project | file"
+            "type": "team | project | file | null"
           },
           {
             "key": "team_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endpoint",
@@ -2127,12 +2127,12 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "context_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "event_type",
@@ -2142,7 +2142,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2178,12 +2178,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "team | project | file"
+            "type": "team | project | file | null"
           },
           {
             "key": "team_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endpoint",
@@ -2198,12 +2198,12 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "context_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "event_type",
@@ -2213,7 +2213,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2331,12 +2331,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "team | project | file"
+            "type": "team | project | file | null"
           },
           {
             "key": "team_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "endpoint",
@@ -2351,12 +2351,12 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "context_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "event_type",
@@ -2366,7 +2366,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2664,6 +2664,16 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "context",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

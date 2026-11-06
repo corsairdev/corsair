@@ -158,7 +158,7 @@ await corsair.boxhero.api.items.get({});
   name: string,
   sku: string,
   barcode: string,
-  photo_url?: string | null,
+  photo_url: string | null,
   attrs: {
     id: number,
     type: text | date | number | barcode,
@@ -211,7 +211,7 @@ await corsair.boxhero.api.items.list({});
 | `items` | `object[]` | Yes | — |
 | `count` | `number` | Yes | — |
 | `limit` | `number` | Yes | — |
-| `cursor` | `number` | No | — |
+| `cursor` | `number \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 
 <AccordionGroup>
@@ -223,7 +223,7 @@ await corsair.boxhero.api.items.list({});
   name: string,
   sku: string,
   barcode: string,
-  photo_url?: string | null,
+  photo_url: string | null,
   attrs: {
     id: number,
     type: text | date | number | barcode,
@@ -472,7 +472,7 @@ await corsair.boxhero.api.partners.list({});
 | `items` | `object[]` | Yes | — |
 | `count` | `number` | Yes | — |
 | `limit` | `number` | Yes | — |
-| `cursor` | `number` | No | — |
+| `cursor` | `number \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 
 <AccordionGroup>
@@ -520,10 +520,10 @@ await corsair.boxhero.api.teams.getInfo({});
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `mode` | `0 \| 1 \| 2` | Yes | — |
-| `currency_symbol` | `string` | No | — |
-| `currency_code` | `string` | No | — |
+| `currency_symbol` | `string \| null` | Yes | — |
+| `currency_code` | `string \| null` | Yes | — |
 | `price_decimal_places` | `number` | Yes | — |
-| `memo` | `string` | No | — |
+| `memo` | `string \| null` | Yes | — |
 
 
 
@@ -560,7 +560,7 @@ await corsair.boxhero.api.transactions.listBasic({});
 | `items` | `object[]` | Yes | — |
 | `count` | `number` | Yes | — |
 | `limit` | `number` | Yes | — |
-| `cursor` | `number` | No | — |
+| `cursor` | `number \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 
 <AccordionGroup>
@@ -702,7 +702,7 @@ await corsair.boxhero.api.transactions.listLocation({});
 | `items` | `object[]` | Yes | — |
 | `count` | `number` | Yes | — |
 | `limit` | `number` | Yes | — |
-| `cursor` | `number` | No | — |
+| `cursor` | `number \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 
 <AccordionGroup>

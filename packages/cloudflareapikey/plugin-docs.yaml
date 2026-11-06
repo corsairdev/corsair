@@ -1,0 +1,19 @@
+displayName: Cloudflare API Token
+description: Cloudflare API access with an API token. Manage zones, DNS records, DNSSEC, rulesets, lockdowns, and cache settings.
+domain: cloudflare.com
+examples:
+  read:
+    path: zones.list
+    title: List zones
+  write:
+    path: dns.create
+    title: Create a DNS record
+    args:
+      zone_id: 023e105f4ecef8ad9ca31a8372d0c353
+      type: A
+      name: www.example.com
+      content: 203.0.113.10
+dbExample:
+  entity: zones
+  note: Search synced zones without hitting Cloudflare.
+  limit: 50

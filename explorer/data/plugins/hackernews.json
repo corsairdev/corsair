@@ -181,7 +181,7 @@
           {
             "key": "item",
             "optional": true,
-            "type": "{ id: number, type?: string, author?: string, title?: string | null, url?: string | null, text?: string | null, points?: number | null, parent_id?: number | null, story_id?: number | null, created_at?: string, created_at_i?: number, options?: number[], children?: {}[], children_shown?: number, max_depth_reached?: boolean, children_truncated?: boolean, total_children_count?: number }"
+            "type": "{ id: number, type?: string, author?: string, title?: string | null, url?: string | null, text?: string | null, points?: number | null, parent_id?: number | null, story_id?: number | null, created_at?: string, created_at_i?: number, options?: number[], children?: Record<string, any>[], children_shown?: number, max_depth_reached?: boolean, children_truncated?: boolean, total_children_count?: number }"
           },
           {
             "key": "error_message",
@@ -695,6 +695,11 @@
           "field": "id",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
           "field": "by",

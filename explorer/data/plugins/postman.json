@@ -1,7 +1,7 @@
 {
   "id": "postman",
   "displayName": "Postman",
-  "description": "Postman plugin for Corsair",
+  "description": "API platform for managing collections, workspaces, environments, mock servers, monitors, specs, APIs, comments, and webhooks.",
   "npmPackageName": "@corsair-dev/postman",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -171,7 +171,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{ data?: { collectionId?: string }, operationType?: COPY_COLLECTION } | { data?: { info?: { name?: string, schema?: https://schema.postman.com/json/collection/v2.1.0/collection.json }, item?: { id?: string, uid?: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: string | { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, item?: lazy[] }[] }, operationType?: CREATE_NEW } | { name?: string, operationType?: GENERATE_FROM_SCHEMA, options?: {} }"
+            "type": "{ data?: { collectionId?: string }, operationType?: COPY_COLLECTION } | { data?: { info?: { name?: string, schema?: https://schema.postman.com/json/collection/v2.1.0/collection.json }, item?: { id?: string, uid?: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: string | { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, item?: { id?: string, uid?: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: string | { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, item?: (recursive)[] }[] }[] }, operationType?: CREATE_NEW } | { name?: string, operationType?: GENERATE_FROM_SCHEMA, options?: Record<string, any> }"
           }
         ]
       },
@@ -294,7 +294,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -434,7 +434,7 @@
           {
             "key": "include",
             "optional": true,
-            "type": "collections | versions | schemas | gitInfo[]"
+            "type": "(collections | versions | schemas | gitInfo)[]"
           }
         ]
       },
@@ -491,7 +491,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -516,7 +516,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -541,7 +541,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -566,7 +566,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -591,7 +591,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -778,7 +778,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -803,7 +803,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -828,7 +828,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -935,7 +935,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1208,7 +1208,7 @@
           {
             "key": "collection",
             "optional": true,
-            "type": "{ info: { name: string, description?: string, schema: https://schema.postman.com/json/collection/v2.1.0/collection.json }, item: { name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] } }[], event?: { listen: test | prerequest, script?: { type?: string, exec?: string[] } }[], variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean }[], auth?: { type: noauth | basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid, noauth?: any, apikey?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], awsv4?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], basic?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], bearer?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], digest?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], edgegrid?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], hawk?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], ntlm?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth1?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth2?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[] }, protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: { cache-control?: boolean, postman-token?: boolean, content-type?: boolean, content-length?: boolean, accept-encoding?: boolean, connection?: boolean, host?: boolean }, insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] } }"
+            "type": "{ info: { name: string, description?: string, schema: https://schema.postman.com/json/collection/v2.1.0/collection.json }, item: { name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] } }[], event?: { listen: test | prerequest, script?: { type?: string, exec?: string[] } }[], variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean }[], auth?: { type: noauth | basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid, noauth?: any, apikey?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], awsv4?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], basic?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], bearer?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], digest?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], edgegrid?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], hawk?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], ntlm?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth1?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth2?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[] }, protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: { cache-control?: boolean, postman-token?: boolean, content-type?: boolean, content-length?: boolean, accept-encoding?: boolean, connection?: boolean, host?: boolean }, insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] } }"
           }
         ]
       },
@@ -1300,7 +1300,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model_id",
@@ -1473,7 +1473,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "method",
@@ -1483,7 +1483,7 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }"
+            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] } | null"
           },
           {
             "key": "headerData",
@@ -1508,7 +1508,7 @@
           {
             "key": "rawModeData",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "graphqlModeData",
@@ -1518,7 +1518,7 @@
           {
             "key": "dataOptions",
             "optional": true,
-            "type": "{ raw?: { language?: string }, urlencoded?: {}, params?: {}, binary?: {}, graphql?: {} }"
+            "type": "{ raw?: { language?: string }, urlencoded?: Record<string, any>, params?: Record<string, any>, binary?: Record<string, any>, graphql?: Record<string, any> }"
           },
           {
             "key": "auth",
@@ -1543,7 +1543,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model_id",
@@ -1630,12 +1630,12 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }"
+            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] } | null"
           },
           {
             "key": "method",
@@ -1655,12 +1655,12 @@
           {
             "key": "rawModeData",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dataOptions",
             "optional": true,
-            "type": "{ raw?: { language?: string }, urlencoded?: {}, params?: {}, binary?: {}, graphql?: {} }"
+            "type": "{ raw?: { language?: string }, urlencoded?: Record<string, any>, params?: Record<string, any>, binary?: Record<string, any>, graphql?: Record<string, any> }"
           },
           {
             "key": "responseCode",
@@ -1670,7 +1670,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
@@ -1680,12 +1680,12 @@
           {
             "key": "cookies",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
@@ -1700,7 +1700,7 @@
           {
             "key": "rawDataType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "requestObject",
@@ -1720,7 +1720,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model_id",
@@ -1837,7 +1837,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model_id",
@@ -1943,7 +1943,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2209,7 +2209,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2404,7 +2404,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2491,7 +2491,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model_id",
@@ -2816,7 +2816,7 @@
           {
             "key": "collection",
             "optional": true,
-            "type": "{ info: { name: string, _postman_id?: string, description?: string, schema: https://schema.postman.com/json/collection/v2.1.0/collection.json, updatedAt?: string, createdAt?: string, lastUpdatedBy?: string, uid?: string }, item: { id: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, uid?: string }[], event?: { id?: string, listen: test | prerequest, script?: { id?: string, type?: string, exec?: string[] } }[], variable?: ({ key?: string, value?: string | boolean | number, disabled?: boolean } | { enabled?: boolean, key?: string, secret?: boolean, source?: { postman?: {}, provider?: postman }, description?: string })[], auth?: { type: basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid | jwt | asap, apikey?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], awsv4?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], basic?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], bearer?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], digest?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], edgegrid?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], hawk?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], ntlm?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth1?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth2?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], jwt?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], asap?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[] }, protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: { cache-control?: boolean, postman-token?: boolean, content-type?: boolean, content-length?: boolean, accept-encoding?: boolean, connection?: boolean, host?: boolean }, insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] } }"
+            "type": "{ info: { name: string, _postman_id?: string, description?: string, schema: https://schema.postman.com/json/collection/v2.1.0/collection.json, updatedAt?: string, createdAt?: string, lastUpdatedBy?: string, uid?: string }, item: { id: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, uid?: string }[], event?: { id?: string, listen: test | prerequest, script?: { id?: string, type?: string, exec?: string[] } }[], variable?: ({ key?: string, value?: string | boolean | number, disabled?: boolean } | { enabled?: boolean, key?: string, secret?: boolean, source?: { postman?: Record<string, any>, provider?: postman }, description?: string })[], auth?: { type: basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid | jwt | asap, apikey?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], awsv4?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], basic?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], bearer?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], digest?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], edgegrid?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], hawk?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], ntlm?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth1?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth2?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], jwt?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], asap?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[] }, protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: { cache-control?: boolean, postman-token?: boolean, content-type?: boolean, content-length?: boolean, accept-encoding?: boolean, connection?: boolean, host?: boolean }, insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] } }"
           }
         ]
       },
@@ -2986,7 +2986,7 @@
           {
             "key": "collection",
             "optional": true,
-            "type": "string | { info?: { name?: string, description?: string, schema?: string }, item?: { id?: string, uid?: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: string | { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, item?: lazy[] }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], auth?: any }"
+            "type": "string | { info?: { name?: string, description?: string, schema?: string }, item?: { id?: string, uid?: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: string | { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, item?: { id?: string, uid?: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: string | { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: Record<string, any>, options?: Record<string, any> } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, item?: (recursive)[] }[] }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], auth?: any }"
           }
         ]
       },
@@ -3042,7 +3042,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model_id",
@@ -3129,7 +3129,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "method",
@@ -3139,7 +3139,7 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }"
+            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] } | null"
           },
           {
             "key": "headerData",
@@ -3164,7 +3164,7 @@
           {
             "key": "rawModeData",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "graphqlModeData",
@@ -3174,7 +3174,7 @@
           {
             "key": "dataOptions",
             "optional": true,
-            "type": "{ raw?: { language?: string }, urlencoded?: {}, params?: {}, binary?: {}, graphql?: {} }"
+            "type": "{ raw?: { language?: string }, urlencoded?: Record<string, any>, params?: Record<string, any>, binary?: Record<string, any>, graphql?: Record<string, any> }"
           },
           {
             "key": "auth",
@@ -3199,7 +3199,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model_id",
@@ -3286,12 +3286,12 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }"
+            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] } | null"
           },
           {
             "key": "method",
@@ -3311,12 +3311,12 @@
           {
             "key": "rawModeData",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dataOptions",
             "optional": true,
-            "type": "{ raw?: { language?: string }, urlencoded?: {}, params?: {}, binary?: {}, graphql?: {} }"
+            "type": "{ raw?: { language?: string }, urlencoded?: Record<string, any>, params?: Record<string, any>, binary?: Record<string, any>, graphql?: Record<string, any> }"
           },
           {
             "key": "responseCode",
@@ -3326,7 +3326,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
@@ -3336,12 +3336,12 @@
           {
             "key": "cookies",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
@@ -3356,7 +3356,7 @@
           {
             "key": "rawDataType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "requestObject",
@@ -3376,7 +3376,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "model_id",
@@ -3468,7 +3468,7 @@
           {
             "key": "environment",
             "optional": true,
-            "type": "{ name: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: { postman?: {}, provider?: postman }, description?: string })[] }"
+            "type": "{ name: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: { postman?: Record<string, any>, provider?: postman }, description?: string })[] }"
           }
         ]
       },
@@ -3540,7 +3540,7 @@
           {
             "key": "environment",
             "optional": true,
-            "type": "{ id?: string, name?: string, owner?: string, createdAt?: string, updatedAt?: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: {}, description?: string })[], isPublic?: boolean }"
+            "type": "{ id?: string, name?: string, owner?: string, createdAt?: string, updatedAt?: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: Record<string, any>, description?: string })[], isPublic?: boolean }"
           }
         ]
       }
@@ -3700,7 +3700,7 @@
           {
             "key": "environment",
             "optional": true,
-            "type": "{ name?: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: { postman?: {}, provider?: postman }, description?: string })[] }"
+            "type": "{ name?: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: { postman?: Record<string, any>, provider?: postman }, description?: string })[] }"
           }
         ]
       },
@@ -3731,7 +3731,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{ op: string, path: string, value: { enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: { postman?: {}, provider?: postman }, description?: string } }[] | { op: string, path: string, value: string }[] | { op: string, path: string, value: string }[] | { op: string, path: string }[]"
+            "type": "{ op: string, path: string, value: { enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: { postman?: Record<string, any>, provider?: postman }, description?: string } }[] | { op: string, path: string, value: string }[] | { op: string, path: string, value: string }[] | { op: string, path: string }[]"
           }
         ]
       },
@@ -3741,7 +3741,7 @@
           {
             "key": "environment",
             "optional": true,
-            "type": "{ id?: string, name?: string, owner?: string, createdAt?: string, updatedAt?: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: {}, description?: string })[], uid?: string }"
+            "type": "{ id?: string, name?: string, owner?: string, createdAt?: string, updatedAt?: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: Record<string, any>, description?: string })[], uid?: string }"
           }
         ]
       }
@@ -4293,7 +4293,7 @@
           {
             "key": "run",
             "optional": true,
-            "type": "{ info?: { jobId?: string, collectionUid?: string, environmentUid?: string, monitorId?: string, name?: string, status?: string, startedAt?: string, finishedAt?: string }, stats?: { assertions?: { total?: number, failed?: number }, requests?: { total?: number, failed?: number }, runCount?: number, errorCount?: number, abortedCount?: number, responseLatency?: number, responseSize?: number }, executions?: { id?: number, item?: any, request?: any, response?: any, errors?: any[] }[], failures?: {}[] }"
+            "type": "{ info?: { jobId?: string, collectionUid?: string, environmentUid?: string, monitorId?: string, name?: string, status?: string, startedAt?: string, finishedAt?: string }, stats?: { assertions?: { total?: number, failed?: number }, requests?: { total?: number, failed?: number }, runCount?: number, errorCount?: number, abortedCount?: number, responseLatency?: number, responseSize?: number }, executions?: { id?: number, item?: any, request?: any, response?: any, errors?: any[] }[], failures?: Record<string, any>[] }"
           }
         ]
       }
@@ -4831,7 +4831,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -5232,7 +5232,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{ type: json, input: {}, options?: { requestNameSource?: Fallback | URL, indentCharacter?: Tab | Space, parametersResolution?: string, folderStrategy?: Paths | Tags, includeAuthInfoInExample?: boolean, enableOptionalParameters?: boolean, keepImplicitHeaders?: boolean, includeDeprecated?: boolean, alwaysInheritAuthentication?: boolean, nestedFolderHierarchy?: boolean } } | { type: string, input: string, options?: { requestNameSource?: Fallback | URL, indentCharacter?: Tab | Space, parametersResolution?: string, folderStrategy?: Paths | Tags, includeAuthInfoInExample?: boolean, enableOptionalParameters?: boolean, keepImplicitHeaders?: boolean, includeDeprecated?: boolean, alwaysInheritAuthentication?: boolean, nestedFolderHierarchy?: boolean } }"
+            "type": "{ type: json, input: Record<string, any>, options?: { requestNameSource?: Fallback | URL, indentCharacter?: Tab | Space, parametersResolution?: string, folderStrategy?: Paths | Tags, includeAuthInfoInExample?: boolean, enableOptionalParameters?: boolean, keepImplicitHeaders?: boolean, includeDeprecated?: boolean, alwaysInheritAuthentication?: boolean, nestedFolderHierarchy?: boolean } } | { type: string, input: string, options?: { requestNameSource?: Fallback | URL, indentCharacter?: Tab | Space, parametersResolution?: string, folderStrategy?: Paths | Tags, includeAuthInfoInExample?: boolean, enableOptionalParameters?: boolean, keepImplicitHeaders?: boolean, includeDeprecated?: boolean, alwaysInheritAuthentication?: boolean, nestedFolderHierarchy?: boolean } }"
           }
         ]
       },

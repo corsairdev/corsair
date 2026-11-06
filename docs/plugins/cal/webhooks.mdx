@@ -74,8 +74,7 @@ A booking was cancelled
     name: string,
     email: string,
     timeZone?: string,
-    language?: {
-    },
+    language?: Record<string, any>,
     absent?: boolean
   }[],
   hosts?: {
@@ -85,8 +84,7 @@ A booking was cancelled
     username?: string,
     timeZone?: string
   }[],
-  metadata?: {
-  } | null
+  metadata?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -120,8 +118,7 @@ A booking was cancelled
       name: string,
       email: string,
       timeZone?: string,
-      language?: {
-      },
+      language?: Record<string, any>,
       absent?: boolean
     }[],
     hosts?: {
@@ -131,8 +128,7 @@ A booking was cancelled
       username?: string,
       timeZone?: string
     }[],
-    metadata?: {
-    } | null
+    metadata?: Record<string, any> | null
   }
 }
 ```
@@ -196,8 +192,7 @@ A new booking was created
     name: string,
     email: string,
     timeZone?: string,
-    language?: {
-    },
+    language?: Record<string, any>,
     absent?: boolean
   }[],
   hosts?: {
@@ -207,8 +202,7 @@ A new booking was created
     username?: string,
     timeZone?: string
   }[],
-  metadata?: {
-  } | null
+  metadata?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -242,8 +236,7 @@ A new booking was created
       name: string,
       email: string,
       timeZone?: string,
-      language?: {
-      },
+      language?: Record<string, any>,
       absent?: boolean
     }[],
     hosts?: {
@@ -253,8 +246,7 @@ A new booking was created
       username?: string,
       timeZone?: string
     }[],
-    metadata?: {
-    } | null
+    metadata?: Record<string, any> | null
   }
 }
 ```
@@ -318,8 +310,7 @@ A booking was rescheduled
     name: string,
     email: string,
     timeZone?: string,
-    language?: {
-    },
+    language?: Record<string, any>,
     absent?: boolean
   }[],
   hosts?: {
@@ -329,8 +320,7 @@ A booking was rescheduled
     username?: string,
     timeZone?: string
   }[],
-  metadata?: {
-  } | null
+  metadata?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -364,8 +354,7 @@ A booking was rescheduled
       name: string,
       email: string,
       timeZone?: string,
-      language?: {
-      },
+      language?: Record<string, any>,
       absent?: boolean
     }[],
     hosts?: {
@@ -375,8 +364,7 @@ A booking was rescheduled
       username?: string,
       timeZone?: string
     }[],
-    metadata?: {
-    } | null
+    metadata?: Record<string, any> | null
   }
 }
 ```
@@ -440,8 +428,7 @@ A meeting ended
     name: string,
     email: string,
     timeZone?: string,
-    language?: {
-    },
+    language?: Record<string, any>,
     absent?: boolean
   }[],
   hosts?: {
@@ -451,8 +438,7 @@ A meeting ended
     username?: string,
     timeZone?: string
   }[],
-  metadata?: {
-  } | null
+  metadata?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -486,8 +472,7 @@ A meeting ended
       name: string,
       email: string,
       timeZone?: string,
-      language?: {
-      },
+      language?: Record<string, any>,
       absent?: boolean
     }[],
     hosts?: {
@@ -497,8 +482,7 @@ A meeting ended
       username?: string,
       timeZone?: string
     }[],
-    metadata?: {
-    } | null
+    metadata?: Record<string, any> | null
   }
 }
 ```
@@ -539,17 +523,7 @@ Ping test to verify webhook endpoint
 |------|------|----------|-------------|
 | `triggerEvent` | `PING` | Yes | — |
 | `createdAt` | `string` | No | — |
-| `payload` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="payload full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payload` | `Record<string, any>` | No | — |
 
 
 
@@ -560,8 +534,7 @@ Ping test to verify webhook endpoint
 {
   triggerEvent: PING,
   createdAt?: string,
-  payload?: {
-  }
+  payload?: Record<string, any>
 }
 ```
 </Accordion>

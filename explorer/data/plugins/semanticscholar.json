@@ -1,7 +1,7 @@
 {
   "id": "semanticscholar",
-  "displayName": "SemanticScholar",
-  "description": "SemanticScholar plugin for Corsair",
+  "displayName": "Semantic Scholar",
+  "description": "Academic search API for papers, authors, citations, references, paper recommendations, text snippets, and dataset releases.",
   "npmPackageName": "@corsair-dev/semanticscholar",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -41,7 +41,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ authorId?: string | null, externalIds?: {} | null, url?: string | null, name?: string | null, affiliations?: string[] | null, homepage?: string | null, paperCount?: number | null, citationCount?: number | null, hIndex?: number | null, papers?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[] | null } | null[]"
+        "type": "({ authorId?: string | null, externalIds?: Record<string, any> | null, url?: string | null, name?: string | null, affiliations?: string[] | null, homepage?: string | null, paperCount?: number | null, citationCount?: number | null, hIndex?: number | null, papers?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[] | null } | null)[]"
       }
     },
     {
@@ -72,52 +72,52 @@
           {
             "key": "authorId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "externalIds",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "affiliations",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "homepage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paperCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "citationCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "hIndex",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "papers",
             "optional": true,
-            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[] | null"
           }
         ]
       }
@@ -175,17 +175,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
           }
         ]
       }
@@ -237,12 +237,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ authorId?: string | null, externalIds?: {} | null, url?: string | null, name?: string | null, affiliations?: string[] | null, homepage?: string | null, paperCount?: number | null, citationCount?: number | null, hIndex?: number | null, papers?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[] | null }[]"
+            "type": "{ authorId?: string | null, externalIds?: Record<string, any> | null, url?: string | null, name?: string | null, affiliations?: string[] | null, homepage?: string | null, paperCount?: number | null, citationCount?: number | null, hIndex?: number | null, papers?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[] | null }[]"
           }
         ]
       }
@@ -273,17 +273,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "README",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "files",
@@ -344,17 +344,17 @@
           {
             "key": "release_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "releaseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "datasets",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           }
         ]
       }
@@ -422,7 +422,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null } | null[]"
+        "type": "({ paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null } | null)[]"
       }
     },
     {
@@ -453,122 +453,122 @@
           {
             "key": "paperId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "corpusId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "externalIds",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "abstract",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "venue",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "publicationVenue",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "year",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "referenceCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "citationCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "influentialCitationCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "isOpenAccess",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "openAccessPdf",
             "optional": true,
-            "type": "{ url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null }"
+            "type": "{ url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null"
           },
           {
             "key": "fieldsOfStudy",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "s2FieldsOfStudy",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           },
           {
             "key": "publicationTypes",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "publicationDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "journal",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "authors",
             "optional": true,
-            "type": "{ authorId?: string | null, name?: string | null }[]"
+            "type": "{ authorId?: string | null, name?: string | null }[] | null"
           },
           {
             "key": "citations",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           },
           {
             "key": "references",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           },
           {
             "key": "embedding",
             "optional": true,
-            "type": "{ model?: string | null, vector?: number[] | null }"
+            "type": "{ model?: string | null, vector?: number[] | null } | null"
           },
           {
             "key": "tldr",
             "optional": true,
-            "type": "{ model?: string | null, text?: string | null }"
+            "type": "{ model?: string | null, text?: string | null } | null"
           }
         ]
       }
@@ -621,12 +621,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ authorId?: string | null, externalIds?: {} | null, url?: string | null, name?: string | null, affiliations?: string[] | null, homepage?: string | null, paperCount?: number | null, citationCount?: number | null, hIndex?: number | null, papers?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[] | null }[]"
+            "type": "{ authorId?: string | null, externalIds?: Record<string, any> | null, url?: string | null, name?: string | null, affiliations?: string[] | null, homepage?: string | null, paperCount?: number | null, citationCount?: number | null, hIndex?: number | null, papers?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[] | null }[]"
           }
         ]
       }
@@ -674,12 +674,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ contexts?: string[] | null, intents?: string[] | null, isInfluential?: boolean | null, citingPaper?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null } | null }[]"
+            "type": "{ contexts?: string[] | null, intents?: string[] | null, isInfluential?: boolean | null, citingPaper?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null } | null }[]"
           }
         ]
       }
@@ -727,12 +727,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ contexts?: string[] | null, intents?: string[] | null, isInfluential?: boolean | null, citedPaper?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null } | null }[]"
+            "type": "{ contexts?: string[] | null, intents?: string[] | null, isInfluential?: boolean | null, citedPaper?: { paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null } | null }[]"
           }
         ]
       }
@@ -764,7 +764,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null, matchScore: number }[]"
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null, matchScore: number }[]"
           }
         ]
       }
@@ -851,17 +851,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
           }
         ]
       }
@@ -948,17 +948,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
           }
         ]
       }
@@ -1045,17 +1045,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
           }
         ]
       }
@@ -1098,7 +1098,7 @@
           {
             "key": "recommendedPapers",
             "optional": false,
-            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
           }
         ]
       }
@@ -1140,7 +1140,7 @@
           {
             "key": "recommendedPapers",
             "optional": false,
-            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: {} | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
+            "type": "{ paperId?: string | null, corpusId?: string | number | null, externalIds?: Record<string, any> | null, url?: string | null, title?: string | null, abstract?: string | null, venue?: string | null, publicationVenue?: {} | null, year?: number | null, referenceCount?: number | null, citationCount?: number | null, influentialCitationCount?: number | null, isOpenAccess?: boolean | null, openAccessPdf?: { url?: string | null, status?: string | null, license?: string | null, disclaimer?: string | null } | null, fieldsOfStudy?: string[] | null, s2FieldsOfStudy?: {}[] | null, publicationTypes?: string[] | null, publicationDate?: string | null, journal?: {} | null, authors?: { authorId?: string | null, name?: string | null }[] | null, citations?: {}[] | null, references?: {}[] | null, embedding?: { model?: string | null, vector?: number[] | null } | null, tldr?: { model?: string | null, text?: string | null } | null }[]"
           }
         ]
       }

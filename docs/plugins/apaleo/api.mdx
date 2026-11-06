@@ -59,37 +59,21 @@ await corsair.apaleo.api.properties.clone({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `code` | `string` | Yes | — |
-| `name` | `object` | Yes | — |
+| `name` | `Record<string, string \| null>` | Yes | — |
 | `companyName` | `string` | Yes | — |
-| `managingDirectors` | `string` | No | — |
+| `managingDirectors` | `string \| null` | No | — |
 | `commercialRegisterEntry` | `string` | Yes | — |
 | `taxId` | `string` | Yes | — |
-| `description` | `object` | No | — |
+| `description` | `Record<string, string \| null> \| null` | No | — |
 | `location` | `object` | Yes | — |
 | `bankAccount` | `object` | No | — |
-| `paymentTerms` | `object` | Yes | — |
+| `paymentTerms` | `Record<string, string \| null>` | Yes | — |
 | `timeZone` | `string` | Yes | — |
 | `defaultCheckInTime` | `string` | Yes | — |
 | `defaultCheckOutTime` | `string` | Yes | — |
 | `currencyCode` | `string` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="name full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="description full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="location full type">
 
 ```ts
@@ -111,14 +95,6 @@ await corsair.apaleo.api.properties.clone({});
   iban?: string,
   bic?: string,
   bank?: string
-}
-```
-</Accordion>
-
-<Accordion title="paymentTerms full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -152,7 +128,7 @@ await corsair.apaleo.api.properties.count({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `Test \| Live[]` | No | — |
+| `status` | `(Test \| Live)[]` | No | — |
 | `includeArchived` | `boolean` | No | — |
 | `countryCode` | `string[]` | No | — |
 
@@ -210,37 +186,21 @@ await corsair.apaleo.api.properties.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `string` | Yes | — |
-| `name` | `object` | Yes | — |
+| `name` | `Record<string, string \| null>` | Yes | — |
 | `companyName` | `string` | Yes | — |
-| `managingDirectors` | `string` | No | — |
+| `managingDirectors` | `string \| null` | No | — |
 | `commercialRegisterEntry` | `string` | Yes | — |
 | `taxId` | `string` | Yes | — |
-| `description` | `object` | No | — |
+| `description` | `Record<string, string \| null> \| null` | No | — |
 | `location` | `object` | Yes | — |
 | `bankAccount` | `object` | No | — |
-| `paymentTerms` | `object` | Yes | — |
+| `paymentTerms` | `Record<string, string \| null>` | Yes | — |
 | `timeZone` | `string` | Yes | — |
 | `defaultCheckInTime` | `string` | Yes | — |
 | `defaultCheckOutTime` | `string` | Yes | — |
 | `currencyCode` | `string` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="name full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="description full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="location full type">
 
 ```ts
@@ -262,14 +222,6 @@ await corsair.apaleo.api.properties.create({});
   iban?: string,
   bic?: string,
   bank?: string
-}
-```
-</Accordion>
-
-<Accordion title="paymentTerms full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -343,41 +295,25 @@ await corsair.apaleo.api.properties.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `code` | `string` | Yes | — |
-| `propertyTemplateId` | `string` | No | — |
+| `propertyTemplateId` | `string \| null` | No | — |
 | `isTemplate` | `boolean` | Yes | — |
-| `name` | `object` | Yes | — |
-| `description` | `object` | No | — |
+| `name` | `string \| Record<string, string \| null>` | Yes | — |
+| `description` | `string \| Record<string, string \| null> \| null` | No | — |
 | `companyName` | `string` | Yes | — |
-| `managingDirectors` | `string` | No | — |
+| `managingDirectors` | `string \| null` | No | — |
 | `commercialRegisterEntry` | `string` | Yes | — |
 | `taxId` | `string` | Yes | — |
 | `location` | `object` | Yes | — |
-| `bankAccount` | `object` | No | — |
-| `paymentTerms` | `object` | Yes | — |
+| `bankAccount` | `object \| null` | No | — |
+| `paymentTerms` | `Record<string, string \| null>` | Yes | — |
 | `timeZone` | `string` | Yes | — |
 | `currencyCode` | `string` | Yes | — |
 | `created` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
 | `isArchived` | `boolean` | Yes | — |
-| `actions` | `object[]` | No | — |
+| `actions` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="name full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="description full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
 <Accordion title="location full type">
 
 ```ts
@@ -399,15 +335,7 @@ string | {
   iban?: string | null,
   bic?: string | null,
   bank?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="paymentTerms full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 
@@ -421,7 +349,7 @@ string | {
     code?: string | null,
     message?: string | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -446,7 +374,7 @@ await corsair.apaleo.api.properties.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `Test \| Live[]` | No | — |
+| `status` | `(Test \| Live)[]` | No | — |
 | `includeArchived` | `boolean` | No | — |
 | `countryCode` | `string[]` | No | — |
 | `expand` | `string[]` | No | — |
@@ -471,10 +399,8 @@ await corsair.apaleo.api.properties.list({});
   code: string,
   propertyTemplateId?: string | null,
   isTemplate: boolean,
-  name: string | {
-  },
-  description?: string | {
-  } | null,
+  name: string | Record<string, string | null>,
+  description?: string | Record<string, string | null> | null,
   companyName: string,
   managingDirectors?: string | null,
   commercialRegisterEntry: string,
@@ -492,8 +418,7 @@ await corsair.apaleo.api.properties.list({});
     bic?: string | null,
     bank?: string | null
   } | null,
-  paymentTerms: {
-  },
+  paymentTerms: Record<string, string | null>,
   timeZone: string,
   currencyCode: string,
   created: string,
@@ -695,7 +620,7 @@ await corsair.apaleo.api.unitAttributes.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -765,7 +690,7 @@ await corsair.apaleo.api.unitGroups.count({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `propertyId` | `string` | No | — |
-| `unitGroupTypes` | `BedRoom \| MeetingRoom \| EventSpace \| ParkingLot \| Other[]` | No | — |
+| `unitGroupTypes` | `(BedRoom \| MeetingRoom \| EventSpace \| ParkingLot \| Other)[]` | No | — |
 
 
 
@@ -797,37 +722,21 @@ await corsair.apaleo.api.unitGroups.create({});
 |------|------|----------|-------------|
 | `code` | `string` | Yes | — |
 | `propertyId` | `string` | Yes | — |
-| `name` | `object` | Yes | — |
-| `description` | `object` | Yes | — |
+| `name` | `Record<string, string \| null>` | Yes | — |
+| `description` | `Record<string, string \| null>` | Yes | — |
 | `maxPersons` | `number` | Yes | — |
-| `rank` | `number` | No | — |
-| `type` | `BedRoom \| MeetingRoom \| EventSpace \| ParkingLot` | No | — |
-| `connectedUnitGroups` | `object[]` | No | — |
+| `rank` | `number \| null` | No | — |
+| `type` | `BedRoom \| MeetingRoom \| EventSpace \| ParkingLot \| null` | No | — |
+| `connectedUnitGroups` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="name full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="description full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="connectedUnitGroups full type">
 
 ```ts
 {
   unitGroupId: string,
   memberCount: number
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -931,13 +840,13 @@ await corsair.apaleo.api.unitGroups.get({});
 | `id` | `string` | Yes | — |
 | `code` | `string` | Yes | — |
 | `property` | `object` | Yes | — |
-| `name` | `object` | Yes | — |
+| `name` | `string \| Record<string, string \| null>` | Yes | — |
 | `memberCount` | `number` | Yes | — |
-| `description` | `object` | Yes | — |
+| `description` | `string \| Record<string, string \| null>` | Yes | — |
 | `maxPersons` | `number` | Yes | — |
-| `rank` | `number` | No | — |
+| `rank` | `number \| null` | No | — |
 | `type` | `string` | Yes | — |
-| `connectedUnitGroups` | `object[]` | No | — |
+| `connectedUnitGroups` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="property full type">
@@ -952,22 +861,6 @@ await corsair.apaleo.api.unitGroups.get({});
 ```
 </Accordion>
 
-<Accordion title="name full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="description full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
 <Accordion title="connectedUnitGroups full type">
 
 ```ts
@@ -977,7 +870,7 @@ string | {
   description: string,
   memberCount: number,
   maxPersons?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1003,7 +896,7 @@ await corsair.apaleo.api.unitGroups.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `propertyId` | `string` | No | — |
-| `unitGroupTypes` | `BedRoom \| MeetingRoom \| EventSpace \| ParkingLot \| Other[]` | No | — |
+| `unitGroupTypes` | `(BedRoom \| MeetingRoom \| EventSpace \| ParkingLot \| Other)[]` | No | — |
 | `expand` | `string[]` | No | — |
 | `pageNumber` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -1030,11 +923,9 @@ await corsair.apaleo.api.unitGroups.list({});
     name?: string | null,
     description?: string | null
   },
-  name: string | {
-  },
+  name: string | Record<string, string | null>,
   memberCount: number,
-  description: string | {
-  },
+  description: string | Record<string, string | null>,
   maxPersons: number,
   rank?: number | null,
   type: string,
@@ -1071,36 +962,20 @@ await corsair.apaleo.api.unitGroups.replace({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `object` | Yes | — |
-| `description` | `object` | Yes | — |
+| `name` | `Record<string, string \| null>` | Yes | — |
+| `description` | `Record<string, string \| null>` | Yes | — |
 | `maxPersons` | `number` | No | — |
-| `rank` | `number` | No | — |
-| `connectedUnitGroups` | `object[]` | No | — |
+| `rank` | `number \| null` | No | — |
+| `connectedUnitGroups` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="name full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="description full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="connectedUnitGroups full type">
 
 ```ts
 {
   unitGroupId: string,
   memberCount: number
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1175,28 +1050,20 @@ await corsair.apaleo.api.units.create({});
 |------|------|----------|-------------|
 | `propertyId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `object` | Yes | — |
-| `unitGroupId` | `string` | No | — |
+| `description` | `Record<string, string \| null>` | Yes | — |
+| `unitGroupId` | `string \| null` | No | — |
 | `maxPersons` | `number` | Yes | — |
-| `condition` | `Clean \| CleanToBeInspected \| Dirty` | No | — |
-| `attributes` | `object[]` | No | — |
-| `connectedUnits` | `object[]` | No | — |
+| `condition` | `Clean \| CleanToBeInspected \| Dirty \| null` | No | — |
+| `attributes` | `object[] \| null` | No | — |
+| `connectedUnits` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="description full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attributes full type">
 
 ```ts
 {
   id: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1205,7 +1072,7 @@ await corsair.apaleo.api.units.create({});
 ```ts
 {
   unitId: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1247,8 +1114,7 @@ await corsair.apaleo.api.units.createBulk({});
 {
   propertyId: string,
   name: string,
-  description: {
-  },
+  description: Record<string, string | null>,
   unitGroupId?: string | null,
   maxPersons: number,
   condition?: Clean | CleanToBeInspected | Dirty | null,
@@ -1361,28 +1227,20 @@ await corsair.apaleo.api.units.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `object` | Yes | — |
+| `description` | `string \| Record<string, string \| null>` | Yes | — |
 | `property` | `object` | Yes | — |
-| `unitGroup` | `object` | No | — |
-| `connectingUnit` | `object` | No | — |
+| `unitGroup` | `object \| null` | No | — |
+| `connectingUnit` | `object \| null` | No | — |
 | `status` | `object` | Yes | — |
 | `maxPersons` | `number` | Yes | — |
 | `created` | `string` | Yes | — |
-| `archived` | `string` | No | — |
-| `isArchived` | `boolean` | No | — |
-| `attributes` | `object[]` | No | — |
-| `connectedUnits` | `object[]` | No | — |
-| `actions` | `object[]` | No | — |
+| `archived` | `string \| null` | No | — |
+| `isArchived` | `boolean \| null` | No | — |
+| `attributes` | `object[] \| null` | No | — |
+| `connectedUnits` | `object[] \| null` | No | — |
+| `actions` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="description full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
 <Accordion title="property full type">
 
 ```ts
@@ -1404,7 +1262,7 @@ string | {
   name?: string | null,
   description?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1416,7 +1274,7 @@ string | {
   name?: string | null,
   description?: string | null,
   unitGroupId?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1444,7 +1302,7 @@ string | {
   id?: string | null,
   name?: string | null,
   description?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1458,7 +1316,7 @@ string | {
   unitGroupId?: string | null,
   condition?: string | null,
   maxPersons?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1472,7 +1330,7 @@ string | {
     code?: string | null,
     message?: string | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1526,8 +1384,7 @@ await corsair.apaleo.api.units.list({});
 {
   id: string,
   name: string,
-  description: string | {
-  },
+  description: string | Record<string, string | null>,
   property: {
     id?: string | null,
     code?: string | null,

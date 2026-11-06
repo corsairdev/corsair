@@ -40,16 +40,16 @@ await corsair.benzinga.api.calendar.getConsensusRatings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `aggregate_ratings` | `object` | No | — |
-| `aggregate_type` | `string` | No | — |
-| `consensus_price_target` | `number` | No | — |
-| `consensus_rating` | `string` | No | — |
-| `consensus_rating_val` | `number` | No | — |
-| `high_price_target` | `number` | No | — |
-| `low_price_target` | `number` | No | — |
-| `total_analyst_count` | `number` | No | — |
-| `unique_analyst_count` | `number` | No | — |
-| `updated_at` | `string` | No | — |
+| `aggregate_ratings` | `object \| null` | No | — |
+| `aggregate_type` | `string \| null` | No | — |
+| `consensus_price_target` | `number \| null` | No | — |
+| `consensus_rating` | `string \| null` | No | — |
+| `consensus_rating_val` | `number \| null` | No | — |
+| `high_price_target` | `number \| null` | No | — |
+| `low_price_target` | `number \| null` | No | — |
+| `total_analyst_count` | `number \| null` | No | — |
+| `unique_analyst_count` | `number \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="aggregate_ratings full type">
@@ -61,7 +61,7 @@ await corsair.benzinga.api.calendar.getConsensusRatings({});
   hold?: number | null,
   sell?: number | null,
   strong_sell?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -74,7 +74,7 @@ await corsair.benzinga.api.calendar.getConsensusRatings({});
 
 `calendar.getEarningsStream`
 
-Get the WebSocket URL for the real-time earnings calendar stream (wss://api.benzinga.com/api/v2.1/calendar/earnings/stream); append token=<api key> to connect
+Get the WebSocket URL for the real-time earnings calendar stream (wss://api.benzinga.com/api/v2.1/calendar/earnings/stream); append token=&lt;api key&gt; to connect
 
 **Risk:** `read`
 
@@ -97,7 +97,7 @@ await corsair.benzinga.api.calendar.getEarningsStream({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `authQueryParam` | `token` | Yes | — |
-| `commands` | `ping \| replay[]` | Yes | — |
+| `commands` | `(ping \| replay)[]` | Yes | — |
 
 
 
@@ -832,7 +832,7 @@ await corsair.benzinga.api.news.get({});
 
 `news.getStream`
 
-Get the WebSocket URL for the real-time news stream (wss://api.benzinga.com/api/v1/news/stream); append token=<api key> to connect
+Get the WebSocket URL for the real-time news stream (wss://api.benzinga.com/api/v1/news/stream); append token=&lt;api key&gt; to connect
 
 **Risk:** `read`
 
@@ -855,7 +855,7 @@ await corsair.benzinga.api.news.getStream({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `authQueryParam` | `token` | Yes | — |
-| `commands` | `ping \| replay[]` | Yes | — |
+| `commands` | `(ping \| replay)[]` | Yes | — |
 
 
 
@@ -929,8 +929,10 @@ await corsair.benzinga.api.news.listRemoved({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  id: number,
+  updated?: string | null
+}[]>
 ```
 </Accordion>
 </AccordionGroup>

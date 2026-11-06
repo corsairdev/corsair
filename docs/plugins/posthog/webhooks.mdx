@@ -46,53 +46,20 @@ A PostHog event was captured
 | `distinct_id` | `string` | Yes | — |
 | `timestamp` | `string` | No | — |
 | `uuid` | `string` | No | — |
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, any>` | No | — |
 | `person` | `object` | No | — |
-| `groups` | `object` | No | — |
-| `$set` | `object` | No | — |
-| `$set_once` | `object` | No | — |
+| `groups` | `Record<string, any>` | No | — |
+| `$set` | `Record<string, any>` | No | — |
+| `$set_once` | `Record<string, any>` | No | — |
 | `$unset` | `string[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="person full type">
 
 ```ts
 {
   distinct_id: string,
-  properties?: {
-  }
-}
-```
-</Accordion>
-
-<Accordion title="groups full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="$set full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="$set_once full type">
-
-```ts
-{
+  properties?: Record<string, any>
 }
 ```
 </Accordion>
@@ -109,19 +76,14 @@ A PostHog event was captured
   distinct_id: string,
   timestamp?: string,
   uuid?: string,
-  properties?: {
-  },
+  properties?: Record<string, any>,
   person?: {
     distinct_id: string,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
-  groups?: {
-  },
-  $set?: {
-  },
-  $set_once?: {
-  },
+  groups?: Record<string, any>,
+  $set?: Record<string, any>,
+  $set_once?: Record<string, any>,
   $unset?: string[]
 }
 ```

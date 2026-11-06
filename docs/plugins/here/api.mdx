@@ -63,9 +63,9 @@ await corsair.here.api.maps.getMapImage({});
 |------|------|----------|-------------|
 | `lat` | `number` | Yes | — |
 | `lng` | `number` | Yes | — |
-| `zoom` | `number` | Yes | — |
-| `width` | `number` | Yes | — |
-| `height` | `number` | Yes | — |
+| `zoom` | `number` | No | Defaults to 14. |
+| `width` | `number` | No | Defaults to 800. |
+| `height` | `number` | No | Defaults to 400. |
 | `format` | `png \| jpeg` | No | — |
 | `style` | `string` | No | — |
 
@@ -102,7 +102,7 @@ await corsair.here.api.routing.computeMatrix({});
 |------|------|----------|-------------|
 | `origins` | `object[]` | Yes | — |
 | `destinations` | `object[]` | Yes | — |
-| `regionDefinition` | `object` | No | Defaults to { type: "world" }. |
+| `regionDefinition` | `Record<string, any>` | No | Defaults to &#123; type: "world" &#125;. |
 | `transportMode` | `string` | No | — |
 | `departureTime` | `string` | No | — |
 | `async` | `boolean` | No | — |
@@ -128,14 +128,6 @@ await corsair.here.api.routing.computeMatrix({});
 }[]
 ```
 </Accordion>
-
-<Accordion title="regionDefinition full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -146,17 +138,7 @@ await corsair.here.api.routing.computeMatrix({});
 |------|------|----------|-------------|
 | `matrixId` | `string` | No | — |
 | `status` | `string` | No | — |
-| `matrix` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="matrix full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `matrix` | `Record<string, any>` | No | — |
 
 
 
@@ -189,7 +171,7 @@ await corsair.here.api.routing.decodeRouteHandle({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `routes` | `object[]` | No | — |
-| `notices` | `object[]` | No | — |
+| `notices` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="routes full type">
@@ -197,16 +179,7 @@ await corsair.here.api.routing.decodeRouteHandle({});
 ```ts
 {
   id?: string,
-  sections?: {
-  }[]
-}[]
-```
-</Accordion>
-
-<Accordion title="notices full type">
-
-```ts
-{
+  sections?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -248,17 +221,7 @@ await corsair.here.api.routing.findWaypointSequence({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `results` | `Record<string, any>[]` | No | — |
 
 
 
@@ -281,8 +244,8 @@ await corsair.here.api.routing.getIsolines({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `origin` | `string` | Yes | Center lat,lng. |
-| `transportMode` | `car \| truck \| pedestrian \| bicycle` | Yes | — |
-| `rangeType` | `time \| distance \| consumption` | Yes | — |
+| `transportMode` | `car \| truck \| pedestrian \| bicycle` | No | Defaults to "car". |
+| `rangeType` | `time \| distance \| consumption` | No | Defaults to "time". |
 | `rangeValues` | `string` | Yes | Comma-separated ranges, e.g. 600,1200. |
 | `departureTime` | `string` | No | — |
 
@@ -292,17 +255,7 @@ await corsair.here.api.routing.getIsolines({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `isolines` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="isolines full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `isolines` | `Record<string, any>[]` | No | — |
 
 
 
@@ -365,17 +318,7 @@ await corsair.here.api.routing.getMatrixResult({});
 |------|------|----------|-------------|
 | `matrixId` | `string` | No | — |
 | `status` | `string` | No | — |
-| `matrix` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="matrix full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `matrix` | `Record<string, any>` | No | — |
 
 
 
@@ -399,7 +342,7 @@ await corsair.here.api.routing.getRoutes({});
 |------|------|----------|-------------|
 | `origin` | `string` | Yes | Origin lat,lng. |
 | `destination` | `string` | Yes | Destination lat,lng. |
-| `transportMode` | `car \| truck \| pedestrian \| bicycle \| scooter \| taxi \| bus` | Yes | — |
+| `transportMode` | `car \| truck \| pedestrian \| bicycle \| scooter \| taxi \| bus` | No | Defaults to "car". |
 | `via` | `string \| string[]` | No | — |
 | `return` | `string` | No | Comma list, e.g. summary,polyline,actions. |
 | `departureTime` | `string` | No | — |
@@ -413,7 +356,7 @@ await corsair.here.api.routing.getRoutes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `routes` | `object[]` | No | — |
-| `notices` | `object[]` | No | — |
+| `notices` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="routes full type">
@@ -421,16 +364,7 @@ await corsair.here.api.routing.getRoutes({});
 ```ts
 {
   id?: string,
-  sections?: {
-  }[]
-}[]
-```
-</Accordion>
-
-<Accordion title="notices full type">
-
-```ts
-{
+  sections?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -459,17 +393,7 @@ await corsair.here.api.routing.listMatrixProfiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `profiles` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `Record<string, any>[]` | No | — |
 
 
 
@@ -493,23 +417,13 @@ await corsair.here.api.routing.postRoutes({});
 |------|------|----------|-------------|
 | `origin` | `string` | Yes | Origin lat,lng. |
 | `destination` | `string` | Yes | Destination lat,lng. |
-| `transportMode` | `car \| truck \| pedestrian \| bicycle \| scooter \| taxi \| bus` | Yes | — |
+| `transportMode` | `car \| truck \| pedestrian \| bicycle \| scooter \| taxi \| bus` | No | Defaults to "car". |
 | `via` | `string \| string[]` | No | — |
 | `return` | `string` | No | Comma list, e.g. summary,polyline,actions. |
 | `departureTime` | `string` | No | — |
 | `routingMode` | `fast \| short` | No | — |
 | `lang` | `string` | No | — |
-| `body` | `object` | No | Avoid areas, EV, or other POST-only Routing v8 fields. |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | Avoid areas, EV, or other POST-only Routing v8 fields. |
 
 
 
@@ -518,7 +432,7 @@ await corsair.here.api.routing.postRoutes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `routes` | `object[]` | No | — |
-| `notices` | `object[]` | No | — |
+| `notices` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="routes full type">
@@ -526,16 +440,7 @@ await corsair.here.api.routing.postRoutes({});
 ```ts
 {
   id?: string,
-  sections?: {
-  }[]
-}[]
-```
-</Accordion>
-
-<Accordion title="notices full type">
-
-```ts
-{
+  sections?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -1067,26 +972,8 @@ await corsair.here.api.traffic.getIncidentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `object` | No | — |
-| `results` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="result full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `result` | `Record<string, any>` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1119,18 +1006,8 @@ await corsair.here.api.traffic.getTrafficFlow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
 | `sourceUpdated` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1161,18 +1038,8 @@ await corsair.here.api.traffic.getTrafficIncidents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
 | `sourceUpdated` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1206,17 +1073,7 @@ await corsair.here.api.transit.getDepartures({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `boards` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="boards full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `boards` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1248,26 +1105,8 @@ await corsair.here.api.transit.getStations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `stations` | `object[]` | No | — |
-| `boards` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="stations full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="boards full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `stations` | `Record<string, any>[]` | No | — |
+| `boards` | `Record<string, any>[]` | No | — |
 
 
 

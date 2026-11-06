@@ -31,7 +31,7 @@ await corsair.bitbucket.api.commitsAndInsights.createRepositoriesCommitReportsAn
 | `repo_slug` | `string` | Yes | — |
 | `commit` | `string` | Yes | — |
 | `reportId` | `string` | Yes | — |
-| `body` | `object[]` | Yes | — |
+| `body` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -46,7 +46,7 @@ await corsair.bitbucket.api.commitsAndInsights.createRepositoriesCommitReportsAn
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -80,7 +80,7 @@ await corsair.bitbucket.api.commitsAndInsights.createRepositoriesCommits2({});
 | `repo_slug` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
-| `body` | `object[]` | No | — |
+| `body` | `object \| object[]` | No | — |
 | `page` | `number` | No | — |
 | `pagelen` | `number` | No | — |
 
@@ -97,7 +97,7 @@ await corsair.bitbucket.api.commitsAndInsights.createRepositoriesCommits2({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -192,7 +192,7 @@ await corsair.bitbucket.api.commitsAndInsights.getCommitBuildStatus({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -236,7 +236,7 @@ await corsair.bitbucket.api.commitsAndInsights.getCommitChanges({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -274,7 +274,7 @@ await corsair.bitbucket.api.commitsAndInsights.getCommitComment({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -345,7 +345,7 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommit({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -386,7 +386,7 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitComments({})
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -424,7 +424,7 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReport({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -463,7 +463,7 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReports({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -502,7 +502,7 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReportsAnnot
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -544,7 +544,7 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitStatuses({})
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -581,7 +581,7 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesMergeBase({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -646,7 +646,7 @@ await corsair.bitbucket.api.commitsAndInsights.listCommits({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -685,7 +685,7 @@ await corsair.bitbucket.api.commitsAndInsights.listCommitsFromRevision({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -723,7 +723,7 @@ await corsair.bitbucket.api.commitsAndInsights.listCommitsOnMaster({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -758,7 +758,7 @@ await corsair.bitbucket.api.commitsAndInsights.updateInsightsProjectsReposCommit
 | `repo_slug` | `string` | Yes | — |
 | `commit` | `string` | Yes | — |
 | `reportId` | `string` | Yes | — |
-| `body` | `object[]` | Yes | — |
+| `body` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -773,7 +773,7 @@ await corsair.bitbucket.api.commitsAndInsights.updateInsightsProjectsReposCommit
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -808,7 +808,7 @@ await corsair.bitbucket.api.commitsAndInsights.updateRepositoriesCommitComments(
 | `commit` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
-| `body` | `object[]` | Yes | — |
+| `body` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -823,7 +823,7 @@ await corsair.bitbucket.api.commitsAndInsights.updateRepositoriesCommitComments(
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -859,7 +859,7 @@ await corsair.bitbucket.api.commitsAndInsights.updateRepositoriesCommitReportsAn
 | `commit` | `string` | Yes | — |
 | `reportId` | `string` | Yes | — |
 | `annotationId` | `string` | Yes | — |
-| `body` | `object[]` | Yes | — |
+| `body` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -874,7 +874,7 @@ await corsair.bitbucket.api.commitsAndInsights.updateRepositoriesCommitReportsAn
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -924,7 +924,7 @@ await corsair.bitbucket.api.issues.createIssue({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -958,7 +958,7 @@ await corsair.bitbucket.api.issues.createIssueComment({});
 | `issue_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
-| `body` | `object[]` | Yes | — |
+| `body` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -973,7 +973,7 @@ await corsair.bitbucket.api.issues.createIssueComment({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1037,7 +1037,7 @@ await corsair.bitbucket.api.issues.getRepositoriesIssuesVote({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1075,7 +1075,7 @@ await corsair.bitbucket.api.issues.listIssues({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1113,7 +1113,7 @@ await corsair.bitbucket.api.issues.listVersions({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1176,7 +1176,7 @@ await corsair.bitbucket.api.issues.updateIssue({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1210,7 +1210,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.createTeamsPipelinesConfigVa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `username` | `string` | Yes | — |
-| `body` | `object[]` | No | — |
+| `body` | `object \| object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -1225,7 +1225,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.createTeamsPipelinesConfigVa
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1257,7 +1257,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.createUsersPipelinesConfigVa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `selected_user` | `string` | Yes | — |
-| `body` | `object[]` | No | — |
+| `body` | `object \| object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -1272,7 +1272,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.createUsersPipelinesConfigVa
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1337,7 +1337,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getDeploymentEnvironmentVari
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1372,7 +1372,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getOpenidConfiguration({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1409,7 +1409,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesEnvironments2
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1446,7 +1446,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelines2({}
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1484,7 +1484,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConf
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1522,7 +1522,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConf
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1560,7 +1560,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConf
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1598,7 +1598,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConf
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1636,7 +1636,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConf
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1675,7 +1675,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesStep
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1713,7 +1713,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.listDeployments({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1762,7 +1762,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.listPipelines({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1800,7 +1800,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.listRepositoriesEnvironments
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1833,7 +1833,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.updateTeamsPipelinesConfigVa
 |------|------|----------|-------------|
 | `username` | `string` | Yes | — |
 | `variable_uuid` | `string` | Yes | — |
-| `body` | `object[]` | Yes | — |
+| `body` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -1848,7 +1848,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.updateTeamsPipelinesConfigVa
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1881,7 +1881,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.updateUsersPipelinesConfigVa
 |------|------|----------|-------------|
 | `selected_user` | `string` | Yes | — |
 | `variable_uuid` | `string` | Yes | — |
-| `body` | `object[]` | Yes | — |
+| `body` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -1896,7 +1896,7 @@ await corsair.bitbucket.api.pipelinesAndDeployments.updateUsersPipelinesConfigVa
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1935,7 +1935,7 @@ await corsair.bitbucket.api.pullRequests.approvePullRequest({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1988,7 +1988,7 @@ await corsair.bitbucket.api.pullRequests.createPullRequest({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2022,7 +2022,7 @@ await corsair.bitbucket.api.pullRequests.createPullRequestComment({});
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
-| `body` | `object[]` | Yes | — |
+| `body` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -2037,7 +2037,7 @@ await corsair.bitbucket.api.pullRequests.createPullRequestComment({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2074,7 +2074,7 @@ await corsair.bitbucket.api.pullRequests.getPullRequest({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2112,7 +2112,7 @@ await corsair.bitbucket.api.pullRequests.getPullRequestComment({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2151,7 +2151,7 @@ await corsair.bitbucket.api.pullRequests.getPullRequestCommits({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2217,7 +2217,7 @@ await corsair.bitbucket.api.pullRequests.getPullRequestDiffstat({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2255,7 +2255,7 @@ await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsActivity({})
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2294,7 +2294,7 @@ await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsComments({})
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2335,7 +2335,7 @@ await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsStatuses({})
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2374,7 +2374,7 @@ await corsair.bitbucket.api.pullRequests.listPullRequests({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2415,7 +2415,7 @@ await corsair.bitbucket.api.pullRequests.listPullRequestTasks({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2452,7 +2452,7 @@ await corsair.bitbucket.api.pullRequests.requestPullRequestChanges({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2487,7 +2487,7 @@ await corsair.bitbucket.api.repositories.createRepository({});
 |------|------|----------|-------------|
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
-| `body` | `object[]` | No | — |
+| `body` | `object \| object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -2502,7 +2502,7 @@ await corsair.bitbucket.api.repositories.createRepository({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2567,7 +2567,7 @@ await corsair.bitbucket.api.repositories.getRepositoriesWatchers({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2603,7 +2603,7 @@ await corsair.bitbucket.api.repositories.getRepository({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2643,7 +2643,7 @@ await corsair.bitbucket.api.repositories.listRepositories({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2683,7 +2683,7 @@ await corsair.bitbucket.api.repositories.listRepositoriesInWorkspace({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2722,7 +2722,7 @@ await corsair.bitbucket.api.searchAndDiscovery.getHookEvents({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2760,7 +2760,7 @@ await corsair.bitbucket.api.searchAndDiscovery.getWorkspacesSearchCode({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2798,7 +2798,7 @@ await corsair.bitbucket.api.searchAndDiscovery.searchTeamCode({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2836,7 +2836,7 @@ await corsair.bitbucket.api.searchAndDiscovery.searchUserRepositoriesCode({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2871,7 +2871,7 @@ await corsair.bitbucket.api.snippets.createSnippetComment({});
 |------|------|----------|-------------|
 | `encoded_id` | `string \| number` | Yes | — |
 | `workspace` | `string` | Yes | — |
-| `body` | `object[]` | Yes | — |
+| `body` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -2886,7 +2886,7 @@ await corsair.bitbucket.api.snippets.createSnippetComment({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2948,7 +2948,7 @@ await corsair.bitbucket.api.snippets.getSnippet({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2984,7 +2984,7 @@ await corsair.bitbucket.api.snippets.getSnippetsWatch({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3021,7 +3021,7 @@ await corsair.bitbucket.api.snippets.listSnippets({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3067,7 +3067,7 @@ await corsair.bitbucket.api.sourceAndRefs.browseRepositoryPath({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3118,7 +3118,7 @@ await corsair.bitbucket.api.sourceAndRefs.createBranch({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3155,7 +3155,7 @@ await corsair.bitbucket.api.sourceAndRefs.getBranch({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3199,7 +3199,7 @@ await corsair.bitbucket.api.sourceAndRefs.getFileFromRepository({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3267,7 +3267,7 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesBranchingModel({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3303,7 +3303,7 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesEffectiveBranchingModel
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3346,7 +3346,7 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesFilehistory({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3386,7 +3386,7 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesRefs({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3423,7 +3423,7 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesRefsTags({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3462,7 +3462,7 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesSrc({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3502,7 +3502,7 @@ await corsair.bitbucket.api.sourceAndRefs.listBranches({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3546,7 +3546,7 @@ await corsair.bitbucket.api.sourceAndRefs.listRepositoryPaths({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3586,7 +3586,7 @@ await corsair.bitbucket.api.sourceAndRefs.listTags({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3618,7 +3618,7 @@ await corsair.bitbucket.api.usersAndPermissions.getCurrentUser2({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3655,7 +3655,7 @@ await corsair.bitbucket.api.usersAndPermissions.getSshLatestKeys({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3690,7 +3690,7 @@ await corsair.bitbucket.api.usersAndPermissions.getUser({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3720,7 +3720,7 @@ await corsair.bitbucket.api.usersAndPermissions.getUserEmails({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3755,7 +3755,7 @@ await corsair.bitbucket.api.usersAndPermissions.getUserEmails2({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3793,7 +3793,7 @@ await corsair.bitbucket.api.usersAndPermissions.getUserPermissionsRepositories({
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3831,7 +3831,7 @@ await corsair.bitbucket.api.usersAndPermissions.getUserPermissionsWorkspaces({})
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3869,7 +3869,7 @@ await corsair.bitbucket.api.usersAndPermissions.getUserWorkspaces({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3912,7 +3912,7 @@ await corsair.bitbucket.api.workspacesAndProjects.getProjectsRepos({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3947,7 +3947,7 @@ await corsair.bitbucket.api.workspacesAndProjects.getWorkspace({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3986,7 +3986,7 @@ await corsair.bitbucket.api.workspacesAndProjects.getWorkspacesPullrequests({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4023,7 +4023,7 @@ await corsair.bitbucket.api.workspacesAndProjects.listWorkspaceMembers({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4060,7 +4060,7 @@ await corsair.bitbucket.api.workspacesAndProjects.listWorkspaceProjects({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4099,7 +4099,7 @@ await corsair.bitbucket.api.workspacesAndProjects.listWorkspaces({});
 
 
 
-**Output:** `object`
+**Output:** `object \| any[] \| string \| number \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">

@@ -85,8 +85,8 @@ A collaboration invitation was accepted
 | `trigger` | `COLLABORATION.ACCEPTED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -107,22 +107,6 @@ A collaboration invitation was accepted
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -149,10 +133,8 @@ A collaboration invitation was accepted
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -194,8 +176,8 @@ A new collaboration was created
 | `trigger` | `COLLABORATION.CREATED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -216,22 +198,6 @@ A new collaboration was created
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -258,10 +224,8 @@ A new collaboration was created
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -303,8 +267,8 @@ A collaboration invitation was rejected
 | `trigger` | `COLLABORATION.REJECTED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -325,22 +289,6 @@ A collaboration invitation was rejected
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -367,10 +315,8 @@ A collaboration invitation was rejected
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -412,8 +358,8 @@ A collaboration was removed
 | `trigger` | `COLLABORATION.REMOVED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -434,22 +380,6 @@ A collaboration was removed
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -476,10 +406,8 @@ A collaboration was removed
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -521,8 +449,8 @@ A collaboration was updated
 | `trigger` | `COLLABORATION.UPDATED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -543,22 +471,6 @@ A collaboration was updated
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -585,10 +497,8 @@ A collaboration was updated
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -632,8 +542,8 @@ A comment was created on a file
 | `trigger` | `COMMENT.CREATED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -654,22 +564,6 @@ A comment was created on a file
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -696,10 +590,8 @@ A comment was created on a file
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -741,8 +633,8 @@ A comment was deleted
 | `trigger` | `COMMENT.DELETED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -763,22 +655,6 @@ A comment was deleted
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -805,10 +681,8 @@ A comment was deleted
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -850,8 +724,8 @@ A comment was updated
 | `trigger` | `COMMENT.UPDATED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -872,22 +746,6 @@ A comment was updated
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -914,10 +772,8 @@ A comment was updated
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -961,8 +817,8 @@ A file was copied to another location
 | `trigger` | `FILE.COPIED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -983,22 +839,6 @@ A file was copied to another location
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1025,10 +865,8 @@ A file was copied to another location
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1070,8 +908,8 @@ A file was permanently deleted
 | `trigger` | `FILE.DELETED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -1092,22 +930,6 @@ A file was permanently deleted
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1134,10 +956,8 @@ A file was permanently deleted
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1179,8 +999,8 @@ A file was downloaded
 | `trigger` | `FILE.DOWNLOADED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -1201,22 +1021,6 @@ A file was downloaded
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1243,10 +1047,8 @@ A file was downloaded
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1288,8 +1090,8 @@ A file was locked
 | `trigger` | `FILE.LOCKED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -1310,22 +1112,6 @@ A file was locked
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1352,10 +1138,8 @@ A file was locked
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1397,8 +1181,8 @@ A file was moved to another folder
 | `trigger` | `FILE.MOVED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -1419,22 +1203,6 @@ A file was moved to another folder
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1461,10 +1229,8 @@ A file was moved to another folder
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1506,8 +1272,8 @@ A file was previewed
 | `trigger` | `FILE.PREVIEWED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -1528,22 +1294,6 @@ A file was previewed
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1570,10 +1320,8 @@ A file was previewed
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1615,8 +1363,8 @@ A file was renamed
 | `trigger` | `FILE.RENAMED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -1637,22 +1385,6 @@ A file was renamed
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1679,10 +1411,8 @@ A file was renamed
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1724,8 +1454,8 @@ A file was restored from trash
 | `trigger` | `FILE.RESTORED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -1746,22 +1476,6 @@ A file was restored from trash
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1788,10 +1502,8 @@ A file was restored from trash
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1833,8 +1545,8 @@ A file was moved to trash
 | `trigger` | `FILE.TRASHED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -1855,22 +1567,6 @@ A file was moved to trash
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1897,10 +1593,8 @@ A file was moved to trash
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1942,8 +1636,8 @@ A file lock was removed
 | `trigger` | `FILE.UNLOCKED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -1964,22 +1658,6 @@ A file lock was removed
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2006,10 +1684,8 @@ A file lock was removed
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2051,8 +1727,8 @@ A new file was uploaded
 | `trigger` | `FILE.UPLOADED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -2073,22 +1749,6 @@ A new file was uploaded
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2115,10 +1775,8 @@ A new file was uploaded
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2162,8 +1820,8 @@ A folder was copied to another location
 | `trigger` | `FOLDER.COPIED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -2184,22 +1842,6 @@ A folder was copied to another location
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2226,10 +1868,8 @@ A folder was copied to another location
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2271,8 +1911,8 @@ A new folder was created
 | `trigger` | `FOLDER.CREATED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -2293,22 +1933,6 @@ A new folder was created
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2335,10 +1959,8 @@ A new folder was created
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2380,8 +2002,8 @@ A folder was permanently deleted
 | `trigger` | `FOLDER.DELETED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -2402,22 +2024,6 @@ A folder was permanently deleted
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2444,10 +2050,8 @@ A folder was permanently deleted
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2489,8 +2093,8 @@ A folder was downloaded
 | `trigger` | `FOLDER.DOWNLOADED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -2511,22 +2115,6 @@ A folder was downloaded
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2553,10 +2141,8 @@ A folder was downloaded
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2598,8 +2184,8 @@ A folder was moved to another location
 | `trigger` | `FOLDER.MOVED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -2620,22 +2206,6 @@ A folder was moved to another location
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2662,10 +2232,8 @@ A folder was moved to another location
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2707,8 +2275,8 @@ A folder was renamed
 | `trigger` | `FOLDER.RENAMED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -2729,22 +2297,6 @@ A folder was renamed
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2771,10 +2323,8 @@ A folder was renamed
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2816,8 +2366,8 @@ A folder was restored from trash
 | `trigger` | `FOLDER.RESTORED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -2838,22 +2388,6 @@ A folder was restored from trash
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2880,10 +2414,8 @@ A folder was restored from trash
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2925,8 +2457,8 @@ A folder was moved to trash
 | `trigger` | `FOLDER.TRASHED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -2947,22 +2479,6 @@ A folder was moved to trash
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2989,10 +2505,8 @@ A folder was moved to trash
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -3036,8 +2550,8 @@ A metadata instance was created on a file or folder
 | `trigger` | `METADATA_INSTANCE.CREATED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -3058,22 +2572,6 @@ A metadata instance was created on a file or folder
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3100,10 +2598,8 @@ A metadata instance was created on a file or folder
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -3145,8 +2641,8 @@ A metadata instance was deleted
 | `trigger` | `METADATA_INSTANCE.DELETED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -3167,22 +2663,6 @@ A metadata instance was deleted
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3209,10 +2689,8 @@ A metadata instance was deleted
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -3254,8 +2732,8 @@ A metadata instance was updated
 | `trigger` | `METADATA_INSTANCE.UPDATED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -3276,22 +2754,6 @@ A metadata instance was updated
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3318,10 +2780,8 @@ A metadata instance was updated
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -3365,8 +2825,8 @@ A shared link was created for a file or folder
 | `trigger` | `SHARED_LINK.CREATED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -3387,22 +2847,6 @@ A shared link was created for a file or folder
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3429,10 +2873,8 @@ A shared link was created for a file or folder
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -3474,8 +2916,8 @@ A shared link was removed
 | `trigger` | `SHARED_LINK.DELETED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -3496,22 +2938,6 @@ A shared link was removed
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3538,10 +2964,8 @@ A shared link was removed
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
@@ -3583,8 +3007,8 @@ A shared link settings were updated
 | `trigger` | `SHARED_LINK.UPDATED` | Yes | — |
 | `webhook` | `object` | Yes | — |
 | `created_by` | `object` | Yes | — |
-| `source` | `object` | Yes | — |
-| `additional_info` | `object` | No | — |
+| `source` | `Record<string, any>` | Yes | — |
+| `additional_info` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -3605,22 +3029,6 @@ A shared link settings were updated
   id?: string,
   name?: string,
   login?: string
-}
-```
-</Accordion>
-
-<Accordion title="source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="additional_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3647,10 +3055,8 @@ A shared link settings were updated
     name?: string,
     login?: string
   },
-  source: {
-  },
-  additional_info?: {
-  }
+  source: Record<string, any>,
+  additional_info?: Record<string, any>
 }
 ```
 </Accordion>
