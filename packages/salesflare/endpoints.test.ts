@@ -214,11 +214,22 @@ describe('Salesflare endpoint request seams', () => {
 				q: 'q-1',
 			},
 		});
-		await createContact(ctx, { force: true } as never);
+		await createContact(ctx, {
+			force: true,
+			owner: 1,
+			domain: 'domain-1',
+			email: 'email-1',
+			prefix: 'prefix-1',
+		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/contacts', {
 			method: 'POST',
 			query: { force: true },
-			body: {},
+			body: {
+				owner: 1,
+				domain: 'domain-1',
+				email: 'email-1',
+				prefix: 'prefix-1',
+			},
 		});
 		await listCurrencies(ctx, { placeholder: 'placeholder-1' } as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/currencies', { method: 'GET' });
@@ -394,10 +405,20 @@ describe('Salesflare endpoint request seams', () => {
 				q: 'q-1',
 			},
 		});
-		await createTask(ctx, { placeholder: 'placeholder-1' } as never);
+		await createTask(ctx, {
+			account: 1,
+			description: 'description-1',
+			reminder_date: 'reminder_date-1',
+			assignees: [1],
+		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/tasks', {
 			method: 'POST',
-			body: { placeholder: 'placeholder-1' },
+			body: {
+				account: 1,
+				description: 'description-1',
+				reminder_date: 'reminder_date-1',
+				assignees: [1],
+			},
 		});
 		await listUsers(ctx, {
 			id: [1],
@@ -784,15 +805,35 @@ describe('Salesflare endpoint request seams', () => {
 			'/customfields/itemClass-1/customFieldApiField-1/options',
 			{ method: 'GET', query: { searchString: 'searchString-1' } },
 		);
-		await createCall(ctx, { placeholder: 'placeholder-1' } as never);
+		await createCall(ctx, {
+			date: 'date-1',
+			end_date: 'end_date-1',
+			subject: 'subject-1',
+			description: 'description-1',
+		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/calls', {
 			method: 'POST',
-			body: { placeholder: 'placeholder-1' },
+			body: {
+				date: 'date-1',
+				end_date: 'end_date-1',
+				subject: 'subject-1',
+				description: 'description-1',
+			},
 		});
-		await createMeeting(ctx, { placeholder: 'placeholder-1' } as never);
+		await createMeeting(ctx, {
+			date: 'date-1',
+			end_date: 'end_date-1',
+			subject: 'subject-1',
+			description: 'description-1',
+		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/meetings', {
 			method: 'POST',
-			body: { placeholder: 'placeholder-1' },
+			body: {
+				date: 'date-1',
+				end_date: 'end_date-1',
+				subject: 'subject-1',
+				description: 'description-1',
+			},
 		});
 		await createMessage(ctx, {
 			account: 1,
@@ -804,27 +845,47 @@ describe('Salesflare endpoint request seams', () => {
 			method: 'POST',
 			body: { account: 1, body: 'body-1', mentions: [1], date: 'date-1' },
 		});
-		await addAccountUsers(ctx, { accountId: 'account_id-1' } as never);
+		await addAccountUsers(ctx, {
+			accountId: 'account_id-1',
+			id: 1,
+			_dirty: true,
+			_deleted: true,
+		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/accounts/account_id-1/users', {
 			method: 'POST',
-			body: {},
+			body: { id: 1, _dirty: true, _deleted: true },
 		});
-		await updateAccountUsers(ctx, { accountId: 'account_id-1' } as never);
+		await updateAccountUsers(ctx, {
+			accountId: 'account_id-1',
+			id: 1,
+			_dirty: true,
+			_deleted: true,
+		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/accounts/account_id-1/users', {
 			method: 'PUT',
-			body: {},
+			body: { id: 1, _dirty: true, _deleted: true },
 		});
-		await addAccountContacts(ctx, { accountId: 'account_id-1' } as never);
+		await addAccountContacts(ctx, {
+			accountId: 'account_id-1',
+			id: 1,
+			_dirty: true,
+			_deleted: true,
+		} as never);
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/accounts/account_id-1/contacts',
-			{ method: 'POST', body: {} },
+			{ method: 'POST', body: { id: 1, _dirty: true, _deleted: true } },
 		);
-		await updateAccountContacts(ctx, { accountId: 'account_id-1' } as never);
+		await updateAccountContacts(ctx, {
+			accountId: 'account_id-1',
+			id: 1,
+			_dirty: true,
+			_deleted: true,
+		} as never);
 		expect(request).toHaveBeenCalledWith(
 			ctx,
 			'/accounts/account_id-1/contacts',
-			{ method: 'PUT', body: {} },
+			{ method: 'PUT', body: { id: 1, _dirty: true, _deleted: true } },
 		);
 		await createMessageFeedbackAlias(ctx, {
 			messageId: 'message_id-1',

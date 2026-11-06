@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// unknown: Salesflare returns open-ended records whose nested fields the
+// provider does not fully document; endpoint-specific envelopes above are
+// validated and passthrough keeps the undocumented remainder intact.
 const SalesflareRecordSchema = z.object({}).passthrough();
 const SalesflareListOutputSchema = z.array(SalesflareRecordSchema);
 const SalesflareResourceOutputSchema = SalesflareRecordSchema;
@@ -44,6 +47,7 @@ const CreateAccountInputSchema = z
 		size: z.number().optional(),
 		website: z.string().optional(),
 		description: z.string().optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		address: z.record(z.string(), z.unknown()).optional(),
 		addresses: z
 			.array(
@@ -91,6 +95,7 @@ const CreateAccountInputSchema = z
 			.optional(),
 		_dirty: z.boolean().optional(),
 		parent_account: z.number().optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		custom: z.record(z.string(), z.unknown()).optional(),
 	})
 	.passthrough();
@@ -126,6 +131,82 @@ const ListContactsInputSchema = z.object({
 const CreateContactInputSchema = z
 	.object({
 		force: z.boolean().optional(),
+		owner: z.number().optional(),
+		domain: z.string().optional(),
+		email: z.string().optional(),
+		prefix: z.string().optional(),
+		firstname: z.string().optional(),
+		middle: z.string().optional(),
+		lastname: z.string().optional(),
+		suffix: z.string().optional(),
+		name: z.string().optional(),
+		picture: z.string().optional(),
+		account: z.number().optional(),
+		birth_date: z.string().optional(),
+		'opt-out': z.boolean().optional(),
+		'opt-out_date': z.string().optional(),
+		'opt-out_campaign': z.string().optional(),
+		bounced: z.boolean().optional(),
+		bounced_date: z.string().optional(),
+		files: z.array(z.record(z.string(), z.unknown())).optional(),
+		tags: z.array(z.string()).optional(),
+		address: z
+			.object({
+				city: z.string().optional(),
+				country: z.string().optional(),
+				region: z.string().optional(),
+				state_region: z.string().optional(),
+				street: z.string().optional(),
+				type: z.string().optional(),
+				zip: z.string().optional(),
+			})
+			.optional(),
+		addresses: z
+			.array(
+				z.object({
+					city: z.string().optional(),
+					country: z.string().optional(),
+					region: z.string().optional(),
+					state_region: z.string().optional(),
+					street: z.string().optional(),
+					type: z.string().optional(),
+					zip: z.string().optional(),
+				}),
+			)
+			.optional(),
+		phone_number: z.string().optional(),
+		mobile_phone_number: z.string().optional(),
+		home_phone_number: z.string().optional(),
+		fax_number: z.string().optional(),
+		phone_numbers: z
+			.array(
+				z.object({
+					number: z.string(),
+					type: z.string().optional(),
+				}),
+			)
+			.optional(),
+		position: z
+			.object({
+				organisation: z.string().optional(),
+				role: z.string().optional(),
+			})
+			.optional(),
+		positions: z
+			.array(
+				z.object({
+					end_date: z.string().optional(),
+					start_date: z.string().optional(),
+					current: z.boolean().optional(),
+					primary: z.boolean().optional(),
+					organisation: z.string().optional(),
+					role: z.string().optional(),
+				}),
+			)
+			.optional(),
+		social_profiles: z.array(z.string()).optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
+		custom: z.record(z.string(), z.unknown()).optional(),
 	})
 	.passthrough();
 
@@ -196,6 +277,7 @@ const CreateOpportunityInputSchema = z
 		contract_start_date: z.string().optional(),
 		contract_end_date: z.string().optional(),
 		main_contact: z.number().optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		custom: z.record(z.string(), z.unknown()).optional(),
 	})
 	.passthrough();
@@ -249,7 +331,14 @@ const ListTasksInputSchema = z.object({
 	q: z.string().optional(),
 });
 
-const CreateTaskInputSchema = z.object({}).passthrough();
+const CreateTaskInputSchema = z
+	.object({
+		account: z.number().optional(),
+		description: z.string(),
+		reminder_date: z.string().optional(),
+		assignees: z.array(z.number()).optional(),
+	})
+	.passthrough();
 
 const ListUsersInputSchema = z.object({
 	id: z.array(z.number()).optional(),
@@ -401,6 +490,7 @@ const UpdateAccountInputSchema = z
 		links: z.string().optional(),
 		_dirty: z.boolean().optional(),
 		parent_account: z.number().optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		custom: z.record(z.string(), z.unknown()).optional(),
 		q: z
 			.object({
@@ -514,6 +604,7 @@ const UpdateContactInputSchema = z
 			)
 			.optional(),
 		social_profiles: z.array(z.string()).optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		custom: z.record(z.string(), z.unknown()).optional(),
 		_dirty: z.boolean().optional(),
 		archived: z.boolean().optional(),
@@ -653,6 +744,7 @@ const UpdateOpportunityInputSchema = z
 		contract_start_date: z.string().optional(),
 		contract_end_date: z.string().optional(),
 		main_contact: z.number().optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		custom: z.record(z.string(), z.unknown()).optional(),
 	})
 	.passthrough();
@@ -853,9 +945,34 @@ const ListCustomFieldOptionsInputSchema = z.object({
 	searchString: z.string().optional(),
 });
 
-const CreateCallInputSchema = z.object({}).passthrough();
+const CreateCallInputSchema = z
+	.object({
+		date: z.string(),
+		end_date: z.string().optional(),
+		subject: z.string().optional(),
+		description: z.string().optional(),
+		minutes: z.string().optional(),
+		notes: z.string().optional(),
+		phone_type: z.string().optional(),
+		phone_number_hash: z.string().optional(),
+		participants: z.array(z.number()),
+	})
+	.passthrough();
 
-const CreateMeetingInputSchema = z.object({}).passthrough();
+const CreateMeetingInputSchema = z
+	.object({
+		date: z.string(),
+		end_date: z.string().optional(),
+		subject: z.string().optional(),
+		description: z.string().optional(),
+		minutes: z.string().optional(),
+		notes: z.string().optional(),
+		phone_type: z.string().optional(),
+		phone_number_hash: z.string().optional(),
+		participants: z.array(z.number()),
+		type: z.enum(['meeting-live', 'meeting-phone']).optional(),
+	})
+	.passthrough();
 
 const CreateMessageInputSchema = z
 	.object({
@@ -869,24 +986,36 @@ const CreateMessageInputSchema = z
 const AddAccountUsersInputSchema = z
 	.object({
 		accountId: z.string().min(1),
+		id: z.number().optional(),
+		_dirty: z.boolean().optional(),
+		_deleted: z.boolean().optional(),
 	})
 	.passthrough();
 
 const UpdateAccountUsersInputSchema = z
 	.object({
 		accountId: z.string().min(1),
+		id: z.number().optional(),
+		_dirty: z.boolean().optional(),
+		_deleted: z.boolean().optional(),
 	})
 	.passthrough();
 
 const AddAccountContactsInputSchema = z
 	.object({
 		accountId: z.string().min(1),
+		id: z.number().optional(),
+		_dirty: z.boolean().optional(),
+		_deleted: z.boolean().optional(),
 	})
 	.passthrough();
 
 const UpdateAccountContactsInputSchema = z
 	.object({
 		accountId: z.string().min(1),
+		id: z.number().optional(),
+		_dirty: z.boolean().optional(),
+		_deleted: z.boolean().optional(),
 	})
 	.passthrough();
 
