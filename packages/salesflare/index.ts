@@ -888,7 +888,7 @@ const salesflareEndpointMeta = {
 		description: 'Update a connected email data source',
 	},
 	'workflows.updateWorkflowAudience': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Update the audience record of a workflow',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
@@ -920,6 +920,11 @@ export type ExternalSalesflarePlugin<T extends SalesflarePluginOptions> =
 // Binds every Salesflare endpoint to its declared input and output schemas.
 // Calls use this validated tree at runtime; the schemas registry stays as
 // introspection metadata.
+// unknown: the tree mixes endpoint functions with family group objects at
+// arbitrary depth, so the wrapper walks unknown values and narrows each node
+// individually. Expressing this as a recursive conditional type over every
+// family would couple the plugin to core generics without adding runtime
+// safety — the parse calls below are the actual boundary.
 function withSalesflareSchemas<T extends Record<string, unknown>>(
 	tree: T,
 	prefix = '',
@@ -934,10 +939,16 @@ function withSalesflareSchemas<T extends Record<string, unknown>>(
 			if (!schema) {
 				throw new Error(`Missing Salesflare endpoint schema for ${operation}`);
 			}
+			// unknown: the walked node is an endpoint function from a
+			// heterogeneous tree level; input and output are parsed by the
+			// contract below before and after the call.
 			const endpoint = value as (
 				ctx: unknown,
 				input: unknown,
 			) => Promise<unknown>;
+			// unknown: the context shape is the Corsair runtime context whose
+			// services vary by deployment; the wrapper passes it through
+			// untouched and only owns the schema boundary around the call.
 			const validated = async (ctx: unknown, input: unknown) => {
 				const parsedInput = schema.input.parse(input ?? {});
 				const result = await endpoint(ctx, parsedInput);
