@@ -224,8 +224,13 @@ export const CreateSalesOrderInputSchema = z
 		replace: z.string().optional(),
 		tranDate: z.string().optional(),
 		promocode: z.record(z.string(), z.unknown()).optional(),
-		customForm: z.string().optional(),
-		orderStatus: z.string().optional(),
+		// Select fields: NetSuite takes the internal ID or a reference object ({ id }).
+		customForm: z
+			.union([z.string(), z.number(), z.record(z.string(), z.unknown())])
+			.optional(),
+		orderStatus: z
+			.union([z.string(), z.record(z.string(), z.unknown())])
+			.optional(),
 		otherrefnum: z.string().optional(),
 		'X-NetSuite-Idempotency-Key': z.string().optional(),
 		'X-NetSuite-PropertyNameValidation': z.string().optional(),

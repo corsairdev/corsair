@@ -823,7 +823,11 @@ Create a NetSuite employee record
 
 ```ts
 await corsair.netsuite.api.employees.createEmployee({
-	body: { firstName: 'Jane', lastName: 'Doe' },
+	body: {
+		firstName: 'Jane',
+		lastName: 'Doe',
+		subsidiary: { id: '1' },
+	},
 });
 ```
 
@@ -4507,8 +4511,8 @@ await corsair.netsuite.api.salesOrders.createSalesOrder({
 | `replace` | `string` | No | — |
 | `tranDate` | `string` | No | — |
 | `promocode` | `Record<string, any>` | No | — |
-| `customForm` | `string` | No | — |
-| `orderStatus` | `string` | No | — |
+| `customForm` | `string \| number \| Record<string, any>` | No | — |
+| `orderStatus` | `string \| Record<string, any>` | No | — |
 | `otherrefnum` | `string` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |

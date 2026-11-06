@@ -48,6 +48,9 @@ apiExamples:
     body:
       firstName: "Jane"
       lastName: "Doe"
+      # OneWorld accounts require a subsidiary; use an internal ID from your account.
+      subsidiary:
+        id: "1"
   invoices.createInvoice:
     body:
       entity:

@@ -379,6 +379,19 @@ describe('NetSuite plugin', () => {
 		).toThrow();
 	});
 
+	it('accepts select fields on a new sales order as IDs or reference objects', () => {
+		const schema = NetSuiteEndpointInputSchemas.createSalesOrder;
+		const base = { entity: { id: '123' }, item: { items: [] } };
+		for (const select of [
+			{ customForm: '-40', orderStatus: 'B' },
+			{ customForm: -40 },
+			{ customForm: { id: '-40' }, orderStatus: { id: 'B' } },
+		]) {
+			expect(() => schema.parse({ ...base, ...select })).not.toThrow();
+		}
+		expect(() => schema.parse({ ...base, orderStatus: 2 })).toThrow();
+	});
+
 	it('only matches 429 text for non-ApiError failures', () => {
 		const apiError = new ApiError(
 			{ method: 'POST', url: '/query/v1/suiteql' },
