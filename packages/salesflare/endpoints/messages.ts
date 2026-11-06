@@ -20,6 +20,29 @@ export const createMessage: SalesflareEndpoints['createMessage'] = async (
 	return response;
 };
 
+export const createMessageFeedbackAlias: SalesflareEndpoints['createMessageFeedbackAlias'] =
+	async (ctx, input) => {
+		const { messageId, ...body } = input;
+		const response = await makeSalesflareRequest<
+			SalesflareEndpointOutputs['createMessageFeedbackAlias']
+		>(
+			ctx,
+			salesflarePathParameter(
+				'/message/{message_id}/feedback',
+				'message_id',
+				input.messageId,
+			),
+			{ method: 'POST', body: body },
+		);
+		await logEventFromContext(
+			ctx,
+			'salesflare.messages.createMessageFeedbackAlias',
+			input,
+			'completed',
+		);
+		return response;
+	};
+
 export const createMessageFeedback: SalesflareEndpoints['createMessageFeedback'] =
 	async (ctx, input) => {
 		const { messageId, ...body } = input;

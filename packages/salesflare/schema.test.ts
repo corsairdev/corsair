@@ -50,7 +50,7 @@ describe('Salesflare schema', () => {
 	it('registers the full current Salesflare operation catalog', () => {
 		expect(
 			Object.keys(salesflareEndpointSchemas).length,
-		).toBeGreaterThanOrEqual(70);
+		).toBeGreaterThanOrEqual(71);
 	});
 
 	it('provides executable input and output contracts for every operation', () => {

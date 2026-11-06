@@ -890,6 +890,13 @@ const UpdateAccountContactsInputSchema = z
 	})
 	.passthrough();
 
+const CreateMessageFeedbackAliasInputSchema = z
+	.object({
+		messageId: z.string().min(1),
+		feedback: z.string(),
+	})
+	.passthrough();
+
 const CreateMessageFeedbackInputSchema = z
 	.object({
 		messageId: z.string().min(1),
@@ -1020,6 +1027,7 @@ export const SalesflareEndpointInputSchemas = {
 	updateAccountUsers: UpdateAccountUsersInputSchema,
 	addAccountContacts: AddAccountContactsInputSchema,
 	updateAccountContacts: UpdateAccountContactsInputSchema,
+	createMessageFeedbackAlias: CreateMessageFeedbackAliasInputSchema,
 	createMessageFeedback: CreateMessageFeedbackInputSchema,
 	updateCall: UpdateCallInputSchema,
 	updateMessage: UpdateMessageInputSchema,
@@ -1093,6 +1101,7 @@ export const SalesflareEndpointOutputSchemas = {
 	updateAccountUsers: SalesflareResourceOutputSchema,
 	addAccountContacts: SalesflareResourceOutputSchema,
 	updateAccountContacts: SalesflareResourceOutputSchema,
+	createMessageFeedbackAlias: SalesflareResourceOutputSchema,
 	createMessageFeedback: SalesflareResourceOutputSchema,
 	updateCall: SalesflareResourceOutputSchema,
 	updateMessage: SalesflareResourceOutputSchema,
