@@ -35,6 +35,30 @@ pnpm add @corsair-dev/salesflare
 | `customfields.listCustomFieldTypes` | `salesflare.api.customfields.listCustomFieldTypes` | `read` | List the custom field types supported by Salesflare |
 | `customfields.retrieveCustomField` | `salesflare.api.customfields.retrieveCustomField` | `read` | Retrieve a single customField by ID |
 | `customfields.updateCustomField` | `salesflare.api.customfields.updateCustomField` | `write` | Update a customField |
+| `meetings.createMeeting` | `salesflare.api.meetings.createMeeting` | `write` | Create a new meeting |
+| `meetings.deleteMeeting` | `salesflare.api.meetings.deleteMeeting` | `destructive` | Delete a meeting |
+| `meetings.retrieveMeeting` | `salesflare.api.meetings.retrieveMeeting` | `read` | Retrieve a single meeting by ID |
+| `meetings.updateMeeting` | `salesflare.api.meetings.updateMeeting` | `write` | Update a meeting |
+| `opportunities.createOpportunity` | `salesflare.api.opportunities.createOpportunity` | `write` | Create a new opportunity |
+| `opportunities.deleteOpportunity` | `salesflare.api.opportunities.deleteOpportunity` | `destructive` | Delete a opportunity |
+| `opportunities.listOpportunities` | `salesflare.api.opportunities.listOpportunities` | `read` | List Opportunities |
+| `opportunities.retrieveOpportunity` | `salesflare.api.opportunities.retrieveOpportunity` | `read` | Retrieve a single opportunity by ID |
+| `opportunities.updateOpportunity` | `salesflare.api.opportunities.updateOpportunity` | `write` | Update a opportunity |
+| `tags.createTag` | `salesflare.api.tags.createTag` | `write` | Create a new tag |
+| `tags.deleteTag` | `salesflare.api.tags.deleteTag` | `destructive` | Delete a tag |
+| `tags.listTags` | `salesflare.api.tags.listTags` | `read` | List Tags |
+| `tags.listTagUsage` | `salesflare.api.tags.listTagUsage` | `read` | List the usage statistics of a tag |
+| `tags.retrieveTag` | `salesflare.api.tags.retrieveTag` | `read` | Retrieve a single tag by ID |
+| `tags.updateTag` | `salesflare.api.tags.updateTag` | `write` | Update a tag |
+| `tasks.createTask` | `salesflare.api.tasks.createTask` | `write` | Create a new task |
+| `tasks.deleteTask` | `salesflare.api.tasks.deleteTask` | `destructive` | Delete a task |
+| `tasks.listTasks` | `salesflare.api.tasks.listTasks` | `read` | List Tasks |
+| `tasks.updateTask` | `salesflare.api.tasks.updateTask` | `write` | Update a task |
+| `workflows.createWorkflow` | `salesflare.api.workflows.createWorkflow` | `write` | Create a new workflow |
+| `workflows.listWorkflows` | `salesflare.api.workflows.listWorkflows` | `read` | List Workflows |
+| `workflows.retrieveWorkflow` | `salesflare.api.workflows.retrieveWorkflow` | `read` | Retrieve a single workflow by ID |
+| `workflows.updateWorkflow` | `salesflare.api.workflows.updateWorkflow` | `write` | Update a workflow |
+| `workflows.updateWorkflowAudience` | `salesflare.api.workflows.updateWorkflowAudience` | `write` | Update the audience record of a workflow |
 
 ## Auth
 
