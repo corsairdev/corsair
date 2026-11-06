@@ -84,7 +84,7 @@
           {
             "key": "dataTypes",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string[]>"
           }
         ]
       }
@@ -120,7 +120,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "confidence",
@@ -151,7 +151,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ clientId: string, platform: TIKTOK | INSTAGRAM | YOUTUBE, dataType: retention | demographics | traffic_sources | watch_time | audience_activity | follower_growth | video_performance | sound_performance | hashtag_performance | reach_sources | content_interactions | story_metrics | reel_metrics | subscriber_growth | click_through_rate | impression_sources | end_screen_performance, videoId?: string, data: {}, confidence?: number }[]"
+            "type": "{ clientId: string, platform: TIKTOK | INSTAGRAM | YOUTUBE, dataType: retention | demographics | traffic_sources | watch_time | audience_activity | follower_growth | video_performance | sound_performance | hashtag_performance | reach_sources | content_interactions | story_metrics | reel_metrics | subscriber_growth | click_through_rate | impression_sources | end_screen_performance, videoId?: string, data: Record<string, any>, confidence?: number }[]"
           }
         ]
       },
@@ -247,7 +247,7 @@
           {
             "key": "agentMd",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -308,7 +308,7 @@
           {
             "key": "agentMd",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -399,7 +399,7 @@
           {
             "key": "skill",
             "optional": true,
-            "type": "{ primaryNiche?: string, subNiches?: string[], contentStyle?: string, signatureStyle?: string, hookPatterns?: string[], avgEngagement?: number, bestPostingTimes?: { day?: number, hour?: number, score?: number }[] }"
+            "type": "{ primaryNiche?: string, subNiches?: string[], contentStyle?: string, signatureStyle?: string, hookPatterns?: string[], avgEngagement?: number, bestPostingTimes?: { day?: number, hour?: number, score?: number }[] } | null"
           }
         ]
       }
@@ -604,7 +604,7 @@
           {
             "key": "agentMd",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -785,7 +785,7 @@
           {
             "key": "services",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { status: string, latency?: string, description?: string }>"
           },
           {
             "key": "metrics",
@@ -795,7 +795,7 @@
           {
             "key": "endpoints",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -971,7 +971,7 @@
           {
             "key": "events",
             "optional": false,
-            "type": "skill.updated | skill.version_created | data.ingested | validation.blocked | posting.completed | posting.failed[]"
+            "type": "(skill.updated | skill.version_created | data.ingested | validation.blocked | posting.completed | posting.failed)[]"
           },
           {
             "key": "secret",
@@ -1105,7 +1105,7 @@
           {
             "key": "events",
             "optional": true,
-            "type": "skill.updated | skill.version_created | data.ingested | validation.blocked | posting.completed | posting.failed[]"
+            "type": "(skill.updated | skill.version_created | data.ingested | validation.blocked | posting.completed | posting.failed)[]"
           },
           {
             "key": "isActive",
@@ -1157,11 +1157,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ event: data.ingested, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "responseType": "{ event: data.ingested, timestamp: string, webhookId: string, agentId: string, data: Record<string, any> }",
       "usageExample": "crowterminal({\n    webhookHooks: {\n        data: {\n            ingested: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1194,11 +1194,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ event: posting.completed, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "responseType": "{ event: posting.completed, timestamp: string, webhookId: string, agentId: string, data: Record<string, any> }",
       "usageExample": "crowterminal({\n    webhookHooks: {\n        posting: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1231,11 +1231,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ event: posting.failed, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "responseType": "{ event: posting.failed, timestamp: string, webhookId: string, agentId: string, data: Record<string, any> }",
       "usageExample": "crowterminal({\n    webhookHooks: {\n        posting: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1268,11 +1268,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ event: skill.updated, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "responseType": "{ event: skill.updated, timestamp: string, webhookId: string, agentId: string, data: Record<string, any> }",
       "usageExample": "crowterminal({\n    webhookHooks: {\n        skill: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1305,11 +1305,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ event: skill.version_created, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "responseType": "{ event: skill.version_created, timestamp: string, webhookId: string, agentId: string, data: Record<string, any> }",
       "usageExample": "crowterminal({\n    webhookHooks: {\n        skill: {\n            versionCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1342,11 +1342,11 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ event: validation.blocked, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "responseType": "{ event: validation.blocked, timestamp: string, webhookId: string, agentId: string, data: Record<string, any> }",
       "usageExample": "crowterminal({\n    webhookHooks: {\n        validation: {\n            blocked: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

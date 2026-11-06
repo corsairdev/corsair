@@ -44,22 +44,22 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "apiToken",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "newUser",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -100,22 +100,22 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "apiToken",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "newUser",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -136,7 +136,7 @@
           {
             "key": "authResponse",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -146,22 +146,22 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "apiToken",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "newUser",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -192,82 +192,82 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shortName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "official",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "prize",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "memberCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "leader",
             "optional": true,
-            "type": "{ id?: string | null, _id?: string | null }"
+            "type": "{ id?: string | null, _id?: string | null } | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null }"
+            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: Record<string, any>[] | null } | null"
           },
           {
             "key": "tasksOrder",
             "optional": true,
-            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "flags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "flagCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -323,82 +323,82 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shortName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "official",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "prize",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "memberCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "leader",
             "optional": true,
-            "type": "{ id?: string | null, _id?: string | null }"
+            "type": "{ id?: string | null, _id?: string | null } | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null }"
+            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: Record<string, any>[] | null } | null"
           },
           {
             "key": "tasksOrder",
             "optional": true,
-            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "flags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "flagCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -420,7 +420,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -480,82 +480,82 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shortName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "official",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "prize",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "memberCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "leader",
             "optional": true,
-            "type": "{ id?: string | null, _id?: string | null }"
+            "type": "{ id?: string | null, _id?: string | null } | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null }"
+            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: Record<string, any>[] | null } | null"
           },
           {
             "key": "tasksOrder",
             "optional": true,
-            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "flags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "flagCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -586,82 +586,82 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shortName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "official",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "prize",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "memberCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "leader",
             "optional": true,
-            "type": "{ id?: string | null, _id?: string | null }"
+            "type": "{ id?: string | null, _id?: string | null } | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null }"
+            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: Record<string, any>[] | null } | null"
           },
           {
             "key": "tasksOrder",
             "optional": true,
-            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "flags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "flagCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -688,7 +688,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -708,7 +708,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, _id?: string | null, name?: string | null, shortName?: string | null, summary?: string | null, description?: string | null, official?: boolean | null, prize?: number | null, memberCount?: number | null, leader?: { id?: string | null, _id?: string | null } | null, group?: { id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null } | null, tasksOrder?: { habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null, categories?: {}[] | null, flags?: {} | null, flagCount?: number | null, createdAt?: string | null, updatedAt?: string | null }[]"
+        "type": "{ id: string, _id?: string | null, name?: string | null, shortName?: string | null, summary?: string | null, description?: string | null, official?: boolean | null, prize?: number | null, memberCount?: number | null, leader?: { id?: string | null, _id?: string | null } | null, group?: { id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: Record<string, any>[] | null } | null, tasksOrder?: { habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null, categories?: Record<string, any>[] | null, flags?: Record<string, any> | null, flagCount?: number | null, createdAt?: string | null, updatedAt?: string | null }[]"
       }
     },
     {
@@ -743,7 +743,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, _id?: string | null, name?: string | null, shortName?: string | null, summary?: string | null, description?: string | null, official?: boolean | null, prize?: number | null, memberCount?: number | null, leader?: { id?: string | null, _id?: string | null } | null, group?: { id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null } | null, tasksOrder?: { habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null, categories?: {}[] | null, flags?: {} | null, flagCount?: number | null, createdAt?: string | null, updatedAt?: string | null }[]"
+        "type": "{ id: string, _id?: string | null, name?: string | null, shortName?: string | null, summary?: string | null, description?: string | null, official?: boolean | null, prize?: number | null, memberCount?: number | null, leader?: { id?: string | null, _id?: string | null } | null, group?: { id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: Record<string, any>[] | null } | null, tasksOrder?: { habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null, categories?: Record<string, any>[] | null, flags?: Record<string, any> | null, flagCount?: number | null, createdAt?: string | null, updatedAt?: string | null }[]"
       }
     },
     {
@@ -773,7 +773,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -813,7 +813,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -827,7 +827,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -847,7 +847,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -872,7 +872,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -892,7 +892,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -912,7 +912,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -926,7 +926,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -940,7 +940,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -960,7 +960,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -980,7 +980,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -994,7 +994,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1058,7 +1058,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1107,117 +1107,117 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "privacy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leader",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           },
           {
             "key": "memberCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "challengeCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "managers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "quest",
             "optional": true,
-            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null }"
+            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: Record<string, any> | null, rage?: number | null } | null, members?: Record<string, any> | null, extra?: Record<string, any> | null } | null"
           },
           {
             "key": "leaderOnly",
             "optional": true,
-            "type": "{ challenges?: boolean | null, getGems?: boolean | null }"
+            "type": "{ challenges?: boolean | null, getGems?: boolean | null } | null"
           },
           {
             "key": "tasksOrder",
             "optional": true,
-            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null"
           },
           {
             "key": "purchased",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "cron",
             "optional": true,
-            "type": "{ lastProcessed?: string | null }"
+            "type": "{ lastProcessed?: string | null } | null"
           },
           {
             "key": "bannedWordsAllowed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "chatLimitCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "logo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leaderMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chat",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "archive",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           }
         ]
       }
@@ -1248,117 +1248,117 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "privacy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leader",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           },
           {
             "key": "memberCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "challengeCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "managers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "quest",
             "optional": true,
-            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null }"
+            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: Record<string, any> | null, rage?: number | null } | null, members?: Record<string, any> | null, extra?: Record<string, any> | null } | null"
           },
           {
             "key": "leaderOnly",
             "optional": true,
-            "type": "{ challenges?: boolean | null, getGems?: boolean | null }"
+            "type": "{ challenges?: boolean | null, getGems?: boolean | null } | null"
           },
           {
             "key": "tasksOrder",
             "optional": true,
-            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null"
           },
           {
             "key": "purchased",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "cron",
             "optional": true,
-            "type": "{ lastProcessed?: string | null }"
+            "type": "{ lastProcessed?: string | null } | null"
           },
           {
             "key": "bannedWordsAllowed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "chatLimitCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "logo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leaderMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chat",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "archive",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           }
         ]
       }
@@ -1383,117 +1383,117 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "privacy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leader",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           },
           {
             "key": "memberCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "challengeCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "managers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "quest",
             "optional": true,
-            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null }"
+            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: Record<string, any> | null, rage?: number | null } | null, members?: Record<string, any> | null, extra?: Record<string, any> | null } | null"
           },
           {
             "key": "leaderOnly",
             "optional": true,
-            "type": "{ challenges?: boolean | null, getGems?: boolean | null }"
+            "type": "{ challenges?: boolean | null, getGems?: boolean | null } | null"
           },
           {
             "key": "tasksOrder",
             "optional": true,
-            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null"
           },
           {
             "key": "purchased",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "cron",
             "optional": true,
-            "type": "{ lastProcessed?: string | null }"
+            "type": "{ lastProcessed?: string | null } | null"
           },
           {
             "key": "bannedWordsAllowed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "chatLimitCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "logo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leaderMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chat",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "archive",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           }
         ]
       }
@@ -1518,117 +1518,117 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "privacy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leader",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           },
           {
             "key": "memberCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "challengeCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "managers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "quest",
             "optional": true,
-            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null }"
+            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: Record<string, any> | null, rage?: number | null } | null, members?: Record<string, any> | null, extra?: Record<string, any> | null } | null"
           },
           {
             "key": "leaderOnly",
             "optional": true,
-            "type": "{ challenges?: boolean | null, getGems?: boolean | null }"
+            "type": "{ challenges?: boolean | null, getGems?: boolean | null } | null"
           },
           {
             "key": "tasksOrder",
             "optional": true,
-            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null"
           },
           {
             "key": "purchased",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "cron",
             "optional": true,
-            "type": "{ lastProcessed?: string | null }"
+            "type": "{ lastProcessed?: string | null } | null"
           },
           {
             "key": "bannedWordsAllowed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "chatLimitCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "logo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leaderMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chat",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "archive",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           }
         ]
       }
@@ -1654,7 +1654,7 @@
           {
             "key": "emails",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "usernames",
@@ -1665,7 +1665,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -1690,7 +1690,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1720,7 +1720,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1750,7 +1750,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, description?: string | null, leader?: string | {} | null, memberCount?: number | null, challengeCount?: number | null, balance?: number | null, managers?: {} | null, categories?: {}[] | null, quest?: { key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null } | null, leaderOnly?: { challenges?: boolean | null, getGems?: boolean | null } | null, tasksOrder?: { habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null, purchased?: {} | null, cron?: { lastProcessed?: string | null } | null, bannedWordsAllowed?: boolean | null, chatLimitCount?: number | null, logo?: string | null, leaderMessage?: string | null, chat?: any[] | null, archive?: string | {} | null }[]"
+        "type": "{ id: string, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, description?: string | null, leader?: string | Record<string, any> | null, memberCount?: number | null, challengeCount?: number | null, balance?: number | null, managers?: Record<string, any> | null, categories?: Record<string, any>[] | null, quest?: { key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: Record<string, any> | null, rage?: number | null } | null, members?: Record<string, any> | null, extra?: Record<string, any> | null } | null, leaderOnly?: { challenges?: boolean | null, getGems?: boolean | null } | null, tasksOrder?: { habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null, purchased?: Record<string, any> | null, cron?: { lastProcessed?: string | null } | null, bannedWordsAllowed?: boolean | null, chatLimitCount?: number | null, logo?: string | null, leaderMessage?: string | null, chat?: any[] | null, archive?: string | Record<string, any> | null }[]"
       }
     },
     {
@@ -1785,7 +1785,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string | null, _id?: string | null, auth?: {} | null, profile?: {} | null }[]"
+        "type": "{ id?: string | null, _id?: string | null, auth?: Record<string, any> | null, profile?: Record<string, any> | null }[]"
       }
     },
     {
@@ -1815,7 +1815,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1869,117 +1869,117 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "privacy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leader",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           },
           {
             "key": "memberCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "challengeCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "managers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "quest",
             "optional": true,
-            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null }"
+            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: Record<string, any> | null, rage?: number | null } | null, members?: Record<string, any> | null, extra?: Record<string, any> | null } | null"
           },
           {
             "key": "leaderOnly",
             "optional": true,
-            "type": "{ challenges?: boolean | null, getGems?: boolean | null }"
+            "type": "{ challenges?: boolean | null, getGems?: boolean | null } | null"
           },
           {
             "key": "tasksOrder",
             "optional": true,
-            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null"
           },
           {
             "key": "purchased",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "cron",
             "optional": true,
-            "type": "{ lastProcessed?: string | null }"
+            "type": "{ lastProcessed?: string | null } | null"
           },
           {
             "key": "bannedWordsAllowed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "chatLimitCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "logo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leaderMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chat",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "archive",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           }
         ]
       }
@@ -2010,17 +2010,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "challenge",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2042,7 +2042,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -2090,17 +2090,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "challenge",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2136,182 +2136,182 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alias",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "value",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "attribute",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "challenge",
             "optional": true,
-            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: Record<string, any> | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null"
           },
           {
             "key": "reminders",
             "optional": true,
-            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[] | null"
           },
           {
             "key": "byHabitica",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "up",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "down",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "counterUp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "counterDown",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "frequency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "history",
             "optional": true,
-            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null"
           },
           {
             "key": "checklist",
             "optional": true,
-            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null"
           },
           {
             "key": "collapseChecklist",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "completed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "streak",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "repeat",
             "optional": true,
-            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null"
           },
           {
             "key": "everyX",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "startDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "daysOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "weeksOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "isDue",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "nextDue",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "yesterDaily",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dateCompleted",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2387,7 +2387,7 @@
           {
             "key": "repeat",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "everyX",
@@ -2407,7 +2407,7 @@
           {
             "key": "reminders",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -2422,182 +2422,182 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alias",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "value",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "attribute",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "challenge",
             "optional": true,
-            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: Record<string, any> | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null"
           },
           {
             "key": "reminders",
             "optional": true,
-            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[] | null"
           },
           {
             "key": "byHabitica",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "up",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "down",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "counterUp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "counterDown",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "frequency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "history",
             "optional": true,
-            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null"
           },
           {
             "key": "checklist",
             "optional": true,
-            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null"
           },
           {
             "key": "collapseChecklist",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "completed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "streak",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "repeat",
             "optional": true,
-            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null"
           },
           {
             "key": "everyX",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "startDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "daysOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "weeksOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "isDue",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "nextDue",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "yesterDaily",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dateCompleted",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2669,7 +2669,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, _id?: string | null, type?: string | null, text?: string | null, notes?: string | null, alias?: string | null, tags?: string[] | null, value?: number | null, priority?: number | null, attribute?: string | null, userId?: string | null, challenge?: { shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null, group?: { id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null, reminders?: { id?: string | null, startDate?: string | null, time?: string | null }[] | null, byHabitica?: boolean | null, createdAt?: string | null, updatedAt?: string | null, up?: boolean | null, down?: boolean | null, counterUp?: number | null, counterDown?: number | null, frequency?: string | null, history?: { date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null, checklist?: { id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null, collapseChecklist?: boolean | null, completed?: boolean | null, streak?: number | null, repeat?: { m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null, everyX?: number | null, startDate?: string | null, daysOfMonth?: number[] | null, weeksOfMonth?: number[] | null, isDue?: boolean | null, nextDue?: string[] | null, yesterDaily?: boolean | null, date?: string | null, dateCompleted?: string | null }[]"
+        "type": "{ id: string, _id?: string | null, type?: string | null, text?: string | null, notes?: string | null, alias?: string | null, tags?: string[] | null, value?: number | null, priority?: number | null, attribute?: string | null, userId?: string | null, challenge?: { shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null, group?: { id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: Record<string, any> | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null, reminders?: { id?: string | null, startDate?: string | null, time?: string | null }[] | null, byHabitica?: boolean | null, createdAt?: string | null, updatedAt?: string | null, up?: boolean | null, down?: boolean | null, counterUp?: number | null, counterDown?: number | null, frequency?: string | null, history?: { date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null, checklist?: { id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null, collapseChecklist?: boolean | null, completed?: boolean | null, streak?: number | null, repeat?: { m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null, everyX?: number | null, startDate?: string | null, daysOfMonth?: number[] | null, weeksOfMonth?: number[] | null, isDue?: boolean | null, nextDue?: string[] | null, yesterDaily?: boolean | null, date?: string | null, dateCompleted?: string | null }[]"
       }
     },
     {
@@ -2689,7 +2689,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -2723,182 +2723,182 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alias",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "value",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "attribute",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "challenge",
             "optional": true,
-            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: Record<string, any> | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null"
           },
           {
             "key": "reminders",
             "optional": true,
-            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[] | null"
           },
           {
             "key": "byHabitica",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "up",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "down",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "counterUp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "counterDown",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "frequency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "history",
             "optional": true,
-            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null"
           },
           {
             "key": "checklist",
             "optional": true,
-            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null"
           },
           {
             "key": "collapseChecklist",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "completed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "streak",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "repeat",
             "optional": true,
-            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null"
           },
           {
             "key": "everyX",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "startDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "daysOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "weeksOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "isDue",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "nextDue",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "yesterDaily",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dateCompleted",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2929,182 +2929,182 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alias",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "value",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "attribute",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "challenge",
             "optional": true,
-            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: Record<string, any> | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null"
           },
           {
             "key": "reminders",
             "optional": true,
-            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[] | null"
           },
           {
             "key": "byHabitica",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "up",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "down",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "counterUp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "counterDown",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "frequency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "history",
             "optional": true,
-            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null"
           },
           {
             "key": "checklist",
             "optional": true,
-            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null"
           },
           {
             "key": "collapseChecklist",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "completed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "streak",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "repeat",
             "optional": true,
-            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null"
           },
           {
             "key": "everyX",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "startDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "daysOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "weeksOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "isDue",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "nextDue",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "yesterDaily",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dateCompleted",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3131,7 +3131,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, _id?: string | null, type?: string | null, text?: string | null, notes?: string | null, alias?: string | null, tags?: string[] | null, value?: number | null, priority?: number | null, attribute?: string | null, userId?: string | null, challenge?: { shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null, group?: { id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null, reminders?: { id?: string | null, startDate?: string | null, time?: string | null }[] | null, byHabitica?: boolean | null, createdAt?: string | null, updatedAt?: string | null, up?: boolean | null, down?: boolean | null, counterUp?: number | null, counterDown?: number | null, frequency?: string | null, history?: { date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null, checklist?: { id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null, collapseChecklist?: boolean | null, completed?: boolean | null, streak?: number | null, repeat?: { m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null, everyX?: number | null, startDate?: string | null, daysOfMonth?: number[] | null, weeksOfMonth?: number[] | null, isDue?: boolean | null, nextDue?: string[] | null, yesterDaily?: boolean | null, date?: string | null, dateCompleted?: string | null }[]"
+        "type": "{ id: string, _id?: string | null, type?: string | null, text?: string | null, notes?: string | null, alias?: string | null, tags?: string[] | null, value?: number | null, priority?: number | null, attribute?: string | null, userId?: string | null, challenge?: { shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null, group?: { id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: Record<string, any> | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null, reminders?: { id?: string | null, startDate?: string | null, time?: string | null }[] | null, byHabitica?: boolean | null, createdAt?: string | null, updatedAt?: string | null, up?: boolean | null, down?: boolean | null, counterUp?: number | null, counterDown?: number | null, frequency?: string | null, history?: { date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null, checklist?: { id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null, collapseChecklist?: boolean | null, completed?: boolean | null, streak?: number | null, repeat?: { m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null, everyX?: number | null, startDate?: string | null, daysOfMonth?: number[] | null, weeksOfMonth?: number[] | null, isDue?: boolean | null, nextDue?: string[] | null, yesterDaily?: boolean | null, date?: string | null, dateCompleted?: string | null }[]"
       }
     },
     {
@@ -3156,7 +3156,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, _id?: string | null, type?: string | null, text?: string | null, notes?: string | null, alias?: string | null, tags?: string[] | null, value?: number | null, priority?: number | null, attribute?: string | null, userId?: string | null, challenge?: { shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null, group?: { id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null, reminders?: { id?: string | null, startDate?: string | null, time?: string | null }[] | null, byHabitica?: boolean | null, createdAt?: string | null, updatedAt?: string | null, up?: boolean | null, down?: boolean | null, counterUp?: number | null, counterDown?: number | null, frequency?: string | null, history?: { date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null, checklist?: { id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null, collapseChecklist?: boolean | null, completed?: boolean | null, streak?: number | null, repeat?: { m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null, everyX?: number | null, startDate?: string | null, daysOfMonth?: number[] | null, weeksOfMonth?: number[] | null, isDue?: boolean | null, nextDue?: string[] | null, yesterDaily?: boolean | null, date?: string | null, dateCompleted?: string | null }[]"
+        "type": "{ id: string, _id?: string | null, type?: string | null, text?: string | null, notes?: string | null, alias?: string | null, tags?: string[] | null, value?: number | null, priority?: number | null, attribute?: string | null, userId?: string | null, challenge?: { shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null, group?: { id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: Record<string, any> | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null, reminders?: { id?: string | null, startDate?: string | null, time?: string | null }[] | null, byHabitica?: boolean | null, createdAt?: string | null, updatedAt?: string | null, up?: boolean | null, down?: boolean | null, counterUp?: number | null, counterDown?: number | null, frequency?: string | null, history?: { date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null, checklist?: { id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null, collapseChecklist?: boolean | null, completed?: boolean | null, streak?: number | null, repeat?: { m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null, everyX?: number | null, startDate?: string | null, daysOfMonth?: number[] | null, weeksOfMonth?: number[] | null, isDue?: boolean | null, nextDue?: string[] | null, yesterDaily?: boolean | null, date?: string | null, dateCompleted?: string | null }[]"
       }
     },
     {
@@ -3210,77 +3210,77 @@
           {
             "key": "delta",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "_tmp",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "hp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "mp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "exp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "gp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "lvl",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "class",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "points",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "str",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "con",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "int",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "per",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "buffs",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "training",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -3307,7 +3307,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3381,7 +3381,7 @@
           {
             "key": "repeat",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "everyX",
@@ -3401,7 +3401,7 @@
           {
             "key": "reminders",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -3416,182 +3416,182 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alias",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "value",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "attribute",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "challenge",
             "optional": true,
-            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: Record<string, any> | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null"
           },
           {
             "key": "reminders",
             "optional": true,
-            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[] | null"
           },
           {
             "key": "byHabitica",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "up",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "down",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "counterUp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "counterDown",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "frequency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "history",
             "optional": true,
-            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null"
           },
           {
             "key": "checklist",
             "optional": true,
-            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null"
           },
           {
             "key": "collapseChecklist",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "completed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "streak",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "repeat",
             "optional": true,
-            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null"
           },
           {
             "key": "everyX",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "startDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "daysOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "weeksOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "isDue",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "nextDue",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "yesterDaily",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dateCompleted",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3632,182 +3632,182 @@
           {
             "key": "_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alias",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "value",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "attribute",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "challenge",
             "optional": true,
-            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null"
           },
           {
             "key": "group",
             "optional": true,
-            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: Record<string, any> | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null"
           },
           {
             "key": "reminders",
             "optional": true,
-            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[] | null"
           },
           {
             "key": "byHabitica",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "up",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "down",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "counterUp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "counterDown",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "frequency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "history",
             "optional": true,
-            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null"
           },
           {
             "key": "checklist",
             "optional": true,
-            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null"
           },
           {
             "key": "collapseChecklist",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "completed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "streak",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "repeat",
             "optional": true,
-            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null"
           },
           {
             "key": "everyX",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "startDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "daysOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "weeksOfMonth",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "isDue",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "nextDue",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "yesterDaily",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dateCompleted",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3834,7 +3834,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -3854,7 +3854,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3874,7 +3874,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -3899,7 +3899,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3919,7 +3919,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3939,7 +3939,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3959,7 +3959,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3984,7 +3984,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -4004,7 +4004,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -4018,7 +4018,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -4032,13 +4032,13 @@
           {
             "key": "updates",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -4072,7 +4072,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4087,47 +4087,47 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "failures",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "lastFailureAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "options",
             "optional": true,
-            "type": "{ created?: boolean | null, updated?: boolean | null, deleted?: boolean | null, scored?: boolean | null, checklistScored?: boolean | null, groupId?: string | null, petHatched?: boolean | null, mountRaised?: boolean | null, leveledUp?: boolean | null, questStarted?: boolean | null, questFinished?: boolean | null, questInvited?: boolean | null }"
+            "type": "{ created?: boolean | null, updated?: boolean | null, deleted?: boolean | null, scored?: boolean | null, checklistScored?: boolean | null, groupId?: string | null, petHatched?: boolean | null, mountRaised?: boolean | null, leveledUp?: boolean | null, questStarted?: boolean | null, questFinished?: boolean | null, questInvited?: boolean | null } | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4172,47 +4172,47 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "failures",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "lastFailureAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "options",
             "optional": true,
-            "type": "{ created?: boolean | null, updated?: boolean | null, deleted?: boolean | null, scored?: boolean | null, checklistScored?: boolean | null, groupId?: string | null, petHatched?: boolean | null, mountRaised?: boolean | null, leveledUp?: boolean | null, questStarted?: boolean | null, questFinished?: boolean | null, questInvited?: boolean | null }"
+            "type": "{ created?: boolean | null, updated?: boolean | null, deleted?: boolean | null, scored?: boolean | null, checklistScored?: boolean | null, groupId?: string | null, petHatched?: boolean | null, mountRaised?: boolean | null, leveledUp?: boolean | null, questStarted?: boolean | null, questFinished?: boolean | null, questInvited?: boolean | null } | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

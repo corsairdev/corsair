@@ -15,7 +15,7 @@ Every `chatfai.api.*` operation is listed below with parameter shapes and return
 
 `characters.get`
 
-Get a public ChatFAI character by ID (GET /v1/characters/{id})
+Get a public ChatFAI character by ID (GET /v1/characters/&#123;id&#125;)
 
 **Risk:** `read`
 
@@ -38,13 +38,13 @@ await corsair.chatfai.api.characters.get({});
 | `id` | `string` | Yes | — |
 | `uid` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `nickname` | `string` | No | — |
-| `publicDescription` | `string` | No | — |
-| `image` | `string` | No | — |
+| `nickname` | `string \| null` | No | — |
+| `publicDescription` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
 | `visibility` | `string` | No | — |
 | `categories` | `string[]` | No | — |
 | `featured` | `boolean` | No | — |
-| `firstMessage` | `string` | No | — |
+| `firstMessage` | `string \| null` | No | — |
 | `voiceEnabled` | `boolean` | No | — |
 | `likes` | `number` | No | — |
 | `installs` | `number` | No | — |
@@ -140,7 +140,7 @@ await corsair.chatfai.api.conversations.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `conversations` | `object[]` | Yes | — |
-| `nextCursor` | `string` | No | — |
+| `nextCursor` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="conversations full type">

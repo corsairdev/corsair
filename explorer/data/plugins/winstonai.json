@@ -1,7 +1,7 @@
 {
   "id": "winstonai",
   "displayName": "Winston AI",
-  "description": "Winston AI plugin for Corsair",
+  "description": "AI content detection API that scores text and images for AI generation, scans text for plagiarism, and compares two texts.",
   "npmPackageName": "@corsair-dev/winstonai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

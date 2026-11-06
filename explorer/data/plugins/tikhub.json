@@ -43,7 +43,7 @@
           {
             "key": "api_key_data",
             "optional": false,
-            "type": "{ api_key_name: string, api_key_scopes: string[], created_at: string, expires_at?: string | null, api_key_status: number }"
+            "type": "{ api_key_name: string, api_key_scopes: string[], created_at: string, expires_at: string | null, api_key_status: number }"
           },
           {
             "key": "user_data",
@@ -80,7 +80,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -115,22 +115,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -140,12 +140,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ id?: string | null, shortcode?: string | null, __typename?: string | null, is_video?: boolean | null, taken_at_timestamp?: number | null, display_url?: string | null, video_url?: string | null, video_view_count?: number | null, video_play_count?: number | null, accessibility_caption?: string | null, comments_disabled?: boolean | null, edge_media_preview_like?: { count?: number | null } | null, edge_media_to_parent_comment?: { count?: number | null } | null, edge_media_to_caption?: { edges?: { node: { text?: string | null } }[] | null } | null, owner?: { id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null } | null }"
+            "optional": false,
+            "type": "{ id?: string | null, shortcode?: string | null, __typename?: string | null, is_video?: boolean | null, taken_at_timestamp?: number | null, display_url?: string | null, video_url?: string | null, video_view_count?: number | null, video_play_count?: number | null, accessibility_caption?: string | null, comments_disabled?: boolean | null, edge_media_preview_like?: { count?: number | null } | null, edge_media_to_parent_comment?: { count?: number | null } | null, edge_media_to_caption?: { edges?: { node: { text?: string | null } }[] | null } | null, owner?: { id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null } | null } | null"
           }
         ]
       }
@@ -189,7 +189,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -224,22 +224,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -249,12 +249,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ data?: { count?: number | null, total?: number | null, items?: { pk?: number | string | null, id?: string | null, text?: string | null, created_at?: number | null, created_at_utc?: number | null, comment_like_count?: number | null, child_comment_count?: number | null, is_liked_by_media_owner?: boolean | null, user?: { pk?: number | string | null, id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null, profile_pic_url?: string | null } | null }[] | null, additional_data?: { caption?: { text?: string | null } | null } | null } | null, pagination_token?: string | null }"
+            "optional": false,
+            "type": "{ data?: { count?: number | null, total?: number | null, items?: { pk?: number | string | null, id?: string | null, text?: string | null, created_at?: number | null, created_at_utc?: number | null, comment_like_count?: number | null, child_comment_count?: number | null, is_liked_by_media_owner?: boolean | null, user?: { pk?: number | string | null, id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null, profile_pic_url?: string | null } | null }[] | null, additional_data?: { caption?: { text?: string | null } | null } | null } | null, pagination_token?: string | null } | null"
           }
         ]
       }
@@ -286,7 +286,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -321,22 +321,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -346,12 +346,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ data?: { user?: { id?: string | null, pk?: number | string | null, username?: string | null, full_name?: string | null, biography?: string | null, external_url?: string | null, is_private?: boolean | null, is_verified?: boolean | null, is_business_account?: boolean | null, is_professional_account?: boolean | null, profile_pic_url?: string | null, profile_pic_url_hd?: string | null, highlight_reel_count?: number | null, bio_links?: { url?: string | null, title?: string | null }[] | null, edge_followed_by?: { count?: number | null } | null, edge_follow?: { count?: number | null } | null, edge_owner_to_timeline_media?: { count?: number | null } | null, category_name?: string | null } | null } | null, status?: string | null }"
+            "optional": false,
+            "type": "{ data?: { user?: { id?: string | null, pk?: number | string | null, username?: string | null, full_name?: string | null, biography?: string | null, external_url?: string | null, is_private?: boolean | null, is_verified?: boolean | null, is_business_account?: boolean | null, is_professional_account?: boolean | null, profile_pic_url?: string | null, profile_pic_url_hd?: string | null, highlight_reel_count?: number | null, bio_links?: { url?: string | null, title?: string | null }[] | null, edge_followed_by?: { count?: number | null } | null, edge_follow?: { count?: number | null } | null, edge_owner_to_timeline_media?: { count?: number | null } | null, category_name?: string | null } | null } | null, status?: string | null } | null"
           }
         ]
       }
@@ -395,7 +395,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -430,22 +430,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -455,12 +455,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ items?: { id?: string | null, pk?: number | string | null, code?: string | null, media_type?: number | null, product_type?: string | null, taken_at?: number | null, like_count?: number | null, comment_count?: number | null, play_count?: number | null, view_count?: number | null, caption?: { text?: string | null } | null, user?: { pk?: number | string | null, id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null, profile_pic_url?: string | null } | null }[] | null, more_available?: boolean | null, next_max_id?: string | null, num_results?: number | null }"
+            "optional": false,
+            "type": "{ items?: { id?: string | null, pk?: number | string | null, code?: string | null, media_type?: number | null, product_type?: string | null, taken_at?: number | null, like_count?: number | null, comment_count?: number | null, play_count?: number | null, view_count?: number | null, caption?: { text?: string | null } | null, user?: { pk?: number | string | null, id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null, profile_pic_url?: string | null } | null }[] | null, more_available?: boolean | null, next_max_id?: string | null, num_results?: number | null } | null"
           }
         ]
       }
@@ -504,7 +504,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -539,22 +539,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -564,12 +564,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ items?: { media?: { id?: string | null, pk?: number | string | null, code?: string | null, media_type?: number | null, product_type?: string | null, taken_at?: number | null, like_count?: number | null, comment_count?: number | null, play_count?: number | null, view_count?: number | null, caption?: { text?: string | null } | null, user?: { pk?: number | string | null, id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null, profile_pic_url?: string | null } | null } | null }[] | null, paging_info?: { max_id?: string | null, more_available?: boolean | null } | null }"
+            "optional": false,
+            "type": "{ items?: { media?: { id?: string | null, pk?: number | string | null, code?: string | null, media_type?: number | null, product_type?: string | null, taken_at?: number | null, like_count?: number | null, comment_count?: number | null, play_count?: number | null, view_count?: number | null, caption?: { text?: string | null } | null, user?: { pk?: number | string | null, id?: string | null, username?: string | null, full_name?: string | null, is_verified?: boolean | null, profile_pic_url?: string | null } | null } | null }[] | null, paging_info?: { max_id?: string | null, more_available?: boolean | null } | null } | null"
           }
         ]
       }
@@ -647,7 +647,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -682,22 +682,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -707,12 +707,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ children?: {}[] | null, pageInfo?: { endCursor?: string | null, startCursor?: string | null, hasNextPage?: boolean | null, hasPreviousPage?: boolean | null } | null }"
+            "optional": false,
+            "type": "{ children?: {}[] | null, pageInfo?: { endCursor?: string | null, startCursor?: string | null, hasNextPage?: boolean | null, hasPreviousPage?: boolean | null } | null } | null"
           }
         ]
       }
@@ -744,7 +744,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -779,22 +779,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -804,12 +804,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ statusCode?: number | null, challengeInfo?: { challenge?: { id?: string | null, title?: string | null, desc?: string | null, coverLarger?: string | null } | null, stats?: { videoCount?: number | null, viewCount?: number | null } | null } | null }"
+            "optional": false,
+            "type": "{ statusCode?: number | null, challengeInfo?: { challenge?: { id?: string | null, title?: string | null, desc?: string | null, coverLarger?: string | null } | null, stats?: { videoCount?: number | null, viewCount?: number | null } | null } | null } | null"
           }
         ]
       }
@@ -859,7 +859,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -894,22 +894,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -919,12 +919,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ status_code?: number | null, status_msg?: string | null, aweme_list?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null, has_more?: boolean | number | null, max_cursor?: number | string | null, min_cursor?: number | string | null, cursor?: number | string | null }"
+            "optional": false,
+            "type": "{ status_code?: number | null, status_msg?: string | null, aweme_list?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null, has_more?: boolean | number | null, max_cursor?: number | string | null, min_cursor?: number | string | null, cursor?: number | string | null } | null"
           }
         ]
       }
@@ -962,7 +962,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -997,22 +997,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -1022,12 +1022,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ statusCode?: number | null, userInfo?: { user?: { id?: string | null, uniqueId?: string | null, secUid?: string | null, nickname?: string | null, signature?: string | null, verified?: boolean | null, privateAccount?: boolean | null, createTime?: number | null, avatarLarger?: string | null, avatarThumb?: string | null, language?: string | null, bioLink?: { link?: string | null } | null } | null, stats?: { followerCount?: number | null, followingCount?: number | null, heart?: number | null, heartCount?: number | null, videoCount?: number | null, diggCount?: number | null, friendCount?: number | null } | null } | null }"
+            "optional": false,
+            "type": "{ statusCode?: number | null, userInfo?: { user?: { id?: string | null, uniqueId?: string | null, secUid?: string | null, nickname?: string | null, signature?: string | null, verified?: boolean | null, privateAccount?: boolean | null, createTime?: number | null, avatarLarger?: string | null, avatarThumb?: string | null, language?: string | null, bioLink?: { link?: string | null } | null } | null, stats?: { followerCount?: number | null, followingCount?: number | null, heart?: number | null, heartCount?: number | null, videoCount?: number | null, diggCount?: number | null, friendCount?: number | null } | null } | null } | null"
           }
         ]
       }
@@ -1089,7 +1089,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -1124,22 +1124,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -1149,12 +1149,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ status_code?: number | null, status_msg?: string | null, aweme_list?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null, has_more?: boolean | number | null, max_cursor?: number | string | null, min_cursor?: number | string | null, cursor?: number | string | null }"
+            "optional": false,
+            "type": "{ status_code?: number | null, status_msg?: string | null, aweme_list?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null, has_more?: boolean | number | null, max_cursor?: number | string | null, min_cursor?: number | string | null, cursor?: number | string | null } | null"
           }
         ]
       }
@@ -1186,7 +1186,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -1221,22 +1221,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -1246,12 +1246,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ status_code?: number | null, status_msg?: string | null, aweme_detail?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null } | null, aweme_details?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null }"
+            "optional": false,
+            "type": "{ status_code?: number | null, status_msg?: string | null, aweme_detail?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null } | null, aweme_details?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null } | null"
           }
         ]
       }
@@ -1295,7 +1295,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -1330,22 +1330,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -1355,12 +1355,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ status_code?: number | null, status_msg?: string | null, comments?: { cid?: string | null, aweme_id?: string | null, text?: string | null, create_time?: number | null, digg_count?: number | null, reply_comment_total?: number | null, user?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null }[] | null, cursor?: number | string | null, has_more?: boolean | number | null, total?: number | null }"
+            "optional": false,
+            "type": "{ status_code?: number | null, status_msg?: string | null, comments?: { cid?: string | null, aweme_id?: string | null, text?: string | null, create_time?: number | null, digg_count?: number | null, reply_comment_total?: number | null, user?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null }[] | null, cursor?: number | string | null, has_more?: boolean | number | null, total?: number | null } | null"
           }
         ]
       }
@@ -1422,7 +1422,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -1457,22 +1457,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -1482,12 +1482,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ status_code?: number | null, status_msg?: string | null, search_item_list?: { aweme_info?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null } | null }[] | null, aweme_list?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null, cursor?: number | string | null, has_more?: boolean | number | null }"
+            "optional": false,
+            "type": "{ status_code?: number | null, status_msg?: string | null, search_item_list?: { aweme_info?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null } | null }[] | null, aweme_list?: { aweme_id: string, desc?: string | null, create_time?: number | null, region?: string | null, share_url?: string | null, author?: { uid?: string | null, sec_uid?: string | null, unique_id?: string | null, nickname?: string | null, signature?: string | null, region?: string | null, follower_count?: number | null, following_count?: number | null, total_favorited?: number | string | null, aweme_count?: number | null, avatar_thumb?: { uri?: string | null, url_list?: string[] | null } | null } | null, statistics?: { play_count?: number | null, digg_count?: number | null, comment_count?: number | null, share_count?: number | null, collect_count?: number | null, download_count?: number | null } | null, video?: { duration?: number | null, width?: number | null, height?: number | null, cover?: { uri?: string | null, url_list?: string[] | null } | null, play_addr?: { uri?: string | null, url_list?: string[] | null } | null, download_addr?: { uri?: string | null, url_list?: string[] | null } | null } | null, music?: { id_str?: string | null, title?: string | null, author?: string | null, play_url?: { uri?: string | null, url_list?: string[] | null } | null } | null, text_extra?: { type?: number | null, hashtag_id?: string | null, hashtag_name?: string | null }[] | null }[] | null, cursor?: number | string | null, has_more?: boolean | number | null } | null"
           }
         ]
       }
@@ -1519,7 +1519,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -1554,22 +1554,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -1579,12 +1579,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{}"
+            "optional": false,
+            "type": "{} | null"
           }
         ]
       }
@@ -1622,7 +1622,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -1657,22 +1657,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -1682,12 +1682,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{}"
+            "optional": false,
+            "type": "{} | null"
           }
         ]
       }
@@ -1731,7 +1731,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -1766,22 +1766,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -1791,12 +1791,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{}"
+            "optional": false,
+            "type": "{} | null"
           }
         ]
       }
@@ -1840,7 +1840,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -1875,22 +1875,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -1900,12 +1900,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{}"
+            "optional": false,
+            "type": "{} | null"
           }
         ]
       }
@@ -1955,7 +1955,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -1990,22 +1990,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -2015,12 +2015,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ channel?: { id?: string | null, name?: string | null, description?: string | null, handle_url?: string | null, avatar?: string | null, url?: string | null, rss_url?: string | null, keywords?: string | null, is_family_safe?: boolean | null, is_verified?: boolean | null } | null, videos?: { video_id?: string | null, title?: string | null, thumbnail?: string | null, duration?: string | null, view_count?: string | null, published_time?: string | null, is_live?: boolean | null, url?: string | null }[] | null, continuation_token?: string | null }"
+            "optional": false,
+            "type": "{ channel?: { id?: string | null, name?: string | null, description?: string | null, handle_url?: string | null, avatar?: string | null, url?: string | null, rss_url?: string | null, keywords?: string | null, is_family_safe?: boolean | null, is_verified?: boolean | null } | null, videos?: { video_id?: string | null, title?: string | null, thumbnail?: string | null, duration?: string | null, view_count?: string | null, published_time?: string | null, is_live?: boolean | null, url?: string | null }[] | null, continuation_token?: string | null } | null"
           }
         ]
       }
@@ -2058,7 +2058,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -2093,22 +2093,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -2118,12 +2118,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ video_id?: string | null, video_url?: string | null, embed_url?: string | null, title?: string | null, description?: string | null, author?: string | null, channel_id?: string | null, channel_handle?: string | null, channel_url?: string | null, subscriber_count_text?: string | null, is_verified?: boolean | null, publish_date?: string | null, upload_date?: string | null, length_seconds?: number | string | null, view_count?: number | string | null, like_count?: number | string | null, comment_count?: number | string | null, keywords?: string[] | string | null, category?: string | null, is_live_content?: boolean | null, is_private?: boolean | null, is_unlisted?: boolean | null, is_family_safe?: boolean | null, playability_status?: string | null, thumbnail_url?: string | null, thumbnails?: { url?: string | null, width?: number | null, height?: number | null }[] | null, captions?: { language_code?: string | null, kind?: string | null }[] | null, chapters?: { title?: string | null, time_description?: string | null }[] | null }"
+            "optional": false,
+            "type": "{ video_id?: string | null, video_url?: string | null, embed_url?: string | null, title?: string | null, description?: string | null, author?: string | null, channel_id?: string | null, channel_handle?: string | null, channel_url?: string | null, subscriber_count_text?: string | null, is_verified?: boolean | null, publish_date?: string | null, upload_date?: string | null, length_seconds?: number | string | null, view_count?: number | string | null, like_count?: number | string | null, comment_count?: number | string | null, keywords?: string[] | string | null, category?: string | null, is_live_content?: boolean | null, is_private?: boolean | null, is_unlisted?: boolean | null, is_family_safe?: boolean | null, playability_status?: string | null, thumbnail_url?: string | null, thumbnails?: { url?: string | null, width?: number | null, height?: number | null }[] | null, captions?: { language_code?: string | null, kind?: string | null }[] | null, chapters?: { title?: string | null, time_description?: string | null }[] | null } | null"
           }
         ]
       }
@@ -2188,7 +2188,7 @@
           {
             "key": "request_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
@@ -2223,22 +2223,22 @@
           {
             "key": "docs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_message_zh",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cache_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "router",
@@ -2248,12 +2248,12 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
-            "optional": true,
-            "type": "{ videos?: { video_id?: string | null, title?: string | null, author?: string | null, channel_id?: string | null, duration?: string | null, view_count?: number | string | null, published_time?: string | null }[] | null, shorts?: { video_id?: string | null, title?: string | null, author?: string | null, channel_id?: string | null, duration?: string | null, view_count?: number | string | null, published_time?: string | null }[] | null, channels?: {}[] | null, playlists?: {}[] | null, continuation_token?: string | null }"
+            "optional": false,
+            "type": "{ videos?: { video_id?: string | null, title?: string | null, author?: string | null, channel_id?: string | null, duration?: string | null, view_count?: number | string | null, published_time?: string | null }[] | null, shorts?: { video_id?: string | null, title?: string | null, author?: string | null, channel_id?: string | null, duration?: string | null, view_count?: number | string | null, published_time?: string | null }[] | null, channels?: {}[] | null, playlists?: {}[] | null, continuation_token?: string | null } | null"
           }
         ]
       }

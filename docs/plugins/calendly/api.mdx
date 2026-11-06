@@ -51,10 +51,8 @@ await corsair.calendly.api.activityLog.list({});
 {
   uri?: string,
   action: string,
-  actor: {
-  },
-  details: {
-  },
+  actor: Record<string, any>,
+  details: Record<string, any>,
   organization: string,
   occurred_at: string,
   namespace?: string
@@ -721,8 +719,7 @@ await corsair.calendly.api.eventTypes.updateAvailability({});
   uri: string,
   user: string,
   timezone: string,
-  rules?: {
-  }[]
+  rules?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -1876,17 +1873,7 @@ await corsair.calendly.api.routingForms.getSampleWebhookData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1925,14 +1912,11 @@ await corsair.calendly.api.routingForms.getSubmission({});
 {
   uri: string,
   routing_form: string,
-  questions_and_answers?: {
-  }[],
-  tracking?: {
-  },
+  questions_and_answers?: Record<string, any>[],
+  tracking?: Record<string, any>,
   created_at?: string,
   updated_at?: string,
-  result?: {
-  }
+  result?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2463,8 +2447,7 @@ await corsair.calendly.api.users.getAvailabilitySchedule({});
   name: string,
   user: string,
   timezone: string,
-  rules?: {
-  }[],
+  rules?: Record<string, any>[],
   created_at?: string,
   updated_at?: string
 }
@@ -2557,8 +2540,7 @@ await corsair.calendly.api.users.listAvailabilitySchedules({});
   name: string,
   user: string,
   timezone: string,
-  rules?: {
-  }[],
+  rules?: Record<string, any>[],
   created_at?: string,
   updated_at?: string
 }[]
@@ -2608,8 +2590,7 @@ await corsair.calendly.api.users.listBusyTimes({});
   end_time: string,
   buffered_start_time?: string,
   buffered_end_time?: string,
-  event?: string | {
-  } | null
+  event?: string | Record<string, any> | null
 }[]
 ```
 </Accordion>

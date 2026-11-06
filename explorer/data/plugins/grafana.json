@@ -69,7 +69,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ status_code: number, message?: string, results?: {} }"
+            "type": "{ status_code: number, message?: string, results?: Record<string, any> }"
           },
           {
             "key": "error",

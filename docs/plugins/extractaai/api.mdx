@@ -268,11 +268,55 @@ await corsair.extractaai.api.extraction.create({});
     description?: string,
     example?: string,
     type?: string | object | array,
-    properties?: lazy[],
+    properties?: {
+      key: string,
+      description?: string,
+      example?: string,
+      type?: string | object | array,
+      properties?: (recursive)[],
+      items?: {
+        type: string | object,
+        example?: string,
+        properties?: {
+          key: string,
+          description?: string,
+          example?: string,
+          type?: string | object | array,
+          properties?: (recursive)[],
+          items?: {
+            type: string | object,
+            example?: string,
+            properties?: (recursive)[]
+          }
+        }[]
+      }
+    }[],
     items?: {
       type: string | object,
       example?: string,
-      properties?: lazy[]
+      properties?: {
+        key: string,
+        description?: string,
+        example?: string,
+        type?: string | object | array,
+        properties?: {
+          key: string,
+          description?: string,
+          example?: string,
+          type?: string | object | array,
+          properties?: (recursive)[],
+          items?: {
+            type: string | object,
+            example?: string,
+            properties?: (recursive)[]
+          }
+        }[],
+        items?: {
+          type: string | object,
+          example?: string,
+          properties?: (recursive)[]
+        }
+      }[]
     }
   }[]
 }
@@ -368,7 +412,7 @@ await corsair.extractaai.api.extraction.getBatchResults({});
     fileId?: string,
     fileName?: string,
     status: string,
-    result?: lazy,
+    result?: JsonValue,
     url?: string
   }[]
 }
@@ -424,11 +468,55 @@ await corsair.extractaai.api.extraction.update({});
     description?: string,
     example?: string,
     type?: string | object | array,
-    properties?: lazy[],
+    properties?: {
+      key: string,
+      description?: string,
+      example?: string,
+      type?: string | object | array,
+      properties?: (recursive)[],
+      items?: {
+        type: string | object,
+        example?: string,
+        properties?: {
+          key: string,
+          description?: string,
+          example?: string,
+          type?: string | object | array,
+          properties?: (recursive)[],
+          items?: {
+            type: string | object,
+            example?: string,
+            properties?: (recursive)[]
+          }
+        }[]
+      }
+    }[],
     items?: {
       type: string | object,
       example?: string,
-      properties?: lazy[]
+      properties?: {
+        key: string,
+        description?: string,
+        example?: string,
+        type?: string | object | array,
+        properties?: {
+          key: string,
+          description?: string,
+          example?: string,
+          type?: string | object | array,
+          properties?: (recursive)[],
+          items?: {
+            type: string | object,
+            example?: string,
+            properties?: (recursive)[]
+          }
+        }[],
+        items?: {
+          type: string | object,
+          example?: string,
+          properties?: (recursive)[]
+        }
+      }[]
     }
   }[]
 }
@@ -503,16 +591,64 @@ await corsair.extractaai.api.extraction.view({});
     description?: string,
     example?: string,
     type?: string | object | array,
-    properties?: lazy[],
+    properties?: {
+      key: string,
+      description?: string,
+      example?: string,
+      type?: string | object | array,
+      properties?: (recursive)[],
+      items?: {
+        type: string | object,
+        example?: string,
+        properties?: {
+          key: string,
+          description?: string,
+          example?: string,
+          type?: string | object | array,
+          properties?: (recursive)[],
+          items?: {
+            type: string | object,
+            example?: string,
+            properties?: (recursive)[]
+          }
+        }[]
+      }
+    }[],
     items?: {
       type: string | object,
       example?: string,
-      properties?: lazy[]
+      properties?: {
+        key: string,
+        description?: string,
+        example?: string,
+        type?: string | object | array,
+        properties?: {
+          key: string,
+          description?: string,
+          example?: string,
+          type?: string | object | array,
+          properties?: (recursive)[],
+          items?: {
+            type: string | object,
+            example?: string,
+            properties?: (recursive)[]
+          }
+        }[],
+        items?: {
+          type: string | object,
+          example?: string,
+          properties?: (recursive)[]
+        }
+      }[]
     }
   }[],
   status?: string,
-  batches?: {
-  }
+  batches?: Record<string, {
+    filesNo?: number,
+    origin?: string,
+    startTime?: string | number,
+    status?: string
+  }>
 }
 ```
 </Accordion>

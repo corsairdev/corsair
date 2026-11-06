@@ -32,8 +32,8 @@ await corsair.turbotpipes.api.actor.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `display_name` | `string` | No | — |
-| `email` | `string` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
 | `type` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -67,18 +67,8 @@ await corsair.turbotpipes.api.actor.listActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -109,18 +99,8 @@ await corsair.turbotpipes.api.actor.listConnections({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -151,18 +131,8 @@ await corsair.turbotpipes.api.actor.listOrgs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -193,18 +163,8 @@ await corsair.turbotpipes.api.actor.listWorkspaces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -234,17 +194,7 @@ await corsair.turbotpipes.api.ai.createUserAiKey({ user_handle: 'my-user', provi
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -271,17 +221,7 @@ await corsair.turbotpipes.api.ai.deleteOrgWorkspaceConversation({ org_handle: 'm
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -307,17 +247,7 @@ await corsair.turbotpipes.api.ai.getUserAiKey({ user_handle: 'my-user', provider
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -344,17 +274,7 @@ await corsair.turbotpipes.api.ai.getUserWorkspaceConversation({ user_handle: 'my
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -385,18 +305,8 @@ await corsair.turbotpipes.api.ai.listUserAiKeys({ user_handle: 'my-user' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -430,18 +340,8 @@ await corsair.turbotpipes.api.ai.listUserWorkspaceConversations({ user_handle: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -470,17 +370,7 @@ await corsair.turbotpipes.api.ai.sendUserWorkspaceChatMessage({ user_handle: 'my
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -507,17 +397,7 @@ await corsair.turbotpipes.api.ai.testUserAiKey({ user_handle: 'my-user', provide
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -544,17 +424,7 @@ await corsair.turbotpipes.api.ai.updateUserAiKey({ user_handle: 'my-user', provi
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -587,17 +457,7 @@ await corsair.turbotpipes.api.ai.updateUserWorkspaceConversation({
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -624,17 +484,7 @@ await corsair.turbotpipes.api.auth.createLoginTokenEmail({ email: 'you@example.c
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -659,17 +509,7 @@ await corsair.turbotpipes.api.auth.createSignup({ email: 'you@example.com' });
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -695,17 +535,7 @@ await corsair.turbotpipes.api.auth.createUserPassword({ user_handle: 'my-user' }
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -731,17 +561,7 @@ await corsair.turbotpipes.api.auth.deleteUserToken({ user_handle: 'my-user', tok
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -766,17 +586,7 @@ await corsair.turbotpipes.api.auth.getAuthProvider({ provider: 'openai' });
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -801,17 +611,7 @@ await corsair.turbotpipes.api.auth.getUserPassword({ user_handle: 'my-user' });
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -837,17 +637,7 @@ await corsair.turbotpipes.api.auth.getUserToken({ user_handle: 'my-user', token_
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -872,17 +662,7 @@ await corsair.turbotpipes.api.auth.initiateLogin({ email: 'you@example.com' });
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -911,17 +691,7 @@ await corsair.turbotpipes.api.auth.updateUserToken({ user_handle: 'my-user', tok
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -949,17 +719,7 @@ await corsair.turbotpipes.api.billing.deleteOrgBillingSubscription({ org_handle:
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -985,17 +745,7 @@ await corsair.turbotpipes.api.billing.getOrgBillingInvoice({ org_handle: 'my-org
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1020,17 +770,7 @@ await corsair.turbotpipes.api.billing.getUserBillingPlan({ user_handle: 'my-user
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1055,17 +795,7 @@ await corsair.turbotpipes.api.billing.getUserBillingUpcomingInvoice({ user_handl
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| null`
 
 
 ---
@@ -1096,18 +826,8 @@ await corsair.turbotpipes.api.billing.listUserBillingInvoices({ user_handle: 'my
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1137,18 +857,8 @@ await corsair.turbotpipes.api.billing.listUserBillingPaymentMethods({ user_handl
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1178,18 +888,8 @@ await corsair.turbotpipes.api.billing.listUserBillingSubscriptions({ user_handle
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1217,17 +917,7 @@ await corsair.turbotpipes.api.billing.updateOrgBillingSubscription({ org_handle:
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1253,17 +943,7 @@ await corsair.turbotpipes.api.connections.createOrgConnection({ org_handle: 'my-
 | `org_handle` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
 | `plugin` | `string` | Yes | — |
-| `config` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | No | — |
 
 
 
@@ -1273,8 +953,8 @@ await corsair.turbotpipes.api.connections.createOrgConnection({ org_handle: 'my-
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `plugin` | `string` | No | — |
-| `state` | `string` | No | — |
+| `plugin` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -1304,17 +984,7 @@ await corsair.turbotpipes.api.connections.createOrgConnectionFolder({ org_handle
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1338,17 +1008,7 @@ await corsair.turbotpipes.api.connections.createUserConnection({ user_handle: 'm
 | `user_handle` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
 | `plugin` | `string` | Yes | — |
-| `config` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | No | — |
 
 
 
@@ -1358,8 +1018,8 @@ await corsair.turbotpipes.api.connections.createUserConnection({ user_handle: 'm
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `plugin` | `string` | No | — |
-| `state` | `string` | No | — |
+| `plugin` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -1389,17 +1049,7 @@ await corsair.turbotpipes.api.connections.deleteOrgConnectionPermission({ org_ha
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1425,17 +1075,7 @@ await corsair.turbotpipes.api.connections.deleteUserConnectionDeprecated({ user_
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1464,17 +1104,7 @@ await corsair.turbotpipes.api.connections.getOrgConnectionPermission({ org_handl
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1506,8 +1136,8 @@ await corsair.turbotpipes.api.connections.getUserConnection({ user_handle: 'my-u
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `plugin` | `string` | No | — |
-| `state` | `string` | No | — |
+| `plugin` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -1541,18 +1171,8 @@ await corsair.turbotpipes.api.connections.listUserConnections({ user_handle: 'my
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1583,31 +1203,11 @@ await corsair.turbotpipes.api.connections.testUserConnection({
 | `user_handle` | `string` | Yes | — |
 | `connection_handle` | `string` | No | — |
 | `plugin` | `string` | Yes | — |
-| `config` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | Yes | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1631,17 +1231,7 @@ await corsair.turbotpipes.api.connections.updateOrgConnection({ org_handle: 'my-
 | `org_handle` | `string` | Yes | — |
 | `connection_handle` | `string` | Yes | — |
 | `handle` | `string` | No | — |
-| `config` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | No | — |
 
 
 
@@ -1651,8 +1241,8 @@ await corsair.turbotpipes.api.connections.updateOrgConnection({ org_handle: 'my-
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `plugin` | `string` | No | — |
-| `state` | `string` | No | — |
+| `plugin` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -1682,17 +1272,7 @@ await corsair.turbotpipes.api.connections.updateOrgConnectionFolder({ org_handle
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1716,17 +1296,7 @@ await corsair.turbotpipes.api.connections.updateUserConnection({ user_handle: 'm
 | `user_handle` | `string` | Yes | — |
 | `connection_handle` | `string` | Yes | — |
 | `handle` | `string` | No | — |
-| `config` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | No | — |
 
 
 
@@ -1736,8 +1306,8 @@ await corsair.turbotpipes.api.connections.updateUserConnection({ user_handle: 'm
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `plugin` | `string` | No | — |
-| `state` | `string` | No | — |
+| `plugin` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -1775,8 +1345,8 @@ await corsair.turbotpipes.api.datatanks.createUserWorkspaceDatatank({ user_handl
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `state` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -1828,17 +1398,7 @@ await corsair.turbotpipes.api.datatanks.createUserWorkspaceDatatankTable({ user_
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1871,17 +1431,7 @@ await corsair.turbotpipes.api.datatanks.getDatatankTable({
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1914,8 +1464,8 @@ await corsair.turbotpipes.api.datatanks.getUserWorkspaceDatatank({ user_handle: 
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `state` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -1945,17 +1495,7 @@ await corsair.turbotpipes.api.datatanks.getUserWorkspaceSchema({ user_handle: 'm
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1988,17 +1528,7 @@ await corsair.turbotpipes.api.datatanks.getUserWorkspaceSchemaTable({
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2030,18 +1560,8 @@ await corsair.turbotpipes.api.datatanks.listOrgWorkspaceDatatanks({ org_handle: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2081,18 +1601,8 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankPartitions({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2125,18 +1635,8 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatanks({ user_handle
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2170,18 +1670,8 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankTables({ user_h
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2214,18 +1704,8 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemas({ user_handle: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2257,18 +1737,8 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemaTables({ user_han
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2296,17 +1766,7 @@ await corsair.turbotpipes.api.identities.getIdentity({ identity_handle: 'my-user
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2367,18 +1827,8 @@ await corsair.turbotpipes.api.identities.listIdentities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2405,31 +1855,11 @@ await corsair.turbotpipes.api.integrations.createUserIntegration({ user_handle: 
 | `user_handle` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
 | `type` | `aws \| azure \| gcp \| github \| slack \| gitlab` | Yes | — |
-| `config` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2455,17 +1885,7 @@ await corsair.turbotpipes.api.integrations.deleteUserIntegration({ user_handle: 
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2491,17 +1911,7 @@ await corsair.turbotpipes.api.integrations.getOrgIntegration({ org_handle: 'my-o
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2528,17 +1938,7 @@ await corsair.turbotpipes.api.integrations.getOrgWorkspaceIntegration({ org_hand
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2564,17 +1964,7 @@ await corsair.turbotpipes.api.integrations.getUserIntegration({ user_handle: 'my
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2601,17 +1991,7 @@ await corsair.turbotpipes.api.integrations.getUserWorkspaceIntegration({ user_ha
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2637,17 +2017,7 @@ await corsair.turbotpipes.api.integrations.installUserSlackIntegration({ user_ha
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2678,18 +2048,8 @@ await corsair.turbotpipes.api.integrations.listUserIntegrations({ user_handle: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2722,18 +2082,8 @@ await corsair.turbotpipes.api.integrations.listUserWorkspaceIntegrations({ user_
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2760,17 +2110,7 @@ await corsair.turbotpipes.api.integrations.testUserIntegration({ user_handle: 'm
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2797,17 +2137,7 @@ await corsair.turbotpipes.api.integrations.updateUserIntegration({ user_handle: 
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2838,17 +2168,7 @@ await corsair.turbotpipes.api.mods.createUserWorkspaceModVariableSetting({ user_
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2881,17 +2201,7 @@ await corsair.turbotpipes.api.mods.deleteOrgWorkspaceModVariableSetting({
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2924,17 +2234,7 @@ await corsair.turbotpipes.api.mods.deleteUserWorkspaceModVariableSetting({
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2967,17 +2267,7 @@ await corsair.turbotpipes.api.mods.getOrgWorkspaceModVariableSetting({
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3004,17 +2294,7 @@ await corsair.turbotpipes.api.mods.getUserWorkspaceMod({ user_handle: 'my-user',
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3047,17 +2327,7 @@ await corsair.turbotpipes.api.mods.getUserWorkspaceModVariableSetting({
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3084,17 +2354,7 @@ await corsair.turbotpipes.api.mods.installUserWorkspaceMod({ user_handle: 'my-us
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3126,18 +2386,8 @@ await corsair.turbotpipes.api.mods.listOrgWorkspaceMods({ org_handle: 'my-org', 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3170,18 +2420,8 @@ await corsair.turbotpipes.api.mods.listUserWorkspaceMods({ user_handle: 'my-user
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3215,18 +2455,8 @@ await corsair.turbotpipes.api.mods.listUserWorkspaceModVariables({ user_handle: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3256,32 +2486,12 @@ await corsair.turbotpipes.api.notifiers.createUserNotifier({
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `notifies` | `object[]` | Yes | — |
+| `notifies` | `Record<string, any>[]` | Yes | — |
 | `state` | `enabled \| disabled` | No | — |
 
-<AccordionGroup>
-<Accordion title="notifies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3310,32 +2520,12 @@ await corsair.turbotpipes.api.notifiers.createUserWorkspaceNotifier({
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `notifies` | `object[]` | Yes | — |
+| `notifies` | `Record<string, any>[]` | Yes | — |
 | `state` | `enabled \| disabled` | No | — |
 
-<AccordionGroup>
-<Accordion title="notifies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3362,17 +2552,7 @@ await corsair.turbotpipes.api.notifiers.deleteUserWorkspaceNotifier({ user_handl
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3399,17 +2579,7 @@ await corsair.turbotpipes.api.notifiers.getOrgWorkspaceNotifier({ org_handle: 'm
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3436,17 +2606,7 @@ await corsair.turbotpipes.api.notifiers.getUserWorkspaceNotifier({ user_handle: 
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3478,18 +2638,8 @@ await corsair.turbotpipes.api.notifiers.listUserNotifiers({ user_handle: 'my-use
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3523,18 +2673,8 @@ await corsair.turbotpipes.api.notifiers.listUserWorkspaceNotifiers({ user_handle
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3600,17 +2740,7 @@ await corsair.turbotpipes.api.orgs.delete({ org_handle: 'my-org' });
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3636,17 +2766,7 @@ await corsair.turbotpipes.api.orgs.deleteWorkspace({ org_handle: 'my-org', works
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3677,9 +2797,9 @@ await corsair.turbotpipes.api.orgs.get({ org_handle: 'my-org' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `display_name` | `string` | No | — |
-| `avatar_url` | `string` | No | — |
-| `role` | `string` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -3708,17 +2828,7 @@ await corsair.turbotpipes.api.orgs.getMember({ org_handle: 'my-org', user_handle
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3750,18 +2860,8 @@ await corsair.turbotpipes.api.orgs.listProcesses({ org_handle: 'my-org' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3794,18 +2894,8 @@ await corsair.turbotpipes.api.orgs.listServiceAccounts({ org_handle: 'my-org' })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3838,18 +2928,8 @@ await corsair.turbotpipes.api.orgs.listUsage({ org_handle: 'my-org' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3881,18 +2961,8 @@ await corsair.turbotpipes.api.orgs.listWorkspaces({ org_handle: 'my-org' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3952,17 +3022,7 @@ await corsair.turbotpipes.api.orgs.updateMemberRole({ org_handle: 'my-org', user
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3990,17 +3050,7 @@ await corsair.turbotpipes.api.orgs.updateServiceAccount({ org_handle: 'my-org', 
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4035,17 +3085,7 @@ await corsair.turbotpipes.api.orgs.updateServiceAccountToken({
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4074,17 +3114,7 @@ await corsair.turbotpipes.api.pipelines.deleteUserWorkspacePipeline({ user_handl
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4111,17 +3141,7 @@ await corsair.turbotpipes.api.pipelines.getOrgWorkspaceFlowpipeTrigger({ org_han
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4148,17 +3168,7 @@ await corsair.turbotpipes.api.pipelines.getUserWorkspaceFlowpipeMod({ user_handl
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4185,17 +3195,7 @@ await corsair.turbotpipes.api.pipelines.getUserWorkspaceFlowpipePipeline({ user_
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4222,17 +3222,7 @@ await corsair.turbotpipes.api.pipelines.getUserWorkspacePipeline({ user_handle: 
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4259,17 +3249,7 @@ await corsair.turbotpipes.api.pipelines.installUserWorkspaceFlowpipeMod({ user_h
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4302,18 +3282,8 @@ await corsair.turbotpipes.api.pipelines.listOrgWorkspaceFlowpipeModVariables({ o
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4347,18 +3317,8 @@ await corsair.turbotpipes.api.pipelines.listOrgWorkspacePipelines({ org_handle: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4391,18 +3351,8 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeInputs({ user_h
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4436,18 +3386,8 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeModVariables({ 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4481,18 +3421,8 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipePipelines({ use
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4523,18 +3453,8 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeTriggers({ user
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4568,18 +3488,8 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelines({ user_handle
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4614,18 +3524,8 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelineTriggers({ user
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4729,17 +3629,7 @@ await corsair.turbotpipes.api.pipelines.uninstallFlowpipeMod({ user_handle: 'my-
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4766,17 +3656,7 @@ await corsair.turbotpipes.api.pipelines.uninstallOrgWorkspaceFlowpipeMod({ org_h
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4805,17 +3685,7 @@ await corsair.turbotpipes.api.query.createOrgWorkspaceQuery({ org_handle: 'my-or
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4865,14 +3735,10 @@ await corsair.turbotpipes.api.query.createOrgWorkspaceSnapshot({
     name: string,
     panel_type: string
   },
-  panels: {
-  },
-  inputs?: {
-  },
-  variables?: {
-  },
-  metadata?: {
-  }
+  panels: Record<string, any>,
+  inputs?: Record<string, any>,
+  variables?: Record<string, any>,
+  metadata?: Record<string, any>
 }
 ```
 </Accordion>
@@ -4880,17 +3746,7 @@ await corsair.turbotpipes.api.query.createOrgWorkspaceSnapshot({
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4917,17 +3773,7 @@ await corsair.turbotpipes.api.query.getOrgWorkspaceQueryData({ org_handle: 'my-o
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4954,17 +3800,7 @@ await corsair.turbotpipes.api.query.getUserWorkspaceQuery({ user_handle: 'my-use
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4991,17 +3827,7 @@ await corsair.turbotpipes.api.query.getUserWorkspaceQueryData({ user_handle: 'my
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -5034,18 +3860,8 @@ await corsair.turbotpipes.api.query.listUserWorkspaceSnapshots({ user_handle: 'm
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5073,17 +3889,7 @@ await corsair.turbotpipes.api.query.postUserWorkspaceQuery({ user_handle: 'my-us
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -5110,17 +3916,7 @@ await corsair.turbotpipes.api.query.runUserWorkspaceQuery({ user_handle: 'my-use
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -5147,17 +3943,7 @@ await corsair.turbotpipes.api.tenants.getTenant({ tenant_handle: 'turbot-pipes' 
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -5207,17 +3993,7 @@ await corsair.turbotpipes.api.tenants.getTenantSettings({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -5247,18 +4023,8 @@ await corsair.turbotpipes.api.tenants.listTenants({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5286,17 +4052,7 @@ await corsair.turbotpipes.api.users.deleteUserAvatar({ user_handle: 'my-user' })
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -5327,9 +4083,9 @@ await corsair.turbotpipes.api.users.get({ user_handle: 'my-user' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `display_name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `avatar_url` | `string` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -5358,17 +4114,7 @@ await corsair.turbotpipes.api.users.getUserEmail({ user_handle: 'my-user', email
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -5393,17 +4139,7 @@ await corsair.turbotpipes.api.users.getUserPreferences({ user_handle: 'my-user' 
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -5434,8 +4170,8 @@ await corsair.turbotpipes.api.users.getUserProcess({ user_handle: 'my-user', pro
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `state` | `string` | No | — |
-| `type` | `string` | No | — |
+| `state` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -5470,9 +4206,9 @@ await corsair.turbotpipes.api.users.getUserWorkspace({ user_handle: 'my-user', w
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `state` | `string` | No | — |
-| `instance_type` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `instance_type` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -5506,18 +4242,8 @@ await corsair.turbotpipes.api.users.listAuditLogs({ user_handle: 'my-user' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5550,18 +4276,8 @@ await corsair.turbotpipes.api.users.listConstraints({ user_handle: 'my-user' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5593,18 +4309,8 @@ await corsair.turbotpipes.api.users.listProcesses({ user_handle: 'my-user' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5637,18 +4343,8 @@ await corsair.turbotpipes.api.users.listUsage({ user_handle: 'my-user' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5680,18 +4376,8 @@ await corsair.turbotpipes.api.users.listUserEmails({ user_handle: 'my-user' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5723,18 +4409,8 @@ await corsair.turbotpipes.api.users.listWorkspaces({ user_handle: 'my-user' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5800,9 +4476,9 @@ await corsair.turbotpipes.api.users.update({ user_handle: 'my-user' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `display_name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `avatar_url` | `string` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -5833,17 +4509,7 @@ await corsair.turbotpipes.api.users.updateUserPreferences({ user_handle: 'my-use
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -5880,9 +4546,9 @@ await corsair.turbotpipes.api.users.updateUserWorkspace({ user_handle: 'my-user'
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `state` | `string` | No | — |
-| `instance_type` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `instance_type` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -5918,31 +4584,11 @@ await corsair.turbotpipes.api.workspaces.createOrgWorkspaceAggregator({
 | `handle` | `string` | Yes | — |
 | `plugin` | `string` | Yes | — |
 | `connections` | `string[]` | No | — |
-| `config` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -5972,18 +4618,8 @@ await corsair.turbotpipes.api.workspaces.createOrgWorkspaceConnection({
 | `workspace_handle` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
 | `plugin` | `string` | Yes | — |
-| `config` | `object` | No | — |
+| `config` | `Record<string, any>` | No | — |
 | `parent_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5993,8 +4629,8 @@ await corsair.turbotpipes.api.workspaces.createOrgWorkspaceConnection({
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `plugin` | `string` | No | — |
-| `state` | `string` | No | — |
+| `plugin` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -6024,17 +4660,7 @@ await corsair.turbotpipes.api.workspaces.createOrgWorkspaceConnectionFolder({ or
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6064,18 +4690,8 @@ await corsair.turbotpipes.api.workspaces.createUserWorkspaceConnection({
 | `workspace_handle` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
 | `plugin` | `string` | Yes | — |
-| `config` | `object` | No | — |
+| `config` | `Record<string, any>` | No | — |
 | `parent_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6085,8 +4701,8 @@ await corsair.turbotpipes.api.workspaces.createUserWorkspaceConnection({
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `plugin` | `string` | No | — |
-| `state` | `string` | No | — |
+| `plugin` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -6116,17 +4732,7 @@ await corsair.turbotpipes.api.workspaces.createUserWorkspaceConnectionFolder({ u
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6159,8 +4765,8 @@ await corsair.turbotpipes.api.workspaces.getOrgWorkspaceConnection({ org_handle:
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `plugin` | `string` | No | — |
-| `state` | `string` | No | — |
+| `plugin` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -6190,17 +4796,7 @@ await corsair.turbotpipes.api.workspaces.getOrgWorkspaceConnectionFolder({ org_h
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6227,17 +4823,7 @@ await corsair.turbotpipes.api.workspaces.getUserWorkspaceAggregator({ user_handl
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6270,8 +4856,8 @@ await corsair.turbotpipes.api.workspaces.getUserWorkspaceConnection({ user_handl
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
-| `plugin` | `string` | No | — |
-| `state` | `string` | No | — |
+| `plugin` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -6301,17 +4887,7 @@ await corsair.turbotpipes.api.workspaces.getUserWorkspaceConnectionFolder({ user
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6343,8 +4919,8 @@ await corsair.turbotpipes.api.workspaces.getUserWorkspaceProcess({ user_handle: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `state` | `string` | No | — |
-| `type` | `string` | No | — |
+| `state` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -6380,17 +4956,7 @@ await corsair.turbotpipes.api.workspaces.getUserWorkspaceProcessLog({ user_handl
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `entries` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="entries full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `entries` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -6424,18 +4990,8 @@ await corsair.turbotpipes.api.workspaces.listOrgWorkspaceProcesses({ org_handle:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6469,18 +5025,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregatorConnections(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6513,18 +5059,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregators({ user_han
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6557,18 +5093,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceAuditLogs({ user_handl
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6601,18 +5127,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionAssociations
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6645,18 +5161,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionFolders({ us
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6689,18 +5195,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnections({ user_han
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6731,17 +5227,7 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionTree({ user_
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6773,18 +5259,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceDatabaseLogs({ user_ha
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6818,18 +5294,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceProcesses({ user_handl
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6863,18 +5329,8 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceUsage({ user_handle: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6905,31 +5361,11 @@ await corsair.turbotpipes.api.workspaces.testUserWorkspaceConnection({
 | `workspace_handle` | `string` | Yes | — |
 | `connection_handle` | `string` | Yes | — |
 | `plugin` | `string` | Yes | — |
-| `config` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---

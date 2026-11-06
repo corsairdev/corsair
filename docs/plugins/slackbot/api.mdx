@@ -74,8 +74,7 @@ await corsair.slackbot.api.calls.add({});
   join_url?: string,
   desktop_app_join_url?: string,
   title?: string,
-  users?: {
-  }[]
+  users?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -128,8 +127,7 @@ await corsair.slackbot.api.calls.end({});
   join_url?: string,
   desktop_app_join_url?: string,
   title?: string,
-  users?: {
-  }[]
+  users?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -181,8 +179,7 @@ await corsair.slackbot.api.calls.info({});
   join_url?: string,
   desktop_app_join_url?: string,
   title?: string,
-  users?: {
-  }[]
+  users?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -249,8 +246,7 @@ await corsair.slackbot.api.calls.participantsAdd({});
   join_url?: string,
   desktop_app_join_url?: string,
   title?: string,
-  users?: {
-  }[]
+  users?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -317,8 +313,7 @@ await corsair.slackbot.api.calls.participantsRemove({});
   join_url?: string,
   desktop_app_join_url?: string,
   title?: string,
-  users?: {
-  }[]
+  users?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -373,8 +368,7 @@ await corsair.slackbot.api.calls.update({});
   join_url?: string,
   desktop_app_join_url?: string,
   title?: string,
-  users?: {
-  }[]
+  users?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -616,7 +610,7 @@ await corsair.slackbot.api.canvases.list({});
 | `needed` | `string` | No | — |
 | `provided` | `string` | No | — |
 | `files` | `object[]` | No | — |
-| `paging` | `object` | No | — |
+| `paging` | `Record<string, any>` | No | — |
 | `response_metadata` | `object` | No | — |
 
 <AccordionGroup>
@@ -641,14 +635,6 @@ await corsair.slackbot.api.canvases.list({});
   external_id?: string,
   external_url?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="paging full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -692,7 +678,7 @@ await corsair.slackbot.api.canvases.sectionsLookup({});
 
 ```ts
 {
-  section_types?: any_header | h1 | h2 | h3[],
+  section_types?: (any_header | h1 | h2 | h3)[],
   contains_text?: string
 }
 ```
@@ -814,10 +800,8 @@ await corsair.slackbot.api.conversations.close({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }
 ```
 </Accordion>
@@ -878,10 +862,8 @@ await corsair.slackbot.api.conversations.create({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }
 ```
 </Accordion>
@@ -909,7 +891,7 @@ await corsair.slackbot.api.conversations.find({});
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
 | `exclude_archived` | `boolean` | No | — |
-| `types` | `public_channel \| private_channel \| mpim \| im[]` | No | — |
+| `types` | `(public_channel \| private_channel \| mpim \| im)[]` | No | — |
 | `team_id` | `string` | No | — |
 | `match` | `contains \| exact \| prefix` | No | — |
 | `limit` | `number` | No | — |
@@ -948,10 +930,8 @@ await corsair.slackbot.api.conversations.find({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1012,10 +992,8 @@ await corsair.slackbot.api.conversations.info({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1076,10 +1054,8 @@ await corsair.slackbot.api.conversations.invite({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1138,10 +1114,8 @@ await corsair.slackbot.api.conversations.join({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1237,7 +1211,7 @@ await corsair.slackbot.api.conversations.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `exclude_archived` | `boolean` | No | — |
-| `types` | `public_channel \| private_channel \| mpim \| im[]` | No | — |
+| `types` | `(public_channel \| private_channel \| mpim \| im)[]` | No | — |
 | `team_id` | `string` | No | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1274,10 +1248,8 @@ await corsair.slackbot.api.conversations.list({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1316,7 +1288,7 @@ await corsair.slackbot.api.conversations.listForUser({});
 |------|------|----------|-------------|
 | `user` | `string` | No | — |
 | `exclude_archived` | `boolean` | No | — |
-| `types` | `public_channel \| private_channel \| mpim \| im[]` | No | — |
+| `types` | `(public_channel \| private_channel \| mpim \| im)[]` | No | — |
 | `team_id` | `string` | No | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1353,10 +1325,8 @@ await corsair.slackbot.api.conversations.listForUser({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1513,10 +1483,8 @@ await corsair.slackbot.api.conversations.rename({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1577,10 +1545,8 @@ await corsair.slackbot.api.conversations.setPurpose({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1641,10 +1607,8 @@ await corsair.slackbot.api.conversations.setTopic({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1859,7 +1823,7 @@ await corsair.slackbot.api.files.info({});
 | `provided` | `string` | No | — |
 | `file` | `object` | No | — |
 | `content` | `string` | No | — |
-| `comments` | `object[]` | No | — |
+| `comments` | `Record<string, any>[]` | No | — |
 | `response_metadata` | `object` | No | — |
 
 <AccordionGroup>
@@ -1884,14 +1848,6 @@ await corsair.slackbot.api.files.info({});
   external_id?: string,
   external_url?: string
 }
-```
-</Accordion>
-
-<Accordion title="comments full type">
-
-```ts
-{
-}[]
 ```
 </Accordion>
 
@@ -1949,7 +1905,7 @@ await corsair.slackbot.api.files.list({});
 | `needed` | `string` | No | — |
 | `provided` | `string` | No | — |
 | `files` | `object[]` | No | — |
-| `paging` | `object` | No | — |
+| `paging` | `Record<string, any>` | No | — |
 | `response_metadata` | `object` | No | — |
 
 <AccordionGroup>
@@ -1974,14 +1930,6 @@ await corsair.slackbot.api.files.list({});
   external_id?: string,
   external_url?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="paging full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -2718,10 +2666,8 @@ await corsair.slackbot.api.messages.history({});
   username?: string,
   thread_ts?: string,
   reply_count?: number,
-  blocks?: {
-  }[],
-  attachments?: {
-  }[]
+  blocks?: Record<string, any>[],
+  attachments?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -2841,17 +2787,7 @@ await corsair.slackbot.api.messages.pinsList({});
 | `warning` | `string` | No | — |
 | `needed` | `string` | No | — |
 | `provided` | `string` | No | — |
-| `items` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `items` | `Record<string, any>[]` | No | — |
 
 
 
@@ -2875,46 +2811,20 @@ await corsair.slackbot.api.messages.post({});
 |------|------|----------|-------------|
 | `channel` | `string` | Yes | — |
 | `text` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `attachments` | `object[]` | No | — |
+| `blocks` | `Record<string, any>[]` | No | — |
+| `attachments` | `Record<string, any>[]` | No | — |
 | `thread_ts` | `string` | No | — |
 | `mrkdwn` | `boolean` | No | — |
 | `parse` | `full \| none` | No | — |
 | `link_names` | `boolean` | No | — |
 | `unfurl_links` | `boolean` | No | — |
 | `unfurl_media` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `as_user` | `boolean` | No | — |
 | `icon_emoji` | `string` | No | — |
 | `icon_url` | `string` | No | — |
 | `username` | `string` | No | — |
 | `reply_broadcast` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2947,10 +2857,8 @@ await corsair.slackbot.api.messages.post({});
   username?: string,
   thread_ts?: string,
   reply_count?: number,
-  blocks?: {
-  }[],
-  attachments?: {
-  }[]
+  blocks?: Record<string, any>[],
+  attachments?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -2979,45 +2887,19 @@ await corsair.slackbot.api.messages.postEphemeral({});
 | `channel` | `string` | Yes | — |
 | `user` | `string` | Yes | — |
 | `text` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `attachments` | `object[]` | No | — |
+| `blocks` | `Record<string, any>[]` | No | — |
+| `attachments` | `Record<string, any>[]` | No | — |
 | `thread_ts` | `string` | No | — |
 | `mrkdwn` | `boolean` | No | — |
 | `parse` | `full \| none` | No | — |
 | `link_names` | `boolean` | No | — |
 | `unfurl_links` | `boolean` | No | — |
 | `unfurl_media` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `as_user` | `boolean` | No | — |
 | `icon_emoji` | `string` | No | — |
 | `icon_url` | `string` | No | — |
 | `username` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3086,10 +2968,8 @@ await corsair.slackbot.api.messages.postMe({});
   username?: string,
   thread_ts?: string,
   reply_count?: number,
-  blocks?: {
-  }[],
-  attachments?: {
-  }[]
+  blocks?: Record<string, any>[],
+  attachments?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -3225,10 +3105,8 @@ await corsair.slackbot.api.messages.reactionsGet({});
   username?: string,
   thread_ts?: string,
   reply_count?: number,
-  blocks?: {
-  }[],
-  attachments?: {
-  }[]
+  blocks?: Record<string, any>[],
+  attachments?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -3295,18 +3173,10 @@ await corsair.slackbot.api.messages.reactionsList({});
 | `warning` | `string` | No | — |
 | `needed` | `string` | No | — |
 | `provided` | `string` | No | — |
-| `items` | `object[]` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `response_metadata` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="response_metadata full type">
 
 ```ts
@@ -3379,10 +3249,8 @@ await corsair.slackbot.api.messages.replies({});
   username?: string,
   thread_ts?: string,
   reply_count?: number,
-  blocks?: {
-  }[],
-  attachments?: {
-  }[]
+  blocks?: Record<string, any>[],
+  attachments?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -3422,43 +3290,17 @@ await corsair.slackbot.api.messages.schedule({});
 | `channel` | `string` | Yes | — |
 | `post_at` | `number` | Yes | — |
 | `text` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `attachments` | `object[]` | No | — |
+| `blocks` | `Record<string, any>[]` | No | — |
+| `attachments` | `Record<string, any>[]` | No | — |
 | `thread_ts` | `string` | No | — |
 | `mrkdwn` | `boolean` | No | — |
 | `parse` | `full \| none` | No | — |
 | `link_names` | `boolean` | No | — |
 | `unfurl_links` | `boolean` | No | — |
 | `unfurl_media` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `as_user` | `boolean` | No | — |
 | `reply_broadcast` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3492,10 +3334,8 @@ await corsair.slackbot.api.messages.schedule({});
   username?: string,
   thread_ts?: string,
   reply_count?: number,
-  blocks?: {
-  }[],
-  attachments?: {
-  }[]
+  blocks?: Record<string, any>[],
+  attachments?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -3524,40 +3364,14 @@ await corsair.slackbot.api.messages.update({});
 | `channel` | `string` | Yes | — |
 | `ts` | `string` | Yes | — |
 | `text` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `attachments` | `object[]` | No | — |
+| `blocks` | `Record<string, any>[]` | No | — |
+| `attachments` | `Record<string, any>[]` | No | — |
 | `as_user` | `boolean` | No | — |
 | `link_names` | `boolean` | No | — |
 | `parse` | `full \| none` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `reply_broadcast` | `boolean` | No | — |
 | `file_ids` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3591,10 +3405,8 @@ await corsair.slackbot.api.messages.update({});
   username?: string,
   thread_ts?: string,
   reply_count?: number,
-  blocks?: {
-  }[],
-  attachments?: {
-  }[]
+  blocks?: Record<string, any>[],
+  attachments?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -3867,26 +3679,8 @@ await corsair.slackbot.api.team.emojiList({});
 | `warning` | `string` | No | — |
 | `needed` | `string` | No | — |
 | `provided` | `string` | No | — |
-| `emoji` | `object` | No | — |
-| `categories` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="emoji full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="categories full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `emoji` | `Record<string, string>` | No | — |
+| `categories` | `Record<string, any>[]` | No | — |
 
 
 
@@ -3933,8 +3727,7 @@ await corsair.slackbot.api.team.info({});
   name?: string,
   domain?: string,
   email_domain?: string,
-  icon?: {
-  },
+  icon?: Record<string, any>,
   enterprise_id?: string,
   enterprise_name?: string
 }
@@ -4000,10 +3793,8 @@ await corsair.slackbot.api.team.openDm({});
   created?: number,
   creator?: string,
   num_members?: number,
-  topic?: {
-  },
-  purpose?: {
-  }
+  topic?: Record<string, any>,
+  purpose?: Record<string, any>
 }
 ```
 </Accordion>
@@ -4042,17 +3833,7 @@ await corsair.slackbot.api.team.profileGet({});
 | `warning` | `string` | No | — |
 | `needed` | `string` | No | — |
 | `provided` | `string` | No | — |
-| `profile` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="profile full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profile` | `Record<string, any>` | No | — |
 
 
 
@@ -4076,20 +3857,10 @@ await corsair.slackbot.api.team.unfurl({});
 |------|------|----------|-------------|
 | `channel` | `string` | Yes | — |
 | `ts` | `string` | Yes | — |
-| `unfurls` | `object` | Yes | — |
+| `unfurls` | `Record<string, Record<string, any>>` | Yes | — |
 | `user_auth_message` | `string` | No | — |
 | `user_auth_required` | `boolean` | No | — |
 | `user_auth_url` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="unfurls full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4542,8 +4313,7 @@ await corsair.slackbot.api.users.botsInfo({});
   updated?: number,
   app_id?: string,
   user_id?: string,
-  icons?: {
-  }
+  icons?: Record<string, any>
 }
 ```
 </Accordion>
@@ -4624,17 +4394,7 @@ await corsair.slackbot.api.users.dndTeamInfo({});
 | `warning` | `string` | No | — |
 | `needed` | `string` | No | — |
 | `provided` | `string` | No | — |
-| `users` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="users full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `users` | `Record<string, Record<string, any>>` | No | — |
 
 
 
@@ -4694,8 +4454,7 @@ await corsair.slackbot.api.users.find({});
   is_app_user?: boolean,
   tz?: string,
   updated?: number,
-  profile?: {
-  }
+  profile?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -4775,17 +4534,7 @@ await corsair.slackbot.api.users.getProfile({});
 | `warning` | `string` | No | — |
 | `needed` | `string` | No | — |
 | `provided` | `string` | No | — |
-| `profile` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="profile full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `profile` | `Record<string, any>` | No | — |
 
 
 
@@ -4839,8 +4588,7 @@ await corsair.slackbot.api.users.info({});
   is_app_user?: boolean,
   tz?: string,
   updated?: number,
-  profile?: {
-  }
+  profile?: Record<string, any>
 }
 ```
 </Accordion>
@@ -4902,8 +4650,7 @@ await corsair.slackbot.api.users.list({});
   is_app_user?: boolean,
   tz?: string,
   updated?: number,
-  profile?: {
-  }
+  profile?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -4971,8 +4718,7 @@ await corsair.slackbot.api.users.lookupByEmail({});
   is_app_user?: boolean,
   tz?: string,
   updated?: number,
-  profile?: {
-  }
+  profile?: Record<string, any>
 }
 ```
 </Accordion>

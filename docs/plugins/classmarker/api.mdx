@@ -507,7 +507,7 @@ await corsair.classmarker.api.certificates.list({});
 | `more_results_exist` | `boolean` | No | — |
 | `next_finished_after_timestamp` | `number` | No | — |
 | `error` | `object` | No | — |
-| `certificates` | `object[]` | No | — |
+| `certificates` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="error full type">
@@ -518,14 +518,6 @@ await corsair.classmarker.api.certificates.list({});
   error_message?: string,
   next_request_after?: number
 }
-```
-</Accordion>
-
-<Accordion title="certificates full type">
-
-```ts
-{
-}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -722,8 +714,9 @@ await corsair.classmarker.api.questions.create({});
   correct_feedback?: string,
   incorrect_feedback?: string,
   random_answers?: boolean,
-  options: {
-  },
+  options: Record<string, {
+    content?: string
+  }>,
   correct_options: string[],
   grade_style?: partial_with_deduction | partial_without_deduction | off
 } | {
@@ -762,8 +755,9 @@ await corsair.classmarker.api.questions.create({});
   last_updated_timestamp?: number,
   status?: string,
   grade_style?: string,
-  options?: {
-  },
+  options?: Record<string, {
+    content?: string
+  }>,
   correct_options?: string[]
 } | {
   status: ok | no_results | error | verified,
@@ -826,8 +820,9 @@ await corsair.classmarker.api.questions.get({});
   last_updated_timestamp?: number,
   status?: string,
   grade_style?: string,
-  options?: {
-  },
+  options?: Record<string, {
+    content?: string
+  }>,
   correct_options?: string[]
 } | {
   status: ok | no_results | error | verified,
@@ -914,8 +909,9 @@ await corsair.classmarker.api.questions.list({});
   last_updated_timestamp?: number,
   status?: string,
   grade_style?: string,
-  options?: {
-  },
+  options?: Record<string, {
+    content?: string
+  }>,
   correct_options?: string[]
 }[]
 ```
@@ -958,8 +954,9 @@ await corsair.classmarker.api.questions.update({});
   correct_feedback?: string,
   incorrect_feedback?: string,
   random_answers?: boolean,
-  options: {
-  },
+  options: Record<string, {
+    content?: string
+  }>,
   correct_options: string[],
   grade_style?: partial_with_deduction | partial_without_deduction | off
 } | {
@@ -998,8 +995,9 @@ await corsair.classmarker.api.questions.update({});
   last_updated_timestamp?: number,
   status?: string,
   grade_style?: string,
-  options?: {
-  },
+  options?: Record<string, {
+    content?: string
+  }>,
   correct_options?: string[]
 } | {
   status: ok | no_results | error | verified,
@@ -2068,7 +2066,7 @@ await corsair.classmarker.api.webhooks.list({});
 | `more_results_exist` | `boolean` | No | — |
 | `next_finished_after_timestamp` | `number` | No | — |
 | `error` | `object` | No | — |
-| `webhooks` | `object[]` | No | — |
+| `webhooks` | `Record<string, any>[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="error full type">
@@ -2079,14 +2077,6 @@ await corsair.classmarker.api.webhooks.list({});
   error_message?: string,
   next_request_after?: number
 }
-```
-</Accordion>
-
-<Accordion title="webhooks full type">
-
-```ts
-{
-}[]
 ```
 </Accordion>
 </AccordionGroup>

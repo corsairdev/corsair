@@ -1,7 +1,7 @@
 {
   "id": "replicate",
   "displayName": "Replicate",
-  "description": "Replicate plugin for Corsair",
+  "description": "Hosted machine learning model API for running predictions, managing models and versions, deployments, trainings, and uploaded files.",
   "npmPackageName": "@corsair-dev/replicate",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -94,7 +94,7 @@
           {
             "key": "full_description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "models",
@@ -125,12 +125,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -294,12 +294,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -344,7 +344,7 @@
           {
             "key": "input",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "stream",
@@ -359,7 +359,7 @@
           {
             "key": "webhook_events_filter",
             "optional": true,
-            "type": "start | output | logs | completed[]"
+            "type": "(start | output | logs | completed)[]"
           },
           {
             "key": "prefer",
@@ -394,7 +394,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deployment",
@@ -404,7 +404,7 @@
           {
             "key": "input",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "output",
@@ -414,12 +414,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
@@ -439,12 +439,12 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "deadline",
@@ -454,7 +454,7 @@
           {
             "key": "metrics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "urls",
@@ -490,7 +490,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -520,7 +520,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "created_at",
@@ -607,7 +607,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "created_at",
@@ -648,17 +648,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, content_type: string, size: number, checksums: { sha256?: string }, metadata: {}, created_at: string | string, expires_at: string | string, urls: { get: string } }[]"
+            "type": "{ id: string, content_type: string, size: number, checksums: { sha256?: string }, metadata: Record<string, any>, created_at: string | string, expires_at: string | string, urls: { get: string } }[]"
           }
         ]
       }
@@ -708,17 +708,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string | null, deployment?: string, input?: {}, output?: any, error?: string | null, logs?: string | null, source?: api | web, data_removed?: boolean, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, deadline?: string | string, metrics?: {}, urls?: { get?: string, cancel?: string, web?: string, stream?: string } }[]"
+            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string | null, deployment?: string, input?: Record<string, any>, output?: any, error?: string | null, logs?: string | null, source?: api | web, data_removed?: boolean, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, deadline?: string | string, metrics?: Record<string, any>, urls?: { get?: string, cancel?: string, web?: string, stream?: string } }[]"
           }
         ]
       }
@@ -759,7 +759,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
@@ -774,22 +774,22 @@
           {
             "key": "github_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paper_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "license_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cover_image_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "run_count",
@@ -804,12 +804,12 @@
           {
             "key": "default_example",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "latest_version",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -845,12 +845,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -895,7 +895,7 @@
           {
             "key": "input",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "stream",
@@ -910,7 +910,7 @@
           {
             "key": "webhook_events_filter",
             "optional": true,
-            "type": "start | output | logs | completed[]"
+            "type": "(start | output | logs | completed)[]"
           },
           {
             "key": "prefer",
@@ -945,7 +945,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deployment",
@@ -955,7 +955,7 @@
           {
             "key": "input",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "output",
@@ -965,12 +965,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
@@ -990,12 +990,12 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "deadline",
@@ -1005,7 +1005,7 @@
           {
             "key": "metrics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "urls",
@@ -1106,7 +1106,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
@@ -1121,22 +1121,22 @@
           {
             "key": "github_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paper_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "license_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cover_image_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "run_count",
@@ -1151,12 +1151,12 @@
           {
             "key": "default_example",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "latest_version",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -1202,12 +1202,12 @@
           {
             "key": "cog_version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "openapi_schema",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -1243,12 +1243,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -1294,7 +1294,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deployment",
@@ -1304,7 +1304,7 @@
           {
             "key": "input",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "output",
@@ -1314,12 +1314,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
@@ -1339,12 +1339,12 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "deadline",
@@ -1354,7 +1354,7 @@
           {
             "key": "metrics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "urls",
@@ -1389,7 +1389,7 @@
           {
             "key": "input",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "stream",
@@ -1404,7 +1404,7 @@
           {
             "key": "webhook_events_filter",
             "optional": true,
-            "type": "start | output | logs | completed[]"
+            "type": "(start | output | logs | completed)[]"
           },
           {
             "key": "prefer",
@@ -1444,7 +1444,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deployment",
@@ -1454,7 +1454,7 @@
           {
             "key": "input",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "output",
@@ -1464,12 +1464,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
@@ -1489,12 +1489,12 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "deadline",
@@ -1504,7 +1504,7 @@
           {
             "key": "metrics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "urls",
@@ -1550,7 +1550,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deployment",
@@ -1560,7 +1560,7 @@
           {
             "key": "input",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "output",
@@ -1570,12 +1570,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
@@ -1595,12 +1595,12 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "deadline",
@@ -1610,7 +1610,7 @@
           {
             "key": "metrics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "urls",
@@ -1656,17 +1656,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string | null, deployment?: string, input?: {}, output?: any, error?: string | null, logs?: string | null, source?: api | web, data_removed?: boolean, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, deadline?: string | string, metrics?: {}, urls?: { get?: string, cancel?: string, web?: string, stream?: string } }[]"
+            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string | null, deployment?: string, input?: Record<string, any>, output?: any, error?: string | null, logs?: string | null, source?: api | web, data_removed?: boolean, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, deadline?: string | string, metrics?: Record<string, any>, urls?: { get?: string, cancel?: string, web?: string, stream?: string } }[]"
           }
         ]
       }
@@ -1702,7 +1702,7 @@
           {
             "key": "models",
             "optional": false,
-            "type": "{ model: { owner: string, name: string, description?: string | null, visibility?: public | private, url?: string, github_url?: string | null, paper_url?: string | null, license_url?: string | null, cover_image_url?: string | null, run_count?: number, is_official?: boolean, default_example?: any | null, latest_version?: any | null }, metadata: {} }[]"
+            "type": "{ model: { owner: string, name: string, description?: string | null, visibility?: public | private, url?: string, github_url?: string | null, paper_url?: string | null, license_url?: string | null, cover_image_url?: string | null, run_count?: number, is_official?: boolean, default_example?: any | null, latest_version?: any | null }, metadata: Record<string, any> }[]"
           },
           {
             "key": "collections",
@@ -1758,7 +1758,7 @@
           {
             "key": "input",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "output",
@@ -1768,7 +1768,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logs",
@@ -1788,12 +1788,12 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "urls",
@@ -1803,7 +1803,7 @@
           {
             "key": "metrics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1853,7 +1853,7 @@
           {
             "key": "input",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "webhook",
@@ -1863,7 +1863,7 @@
           {
             "key": "webhook_events_filter",
             "optional": true,
-            "type": "start | output | logs | completed[]"
+            "type": "(start | output | logs | completed)[]"
           }
         ]
       },
@@ -1893,7 +1893,7 @@
           {
             "key": "input",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "output",
@@ -1903,7 +1903,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logs",
@@ -1923,12 +1923,12 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "urls",
@@ -1938,7 +1938,7 @@
           {
             "key": "metrics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1984,7 +1984,7 @@
           {
             "key": "input",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "output",
@@ -1994,7 +1994,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logs",
@@ -2014,12 +2014,12 @@
           {
             "key": "started_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string | string"
+            "type": "string | string | null"
           },
           {
             "key": "urls",
@@ -2029,7 +2029,7 @@
           {
             "key": "metrics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2055,17 +2055,17 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string, input?: {}, output?: { version?: string, weights?: string }, error?: string | null, logs?: string, source?: api | web, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, urls?: { get?: string, cancel?: string, web?: string, stream?: string }, metrics?: {} }[]"
+            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string, input?: Record<string, any>, output?: { version?: string, weights?: string }, error?: string | null, logs?: string, source?: api | web, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, urls?: { get?: string, cancel?: string, web?: string, stream?: string }, metrics?: Record<string, any> }[]"
           }
         ]
       }

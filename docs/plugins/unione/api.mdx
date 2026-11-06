@@ -177,8 +177,8 @@ await corsair.unione.api.email.schedule({});
 | `template_id` | `string` | No | — |
 | `tags` | `string[]` | No | — |
 | `template_engine` | `string` | No | — |
-| `global_substitutions` | `object` | No | — |
-| `global_metadata` | `object` | No | — |
+| `global_substitutions` | `Record<string, string>` | No | — |
+| `global_metadata` | `Record<string, string>` | No | — |
 | `track_links` | `number` | No | — |
 | `track_read` | `number` | No | — |
 | `send_at` | `string` | Yes | — |
@@ -189,10 +189,8 @@ await corsair.unione.api.email.schedule({});
 ```ts
 {
   email: string,
-  substitutions?: {
-  },
-  metadata?: {
-  }
+  substitutions?: Record<string, string>,
+  metadata?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -207,22 +205,6 @@ await corsair.unione.api.email.schedule({});
 }
 ```
 </Accordion>
-
-<Accordion title="global_substitutions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="global_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -234,17 +216,7 @@ await corsair.unione.api.email.schedule({});
 | `status` | `string` | No | — |
 | `job_id` | `string` | No | — |
 | `emails` | `string[]` | No | — |
-| `failed_emails` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="failed_emails full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `failed_emails` | `Record<string, string>` | No | — |
 
 
 
@@ -276,8 +248,8 @@ await corsair.unione.api.email.send({});
 | `template_id` | `string` | No | — |
 | `tags` | `string[]` | No | — |
 | `template_engine` | `string` | No | — |
-| `global_substitutions` | `object` | No | — |
-| `global_metadata` | `object` | No | — |
+| `global_substitutions` | `Record<string, string>` | No | — |
+| `global_metadata` | `Record<string, string>` | No | — |
 | `track_links` | `number` | No | — |
 | `track_read` | `number` | No | — |
 
@@ -287,10 +259,8 @@ await corsair.unione.api.email.send({});
 ```ts
 {
   email: string,
-  substitutions?: {
-  },
-  metadata?: {
-  }
+  substitutions?: Record<string, string>,
+  metadata?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -305,22 +275,6 @@ await corsair.unione.api.email.send({});
 }
 ```
 </Accordion>
-
-<Accordion title="global_substitutions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="global_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -332,17 +286,7 @@ await corsair.unione.api.email.send({});
 | `status` | `string` | No | — |
 | `job_id` | `string` | No | — |
 | `emails` | `string[]` | No | — |
-| `failed_emails` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="failed_emails full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `failed_emails` | `Record<string, string>` | No | — |
 
 
 
@@ -821,7 +765,7 @@ await corsair.unione.api.suppression.list({});
 | `status` | `string` | No | — |
 | `count` | `number` | No | — |
 | `suppressions` | `object[]` | No | — |
-| `cursor` | `string` | No | — |
+| `cursor` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="suppressions full type">
@@ -1066,10 +1010,8 @@ await corsair.unione.api.template.get({});
   name?: string,
   editor_type?: string,
   template_engine?: string,
-  global_substitutions?: {
-  },
-  global_metadata?: {
-  },
+  global_substitutions?: Record<string, string>,
+  global_metadata?: Record<string, string>,
   body?: {
     html?: string,
     plaintext?: string,
@@ -1082,8 +1024,7 @@ await corsair.unione.api.template.get({});
   reply_to_name?: string,
   track_links?: number,
   track_read?: number,
-  headers?: {
-  },
+  headers?: Record<string, string>,
   attachments?: {
     type: string,
     name: string,
@@ -1140,10 +1081,8 @@ await corsair.unione.api.template.list({});
   name?: string,
   editor_type?: string,
   template_engine?: string,
-  global_substitutions?: {
-  },
-  global_metadata?: {
-  },
+  global_substitutions?: Record<string, string>,
+  global_metadata?: Record<string, string>,
   body?: {
     html?: string,
     plaintext?: string,
@@ -1156,8 +1095,7 @@ await corsair.unione.api.template.list({});
   reply_to_name?: string,
   track_links?: number,
   track_read?: number,
-  headers?: {
-  },
+  headers?: Record<string, string>,
   attachments?: {
     type: string,
     name: string,
@@ -1204,10 +1142,8 @@ await corsair.unione.api.template.set({});
   name?: string,
   editor_type?: string,
   template_engine?: string,
-  global_substitutions?: {
-  },
-  global_metadata?: {
-  },
+  global_substitutions?: Record<string, string>,
+  global_metadata?: Record<string, string>,
   body?: {
     html?: string,
     plaintext?: string,
@@ -1220,8 +1156,7 @@ await corsair.unione.api.template.set({});
   reply_to_name?: string,
   track_links?: number,
   track_read?: number,
-  headers?: {
-  },
+  headers?: Record<string, string>,
   attachments?: {
     type: string,
     name: string,
@@ -1255,10 +1190,8 @@ await corsair.unione.api.template.set({});
   name?: string,
   editor_type?: string,
   template_engine?: string,
-  global_substitutions?: {
-  },
-  global_metadata?: {
-  },
+  global_substitutions?: Record<string, string>,
+  global_metadata?: Record<string, string>,
   body?: {
     html?: string,
     plaintext?: string,
@@ -1271,8 +1204,7 @@ await corsair.unione.api.template.set({});
   reply_to_name?: string,
   track_links?: number,
   track_read?: number,
-  headers?: {
-  },
+  headers?: Record<string, string>,
   attachments?: {
     type: string,
     name: string,

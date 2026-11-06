@@ -35,7 +35,7 @@ await corsair.plain.api.companies.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `company` | `object` | No | — |
+| `company` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="company full type">
@@ -46,7 +46,7 @@ await corsair.plain.api.companies.fetch({});
   name: string,
   domainName: string,
   contractValue?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -95,8 +95,8 @@ await corsair.plain.api.companies.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `CREATED \| UPDATED \| NOOP` | No | — |
-| `company` | `object` | No | — |
+| `result` | `CREATED \| UPDATED \| NOOP \| null` | No | — |
+| `company` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="company full type">
@@ -107,7 +107,7 @@ await corsair.plain.api.companies.update({});
   name: string,
   domainName: string,
   contractValue?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -290,8 +290,8 @@ await corsair.plain.api.customerGroups.list({});
 {
   hasNextPage: boolean,
   hasPreviousPage: boolean,
-  startCursor?: string | null,
-  endCursor?: string | null
+  startCursor: string | null,
+  endCursor: string | null
 }
 ```
 </Accordion>
@@ -401,7 +401,7 @@ await corsair.plain.api.customers.getByEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `customer` | `object` | No | — |
+| `customer` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="customer full type">
@@ -416,7 +416,7 @@ await corsair.plain.api.customers.getByEmail({});
     email: string,
     isVerified: boolean
   }
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -449,7 +449,7 @@ await corsair.plain.api.customers.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `customer` | `object` | No | — |
+| `customer` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="customer full type">
@@ -464,7 +464,7 @@ await corsair.plain.api.customers.getById({});
     email: string,
     isVerified: boolean
   }
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -561,8 +561,8 @@ await corsair.plain.api.customers.list({});
 {
   hasNextPage: boolean,
   hasPreviousPage: boolean,
-  startCursor?: string | null,
-  endCursor?: string | null
+  startCursor: string | null,
+  endCursor: string | null
 }
 ```
 </Accordion>
@@ -656,8 +656,8 @@ await corsair.plain.api.customers.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `CREATED \| UPDATED \| NOOP` | No | — |
-| `customer` | `object` | No | — |
+| `result` | `CREATED \| UPDATED \| NOOP \| null` | No | — |
+| `customer` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="customer full type">
@@ -672,7 +672,7 @@ await corsair.plain.api.customers.upsert({});
     email: string,
     isVerified: boolean
   }
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -700,22 +700,12 @@ await corsair.plain.api.graphql.run({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
-| `variables` | `object` | No | — |
+| `variables` | `Record<string, JsonValue>` | No | — |
 | `operationName` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="variables full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `lazy`
+**Output:** `JsonValue`
 
 
 ---
@@ -802,7 +792,7 @@ await corsair.plain.api.threads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `thread` | `object` | No | — |
+| `thread` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="thread full type">
@@ -814,7 +804,7 @@ await corsair.plain.api.threads.create({});
   title: string,
   status: string,
   priority: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -884,8 +874,8 @@ await corsair.plain.api.threads.fetchIssues({});
 {
   hasNextPage: boolean,
   hasPreviousPage: boolean,
-  startCursor?: string | null,
-  endCursor?: string | null
+  startCursor: string | null,
+  endCursor: string | null
 }
 ```
 </Accordion>
@@ -919,7 +909,7 @@ await corsair.plain.api.threads.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `thread` | `object` | No | — |
+| `thread` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="thread full type">
@@ -931,7 +921,7 @@ await corsair.plain.api.threads.getById({});
   title: string,
   status: string,
   priority: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -994,10 +984,10 @@ await corsair.plain.api.threads.listDeprecated({});
     tenantId?: string,
     externalId?: string
   }[],
-  messageSource?: CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL[],
+  messageSource?: (CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL)[],
   participantIds?: string[],
   broadcastIds?: string[],
-  statuses?: TODO | SNOOZED | DONE[]
+  statuses?: (TODO | SNOOZED | DONE)[]
 }
 ```
 </Accordion>
@@ -1044,8 +1034,8 @@ await corsair.plain.api.threads.listDeprecated({});
 {
   hasNextPage: boolean,
   hasPreviousPage: boolean,
-  startCursor?: string | null,
-  endCursor?: string | null
+  startCursor: string | null,
+  endCursor: string | null
 }
 ```
 </Accordion>
@@ -1109,10 +1099,10 @@ await corsair.plain.api.threads.query({});
     tenantId?: string,
     externalId?: string
   }[],
-  messageSource?: CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL[],
+  messageSource?: (CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL)[],
   participantIds?: string[],
   broadcastIds?: string[],
-  statuses?: TODO | SNOOZED | DONE[]
+  statuses?: (TODO | SNOOZED | DONE)[]
 }
 ```
 </Accordion>
@@ -1159,8 +1149,8 @@ await corsair.plain.api.threads.query({});
 {
   hasNextPage: boolean,
   hasPreviousPage: boolean,
-  startCursor?: string | null,
-  endCursor?: string | null
+  startCursor: string | null,
+  endCursor: string | null
 }
 ```
 </Accordion>
@@ -1246,7 +1236,7 @@ await corsair.plain.api.threads.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `thread` | `object` | No | — |
+| `thread` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="thread full type">
@@ -1258,7 +1248,7 @@ await corsair.plain.api.threads.update({});
   title: string,
   status: string,
   priority: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1293,7 +1283,7 @@ await corsair.plain.api.tiers.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `tier` | `object` | No | — |
+| `tier` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="tier full type">
@@ -1305,7 +1295,7 @@ await corsair.plain.api.tiers.fetch({});
   externalId?: string | null,
   color?: string,
   isDefault?: boolean
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1364,8 +1354,8 @@ await corsair.plain.api.tiers.list({});
 {
   hasNextPage: boolean,
   hasPreviousPage: boolean,
-  startCursor?: string | null,
-  endCursor?: string | null
+  startCursor: string | null,
+  endCursor: string | null
 }
 ```
 </Accordion>
@@ -1431,7 +1421,7 @@ await corsair.plain.api.users.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object` | No | — |
+| `user` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -1443,7 +1433,7 @@ await corsair.plain.api.users.getById({});
   publicName: string,
   email: string,
   isDeleted?: boolean
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

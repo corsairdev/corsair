@@ -236,12 +236,10 @@ await corsair.boldsign.api.documents.createEmbeddedRequestLink({});
 <Accordion title="files full type">
 
 ```ts
-(
-  string | {
-    base64: string,
-    fileName: string
-  }
-)[]
+(string | {
+  base64: string,
+  fileName: string
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -279,8 +277,8 @@ await corsair.boldsign.api.documents.editBeta({});
 | `title` | `string` | No | — |
 | `message` | `string` | No | — |
 | `signers` | `object[]` | No | — |
-| `cc` | `object[]` | No | — |
-| `files` | `object[]` | No | — |
+| `cc` | `Record<string, any>[]` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
 | `enableSigningOrder` | `boolean` | No | — |
 | `disableEmails` | `boolean` | No | — |
 | `disableSMS` | `boolean` | No | — |
@@ -299,22 +297,6 @@ await corsair.boldsign.api.documents.editBeta({});
     name?: string,
     fieldType?: string
   }[]
-}[]
-```
-</Accordion>
-
-<Accordion title="cc full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="files full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -628,7 +610,7 @@ await corsair.boldsign.api.documents.send({});
 | `enableSigningOrder` | `boolean` | No | — |
 | `expiryValue` | `number` | No | — |
 | `expiryDateType` | `Days \| DateTime` | No | — |
-| `reminderSettings` | `object` | No | — |
+| `reminderSettings` | `Record<string, any>` | No | — |
 | `disableEmails` | `boolean` | No | — |
 | `disableSMS` | `boolean` | No | — |
 | `brandId` | `string` | No | — |
@@ -657,20 +639,10 @@ await corsair.boldsign.api.documents.send({});
 <Accordion title="files full type">
 
 ```ts
-(
-  string | {
-    base64: string,
-    fileName: string
-  }
-)[]
-```
-</Accordion>
-
-<Accordion title="reminderSettings full type">
-
-```ts
-{
-}
+(string | {
+  base64: string,
+  fileName: string
+})[]
 ```
 </Accordion>
 </AccordionGroup>

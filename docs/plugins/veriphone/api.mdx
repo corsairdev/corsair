@@ -77,7 +77,7 @@ await corsair.veriphone.api.credits({});
 | `limit` | `number` | Yes | — |
 | `plan` | `string` | Yes | — |
 | `renew` | `number` | Yes | — |
-| `last_reset` | `object` | No | — |
+| `last_reset` | `string \| object` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
@@ -200,13 +200,13 @@ await corsair.veriphone.api.verifyPhoneNumber({});
 | `mode` | `string` | No | — |
 | `original_carrier` | `string` | No | — |
 | `original_line_type` | `string` | No | — |
-| `original_mccmnc` | `string` | No | — |
-| `current_carrier` | `string` | No | — |
-| `current_line_type` | `string` | No | — |
-| `current_mccmnc` | `string` | No | — |
-| `current_lookup` | `string` | No | — |
-| `ported` | `boolean` | No | — |
-| `carrier_data_source` | `string` | No | — |
+| `original_mccmnc` | `string \| null` | No | — |
+| `current_carrier` | `string \| null` | No | — |
+| `current_line_type` | `string \| null` | No | — |
+| `current_mccmnc` | `string \| null` | No | — |
+| `current_lookup` | `string \| null` | No | — |
+| `ported` | `boolean \| null` | No | — |
+| `carrier_data_source` | `string \| null` | No | — |
 
 
 

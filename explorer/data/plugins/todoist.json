@@ -861,7 +861,7 @@
           {
             "key": "due",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -897,7 +897,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, task_id?: string, notify_uid?: string, due?: {} }[]"
+        "type": "{ id: string, task_id?: string, notify_uid?: string, due?: Record<string, any> }[]"
       }
     },
     {
@@ -976,7 +976,7 @@
           {
             "key": "due",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1270,12 +1270,12 @@
           {
             "key": "project_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "section_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content",
@@ -1300,7 +1300,7 @@
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
@@ -1315,7 +1315,7 @@
           {
             "key": "due",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "url",
@@ -1396,12 +1396,12 @@
           {
             "key": "project_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "section_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content",
@@ -1426,7 +1426,7 @@
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
@@ -1441,7 +1441,7 @@
           {
             "key": "due",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "url",
@@ -1513,43 +1513,17 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, project_id?: string | null, section_id?: string | null, content: string, description?: string, is_completed?: boolean, labels?: string[], parent_id?: string | null, order?: number, priority?: number, due?: {} | null, url?: string, comment_count?: number, created_at?: string, creator_id?: string, assignee_id?: string, assigner_id?: string }[] | { tasks?: { id: string, project_id?: string | null, section_id?: string | null, content: string, description?: string, is_completed?: boolean, labels?: string[], parent_id?: string | null, order?: number, priority?: number, due?: {} | null, url?: string, comment_count?: number, created_at?: string, creator_id?: string, assignee_id?: string, assigner_id?: string }[] }"
+        "type": "{ id: string, project_id?: string | null, section_id?: string | null, content: string, description?: string, is_completed?: boolean, labels?: string[], parent_id?: string | null, order?: number, priority?: number, due?: Record<string, any> | null, url?: string, comment_count?: number, created_at?: string, creator_id?: string, assignee_id?: string, assigner_id?: string }[] | { tasks?: { id: string, project_id?: string | null, section_id?: string | null, content: string, description?: string, is_completed?: boolean, labels?: string[], parent_id?: string | null, order?: number, priority?: number, due?: Record<string, any> | null, url?: string, comment_count?: number, created_at?: string, creator_id?: string, assignee_id?: string, assigner_id?: string }[] }"
       }
     },
     {
       "path": "todoist.api.tasks.move",
       "shortPath": "tasks.move",
-      "description": "Move a Todoist task between project or section",
+      "description": "Move a Todoist task to one project, section, or parent",
       "riskLevel": "write",
       "input": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "id",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "project_id",
-            "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "section_id",
-            "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "parent_id",
-            "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "order",
-            "optional": true,
-            "type": "number"
-          }
-        ]
+        "kind": "inline",
+        "type": "{ id: string, project_id: string, order?: number } | { id: string, section_id: string, order?: number } | { id: string, parent_id: string, order?: number }"
       },
       "output": {
         "kind": "object",
@@ -1562,12 +1536,12 @@
           {
             "key": "project_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "section_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content",
@@ -1592,7 +1566,7 @@
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
@@ -1607,7 +1581,7 @@
           {
             "key": "due",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "url",
@@ -1683,12 +1657,12 @@
           {
             "key": "project_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "section_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content",
@@ -1713,7 +1687,7 @@
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
@@ -1728,7 +1702,7 @@
           {
             "key": "due",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "url",
@@ -1869,12 +1843,12 @@
           {
             "key": "project_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "section_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content",
@@ -1899,7 +1873,7 @@
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "order",
@@ -1914,7 +1888,7 @@
           {
             "key": "due",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "url",

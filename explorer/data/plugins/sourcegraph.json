@@ -53,8 +53,8 @@
         "fields": [
           {
             "key": "repository",
-            "optional": true,
-            "type": "{ comparison?: { range?: { expr?: string } | null, fileDiffs?: { nodes?: { oldPath?: string | null, newPath?: string | null, stat?: { added?: number, changed?: number, deleted?: number } }[], totalCount?: number | null, pageInfo?: { hasNextPage?: boolean, endCursor?: string | null } } } | null }"
+            "optional": false,
+            "type": "{ comparison?: { range?: { expr?: string } | null, fileDiffs?: { nodes?: { oldPath?: string | null, newPath?: string | null, stat?: { added?: number, changed?: number, deleted?: number } }[], totalCount?: number | null, pageInfo?: { hasNextPage?: boolean, endCursor?: string | null } } } | null } | null"
           }
         ]
       }
@@ -84,8 +84,8 @@
         "fields": [
           {
             "key": "repository",
-            "optional": true,
-            "type": "{ commit?: { oid: string, abbreviatedOID?: string, message?: string, subject?: string, body?: string | null, url?: string, canonicalURL?: string, author?: { date?: string, person?: { name?: string | null, email?: string | null, displayName?: string | null } | null }, committer?: { date?: string, person?: { name?: string | null, email?: string | null, displayName?: string | null } | null } | null } | null }"
+            "optional": false,
+            "type": "{ commit: { oid: string, abbreviatedOID?: string, message?: string, subject?: string, body?: string | null, url?: string, canonicalURL?: string, author?: { date?: string, person?: { name?: string | null, email?: string | null, displayName?: string | null } | null }, committer?: { date?: string, person?: { name?: string | null, email?: string | null, displayName?: string | null } | null } | null } | null } | null"
           }
         ]
       }
@@ -115,8 +115,8 @@
         "fields": [
           {
             "key": "repository",
-            "optional": true,
-            "type": "{ name?: string, defaultBranch?: { displayName?: string | null } | null, commit?: { oid?: string, file?: { name?: string, path?: string, content?: string, binary?: boolean, byteSize?: number } | null } | null }"
+            "optional": false,
+            "type": "{ name?: string, defaultBranch?: { displayName?: string | null } | null, commit?: { oid?: string, file: { name?: string, path?: string, content?: string, binary?: boolean, byteSize?: number } | null } | null } | null"
           }
         ]
       }
@@ -187,8 +187,8 @@
         "fields": [
           {
             "key": "repository",
-            "optional": true,
-            "type": "{ commit?: { tree?: { path?: string, isRoot?: boolean, entries?: { name?: string, path?: string, isDirectory?: boolean }[] } | null } | null }"
+            "optional": false,
+            "type": "{ commit: { tree: { path?: string, isRoot?: boolean, entries?: { name?: string, path?: string, isDirectory?: boolean }[] } | null } | null } | null"
           }
         ]
       }
@@ -213,8 +213,8 @@
         "fields": [
           {
             "key": "repository",
-            "optional": true,
-            "type": "{ name?: string, language?: string | null, commit?: { languages?: string[], languageStatistics?: { name?: string, totalBytes?: number, totalLines?: number }[] } | null }"
+            "optional": false,
+            "type": "{ name?: string, language?: string | null, commit?: { languages?: string[], languageStatistics?: { name?: string, totalBytes?: number, totalLines?: number }[] } | null } | null"
           }
         ]
       }
@@ -234,12 +234,12 @@
           {
             "key": "site",
             "optional": true,
-            "type": "{ id?: string, siteID?: string, canReloadSite?: boolean, viewerCanAdminister?: boolean }"
+            "type": "{ id?: string, siteID?: string, canReloadSite?: boolean, viewerCanAdminister?: boolean } | null"
           },
           {
             "key": "currentUser",
             "optional": true,
-            "type": "{ siteAdmin?: boolean, viewerCanAdminister?: boolean }"
+            "type": "{ siteAdmin?: boolean, viewerCanAdminister?: boolean } | null"
           },
           {
             "key": "canEditSiteSettings",
@@ -263,8 +263,8 @@
         "fields": [
           {
             "key": "currentUser",
-            "optional": true,
-            "type": "{ id?: string, username?: string, displayName?: string | null, email?: string | null, siteAdmin?: boolean, viewerCanAdminister?: boolean, avatarURL?: string | null, url?: string, createdAt?: string }"
+            "optional": false,
+            "type": "{ id?: string, username?: string, displayName?: string | null, email?: string | null, siteAdmin?: boolean, viewerCanAdminister?: boolean, avatarURL?: string | null, url?: string, createdAt?: string } | null"
           }
         ]
       }

@@ -31,7 +31,7 @@ await corsair.allimagesai.api.apiKeys.check({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `email` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 
 
 
@@ -139,18 +139,10 @@ await corsair.allimagesai.api.imageGenerations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filteredResults` | `object` | No | — |
+| `filteredResults` | `number \| Record<string, any>` | No | — |
 | `prints` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="filteredResults full type">
-
-```ts
-number | {
-}
-```
-</Accordion>
-
 <Accordion title="prints full type">
 
 ```ts
@@ -170,8 +162,7 @@ number | {
   }[],
   nbImages?: number | null,
   tags?: string[],
-  metaData?: {
-  } | null,
+  metaData?: Record<string, any> | null,
   createdAt?: string | null
 }[]
 ```
@@ -212,18 +203,10 @@ await corsair.allimagesai.api.images.listDownloaded({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filteredResults` | `object` | No | — |
+| `filteredResults` | `number \| Record<string, any>` | No | — |
 | `images` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="filteredResults full type">
-
-```ts
-number | {
-}
-```
-</Accordion>
-
 <Accordion title="images full type">
 
 ```ts
@@ -262,7 +245,7 @@ await corsair.allimagesai.api.webhooks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `events` | `test \| print.created \| print.active \| print.failed \| print.progress \| print.completed[]` | No | — |
+| `events` | `(test \| print.created \| print.active \| print.failed \| print.progress \| print.completed)[]` | No | — |
 
 
 
@@ -301,8 +284,8 @@ await corsair.allimagesai.api.webhooks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `apiKeyId` | `string` | No | — |
-| `url` | `string` | No | — |
+| `apiKeyId` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
 
 
 

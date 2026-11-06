@@ -149,12 +149,9 @@ An invitee canceled a meeting
   updated_at: string,
   cancel_url?: string,
   reschedule_url?: string,
-  tracking?: {
-  },
-  questions_and_answers?: {
-  }[],
-  payment?: {
-  } | null,
+  tracking?: Record<string, any>,
+  questions_and_answers?: Record<string, any>[],
+  payment?: Record<string, any> | null,
   no_show?: {
     uri: string
   } | null,
@@ -181,16 +178,13 @@ An invitee canceled a meeting
     },
     created_at?: string,
     updated_at?: string,
-    event_memberships?: {
-    }[],
-    event_guests?: {
-    }[]
+    event_memberships?: Record<string, any>[],
+    event_guests?: Record<string, any>[]
   },
   invitee_scheduled_by?: string | null,
   first_name?: string | null,
   last_name?: string | null,
-  reconfirmation?: {
-  } | null,
+  reconfirmation?: Record<string, any> | null,
   scheduling_method?: string | null,
   text_reminder_number?: string | null,
   cancellation?: {
@@ -223,12 +217,9 @@ An invitee canceled a meeting
     updated_at: string,
     cancel_url?: string,
     reschedule_url?: string,
-    tracking?: {
-    },
-    questions_and_answers?: {
-    }[],
-    payment?: {
-    } | null,
+    tracking?: Record<string, any>,
+    questions_and_answers?: Record<string, any>[],
+    payment?: Record<string, any> | null,
     no_show?: {
       uri: string
     } | null,
@@ -255,16 +246,13 @@ An invitee canceled a meeting
       },
       created_at?: string,
       updated_at?: string,
-      event_memberships?: {
-      }[],
-      event_guests?: {
-      }[]
+      event_memberships?: Record<string, any>[],
+      event_guests?: Record<string, any>[]
     },
     invitee_scheduled_by?: string | null,
     first_name?: string | null,
     last_name?: string | null,
-    reconfirmation?: {
-    } | null,
+    reconfirmation?: Record<string, any> | null,
     scheduling_method?: string | null,
     text_reminder_number?: string | null,
     cancellation?: {
@@ -327,12 +315,9 @@ An invitee booked a meeting
   updated_at: string,
   cancel_url?: string,
   reschedule_url?: string,
-  tracking?: {
-  },
-  questions_and_answers?: {
-  }[],
-  payment?: {
-  } | null,
+  tracking?: Record<string, any>,
+  questions_and_answers?: Record<string, any>[],
+  payment?: Record<string, any> | null,
   no_show?: {
     uri: string
   } | null,
@@ -359,16 +344,13 @@ An invitee booked a meeting
     },
     created_at?: string,
     updated_at?: string,
-    event_memberships?: {
-    }[],
-    event_guests?: {
-    }[]
+    event_memberships?: Record<string, any>[],
+    event_guests?: Record<string, any>[]
   },
   invitee_scheduled_by?: string | null,
   first_name?: string | null,
   last_name?: string | null,
-  reconfirmation?: {
-  } | null,
+  reconfirmation?: Record<string, any> | null,
   scheduling_method?: string | null,
   text_reminder_number?: string | null
 }
@@ -396,12 +378,9 @@ An invitee booked a meeting
     updated_at: string,
     cancel_url?: string,
     reschedule_url?: string,
-    tracking?: {
-    },
-    questions_and_answers?: {
-    }[],
-    payment?: {
-    } | null,
+    tracking?: Record<string, any>,
+    questions_and_answers?: Record<string, any>[],
+    payment?: Record<string, any> | null,
     no_show?: {
       uri: string
     } | null,
@@ -428,16 +407,13 @@ An invitee booked a meeting
       },
       created_at?: string,
       updated_at?: string,
-      event_memberships?: {
-      }[],
-      event_guests?: {
-      }[]
+      event_memberships?: Record<string, any>[],
+      event_guests?: Record<string, any>[]
     },
     invitee_scheduled_by?: string | null,
     first_name?: string | null,
     last_name?: string | null,
-    reconfirmation?: {
-    } | null,
+    reconfirmation?: Record<string, any> | null,
     scheduling_method?: string | null,
     text_reminder_number?: string | null
   }
@@ -557,12 +533,9 @@ A routing form submission was created
 {
   uri: string,
   routing_form: string,
-  questions_and_answers?: {
-  }[],
-  tracking?: {
-  },
-  result?: {
-  },
+  questions_and_answers?: Record<string, any>[],
+  tracking?: Record<string, any>,
+  result?: Record<string, any>,
   created_at?: string,
   updated_at?: string
 }
@@ -582,12 +555,9 @@ A routing form submission was created
   payload: {
     uri: string,
     routing_form: string,
-    questions_and_answers?: {
-    }[],
-    tracking?: {
-    },
-    result?: {
-    },
+    questions_and_answers?: Record<string, any>[],
+    tracking?: Record<string, any>,
+    result?: Record<string, any>,
     created_at?: string,
     updated_at?: string
   }

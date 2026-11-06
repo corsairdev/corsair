@@ -40,29 +40,21 @@ await corsair.retellai.api.calls.get({ id: 'Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6' })
 | `agent_id` | `string` | No | — |
 | `call_status` | `string` | No | — |
 | `start_timestamp` | `number` | No | — |
-| `end_timestamp` | `number` | No | — |
+| `end_timestamp` | `number \| null` | No | — |
 | `direction` | `string` | No | — |
 | `from_number` | `string` | No | — |
 | `to_number` | `string` | No | — |
 | `disconnection_reason` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `transcript` | `string` | No | — |
 | `transcript_object` | `object[]` | No | — |
-| `transcript_with_tool_calls` | `object[]` | No | — |
-| `scrubbed_transcript_with_tool_calls` | `object[]` | No | — |
+| `transcript_with_tool_calls` | `Record<string, any>[]` | No | — |
+| `scrubbed_transcript_with_tool_calls` | `Record<string, any>[]` | No | — |
 | `recording_url` | `string` | No | — |
-| `call_analysis` | `object` | No | — |
-| `retell_llm_dynamic_variables` | `object` | No | — |
+| `call_analysis` | `Record<string, any>` | No | — |
+| `retell_llm_dynamic_variables` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="transcript_object full type">
 
 ```ts
@@ -72,38 +64,6 @@ await corsair.retellai.api.calls.get({ id: 'Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6' })
   start?: number,
   end?: number
 }[]
-```
-</Accordion>
-
-<Accordion title="transcript_with_tool_calls full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="scrubbed_transcript_with_tool_calls full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="call_analysis full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="retell_llm_dynamic_variables full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -128,21 +88,11 @@ await corsair.retellai.api.calls.list({ limit: 50, sortOrder: 'descending', filt
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filterCriteria` | `object` | No | — |
+| `filterCriteria` | `Record<string, any>` | No | — |
 | `limit` | `number` | No | — |
 | `paginationKey` | `string` | No | — |
 | `sortOrder` | `ascending \| descending` | No | — |
 | `includeTotal` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="filterCriteria full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -151,7 +101,7 @@ await corsair.retellai.api.calls.list({ limit: 50, sortOrder: 'descending', filt
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `pagination_key` | `string` | No | — |
+| `pagination_key` | `string \| null` | No | — |
 | `has_more` | `boolean` | No | — |
 | `total` | `number` | No | — |
 
@@ -170,8 +120,7 @@ await corsair.retellai.api.calls.list({ limit: 50, sortOrder: 'descending', filt
   from_number?: string,
   to_number?: string,
   disconnection_reason?: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -211,37 +160,11 @@ await corsair.retellai.api.chats.get({ id: 'Jabr9TXYYJHfvl6Syypi88rdAHYHmcq6' })
 | `agent_id` | `string` | No | — |
 | `chat_status` | `string` | No | — |
 | `start_timestamp` | `number` | No | — |
-| `end_timestamp` | `number` | No | — |
-| `metadata` | `object` | No | — |
+| `end_timestamp` | `number \| null` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `transcript` | `string` | No | — |
-| `message_with_tool_calls` | `object[]` | No | — |
-| `chat_analysis` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="message_with_tool_calls full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="chat_analysis full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `message_with_tool_calls` | `Record<string, any>[]` | No | — |
+| `chat_analysis` | `Record<string, any>` | No | — |
 
 
 
@@ -263,21 +186,11 @@ await corsair.retellai.api.chats.list({ limit: 50, includeTotal: true });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filterCriteria` | `object` | No | — |
+| `filterCriteria` | `Record<string, any>` | No | — |
 | `limit` | `number` | No | — |
 | `paginationKey` | `string` | No | — |
 | `sortOrder` | `ascending \| descending` | No | — |
 | `includeTotal` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="filterCriteria full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -286,7 +199,7 @@ await corsair.retellai.api.chats.list({ limit: 50, includeTotal: true });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `pagination_key` | `string` | No | — |
+| `pagination_key` | `string \| null` | No | — |
 | `has_more` | `boolean` | No | — |
 | `total` | `number` | No | — |
 
@@ -300,8 +213,7 @@ await corsair.retellai.api.chats.list({ limit: 50, includeTotal: true });
   chat_status?: string,
   start_timestamp?: number,
   end_timestamp?: number | null,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>

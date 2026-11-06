@@ -29,6 +29,8 @@ const rows = await corsair.pagerduty.db.incidents.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `incident_number` | `number` | equals, gt, gte, lt, lte, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `urgency` | `string` | equals, contains, startsWith, endsWith, in |
 | `html_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `date` | equals, before, after, between |
 | `updated_at` | `date` | equals, before, after, between |

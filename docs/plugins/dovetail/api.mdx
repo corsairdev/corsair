@@ -92,17 +92,7 @@ await corsair.dovetail.api.channels.createDataPoint({});
 | `timestamp` | `string` | Yes | — |
 | `source_title` | `string` | No | — |
 | `source_url` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -3146,17 +3136,7 @@ await corsair.dovetail.api.search.magicSearch({});
 | `query` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
-| `filter` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="filter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `filter` | `Record<string, any>` | No | — |
 
 
 

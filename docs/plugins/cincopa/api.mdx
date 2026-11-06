@@ -149,7 +149,7 @@ await corsair.cincopa.api.gallery.list({});
 | `runtime` | `number` | Yes | — |
 | `workspace` | `string` | No | — |
 | `galleries` | `object[]` | Yes | — |
-| `tag_cloud` | `object` | Yes | — |
+| `tag_cloud` | `Record<string, number>` | Yes | — |
 | `items_data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -165,14 +165,6 @@ await corsair.cincopa.api.gallery.list({});
   modified: string,
   syncstatus: string
 }[]
-```
-</Accordion>
-
-<Accordion title="tag_cloud full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 

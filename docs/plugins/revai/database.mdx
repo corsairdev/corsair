@@ -27,9 +27,11 @@ const rows = await corsair.revai.db.job.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_on` | `date` | equals, before, after, between |
 | `completed_on` | `date` | equals, before, after, between |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `metadata` | `string` | equals, contains, startsWith, endsWith, in |
 | `media_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `callback_url` | `string` | equals, contains, startsWith, endsWith, in |

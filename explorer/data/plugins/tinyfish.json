@@ -48,13 +48,13 @@
           },
           {
             "key": "cancelled_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "message",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -80,12 +80,12 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ run_id: string, status: CANCELLED | COMPLETED | FAILED, cancelled_at?: string | null, message?: string | null }[]"
+            "type": "{ run_id: string, status: CANCELLED | COMPLETED | FAILED, cancelled_at: string | null, message: string | null }[]"
           },
           {
             "key": "not_found",
-            "optional": true,
-            "type": "string[]"
+            "optional": false,
+            "type": "string[] | null"
           }
         ]
       }
@@ -140,28 +140,28 @@
           },
           {
             "key": "started_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "finished_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "num_of_steps",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "result",
-            "optional": true,
-            "type": "{}"
+            "optional": false,
+            "type": "Record<string, any> | null"
           },
           {
             "key": "output_schema",
-            "optional": true,
-            "type": "{}"
+            "optional": false,
+            "type": "Record<string, any> | null"
           },
           {
             "key": "profile_attached",
@@ -170,33 +170,33 @@
           },
           {
             "key": "profile_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "{ code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null }"
+            "optional": false,
+            "type": "{ code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null } | null"
           },
           {
             "key": "profile_hint",
             "optional": true,
-            "type": "{ message: string, setup_url: string, reason: auth_wall | bot_challenge }"
+            "type": "{ message: string, setup_url: string, reason: auth_wall | bot_challenge } | null"
           },
           {
             "key": "streaming_url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "browser_config",
-            "optional": true,
-            "type": "{ proxy_enabled?: boolean | null, proxy_country_code?: string | null }"
+            "optional": false,
+            "type": "{ proxy_enabled: boolean | null, proxy_country_code: string | null } | null"
           },
           {
             "key": "video_url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "steps",
@@ -227,12 +227,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ run_id: string, status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED, goal: string, created_at: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, output_schema?: {} | null, profile_attached: boolean, profile_id?: string | null, error?: { code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null } | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null, streaming_url?: string | null, browser_config?: { proxy_enabled?: boolean | null, proxy_country_code?: string | null } | null, video_url?: string | null, steps: { id: string, timestamp: string, status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }[]"
+            "type": "{ run_id: string, status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED, goal: string, created_at: string, started_at: string | null, finished_at: string | null, num_of_steps: number | null, result: Record<string, any> | null, output_schema: Record<string, any> | null, profile_attached: boolean, profile_id: string | null, error: { code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null } | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null, streaming_url: string | null, browser_config: { proxy_enabled: boolean | null, proxy_country_code: string | null } | null, video_url: string | null, steps: { id: string, timestamp: string, status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }[]"
           },
           {
             "key": "not_found",
-            "optional": true,
-            "type": "string[]"
+            "optional": false,
+            "type": "string[] | null"
           }
         ]
       }
@@ -365,12 +365,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ run_id: string, status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED, goal: string, created_at: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, output_schema?: {} | null, profile_attached: boolean, profile_id?: string | null, error?: { code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null } | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null, streaming_url?: string | null, browser_config?: { proxy_enabled?: boolean | null, proxy_country_code?: string | null } | null }[]"
+            "type": "{ run_id: string, status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED, goal: string, created_at: string, started_at: string | null, finished_at: string | null, num_of_steps: number | null, result: Record<string, any> | null, output_schema: Record<string, any> | null, profile_attached: boolean, profile_id: string | null, error: { code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null } | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null, streaming_url: string | null, browser_config: { proxy_enabled: boolean | null, proxy_country_code: string | null } | null }[]"
           },
           {
             "key": "pagination",
             "optional": false,
-            "type": "{ total: number, next_cursor?: string | null, has_more: boolean }"
+            "type": "{ total: number, next_cursor: string | null, has_more: boolean }"
           }
         ]
       }
@@ -446,7 +446,7 @@
           {
             "key": "output_schema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -455,8 +455,8 @@
         "fields": [
           {
             "key": "run_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -465,33 +465,33 @@
           },
           {
             "key": "started_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "finished_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "num_of_steps",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "result",
-            "optional": true,
-            "type": "{}"
+            "optional": false,
+            "type": "Record<string, any> | null"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "{ code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null }"
+            "optional": false,
+            "type": "{ code?: string | null, message: string, category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN, retry_after?: number | null, help_url?: string | null, help_message?: string | null, profile_hint?: { message: string, setup_url: string, reason: auth_wall | bot_challenge } | null } | null"
           },
           {
             "key": "profile_hint",
             "optional": true,
-            "type": "{ message: string, setup_url: string, reason: auth_wall | bot_challenge }"
+            "type": "{ message: string, setup_url: string, reason: auth_wall | bot_challenge } | null"
           }
         ]
       }
@@ -567,7 +567,7 @@
           {
             "key": "output_schema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -576,13 +576,13 @@
         "fields": [
           {
             "key": "run_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "{ code: string, message: string }"
+            "optional": false,
+            "type": "{ code: string, message: string } | null"
           }
         ]
       }
@@ -598,7 +598,7 @@
           {
             "key": "runs",
             "optional": false,
-            "type": "{ url: string, goal: string, browser_profile?: lite | stealth, api_integration?: string, agent_config?: { mode?: default | strict, cursor_style?: fish | standard | green-pointer, max_steps?: number, max_duration_seconds?: number }, capture_config?: { elements?: boolean, snapshots?: boolean, screenshots?: boolean, recording?: boolean, html?: boolean }, webhook_url?: string, use_vault?: boolean, credential_item_ids?: string[], proxy_config?: { enabled: boolean, country_code?: US | GB | CA | DE | FR | JP | AU | null }, output_schema?: {} }[]"
+            "type": "{ url: string, goal: string, browser_profile?: lite | stealth, api_integration?: string, agent_config?: { mode?: default | strict, cursor_style?: fish | standard | green-pointer, max_steps?: number, max_duration_seconds?: number }, capture_config?: { elements?: boolean, snapshots?: boolean, screenshots?: boolean, recording?: boolean, html?: boolean }, webhook_url?: string, use_vault?: boolean, credential_item_ids?: string[], proxy_config?: { enabled: boolean, country_code?: US | GB | CA | DE | FR | JP | AU | null }, output_schema?: Record<string, any> }[]"
           },
           {
             "key": "profile_id",
@@ -608,7 +608,7 @@
           {
             "key": "output_schema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -617,13 +617,13 @@
         "fields": [
           {
             "key": "run_ids",
-            "optional": true,
-            "type": "string[]"
+            "optional": false,
+            "type": "string[] | null"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "{ code: string, message: string, details?: any | null }"
+            "optional": false,
+            "type": "{ code: string, message: string, details?: any | null } | null"
           }
         ]
       }
@@ -644,7 +644,7 @@
           {
             "key": "timeout_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "proxy_config",
@@ -751,7 +751,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ session_id: string, user_id: string, sub_user_id?: string | null, mode: light | stealth | tf-browser, start_time: string, end_time?: string | null, duration_ms?: number | null, proxy_trg_rx_bytes?: number | null, proxy_trg_tx_bytes?: number | null, status: running | ended | created, created_at: string, updated_at: string }[]"
+            "type": "{ session_id: string, user_id: string, sub_user_id: string | null, mode: light | stealth | tf-browser, start_time: string, end_time: string | null, duration_ms: number | null, proxy_trg_rx_bytes: number | null, proxy_trg_tx_bytes: number | null, status: running | ended | created, created_at: string, updated_at: string }[]"
           },
           {
             "key": "total",
@@ -867,7 +867,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ url: string, final_url?: string | null, title?: string | null, description?: string | null, language?: string | null, format: markdown | html | json, text?: string | {} | null, author?: string | null, published_date?: string | null, links?: string[], image_links?: string[], iframe_links?: string[], page_metadata?: {}, latency_ms?: number | null, not_modified?: boolean, etag?: string, last_modified?: string, unmatched_selectors?: string[] }[]"
+            "type": "{ url: string, final_url: string | null, title: string | null, description: string | null, language: string | null, format: markdown | html | json, text: string | Record<string, any> | null, author: string | null, published_date: string | null, links?: string[], image_links?: string[], iframe_links?: string[], page_metadata?: Record<string, any>, latency_ms: number | null, not_modified?: boolean, etag?: string, last_modified?: string, unmatched_selectors?: string[] }[]"
           },
           {
             "key": "errors",
@@ -923,7 +923,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, url: string, final_url: string, title?: string | null, description?: string | null, language?: string | null, author?: string | null, published_date?: string | null, format: markdown | html | json, status: completed | failed, request_origin: string, request_id?: string | null, text_length?: number | null, links_count: number, image_links_count: number, latency_ms?: number | null, not_modified?: boolean, etag?: string, last_modified?: string, created_at: string, error?: string | null }[]"
+            "type": "{ id: string, url: string, final_url: string, title: string | null, description: string | null, language: string | null, author: string | null, published_date: string | null, format: markdown | html | json, status: completed | failed, request_origin: string, request_id: string | null, text_length: number | null, links_count: number, image_links_count: number, latency_ms: number | null, not_modified?: boolean, etag?: string, last_modified?: string, created_at: string, error: string | null }[]"
           },
           {
             "key": "total",
@@ -974,7 +974,7 @@
           {
             "key": "proxy_country_code",
             "optional": true,
-            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN"
+            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN | null"
           }
         ]
       },
@@ -994,7 +994,7 @@
           {
             "key": "proxy_country_code",
             "optional": true,
-            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN"
+            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN | null"
           },
           {
             "key": "is_default",
@@ -1082,7 +1082,7 @@
           {
             "key": "proxy_country_code",
             "optional": true,
-            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN"
+            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN | null"
           },
           {
             "key": "is_default",
@@ -1163,7 +1163,7 @@
           {
             "key": "proxy_country_code",
             "optional": true,
-            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN"
+            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN | null"
           }
         ]
       },
@@ -1183,7 +1183,7 @@
           {
             "key": "proxy_country_code",
             "optional": true,
-            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN"
+            "type": "US | GB | CA | AU | DE | FR | IT | ES | NL | JP | SG | BR | IN | null"
           },
           {
             "key": "is_default",
@@ -1289,18 +1289,18 @@
           },
           {
             "key": "quick_result",
-            "optional": true,
-            "type": "{ answer: string, citations: string[], actions?: { id: string, label: string, status: running | done | error, streamingUrl?: string, kind?: plan | search | fetch | browse | map, iteration?: number, url?: string, query?: string, details?: string[] }[], stats?: { iterations: number, sources_searched: number, sources_fetched: number, agent_runs: number, claims_extracted: number, termination_reason: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort, subquestions_covered: number, subquestions_total: number } }"
+            "optional": false,
+            "type": "{ answer: string, citations: string[], actions?: { id: string, label: string, status: running | done | error, streamingUrl?: string, kind?: plan | search | fetch | browse | map, iteration?: number, url?: string, query?: string, details?: string[] }[], stats?: { iterations: number, sources_searched: number, sources_fetched: number, agent_runs: number, claims_extracted: number, termination_reason: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort, subquestions_covered: number, subquestions_total: number } } | null"
           },
           {
             "key": "quick_result_summary",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "deep_result",
-            "optional": true,
-            "type": "{ result: string, citations: string[], freshness_report?: { filter_applied?: { domain_type?: web | news | research_paper, after_date?: string, before_date?: string, recency_minutes?: number }, latest_published_date?: string, sources_with_dates: number, sources_without_dates: number, sources_in_requested_window: number, fetched_at_latest?: string }, termination_reason?: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort }"
+            "optional": false,
+            "type": "{ result: string, citations: string[], freshness_report?: { filter_applied?: { domain_type?: web | news | research_paper, after_date?: string, before_date?: string, recency_minutes?: number }, latest_published_date?: string, sources_with_dates: number, sources_without_dates: number, sources_in_requested_window: number, fetched_at_latest?: string }, termination_reason?: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort } | null"
           },
           {
             "key": "run_ids",
@@ -1309,33 +1309,33 @@
           },
           {
             "key": "created_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "completed_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "{ code: string, message: string, details?: any | null }"
+            "optional": false,
+            "type": "{ code: string, message: string, details?: any | null } | null"
           },
           {
             "key": "research_plan",
             "optional": true,
-            "type": "{ summary: string, subquestions: { id: string, question: string, priority: high | medium | low }[], search_queries: string[], done: boolean, review?: { id: string, status: pending | approve | refine | timeout, expiresAt: number, feedback?: string, resolvedAt?: number } }"
+            "type": "{ summary: string, subquestions: { id: string, question: string, priority: high | medium | low }[], search_queries: string[], done: boolean, review?: { id: string, status: pending | approve | refine | timeout, expiresAt: number, feedback?: string, resolvedAt?: number } } | null"
           },
           {
             "key": "evidence",
             "optional": true,
-            "type": "{ url: string, title: string, language?: string | null, published_date?: string | null, fetched_at?: string, live_fetch?: boolean, access_method?: fetch | browser | social, discovered_by_queries?: string[], search_filters?: { after_date?: string, before_date?: string, recency_minutes?: number }, subquestions_covered: string[], claims: { claim: string, snippet: string, subquestion_id: string, confidence: high | medium | low, claim_type?: fact | official_statement | reported_claim | estimate | opinion | user_sentiment | unverified }[], source_quality: primary | secondary | low }[]"
+            "type": "{ url: string, title: string, language?: string | null, published_date?: string | null, fetched_at?: string, live_fetch?: boolean, access_method?: fetch | browser | social, discovered_by_queries?: string[], search_filters?: { after_date?: string, before_date?: string, recency_minutes?: number }, subquestions_covered: string[], claims: { claim: string, snippet: string, subquestion_id: string, confidence: high | medium | low, claim_type?: fact | official_statement | reported_claim | estimate | opinion | user_sentiment | unverified }[], source_quality: primary | secondary | low }[] | null"
           },
           {
             "key": "iterations",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1391,12 +1391,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ research_run_id: string, status: RUNNING | COMPLETED | FAILED | CANCELLED | TIMED_OUT | QUEUED, query: string, quick_result?: { answer: string, citations: string[], actions?: { id: string, label: string, status: running | done | error, streamingUrl?: string, kind?: plan | search | fetch | browse | map, iteration?: number, url?: string, query?: string, details?: string[] }[], stats?: { iterations: number, sources_searched: number, sources_fetched: number, agent_runs: number, claims_extracted: number, termination_reason: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort, subquestions_covered: number, subquestions_total: number } } | null, quick_result_summary?: string | null, deep_result?: { result: string, citations: string[], freshness_report?: { filter_applied?: { domain_type?: web | news | research_paper, after_date?: string, before_date?: string, recency_minutes?: number }, latest_published_date?: string, sources_with_dates: number, sources_without_dates: number, sources_in_requested_window: number, fetched_at_latest?: string }, termination_reason?: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort } | null, run_ids: string[], created_at?: string | null, completed_at?: string | null, error?: { code: string, message: string, details?: any | null } | null, research_plan?: { summary: string, subquestions: { id: string, question: string, priority: high | medium | low }[], search_queries: string[], done: boolean, review?: { id: string, status: pending | approve | refine | timeout, expiresAt: number, feedback?: string, resolvedAt?: number } } | null, evidence?: { url: string, title: string, language?: string | null, published_date?: string | null, fetched_at?: string, live_fetch?: boolean, access_method?: fetch | browser | social, discovered_by_queries?: string[], search_filters?: { after_date?: string, before_date?: string, recency_minutes?: number }, subquestions_covered: string[], claims: { claim: string, snippet: string, subquestion_id: string, confidence: high | medium | low, claim_type?: fact | official_statement | reported_claim | estimate | opinion | user_sentiment | unverified }[], source_quality: primary | secondary | low }[] | null, iterations?: number | null }[]"
+            "type": "{ research_run_id: string, status: RUNNING | COMPLETED | FAILED | CANCELLED | TIMED_OUT | QUEUED, query: string, quick_result: { answer: string, citations: string[], actions?: { id: string, label: string, status: running | done | error, streamingUrl?: string, kind?: plan | search | fetch | browse | map, iteration?: number, url?: string, query?: string, details?: string[] }[], stats?: { iterations: number, sources_searched: number, sources_fetched: number, agent_runs: number, claims_extracted: number, termination_reason: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort, subquestions_covered: number, subquestions_total: number } } | null, quick_result_summary: string | null, deep_result: { result: string, citations: string[], freshness_report?: { filter_applied?: { domain_type?: web | news | research_paper, after_date?: string, before_date?: string, recency_minutes?: number }, latest_published_date?: string, sources_with_dates: number, sources_without_dates: number, sources_in_requested_window: number, fetched_at_latest?: string }, termination_reason?: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort } | null, run_ids: string[], created_at: string | null, completed_at: string | null, error: { code: string, message: string, details?: any | null } | null, research_plan?: { summary: string, subquestions: { id: string, question: string, priority: high | medium | low }[], search_queries: string[], done: boolean, review?: { id: string, status: pending | approve | refine | timeout, expiresAt: number, feedback?: string, resolvedAt?: number } } | null, evidence?: { url: string, title: string, language?: string | null, published_date?: string | null, fetched_at?: string, live_fetch?: boolean, access_method?: fetch | browser | social, discovered_by_queries?: string[], search_filters?: { after_date?: string, before_date?: string, recency_minutes?: number }, subquestions_covered: string[], claims: { claim: string, snippet: string, subquestion_id: string, confidence: high | medium | low, claim_type?: fact | official_statement | reported_claim | estimate | opinion | user_sentiment | unverified }[], source_quality: primary | secondary | low }[] | null, iterations?: number | null }[]"
           },
           {
             "key": "pagination",
             "optional": false,
-            "type": "{ total: number, next_cursor?: string | null, has_more: boolean }"
+            "type": "{ total: number, next_cursor: string | null, has_more: boolean }"
           }
         ]
       }
@@ -1481,8 +1481,8 @@
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "{ code: string, message: string }"
+            "optional": false,
+            "type": "{ code: string, message: string } | null"
           }
         ]
       }
@@ -1558,7 +1558,7 @@
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "include_thumbnail",
@@ -1644,7 +1644,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: number, request_id: string, query: string, status_code: number, result_count: number, results?: { position: number, site_name: string, snippet: string, title: string, url: string, thumbnail_url?: string | null, fetch?: any | null, fetch_error?: any | null, date?: string | null, publisher?: string | null, authors?: string[], venue?: string | null, year?: number | null, cited_by_count?: number | null, pdf_url?: string | null }[] | null, cached?: boolean | null, response_size_bytes?: number | null, created_at: string }[]"
+            "type": "{ id: number, request_id: string, query: string, status_code: number, result_count: number, results: { position: number, site_name: string, snippet: string, title: string, url: string, thumbnail_url?: string | null, fetch?: any | null, fetch_error?: any | null, date?: string | null, publisher?: string | null, authors?: string[], venue?: string | null, year?: number | null, cited_by_count?: number | null, pdf_url?: string | null }[] | null, cached: boolean | null, response_size_bytes: number | null, created_at: string }[]"
           },
           {
             "key": "total",
@@ -1689,7 +1689,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ itemId: string, connectionId?: string | null, label: string, vaultName: string, domains: string[], fieldMetadata: { fieldId: string, label: string, type: STRING | CONCEALED | OTP }[], hasTotp: boolean }[]"
+            "type": "{ itemId: string, connectionId: string | null, label: string, vaultName: string, domains: string[], fieldMetadata: { fieldId: string, label: string, type: STRING | CONCEALED | OTP }[], hasTotp: boolean }[]"
           }
         ]
       }
@@ -1723,18 +1723,18 @@
           },
           {
             "key": "auto_reload",
-            "optional": true,
-            "type": "any"
+            "optional": false,
+            "type": "any | null"
           },
           {
             "key": "pending_top_up",
-            "optional": true,
-            "type": "{ amount: string, started_at: string }"
+            "optional": false,
+            "type": "{ amount: string, started_at: string } | null"
           },
           {
             "key": "rates",
-            "optional": true,
-            "type": "{ meters: { label: string, unit_amount: string, currency: USD, per: string }[], as_of: string }"
+            "optional": false,
+            "type": "{ meters: { label: string, unit_amount: string, currency: USD, per: string }[], as_of: string } | null"
           },
           {
             "key": "agent_top_up_url",
@@ -1771,11 +1771,11 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }"
+            "type": "{ run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: Record<string, any> | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }"
           }
         ]
       },
-      "responseType": "{ event: run.cancelled, run_id: string, status: string, data?: { run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] } }",
+      "responseType": "{ event: run.cancelled, run_id: string, status: string, data?: { run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: Record<string, any> | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] } }",
       "usageExample": "tinyfish({\n    webhookHooks: {\n        run: {\n            cancelled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1803,11 +1803,11 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }"
+            "type": "{ run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: Record<string, any> | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }"
           }
         ]
       },
-      "responseType": "{ event: run.completed, run_id: string, status: string, data?: { run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] } }",
+      "responseType": "{ event: run.completed, run_id: string, status: string, data?: { run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: Record<string, any> | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] } }",
       "usageExample": "tinyfish({\n    webhookHooks: {\n        run: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1835,11 +1835,11 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }"
+            "type": "{ run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: Record<string, any> | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] }"
           }
         ]
       },
-      "responseType": "{ event: run.failed, run_id: string, status: string, data?: { run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: {} | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] } }",
+      "responseType": "{ event: run.failed, run_id: string, status: string, data?: { run_id?: string, status?: string, goal?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, num_of_steps?: number | null, result?: Record<string, any> | null, error?: { code?: string | null, message?: string, category?: string } | null, streaming_url?: string | null, steps?: { id: string, timestamp: string, status: string, action?: string | null, screenshot?: string | null, html?: string | null, duration?: string | null }[] } }",
       "usageExample": "tinyfish({\n    webhookHooks: {\n        run: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

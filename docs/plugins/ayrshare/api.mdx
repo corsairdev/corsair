@@ -37,8 +37,12 @@ await corsair.ayrshare.api.autoSchedule.list({});
 <Accordion title="schedules full type">
 
 ```ts
-{
-}
+Record<string, {
+  schedule?: string[],
+  daysOfWeek?: number[],
+  lastScheduleDate?: string | null,
+  excludeDates?: string[]
+}>
 ```
 </Accordion>
 </AccordionGroup>

@@ -41,8 +41,10 @@ await corsair.aryn.api.asyncTasks.list({});
 <Accordion title="tasks full type">
 
 ```ts
-{
-}
+Record<string, {
+  action: string,
+  task_status: done | abort | cancel | run | queue
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -71,26 +73,8 @@ await corsair.aryn.api.docset.create({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `schema` | `any` | No | — |
-| `properties` | `object` | No | — |
-| `prompts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="prompts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any>` | No | — |
+| `prompts` | `Record<string, string>` | No | — |
 
 
 
@@ -101,19 +85,9 @@ await corsair.aryn.api.docset.create({});
 | `docset_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `readonly` | `boolean` | Yes | — |
-| `properties` | `object` | No | — |
-| `schema` | `any` | No | — |
-| `size` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any> \| null` | No | — |
+| `schema` | `any \| null` | No | — |
+| `size` | `number \| null` | No | — |
 
 
 
@@ -146,19 +120,9 @@ await corsair.aryn.api.docset.delete({});
 | `docset_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `readonly` | `boolean` | Yes | — |
-| `properties` | `object` | No | — |
-| `schema` | `any` | No | — |
-| `size` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any> \| null` | No | — |
+| `schema` | `any \| null` | No | — |
+| `size` | `number \| null` | No | — |
 
 
 
@@ -191,19 +155,9 @@ await corsair.aryn.api.docset.get({});
 | `docset_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `readonly` | `boolean` | Yes | — |
-| `properties` | `object` | No | — |
-| `schema` | `any` | No | — |
-| `size` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any> \| null` | No | — |
+| `schema` | `any \| null` | No | — |
+| `size` | `number \| null` | No | — |
 
 
 
@@ -241,8 +195,8 @@ await corsair.aryn.api.document.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `elements` | `object[]` | No | — |
-| `properties` | `object` | No | — |
-| `binary_data` | `string` | No | — |
+| `properties` | `Record<string, any>` | No | — |
+| `binary_data` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="elements full type">
@@ -258,14 +212,6 @@ await corsair.aryn.api.document.get({});
   text_representation?: string | null,
   binary_representation?: any
 }[]
-```
-</Accordion>
-
-<Accordion title="properties full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -337,9 +283,7 @@ await corsair.aryn.api.document.partition({});
   table_mode?: string,
   extract_images?: boolean,
   extract_image_format?: string,
-  selected_pages?: (
-    number | number[]
-  )[],
+  selected_pages?: (number | number[])[],
   strategy?: string,
   max_tokens?: number,
   tokenizer?: string,
@@ -365,9 +309,9 @@ await corsair.aryn.api.document.partition({});
 |------|------|----------|-------------|
 | `status` | `string[]` | Yes | — |
 | `status_code` | `number` | No | — |
-| `error` | `string` | No | — |
-| `elements` | `object[]` | No | — |
-| `markdown` | `string` | No | — |
+| `error` | `string \| null` | No | — |
+| `elements` | `object[] \| null` | No | — |
+| `markdown` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="elements full type">
@@ -382,7 +326,7 @@ await corsair.aryn.api.document.partition({});
   } | null,
   text_representation?: string | null,
   binary_representation?: any
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -422,9 +366,7 @@ await corsair.aryn.api.document.submitAsyncAdd({});
   table_mode?: string,
   extract_images?: boolean,
   extract_image_format?: string,
-  selected_pages?: (
-    number | number[]
-  )[],
+  selected_pages?: (number | number[])[],
   strategy?: string,
   max_tokens?: number,
   tokenizer?: string,
@@ -486,15 +428,19 @@ await corsair.aryn.api.query.generatePlan({});
 | `query` | `string` | Yes | — |
 | `nodes` | `object` | Yes | — |
 | `result_node` | `number` | Yes | — |
-| `llm_prompt` | `any` | No | — |
-| `llm_plan` | `string` | No | — |
+| `llm_prompt` | `any \| null` | No | — |
+| `llm_plan` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="nodes full type">
 
 ```ts
-{
-}
+Record<string, {
+  node_id: number,
+  node_type?: string | null,
+  description?: string | null,
+  inputs?: number[]
+}>
 ```
 </Accordion>
 </AccordionGroup>

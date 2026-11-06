@@ -44,12 +44,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -85,18 +85,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -125,12 +125,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -171,18 +171,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -211,18 +211,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -247,18 +247,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -288,18 +288,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -329,18 +329,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -364,18 +364,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -399,18 +399,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -434,12 +434,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -505,18 +505,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -560,18 +560,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -715,12 +715,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -812,18 +812,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -873,18 +873,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -948,18 +948,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -988,18 +988,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -1043,18 +1043,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -1078,18 +1078,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -1168,18 +1168,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -1208,18 +1208,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -1268,18 +1268,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -1328,18 +1328,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -1568,18 +1568,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -1783,12 +1783,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1875,18 +1875,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -1916,18 +1916,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -1957,18 +1957,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2027,18 +2027,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2062,18 +2062,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2097,18 +2097,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2132,18 +2132,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2167,12 +2167,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2253,18 +2253,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2298,18 +2298,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2353,12 +2353,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2429,18 +2429,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2479,18 +2479,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2544,18 +2544,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2609,18 +2609,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -2854,18 +2854,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3074,12 +3074,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3215,18 +3215,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3270,18 +3270,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3350,18 +3350,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3450,12 +3450,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3541,18 +3541,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3577,18 +3577,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3613,18 +3613,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3649,18 +3649,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3684,18 +3684,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3719,18 +3719,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3754,18 +3754,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3789,12 +3789,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3855,18 +3855,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3895,18 +3895,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3935,18 +3935,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -3975,18 +3975,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4015,18 +4015,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4095,18 +4095,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4195,12 +4195,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4286,18 +4286,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4416,18 +4416,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4461,18 +4461,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4511,18 +4511,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4541,18 +4541,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4571,18 +4571,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4601,18 +4601,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4631,18 +4631,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4661,18 +4661,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4691,18 +4691,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4721,18 +4721,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4751,18 +4751,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4781,18 +4781,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4811,18 +4811,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4841,18 +4841,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4871,18 +4871,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4906,12 +4906,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4952,18 +4952,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -4982,18 +4982,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5012,18 +5012,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5067,18 +5067,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5122,18 +5122,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5158,18 +5158,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5193,18 +5193,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5283,12 +5283,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5355,18 +5355,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5390,12 +5390,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5466,18 +5466,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5566,18 +5566,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5661,12 +5661,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5727,18 +5727,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5788,18 +5788,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5843,18 +5843,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5918,18 +5918,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5958,18 +5958,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     },
     {
@@ -5993,12 +5993,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -6034,18 +6034,18 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{} | any[]"
+        "type": "Record<string, any> | any[]"
       }
     }
   ],

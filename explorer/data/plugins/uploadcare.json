@@ -1,7 +1,7 @@
 {
   "id": "uploadcare",
   "displayName": "Uploadcare",
-  "description": "Uploadcare plugin for Corsair",
+  "description": "File upload and delivery platform for uploading files, managing files and groups, CDN operations, add-ons, webhooks, and project settings.",
   "npmPackageName": "@corsair-dev/uploadcare",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -60,7 +60,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -236,12 +236,12 @@
           {
             "key": "problems",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: {} | null, content_info?: {}, metadata?: {}, appdata?: {}, tags?: string[] }[]"
+            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: Record<string, string> | null, content_info?: Record<string, JsonValue>, metadata?: Record<string, string>, appdata?: Record<string, JsonValue>, tags?: string[] }[]"
           }
         ]
       }
@@ -272,12 +272,12 @@
           {
             "key": "problems",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: {} | null, content_info?: {}, metadata?: {}, appdata?: {}, tags?: string[] }[]"
+            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: Record<string, string> | null, content_info?: Record<string, JsonValue>, metadata?: Record<string, string>, appdata?: Record<string, JsonValue>, tags?: string[] }[]"
           }
         ]
       }
@@ -303,7 +303,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -318,7 +318,7 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: {} | null, content_info?: {}, metadata?: {}, appdata?: {}, tags?: string[] }"
+            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: Record<string, string> | null, content_info?: Record<string, JsonValue>, metadata?: Record<string, string>, appdata?: Record<string, JsonValue>, tags?: string[] }"
           }
         ]
       }
@@ -354,12 +354,12 @@
           {
             "key": "datetime_removed",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "datetime_stored",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "datetime_uploaded",
@@ -384,7 +384,7 @@
           {
             "key": "original_file_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "original_filename",
@@ -404,22 +404,22 @@
           {
             "key": "variations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "content_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appdata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "tags",
@@ -491,12 +491,12 @@
           {
             "key": "datetime_removed",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "datetime_stored",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "datetime_uploaded",
@@ -521,7 +521,7 @@
           {
             "key": "original_file_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "original_filename",
@@ -541,22 +541,22 @@
           {
             "key": "variations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "content_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appdata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "tags",
@@ -583,7 +583,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string>"
       }
     },
     {
@@ -657,12 +657,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -682,7 +682,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: {} | null, content_info?: {}, metadata?: {}, appdata?: {}, tags?: string[] }[]"
+            "type": "{ uuid: string, datetime_removed?: string | null, datetime_stored?: string | null, datetime_uploaded?: string, is_image?: boolean, is_ready?: boolean, mime_type?: string, original_file_url?: string | null, original_filename?: string, size?: number, url?: string, variations?: Record<string, string> | null, content_info?: Record<string, JsonValue>, metadata?: Record<string, string>, appdata?: Record<string, JsonValue>, tags?: string[] }[]"
           }
         ]
       }
@@ -718,12 +718,12 @@
           {
             "key": "datetime_removed",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "datetime_stored",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "datetime_uploaded",
@@ -748,7 +748,7 @@
           {
             "key": "original_file_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "original_filename",
@@ -768,22 +768,22 @@
           {
             "key": "variations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "content_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "appdata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "tags",
@@ -875,7 +875,7 @@
           {
             "key": "datetime_created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "files_count",
@@ -895,7 +895,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "lazy[]"
+            "type": "JsonValue[] | null"
           }
         ]
       }
@@ -931,12 +931,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -951,7 +951,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, datetime_created?: string | null, files_count?: number, cdn_url?: string, url?: string, files?: lazy[] | null }[]"
+            "type": "{ id: string, datetime_created?: string | null, files_count?: number, cdn_url?: string, url?: string, files?: JsonValue[] | null }[]"
           }
         ]
       }
@@ -1012,7 +1012,7 @@
           {
             "key": "datetime_created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "files_count",
@@ -1032,7 +1032,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "lazy[]"
+            "type": "JsonValue[] | null"
           }
         ]
       }
@@ -1226,7 +1226,7 @@
           {
             "key": "datetime_created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "files_count",
@@ -1246,7 +1246,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "lazy[]"
+            "type": "JsonValue[] | null"
           }
         ]
       }
@@ -1368,7 +1368,7 @@
           {
             "key": "signing_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1515,7 +1515,7 @@
           {
             "key": "signing_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

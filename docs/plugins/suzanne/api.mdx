@@ -31,7 +31,7 @@ await corsair.suzanne.api.generations.photoTo3d({});
 | `images_upload_ids` | `object` | No | — |
 | `images_inline` | `object` | No | — |
 | `params` | `object` | No | — |
-| `outputs` | `glb \| obj \| stl \| fbx[]` | No | — |
+| `outputs` | `(glb \| obj \| stl \| fbx)[]` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
 <AccordionGroup>
@@ -103,7 +103,7 @@ await corsair.suzanne.api.generations.textTo3d({ model: 'sculptor', prompt: 'a l
 | `model` | `sculptor \| atelier` | Yes | — |
 | `prompt` | `string` | Yes | — |
 | `params` | `object` | No | — |
-| `outputs` | `glb \| obj \| stl \| fbx[]` | No | — |
+| `outputs` | `(glb \| obj \| stl \| fbx)[]` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
 <AccordionGroup>
@@ -198,9 +198,9 @@ await corsair.suzanne.api.jobs.get({ job_id: 'job_01H' });
 | `model` | `string` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
+| `completed_at` | `string \| null` | No | — |
 | `outputs` | `object[]` | No | — |
-| `error` | `object` | No | — |
+| `error` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="outputs full type">
@@ -219,7 +219,7 @@ await corsair.suzanne.api.jobs.get({ job_id: 'job_01H' });
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

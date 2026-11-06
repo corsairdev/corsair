@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T01:51:56.845Z",
+  "generatedAt": "2026-11-06T11:16:28.741Z",
   "corsairVersion": "0.1.157",
   "catalogVersion": 2,
   "plugins": [
@@ -216,7 +216,7 @@
     {
       "id": "agiled",
       "displayName": "Agiled",
-      "description": "Agiled plugin for Corsair",
+      "description": "Business management platform for CRM, projects and invoicing; this plugin lists the contacts in an Agiled workspace.",
       "npmPackageName": "@corsair-dev/agiled",
       "authTypes": [
         "api_key"
@@ -306,7 +306,7 @@
     {
       "id": "akta",
       "displayName": "Akta",
-      "description": "Akta plugin for Corsair",
+      "description": "Company intelligence API for looking up companies, enriching firmographic data, and reading employee reviews, product reviews, and industry news.",
       "npmPackageName": "@corsair-dev/akta",
       "authTypes": [
         "api_key"
@@ -350,8 +350,8 @@
     },
     {
       "id": "alibaba",
-      "displayName": "Alibaba",
-      "description": "Alibaba plugin for Corsair",
+      "displayName": "Alibaba Cloud Model Studio",
+      "description": "Generative AI API for creating images with Qwen-Image and Wan, starting Wan video generation and editing tasks, and checking task status.",
       "npmPackageName": "@corsair-dev/alibaba",
       "authTypes": [
         "api_key"
@@ -681,8 +681,8 @@
     },
     {
       "id": "apollo",
-      "displayName": "Apollo",
-      "description": "Apollo plugin for Corsair",
+      "displayName": "Apollo.io",
+      "description": "Sales intelligence API for searching and enriching people and organizations, reading organization job postings, and searching company news.",
       "npmPackageName": "@corsair-dev/apollo",
       "authTypes": [
         "api_key"
@@ -697,7 +697,7 @@
     {
       "id": "appointo",
       "displayName": "Appointo",
-      "description": "Appointo plugin for Corsair",
+      "description": "Appointment scheduling platform. List products, appointments, bookings and subscriptions, check availability, and create, update, reschedule, or cancel bookings.",
       "npmPackageName": "@corsair-dev/appointo",
       "authTypes": [
         "api_key"
@@ -712,7 +712,7 @@
     {
       "id": "aryn",
       "displayName": "Aryn",
-      "description": "Aryn plugin for Corsair",
+      "description": "Document intelligence API for partitioning documents with DocParse, managing DocSets and documents, tracking async tasks, and generating query plans.",
       "npmPackageName": "@corsair-dev/aryn",
       "authTypes": [
         "api_key"
@@ -758,7 +758,7 @@
     {
       "id": "ashby",
       "displayName": "Ashby",
-      "description": "Ashby plugin for Corsair",
+      "description": "Recruiting platform. Manage candidates, applications, interviews, offers, jobs, departments, locations, users, and webhooks.",
       "npmPackageName": "@corsair-dev/ashby",
       "authTypes": [
         "api_key"
@@ -967,7 +967,7 @@
     {
       "id": "beamer",
       "displayName": "Beamer",
-      "description": "Beamer plugin for Corsair",
+      "description": "Product update and changelog platform. Read the posts published in a Beamer account.",
       "npmPackageName": "@corsair-dev/beamer",
       "authTypes": [
         "api_key"
@@ -997,8 +997,8 @@
     },
     {
       "id": "benchmarkemail",
-      "displayName": "BenchmarkEmail",
-      "description": "BenchmarkEmail plugin for Corsair",
+      "displayName": "Benchmark Email",
+      "description": "Email marketing platform. Manage contacts, lists, emails, automations, sign-up forms, polls, surveys, webhooks, and reports, plus account settings and the media archive.",
       "npmPackageName": "@corsair-dev/benchmarkemail",
       "authTypes": [
         "api_key"
@@ -1013,7 +1013,7 @@
     {
       "id": "benzinga",
       "displayName": "Benzinga",
-      "description": "Benzinga plugin for Corsair",
+      "description": "Financial news and market data API for reading news and channels, and calendar data for earnings, dividends, splits, IPOs, analyst ratings, guidance, and economics.",
       "npmPackageName": "@corsair-dev/benzinga",
       "authTypes": [
         "api_key"
@@ -1027,8 +1027,8 @@
     },
     {
       "id": "bestbuy",
-      "displayName": "Best Buy Remix API",
-      "description": "Best Buy Remix API plugin for Corsair",
+      "displayName": "Best Buy",
+      "description": "Best Buy Remix API for searching and reading retail products, categories, stores, and customer reviews.",
       "npmPackageName": "@corsair-dev/bestbuy",
       "authTypes": [
         "api_key"
@@ -1133,7 +1133,7 @@
     {
       "id": "bigpictureio",
       "displayName": "BigPicture.io",
-      "description": "BigPicture.io plugin for Corsair",
+      "description": "Company data API for finding company details by domain or IP address and streaming a company lookup until it completes.",
       "npmPackageName": "@corsair-dev/bigpictureio",
       "authTypes": [
         "api_key"
@@ -1178,7 +1178,7 @@
     {
       "id": "blackbaud",
       "displayName": "Blackbaud",
-      "description": "Blackbaud plugin for Corsair",
+      "description": "Nonprofit software API for Raiser's Edge NXT gifts, gift batches, and membership details, SKY Payments transactions, and OneRoster discovery.",
       "npmPackageName": "@corsair-dev/blackbaud",
       "authTypes": [
         "oauth_2"
@@ -1237,8 +1237,8 @@
     },
     {
       "id": "boldsign",
-      "displayName": "Boldsign",
-      "description": "Boldsign plugin for Corsair",
+      "displayName": "BoldSign",
+      "description": "Electronic signature platform. Send and list documents, extend expiry, manage brands and custom fields, create embedded request links, and check API credits.",
       "npmPackageName": "@corsair-dev/boldsign",
       "authTypes": [
         "oauth_2"
@@ -1313,7 +1313,7 @@
     {
       "id": "booqable",
       "displayName": "Booqable",
-      "description": "Booqable plugin for Corsair",
+      "description": "Rental business software. Manage customers, orders, products, product groups, bundles, stock items, inventory, payments, coupons, documents, and locations.",
       "npmPackageName": "@corsair-dev/booqable",
       "authTypes": [
         "api_key"
@@ -1328,7 +1328,7 @@
     {
       "id": "borneo",
       "displayName": "Borneo",
-      "description": "Borneo plugin for Corsair",
+      "description": "Data security and privacy compliance platform. Run and read data scans, processing activities, recipients, resources, breaches, documents, employees, domains, and dashboard figures.",
       "npmPackageName": "@corsair-dev/borneo",
       "authTypes": [
         "api_key",
@@ -1464,7 +1464,7 @@
     {
       "id": "brevo",
       "displayName": "Brevo",
-      "description": "Brevo plugin for Corsair",
+      "description": "Marketing and email platform. Manage contacts and email campaigns, and read account details.",
       "npmPackageName": "@corsair-dev/brevo",
       "authTypes": [
         "api_key"
@@ -1539,8 +1539,8 @@
     },
     {
       "id": "browsertool",
-      "displayName": "BrowserTool",
-      "description": "BrowserTool plugin for Corsair",
+      "displayName": "Browser Tool",
+      "description": "Cloud browser automation tool that runs AI-driven browser tasks, polls and stops them, and returns session live URLs and task output files.",
       "npmPackageName": "@corsair-dev/browsertool",
       "authTypes": [
         "api_key"
@@ -1629,8 +1629,8 @@
     },
     {
       "id": "bunnycdn",
-      "displayName": "Bunnycdn",
-      "description": "Bunnycdn plugin for Corsair",
+      "displayName": "bunny.net",
+      "description": "Edge platform API for managing pull zones, storage zones, DNS zones, Shield security, and Magic Containers, purging cache, and reading statistics and billing.",
       "npmPackageName": "@corsair-dev/bunnycdn",
       "authTypes": [
         "api_key"
@@ -1644,8 +1644,8 @@
     },
     {
       "id": "bytedance",
-      "displayName": "Bytedance",
-      "description": "Bytedance plugin for Corsair",
+      "displayName": "ByteDance",
+      "description": "Video generation API for starting Seedance video tasks and listing, reading, and canceling or deleting them.",
       "npmPackageName": "@corsair-dev/bytedance",
       "authTypes": [
         "api_key"
@@ -1660,7 +1660,7 @@
     {
       "id": "byteforms",
       "displayName": "ByteForms",
-      "description": "ByteForms plugin for Corsair",
+      "description": "Form builder platform. Create, list, read, and delete forms and read the responses submitted to them.",
       "npmPackageName": "@corsair-dev/byteforms",
       "authTypes": [
         "api_key"
@@ -1705,7 +1705,7 @@
     {
       "id": "callingly",
       "displayName": "Callingly",
-      "description": "Callingly plugin for Corsair",
+      "description": "Speed-to-lead platform. Manage leads, calls, agents and their schedules, teams, clients, and webhooks.",
       "npmPackageName": "@corsair-dev/callingly",
       "authTypes": [
         "api_key"
@@ -1734,8 +1734,8 @@
     },
     {
       "id": "campaigncleaner",
-      "displayName": "CampaignCleaner",
-      "description": "CampaignCleaner plugin for Corsair",
+      "displayName": "Campaign Cleaner",
+      "description": "Email campaign checking tool for listing campaigns, reading status and PDF analysis, deleting campaigns, and checking credits.",
       "npmPackageName": "@corsair-dev/campaigncleaner",
       "authTypes": [
         "api_key"
@@ -1750,7 +1750,7 @@
     {
       "id": "campayn",
       "displayName": "Campayn",
-      "description": "Campayn plugin for Corsair",
+      "description": "Email marketing platform. Manage contact lists, contacts, and webforms, read messages and message statistics, view reports, and sign up contacts.",
       "npmPackageName": "@corsair-dev/campayn",
       "authTypes": [
         "api_key"
@@ -1765,7 +1765,7 @@
     {
       "id": "canny",
       "displayName": "Canny",
-      "description": "Canny plugin for Corsair",
+      "description": "Customer feedback platform. Manage boards, feedback posts, comments, and votes.",
       "npmPackageName": "@corsair-dev/canny",
       "authTypes": [
         "api_key"
@@ -1841,8 +1841,8 @@
     },
     {
       "id": "castingwords",
-      "displayName": "Castingwords",
-      "description": "Castingwords plugin for Corsair",
+      "displayName": "CastingWords",
+      "description": "Transcription service. Place and upgrade orders, fetch audiofiles, transcripts, and invoices, check prepay balance and SKUs, and manage webhooks.",
       "npmPackageName": "@corsair-dev/castingwords",
       "authTypes": [
         "api_key"
@@ -1857,7 +1857,7 @@
     {
       "id": "cdrplatform",
       "displayName": "CDR Platform",
-      "description": "CDR Platform plugin for Corsair",
+      "description": "Carbon dioxide removal API. Price and purchase CO2 removal portfolios, retrieve removal certificates, and check service health.",
       "npmPackageName": "@corsair-dev/cdrplatform",
       "authTypes": [
         "api_key"
@@ -1902,7 +1902,7 @@
     {
       "id": "chaser",
       "displayName": "Chaser",
-      "description": "Chaser plugin for Corsair",
+      "description": "Accounts receivable automation software. List customers, invoices, and credit notes, and read organization details.",
       "npmPackageName": "@corsair-dev/chaser",
       "authTypes": [
         "api_key"
@@ -1963,7 +1963,7 @@
     {
       "id": "chmeetings",
       "displayName": "ChMeetings",
-      "description": "ChMeetings plugin for Corsair",
+      "description": "Church management platform. Manage people, families, groups, organizations, and events, and read attendance, notes, and settings.",
       "npmPackageName": "@corsair-dev/chmeetings",
       "authTypes": [
         "api_key"
@@ -1978,7 +1978,7 @@
     {
       "id": "cincopa",
       "displayName": "Cincopa",
-      "description": "Cincopa plugin for Corsair",
+      "description": "Media hosting platform. List galleries, upload assets from a URL and track the upload, and get the upload iframe.",
       "npmPackageName": "@corsair-dev/cincopa",
       "authTypes": [
         "api_key"
@@ -2008,7 +2008,7 @@
     {
       "id": "claidai",
       "displayName": "Claid.ai",
-      "description": "Claid.ai plugin for Corsair",
+      "description": "Image editing and generation API. Remove or generate backgrounds, resize, polish, blur license plates, edit images with AI, and manage storage connections.",
       "npmPackageName": "@corsair-dev/claidai",
       "authTypes": [
         "api_key"
@@ -2022,8 +2022,8 @@
     },
     {
       "id": "classmarker",
-      "displayName": "Classmarker",
-      "description": "Classmarker plugin for Corsair",
+      "displayName": "ClassMarker",
+      "description": "Online exam platform. Manage tests, users, groups, question banks, categories, and access lists, and read results, certificates, and webhooks.",
       "npmPackageName": "@corsair-dev/classmarker",
       "authTypes": [
         "api_key"
@@ -2038,7 +2038,7 @@
     {
       "id": "clay",
       "displayName": "Clay",
-      "description": "Clay plugin for Corsair",
+      "description": "Go-to-market data platform. Create and run people and company searches, run routines on items, and check workspace credits.",
       "npmPackageName": "@corsair-dev/clay",
       "authTypes": [
         "api_key"
@@ -2142,8 +2142,8 @@
     },
     {
       "id": "cloro",
-      "displayName": "Cloro",
-      "description": "Cloro plugin for Corsair",
+      "displayName": "cloro",
+      "description": "Search monitoring API. Run prompts on ChatGPT, Gemini, Copilot, Perplexity, and Google Search, AI Mode, and News, and check credits.",
       "npmPackageName": "@corsair-dev/cloro",
       "authTypes": [
         "api_key"
@@ -2158,7 +2158,7 @@
     {
       "id": "close",
       "displayName": "Close",
-      "description": "Close plugin for Corsair",
+      "description": "Sales CRM. Manage leads, contacts, opportunities, tasks, and call, note, and SMS activities, and read email activities and custom fields.",
       "npmPackageName": "@corsair-dev/close",
       "authTypes": [
         "api_key",
@@ -2173,8 +2173,8 @@
     },
     {
       "id": "cloudcart",
-      "displayName": "Cloudcart",
-      "description": "Cloudcart plugin for Corsair",
+      "displayName": "CloudCart",
+      "description": "Ecommerce platform. Manage products, variants, categories, properties, customers, orders, carts, discounts, blog posts, subscribers, and webhooks.",
       "npmPackageName": "@corsair-dev/cloudcart",
       "authTypes": [
         "api_key"
@@ -2203,8 +2203,8 @@
     },
     {
       "id": "cloudflareapikey",
-      "displayName": "Cloudflare API token",
-      "description": "Cloudflare API token plugin for Corsair",
+      "displayName": "Cloudflare API Token",
+      "description": "Cloudflare API access with an API token. Manage zones, DNS records, DNSSEC, rulesets, lockdowns, and cache settings.",
       "npmPackageName": "@corsair-dev/cloudflareapikey",
       "authTypes": [
         "api_key"
@@ -2276,8 +2276,8 @@
     },
     {
       "id": "codeinterpreter",
-      "displayName": "CodeInterpreter",
-      "description": "CodeInterpreter plugin for Corsair",
+      "displayName": "Code Interpreter",
+      "description": "LibreChat Code Interpreter API. Execute code in a sandbox and upload, list, download, and delete session files.",
       "npmPackageName": "@corsair-dev/codeinterpreter",
       "authTypes": [
         "api_key"
@@ -2292,7 +2292,7 @@
     {
       "id": "cody",
       "displayName": "Cody",
-      "description": "Cody plugin for Corsair",
+      "description": "AI assistant platform. Manage bots, conversations, messages, documents, and folders, and create signed upload URLs.",
       "npmPackageName": "@corsair-dev/cody",
       "authTypes": [
         "api_key"
@@ -2307,7 +2307,7 @@
     {
       "id": "coinbase",
       "displayName": "Coinbase",
-      "description": "Coinbase plugin for Corsair",
+      "description": "Crypto exchange and wallet platform. Read accounts, transactions, payment methods, prices, exchange rates, and currencies.",
       "npmPackageName": "@corsair-dev/coinbase",
       "authTypes": [
         "api_key",
@@ -2353,7 +2353,7 @@
     {
       "id": "composio",
       "displayName": "Composio",
-      "description": "Composio plugin for Corsair",
+      "description": "Tool integration platform for AI agents. List toolkits and tools, execute them, manage connected accounts, and create sessions.",
       "npmPackageName": "@corsair-dev/composio",
       "authTypes": [
         "api_key"
@@ -2399,7 +2399,7 @@
     {
       "id": "contactout",
       "displayName": "ContactOut",
-      "description": "ContactOut plugin for Corsair",
+      "description": "Contact data platform. Enrich and search people and companies, find and verify emails and phones, and check account usage.",
       "npmPackageName": "@corsair-dev/contactout",
       "authTypes": [
         "api_key"
@@ -2459,7 +2459,7 @@
     {
       "id": "convex",
       "displayName": "Convex",
-      "description": "Convex plugin for Corsair",
+      "description": "Reactive backend platform. Manage projects, deployments and deploy keys, delete custom domains, read token details and the available deployment classes and regions, and run query batches, read query timestamps and list log streams on a deployment.",
       "npmPackageName": "@corsair-dev/convex",
       "authTypes": [
         "api_key",
@@ -2474,8 +2474,8 @@
     },
     {
       "id": "convoloai",
-      "displayName": "ConvoloAi",
-      "description": "ConvoloAi plugin for Corsair",
+      "displayName": "Convolo AI",
+      "description": "AI phone and speed-to-lead platform. Manage voice agents, calls, website call widgets, and leads.",
       "npmPackageName": "@corsair-dev/convoloai",
       "authTypes": [
         "api_key"
@@ -2490,7 +2490,7 @@
     {
       "id": "cosmic",
       "displayName": "Cosmic",
-      "description": "Cosmic plugin for Corsair",
+      "description": "Headless CMS. Manage objects, object types, media, and revisions.",
       "npmPackageName": "@corsair-dev/cosmic",
       "authTypes": [
         "api_key"
@@ -2504,8 +2504,8 @@
     },
     {
       "id": "countdownapi",
-      "displayName": "CountdownApi",
-      "description": "CountdownApi plugin for Corsair",
+      "displayName": "Countdown API",
+      "description": "eBay data API. Search products, get product details, and fetch search autocomplete suggestions.",
       "npmPackageName": "@corsair-dev/countdownapi",
       "authTypes": [
         "api_key"
@@ -2534,8 +2534,8 @@
     },
     {
       "id": "currentsapi",
-      "displayName": "CurrentsApi",
-      "description": "CurrentsApi plugin for Corsair",
+      "displayName": "Currents API",
+      "description": "News API that returns latest news, searches articles, and lists the available categories, languages, and regions.",
       "npmPackageName": "@corsair-dev/currentsapi",
       "authTypes": [
         "api_key"
@@ -2565,7 +2565,7 @@
     {
       "id": "customerio",
       "displayName": "Customer.io",
-      "description": "Customer.io plugin for Corsair",
+      "description": "Customer engagement platform for sending targeted email, SMS, and push messages, with endpoints for profiles, segments, broadcasts, transactional messages, newsletters, collections, snippets, and CDP tracking.",
       "npmPackageName": "@corsair-dev/customerio",
       "authTypes": [
         "api_key"
@@ -2609,8 +2609,8 @@
     },
     {
       "id": "dadataru",
-      "displayName": "Dadataru",
-      "description": "Dadataru plugin for Corsair",
+      "displayName": "DaData",
+      "description": "Russian data cleaning and lookup API. Standardize addresses, names, phones and other records, suggest and find addresses, companies, banks and reference codes, and locate IP addresses.",
       "npmPackageName": "@corsair-dev/dadataru",
       "authTypes": [
         "api_key"
@@ -2670,8 +2670,8 @@
     },
     {
       "id": "dataforseo",
-      "displayName": "DataForSeo",
-      "description": "DataForSeo plugin for Corsair",
+      "displayName": "DataForSEO",
+      "description": "SEO data API for SERP results, keyword research, backlinks, Amazon and app store data, and AI search results.",
       "npmPackageName": "@corsair-dev/dataforseo",
       "authTypes": [
         "api_key"
@@ -2821,7 +2821,7 @@
     {
       "id": "docsumo",
       "displayName": "Docsumo",
-      "description": "Docsumo plugin for Corsair",
+      "description": "Document AI platform for extracting data from uploaded documents, with endpoints for documents, document types, folders, tables, analytics, and agents.",
       "npmPackageName": "@corsair-dev/docsumo",
       "authTypes": [
         "api_key"
@@ -2835,8 +2835,8 @@
     },
     {
       "id": "docupost",
-      "displayName": "Docupost",
-      "description": "Docupost plugin for Corsair",
+      "displayName": "DocuPost",
+      "description": "Mail API for sending letters and postcards and checking the account balance.",
       "npmPackageName": "@corsair-dev/docupost",
       "authTypes": [
         "api_key"
@@ -2895,7 +2895,7 @@
     {
       "id": "dovetail",
       "displayName": "Dovetail",
-      "description": "Dovetail plugin for Corsair",
+      "description": "Customer research platform for managing projects, notes, highlights, insights, data, docs, folders, tags, contacts, channels, and files.",
       "npmPackageName": "@corsair-dev/dovetail",
       "authTypes": [
         "api_key"
@@ -3001,7 +3001,7 @@
     {
       "id": "emelia",
       "displayName": "Emelia",
-      "description": "Emelia plugin for Corsair",
+      "description": "B2B prospecting tool for managing email and LinkedIn campaigns, contacts, webhooks, sending providers, and the blacklist.",
       "npmPackageName": "@corsair-dev/emelia",
       "authTypes": [
         "api_key"
@@ -3091,7 +3091,7 @@
     {
       "id": "everhour",
       "displayName": "Everhour",
-      "description": "Everhour plugin for Corsair",
+      "description": "Time tracking tool for managing projects, tasks, sections, clients, timers, time records, timecards, expenses, and invoices.",
       "npmPackageName": "@corsair-dev/everhour",
       "authTypes": [
         "api_key",
@@ -3137,7 +3137,7 @@
     {
       "id": "exist",
       "displayName": "Exist",
-      "description": "Exist plugin for Corsair",
+      "description": "Personal analytics service that collects tracked data and returns attributes, averages, correlations, and insights, and lets you write attribute values.",
       "npmPackageName": "@corsair-dev/exist",
       "authTypes": [
         "oauth_2"
@@ -3151,8 +3151,8 @@
     },
     {
       "id": "extractaai",
-      "displayName": "Extractaai",
-      "description": "Extractaai plugin for Corsair",
+      "displayName": "Extracta.ai",
+      "description": "Document data extraction API for creating and managing extractions and classifications and checking credits.",
       "npmPackageName": "@corsair-dev/extractaai",
       "authTypes": [
         "api_key"
@@ -3303,8 +3303,8 @@
     },
     {
       "id": "flexisign",
-      "displayName": "Flexisign",
-      "description": "Flexisign plugin for Corsair",
+      "displayName": "FlexiSign",
+      "description": "Electronic signature platform; this plugin lists the document templates available in a FlexiSign account.",
       "npmPackageName": "@corsair-dev/flexisign",
       "authTypes": [
         "api_key"
@@ -3319,7 +3319,7 @@
     {
       "id": "flutterwave",
       "displayName": "Flutterwave",
-      "description": "Flutterwave plugin for Corsair",
+      "description": "Payments API for accepting charges and payment links, and managing transfers, beneficiaries, subaccounts, virtual accounts, subscriptions, settlements, refunds, bills, banks, and wallet balances.",
       "npmPackageName": "@corsair-dev/flutterwave",
       "authTypes": [
         "api_key"
@@ -3426,7 +3426,7 @@
     {
       "id": "gladia",
       "displayName": "Gladia",
-      "description": "Gladia plugin for Corsair",
+      "description": "Speech-to-text API for uploading audio and video, running pre-recorded transcriptions, and managing live transcription sessions.",
       "npmPackageName": "@corsair-dev/gladia",
       "authTypes": [
         "api_key"
@@ -3638,7 +3638,7 @@
     {
       "id": "griptape",
       "displayName": "Griptape",
-      "description": "Griptape plugin for Corsair",
+      "description": "AI application platform. Manage assistants, knowledge bases, models, buckets, tools, structures, functions, data connectors, threads, and secrets in Griptape Cloud.",
       "npmPackageName": "@corsair-dev/griptape",
       "authTypes": [
         "api_key"
@@ -3773,7 +3773,7 @@
     {
       "id": "hookdeck",
       "displayName": "Hookdeck",
-      "description": "Hookdeck plugin for Corsair",
+      "description": "Webhook infrastructure platform, with endpoints for creating and managing connections that route events from sources to destinations.",
       "npmPackageName": "@corsair-dev/hookdeck",
       "authTypes": [
         "api_key"
@@ -3835,7 +3835,7 @@
     {
       "id": "humanitix",
       "displayName": "Humanitix",
-      "description": "Humanitix plugin for Corsair",
+      "description": "Event ticketing platform, with endpoints for listing and fetching events and listing tags.",
       "npmPackageName": "@corsair-dev/humanitix",
       "authTypes": [
         "api_key"
@@ -3879,8 +3879,8 @@
     },
     {
       "id": "imejisio",
-      "displayName": "Imejisio",
-      "description": "Imejisio plugin for Corsair",
+      "displayName": "Imejis.io",
+      "description": "Image generation API for rendering designs from templates into images or PDFs.",
       "npmPackageName": "@corsair-dev/imejisio",
       "authTypes": [
         "api_key"
@@ -4031,7 +4031,7 @@
     {
       "id": "kibana",
       "displayName": "Kibana",
-      "description": "Kibana plugin for Corsair",
+      "description": "Elastic's data exploration and management interface, with endpoints for saved objects, data views, dashboards, alerting rules, cases, connectors, security detections, and Fleet.",
       "npmPackageName": "@corsair-dev/kibana",
       "authTypes": [
         "api_key"
@@ -4183,7 +4183,7 @@
     {
       "id": "mailcheck",
       "displayName": "Mailcheck",
-      "description": "Mailcheck plugin for Corsair",
+      "description": "Email verification API for validating email addresses and email domains.",
       "npmPackageName": "@corsair-dev/mailcheck",
       "authTypes": [
         "api_key"
@@ -4590,8 +4590,8 @@
     },
     {
       "id": "pdfco",
-      "displayName": "Pdfco",
-      "description": "Pdfco plugin for Corsair",
+      "displayName": "PDF.co",
+      "description": "PDF API for converting, merging, splitting, editing, and parsing PDFs and documents, and uploading files.",
       "npmPackageName": "@corsair-dev/pdfco",
       "authTypes": [
         "api_key"
@@ -4681,7 +4681,7 @@
     {
       "id": "plain",
       "displayName": "Plain",
-      "description": "Plain plugin for Corsair",
+      "description": "Customer support platform for managing customers, threads, customer groups, companies, tiers, and users, with a raw GraphQL query endpoint.",
       "npmPackageName": "@corsair-dev/plain",
       "authTypes": [
         "api_key"
@@ -4726,7 +4726,7 @@
     {
       "id": "postman",
       "displayName": "Postman",
-      "description": "Postman plugin for Corsair",
+      "description": "API platform for managing collections, workspaces, environments, mock servers, monitors, specs, APIs, comments, and webhooks.",
       "npmPackageName": "@corsair-dev/postman",
       "authTypes": [
         "api_key"
@@ -4741,7 +4741,7 @@
     {
       "id": "prisma",
       "displayName": "Prisma",
-      "description": "Prisma plugin for Corsair",
+      "description": "Database platform API. Manage Prisma Postgres projects, databases, connection strings and backups, list workspaces, regions and integrations, and run read-only queries, writes and schema inspection over Postgres.",
       "npmPackageName": "@corsair-dev/prisma",
       "authTypes": [
         "api_key",
@@ -4757,7 +4757,7 @@
     {
       "id": "pushbullet",
       "displayName": "Pushbullet",
-      "description": "Pushbullet plugin for Corsair",
+      "description": "Notification service for sending pushes between devices, with endpoints for pushes, devices, chats, and the account.",
       "npmPackageName": "@corsair-dev/pushbullet",
       "authTypes": [
         "api_key",
@@ -4833,7 +4833,7 @@
     {
       "id": "reducto",
       "displayName": "Reducto",
-      "description": "Reducto plugin for Corsair",
+      "description": "Document processing API that parses, extracts fields from, classifies, splits, and edits documents, and runs Studio pipelines, with async jobs and file uploads.",
       "npmPackageName": "@corsair-dev/reducto",
       "authTypes": [
         "api_key"
@@ -4893,7 +4893,7 @@
     {
       "id": "replicate",
       "displayName": "Replicate",
-      "description": "Replicate plugin for Corsair",
+      "description": "Hosted machine learning model API for running predictions, managing models and versions, deployments, trainings, and uploaded files.",
       "npmPackageName": "@corsair-dev/replicate",
       "authTypes": [
         "api_key"
@@ -4968,8 +4968,8 @@
     },
     {
       "id": "revai",
-      "displayName": "RevAI",
-      "description": "RevAI plugin for Corsair",
+      "displayName": "Rev AI",
+      "description": "Speech-to-text API for submitting transcription jobs and retrieving job status and transcripts.",
       "npmPackageName": "@corsair-dev/revai",
       "authTypes": [
         "api_key",
@@ -4985,7 +4985,7 @@
     {
       "id": "rootly",
       "displayName": "Rootly",
-      "description": "Rootly plugin for Corsair",
+      "description": "Incident management platform where this plugin gets, updates, and deletes incidents and manages incident action items.",
       "npmPackageName": "@corsair-dev/rootly",
       "authTypes": [
         "api_key"
@@ -5000,7 +5000,7 @@
     {
       "id": "runpod",
       "displayName": "Runpod",
-      "description": "Runpod plugin for Corsair",
+      "description": "GPU cloud platform for managing Pods, Serverless endpoints, templates, clusters, secrets, and registry credentials, and for browsing GPU and CPU types.",
       "npmPackageName": "@corsair-dev/runpod",
       "authTypes": [
         "api_key"
@@ -5062,7 +5062,7 @@
     {
       "id": "scaleai",
       "displayName": "Scale AI",
-      "description": "Scale AI plugin for Corsair — data labeling tasks, batches, projects and Studio",
+      "description": "Data labeling platform. Create and manage annotation tasks, batches, projects, files, teams, quality tasks, audits, and Studio work.",
       "npmPackageName": "@corsair-dev/scaleai",
       "authTypes": [
         "api_key"
@@ -5121,8 +5121,8 @@
     },
     {
       "id": "semanticscholar",
-      "displayName": "SemanticScholar",
-      "description": "SemanticScholar plugin for Corsair",
+      "displayName": "Semantic Scholar",
+      "description": "Academic search API for papers, authors, citations, references, paper recommendations, text snippets, and dataset releases.",
       "npmPackageName": "@corsair-dev/semanticscholar",
       "authTypes": [
         "api_key"
@@ -5212,8 +5212,8 @@
     },
     {
       "id": "slackbot",
-      "displayName": "Slackbot",
-      "description": "Slackbot plugin for Corsair",
+      "displayName": "Slack Bot",
+      "description": "Slack workspace access with a bot token for messages, conversations, files, users, user groups, reminders, calls, canvases, and team info, plus Events API webhooks.",
       "npmPackageName": "@corsair-dev/slackbot",
       "authTypes": [
         "oauth_2"
@@ -5396,7 +5396,7 @@
     {
       "id": "supadata",
       "displayName": "Supadata",
-      "description": "Supadata plugin for Corsair",
+      "description": "Video data API for transcripts and metadata, YouTube videos, channels, playlists and search, and web page scraping and site mapping.",
       "npmPackageName": "@corsair-dev/supadata",
       "authTypes": [
         "api_key"
@@ -5712,7 +5712,7 @@
     {
       "id": "tokenmetrics",
       "displayName": "Token Metrics",
-      "description": "Token Metrics plugin for Corsair",
+      "description": "Crypto analytics API for token prices, market cap rankings, technical indicators, and AI-generated trading signals.",
       "npmPackageName": "@corsair-dev/tokenmetrics",
       "authTypes": [
         "api_key"
@@ -5967,7 +5967,7 @@
     {
       "id": "uploadcare",
       "displayName": "Uploadcare",
-      "description": "Uploadcare plugin for Corsair",
+      "description": "File upload and delivery platform for uploading files, managing files and groups, CDN operations, add-ons, webhooks, and project settings.",
       "npmPackageName": "@corsair-dev/uploadcare",
       "authTypes": [
         "api_key"
@@ -6027,7 +6027,7 @@
     {
       "id": "veriphone",
       "displayName": "Veriphone",
-      "description": "Veriphone plugin for Corsair",
+      "description": "Phone number validation API for verifying numbers, listing supported countries, checking credit usage, and fetching example numbers.",
       "npmPackageName": "@corsair-dev/veriphone",
       "authTypes": [
         "api_key"
@@ -6056,8 +6056,8 @@
     },
     {
       "id": "waboxapp",
-      "displayName": "Waboxapp",
-      "description": "Waboxapp plugin for Corsair",
+      "displayName": "waboxapp",
+      "description": "WhatsApp messaging API for sending text, image, link, and media messages and checking the linked account status.",
       "npmPackageName": "@corsair-dev/waboxapp",
       "authTypes": [
         "api_key"
@@ -6103,7 +6103,7 @@
     {
       "id": "webscrapingai",
       "displayName": "WebScraping.AI",
-      "description": "WebScraping.AI plugin for Corsair",
+      "description": "Web scraping API that returns rendered HTML, text, or selected elements from pages, answers questions about a page, and extracts structured fields.",
       "npmPackageName": "@corsair-dev/webscrapingai",
       "authTypes": [
         "api_key"
@@ -6147,7 +6147,7 @@
     {
       "id": "whautomate",
       "displayName": "Whautomate",
-      "description": "Whautomate plugin for Corsair",
+      "description": "Customer engagement and booking platform for managing contacts, broadcasts, segments, services, service categories, staff availability, and webhooks.",
       "npmPackageName": "@corsair-dev/whautomate",
       "authTypes": [
         "api_key"
@@ -6161,8 +6161,8 @@
     },
     {
       "id": "whoisfreaks",
-      "displayName": "Whoisfreaks",
-      "description": "Whoisfreaks plugin for Corsair",
+      "displayName": "WhoisFreaks",
+      "description": "Domain and network intelligence API for WHOIS, DNS, SSL, subdomains, domain availability, typosquatting, IP and ASN data, geolocation, and reputation lookups.",
       "npmPackageName": "@corsair-dev/whoisfreaks",
       "authTypes": [
         "api_key"
@@ -6177,7 +6177,7 @@
     {
       "id": "winstonai",
       "displayName": "Winston AI",
-      "description": "Winston AI plugin for Corsair",
+      "description": "AI content detection API that scores text and images for AI generation, scans text for plagiarism, and compares two texts.",
       "npmPackageName": "@corsair-dev/winstonai",
       "authTypes": [
         "api_key"
@@ -6207,7 +6207,7 @@
     {
       "id": "wix",
       "displayName": "Wix",
-      "description": "Wix plugin for Corsair",
+      "description": "Website platform API for sites, contacts, stores, orders, bookings, members, events, forms, CMS data, media, marketing, and billing.",
       "npmPackageName": "@corsair-dev/wix",
       "authTypes": [
         "api_key",
@@ -6313,7 +6313,7 @@
     {
       "id": "writer",
       "displayName": "Writer",
-      "description": "Writer plugin for Corsair",
+      "description": "Enterprise generative AI API for chat and text completions, knowledge graphs, file management, PDF parsing, translation, AI content detection, and web search.",
       "npmPackageName": "@corsair-dev/writer",
       "authTypes": [
         "api_key"
@@ -6328,7 +6328,7 @@
     {
       "id": "xero",
       "displayName": "Xero",
-      "description": "Xero plugin for Corsair",
+      "description": "Cloud accounting API for invoices, contacts, payments, bank transactions, credit notes, quotes, purchase orders, journals, reports, and files.",
       "npmPackageName": "@corsair-dev/xero",
       "authTypes": [
         "api_key",
@@ -6404,7 +6404,7 @@
     {
       "id": "zenserp",
       "displayName": "Zenserp",
-      "description": "Zenserp plugin for Corsair",
+      "description": "Search results API for Google, Bing, and Yandex SERP data, reverse image search, Google Shopping products, and Google Trends.",
       "npmPackageName": "@corsair-dev/zenserp",
       "authTypes": [
         "api_key"
@@ -6419,7 +6419,7 @@
     {
       "id": "zohobigin",
       "displayName": "Zoho Bigin",
-      "description": "Zoho Bigin plugin for Corsair",
+      "description": "Small business CRM that manages records, notes, tags, attachments, bulk operations, notifications, and users, with webhooks.",
       "npmPackageName": "@corsair-dev/zohobigin",
       "authTypes": [
         "oauth_2"
@@ -54116,7 +54116,7 @@
       "pluginId": "enginemailer",
       "kind": "api",
       "shortPath": "n8n.deactivateSubscriber",
-      "haystack": "n8n.deactivatesubscriber enginemailer.api.n8n.deactivatesubscriber unsubscribe a subscriber through enginemailer n8n write"
+      "haystack": "n8n.deactivatesubscriber enginemailer.api.n8n.deactivatesubscriber unsubscribe a subscriber through enginemailer n8n destructive"
     },
     {
       "pluginId": "enginemailer",
@@ -54212,7 +54212,7 @@
       "pluginId": "enginemailer",
       "kind": "api",
       "shortPath": "subscribers.batchUpdateStatus",
-      "haystack": "subscribers.batchupdatestatus enginemailer.api.subscribers.batchupdatestatus update subscriber status in a batch write"
+      "haystack": "subscribers.batchupdatestatus enginemailer.api.subscribers.batchupdatestatus get the status of a batch subscriber update by its job id read"
     },
     {
       "pluginId": "enginemailer",
@@ -54254,7 +54254,7 @@
       "pluginId": "enginemailer",
       "kind": "api",
       "shortPath": "subscribers.unsubscribe",
-      "haystack": "subscribers.unsubscribe enginemailer.api.subscribers.unsubscribe unsubscribe a subscriber write"
+      "haystack": "subscribers.unsubscribe enginemailer.api.subscribers.unsubscribe unsubscribe a subscriber destructive"
     },
     {
       "pluginId": "enginemailer",
@@ -54710,7 +54710,7 @@
       "pluginId": "esputnik",
       "kind": "api",
       "shortPath": "contacts.deleteFromUnsubscribed",
-      "haystack": "contacts.deletefromunsubscribed esputnik.api.contacts.deletefromunsubscribed remove emails from the esputnik unsubscribe list write"
+      "haystack": "contacts.deletefromunsubscribed esputnik.api.contacts.deletefromunsubscribed remove emails from the esputnik unsubscribe list destructive"
     },
     {
       "pluginId": "esputnik",
@@ -54962,7 +54962,7 @@
       "pluginId": "esputnik",
       "kind": "api",
       "shortPath": "preprocessor.updatePreprocessorFile",
-      "haystack": "preprocessor.updatepreprocessorfile esputnik.api.preprocessor.updatepreprocessorfile replace the data of an esputnik preprocessor file write"
+      "haystack": "preprocessor.updatepreprocessorfile esputnik.api.preprocessor.updatepreprocessorfile replace the data of an esputnik preprocessor file destructive"
     },
     {
       "pluginId": "esputnik",
@@ -63734,7 +63734,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "emails.create",
-      "haystack": "emails.create gumroad.api.emails.create create a draft audience email by subject, html body and audience, or send it immediately with publish=true write"
+      "haystack": "emails.create gumroad.api.emails.create create a draft audience email by subject, html body and audience, or send it immediately with publish=true destructive"
     },
     {
       "pluginId": "gumroad",
@@ -63770,7 +63770,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "emails.send",
-      "haystack": "emails.send gumroad.api.emails.send publish a draft audience email and send it to its audience write"
+      "haystack": "emails.send gumroad.api.emails.send publish a draft audience email and send it to its audience destructive"
     },
     {
       "pluginId": "gumroad",
@@ -63806,7 +63806,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "licenses.disable",
-      "haystack": "licenses.disable gumroad.api.licenses.disable disable a license key so it fails verification, and read its purchase write"
+      "haystack": "licenses.disable gumroad.api.licenses.disable disable a license key so it fails verification, and read its purchase destructive"
     },
     {
       "pluginId": "gumroad",
@@ -63944,7 +63944,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "products.disable",
-      "haystack": "products.disable gumroad.api.products.disable unpublish (disable) an existing product write"
+      "haystack": "products.disable gumroad.api.products.disable unpublish (disable) an existing product destructive"
     },
     {
       "pluginId": "gumroad",
@@ -64046,7 +64046,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "sales.refund",
-      "haystack": "sales.refund gumroad.api.sales.refund refund a sale fully, or partially with amount_cents; returns the updated sale write"
+      "haystack": "sales.refund gumroad.api.sales.refund refund a sale fully, or partially with amount_cents; returns the updated sale destructive"
     },
     {
       "pluginId": "gumroad",
@@ -64058,7 +64058,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "sales.revokeAccess",
-      "haystack": "sales.revokeaccess gumroad.api.sales.revokeaccess revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales) write"
+      "haystack": "sales.revokeaccess gumroad.api.sales.revokeaccess revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales) destructive"
     },
     {
       "pluginId": "gumroad",
@@ -71996,7 +71996,7 @@
       "pluginId": "lever",
       "kind": "api",
       "shortPath": "requisitionFields.deleteOptions",
-      "haystack": "requisitionfields.deleteoptions lever.api.requisitionfields.deleteoptions remove dropdown option values from a requisition field write"
+      "haystack": "requisitionfields.deleteoptions lever.api.requisitionfields.deleteoptions remove dropdown option values from a requisition field destructive"
     },
     {
       "pluginId": "lever",
@@ -72008,7 +72008,7 @@
       "pluginId": "lever",
       "kind": "api",
       "shortPath": "requisitionFields.replaceOptions",
-      "haystack": "requisitionfields.replaceoptions lever.api.requisitionfields.replaceoptions replace the dropdown options of a requisition field write"
+      "haystack": "requisitionfields.replaceoptions lever.api.requisitionfields.replaceoptions replace the dropdown options of a requisition field destructive"
     },
     {
       "pluginId": "lever",
@@ -82106,7 +82106,7 @@
       "pluginId": "render",
       "kind": "api",
       "shortPath": "disks.restoreSnapshot",
-      "haystack": "disks.restoresnapshot render.api.disks.restoresnapshot restore a snapshot to a render disk write"
+      "haystack": "disks.restoresnapshot render.api.disks.restoresnapshot restore a snapshot to a render disk destructive"
     },
     {
       "pluginId": "render",
@@ -90050,7 +90050,7 @@
       "pluginId": "snowflake",
       "kind": "api",
       "shortPath": "statements.submit",
-      "haystack": "statements.submit snowflake.api.statements.submit submit sql for execution. returns rows, a handle while the statement is still running, or dml stats. write"
+      "haystack": "statements.submit snowflake.api.statements.submit submit sql for execution. returns rows, a handle while the statement is still running, or dml stats. destructive"
     },
     {
       "pluginId": "sourcegraph",
@@ -94352,7 +94352,7 @@
       "pluginId": "todoist",
       "kind": "api",
       "shortPath": "tasks.move",
-      "haystack": "tasks.move todoist.api.tasks.move move a todoist task between project or section write"
+      "haystack": "tasks.move todoist.api.tasks.move move a todoist task to one project, section, or parent write"
     },
     {
       "pluginId": "todoist",
@@ -100910,7 +100910,7 @@
       "pluginId": "workable",
       "kind": "api",
       "shortPath": "departments.merge",
-      "haystack": "departments.merge workable.api.departments.merge merge a department into another department write"
+      "haystack": "departments.merge workable.api.departments.merge merge a department into another department destructive"
     },
     {
       "pluginId": "workable",

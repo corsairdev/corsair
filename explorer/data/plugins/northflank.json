@@ -590,7 +590,7 @@
           {
             "key": "secrets",
             "optional": true,
-            "type": "{ variables?: {}, files?: {}, dockerSecretMounts?: {} }"
+            "type": "{ variables?: Record<string, string>, files?: Record<string, { data: string, encoding?: string }>, dockerSecretMounts?: Record<string, { data: string, encoding?: string }> }"
           }
         ]
       },
@@ -600,7 +600,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string }"
+            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: Record<string, string>, files?: Record<string, { data: string, encoding?: string }>, dockerSecretMounts?: Record<string, { data: string, encoding?: string }> }, createdAt?: string, updatedAt?: string }"
           }
         ]
       }
@@ -671,7 +671,7 @@
           {
             "key": "secrets",
             "optional": true,
-            "type": "{ variables?: {}, files?: {}, dockerSecretMounts?: {} }"
+            "type": "{ variables?: Record<string, string>, files?: Record<string, { data: string, encoding?: string }>, dockerSecretMounts?: Record<string, { data: string, encoding?: string }> }"
           }
         ]
       },
@@ -681,7 +681,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string }"
+            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: Record<string, string>, files?: Record<string, { data: string, encoding?: string }>, dockerSecretMounts?: Record<string, { data: string, encoding?: string }> }, createdAt?: string, updatedAt?: string }"
           }
         ]
       }
@@ -717,7 +717,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string }"
+            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: Record<string, string>, files?: Record<string, { data: string, encoding?: string }>, dockerSecretMounts?: Record<string, { data: string, encoding?: string }> }, createdAt?: string, updatedAt?: string }"
           }
         ]
       }
@@ -748,7 +748,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string, addonSecrets?: { id: string, name: string, addonType: string, version: string, variables?: {} }[] }"
+            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: Record<string, string>, files?: Record<string, { data: string, encoding?: string }>, dockerSecretMounts?: Record<string, { data: string, encoding?: string }> }, createdAt?: string, updatedAt?: string, addonSecrets?: { id: string, name: string, addonType: string, version: string, variables?: Record<string, string> }[] }"
           }
         ]
       }
@@ -789,7 +789,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ secrets: { id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string }[] }"
+            "type": "{ secrets: { id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: Record<string, string>, files?: Record<string, { data: string, encoding?: string }>, dockerSecretMounts?: Record<string, { data: string, encoding?: string }> }, createdAt?: string, updatedAt?: string }[] }"
           },
           {
             "key": "pagination",
@@ -865,7 +865,7 @@
           {
             "key": "secrets",
             "optional": true,
-            "type": "{ variables?: {}, files?: {}, dockerSecretMounts?: {} }"
+            "type": "{ variables?: Record<string, string>, files?: Record<string, { data: string, encoding?: string }>, dockerSecretMounts?: Record<string, { data: string, encoding?: string }> }"
           }
         ]
       },
@@ -875,7 +875,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string }"
+            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: Record<string, string>, files?: Record<string, { data: string, encoding?: string }>, dockerSecretMounts?: Record<string, { data: string, encoding?: string }> }, createdAt?: string, updatedAt?: string }"
           }
         ]
       }
@@ -936,7 +936,7 @@
           {
             "key": "secrets",
             "optional": true,
-            "type": "{ variables?: {}, files?: {}, dockerSecretMounts?: {} }"
+            "type": "{ variables?: Record<string, string>, files?: Record<string, { data: string, encoding?: string }>, dockerSecretMounts?: Record<string, { data: string, encoding?: string }> }"
           }
         ]
       },

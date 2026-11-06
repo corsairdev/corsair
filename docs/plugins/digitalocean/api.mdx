@@ -37,48 +37,14 @@ await corsair.digitalocean.api.databases.createDatabaseCluster({});
 | `sql_mode` | `string` | No | — |
 | `num_nodes` | `number` | Yes | — |
 | `user_names` | `any[]` | No | — |
-| `backup_restore` | `object` | No | — |
+| `backup_restore` | `Record<string, any>` | No | — |
 | `eviction_policy` | `string` | No | — |
 | `storage_size_gb` | `number` | No | — |
-| `maintenance_window` | `object` | No | — |
+| `maintenance_window` | `Record<string, any>` | No | — |
 | `private_network_uuid` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="backup_restore full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="maintenance_window full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -105,26 +71,8 @@ await corsair.digitalocean.api.databases.deleteDatabaseCluster({});
 |------|------|----------|-------------|
 | `database_cluster_uuid` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -153,26 +101,8 @@ await corsair.digitalocean.api.databases.listAllDatabases({});
 | `per_page` | `number` | No | — |
 | `tag_name` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -198,26 +128,8 @@ await corsair.digitalocean.api.databases.listDatabaseOptions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -255,26 +167,8 @@ await corsair.digitalocean.api.domainRecords.createNewDomainRecord({});
 | `priority` | `number` | No | — |
 | `domain_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -302,26 +196,8 @@ await corsair.digitalocean.api.domainRecords.deleteDomainRecord({});
 | `domain_name` | `string` | Yes | — |
 | `record_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -352,26 +228,8 @@ await corsair.digitalocean.api.domainRecords.listDomainRecords({});
 | `domain_name` | `string` | Yes | — |
 | `record_name` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -399,26 +257,8 @@ await corsair.digitalocean.api.domainRecords.retrieveDomainRecord({});
 | `domain_name` | `string` | Yes | — |
 | `record_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -455,26 +295,8 @@ await corsair.digitalocean.api.domainRecords.updateDomainRecord({});
 | `record_id` | `number` | Yes | — |
 | `domain_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -504,26 +326,8 @@ await corsair.digitalocean.api.domains.createNewDomain({});
 | `name` | `string` | Yes | — |
 | `ip_address` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -550,26 +354,8 @@ await corsair.digitalocean.api.domains.deleteDomain({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -597,26 +383,8 @@ await corsair.digitalocean.api.domains.listAllDomains({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -643,26 +411,8 @@ await corsair.digitalocean.api.domains.retrieveDomain({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -704,26 +454,8 @@ await corsair.digitalocean.api.droplets.createNewDroplet({});
 | `private_networking` | `boolean` | No | — |
 | `with_droplet_agent` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -750,26 +482,8 @@ await corsair.digitalocean.api.droplets.deleteExistingDroplet({});
 |------|------|----------|-------------|
 | `droplet_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -798,26 +512,8 @@ await corsair.digitalocean.api.droplets.listAllDroplets({});
 | `per_page` | `number` | No | — |
 | `tag_name` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -844,26 +540,8 @@ await corsair.digitalocean.api.droplets.retrieveExistingDroplet({});
 |------|------|----------|-------------|
 | `droplet_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -897,26 +575,8 @@ await corsair.digitalocean.api.firewalls.createNewFirewall({});
 | `inbound_rules` | `any[]` | Yes | — |
 | `outbound_rules` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -943,26 +603,8 @@ await corsair.digitalocean.api.firewalls.deleteFirewall({});
 |------|------|----------|-------------|
 | `firewall_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -990,26 +632,8 @@ await corsair.digitalocean.api.firewalls.listAllFirewalls({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1043,26 +667,8 @@ await corsair.digitalocean.api.images.createCustomImage({});
 | `description` | `string` | No | — |
 | `distribution` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1089,26 +695,8 @@ await corsair.digitalocean.api.images.deleteImage({});
 |------|------|----------|-------------|
 | `image_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1139,26 +727,8 @@ await corsair.digitalocean.api.images.listAllImages({});
 | `per_page` | `number` | No | — |
 | `tag_name` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1185,26 +755,8 @@ await corsair.digitalocean.api.images.retrieveExistingImage({});
 |------|------|----------|-------------|
 | `image_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1237,36 +789,10 @@ await corsair.digitalocean.api.kubernetes.createNewKubernetesCluster({});
 | `version` | `string` | Yes | — |
 | `node_pools` | `any[]` | Yes | — |
 | `auto_upgrade` | `boolean` | No | — |
-| `maintenance_policy` | `object` | No | — |
+| `maintenance_policy` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="maintenance_policy full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1294,26 +820,8 @@ await corsair.digitalocean.api.kubernetes.listAllKubernetesClusters({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1346,50 +854,16 @@ await corsair.digitalocean.api.loadBalancers.createNewLoadBalancer({});
 | `vpc_uuid` | `string` | No | — |
 | `algorithm` | `string` | No | — |
 | `droplet_ids` | `any[]` | No | — |
-| `health_check` | `object` | No | — |
+| `health_check` | `Record<string, any>` | No | — |
 | `firewall_policy` | `string` | No | — |
-| `sticky_sessions` | `object` | No | — |
+| `sticky_sessions` | `Record<string, any>` | No | — |
 | `forwarding_rules` | `any[]` | Yes | — |
 | `enable_proxy_protocol` | `boolean` | No | — |
 | `redirect_http_to_https` | `boolean` | No | — |
 | `enable_backend_keepalive` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="health_check full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="sticky_sessions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1416,26 +890,8 @@ await corsair.digitalocean.api.loadBalancers.deleteLoadBalancer({});
 |------|------|----------|-------------|
 | `load_balancer_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1463,26 +919,8 @@ await corsair.digitalocean.api.loadBalancers.listAllLoadBalancers({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1513,26 +951,8 @@ await corsair.digitalocean.api.snapshots.listAllSnapshots({});
 | `per_page` | `number` | No | — |
 | `resource_type` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1562,26 +982,8 @@ await corsair.digitalocean.api.sshKeys.createNewSshKey({});
 | `name` | `string` | Yes | — |
 | `public_key` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1608,26 +1010,8 @@ await corsair.digitalocean.api.sshKeys.deleteSshKey({});
 |------|------|----------|-------------|
 | `key_id_or_fingerprint` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1655,26 +1039,8 @@ await corsair.digitalocean.api.sshKeys.listAllSshKeys({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1703,26 +1069,8 @@ await corsair.digitalocean.api.tags.createNewTag({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1749,26 +1097,8 @@ await corsair.digitalocean.api.tags.deleteTag({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1796,26 +1126,8 @@ await corsair.digitalocean.api.tags.listAllTags({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1842,26 +1154,8 @@ await corsair.digitalocean.api.tags.retrieveTag({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1889,26 +1183,8 @@ await corsair.digitalocean.api.tags.tagResource({});
 | `tag_name` | `string` | Yes | — |
 | `resources` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1936,26 +1212,8 @@ await corsair.digitalocean.api.tags.untagResource({});
 | `tag_name` | `string` | Yes | — |
 | `resources` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1991,26 +1249,8 @@ await corsair.digitalocean.api.volumes.createNewBlockStorageVolume({});
 | `filesystem_type` | `string` | No | — |
 | `filesystem_label` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2037,26 +1277,8 @@ await corsair.digitalocean.api.volumes.deleteBlockStorageVolume({});
 |------|------|----------|-------------|
 | `volume_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2086,26 +1308,8 @@ await corsair.digitalocean.api.volumes.listAllVolumes({});
 | `region` | `string` | No | — |
 | `per_page` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2138,26 +1342,8 @@ await corsair.digitalocean.api.vpcs.createNewVpc({});
 | `ip_range` | `string` | No | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2184,26 +1370,8 @@ await corsair.digitalocean.api.vpcs.deleteVpc({});
 |------|------|----------|-------------|
 | `vpc_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2231,26 +1399,8 @@ await corsair.digitalocean.api.vpcs.listAllVpcs({});
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2277,26 +1427,8 @@ await corsair.digitalocean.api.vpcs.retrieveVpc({});
 |------|------|----------|-------------|
 | `vpc_uuid` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2326,26 +1458,8 @@ await corsair.digitalocean.api.vpcs.updateVpc({});
 | `default` | `boolean` | No | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 

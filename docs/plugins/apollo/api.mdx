@@ -154,8 +154,7 @@ await corsair.apollo.api.organizations.enrich({});
   organization_headcount_six_month_growth?: number | null,
   organization_headcount_twelve_month_growth?: number | null,
   organization_headcount_twenty_four_month_growth?: number | null,
-  departmental_head_count?: {
-  } | null,
+  departmental_head_count?: Record<string, number> | null,
   annual_revenue?: number | null,
   annual_revenue_printed?: string | null,
   organization_revenue?: number | null,
@@ -278,8 +277,7 @@ await corsair.apollo.api.organizations.get({});
   organization_headcount_six_month_growth?: number | null,
   organization_headcount_twelve_month_growth?: number | null,
   organization_headcount_twenty_four_month_growth?: number | null,
-  departmental_head_count?: {
-  } | null,
+  departmental_head_count?: Record<string, number> | null,
   annual_revenue?: number | null,
   annual_revenue_printed?: string | null,
   organization_revenue?: number | null,
@@ -583,8 +581,7 @@ await corsair.apollo.api.organizations.search({});
   organization_headcount_six_month_growth?: number | null,
   organization_headcount_twelve_month_growth?: number | null,
   organization_headcount_twenty_four_month_growth?: number | null,
-  departmental_head_count?: {
-  } | null,
+  departmental_head_count?: Record<string, number> | null,
   annual_revenue?: number | null,
   annual_revenue_printed?: string | null,
   organization_revenue?: number | null,
@@ -675,8 +672,7 @@ await corsair.apollo.api.organizations.search({});
   organization_headcount_six_month_growth?: number | null,
   organization_headcount_twelve_month_growth?: number | null,
   organization_headcount_twenty_four_month_growth?: number | null,
-  departmental_head_count?: {
-  } | null,
+  departmental_head_count?: Record<string, number> | null,
   annual_revenue?: number | null,
   annual_revenue_printed?: string | null,
   organization_revenue?: number | null,
@@ -790,9 +786,9 @@ await corsair.apollo.api.people.enrich({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `person` | `object` | No | — |
+| `person` | `object \| null` | Yes | — |
 | `request_id` | `number` | No | — |
-| `waterfall` | `object` | No | — |
+| `waterfall` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="person full type">
@@ -845,8 +841,7 @@ await corsair.apollo.api.people.enrich({});
     organization_headcount_six_month_growth?: number | null,
     organization_headcount_twelve_month_growth?: number | null,
     organization_headcount_twenty_four_month_growth?: number | null,
-    departmental_head_count?: {
-    } | null,
+    departmental_head_count?: Record<string, number> | null,
     annual_revenue?: number | null,
     annual_revenue_printed?: string | null,
     organization_revenue?: number | null,
@@ -940,7 +935,7 @@ await corsair.apollo.api.people.enrich({});
   } | null,
   revealed_for_current_team?: boolean | null,
   is_likely_to_engage?: boolean | null
-}
+} | null
 ```
 </Accordion>
 
@@ -950,7 +945,7 @@ await corsair.apollo.api.people.enrich({});
 {
   status: string,
   message?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1036,8 +1031,7 @@ await corsair.apollo.api.people.get({});
     organization_headcount_six_month_growth?: number | null,
     organization_headcount_twelve_month_growth?: number | null,
     organization_headcount_twenty_four_month_growth?: number | null,
-    departmental_head_count?: {
-    } | null,
+    departmental_head_count?: Record<string, number> | null,
     annual_revenue?: number | null,
     annual_revenue_printed?: string | null,
     organization_revenue?: number | null,
@@ -1165,7 +1159,7 @@ await corsair.apollo.api.people.search({});
 | `person_locations` | `string[]` | No | — |
 | `person_not_locations` | `string[]` | No | — |
 | `person_seniorities` | `string[]` | No | — |
-| `contact_email_status` | `verified \| unverified \| likely to engage \| unavailable[]` | No | — |
+| `contact_email_status` | `(verified \| unverified \| likely to engage \| unavailable)[]` | No | — |
 | `currently_using_all_of_technology_uids` | `string[]` | No | — |
 | `currently_not_using_any_of_technology_uids` | `string[]` | No | — |
 | `organization_locations` | `string[]` | No | — |

@@ -49,8 +49,7 @@ await corsair.addresszen.api.autocomplete.addresses({});
   hits: {
     id: string,
     suggestion: string,
-    urls?: {
-    } | null,
+    urls?: Record<string, any> | null,
     udprn?: number
   }[]
 }
@@ -94,8 +93,7 @@ await corsair.addresszen.api.key.availability({});
 {
   available: boolean,
   context?: string,
-  contexts?: {
-  }[]
+  contexts?: Record<string, any>[]
 }
 ```
 </Accordion>

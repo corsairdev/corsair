@@ -77,8 +77,7 @@ await corsair.bettercontact.api.enrichment.enrich({});
   company?: string,
   company_domain?: string,
   linkedin_url?: string,
-  custom_fields?: {
-  }
+  custom_fields?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -127,26 +126,8 @@ await corsair.bettercontact.api.enrichment.getResults({});
 | `message` | `string` | No | — |
 | `credits_consumed` | `number` | No | — |
 | `credits_left` | `number` | No | — |
-| `summary` | `object` | No | — |
-| `data` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="summary full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `summary` | `Record<string, any>` | No | — |
+| `data` | `Record<string, any>[]` | No | — |
 
 
 
@@ -174,7 +155,7 @@ await corsair.bettercontact.api.leadFinder.create({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `max_leads` | `number` | No | — |
-| `webhook` | `string` | No | — |
+| `webhook` | `string \| null` | No | — |
 | `enrich_email_address` | `boolean` | No | — |
 | `enrich_phone_number` | `boolean` | No | — |
 
@@ -327,26 +308,8 @@ await corsair.bettercontact.api.leadFinder.getResults({});
 | `message` | `string` | No | — |
 | `credits_consumed` | `number` | No | — |
 | `credits_left` | `number` | No | — |
-| `summary` | `object` | No | — |
-| `leads` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="summary full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="leads full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `summary` | `Record<string, any>` | No | — |
+| `leads` | `Record<string, any>[]` | No | — |
 
 
 

@@ -74,22 +74,22 @@
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_public_holiday",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "public_holiday_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -130,32 +130,32 @@
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "day_of_week",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_workday",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "public_holiday_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "non_working_reason",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -231,22 +231,22 @@
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "utc_offset",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "local_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -292,27 +292,27 @@
           {
             "key": "num_working_days",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "num_non_working_days",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "working_days",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "non_working_days",
             "optional": true,
-            "type": "{ date?: string | null, reasons?: string[] | null, holiday_name?: string | null }[]"
+            "type": "{ date?: string | null, reasons?: string[] | null, holiday_name?: string | null }[] | null"
           },
           {
             "key": "year",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -363,52 +363,52 @@
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "datetime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "year",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "month",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "day",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hour",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "minute",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "second",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "day_of_week",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -469,32 +469,32 @@
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "year",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "fica",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "states",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "federal",
             "optional": true,
-            "type": "{ married?: { brackets?: { rate?: number | null, min?: number | null, max?: number | string | null }[] | null } | null, married_separate?: { brackets?: { rate?: number | null, min?: number | null, max?: number | string | null }[] | null } | null, single?: { brackets?: { rate?: number | null, min?: number | null, max?: number | string | null }[] | null } | null, head_of_household?: { brackets?: { rate?: number | null, min?: number | null, max?: number | string | null }[] | null } | null }"
+            "type": "{ married?: { brackets?: { rate?: number | null, min?: number | null, max?: number | string | null }[] | null } | null, married_separate?: { brackets?: { rate?: number | null, min?: number | null, max?: number | string | null }[] | null } | null, single?: { brackets?: { rate?: number | null, min?: number | null, max?: number | string | null }[] | null } | null, head_of_household?: { brackets?: { rate?: number | null, min?: number | null, max?: number | string | null }[] | null } | null } | null"
           },
           {
             "key": "provinces",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -555,102 +555,102 @@
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "income",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxable_income",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "deductions",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "credits",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax_year",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "federal_effective_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "federal_taxes_owed",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "fica_social_security",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fica_social_security_rate",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "fica_social_security_cap",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "fica_medicare",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fica_medicare_rate",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "fica_total",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "region_effective_rate",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "region_taxes_owed",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_taxes_owed",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "income_after_tax",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_effective_tax_rate",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       }
@@ -701,17 +701,17 @@
           {
             "key": "rate_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rate_pct",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "last_updated",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -772,17 +772,17 @@
           {
             "key": "monthly_payment",
             "optional": true,
-            "type": "{ total?: number | null, mortgage?: number | null, property_tax?: number | null, hoa?: number | null, annual_home_ins?: number | null }"
+            "type": "{ total?: number | null, mortgage?: number | null, property_tax?: number | null, hoa?: number | null, annual_home_ins?: number | null } | null"
           },
           {
             "key": "annual_payment",
             "optional": true,
-            "type": "{ total?: number | null, mortgage?: number | null, property_tax?: number | null, hoa?: number | null, home_insurance?: number | null }"
+            "type": "{ total?: number | null, mortgage?: number | null, property_tax?: number | null, hoa?: number | null, home_insurance?: number | null } | null"
           },
           {
             "key": "total_interest_paid",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -853,72 +853,72 @@
           {
             "key": "historical_population",
             "optional": true,
-            "type": "{ year?: number | null, population?: number | null, yearly_change_percentage?: number | null, yearly_change?: number | null, migrants?: number | null, median_age?: number | null, fertility_rate?: number | null, density?: number | null, urban_population_pct?: number | null, urban_population?: number | null, percentage_of_world_population?: number | null, rank?: number | null }[]"
+            "type": "{ year?: number | null, population?: number | null, yearly_change_percentage?: number | null, yearly_change?: number | null, migrants?: number | null, median_age?: number | null, fertility_rate?: number | null, density?: number | null, urban_population_pct?: number | null, urban_population?: number | null, percentage_of_world_population?: number | null, rank?: number | null }[] | null"
           },
           {
             "key": "population_forecast",
             "optional": true,
-            "type": "{ year?: number | null, population?: number | null, yearly_change_percentage?: number | null, yearly_change?: number | null, migrants?: number | string | null, median_age?: number | null, fertility_rate?: number | null, density?: number | null, urban_population_pct?: number | null, urban_population?: number | null, percentage_of_world_population?: number | null, rank?: number | null }[]"
+            "type": "{ year?: number | null, population?: number | null, yearly_change_percentage?: number | null, yearly_change?: number | null, migrants?: number | string | null, median_age?: number | null, fertility_rate?: number | null, density?: number | null, urban_population_pct?: number | null, urban_population?: number | null, percentage_of_world_population?: number | null, rank?: number | null }[] | null"
           },
           {
             "key": "country_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "population",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "yearly_change_percentage",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "yearly_change",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "migrants",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "median_age",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fertility_rate",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "density",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "urban_population_pct",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "urban_population",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "percentage_of_world_population",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "rank",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       }
@@ -1118,7 +1118,7 @@
           {
             "key": "advice",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1138,7 +1138,7 @@
           {
             "key": "item",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1158,7 +1158,7 @@
           {
             "key": "joke",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1253,12 +1253,12 @@
           {
             "key": "puzzle",
             "optional": true,
-            "type": "number | null[][]"
+            "type": "(number | null)[][] | null"
           },
           {
             "key": "solution",
             "optional": true,
-            "type": "number | null[][]"
+            "type": "(number | null)[][] | null"
           }
         ]
       }
@@ -1284,17 +1284,17 @@
           {
             "key": "hobby",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "link",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1325,17 +1325,17 @@
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sign",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "horoscope",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1524,12 +1524,12 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "solution",
             "optional": true,
-            "type": "number | null[][]"
+            "type": "(number | null)[][] | null"
           }
         ]
       }
@@ -1769,92 +1769,92 @@
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "available",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "creation_date",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "expiration_date",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "registrar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "age_days",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_date",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "domain_status",
             "optional": true,
-            "type": "string[] | string"
+            "type": "string[] | string | null"
           },
           {
             "key": "has_mx",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "is_free_email_provider",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "risky_tld",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "is_disposable_email_domain",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "is_custom_domain",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "mx_provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_parked",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "ip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hosting_provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1880,122 +1880,122 @@
           {
             "key": "is_valid",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lat",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "lon",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isp",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_datacenter",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "is_hosting",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "is_tor",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "is_vpn",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "is_icloud_relay",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "is_bogon",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "is_abuser",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "threat_level",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "asn",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "asn_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "route",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "abuse_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2051,7 +2051,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2077,62 +2077,62 @@
           {
             "key": "is_valid",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lat",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "lon",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isp",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2173,7 +2173,7 @@
           {
             "key": "user_agent",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2199,42 +2199,42 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url_parameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "page_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "page_description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "meta_tags",
             "optional": true,
-            "type": "{ viewport?: string | null }"
+            "type": "{ viewport?: string | null } | null"
           },
           {
             "key": "favicon",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2260,52 +2260,52 @@
           {
             "key": "domain_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "registrar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "registrar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "whois_server",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_date",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "creation_date",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "expiration_date",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "name_servers",
             "optional": true,
-            "type": "string[] | string"
+            "type": "string[] | string | null"
           },
           {
             "key": "dnssec",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2351,37 +2351,37 @@
           {
             "key": "CO",
             "optional": true,
-            "type": "{ concentration?: number | null, aqi?: number | null }"
+            "type": "{ concentration?: number | null, aqi?: number | null } | null"
           },
           {
             "key": "NO2",
             "optional": true,
-            "type": "{ concentration?: number | null, aqi?: number | null }"
+            "type": "{ concentration?: number | null, aqi?: number | null } | null"
           },
           {
             "key": "O3",
             "optional": true,
-            "type": "{ concentration?: number | null, aqi?: number | null }"
+            "type": "{ concentration?: number | null, aqi?: number | null } | null"
           },
           {
             "key": "SO2",
             "optional": true,
-            "type": "{ concentration?: number | null, aqi?: number | null }"
+            "type": "{ concentration?: number | null, aqi?: number | null } | null"
           },
           {
             "key": "PM2.5",
             "optional": true,
-            "type": "{ concentration?: number | null, aqi?: number | null }"
+            "type": "{ concentration?: number | null, aqi?: number | null } | null"
           },
           {
             "key": "PM10",
             "optional": true,
-            "type": "{ concentration?: number | null, aqi?: number | null }"
+            "type": "{ concentration?: number | null, aqi?: number | null } | null"
           },
           {
             "key": "overall_aqi",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2927,52 +2927,52 @@
           {
             "key": "cloud_pct",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "temp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "feels_like",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "humidity",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "min_temp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "max_temp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "wind_speed",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "wind_degrees",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sunrise",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sunset",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3067,37 +3067,37 @@
           {
             "key": "price",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timestamp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "24h_price_change",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "24h_price_change_percent",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "24h_high",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "24h_low",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "24h_volume",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3138,67 +3138,67 @@
           {
             "key": "exchange",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "unit",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency_unit",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "price",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "change_24h_percent",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "change_24h",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "low_24h",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "high_24h",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_close",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "high_52w",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3234,27 +3234,27 @@
           {
             "key": "old_amount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "old_currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "new_amount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "new_currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timestamp",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       }
@@ -3280,17 +3280,17 @@
           {
             "key": "symbol",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "price",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timestamp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3441,77 +3441,77 @@
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timestamp",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "ticker",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cik",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "year",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "quarter",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "earnings_timing",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transcript",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "participants",
             "optional": true,
-            "type": "string[] | string"
+            "type": "string[] | string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "guidance",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "risk_factors",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "overall_sentiment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "overall_sentiment_rationale",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transcript_split",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3537,67 +3537,67 @@
           {
             "key": "etf_ticker",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "price",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "etf_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cusip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domicile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expense_ratio",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "aum",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "aum_currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "aum_usd",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "holdings",
             "optional": true,
-            "type": "string[] | string"
+            "type": "string[] | string | null"
           },
           {
             "key": "num_holdings",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       }
@@ -3623,17 +3623,17 @@
           {
             "key": "currency_pair",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "exchange_rate",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "timestamp",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       }
@@ -3744,27 +3744,27 @@
           {
             "key": "ticker",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "market_cap",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3790,52 +3790,52 @@
           {
             "key": "fund_ticker",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fund_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cusip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expense_ratio",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "aum",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "price",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "holdings",
             "optional": true,
-            "type": "string[] | string"
+            "type": "string[] | string | null"
           },
           {
             "key": "num_holdings",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       }
@@ -3971,37 +3971,37 @@
           {
             "key": "ticker",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "price",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "exchange",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "volume",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4027,97 +4027,97 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ticker",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chief_executive_officer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "{ address?: string | null, city?: string | null, state?: string | null, zip?: string | null }"
+            "type": "{ address?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null"
           },
           {
             "key": "latest_price",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "latest_market_cap",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "latest_dividend",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cik",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cusip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "exchange",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ipo_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "latest_earnings",
             "optional": true,
-            "type": "{ year?: number | null, quarter?: number | null }"
+            "type": "{ year?: number | null, quarter?: number | null } | null"
           },
           {
             "key": "sector",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sic_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sic_description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4663,17 +4663,17 @@
           {
             "key": "definition",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "word",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "valid",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -4699,7 +4699,7 @@
           {
             "key": "embeddings",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           }
         ]
       }
@@ -4725,12 +4725,12 @@
           {
             "key": "iso",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4771,7 +4771,7 @@
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4797,17 +4797,17 @@
           {
             "key": "original",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "censored",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_profanity",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -4878,17 +4878,17 @@
           {
             "key": "score",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sentiment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4919,7 +4919,7 @@
           {
             "key": "similarity",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4945,32 +4945,32 @@
           {
             "key": "original",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "corrected",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "corrections",
             "optional": true,
-            "type": "{ word?: string | null, index?: number | null, correction?: string | null, candidates?: string[] | null }[]"
+            "type": "{ word?: string | null, index?: number | null, correction?: string | null, candidates?: string[] | null }[] | null"
           },
           {
             "key": "index",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "correction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "candidates",
             "optional": true,
-            "type": "string[] | string"
+            "type": "string[] | string | null"
           }
         ]
       }
@@ -4996,17 +4996,17 @@
           {
             "key": "word",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "synonyms",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "antonyms",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -5467,52 +5467,52 @@
           {
             "key": "vin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "manufacturer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "model",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "class",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "wmi",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vds",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vis",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "year",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -5594,22 +5594,22 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "unit",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "conversions",
             "optional": true,
-            "type": "{ meter?: number | null, kilometer?: number | null, centimeter?: number | null, millimeter?: number | null, micrometer?: number | null, nanometer?: number | null, mile?: number | null, yard?: number | null, foot?: number | null, inch?: number | null, nautical_mile?: number | null, furlong?: number | null, light_year?: number | null, astronomical_unit?: number | null }"
+            "type": "{ meter?: number | null, kilometer?: number | null, centimeter?: number | null, millimeter?: number | null, micrometer?: number | null, nanometer?: number | null, mile?: number | null, yard?: number | null, foot?: number | null, inch?: number | null, nautical_mile?: number | null, furlong?: number | null, light_year?: number | null, astronomical_unit?: number | null } | null"
           }
         ]
       }
@@ -5645,12 +5645,12 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "value",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -5676,17 +5676,17 @@
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "square_image_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rectangle_image_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -5787,7 +5787,7 @@
           {
             "key": "random_password",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -5990,17 +5990,17 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_disposable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -6026,42 +6026,42 @@
           {
             "key": "is_valid",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_disposable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_public",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "main_category",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sub_category",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "local_part",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -6087,57 +6087,57 @@
           {
             "key": "iban",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bank_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bank_address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "account_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bank_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "checksum",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "valid",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "invalid_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bban",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "swift_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -6168,67 +6168,67 @@
           {
             "key": "is_valid",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_formatted_properly",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezones",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "format_national",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "format_international",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "format_e164",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "line_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_mobile",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "format_rfc3966",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_possible",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           }
         ]
       }
@@ -6994,6 +6994,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kind",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

@@ -59,7 +59,7 @@
           {
             "key": "expand",
             "optional": true,
-            "type": "Fields | Views | Filters[]"
+            "type": "(Fields | Views | Filters)[]"
           }
         ]
       },
@@ -152,7 +152,7 @@
           {
             "key": "record",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Field ID keys to values, per list metadata"
           }
         ]
@@ -220,7 +220,7 @@
           {
             "key": "summary",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -246,7 +246,7 @@
           {
             "key": "record",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Full record body; PUT replaces the record"
           }
         ]

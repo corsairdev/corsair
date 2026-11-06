@@ -28,19 +28,9 @@ await corsair.brightdata.api.crawlApi({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dataset_id` | `string` | Yes | Official query: ?dataset_id= |
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, any>[]` | Yes | — |
 | `include_errors` | `boolean` | No | — |
 | `custom_output_fields` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -73,18 +63,8 @@ await corsair.brightdata.api.filterDataset({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dataset_id` | `string` | Yes | — |
-| `filter` | `object` | Yes | — |
+| `filter` | `Record<string, any>` | Yes | — |
 | `records_limit` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="filter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -153,8 +133,9 @@ await corsair.brightdata.api.getAvailableCountries({});
 <Accordion title="zone_types full type">
 
 ```ts
-{
-}
+Record<string, {
+  country_codes: string[]
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -181,7 +162,7 @@ await corsair.brightdata.api.getSnapshotResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `snapshot_id` | `string` | Yes | Official path {snapshot_id} on GET /datasets/v3/snapshot/{snapshot_id} |
+| `snapshot_id` | `string` | Yes | Official path &#123;snapshot_id&#125; on GET /datasets/v3/snapshot/&#123;snapshot_id&#125; |
 | `format` | `json \| ndjson \| jsonl \| csv` | No | — |
 | `compress` | `boolean` | No | — |
 | `batch_size` | `number` | No | — |
@@ -189,17 +170,7 @@ await corsair.brightdata.api.getSnapshotResults({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[] | string
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[] \| string`
 
 
 ---
@@ -222,7 +193,7 @@ await corsair.brightdata.api.getSnapshotStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `snapshot_id` | `string` | Yes | Official path {snapshot_id} on GET /datasets/v3/progress/{snapshot_id} |
+| `snapshot_id` | `string` | Yes | Official path &#123;snapshot_id&#125; on GET /datasets/v3/progress/&#123;snapshot_id&#125; |
 
 
 
@@ -335,19 +306,16 @@ await corsair.brightdata.api.serpSearch({});
 
 
 
-**Output:** `object`
+**Output:** `string \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 string | {
-  general?: {
-  },
-  input?: {
-  },
-  organic?: {
-  }[]
+  general?: Record<string, any>,
+  input?: Record<string, any>,
+  organic?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -382,7 +350,7 @@ await corsair.brightdata.api.webUnlocker({});
 
 
 
-**Output:** `object`
+**Output:** `string \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -390,8 +358,7 @@ await corsair.brightdata.api.webUnlocker({});
 ```ts
 string | {
   status_code?: number,
-  headers?: {
-  },
+  headers?: Record<string, any>,
   body?: any
 }
 ```

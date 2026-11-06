@@ -38,18 +38,18 @@ await corsair.brandfetch.api.brands.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | Yes | — |
 | `domain` | `string` | Yes | — |
 | `claimed` | `boolean` | Yes | — |
-| `description` | `string` | No | — |
-| `longDescription` | `string` | No | — |
+| `description` | `string \| null` | Yes | — |
+| `longDescription` | `string \| null` | Yes | — |
 | `links` | `object[]` | Yes | — |
 | `logos` | `object[]` | Yes | — |
 | `colors` | `object[]` | Yes | — |
 | `fonts` | `object[]` | Yes | — |
 | `images` | `object[]` | Yes | — |
 | `qualityScore` | `number` | Yes | — |
-| `company` | `object` | No | — |
+| `company` | `object \| null` | Yes | — |
 | `isNsfw` | `boolean` | Yes | — |
 | `urn` | `string` | Yes | — |
 
@@ -172,7 +172,7 @@ await corsair.brandfetch.api.brands.get({});
     state?: string | null,
     subregion?: string | null
   }
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -207,11 +207,11 @@ await corsair.brandfetch.api.brands.getCompany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `employees` | `number` | No | — |
-| `financialIdentifiers` | `object` | No | — |
-| `foundedYear` | `number` | No | — |
+| `employees` | `number \| null` | No | — |
+| `financialIdentifiers` | `object \| null` | No | — |
+| `foundedYear` | `number \| null` | No | — |
 | `industries` | `object[]` | No | — |
-| `kind` | `string` | No | — |
+| `kind` | `string \| null` | No | — |
 | `location` | `object` | No | — |
 
 <AccordionGroup>
@@ -221,7 +221,7 @@ await corsair.brandfetch.api.brands.getCompany({});
 {
   isin?: string[],
   ticker?: string[]
-}
+} | null
 ```
 </Accordion>
 
@@ -296,8 +296,8 @@ await corsair.brandfetch.api.brands.search({});
 
 ```ts
 {
-  icon?: string | null,
-  name?: string | null,
+  icon: string | null,
+  name: string | null,
   domain: string,
   claimed: boolean,
   brandId: string
@@ -497,18 +497,18 @@ await corsair.brandfetch.api.transactions.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | Yes | — |
 | `domain` | `string` | Yes | — |
 | `claimed` | `boolean` | Yes | — |
-| `description` | `string` | No | — |
-| `longDescription` | `string` | No | — |
+| `description` | `string \| null` | Yes | — |
+| `longDescription` | `string \| null` | Yes | — |
 | `links` | `object[]` | Yes | — |
 | `logos` | `object[]` | Yes | — |
 | `colors` | `object[]` | Yes | — |
 | `fonts` | `object[]` | Yes | — |
 | `images` | `object[]` | Yes | — |
 | `qualityScore` | `number` | Yes | — |
-| `company` | `object` | No | — |
+| `company` | `object \| null` | Yes | — |
 | `isNsfw` | `boolean` | Yes | — |
 | `urn` | `string` | Yes | — |
 
@@ -631,7 +631,7 @@ await corsair.brandfetch.api.transactions.get({});
     state?: string | null,
     subregion?: string | null
   }
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

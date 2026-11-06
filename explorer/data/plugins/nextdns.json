@@ -1183,7 +1183,7 @@
           {
             "key": "recreation",
             "optional": true,
-            "type": "{ times?: {} | null, timezone?: string | null }"
+            "type": "{ times?: Record<string, { start: string, end: string }> | null, timezone?: string | null }"
           },
           {
             "key": "safeSearch",
@@ -1339,7 +1339,7 @@
           {
             "key": "recreation",
             "optional": true,
-            "type": "{ times?: {} | null, timezone?: string | null }"
+            "type": "{ times?: Record<string, { start: string, end: string }> | null, timezone?: string | null }"
           },
           {
             "key": "safeSearch",
@@ -1743,7 +1743,7 @@
           {
             "key": "parentalControl",
             "optional": true,
-            "type": "{ services?: { id: string, active?: boolean, recreation?: boolean }[], categories?: { id: string, active?: boolean, recreation?: boolean }[], recreation?: { times?: {} | null, timezone?: string | null }, safeSearch?: boolean, youtubeRestrictedMode?: boolean, blockBypass?: boolean }"
+            "type": "{ services?: { id: string, active?: boolean, recreation?: boolean }[], categories?: { id: string, active?: boolean, recreation?: boolean }[], recreation?: { times?: Record<string, { start: string, end: string }> | null, timezone?: string | null }, safeSearch?: boolean, youtubeRestrictedMode?: boolean, blockBypass?: boolean }"
           },
           {
             "key": "settings",
@@ -1778,12 +1778,12 @@
           {
             "key": "fingerprint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -1851,7 +1851,7 @@
           {
             "key": "fingerprint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "security",
@@ -1866,7 +1866,7 @@
           {
             "key": "parentalControl",
             "optional": true,
-            "type": "{ services?: { id: string, active?: boolean, recreation?: boolean }[], categories?: { id: string, active?: boolean, recreation?: boolean }[], recreation?: { times?: {} | null, timezone?: string | null }, safeSearch?: boolean, youtubeRestrictedMode?: boolean, blockBypass?: boolean }"
+            "type": "{ services?: { id: string, active?: boolean, recreation?: boolean }[], categories?: { id: string, active?: boolean, recreation?: boolean }[], recreation?: { times?: Record<string, { start: string, end: string }> | null, timezone?: string | null }, safeSearch?: boolean, youtubeRestrictedMode?: boolean, blockBypass?: boolean }"
           },
           {
             "key": "settings",
@@ -1972,7 +1972,7 @@
           {
             "key": "parentalControl",
             "optional": true,
-            "type": "{ services?: { id: string, active?: boolean, recreation?: boolean }[], categories?: { id: string, active?: boolean, recreation?: boolean }[], recreation?: { times?: {} | null, timezone?: string | null }, safeSearch?: boolean, youtubeRestrictedMode?: boolean, blockBypass?: boolean }"
+            "type": "{ services?: { id: string, active?: boolean, recreation?: boolean }[], categories?: { id: string, active?: boolean, recreation?: boolean }[], recreation?: { times?: Record<string, { start: string, end: string }> | null, timezone?: string | null }, safeSearch?: boolean, youtubeRestrictedMode?: boolean, blockBypass?: boolean }"
           },
           {
             "key": "settings",
@@ -2551,12 +2551,12 @@
           {
             "key": "retention",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2633,12 +2633,12 @@
           {
             "key": "retention",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2679,12 +2679,12 @@
           {
             "key": "retention",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2802,7 +2802,7 @@
           {
             "key": "retention",
             "optional": true,
-            "type": "3600"
+            "type": "3600 | 86400 | 604800 | 2592000 | 7776000 | 15552000 | 31536000"
           },
           {
             "key": "location",
@@ -2827,12 +2827,12 @@
           {
             "key": "retention",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2914,12 +2914,12 @@
           {
             "key": "ip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ddns",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updateToken",

@@ -176,7 +176,7 @@
           {
             "key": "send",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -360,7 +360,7 @@
           {
             "key": "send",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -650,7 +650,7 @@
           {
             "key": "parsed",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -909,6 +909,11 @@
         },
         {
           "field": "UserReference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kind",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

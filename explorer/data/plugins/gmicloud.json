@@ -289,7 +289,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ gpuModel?: string, idc: string, name: string, price: number, productLine?: string, spec: {}, type: Container | BareMetal | Storage | EIP, valid: boolean }[]"
+        "type": "{ gpuModel?: string, idc: string, name: string, price: number, productLine?: string, spec: Record<string, any>, type: Container | BareMetal | Storage | EIP, valid: boolean }[]"
       }
     },
     {
@@ -406,7 +406,7 @@
           {
             "key": "tools",
             "optional": true,
-            "type": "{ type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean } }[]"
+            "type": "{ type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean } }[]"
           },
           {
             "key": "tool_choice",
@@ -466,7 +466,7 @@
           {
             "key": "response_format",
             "optional": true,
-            "type": "{ type: text | json_object | json_schema, json_schema?: {} }"
+            "type": "{ type: text | json_object | json_schema, json_schema?: Record<string, any> }"
           },
           {
             "key": "context_length_exceeded_behavior",
@@ -501,12 +501,12 @@
           {
             "key": "choices",
             "optional": false,
-            "type": "{ index?: number, message: { role: string, content?: string | null, reasoning_content?: string | null, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[] | null }, finish_reason?: string | null }[]"
+            "type": "{ index?: number, message: { role: string, content: string | null, reasoning_content?: string | null, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[] | null }, finish_reason?: string | null }[]"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number } | null"
           }
         ]
       }
@@ -826,7 +826,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ gpuModel?: string, idc: string, name: string, price: number, productLine?: string, spec: {}, type: Container | BareMetal | Storage | EIP, valid: boolean }[]"
+        "type": "{ gpuModel?: string, idc: string, name: string, price: number, productLine?: string, spec: Record<string, any>, type: Container | BareMetal | Storage | EIP, valid: boolean }[]"
       }
     },
     {
@@ -972,13 +972,13 @@
           {
             "key": "instanceID",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "set instanceID and instanceType to associate the elastic IP to the instance, set to null to disassociate the elastic IP from the instance"
           },
           {
             "key": "instanceType",
             "optional": true,
-            "type": "baremetal | container"
+            "type": "baremetal | container | null"
           }
         ]
       },
@@ -1088,13 +1088,13 @@
           {
             "key": "instanceID",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "set instanceID and instanceType to associate the elastic IP to the instance, set to null to disassociate the elastic IP from the instance"
           },
           {
             "key": "instanceType",
             "optional": true,
-            "type": "baremetal | container"
+            "type": "baremetal | container | null"
           }
         ]
       }
@@ -1130,7 +1130,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ gpuModel?: string, idc: string, name: string, price: number, productLine?: string, spec: {}, type: Container | BareMetal | Storage | EIP, valid: boolean }[]"
+        "type": "{ gpuModel?: string, idc: string, name: string, price: number, productLine?: string, spec: Record<string, any>, type: Container | BareMetal | Storage | EIP, valid: boolean }[]"
       }
     },
     {
@@ -1697,27 +1697,27 @@
           {
             "key": "org_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "brief_description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "detailed_description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "modalities",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "parameters",
             "optional": true,
-            "type": "{ name: string, display_name?: string | null, description?: string | null, type?: string | null, required?: boolean | null, default?: any }[]"
+            "type": "{ name: string, display_name?: string | null, description?: string | null, type?: string | null, required?: boolean | null, default?: any }[] | null"
           }
         ]
       }
@@ -1759,7 +1759,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Model parameters, e.g. { prompt, durationSeconds, aspectRatio }"
           }
         ]
@@ -1786,17 +1786,17 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "queued_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1838,37 +1838,37 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "queued_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "org_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_public",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "payload",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "outcome",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -1930,12 +1930,12 @@
           {
             "key": "message",
             "optional": false,
-            "type": "{ role: string, content?: string | null }"
+            "type": "{ role: string, content: string | null }"
           },
           {
             "key": "routing_metadata",
             "optional": true,
-            "type": "{ selected_model: string, task_type?: string | null, selected_mode?: string | null, fallback_models?: string[] | null, recommendation_id?: string | null }"
+            "type": "{ selected_model: string, task_type?: string | null, selected_mode?: string | null, fallback_models?: string[] | null, recommendation_id?: string | null } | null"
           }
         ]
       }
@@ -2014,12 +2014,12 @@
           {
             "key": "env_vars",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, string>",
             "description": "Customer-defined key/value pairs; the platform does not interpret them."
           }
         ]
@@ -2102,7 +2102,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string, sandbox_key?: string, template_id?: string, idc_name?: string, state?: provisioning | running | checkpointing | updating | failed, product?: string, product_name?: string, resources?: { vcpu?: number, memory_mb?: number, disk_mb?: number }, metadata?: {}, latest_operation?: { type: create | delete | set_timeout, status: pending | succeeded | failed, error_code?: string, message?: string, completed_at?: string }, failure?: { code?: string, message?: string, occurred_at?: string }, created_at?: string, running_at?: string, started_at?: string, end_at?: string, domain?: string }"
+            "type": "{ id?: string, sandbox_key?: string, template_id?: string, idc_name?: string, state?: provisioning | running | checkpointing | updating | failed, product?: string, product_name?: string, resources?: { vcpu?: number, memory_mb?: number, disk_mb?: number }, metadata?: Record<string, string>, latest_operation?: { type: create | delete | set_timeout, status: pending | succeeded | failed, error_code?: string, message?: string, completed_at?: string }, failure?: { code?: string, message?: string, occurred_at?: string }, created_at?: string, running_at?: string, started_at?: string, end_at?: string, domain?: string }"
           }
         ]
       }
@@ -2136,13 +2136,13 @@
           {
             "key": "state",
             "optional": true,
-            "type": "provisioning | running | failed[]",
+            "type": "(provisioning | running | failed)[]",
             "description": "Filter by external state."
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, string>",
             "description": "Filter by customer metadata key/value, e.g."
           }
         ]
@@ -2175,7 +2175,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id?: string, sandbox_key?: string, template_id?: string, idc_name?: string, state?: provisioning | running | checkpointing | updating | failed, metadata?: {}, created_at?: string, running_at?: string }[]"
+            "type": "{ id?: string, sandbox_key?: string, template_id?: string, idc_name?: string, state?: provisioning | running | checkpointing | updating | failed, metadata?: Record<string, string>, created_at?: string, running_at?: string }[]"
           }
         ]
       }
@@ -2236,7 +2236,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, string>",
             "description": "Customer metadata, replaced as a whole."
           }
         ]
@@ -2253,7 +2253,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string, sandbox_key?: string, template_id?: string, idc_name?: string, state?: provisioning | running | checkpointing | updating | failed, product?: string, product_name?: string, resources?: { vcpu?: number, memory_mb?: number, disk_mb?: number }, metadata?: {}, latest_operation?: { type: create | delete | set_timeout, status: pending | succeeded | failed, error_code?: string, message?: string, completed_at?: string }, failure?: { code?: string, message?: string, occurred_at?: string }, created_at?: string, running_at?: string, started_at?: string, end_at?: string, domain?: string }"
+            "type": "{ id?: string, sandbox_key?: string, template_id?: string, idc_name?: string, state?: provisioning | running | checkpointing | updating | failed, product?: string, product_name?: string, resources?: { vcpu?: number, memory_mb?: number, disk_mb?: number }, metadata?: Record<string, string>, latest_operation?: { type: create | delete | set_timeout, status: pending | succeeded | failed, error_code?: string, message?: string, completed_at?: string }, failure?: { code?: string, message?: string, occurred_at?: string }, created_at?: string, running_at?: string, started_at?: string, end_at?: string, domain?: string }"
           }
         ]
       }
@@ -2300,7 +2300,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled, exit_code?: number | null, stdout?: string | null, stderr?: string | null, stdout_truncated?: boolean | null, stderr_truncated?: boolean | null, started_at?: string | null, completed_at?: string | null } | { request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled }"
+        "type": "{ request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled, exit_code: number | null, stdout: string | null, stderr: string | null, stdout_truncated: boolean | null, stderr_truncated: boolean | null, started_at: string | null, completed_at: string | null } | { request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled }"
       }
     },
     {
@@ -2370,41 +2370,41 @@
           },
           {
             "key": "exit_code",
-            "optional": true,
-            "type": "number",
+            "optional": false,
+            "type": "number | null",
             "description": "Process exit code; null while non-terminal or when canceled."
           },
           {
             "key": "stdout",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Captured standard output, or null while not yet available."
           },
           {
             "key": "stderr",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Captured standard error, or null while not yet available."
           },
           {
             "key": "stdout_truncated",
-            "optional": true,
-            "type": "boolean"
+            "optional": false,
+            "type": "boolean | null"
           },
           {
             "key": "stderr_truncated",
-            "optional": true,
-            "type": "boolean"
+            "optional": false,
+            "type": "boolean | null"
           },
           {
             "key": "started_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "completed_at",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -2455,19 +2455,20 @@
           },
           {
             "key": "action",
-            "optional": false,
-            "type": "exec"
+            "optional": true,
+            "type": "exec",
+            "description": "Defaults to \"exec\"."
           },
           {
             "key": "parameters",
             "optional": false,
-            "type": "{ command: string, envs?: {}, cwd?: string }"
+            "type": "{ command: string, envs?: Record<string, string>, cwd?: string }"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled, exit_code?: number | null, stdout?: string | null, stderr?: string | null, stdout_truncated?: boolean | null, stderr_truncated?: boolean | null, started_at?: string | null, completed_at?: string | null } | { request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled }"
+        "type": "{ request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled, exit_code: number | null, stdout: string | null, stderr: string | null, stdout_truncated: boolean | null, stderr_truncated: boolean | null, started_at: string | null, completed_at: string | null } | { request_id?: string, execution_id: string, sandbox_id: string, status: pending | running | canceling | succeeded | failed | canceled }"
       }
     },
     {
@@ -2588,8 +2589,9 @@
           },
           {
             "key": "encoding",
-            "optional": false,
-            "type": "utf8 | base64"
+            "optional": true,
+            "type": "utf8 | base64",
+            "description": "Defaults to \"utf8\"."
           }
         ]
       },
@@ -2683,13 +2685,13 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, string>",
             "description": "User-defined labels used for filtering."
           },
           {
             "key": "build",
             "optional": true,
-            "type": "{ source: { type: image, image: string } | { type: template, template_id: string, build_id?: string }, commands?: string[], envs?: {}, start_cmd?: string }",
+            "type": "{ source: { type: image, image: string } | { type: template, template_id: string, build_id?: string }, commands?: string[], envs?: Record<string, string>, start_cmd?: string }",
             "description": "Initial Build definition created and started with the Template (combined flow, every IDC supports it)."
           }
         ]
@@ -2785,7 +2787,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string, idc_name: string, source_type: image | template | sandbox, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, labels?: {}, current_build_id?: string | null, latest_build_id: string, latest_build_status: waiting | building | ready | error, rebuildable?: boolean, deleted_at?: string | null, created_at: string, updated_at: string }"
+            "type": "{ id: string, name: string, description?: string, idc_name: string, source_type: image | template | sandbox, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, labels?: Record<string, string>, current_build_id?: string | null, latest_build_id: string, latest_build_status: waiting | building | ready | error, rebuildable?: boolean, deleted_at?: string | null, created_at: string, updated_at: string }"
           }
         ]
       }
@@ -2824,7 +2826,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, template_id: string, trigger: initial_build | rebuild | snapshot, status: waiting | building | ready | error, artifact_state: absent | unknown | available | reclaimed | retained, source_type: image | template | sandbox, source?: {}, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, commands?: string[], start_cmd?: string | null, failure?: { code: string, message: string } | null, created_at: string, started_at?: string | null, finished_at?: string | null }"
+            "type": "{ id: string, template_id: string, trigger: initial_build | rebuild | snapshot, status: waiting | building | ready | error, artifact_state: absent | unknown | available | reclaimed | retained, source_type: image | template | sandbox, source?: Record<string, any>, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, commands?: string[], start_cmd?: string | null, failure?: { code: string, message: string } | null, created_at: string, started_at?: string | null, finished_at?: string | null }"
           }
         ]
       }
@@ -2944,7 +2946,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string, idc_name: string, source_type: image | template | sandbox, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, labels?: {}, current_build_id?: string | null, latest_build_id: string, latest_build_status: waiting | building | ready | error, rebuildable?: boolean, deleted_at?: string | null, created_at: string, updated_at: string }[]"
+            "type": "{ id: string, name: string, description?: string, idc_name: string, source_type: image | template | sandbox, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, labels?: Record<string, string>, current_build_id?: string | null, latest_build_id: string, latest_build_status: waiting | building | ready | error, rebuildable?: boolean, deleted_at?: string | null, created_at: string, updated_at: string }[]"
           }
         ]
       }
@@ -3007,7 +3009,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, template_id: string, trigger: initial_build | rebuild | snapshot, status: waiting | building | ready | error, artifact_state: absent | unknown | available | reclaimed | retained, source_type: image | template | sandbox, source?: {}, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, commands?: string[], start_cmd?: string | null, failure?: { code: string, message: string } | null, created_at: string, started_at?: string | null, finished_at?: string | null }[]"
+            "type": "{ id: string, template_id: string, trigger: initial_build | rebuild | snapshot, status: waiting | building | ready | error, artifact_state: absent | unknown | available | reclaimed | retained, source_type: image | template | sandbox, source?: Record<string, any>, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, commands?: string[], start_cmd?: string | null, failure?: { code: string, message: string } | null, created_at: string, started_at?: string | null, finished_at?: string | null }[]"
           }
         ]
       }
@@ -3047,7 +3049,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, string>",
             "description": "Complete replacement of user-defined labels."
           }
         ]
@@ -3064,7 +3066,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string, idc_name: string, source_type: image | template | sandbox, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, labels?: {}, current_build_id?: string | null, latest_build_id: string, latest_build_status: waiting | building | ready | error, rebuildable?: boolean, deleted_at?: string | null, created_at: string, updated_at: string }"
+            "type": "{ id: string, name: string, description?: string, idc_name: string, source_type: image | template | sandbox, product?: string | null, product_name?: X_SMALL | SMALL | MEDIUM | LARGE | X_LARGE | null, resources: { cpu_count: number, memory_mb: number, disk_size_mb: number, architecture: x86_64 | arm64 }, labels?: Record<string, string>, current_build_id?: string | null, latest_build_id: string, latest_build_status: waiting | building | ready | error, rebuildable?: boolean, deleted_at?: string | null, created_at: string, updated_at: string }"
           }
         ]
       }
@@ -3512,6 +3514,11 @@
           "field": "reason",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },
@@ -3556,6 +3563,11 @@
         },
         {
           "field": "reason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -3606,6 +3618,16 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internetConnectionType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "maxBandwidth",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -3632,6 +3654,11 @@
         },
         {
           "field": "instanceID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "instanceType",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
@@ -3673,6 +3700,11 @@
         },
         {
           "field": "orgId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
@@ -3790,6 +3822,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "product",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -3856,7 +3893,17 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "source_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "product",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product_name",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -3867,6 +3914,11 @@
         },
         {
           "field": "latest_build_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latest_build_status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

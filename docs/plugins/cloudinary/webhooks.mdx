@@ -118,20 +118,10 @@ Notification when eager transformations complete
 | `notification_type` | `eager` | Yes | — |
 | `request_id` | `string` | No | — |
 | `signature_key` | `string` | No | — |
-| `eager` | `object[]` | No | — |
+| `eager` | `Record<string, any>[]` | No | — |
 | `batch_id` | `string` | No | — |
 | `asset_id` | `string` | No | — |
 | `public_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="eager full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -143,8 +133,7 @@ Notification when eager transformations complete
   notification_type: eager,
   request_id?: string,
   signature_key?: string,
-  eager?: {
-  }[],
+  eager?: Record<string, any>[],
   batch_id?: string,
   asset_id?: string,
   public_id?: string
@@ -597,17 +586,7 @@ Notification when resource context metadata changes
 | `signature_key` | `string` | No | — |
 | `public_id` | `string` | No | — |
 | `asset_id` | `string` | No | — |
-| `context` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="context full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `context` | `Record<string, any>` | No | — |
 
 
 
@@ -621,8 +600,7 @@ Notification when resource context metadata changes
   signature_key?: string,
   public_id?: string,
   asset_id?: string,
-  context?: {
-  }
+  context?: Record<string, any>
 }
 ```
 </Accordion>
@@ -663,17 +641,7 @@ Notification when structured metadata changes
 | `signature_key` | `string` | No | — |
 | `public_id` | `string` | No | — |
 | `asset_id` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -687,8 +655,7 @@ Notification when structured metadata changes
   signature_key?: string,
   public_id?: string,
   asset_id?: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }
 ```
 </Accordion>

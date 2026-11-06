@@ -63,9 +63,9 @@ await corsair.search1api.api.account.usage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `usage` | `number` | Yes | — |
-| `user_id` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
 | `credential_type` | `api_key \| oauth` | Yes | — |
-| `client_id` | `string` | No | — |
+| `client_id` | `string \| null` | No | — |
 
 
 
@@ -118,8 +118,7 @@ await corsair.search1api.api.content.crawl({ url: 'https://example.com/docs' });
   title: string,
   link: string,
   content: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }
 ```
 </Accordion>
@@ -170,8 +169,7 @@ await corsair.search1api.api.content.crawlBatch({});
     title: string,
     link: string,
     content: string,
-    metadata?: {
-    }
+    metadata?: Record<string, any>
   }
 }[]
 ```
@@ -199,17 +197,7 @@ await corsair.search1api.api.content.extract({ url: 'https://example.com/pricing
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `prompt` | `string` | No | — |
-| `response_format` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="response_format full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `response_format` | `Record<string, any>` | No | — |
 
 
 
@@ -390,9 +378,9 @@ await corsair.search1api.api.deepcrawl.status({});
 | `status` | `queued \| waiting \| processing \| completed \| failed \| not_found` | Yes | — |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
-| `error` | `string` | No | — |
+| `error` | `string \| null` | No | — |
 | `r2Key` | `string` | No | — |
-| `zipUrl` | `string` | No | — |
+| `zipUrl` | `string \| null` | No | — |
 
 
 
@@ -436,7 +424,7 @@ await corsair.search1api.api.web.ask({ query: 'what shipped in AI this week?' })
 {
   search_query: string,
   sources: string[],
-  time_range?: day | week | month | year | | null
+  time_range: day | week | month | year | "" | null
 }
 ```
 </Accordion>
@@ -534,14 +522,14 @@ await corsair.search1api.api.web.news({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
-| `search_service` | `google \| bing \| duckduckgo \| yahoo \| hackernews \| reuters \| ` | No | — |
+| `search_service` | `google \| bing \| duckduckgo \| yahoo \| hackernews \| reuters \| ""` | No | — |
 | `max_results` | `number` | No | — |
 | `crawl_results` | `number` | No | — |
 | `image` | `boolean` | No | — |
 | `include_sites` | `string[]` | No | — |
 | `exclude_sites` | `string[]` | No | — |
 | `language` | `string` | No | — |
-| `time_range` | `day \| week \| month \| year \| ` | No | — |
+| `time_range` | `day \| week \| month \| year \| ""` | No | — |
 
 
 
@@ -559,14 +547,14 @@ await corsair.search1api.api.web.news({});
 ```ts
 {
   query: string,
-  search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | ,
+  search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | "",
   max_results?: number,
   crawl_results?: number,
   image?: boolean,
   include_sites?: string[],
   exclude_sites?: string[],
   language?: string,
-  time_range?: day | week | month | year |
+  time_range?: day | week | month | year | ""
 }
 ```
 </Accordion>
@@ -617,14 +605,14 @@ await corsair.search1api.api.web.newsBatch({});
 ```ts
 {
   query: string,
-  search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | ,
+  search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | "",
   max_results?: number,
   crawl_results?: number,
   image?: boolean,
   include_sites?: string[],
   exclude_sites?: string[],
   language?: string,
-  time_range?: day | week | month | year |
+  time_range?: day | week | month | year | ""
 }[]
 ```
 </Accordion>
@@ -647,14 +635,14 @@ await corsair.search1api.api.web.newsBatch({});
   data?: {
     searchParameters: {
       query: string,
-      search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | ,
+      search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | "",
       max_results?: number,
       crawl_results?: number,
       image?: boolean,
       include_sites?: string[],
       exclude_sites?: string[],
       language?: string,
-      time_range?: day | week | month | year |
+      time_range?: day | week | month | year | ""
     },
     results: {
       title: string,
@@ -716,7 +704,7 @@ await corsair.search1api.api.web.search({ query: 'open source integration layer'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
-| `search_service` | `360 \| google \| bing \| bingcn \| duckduckgo \| yahoo \| yandex \| youtube \| x \| reddit \| github \| arxiv \| wechat \| bilibili \| imdb \| wikipedia \| grokipedia \| baidu \| quark \| ` | No | — |
+| `search_service` | `360 \| google \| bing \| bingcn \| duckduckgo \| yahoo \| yandex \| youtube \| x \| reddit \| github \| arxiv \| wechat \| bilibili \| imdb \| wikipedia \| grokipedia \| baidu \| quark \| ""` | No | — |
 | `max_results` | `number` | No | — |
 | `page` | `number` | No | — |
 | `crawl_results` | `number` | No | — |
@@ -724,7 +712,7 @@ await corsair.search1api.api.web.search({ query: 'open source integration layer'
 | `include_sites` | `string[]` | No | — |
 | `exclude_sites` | `string[]` | No | — |
 | `language` | `string` | No | — |
-| `time_range` | `day \| week \| month \| year \| ` | No | — |
+| `time_range` | `day \| week \| month \| year \| ""` | No | — |
 
 
 
@@ -742,7 +730,7 @@ await corsair.search1api.api.web.search({ query: 'open source integration layer'
 ```ts
 {
   query: string,
-  search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | ,
+  search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | "",
   max_results?: number,
   page?: number,
   crawl_results?: number,
@@ -750,7 +738,7 @@ await corsair.search1api.api.web.search({ query: 'open source integration layer'
   include_sites?: string[],
   exclude_sites?: string[],
   language?: string,
-  time_range?: day | week | month | year |
+  time_range?: day | week | month | year | ""
 }
 ```
 </Accordion>
@@ -801,7 +789,7 @@ await corsair.search1api.api.web.searchBatch({});
 ```ts
 {
   query: string,
-  search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | ,
+  search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | "",
   max_results?: number,
   page?: number,
   crawl_results?: number,
@@ -809,7 +797,7 @@ await corsair.search1api.api.web.searchBatch({});
   include_sites?: string[],
   exclude_sites?: string[],
   language?: string,
-  time_range?: day | week | month | year |
+  time_range?: day | week | month | year | ""
 }[]
 ```
 </Accordion>
@@ -832,7 +820,7 @@ await corsair.search1api.api.web.searchBatch({});
   data?: {
     searchParameters: {
       query: string,
-      search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | ,
+      search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | "",
       max_results?: number,
       page?: number,
       crawl_results?: number,
@@ -840,7 +828,7 @@ await corsair.search1api.api.web.searchBatch({});
       include_sites?: string[],
       exclude_sites?: string[],
       language?: string,
-      time_range?: day | week | month | year |
+      time_range?: day | week | month | year | ""
     },
     results: {
       title: string,

@@ -57,8 +57,7 @@ await corsair.docsumo.api.agents.listCases({});
 
 ```ts
 {
-  cases?: {
-  }[],
+  cases?: Record<string, any>[],
   pagination?: {
     limit?: number,
     offset?: number,
@@ -109,8 +108,7 @@ await corsair.docsumo.api.agents.listExternal({});
 
 ```ts
 {
-  agents?: {
-  }[],
+  agents?: Record<string, any>[],
   disabled_agents?: any[]
 }
 ```
@@ -151,20 +149,10 @@ await corsair.docsumo.api.analytics.mcaAnalysis({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `account_summaries` | `object[]` | No | — |
+| `account_summaries` | `Record<string, any>[][]` | No | — |
 | `status` | `string` | No | — |
 | `status_code` | `number` | No | — |
 | `message` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="account_summaries full type">
-
-```ts
-{
-}[][]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -216,8 +204,7 @@ await corsair.docsumo.api.documents.listAll({});
 
 ```ts
 {
-  documents?: {
-  }[],
+  documents?: Record<string, any>[],
   limit?: number,
   offset?: number,
   total?: number
@@ -256,17 +243,7 @@ await corsair.docsumo.api.documentTypes.getEnabled({});
 | `message` | `string` | No | — |
 | `error` | `string` | No | — |
 | `error_code` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -348,17 +325,7 @@ await corsair.docsumo.api.folders.create({});
 | `message` | `string` | No | — |
 | `error` | `string` | No | — |
 | `error_code` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -395,17 +362,7 @@ await corsair.docsumo.api.tables.addRow({});
 | `message` | `string` | No | — |
 | `error` | `string` | No | — |
 | `error_code` | `string` | No | — |
-| `data` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | No | — |
 
 
 
@@ -481,8 +438,7 @@ await corsair.docsumo.api.tables.getData({});
 
 ```ts
 {
-  data?: {
-  }[],
+  data?: Record<string, any>[],
   limit?: number,
   offset?: number,
   total?: number

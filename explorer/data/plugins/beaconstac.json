@@ -161,12 +161,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -207,12 +207,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -409,12 +409,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -637,12 +637,12 @@
           {
             "key": "place",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "maintainer",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tags",
@@ -652,7 +652,7 @@
           {
             "key": "template",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "campaign",
@@ -672,7 +672,7 @@
           {
             "key": "view_limit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "domain",
@@ -712,7 +712,7 @@
           {
             "key": "heartbeat",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -733,7 +733,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "name",
@@ -758,17 +758,17 @@
           {
             "key": "campaign",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "fields_data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "organization",
@@ -813,12 +813,12 @@
           {
             "key": "place",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "maintainer",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tags",
@@ -828,7 +828,7 @@
           {
             "key": "template",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "campaign",
@@ -848,7 +848,7 @@
           {
             "key": "view_limit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "domain",
@@ -888,7 +888,7 @@
           {
             "key": "heartbeat",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -914,7 +914,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "margin",
@@ -1039,7 +1039,7 @@
           {
             "key": "maintainer",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "meta",
@@ -1186,12 +1186,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -1252,7 +1252,7 @@
           {
             "key": "maintainer",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
@@ -1334,12 +1334,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -1400,7 +1400,7 @@
           {
             "key": "maintainer",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
@@ -1521,7 +1521,7 @@
           {
             "key": "stripe_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezone",
@@ -1536,7 +1536,7 @@
           {
             "key": "last_login",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_joined",
@@ -1617,7 +1617,7 @@
           {
             "key": "stripe_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezone",
@@ -1632,7 +1632,7 @@
           {
             "key": "last_login",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_joined",
@@ -1768,12 +1768,12 @@
           {
             "key": "next",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -1864,7 +1864,7 @@
           {
             "key": "stripe_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezone",
@@ -1879,7 +1879,7 @@
           {
             "key": "last_login",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_joined",

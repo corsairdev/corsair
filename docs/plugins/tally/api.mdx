@@ -60,7 +60,7 @@ await corsair.tally.api.forms.create({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
+| `workspaceId` | `string \| null` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `blocks` | `object[]` | No | — |
@@ -140,7 +140,7 @@ await corsair.tally.api.forms.get({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
+| `workspaceId` | `string \| null` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `blocks` | `object[]` | No | — |
@@ -273,7 +273,7 @@ await corsair.tally.api.forms.update({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
+| `workspaceId` | `string \| null` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `blocks` | `object[]` | No | — |
@@ -504,8 +504,7 @@ await corsair.tally.api.questions.list({});
   numberOfResponses?: number,
   createdAt?: string,
   updatedAt?: string,
-  fields?: {
-  }[]
+  fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -585,8 +584,7 @@ await corsair.tally.api.submissions.get({});
   numberOfResponses?: number,
   createdAt?: string,
   updatedAt?: string,
-  fields?: {
-  }[]
+  fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -654,19 +652,11 @@ await corsair.tally.api.submissions.list({});
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `hasMore` | `boolean` | No | — |
-| `totalNumberOfSubmissionsPerFilter` | `object` | No | — |
+| `totalNumberOfSubmissionsPerFilter` | `Record<string, number>` | No | — |
 | `questions` | `object[]` | No | — |
 | `submissions` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="totalNumberOfSubmissionsPerFilter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="questions full type">
 
 ```ts
@@ -680,8 +670,7 @@ await corsair.tally.api.submissions.list({});
   numberOfResponses?: number,
   createdAt?: string,
   updatedAt?: string,
-  fields?: {
-  }[]
+  fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -739,8 +728,8 @@ await corsair.tally.api.users.getMe({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `email` | `string` | No | — |
-| `name` | `string` | No | — |
-| `subscriptionPlan` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `subscriptionPlan` | `string \| null` | No | — |
 
 
 
@@ -793,7 +782,7 @@ await corsair.tally.api.webhookManagement.create({});
 | `url` | `string` | No | — |
 | `eventTypes` | `string[]` | No | — |
 | `isEnabled` | `boolean` | No | — |
-| `signingSecret` | `string` | No | — |
+| `signingSecret` | `string \| null` | No | — |
 | `createdAt` | `string` | No | — |
 
 
@@ -918,8 +907,7 @@ await corsair.tally.api.webhookManagement.listEvents({});
   statusCode?: number | null,
   response?: string | null,
   retry?: number,
-  payload?: {
-  },
+  payload?: Record<string, any>,
   createdAt?: string,
   updatedAt?: string
 }[]

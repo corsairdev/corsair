@@ -131,62 +131,62 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "datetime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sub_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_public",
             "optional": true,
-            "type": "0 | 1 | boolean"
+            "type": "0 | 1 | boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public_job_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

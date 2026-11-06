@@ -182,8 +182,7 @@ await corsair.intercom.api.admins.listActivityLogs({});
     id?: string,
     email?: string
   },
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: number,
   activity_type?: string,
   activity_description?: string
@@ -271,13 +270,13 @@ await corsair.intercom.api.articles.create({});
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `body` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
 | `author_id` | `number` | No | — |
 | `state` | `string` | No | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `url` | `string` | No | — |
+| `url` | `string \| null` | No | — |
 
 
 
@@ -342,13 +341,13 @@ await corsair.intercom.api.articles.get({});
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `body` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
 | `author_id` | `number` | No | — |
 | `state` | `string` | No | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `url` | `string` | No | — |
+| `url` | `string \| null` | No | — |
 
 
 
@@ -524,13 +523,13 @@ await corsair.intercom.api.articles.update({});
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `body` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
 | `author_id` | `number` | No | — |
 | `state` | `string` | No | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `url` | `string` | No | — |
+| `url` | `string \| null` | No | — |
 
 
 
@@ -557,7 +556,7 @@ await corsair.intercom.api.collections.create({});
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `help_center_id` | `number` | No | — |
-| `parent_id` | `string` | No | — |
+| `parent_id` | `string \| null` | No | — |
 
 
 
@@ -568,13 +567,13 @@ await corsair.intercom.api.collections.create({});
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `url` | `string` | No | — |
-| `icon` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
 | `order` | `number` | No | — |
-| `help_center_id` | `number` | No | — |
+| `help_center_id` | `number \| null` | No | — |
 
 
 
@@ -639,13 +638,13 @@ await corsair.intercom.api.collections.get({});
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `url` | `string` | No | — |
-| `icon` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
 | `order` | `number` | No | — |
-| `help_center_id` | `number` | No | — |
+| `help_center_id` | `number \| null` | No | — |
 
 
 
@@ -749,13 +748,13 @@ await corsair.intercom.api.collections.update({});
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `url` | `string` | No | — |
-| `icon` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
 | `order` | `number` | No | — |
-| `help_center_id` | `number` | No | — |
+| `help_center_id` | `number \| null` | No | — |
 
 
 
@@ -787,17 +786,7 @@ await corsair.intercom.api.companies.createOrUpdate({});
 | `website` | `string` | No | — |
 | `industry` | `string` | No | — |
 | `monthly_spend` | `number` | No | — |
-| `custom_attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `custom_attributes` | `Record<string, any>` | No | — |
 
 
 
@@ -814,9 +803,9 @@ await corsair.intercom.api.companies.createOrUpdate({});
 | `monthly_spend` | `number` | No | — |
 | `session_count` | `number` | No | — |
 | `user_count` | `number` | No | — |
-| `size` | `number` | No | — |
-| `website` | `string` | No | — |
-| `industry` | `string` | No | — |
+| `size` | `number \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `industry` | `string \| null` | No | — |
 
 
 
@@ -887,9 +876,9 @@ await corsair.intercom.api.companies.get({});
 | `monthly_spend` | `number` | No | — |
 | `session_count` | `number` | No | — |
 | `user_count` | `number` | No | — |
-| `size` | `number` | No | — |
-| `website` | `string` | No | — |
-| `industry` | `string` | No | — |
+| `size` | `number \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `industry` | `string \| null` | No | — |
 
 
 
@@ -1118,9 +1107,9 @@ await corsair.intercom.api.companies.retrieve({});
 | `monthly_spend` | `number` | No | — |
 | `session_count` | `number` | No | — |
 | `user_count` | `number` | No | — |
-| `size` | `number` | No | — |
-| `website` | `string` | No | — |
-| `industry` | `string` | No | — |
+| `size` | `number \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `industry` | `string \| null` | No | — |
 
 
 
@@ -1312,9 +1301,9 @@ await corsair.intercom.api.contacts.attachToCompany({});
 | `monthly_spend` | `number` | No | — |
 | `session_count` | `number` | No | — |
 | `user_count` | `number` | No | — |
-| `size` | `number` | No | — |
-| `website` | `string` | No | — |
-| `industry` | `string` | No | — |
+| `size` | `number \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `industry` | `string \| null` | No | — |
 
 
 
@@ -1446,9 +1435,9 @@ await corsair.intercom.api.contacts.detachFromCompany({});
 | `monthly_spend` | `number` | No | — |
 | `session_count` | `number` | No | — |
 | `user_count` | `number` | No | — |
-| `size` | `number` | No | — |
-| `website` | `string` | No | — |
-| `industry` | `string` | No | — |
+| `size` | `number \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `industry` | `string \| null` | No | — |
 
 
 
@@ -1480,15 +1469,15 @@ await corsair.intercom.api.contacts.get({});
 |------|------|----------|-------------|
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
-| `external_id` | `string` | No | — |
-| `user_id` | `string` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
 | `email` | `string` | No | — |
-| `name` | `string` | No | — |
-| `phone` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
 | `role` | `string` | No | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `last_seen_at` | `number` | No | — |
+| `last_seen_at` | `number \| null` | No | — |
 | `unsubscribed_from_emails` | `boolean` | No | — |
 
 
@@ -1874,15 +1863,15 @@ await corsair.intercom.api.contacts.merge({});
 |------|------|----------|-------------|
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
-| `external_id` | `string` | No | — |
-| `user_id` | `string` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
 | `email` | `string` | No | — |
-| `name` | `string` | No | — |
-| `phone` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
 | `role` | `string` | No | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `last_seen_at` | `number` | No | — |
+| `last_seen_at` | `number \| null` | No | — |
 | `unsubscribed_from_emails` | `boolean` | No | — |
 
 
@@ -1993,17 +1982,7 @@ await corsair.intercom.api.contacts.update({});
 | `role` | `user \| lead` | No | — |
 | `external_id` | `string` | No | — |
 | `unsubscribed_from_emails` | `boolean` | No | — |
-| `custom_attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `custom_attributes` | `Record<string, any>` | No | — |
 
 
 
@@ -2013,15 +1992,15 @@ await corsair.intercom.api.contacts.update({});
 |------|------|----------|-------------|
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
-| `external_id` | `string` | No | — |
-| `user_id` | `string` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
 | `email` | `string` | No | — |
-| `name` | `string` | No | — |
-| `phone` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
 | `role` | `string` | No | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `last_seen_at` | `number` | No | — |
+| `last_seen_at` | `number \| null` | No | — |
 | `unsubscribed_from_emails` | `boolean` | No | — |
 
 
@@ -2063,8 +2042,8 @@ await corsair.intercom.api.conversations.assign({});
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `waiting_since` | `number` | No | — |
-| `snoozed_until` | `number` | No | — |
+| `waiting_since` | `number \| null` | No | — |
+| `snoozed_until` | `number \| null` | No | — |
 | `state` | `string` | No | — |
 | `read` | `boolean` | No | — |
 | `priority` | `string` | No | — |
@@ -2158,8 +2137,8 @@ await corsair.intercom.api.conversations.close({});
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `waiting_since` | `number` | No | — |
-| `snoozed_until` | `number` | No | — |
+| `waiting_since` | `number \| null` | No | — |
+| `snoozed_until` | `number \| null` | No | — |
 | `state` | `string` | No | — |
 | `read` | `boolean` | No | — |
 | `priority` | `string` | No | — |
@@ -2263,8 +2242,8 @@ await corsair.intercom.api.conversations.create({});
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `waiting_since` | `number` | No | — |
-| `snoozed_until` | `number` | No | — |
+| `waiting_since` | `number \| null` | No | — |
+| `snoozed_until` | `number \| null` | No | — |
 | `state` | `string` | No | — |
 | `read` | `boolean` | No | — |
 | `priority` | `string` | No | — |
@@ -2356,8 +2335,8 @@ await corsair.intercom.api.conversations.get({});
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `waiting_since` | `number` | No | — |
-| `snoozed_until` | `number` | No | — |
+| `waiting_since` | `number \| null` | No | — |
+| `snoozed_until` | `number \| null` | No | — |
 | `state` | `string` | No | — |
 | `read` | `boolean` | No | — |
 | `priority` | `string` | No | — |
@@ -2551,8 +2530,8 @@ await corsair.intercom.api.conversations.reopen({});
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `waiting_since` | `number` | No | — |
-| `snoozed_until` | `number` | No | — |
+| `waiting_since` | `number \| null` | No | — |
+| `snoozed_until` | `number \| null` | No | — |
 | `state` | `string` | No | — |
 | `read` | `boolean` | No | — |
 | `priority` | `string` | No | — |
@@ -2649,8 +2628,8 @@ await corsair.intercom.api.conversations.reply({});
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
 | `updated_at` | `number` | No | — |
-| `waiting_since` | `number` | No | — |
-| `snoozed_until` | `number` | No | — |
+| `waiting_since` | `number \| null` | No | — |
+| `snoozed_until` | `number \| null` | No | — |
 | `state` | `string` | No | — |
 | `read` | `boolean` | No | — |
 | `priority` | `string` | No | — |

@@ -38,9 +38,9 @@ await corsair.mem0.api.events.get({ event_id: '2c4d1f44-4f7b-4b2f-9f6e-7b5b4f5a1
 | `id` | `string` | Yes | — |
 | `event_type` | `string \| null` | No | ADD, SEARCH, DELETE_ALL and so on. |
 | `status` | `string \| null` | No | PENDING, RUNNING, FAILED or SUCCEEDED. |
-| `payload` | `Record<string, unknown> \| null` | No | — |
-| `metadata` | `Record<string, unknown> \| null` | No | — |
-| `results` | `object \| null` | No | An array for ADD, SEARCH and GET_ALL, one object for UPDATE, and null for a delete. |
+| `payload` | `Record<string, any> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `results` | `any[] \| Record<string, any> \| null` | No | An array for ADD, SEARCH and GET_ALL, one object for UPDATE, and null for a delete. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 | `started_at` | `string \| null` | No | — |
@@ -48,30 +48,6 @@ await corsair.mem0.api.events.get({ event_id: '2c4d1f44-4f7b-4b2f-9f6e-7b5b4f5a1
 | `latency` | `number \| null` | No | Processing time in milliseconds. |
 | `graph_status` | `string \| null` | No | — |
 | `error` | `string \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="payload full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="results full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -103,8 +79,8 @@ await corsair.mem0.api.events.list({ page: 1, page_size: 25 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
-| `next` | `string \| null` | No | — |
-| `previous` | `string \| null` | No | — |
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -115,9 +91,9 @@ await corsair.mem0.api.events.list({ page: 1, page_size: 25 });
   id: string,
   event_type?: string | null,
   status?: string | null,
-  payload?: Record<string, unknown> | null,
-  metadata?: Record<string, unknown> | null,
-  results?: unknown[] | Record<string, unknown> | null,
+  payload?: Record<string, any> | null,
+  metadata?: Record<string, any> | null,
+  results?: any[] | Record<string, any> | null,
   created_at?: string | null,
   updated_at?: string | null,
   started_at?: string | null,
@@ -157,7 +133,7 @@ await corsair.mem0.api.memories.add({ user_id: 'alice', messages: [{ role: 'user
 | `agent_id` | `string` | No | Scope memories to this agent. |
 | `app_id` | `string` | No | Scope memories to this app. |
 | `run_id` | `string` | No | Scope memories to this run. |
-| `metadata` | `Record<string, unknown>` | No | Custom key/value metadata attached to each memory. |
+| `metadata` | `Record<string, any>` | No | Custom key/value metadata attached to each memory. |
 | `infer` | `boolean` | No | Defaults to true, which runs extraction. Set false to store each message verbatim, which also makes the response synchronous. |
 | `expiration_date` | `string` | No | Date through which the memory is visible. Expired memories are hidden unless `show_expired` is passed. |
 | `immutable` | `boolean` | No | Defaults to false. Immutable memories are excluded from later update and consolidation. |
@@ -171,16 +147,9 @@ await corsair.mem0.api.memories.add({ user_id: 'alice', messages: [{ role: 'user
 
 ```ts
 {
-  role: 'user' | 'assistant' | 'system',
+  role: user | assistant | system,
   content: string
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-Record<string, unknown>
 ```
 </Accordion>
 </AccordionGroup>
@@ -202,9 +171,9 @@ Record<string, unknown>
 ```ts
 {
   id?: string | null,
-  data?: Record<string, unknown> | null,
+  data?: Record<string, any> | null,
   event?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -345,16 +314,7 @@ await corsair.mem0.api.memories.deleteAll({ user_id: 'alice' });
 | `run_id` | `string` | No | Delete this run's memories. Pass "*" for every run. |
 | `org_id` | `string` | No | Only memories in this organization. |
 | `project_id` | `string` | No | Only memories in this project. |
-| `metadata` | `Record<string, unknown>` | No | Only memories whose metadata matches these keys. Values must be strings, numbers or booleans, because null and undefined reach the wire as no key at all. |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | Only memories whose metadata matches these keys. Values must be strings, numbers or booleans, because null and undefined reach the wire as no key at all. |
 
 
 
@@ -400,31 +360,15 @@ await corsair.mem0.api.memories.get({ memory_id: 'ea925981-272f-40dd-b576-be64e4
 | `agent_id` | `string \| null` | No | — |
 | `app_id` | `string \| null` | No | — |
 | `session_id` | `string \| null` | No | List returns the run as `session_id`; search returns the same value as `run_id`. |
-| `metadata` | `Record<string, unknown> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `categories` | `string[] \| null` | No | — |
-| `structured_attributes` | `Record<string, unknown> \| null` | No | System-derived breakdown of the creation time. |
+| `structured_attributes` | `Record<string, any> \| null` | No | System-derived breakdown of the creation time. |
 | `replaced_by` | `string \| null` | No | — |
 | `synthesized` | `boolean \| null` | No | — |
 | `lifecycle_state` | `string \| null` | No | — |
 | `expiration_date` | `string \| null` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="structured_attributes full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -475,7 +419,7 @@ await corsair.mem0.api.memories.history({ memory_id: 'ea925981-272f-40dd-b576-be
   session_id?: string | null,
   categories?: string[] | null,
   event?: string | null,
-  metadata?: Record<string, unknown> | null,
+  metadata?: Record<string, any> | null,
   created_at?: string | null,
   updated_at?: string | null
 }[]
@@ -503,7 +447,7 @@ await corsair.mem0.api.memories.list({ filters: { user_id: 'alice' }, page: 1, p
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filters` | `Record<string, unknown>` | Yes | Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard. |
+| `filters` | `Record<string, any>` | Yes | Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard. |
 | `page` | `number` | No | 1-based page. Defaults to 1. |
 | `page_size` | `number` | No | Results per page. Defaults to 100. |
 | `show_expired` | `boolean` | No | Defaults to false. Include memories past their expiration_date. |
@@ -513,15 +457,6 @@ await corsair.mem0.api.memories.list({ filters: { user_id: 'alice' }, page: 1, p
 | `fields` | `string[]` | No | Only these fields come back per memory. A memory without them is absent from the result, not null. |
 | `keywords` | `string` | No | Free-text keyword filter applied on top of `filters`. |
 
-<AccordionGroup>
-<Accordion title="filters full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output**
@@ -529,8 +464,8 @@ Record<string, unknown>
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | Yes | Total number of memories matching the filters. |
-| `next` | `string \| null` | No | URL of the next page, or null on the last page. |
-| `previous` | `string \| null` | No | — |
+| `next` | `string \| null` | Yes | URL of the next page, or null on the last page. |
+| `previous` | `string \| null` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -544,9 +479,9 @@ Record<string, unknown>
   agent_id?: string | null,
   app_id?: string | null,
   session_id?: string | null,
-  metadata?: Record<string, unknown> | null,
+  metadata?: Record<string, any> | null,
   categories?: string[] | null,
-  structured_attributes?: Record<string, unknown> | null,
+  structured_attributes?: Record<string, any> | null,
   replaced_by?: string | null,
   synthesized?: boolean | null,
   lifecycle_state?: string | null,
@@ -579,7 +514,7 @@ await corsair.mem0.api.memories.search({ query: 'Where does the user live?', fil
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | Natural-language search query. |
-| `filters` | `Record<string, unknown>` | Yes | Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard. |
+| `filters` | `Record<string, any>` | Yes | Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard. |
 | `top_k` | `number` | No | Number of results. Defaults to 10. |
 | `threshold` | `number` | No | Minimum relevance score. Defaults to 0.1. Pass 0 to disable filtering. |
 | `rerank` | `boolean` | No | Defaults to false. Apply the managed reranker, which adds latency. |
@@ -587,15 +522,6 @@ await corsair.mem0.api.memories.search({ query: 'Where does the user live?', fil
 | `reference_date` | `number \| string` | No | Date to simulate the search from. Accepts a Unix epoch, YYYY-MM-DD, or an ISO datetime. |
 | `fields` | `string[]` | No | Only these fields come back per memory. A memory without them is absent from the result, not null. |
 | `categories` | `string[]` | No | Only memories tagged with any of these categories. |
-
-<AccordionGroup>
-<Accordion title="filters full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -622,7 +548,7 @@ Record<string, unknown>
   agent_id?: string | null,
   app_id?: string | null,
   run_id?: string | null,
-  metadata?: Record<string, unknown> | null,
+  metadata?: Record<string, any> | null,
   categories?: string[] | null,
   expiration_date?: string | null,
   created_at?: string,
@@ -654,17 +580,8 @@ await corsair.mem0.api.memories.update({ memory_id: 'ea925981-272f-40dd-b576-be6
 |------|------|----------|-------------|
 | `memory_id` | `string` | Yes | The memory to update. |
 | `text` | `string` | No | The new memory text. |
-| `metadata` | `Record<string, unknown>` | No | Replacement metadata. |
+| `metadata` | `Record<string, any>` | No | Replacement metadata. |
 | `expiration_date` | `string \| null` | No | New expiration date in YYYY-MM-DD form, or null to clear an existing one. null and an omitted field mean different things, so the key is sent whenever this is set. |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -678,31 +595,15 @@ Record<string, unknown>
 | `agent_id` | `string \| null` | No | — |
 | `app_id` | `string \| null` | No | — |
 | `session_id` | `string \| null` | No | List returns the run as `session_id`; search returns the same value as `run_id`. |
-| `metadata` | `Record<string, unknown> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `categories` | `string[] \| null` | No | — |
-| `structured_attributes` | `Record<string, unknown> \| null` | No | System-derived breakdown of the creation time. |
+| `structured_attributes` | `Record<string, any> \| null` | No | System-derived breakdown of the creation time. |
 | `replaced_by` | `string \| null` | No | — |
 | `synthesized` | `boolean \| null` | No | — |
 | `lifecycle_state` | `string \| null` | No | — |
 | `expiration_date` | `string \| null` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="structured_attributes full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -729,7 +630,7 @@ await corsair.mem0.api.webhooks.create({ project_id: 'proj_123', name: 'Memory L
 | `project_id` | `string` | Yes | The project to register the webhook on. |
 | `name` | `string` | Yes | A label for the webhook. |
 | `url` | `string` | Yes | The HTTPS endpoint Mem0 posts events to. |
-| `event_types` | `('memory_add' \| 'memory_update' \| 'memory_delete' \| 'memory_categorize' \| 'ingest_job_completed' \| 'ingest_job_partially_completed' \| 'ingest_job_failed' \| 'ingest_job_cancelled')[]` | Yes | Events to subscribe to. Mem0 requires this: omitting it does not fall back to a default. |
+| `event_types` | `(memory_add \| memory_update \| memory_delete \| memory_categorize \| ingest_job_completed \| ingest_job_partially_completed \| ingest_job_failed \| ingest_job_cancelled)[]` | Yes | Events to subscribe to. Mem0 requires this: omitting it does not fall back to a default. |
 | `is_active` | `boolean` | No | Defaults to true on Mem0 side. |
 
 
@@ -852,7 +753,7 @@ await corsair.mem0.api.webhooks.update({ webhook_id: 'wh_123', name: 'Updated Lo
 | `webhook_id` | `string` | Yes | The webhook to change. |
 | `name` | `string` | No | The new label. |
 | `url` | `string` | No | The new endpoint URL. |
-| `event_types` | `('memory_add' \| 'memory_update' \| 'memory_delete' \| 'memory_categorize' \| 'ingest_job_completed' \| 'ingest_job_partially_completed' \| 'ingest_job_failed' \| 'ingest_job_cancelled')[]` | No | The new event subscription list, replacing the old one. |
+| `event_types` | `(memory_add \| memory_update \| memory_delete \| memory_categorize \| ingest_job_completed \| ingest_job_partially_completed \| ingest_job_failed \| ingest_job_cancelled)[]` | No | The new event subscription list, replacing the old one. |
 
 
 
@@ -863,7 +764,7 @@ await corsair.mem0.api.webhooks.update({ webhook_id: 'wh_123', name: 'Updated Lo
 | `success` | `true` | Yes | — |
 | `webhook_id` | `string` | Yes | — |
 | `message` | `string \| null` | No | — |
-| `webhook` | `object \| null` | No | The webhook as it stands after the change, when Mem0 returns it. |
+| `webhook` | `object` | No | The webhook as it stands after the change, when Mem0 returns it. |
 
 <AccordionGroup>
 <Accordion title="webhook full type">

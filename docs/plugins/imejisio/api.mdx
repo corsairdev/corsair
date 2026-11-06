@@ -28,21 +28,11 @@ await corsair.imejisio.api.designs.render({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `designId` | `string` | Yes | The design render code from the design render URL |
-| `format` | `png \| jpeg \| webp \| pdf` | Yes | Output format. Defaults to jpeg per the Imejis OpenAPI spec |
+| `format` | `png \| jpeg \| webp \| pdf` | No | Output format. Defaults to jpeg per the Imejis OpenAPI spec |
 | `quality` | `number` | No | JPEG quality from 1 to 100 (only affects jpeg output) |
-| `delivery` | `stream \| hosted \| signed` | Yes | Delivery mode: stream (raw bytes normalized to base64), hosted (public URL), or signed (expiring URL) |
+| `delivery` | `stream \| hosted \| signed` | No | Delivery mode: stream (raw bytes normalized to base64), hosted (public URL), or signed (expiring URL). Defaults to "stream". |
 | `expiresIn` | `number` | No | Signed delivery only: link lifetime in minutes (default 60, maximum 7 days = 10080) |
-| `overrides` | `object` | No | Key-value overrides for dynamic design template fields |
-
-<AccordionGroup>
-<Accordion title="overrides full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `overrides` | `Record<string, any>` | No | Key-value overrides for dynamic design template fields |
 
 
 
@@ -62,16 +52,14 @@ await corsair.imejisio.api.designs.render({});
   delivery: hosted,
   url: string,
   format?: png | jpeg | webp | pdf,
-  file?: {
-  }
+  file?: Record<string, any>
 } | {
   success?: boolean,
   delivery: signed,
   url: string,
   expiresAt?: string,
   format?: png | jpeg | webp | pdf,
-  file?: {
-  }
+  file?: Record<string, any>
 }
 ```
 </Accordion>
