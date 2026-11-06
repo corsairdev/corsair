@@ -14,6 +14,10 @@ Corsair acts as a secure intermediary between your AI agents and external APIs. 
 - **Signature-Verified Webhooks**: Standardized, signature-verified webhook endpoints for all integrated plugins.
 - **Studio UI**: A developer dashboard to monitor execution, manage keys, configure permissions, and test tools.
 
+## For agents
+
+- [Agent skill](https://corsair.dev/skill.md): How to add Corsair's MCP server (https://mcp.corsair.dev/mcp) to your client, connect the user's apps, and which tool to call for what.
+
 ## Documentation Index
 
 The full agent index lives at [docs.corsair.dev/llms.txt](https://docs.corsair.dev/llms.txt).
