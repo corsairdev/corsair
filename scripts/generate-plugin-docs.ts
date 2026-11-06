@@ -1268,6 +1268,7 @@ ${setupPluginCall},
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -1275,7 +1276,7 @@ ${setupPluginCall},
 });
 \`\`\`
 
-Multi-tenancy is the default — scope calls with \`corsair.withTenant(id)\`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With \`multiTenancy: true\`, scope calls with \`corsair.withTenant(id)\`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 

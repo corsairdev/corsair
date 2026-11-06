@@ -1,0 +1,21 @@
+displayName: Extracta.ai
+description: Document data extraction API for creating and managing extractions and classifications and checking credits.
+domain: extracta.ai
+examples:
+  read:
+    path: credits.get
+    title: Check remaining credits
+  write:
+    path: extraction.create
+    title: Create an extraction
+    args:
+      extractionDetails:
+        name: Invoice extraction
+        language: English
+        fields:
+          - key: invoice_number
+            description: The invoice number.
+dbExample:
+  entity: extractions
+  note: These tables exist, but Extracta.ai calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

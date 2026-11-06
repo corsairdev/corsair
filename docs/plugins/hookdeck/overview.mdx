@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Hookdeck plugin for Corsair"
+description: "Webhook infrastructure platform, with endpoints for creating and managing connections that route events from sources to destinations."
 ---
 
 Use **Hookdeck** through Corsair: one client, typed API calls.
@@ -43,6 +43,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -50,7 +51,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -88,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`connections.get`**
+**List connections**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.hookdeck.api.connections.get({});
+await tenant.hookdeck.api.connections.list({});
 ```
 
 
-**`connections.create`**
+**Create a connection**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.hookdeck.api.connections.create({});
+await tenant.hookdeck.api.connections.create({ name: 'stripe-to-api' });
 ```
 
 

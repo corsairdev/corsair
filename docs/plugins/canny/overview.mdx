@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Canny plugin for Corsair"
+description: "Customer feedback platform. Manage boards, feedback posts, comments, and votes."
 ---
 
 Use **Canny** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -45,6 +45,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -52,7 +53,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -90,7 +91,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`boards.list`**
+**List boards**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -98,11 +99,16 @@ await tenant.canny.api.boards.list({});
 ```
 
 
-**`comments.create`**
+**Create a post**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.canny.api.comments.create({});
+await tenant.canny.api.posts.create({
+	authorID: '5f1a2b3c4d5e6f7a8b9c0d1e',
+	boardID: '5f1a2b3c4d5e6f7a8b9c0d1f',
+	title: 'Add dark mode',
+	details: 'It would be easier on the eyes at night.',
+});
 ```
 
 
@@ -110,15 +116,37 @@ See the full list on the [API](/plugins/canny/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.canny.db.<entity>.search()` and `.list()`: `boards`, `comments`, `posts`, `votes`.
+Search synced boards without hitting Canny.
 
-See [Database](/plugins/canny/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.canny.db.boards.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `boards`, `comments`, `posts`, `votes`. See [Database](/plugins/canny/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **4** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when someone creates a post on a board.
 
-See [Webhooks](/plugins/canny/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+canny({
+    webhookHooks: {
+        posts: {
+            created: {
+                after: async (ctx, result) => {
+                    console.log('Canny post created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/canny/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

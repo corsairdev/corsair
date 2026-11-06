@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Convex plugin for Corsair"
+description: "Reactive backend platform. Manage projects, deployments and deploy keys, delete custom domains, read token details and the available deployment classes and regions, and run query batches, read query timestamps and list log streams on a deployment."
 ---
 
 Use **Convex** through Corsair: one client, typed API calls, local DB sync.
@@ -66,6 +66,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -73,7 +74,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 

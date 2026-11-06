@@ -1,0 +1,66 @@
+displayName: Mem0
+description: Long-term memory for AI agents with Mem0 - add, search, list, update and delete memories, read a memory's change history, and poll the events Mem0 queues for asynchronous work.
+domain: mem0.ai
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in the Mem0 dashboard under Settings, API Keys. The key is scoped to a project, and every call acts on that project's memories. Things to know before you write:
+
+  - **Writes are queued.** `memories.add` returns an `event_id` with status `PENDING`, because extraction runs in the background. Poll `events.get` until the status is `SUCCEEDED` or `FAILED`. Passing `infer: false` stores the messages verbatim instead, which answers immediately with the stored memories.
+  - **A queued delete finishes before its event updates.** `memories.deleteAll` answers with an `event_id`, but that event can still read `PENDING` after the memories are gone. To confirm a delete, re-read with `memories.list` and check that `count` is 0, passing `show_expired: true` and wrapping the scope in `filters`. Both are needed: without `show_expired` an expired memory is hidden, and `memories.list` rejects a filter with no entity ID, so a delete scoped only by `metadata`, `org_id` or `project_id` cannot be re-read this way. For those, check `events.get` instead.
+  - **Entity IDs.** A memory belongs to a user, agent, app or run. `memories.add` takes those IDs at the top level; `memories.search` and `memories.list` require them inside `filters`, and Mem0 rejects a top-level entity ID with 400.
+  - **Deletes are permanent.** `memories.delete` removes one memory, and `memories.deleteAll` removes every memory matching a filter. Mem0 queues `memories.deleteAll` and answers before the deletion happens. Neither can be undone.
+  - **The run ID has two names.** `memories.list` returns it as `session_id` and `memories.search` returns the same value as `run_id`.
+  - **Expiration.** A memory past its `expiration_date` stays stored but is hidden from search and list unless you pass `show_expired: true`. To clear an expiration date, pass `expiration_date: null` to `memories.update`.
+  - **Rate limits and quotas.** Mem0 answers 429 when a project is over its rate limit, and the plugin retries that up to three times with backoff. A free or paid plan's monthly add and retrieval limits are separate: calls past those fail with a 413, which the plugin does not retry because the limits reset on the billing date.
+  - **Webhooks.** The plugin can register, list, change and remove Mem0 webhooks with `webhooks.create`, `webhooks.list`, `webhooks.update` and `webhooks.delete`, so Mem0 posts memory events to your URL. It does not receive those posts itself: Mem0 publishes no signing secret or signature header, so a receiver built here could not tell a genuine post from a forged one. Verify deliveries in your own endpoint, and poll `events.list` or `events.get` if you would rather not run one.
+
+  Operations that take an enum argument: `memories.add` accepts `role` values of `user`, `assistant` and `system`. `memories.history` reports events as `ADD`, `UPDATE` or `DELETE`, and `events.get` reports statuses of `PENDING`, `RUNNING`, `FAILED` and `SUCCEEDED`.
+examples:
+  read:
+    path: memories.list
+    title: List a user's memories
+    args:
+      filters:
+        user_id: alice
+      page_size: 20
+  write:
+    path: memories.add
+    title: Remember a conversation turn
+    args:
+      user_id: alice
+      messages:
+        - role: user
+          content: I moved to Austin last month.
+apiExamples:
+  memories.add:
+    call: "{ user_id: 'alice', messages: [{ role: 'user', content: 'I moved to Austin last month.' }], metadata: { source: 'onboarding_form' } }"
+  memories.search:
+    call: "{ query: 'Where does the user live?', filters: { user_id: 'alice' }, top_k: 5 }"
+  memories.list:
+    call: "{ filters: { user_id: 'alice' }, page: 1, page_size: 50 }"
+  memories.get:
+    call: "{ memory_id: 'ea925981-272f-40dd-b576-be64e4871429' }"
+  memories.update:
+    call: "{ memory_id: 'ea925981-272f-40dd-b576-be64e4871429', text: 'User moved to Lisbon in March 2026' }"
+  memories.delete:
+    call: "{ memory_id: 'ea925981-272f-40dd-b576-be64e4871429' }"
+  memories.deleteAll:
+    call: "{ user_id: 'alice' }"
+  memories.history:
+    call: "{ memory_id: 'ea925981-272f-40dd-b576-be64e4871429' }"
+  memories.batchUpdate:
+    call: "{ memories: [{ memory_id: '285ed74b-6e05-4043-b16b-3abd5b533496', text: 'Watches football' }] }"
+  memories.batchDelete:
+    call: "{ memory_ids: ['285ed74b-6e05-4043-b16b-3abd5b533496'] }"
+  events.get:
+    call: "{ event_id: '2c4d1f44-4f7b-4b2f-9f6e-7b5b4f5a1234' }"
+  events.list:
+    call: "{ page: 1, page_size: 25 }"
+  webhooks.list:
+    call: "{ project_id: 'proj_123' }"
+  webhooks.create:
+    call: "{ project_id: 'proj_123', name: 'Memory Logger', url: 'https://your-app.com/webhook', event_types: ['memory_add', 'memory_categorize'] }"
+  webhooks.update:
+    call: "{ webhook_id: 'wh_123', name: 'Updated Logger', event_types: ['memory_update', 'memory_add'] }"
+  webhooks.delete:
+    call: "{ webhook_id: 'wh_123' }"

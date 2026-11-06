@@ -1,0 +1,1413 @@
+---
+title: API
+description: "API reference for Enginemailer: every `enginemailer.api.*` operation with input and output types."
+---
+
+Every `enginemailer.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaigns
+
+### assignRecipientList
+
+`campaigns.assignRecipientList`
+
+Assign a recipient list to a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.campaigns.assignRecipientList({ campaignid: 2200, FilterBy: 2, data: { CategoryList: [12, 13], FilterType: 'OR' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignid` | `number` | Yes | — |
+| `data` | `object` | No | — |
+| `FilterBy` | `1 \| 2` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  CategoryList: number[],
+  FilterType: AND | OR
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createCampaign
+
+`campaigns.createCampaign`
+
+Create an email campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.campaigns.createCampaign({
+	CampaignName: 'November news',
+	SenderName: 'Acme',
+	SenderEmail: 'news@acme.example',
+	Subject: 'What is new in November',
+	Content: '<p>Hello</p>',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CampaignName` | `string` | Yes | — |
+| `SenderName` | `string` | Yes | — |
+| `SenderEmail` | `string` | Yes | — |
+| `ReplyTo` | `string` | No | — |
+| `Subject` | `string` | Yes | — |
+| `Content` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteCampaign
+
+`campaigns.deleteCampaign`
+
+Delete an email campaign
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.enginemailer.api.campaigns.deleteCampaign({ campaignid: 2200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignid` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteRecipientList
+
+`campaigns.deleteRecipientList`
+
+Remove a recipient list from a campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.enginemailer.api.campaigns.deleteRecipientList({ campaignid: 2200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignid` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCampaigns
+
+`campaigns.listCampaigns`
+
+List campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.campaigns.listCampaigns({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pauseCampaign
+
+`campaigns.pauseCampaign`
+
+Pause an email campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.campaigns.pauseCampaign({ campaignid: 2200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignid` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendCampaign
+
+`campaigns.sendCampaign`
+
+Send an email campaign to its recipient list now
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.enginemailer.api.campaigns.sendCampaign({ campaignid: 2200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignid` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateCampaign
+
+`campaigns.updateCampaign`
+
+Update an email campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.campaigns.updateCampaign({
+	CampaignID: 2200,
+	CampaignName: 'November news',
+	SenderName: 'Acme',
+	SenderEmail: 'news@acme.example',
+	Subject: 'What is new in November',
+	Content: '<p>Hello again</p>',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CampaignName` | `string` | Yes | — |
+| `SenderName` | `string` | Yes | — |
+| `SenderEmail` | `string` | Yes | — |
+| `ReplyTo` | `string` | No | — |
+| `Subject` | `string` | Yes | — |
+| `Content` | `string` | Yes | — |
+| `CampaignID` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## N8n
+
+### addOrUpdateSubscriber
+
+`n8n.addOrUpdateSubscriber`
+
+Add or update a subscriber through Enginemailer N8N
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.n8n.addOrUpdateSubscriber({ email: 'ada@example.com', subcategories: [12], updatetype: 'Append' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `sourcetype` | `string` | No | — |
+| `subcategories` | `number[]` | No | — |
+| `customfields` | `object[]` | No | — |
+| `updatetype` | `Overwrite \| Append \| Ignore` | No | — |
+
+<AccordionGroup>
+<Accordion title="customfields full type">
+
+```ts
+{
+  customfield_key: string,
+  customfield_value: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### autoresponderCompleted
+
+`n8n.autoresponderCompleted`
+
+List subscribers who completed an autoresponder
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.autoresponderCompleted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `lastpollingdate` | `string` | No | — |
+| `filter_autoresponder` | `number \| All` | No | — |
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### autoresponderTriggered
+
+`n8n.autoresponderTriggered`
+
+List subscribers who triggered an autoresponder
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.autoresponderTriggered({ filter_autoresponder: 3, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `lastpollingdate` | `string` | No | — |
+| `filter_autoresponder` | `number \| All` | No | — |
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### connect
+
+`n8n.connect`
+
+Test the Enginemailer N8N connection
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.connect({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### deactivateSubscriber
+
+`n8n.deactivateSubscriber`
+
+Unsubscribe a subscriber through Enginemailer N8N
+
+**Risk:** `destructive`
+
+```ts
+await corsair.enginemailer.api.n8n.deactivateSubscriber({ email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deletedSubscribers
+
+`n8n.deletedSubscribers`
+
+List deleted subscribers through Enginemailer N8N
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.deletedSubscribers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `lastpollingdate` | `string` | No | — |
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### deleteN8nSubscriber
+
+`n8n.deleteN8nSubscriber`
+
+Delete a subscriber through Enginemailer N8N
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.enginemailer.api.n8n.deleteN8nSubscriber({ email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### findSubscriber
+
+`n8n.findSubscriber`
+
+Find a subscriber through Enginemailer N8N
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.findSubscriber({ email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listForms
+
+`n8n.listForms`
+
+List Enginemailer forms through N8N
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.listForms({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any[]`
+
+
+---
+
+### listPages
+
+`n8n.listPages`
+
+List Enginemailer pages through N8N
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.listPages({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any[]`
+
+
+---
+
+### listPopups
+
+`n8n.listPopups`
+
+List Enginemailer popups through N8N
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.listPopups({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any[]`
+
+
+---
+
+### modifiedSubscribers
+
+`n8n.modifiedSubscribers`
+
+List modified subscribers through Enginemailer N8N
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.modifiedSubscribers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `lastpollingdate` | `string` | No | — |
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### newSubscribers
+
+`n8n.newSubscribers`
+
+List new subscribers through Enginemailer N8N
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.newSubscribers({ source: 'Form', filter_form: 7, limit: 50, lastpollingdate: '2026-11-01 00:00:00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `lastpollingdate` | `string` | No | — |
+| `source` | `All \| API \| Form \| Import \| LandingPage \| Manual \| Popup \| WhatsApp` | No | — |
+| `filter_form` | `number \| All` | No | — |
+| `filter_page` | `number \| All` | No | — |
+| `filter_popups` | `number \| All` | No | — |
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### sendEmail
+
+`n8n.sendEmail`
+
+Send an email through Enginemailer N8N
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.n8n.sendEmail({ email: 'ada@example.com', type: 'template', template_id: 42, substitution_tags: [{ Key: 'firstname', Value: 'Ada' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `type` | `html \| template` | Yes | — |
+| `html` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `sender_email` | `string` | No | — |
+| `sender_name` | `string` | No | — |
+| `template_id` | `number` | No | — |
+| `substitution_tags` | `object[]` | No | — |
+| `cc_emails` | `string \| string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="substitution_tags full type">
+
+```ts
+{
+  Key: string,
+  Value: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### taggedSubscribers
+
+`n8n.taggedSubscribers`
+
+List tagged subscribers through Enginemailer N8N
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.taggedSubscribers({ filter_subcategory: 12, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `lastpollingdate` | `string` | No | — |
+| `filter_subcategory` | `number \| All` | No | — |
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### tagSubscriber
+
+`n8n.tagSubscriber`
+
+Tag a subscriber through Enginemailer N8N
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.n8n.tagSubscriber({
+	email: 'ada@example.com',
+	subcategories: [12],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `subcategories` | `number[]` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### unsubscribedSubscribers
+
+`n8n.unsubscribedSubscribers`
+
+List unsubscribed subscribers through Enginemailer N8N
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.unsubscribedSubscribers({ filter: 'Campaign', filter_campaign: 2200, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `lastpollingdate` | `string` | No | — |
+| `filter` | `All \| Autoresponder \| Campaign` | No | — |
+| `filter_autoresponder` | `number \| All` | No | — |
+| `filter_campaign` | `number \| All` | No | — |
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### untaggedSubscribers
+
+`n8n.untaggedSubscribers`
+
+List untagged subscribers through Enginemailer N8N
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.n8n.untaggedSubscribers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `lastpollingdate` | `string` | No | — |
+| `filter_subcategory` | `number \| All` | No | — |
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### untagSubscriber
+
+`n8n.untagSubscriber`
+
+Remove a tag from a subscriber through Enginemailer N8N
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.n8n.untagSubscriber({
+	email: 'ada@example.com',
+	subcategories: [12],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `subcategories` | `number[]` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Subscribers
+
+### activate
+
+`subscribers.activate`
+
+Activate a subscriber
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.subscribers.activate({ email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### batchUpdateStatus
+
+`subscribers.batchUpdateStatus`
+
+Get the status of a batch subscriber update by its job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.subscribers.batchUpdateStatus({ ID: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Status: string,
+  StatusCode: string
+} | {
+  Result: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### batchUpdateSubscribers
+
+`subscribers.batchUpdateSubscribers`
+
+Update subscribers in a batch
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.subscribers.batchUpdateSubscribers({
+	subscribers: [{
+		email: 'ada@example.com',
+		customfields: [{ customfield_key: 'first_name', customfield_value: 'Ada' }],
+	}],
+	subcategories: [12],
+	sourcetype: 'Import',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribers` | `object[]` | Yes | — |
+| `subcategories` | `number[]` | No | — |
+| `sourcetype` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  email: string,
+  customfields?: {
+    customfield_key: string,
+    customfield_value: string | number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteSubscriber
+
+`subscribers.deleteSubscriber`
+
+Delete a subscriber
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.enginemailer.api.subscribers.deleteSubscriber({ email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`subscribers.get`
+
+Retrieve a subscriber by email address
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.subscribers.get({ email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCustomFields
+
+`subscribers.getCustomFields`
+
+List subscriber custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.subscribers.getCustomFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSubcategories
+
+`subscribers.getSubcategories`
+
+List subscriber subcategories
+
+**Risk:** `read`
+
+```ts
+await corsair.enginemailer.api.subscribers.getSubcategories({ includeActiveSubscriberCount: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeActiveSubscriberCount` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insert
+
+`subscribers.insert`
+
+Insert a subscriber into Enginemailer
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.subscribers.insert({
+	email: 'ada@example.com',
+	subcategories: [12],
+	customfields: [{ customfield_key: 'first_name', customfield_value: 'Ada' }],
+	sourcetype: 'Website sign-up',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `subcategories` | `number[]` | No | — |
+| `customfields` | `object[]` | No | — |
+| `sourcetype` | `string` | No | — |
+| `subcategories_type` | `number` | No | — |
+| `customfield_type` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="customfields full type">
+
+```ts
+{
+  customfield_key: string,
+  customfield_value: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`subscribers.unsubscribe`
+
+Unsubscribe a subscriber
+
+**Risk:** `destructive`
+
+```ts
+await corsair.enginemailer.api.subscribers.unsubscribe({ email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`subscribers.update`
+
+Update a subscriber record
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.subscribers.update({
+	email: 'ada@example.com',
+	subcategories: [12, 13],
+	subcategories_type: 1,
+	customfields: [{ customfield_key: 'branch', customfield_value: 'KL' }],
+	customfield_type: 0,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `subcategories` | `number[]` | No | — |
+| `customfields` | `object[]` | No | — |
+| `sourcetype` | `string` | No | — |
+| `subcategories_type` | `number` | No | — |
+| `customfield_type` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="customfields full type">
+
+```ts
+{
+  customfield_key: string,
+  customfield_value: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateCategory
+
+`subscribers.updateCategory`
+
+Create or update a subscriber category
+
+**Risk:** `write`
+
+```ts
+await corsair.enginemailer.api.subscribers.updateCategory({
+	categoryID: 0,
+	categoryName: 'Interests',
+	subcategories: [{ subcategoryID: 0, subcategoryName: 'Hiking' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categoryID` | `number` | Yes | — |
+| `categoryName` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `isvisible` | `boolean` | No | — |
+| `subcategories` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="subcategories full type">
+
+```ts
+{
+  subcategoryID: number,
+  subcategoryName: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

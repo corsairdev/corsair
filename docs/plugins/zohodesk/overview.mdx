@@ -1,0 +1,192 @@
+---
+title: Overview
+description: "Read tickets, threads, contacts, agents, departments and roles in Zoho Desk, update tasks in bulk and manage department logos."
+---
+
+Use **Zoho Desk** through Corsair: one client, typed API calls, local DB sync.
+
+**Data center.** Zoho keeps each account in one data center, and both sign-in and API calls have to go there. Pass `region` to the plugin factory: `us` (default), `eu`, `in`, `au`, `jp`, `cn`, `ca`, `sa`, `sg` or `ae`. To tell which one you are on, check the address you use for Zoho Desk (`desk.zoho.eu` is `eu`). You can pass the `api_domain` from a Zoho token response as `apiDomain` instead; it is only read to pick the data center, and a value that names no Zoho data center throws when the plugin is created.
+
+```ts
+zohodesk({ region: 'eu' })
+```
+
+One plugin instance serves one data center, because the OAuth token URL is fixed when the plugin is created. Zoho's UK data center is not supported yet: the Zoho Desk API reference lists no host for it.
+
+**Organization.** Zoho Desk calls carry an `orgId` header. You rarely need to set it. After OAuth the plugin stores the ID of your organization, and if that step did not run it looks the ID up on the first call and keeps it. If your Zoho user belongs to several organizations it cannot tell which one you picked on the consent screen, so it sends no header and Zoho uses the one the token was issued for. To name one yourself with a single tenant, pass `orgId` to the factory or call `corsair.zohodesk.keys.set_tenant_external_id(orgId)`. With `multiTenancy: true`, set it per tenant with `corsair.withTenant(id).zohodesk.keys.set_tenant_external_id(orgId)`: the factory `orgId` applies to every tenant and wins over the stored ID, so tenants in other organizations would fail with `OAUTH_ORG_MISMATCH`. List them with `organizations.list`. A mismatch fails with `OAUTH_ORG_MISMATCH`.
+
+**OAuth setup.** Create a Server-based Application in the [Zoho API Console](https://api-console.zoho.com) and add your redirect URL. If the app serves users in several data centers, turn on Multi-DC support there. The plugin requests these scopes:
+
+| Scope | Used by |
+|-------|---------|
+| `Desk.tickets.READ` | `tickets.*` |
+| `Desk.contacts.READ` | `contacts.list`, `contacts.get`, `contacts.getByIds` |
+| `Desk.accounts.READ` | `contacts.listAccounts` |
+| `Desk.agents.READ` | `agents.*` |
+| `Desk.basic.READ` | `agents.getCount`, `departments.*`, `organizations.list`, `roles.*` |
+| `Desk.departments.READ` | `departments.*` |
+| `Desk.departments.UPDATE` | `departments.uploadLogo` |
+| `Desk.teams.READ` | `departments.listTeams` |
+| `Desk.organization.READ` | `organizations.list` |
+| `Desk.permissions.READ` | `roles.*` |
+| `Desk.activities.tasks.UPDATE` | `tasks.updateMany` |
+
+Access tokens last an hour. The plugin refreshes them when they expire, and once more if Zoho rejects one early. A token passed as `key` is never refreshed.
+
+**Things to know:**
+
+- **IDs are strings.** Zoho IDs are 64-bit and do not fit a JavaScript number, so inputs take them as strings. Response fields keep the type Zoho sent, and Zoho sends many counts and some booleans as strings.
+- **Empty lists.** Zoho answers `204` when a list has nothing in it. List operations return an empty array, and `tickets.getLatestThread` and `tickets.getResolution` return `null`.
+- **API credits.** Zoho meters calls in daily credits: 1 for most single records, 3 or more for lists, 50 for `agents.getCount` and `departments.getCount`, and 1 for every 2 tasks in `tasks.updateMany`. When credits run out and the wait is over a minute, the call fails straight away rather than holding on, with the wait in `error.retryAfter` (milliseconds) and the credits left in `error.creditsRemaining`.
+- **Concurrency.** Zoho also limits simultaneous calls per organization (5 on a trial, up to 25). Calls that hit it retry with backoff.
+- **Partial updates.** `tasks.updateMany` can succeed for some tasks and fail for others. Check `success` on each entry in `results`.
+- **Logos.** `departments.getLogo` returns base64. `departments.uploadLogo` takes base64 in `contentBase64` and a `fileName` ending in jpg, jpeg, png or gif, 2MB at most.
+- **Local sync.** `tickets.list`, `tickets.get`, `contacts.list`, `contacts.get` and `contacts.getByIds` save rows to the local database. Calls using `fields` do not, because a partial row would replace the full one.
+
+**What you get:**
+
+- 22 typed API operations
+- 2 synced entities (`contacts`, `tickets`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/zohodesk
+```
+```bash yarn
+yarn add corsair @corsair-dev/zohodesk
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/zohodesk
+```
+```bash bun
+bun add corsair @corsair-dev/zohodesk
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { zohodesk } from '@corsair-dev/zohodesk';
+
+export const corsair = createCorsair({
+	plugins: [
+		zohodesk({
+			region: 'us',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Zoho Desk OAuth app.
+
+Set `region` to your Zoho data center (see below). It defaults to `us`.
+
+```ts
+zohodesk({
+	region: 'us',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'zohodesk',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List open tickets**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohodesk.api.tickets.list({
+	status: ['Open'],
+	sortBy: '-createdTime',
+	limit: 20,
+});
+```
+
+
+**Update tasks in bulk**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohodesk.api.tasks.updateMany({
+	ids: ['1892000000093303', '1892000000085009'],
+	fieldName: 'priority',
+	fieldValue: 'High',
+});
+```
+
+
+See the full list on the [API](/plugins/zohodesk/api) page.
+
+## Query synced data
+
+Tickets are saved when you list or fetch them.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zohodesk.db.tickets.search({
+	data: { status: 'Open' },
+	limit: 20,
+});
+```
+
+Synced entities: `contacts`, `tickets`. See [Database](/plugins/zohodesk/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/zohodesk/api">
+    Every `zohodesk.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/zohodesk/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

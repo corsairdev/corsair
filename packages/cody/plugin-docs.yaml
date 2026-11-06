@@ -1,0 +1,19 @@
+displayName: Cody
+description: AI assistant platform. Manage bots, conversations, messages, documents, and folders, and create signed upload URLs.
+domain: meetcody.ai
+examples:
+  read:
+    path: bots.list
+    title: List bots
+  write:
+    path: messages.send
+    title: Send a message
+    args:
+      conversation_id: conv_0123456789
+      content: What can you help me with?
+dbExample:
+  entity: bots
+  note: >-
+    This table exists, but Cody calls don't fill it yet. This returns only rows
+    you have written yourself.
+  limit: 50

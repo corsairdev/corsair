@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Cody plugin for Corsair"
+description: "AI assistant platform. Manage bots, conversations, messages, documents, and folders, and create signed upload URLs."
 ---
 
 Use **Cody** through Corsair: one client, typed API calls, local DB sync.
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -89,7 +90,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`bots.list`**
+**List bots**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -97,11 +98,11 @@ await tenant.cody.api.bots.list({});
 ```
 
 
-**`conversations.create`**
+**Send a message**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cody.api.conversations.create({});
+await tenant.cody.api.messages.send({ conversation_id: 'conv_0123456789', content: 'What can you help me with?' });
 ```
 
 
@@ -109,9 +110,17 @@ See the full list on the [API](/plugins/cody/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.cody.db.<entity>.search()` and `.list()`: `bots`, `conversations`, `documents`, `folders`, `messages`, `usage`.
+This table exists, but Cody calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/cody/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cody.db.bots.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `bots`, `conversations`, `documents`, `folders`, `messages`, `usage`. See [Database](/plugins/cody/database) for filters and operators.
 
 ## What's next
 

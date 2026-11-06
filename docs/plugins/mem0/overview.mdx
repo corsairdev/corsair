@@ -1,0 +1,141 @@
+---
+title: Overview
+description: "Long-term memory for AI agents with Mem0 - add, search, list, update and delete memories, read a memory's change history, and poll the events Mem0 queues for asynchronous work."
+---
+
+Use **Mem0** through Corsair: one client, typed API calls.
+
+Create a key in the Mem0 dashboard under Settings, API Keys. The key is scoped to a project, and every call acts on that project's memories. Things to know before you write:
+
+- **Writes are queued.** `memories.add` returns an `event_id` with status `PENDING`, because extraction runs in the background. Poll `events.get` until the status is `SUCCEEDED` or `FAILED`. Passing `infer: false` stores the messages verbatim instead, which answers immediately with the stored memories.
+- **A queued delete finishes before its event updates.** `memories.deleteAll` answers with an `event_id`, but that event can still read `PENDING` after the memories are gone. To confirm a delete, re-read with `memories.list` and check that `count` is 0, passing `show_expired: true` and wrapping the scope in `filters`. Both are needed: without `show_expired` an expired memory is hidden, and `memories.list` rejects a filter with no entity ID, so a delete scoped only by `metadata`, `org_id` or `project_id` cannot be re-read this way. For those, check `events.get` instead.
+- **Entity IDs.** A memory belongs to a user, agent, app or run. `memories.add` takes those IDs at the top level; `memories.search` and `memories.list` require them inside `filters`, and Mem0 rejects a top-level entity ID with 400.
+- **Deletes are permanent.** `memories.delete` removes one memory, and `memories.deleteAll` removes every memory matching a filter. Mem0 queues `memories.deleteAll` and answers before the deletion happens. Neither can be undone.
+- **The run ID has two names.** `memories.list` returns it as `session_id` and `memories.search` returns the same value as `run_id`.
+- **Expiration.** A memory past its `expiration_date` stays stored but is hidden from search and list unless you pass `show_expired: true`. To clear an expiration date, pass `expiration_date: null` to `memories.update`.
+- **Rate limits and quotas.** Mem0 answers 429 when a project is over its rate limit, and the plugin retries that up to three times with backoff. A free or paid plan's monthly add and retrieval limits are separate: calls past those fail with a 413, which the plugin does not retry because the limits reset on the billing date.
+- **Webhooks.** The plugin can register, list, change and remove Mem0 webhooks with `webhooks.create`, `webhooks.list`, `webhooks.update` and `webhooks.delete`, so Mem0 posts memory events to your URL. It does not receive those posts itself: Mem0 publishes no signing secret or signature header, so a receiver built here could not tell a genuine post from a forged one. Verify deliveries in your own endpoint, and poll `events.list` or `events.get` if you would rather not run one.
+
+Operations that take an enum argument: `memories.add` accepts `role` values of `user`, `assistant` and `system`. `memories.history` reports events as `ADD`, `UPDATE` or `DELETE`, and `events.get` reports statuses of `PENDING`, `RUNNING`, `FAILED` and `SUCCEEDED`.
+
+**What you get:**
+
+- 16 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/mem0
+```
+```bash yarn
+yarn add corsair @corsair-dev/mem0
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/mem0
+```
+```bash bun
+bun add corsair @corsair-dev/mem0
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { mem0 } from '@corsair-dev/mem0';
+
+export const corsair = createCorsair({
+	plugins: [
+		mem0(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+A call with no saved key throws `AuthMissingError` before it reaches Mem0. Save the key once for the account with `tenant.mem0.keys.set_api_key(...)`, which encrypts it with your KEK, or pass `mem0({ key })` yourself.
+
+```ts
+mem0()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'mem0',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List a user's memories**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mem0.api.memories.list({
+	filters: { user_id: 'alice' },
+	page_size: 20,
+});
+```
+
+
+**Remember a conversation turn**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mem0.api.memories.add({
+	user_id: 'alice',
+	messages: [{ role: 'user', content: 'I moved to Austin last month.' }],
+});
+```
+
+
+See the full list on the [API](/plugins/mem0/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/mem0/api">
+    Every `mem0.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

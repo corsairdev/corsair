@@ -114,20 +114,20 @@ export const BaseProviders = [
 	'brex',
 	'brightdata',
 	'browseai',
-	'builtwith',
 	'browserless',
 	'browsertool',
 	'browseruse',
 	'bubble',
 	'bugsnag',
 	'buildkite',
+	'builtwith',
 	'bunnycdn',
 	'bytedance',
 	'byteforms',
 	'cal',
-	'callpage',
 	'calendly',
 	'callingly',
+	'callpage',
 	'campaigncleaner',
 	'campayn',
 	'canny',
@@ -151,19 +151,20 @@ export const BaseProviders = [
 	'clay',
 	'clickhouse',
 	'clickmeeting',
-	'clickup',
 	'clicksend',
+	'clickup',
 	'clientary',
 	'clockify',
-	'close',
 	'cloro',
+	'close',
 	'cloudcart',
 	'cloudflare',
 	'cloudflareapikey',
 	'cloudinary',
 	'coassemble',
-	'codeinterpreter',
 	'coda',
+	'codacy',
+	'codeinterpreter',
 	'cody',
 	'coinbase',
 	'coinmarketcal',
@@ -196,10 +197,11 @@ export const BaseProviders = [
 	'diffbot',
 	'digitalocean',
 	'discord',
+	'dnsfilter',
 	'dockerhub',
 	'docmosis',
-	'docupost',
 	'docsumo',
+	'docupost',
 	'docusign',
 	'dodopayments',
 	'doppler',
@@ -207,10 +209,15 @@ export const BaseProviders = [
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
+	'enginemailer',
 	'dropboxsign',
 	'dynapictures',
+	'emailoctopus',
 	'emelia',
+	'enigma',
 	'epicgames',
+	'esignatures',
+	'esputnik',
 	'everhour',
 	'exa',
 	'excel',
@@ -249,6 +256,7 @@ export const BaseProviders = [
 	'grafana',
 	'griptape',
 	'groqcloud',
+	'gumroad',
 	'habitica',
 	'hackernews',
 	'harvest',
@@ -275,6 +283,7 @@ export const BaseProviders = [
 	'kibana',
 	'kling',
 	'leexi',
+	'lever',
 	'linear',
 	'linkedin',
 	'litescrape',
@@ -285,6 +294,7 @@ export const BaseProviders = [
 	'mailchimp',
 	'mailtrap',
 	'marketstack',
+	'mem0',
 	'merriamwebsterdict',
 	'minimax',
 	'monday',
@@ -320,16 +330,20 @@ export const BaseProviders = [
 	'postman',
 	'prisma',
 	'pushbullet',
+	'qdrant',
 	'razorpay',
+	'recallai',
 	'reddit',
 	'reducto',
 	'remoet',
-	'replicate',
 	'removebg',
+	'render',
+	'replicate',
 	'replicate',
 	'replyio',
 	'resend',
 	'retailed',
+	'retellai',
 	'revai',
 	'rootly',
 	'runpod',
@@ -348,6 +362,7 @@ export const BaseProviders = [
 	'slack',
 	'slackbot',
 	'snapchat',
+	'snowflake',
 	'sourcegraph',
 	'spoki',
 	'spotify',
@@ -358,8 +373,8 @@ export const BaseProviders = [
 	'studiobyai21labs',
 	'supabase',
 	'supadata',
-	'suzanne',
 	'surf',
+	'suzanne',
 	'synthflowai',
 	'tally',
 	'tavily',
@@ -367,12 +382,13 @@ export const BaseProviders = [
 	'teams',
 	'telegram',
 	'textrazor',
+	'ticketmaster',
 	'ticktick',
 	'tikhub',
 	'timecamp',
 	'timelink',
-	'tinypng',
 	'tinyfish',
+	'tinypng',
 	'tinyurl',
 	'tisane',
 	'todoist',
@@ -412,6 +428,8 @@ export const BaseProviders = [
 	'witai',
 	'wix',
 	'wiza',
+	'woodpeckerco',
+	'workable',
 	'workday',
 	'workiom',
 	'worldnewsapi',
@@ -423,6 +441,7 @@ export const BaseProviders = [
 	'zendesk',
 	'zenserp',
 	'zohobigin',
+	'zohodesk',
 	'zohoinventory',
 	'zohomail',
 	'zoom',
@@ -531,20 +550,20 @@ export const ProviderDisplayNames = {
 	brex: 'Brex',
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
-	builtwith: 'BuiltWith',
 	browserless: 'Browserless',
 	browsertool: 'Browser Tool',
 	browseruse: 'Browser Use',
 	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
+	builtwith: 'BuiltWith',
 	bunnycdn: 'Bunnycdn',
 	bytedance: 'ByteDance',
 	byteforms: 'ByteForms',
 	cal: 'Cal',
-	callpage: 'CallPage',
 	calendly: 'Calendly',
 	callingly: 'Callingly',
+	callpage: 'CallPage',
 	campaigncleaner: 'Campaign Cleaner',
 	campayn: 'Campayn',
 	canny: 'Canny',
@@ -568,19 +587,20 @@ export const ProviderDisplayNames = {
 	clay: 'Clay',
 	clickhouse: 'Clickhouse',
 	clickmeeting: 'ClickMeeting',
-	clickup: 'ClickUp',
 	clicksend: 'ClickSend',
+	clickup: 'ClickUp',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
-	close: 'Close',
 	cloro: 'cloro',
+	close: 'Close',
 	cloudcart: 'CloudCart',
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
 	cloudinary: 'Cloudinary',
 	coassemble: 'Coassemble',
-	codeinterpreter: 'CodeInterpreter',
 	coda: 'Coda',
+	codacy: 'Codacy',
+	codeinterpreter: 'CodeInterpreter',
 	cody: 'Cody',
 	coinbase: 'Coinbase',
 	coinmarketcal: 'Coinmarketcal',
@@ -613,10 +633,11 @@ export const ProviderDisplayNames = {
 	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	dnsfilter: 'DNSFilter',
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
-	docupost: 'Docupost',
 	docsumo: 'Docsumo',
+	docupost: 'Docupost',
 	docusign: 'DocuSign',
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
@@ -624,10 +645,15 @@ export const ProviderDisplayNames = {
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
+	enginemailer: 'Enginemailer',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
+	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
+	enigma: 'Enigma',
 	epicgames: 'Epic Games',
+	esignatures: 'eSignatures',
+	esputnik: 'eSputnik',
 	everhour: 'Everhour',
 	exa: 'Exa',
 	excel: 'Excel',
@@ -666,6 +692,7 @@ export const ProviderDisplayNames = {
 	grafana: 'Grafana',
 	griptape: 'Griptape',
 	groqcloud: 'GroqCloud',
+	gumroad: 'Gumroad',
 	habitica: 'Habitica',
 	hackernews: 'Hacker News',
 	harvest: 'Harvest',
@@ -692,6 +719,7 @@ export const ProviderDisplayNames = {
 	kibana: 'Kibana',
 	kling: 'Kling',
 	leexi: 'Leexi',
+	lever: 'Lever',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
@@ -702,6 +730,7 @@ export const ProviderDisplayNames = {
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
 	marketstack: 'Marketstack',
+	mem0: 'Mem0',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
 	monday: 'Monday',
@@ -737,15 +766,19 @@ export const ProviderDisplayNames = {
 	postman: 'Postman',
 	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
+	qdrant: 'Qdrant',
 	razorpay: 'Razorpay',
+	recallai: 'Recall.ai',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
 	remoet: 'Remoet',
 	removebg: 'remove.bg',
+	render: 'Render',
 	replicate: 'Replicate',
 	replyio: 'Reply.io',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	retellai: 'Retell AI',
 	revai: 'RevAI',
 	rootly: 'Rootly',
 	runpod: 'RunPod',
@@ -764,6 +797,7 @@ export const ProviderDisplayNames = {
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
+	snowflake: 'Snowflake',
 	sourcegraph: 'Sourcegraph',
 	spoki: 'Spoki',
 	spotify: 'Spotify',
@@ -774,8 +808,8 @@ export const ProviderDisplayNames = {
 	studiobyai21labs: 'StudioByAI21Labs',
 	supabase: 'Supabase',
 	supadata: 'Supadata',
-	suzanne: 'Suzanne',
 	surf: 'Surf',
+	suzanne: 'Suzanne',
 	synthflowai: 'Synthflow AI',
 	tally: 'Tally',
 	tavily: 'Tavily',
@@ -783,12 +817,13 @@ export const ProviderDisplayNames = {
 	teams: 'Teams',
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
+	ticketmaster: 'Ticketmaster',
 	ticktick: 'TickTick',
 	tikhub: 'TikHub',
 	timecamp: 'TimeCamp',
 	timelink: 'Timelink',
-	tinypng: 'TinyPNG',
 	tinyfish: 'TinyFish',
+	tinypng: 'TinyPNG',
 	tinyurl: 'TinyURL',
 	tisane: 'Tisane',
 	todoist: 'Todoist',
@@ -828,6 +863,8 @@ export const ProviderDisplayNames = {
 	witai: 'WitAi',
 	wix: 'Wix',
 	wiza: 'Wiza',
+	woodpeckerco: 'Woodpecker Co',
+	workable: 'Workable',
 	workday: 'Workday',
 	workiom: 'Workiom',
 	worldnewsapi: 'World News API',
@@ -839,6 +876,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zenserp: 'Zenserp',
 	zohobigin: 'Zoho Bigin',
+	zohodesk: 'Zoho Desk',
 	zohoinventory: 'Zoho Inventory',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
@@ -964,9 +1002,9 @@ export type AllProviders =
 	| 'bytedance'
 	| 'byteforms'
 	| 'cal'
-	| 'callpage'
 	| 'calendly'
 	| 'callingly'
+	| 'callpage'
 	| 'campaigncleaner'
 	| 'campayn'
 	| 'canny'
@@ -990,19 +1028,20 @@ export type AllProviders =
 	| 'clay'
 	| 'clickhouse'
 	| 'clickmeeting'
-	| 'clickup'
 	| 'clicksend'
+	| 'clickup'
 	| 'clientary'
 	| 'clockify'
-	| 'close'
 	| 'cloro'
+	| 'close'
 	| 'cloudcart'
 	| 'cloudflare'
 	| 'cloudflareapikey'
 	| 'cloudinary'
 	| 'coassemble'
-	| 'codeinterpreter'
 	| 'coda'
+	| 'codacy'
+	| 'codeinterpreter'
 	| 'cody'
 	| 'coinbase'
 	| 'coinmarketcal'
@@ -1037,8 +1076,8 @@ export type AllProviders =
 	| 'discord'
 	| 'dockerhub'
 	| 'docmosis'
-	| 'docupost'
 	| 'docsumo'
+	| 'docupost'
 	| 'docusign'
 	| 'dodopayments'
 	| 'doppler'
@@ -1046,10 +1085,15 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
+	| 'enginemailer'
 	| 'dropboxsign'
 	| 'dynapictures'
+	| 'emailoctopus'
 	| 'emelia'
+	| 'enigma'
 	| 'epicgames'
+	| 'esignatures'
+	| 'esputnik'
 	| 'everhour'
 	| 'exa'
 	| 'excel'
@@ -1088,6 +1132,7 @@ export type AllProviders =
 	| 'grafana'
 	| 'griptape'
 	| 'groqcloud'
+	| 'gumroad'
 	| 'habitica'
 	| 'hackernews'
 	| 'harvest'
@@ -1114,6 +1159,7 @@ export type AllProviders =
 	| 'kibana'
 	| 'kling'
 	| 'leexi'
+	| 'lever'
 	| 'linear'
 	| 'linkedin'
 	| 'litescrape'
@@ -1124,6 +1170,7 @@ export type AllProviders =
 	| 'mailchimp'
 	| 'mailtrap'
 	| 'marketstack'
+	| 'mem0'
 	| 'merriamwebsterdict'
 	| 'minimax'
 	| 'monday'
@@ -1159,16 +1206,20 @@ export type AllProviders =
 	| 'postman'
 	| 'prisma'
 	| 'pushbullet'
+	| 'qdrant'
 	| 'razorpay'
+	| 'recallai'
 	| 'reddit'
 	| 'reducto'
 	| 'remoet'
-	| 'replicate'
 	| 'removebg'
+	| 'render'
+	| 'replicate'
 	| 'replicate'
 	| 'replyio'
 	| 'resend'
 	| 'retailed'
+	| 'retellai'
 	| 'revai'
 	| 'rootly'
 	| 'runpod'
@@ -1187,6 +1238,7 @@ export type AllProviders =
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'
+	| 'snowflake'
 	| 'sourcegraph'
 	| 'spoki'
 	| 'spotify'
@@ -1197,8 +1249,8 @@ export type AllProviders =
 	| 'studiobyai21labs'
 	| 'supabase'
 	| 'supadata'
-	| 'suzanne'
 	| 'surf'
+	| 'suzanne'
 	| 'synthflowai'
 	| 'tally'
 	| 'tavily'
@@ -1206,12 +1258,13 @@ export type AllProviders =
 	| 'teams'
 	| 'telegram'
 	| 'textrazor'
+	| 'ticketmaster'
 	| 'ticktick'
 	| 'tikhub'
 	| 'timecamp'
 	| 'timelink'
-	| 'tinypng'
 	| 'tinyfish'
+	| 'tinypng'
 	| 'tinyurl'
 	| 'tisane'
 	| 'todoist'
@@ -1251,6 +1304,8 @@ export type AllProviders =
 	| 'witai'
 	| 'wix'
 	| 'wiza'
+	| 'woodpeckerco'
+	| 'workable'
 	| 'workday'
 	| 'workiom'
 	| 'worldnewsapi'
@@ -1262,6 +1317,7 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zenserp'
 	| 'zohobigin'
+	| 'zohodesk'
 	| 'zohoinventory'
 	| 'zohomail'
 	| 'zoom'
