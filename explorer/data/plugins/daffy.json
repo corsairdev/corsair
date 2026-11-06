@@ -102,14 +102,14 @@
           },
           {
             "key": "note",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Public donation note."
           },
           {
             "key": "scheduled_donation_id",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Scheduled donation ID."
           },
           {
@@ -126,14 +126,14 @@
           },
           {
             "key": "mailed_at",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Donation mailed timestamp."
           },
           {
             "key": "non_profit",
             "optional": false,
-            "type": "{ ein: string, name: string, website?: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo?: string | null, cause_id?: number, cause?: { id: number, name: string, logo?: string | null, color: string }, causes?: { id: number, name: string, logo?: string | null, color: string }[] }",
+            "type": "{ ein: string, name: string, website: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo: string | null, cause_id?: number, cause?: { id: number, name: string, logo: string | null, color: string }, causes?: { id: number, name: string, logo: string | null, color: string }[] }",
             "description": "Recipient nonprofit."
           },
           {
@@ -145,7 +145,7 @@
           {
             "key": "user",
             "optional": true,
-            "type": "{ id: number, name: string, avatar?: string | null, slug: string, city?: string | null }",
+            "type": "{ id: number, name: string, avatar: string | null, slug: string, city: string | null }",
             "description": "Donating user."
           }
         ]
@@ -207,7 +207,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ units: number, type: string, status: string, valuation: number, currency: string, frequency: string, created_at: string, received_at?: string | null, completed_at?: string | null, id: number }[]",
+            "type": "{ units: number, type: string, status: string, valuation: number, currency: string, frequency: string, created_at: string, received_at: string | null, completed_at: string | null, id: number }[]",
             "description": "Page of returned records."
           },
           {
@@ -268,14 +268,14 @@
           },
           {
             "key": "note",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Public donation note."
           },
           {
             "key": "scheduled_donation_id",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Scheduled donation ID."
           },
           {
@@ -292,14 +292,14 @@
           },
           {
             "key": "mailed_at",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Donation mailed timestamp."
           },
           {
             "key": "non_profit",
             "optional": false,
-            "type": "{ ein: string, name: string, website?: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo?: string | null, cause_id?: number, cause?: { id: number, name: string, logo?: string | null, color: string }, causes?: { id: number, name: string, logo?: string | null, color: string }[] }",
+            "type": "{ ein: string, name: string, website: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo: string | null, cause_id?: number, cause?: { id: number, name: string, logo: string | null, color: string }, causes?: { id: number, name: string, logo: string | null, color: string }[] }",
             "description": "Recipient nonprofit."
           },
           {
@@ -311,7 +311,7 @@
           {
             "key": "user",
             "optional": true,
-            "type": "{ id: number, name: string, avatar?: string | null, slug: string, city?: string | null }",
+            "type": "{ id: number, name: string, avatar: string | null, slug: string, city: string | null }",
             "description": "Donating user."
           }
         ]
@@ -338,7 +338,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: number, amount?: number, user_id?: number, status: string, note?: string | null, scheduled_donation_id?: number | null, visibility?: string, created_at: string, mailed_at?: string | null, non_profit: { ein: string, name: string, website?: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo?: string | null, cause_id?: number, cause?: { id: number, name: string, logo?: string | null, color: string }, causes?: { id: number, name: string, logo?: string | null, color: string }[] }, fund?: { id: number, name: string }, user?: { id: number, name: string, avatar?: string | null, slug: string, city?: string | null } }[]",
+            "type": "{ id: number, amount?: number, user_id?: number, status: string, note: string | null, scheduled_donation_id?: number | null, visibility?: string, created_at: string, mailed_at: string | null, non_profit: { ein: string, name: string, website: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo: string | null, cause_id?: number, cause?: { id: number, name: string, logo: string | null, color: string }, causes?: { id: number, name: string, logo: string | null, color: string }[] }, fund?: { id: number, name: string }, user?: { id: number, name: string, avatar: string | null, slug: string, city: string | null } }[]",
             "description": "Page of returned records."
           },
           {
@@ -382,8 +382,8 @@
           },
           {
             "key": "avatar",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "User avatar URL."
           },
           {
@@ -394,8 +394,8 @@
           },
           {
             "key": "cover_image",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "User cover image URL."
           },
           {
@@ -407,7 +407,7 @@
           {
             "key": "current_fund",
             "optional": false,
-            "type": "{ id: number, name: string, summary: string, causes: { id: number, name: string, logo?: string | null, color: string }[], users: { id: number, name: string, avatar?: string | null, slug: string }[] }",
+            "type": "{ id: number, name: string, summary: string, causes: { id: number, name: string, logo: string | null, color: string }[], users: { id: number, name: string, avatar: string | null, slug: string }[] }",
             "description": "Current donor-advised fund."
           },
           {
@@ -448,7 +448,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, name: string, logo?: string | null, color: string }[]"
+        "type": "{ id: number, name: string, logo: string | null, color: string }[]"
       }
     },
     {
@@ -477,7 +477,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: number, amount?: number, user_id?: number, status: string, note?: string | null, scheduled_donation_id?: number | null, visibility?: string, created_at: string, mailed_at?: string | null, non_profit: { ein: string, name: string, website?: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo?: string | null, cause_id?: number, cause?: { id: number, name: string, logo?: string | null, color: string }, causes?: { id: number, name: string, logo?: string | null, color: string }[] }, fund?: { id: number, name: string }, user?: { id: number, name: string, avatar?: string | null, slug: string, city?: string | null } }[]",
+            "type": "{ id: number, amount?: number, user_id?: number, status: string, note: string | null, scheduled_donation_id?: number | null, visibility?: string, created_at: string, mailed_at: string | null, non_profit: { ein: string, name: string, website: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo: string | null, cause_id?: number, cause?: { id: number, name: string, logo: string | null, color: string }, causes?: { id: number, name: string, logo: string | null, color: string }[] }, fund?: { id: number, name: string }, user?: { id: number, name: string, avatar: string | null, slug: string, city: string | null } }[]",
             "description": "Page of returned records."
           },
           {
@@ -515,8 +515,8 @@
           },
           {
             "key": "avatar",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "User avatar URL."
           },
           {
@@ -527,8 +527,8 @@
           },
           {
             "key": "cover_image",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "User cover image URL."
           },
           {
@@ -540,7 +540,7 @@
           {
             "key": "current_fund",
             "optional": false,
-            "type": "{ id: number, name: string, summary: string, causes: { id: number, name: string, logo?: string | null, color: string }[], users: { id: number, name: string, avatar?: string | null, slug: string }[] }",
+            "type": "{ id: number, name: string, summary: string, causes: { id: number, name: string, logo: string | null, color: string }[], users: { id: number, name: string, avatar: string | null, slug: string }[] }",
             "description": "Current donor-advised fund."
           },
           {
@@ -601,8 +601,8 @@
           },
           {
             "key": "message",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Gift message."
           },
           {
@@ -613,8 +613,8 @@
           },
           {
             "key": "ein",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Associated nonprofit EIN."
           },
           {
@@ -688,8 +688,8 @@
           },
           {
             "key": "message",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Gift message."
           },
           {
@@ -700,8 +700,8 @@
           },
           {
             "key": "ein",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Associated nonprofit EIN."
           },
           {
@@ -764,7 +764,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ name: string, amount: number, message?: string | null, code: string, ein?: string | null, seen: boolean, status: new | accepted | denied | claimed, updated_at: string, created_at: string, claimed: boolean, url: string }[]",
+            "type": "{ name: string, amount: number, message: string | null, code: string, ein: string | null, seen: boolean, status: new | accepted | denied | claimed, updated_at: string, created_at: string, claimed: boolean, url: string }[]",
             "description": "Page of returned records."
           },
           {
@@ -808,8 +808,8 @@
           },
           {
             "key": "website",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Organization website URL."
           },
           {
@@ -839,31 +839,31 @@
           {
             "key": "latitude",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Organization latitude."
           },
           {
             "key": "longitude",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Organization longitude."
           },
           {
             "key": "logo",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "Organization logo URL."
           },
           {
             "key": "cause",
             "optional": false,
-            "type": "{ id: number, name: string, logo?: string | null, color: string }",
+            "type": "{ id: number, name: string, logo: string | null, color: string }",
             "description": "Primary charitable cause."
           },
           {
             "key": "causes",
             "optional": false,
-            "type": "{ id: number, name: string, logo?: string | null, color: string }[]",
+            "type": "{ id: number, name: string, logo: string | null, color: string }[]",
             "description": "All charitable causes."
           }
         ]
@@ -900,7 +900,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ ein: string, name: string, website?: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo?: string | null, cause: { id: number, name: string, logo?: string | null, color: string }, causes: { id: number, name: string, logo?: string | null, color: string }[] }[]",
+            "type": "{ ein: string, name: string, website: string | null, city: string, state: string, public_path: string, public_url: string, latitude?: number | null, longitude?: number | null, logo: string | null, cause: { id: number, name: string, logo: string | null, color: string }, causes: { id: number, name: string, logo: string | null, color: string }[] }[]",
             "description": "Page of returned records."
           },
           {

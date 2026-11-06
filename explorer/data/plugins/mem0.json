@@ -45,66 +45,66 @@
           {
             "key": "event_type",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "ADD, SEARCH, DELETE_ALL and so on."
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "PENDING, RUNNING, FAILED or SUCCEEDED."
           },
           {
             "key": "payload",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "results",
             "optional": true,
-            "type": "any[] | {}",
+            "type": "any[] | Record<string, any> | null",
             "description": "An array for ADD, SEARCH and GET_ALL, one object for UPDATE, and null for a delete."
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "started_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "latency",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Processing time in milliseconds."
           },
           {
             "key": "graph_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -141,18 +141,18 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id: string, event_type?: string | null, status?: string | null, payload?: {} | null, metadata?: {} | null, results?: any[] | {} | null, created_at?: string | null, updated_at?: string | null, started_at?: string | null, completed_at?: string | null, latency?: number | null, graph_status?: string | null, error?: string | null }[]"
+            "type": "{ id: string, event_type?: string | null, status?: string | null, payload?: Record<string, any> | null, metadata?: Record<string, any> | null, results?: any[] | Record<string, any> | null, created_at?: string | null, updated_at?: string | null, started_at?: string | null, completed_at?: string | null, latency?: number | null, graph_status?: string | null, error?: string | null }[]"
           }
         ]
       }
@@ -198,7 +198,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Custom key/value metadata attached to each memory."
           },
           {
@@ -251,24 +251,24 @@
           {
             "key": "event_id",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Poll this with events.get."
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "PENDING when extraction is queued, SUCCEEDED when `infer` was false."
           },
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": true,
-            "type": "{ id?: string | null, data?: {} | null, event?: string | null }[]"
+            "type": "{ id?: string | null, data?: Record<string, any> | null, event?: string | null }[] | null"
           }
         ]
       }
@@ -300,7 +300,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "count",
@@ -338,7 +338,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "count",
@@ -387,12 +387,12 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cascade_count",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Only present when `delete_linked` was true."
           }
         ]
@@ -445,7 +445,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Only memories whose metadata matches these keys. Values must be strings, numbers or booleans, because null and undefined reach the wire as no key at all."
           }
         ]
@@ -461,12 +461,12 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "event_id",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Mem0 queues the deletion and answers immediately."
           }
         ]
@@ -504,59 +504,59 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "agent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "app_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "session_id",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "List returns the run as `session_id`; search returns the same value as `run_id`."
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "structured_attributes",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "System-derived breakdown of the creation time."
           },
           {
             "key": "replaced_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "synthesized",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "lifecycle_state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expiration_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -566,7 +566,7 @@
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -593,7 +593,7 @@
           {
             "key": "history",
             "optional": false,
-            "type": "{ id: string, memory_id: string, input?: { role?: string | null, content?: string | null }[] | null, old_memory?: string | null, new_memory?: string | null, user_id?: string | null, agent_id?: string | null, app_id?: string | null, session_id?: string | null, categories?: string[] | null, event?: string | null, metadata?: {} | null, created_at?: string | null, updated_at?: string | null }[]"
+            "type": "{ id: string, memory_id: string, input?: { role?: string | null, content?: string | null }[] | null, old_memory?: string | null, new_memory?: string | null, user_id?: string | null, agent_id?: string | null, app_id?: string | null, session_id?: string | null, categories?: string[] | null, event?: string | null, metadata?: Record<string, any> | null, created_at?: string | null, updated_at?: string | null }[]"
           }
         ]
       }
@@ -609,7 +609,7 @@
           {
             "key": "filters",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard."
           },
           {
@@ -673,19 +673,19 @@
           },
           {
             "key": "next",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "URL of the next page, or null on the last page."
           },
           {
             "key": "previous",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "results",
             "optional": false,
-            "type": "{ id?: string, memory?: string, user_id?: string | null, agent_id?: string | null, app_id?: string | null, session_id?: string | null, metadata?: {} | null, categories?: string[] | null, structured_attributes?: {} | null, replaced_by?: string | null, synthesized?: boolean | null, lifecycle_state?: string | null, expiration_date?: string | null, created_at?: string, updated_at?: string | null }[]"
+            "type": "{ id?: string, memory?: string, user_id?: string | null, agent_id?: string | null, app_id?: string | null, session_id?: string | null, metadata?: Record<string, any> | null, categories?: string[] | null, structured_attributes?: Record<string, any> | null, replaced_by?: string | null, synthesized?: boolean | null, lifecycle_state?: string | null, expiration_date?: string | null, created_at?: string, updated_at?: string | null }[]"
           }
         ]
       }
@@ -707,7 +707,7 @@
           {
             "key": "filters",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard."
           },
           {
@@ -760,7 +760,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ id?: string, memory?: string, score?: number | null, score_breakdown?: { semantic?: number | null, bm25?: number | null, entity?: number | null } | null, user_id?: string | null, agent_id?: string | null, app_id?: string | null, run_id?: string | null, metadata?: {} | null, categories?: string[] | null, expiration_date?: string | null, created_at?: string, updated_at?: string | null }[]"
+            "type": "{ id?: string, memory?: string, score?: number | null, score_breakdown?: { semantic?: number | null, bm25?: number | null, entity?: number | null } | null, user_id?: string | null, agent_id?: string | null, app_id?: string | null, run_id?: string | null, metadata?: Record<string, any> | null, categories?: string[] | null, expiration_date?: string | null, created_at?: string, updated_at?: string | null }[]"
           }
         ]
       }
@@ -788,7 +788,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Replacement metadata."
           },
           {
@@ -815,59 +815,59 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "agent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "app_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "session_id",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "List returns the run as `session_id`; search returns the same value as `run_id`."
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "structured_attributes",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any> | null",
             "description": "System-derived breakdown of the creation time."
           },
           {
             "key": "replaced_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "synthesized",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "lifecycle_state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expiration_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -877,7 +877,7 @@
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -911,7 +911,7 @@
           {
             "key": "event_types",
             "optional": false,
-            "type": "memory_add | memory_update | memory_delete | memory_categorize | ingest_job_completed | ingest_job_partially_completed | ingest_job_failed | ingest_job_cancelled[]",
+            "type": "(memory_add | memory_update | memory_delete | memory_categorize | ingest_job_completed | ingest_job_partially_completed | ingest_job_failed | ingest_job_cancelled)[]",
             "description": "Events to subscribe to. Mem0 requires this: omitting it does not fall back to a default."
           },
           {
@@ -933,44 +933,44 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "event_types",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "owner",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Username of the account that created the webhook."
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Name of the project the webhook belongs to."
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1007,7 +1007,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1068,7 +1068,7 @@
           {
             "key": "event_types",
             "optional": true,
-            "type": "memory_add | memory_update | memory_delete | memory_categorize | ingest_job_completed | ingest_job_partially_completed | ingest_job_failed | ingest_job_cancelled[]",
+            "type": "(memory_add | memory_update | memory_delete | memory_categorize | ingest_job_completed | ingest_job_partially_completed | ingest_job_failed | ingest_job_cancelled)[]",
             "description": "The new event subscription list, replacing the old one."
           }
         ]
@@ -1089,7 +1089,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook",

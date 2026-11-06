@@ -185,12 +185,12 @@
           {
             "key": "will_train_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_trained_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_training_duration_secs",
@@ -915,12 +915,12 @@
           {
             "key": "entities",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { id?: string, name?: string, role?: string, start?: number, end?: number, body?: string, confidence?: number, entities?: any[], value?: any, type?: string }[]>"
           },
           {
             "key": "traits",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { id?: string, value: string, confidence?: number }[]>"
           }
         ]
       }
@@ -1279,7 +1279,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { name: string, locale?: string, gender?: string, styles?: { name: string, speed?: string[], pitch?: string[] }[], supported_features?: string[] }[]>"
       }
     }
   ],

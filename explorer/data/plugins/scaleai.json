@@ -79,7 +79,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -119,7 +119,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -175,7 +175,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -231,7 +231,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -338,7 +338,7 @@
           {
             "key": "docs",
             "optional": false,
-            "type": "{ name: string, project?: string, status?: string, created_at?: string, completed_at?: string, callback?: string, metadata?: {} }[]"
+            "type": "{ name: string, project?: string, status?: string, created_at?: string, completed_at?: string, callback?: string, metadata?: Record<string, any> }[]"
           },
           {
             "key": "totalDocs",
@@ -379,7 +379,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "limit",
@@ -409,7 +409,7 @@
           {
             "key": "next_token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -450,7 +450,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -511,7 +511,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -567,7 +567,7 @@
           {
             "key": "param_history",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "created_at",
@@ -599,7 +599,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ type?: string, name: string, param_history?: {}[], created_at?: string, archived?: boolean }[]"
+        "type": "{ type?: string, name: string, param_history?: Record<string, any>[], created_at?: string, archived?: boolean }[]"
       }
     },
     {
@@ -618,7 +618,7 @@
           {
             "key": "ontology",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -638,7 +638,7 @@
           {
             "key": "param_history",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "created_at",
@@ -694,7 +694,7 @@
           {
             "key": "param_history",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "created_at",
@@ -756,7 +756,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -770,7 +770,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -784,7 +784,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -809,7 +809,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -823,7 +823,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -843,7 +843,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -907,7 +907,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -932,17 +932,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -952,7 +952,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -998,7 +998,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "priority",
@@ -1028,7 +1028,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{}[] | {}"
+            "type": "Record<string, any>[] | Record<string, any>"
           }
         ]
       },
@@ -1073,7 +1073,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -1098,17 +1098,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -1118,7 +1118,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1164,7 +1164,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "priority",
@@ -1189,12 +1189,12 @@
           {
             "key": "geometries",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "annotation_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1239,7 +1239,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -1264,17 +1264,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -1284,7 +1284,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1330,7 +1330,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "priority",
@@ -1355,12 +1355,12 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "(string | {})[]"
+            "type": "(string | Record<string, any>)[]"
           },
           {
             "key": "annotation_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1405,7 +1405,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -1430,17 +1430,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -1450,7 +1450,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1496,7 +1496,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "priority",
@@ -1521,7 +1521,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "(string | {})[]"
+            "type": "(string | Record<string, any>)[]"
           }
         ]
       },
@@ -1566,7 +1566,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -1591,17 +1591,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -1611,7 +1611,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1657,7 +1657,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "priority",
@@ -1677,12 +1677,12 @@
           {
             "key": "attachments",
             "optional": true,
-            "type": "(string | {})[]"
+            "type": "(string | Record<string, any>)[]"
           },
           {
             "key": "labels",
             "optional": false,
-            "type": "(string | {})[]"
+            "type": "(string | Record<string, any>)[]"
           }
         ]
       },
@@ -1727,7 +1727,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -1752,17 +1752,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -1772,7 +1772,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1818,7 +1818,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "priority",
@@ -1838,7 +1838,7 @@
           {
             "key": "labels",
             "optional": false,
-            "type": "(string | {})[]"
+            "type": "(string | Record<string, any>)[]"
           },
           {
             "key": "allow_unlabeled",
@@ -1888,7 +1888,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -1913,17 +1913,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -1933,7 +1933,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1979,7 +1979,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "priority",
@@ -1994,12 +1994,12 @@
           {
             "key": "attachments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "fields",
             "optional": false,
-            "type": "{}[] | {}"
+            "type": "Record<string, any>[] | Record<string, any>"
           }
         ]
       },
@@ -2044,7 +2044,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -2069,17 +2069,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -2089,7 +2089,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2135,7 +2135,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "priority",
@@ -2165,12 +2165,12 @@
           {
             "key": "geometries",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "annotation_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "events_to_annotate",
@@ -2220,7 +2220,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -2245,17 +2245,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -2265,7 +2265,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2311,7 +2311,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "priority",
@@ -2336,12 +2336,12 @@
           {
             "key": "geometries",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "annotation_attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2386,7 +2386,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -2411,17 +2411,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -2431,7 +2431,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2497,7 +2497,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -2522,17 +2522,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -2542,7 +2542,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2603,7 +2603,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -2628,17 +2628,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -2648,7 +2648,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2709,7 +2709,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -2734,17 +2734,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -2754,7 +2754,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2815,7 +2815,7 @@
           {
             "key": "customer_review_status",
             "optional": true,
-            "type": "accepted | fixed | commented | rejected | pending | accepted | fixed | commented | rejected | pending[]"
+            "type": "accepted | fixed | commented | rejected | pending | (accepted | fixed | commented | rejected | pending)[]"
           },
           {
             "key": "unique_id",
@@ -2885,7 +2885,7 @@
           {
             "key": "docs",
             "optional": false,
-            "type": "{ task_id: string, created_at?: string, updated_at?: string, completed_at?: string, type?: string, status?: string, instruction?: string, params?: {}, callback_url?: string, callback_completed?: boolean, project?: string, batch?: string, metadata?: {}, response?: {}, audits?: {}[], tags?: string[], unique_id?: string | null }[]"
+            "type": "{ task_id: string, created_at?: string, updated_at?: string, completed_at?: string, type?: string, status?: string, instruction?: string, params?: Record<string, any>, callback_url?: string, callback_completed?: boolean, project?: string, batch?: string, metadata?: Record<string, any>, response?: Record<string, any>, audits?: Record<string, any>[], tags?: string[], unique_id?: string | null }[]"
           },
           {
             "key": "total",
@@ -2915,7 +2915,7 @@
           {
             "key": "next_token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2962,7 +2962,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3007,7 +3007,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -3032,17 +3032,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -3052,7 +3052,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3118,7 +3118,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "callback_url",
@@ -3143,17 +3143,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "audits",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "tags",
@@ -3163,7 +3163,7 @@
           {
             "key": "unique_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

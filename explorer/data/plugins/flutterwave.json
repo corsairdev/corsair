@@ -1,7 +1,7 @@
 {
   "id": "flutterwave",
   "displayName": "Flutterwave",
-  "description": "Flutterwave plugin for Corsair",
+  "description": "Payments API for accepting charges and payment links, and managing transfers, beneficiaries, subaccounts, virtual accounts, subscriptions, settlements, refunds, bills, banks, and wallet balances.",
   "npmPackageName": "@corsair-dev/flutterwave",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -34,12 +34,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -59,7 +59,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -90,12 +90,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -115,7 +115,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -132,7 +132,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{ account_number: string, account_bank: string, query?: {}, body?: {} } | { query?: {}, body: { account_number: string, account_bank: string } }"
+        "type": "{ account_number: string, account_bank: string, query?: Record<string, string | number | boolean>, body?: Record<string, any> } | { query?: Record<string, string | number | boolean>, body: { account_number: string, account_bank: string } }"
       },
       "output": {
         "kind": "object",
@@ -150,7 +150,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -167,7 +167,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ body: { account_number: string, account_bank: string, beneficiary_name: string }, query?: {} } | { account_number: string, account_bank: string, beneficiary_name: string, query?: {}, body?: {} }"
+        "type": "{ body: { account_number: string, account_bank: string, beneficiary_name: string }, query?: Record<string, string | number | boolean> } | { account_number: string, account_bank: string, beneficiary_name: string, query?: Record<string, string | number | boolean>, body?: Record<string, any> }"
       },
       "output": {
         "kind": "object",
@@ -185,7 +185,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -211,12 +211,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -236,7 +236,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -262,12 +262,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -287,7 +287,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -313,12 +313,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -338,7 +338,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -364,12 +364,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -389,7 +389,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -420,12 +420,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -445,7 +445,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -471,12 +471,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -496,7 +496,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -557,12 +557,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -582,7 +582,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -613,12 +613,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -638,7 +638,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -655,7 +655,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ title: string, bulk_data: {}[], retry_strategy?: string, query?: {}, body?: {} } | { query?: {}, body: { title: string, bulk_data: {}[] } }"
+        "type": "{ title: string, bulk_data: Record<string, any>[], retry_strategy?: string, query?: Record<string, string | number | boolean>, body?: Record<string, any> } | { query?: Record<string, string | number | boolean>, body: { title: string, bulk_data: Record<string, any>[] } }"
       },
       "output": {
         "kind": "object",
@@ -673,7 +673,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -699,7 +699,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -719,7 +719,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -736,7 +736,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ body: { batch_ref: string, bulk_data: { firstname: string, lastname: string, email: string, bvn?: string, nin?: string }[], is_permanent?: boolean }, query?: {} } | { batch_ref: string, bulk_data: { firstname: string, lastname: string, email: string, bvn?: string, nin?: string }[], is_permanent?: boolean, query?: {}, body?: {} }"
+        "type": "{ body: { batch_ref: string, bulk_data: { firstname: string, lastname: string, email: string, bvn?: string, nin?: string }[], is_permanent?: boolean }, query?: Record<string, string | number | boolean> } | { batch_ref: string, bulk_data: { firstname: string, lastname: string, email: string, bvn?: string, nin?: string }[], is_permanent?: boolean, query?: Record<string, string | number | boolean>, body?: Record<string, any> }"
       },
       "output": {
         "kind": "object",
@@ -754,7 +754,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -780,12 +780,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -805,7 +805,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -831,12 +831,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -856,7 +856,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -902,12 +902,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -927,7 +927,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -944,7 +944,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ type: string, tx_ref: string, amount: string | number, currency: string, email: string, phone_number: string, query?: {}, body?: {} } | { type: string, query?: {}, body: { tx_ref: string, amount: string | number, currency: string, email: string, phone_number: string } }"
+        "type": "{ type: string, tx_ref: string, amount: string | number, currency: string, email: string, phone_number: string, query?: Record<string, string | number | boolean>, body?: Record<string, any> } | { type: string, query?: Record<string, string | number | boolean>, body: { tx_ref: string, amount: string | number, currency: string, email: string, phone_number: string } }"
       },
       "output": {
         "kind": "object",
@@ -962,7 +962,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -979,7 +979,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ tx_ref: string, amount: string | number, customer: { email: string, name?: string, phonenumber?: string } | string, currency?: string, redirect_url?: string, query?: {}, body?: {} } | { query?: {}, body: { tx_ref: string, amount: string | number, customer: { email: string, name?: string, phonenumber?: string } | string } }"
+        "type": "{ tx_ref: string, amount: string | number, customer: { email: string, name?: string, phonenumber?: string } | string, currency?: string, redirect_url?: string, query?: Record<string, string | number | boolean>, body?: Record<string, any> } | { query?: Record<string, string | number | boolean>, body: { tx_ref: string, amount: string | number, customer: { email: string, name?: string, phonenumber?: string } | string } }"
       },
       "output": {
         "kind": "object",
@@ -997,7 +997,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1023,12 +1023,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1048,7 +1048,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1074,12 +1074,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1099,7 +1099,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1116,7 +1116,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ amount: string | number, name: string, interval: string, query?: {}, body?: {} } | { query?: {}, body: { amount: string | number, name: string, interval: string } }"
+        "type": "{ amount: string | number, name: string, interval: string, query?: Record<string, string | number | boolean>, body?: Record<string, any> } | { query?: Record<string, string | number | boolean>, body: { amount: string | number, name: string, interval: string } }"
       },
       "output": {
         "kind": "object",
@@ -1134,7 +1134,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1160,12 +1160,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1185,7 +1185,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1241,12 +1241,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1266,7 +1266,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1302,12 +1302,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1327,7 +1327,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1358,12 +1358,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1383,7 +1383,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1424,12 +1424,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1449,7 +1449,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1480,12 +1480,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1505,7 +1505,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1531,12 +1531,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1556,7 +1556,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1607,12 +1607,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1632,7 +1632,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1678,12 +1678,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1703,7 +1703,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1720,7 +1720,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ account_bank: string, account_number: string, business_name: string, split_value: number, country: string, business_mobile: string, query?: {}, body?: {} } | { query?: {}, body: { account_bank: string, account_number: string, business_name: string, split_value: number, country: string, business_mobile: string } }"
+        "type": "{ account_bank: string, account_number: string, business_name: string, split_value: number, country: string, business_mobile: string, query?: Record<string, string | number | boolean>, body?: Record<string, any> } | { query?: Record<string, string | number | boolean>, body: { account_bank: string, account_number: string, business_name: string, split_value: number, country: string, business_mobile: string } }"
       },
       "output": {
         "kind": "object",
@@ -1738,7 +1738,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1764,12 +1764,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1789,7 +1789,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1815,12 +1815,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1840,7 +1840,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1881,12 +1881,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1906,7 +1906,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -1942,12 +1942,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1967,7 +1967,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2033,12 +2033,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2058,7 +2058,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2089,12 +2089,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2114,7 +2114,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2140,12 +2140,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2165,7 +2165,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2206,12 +2206,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2231,7 +2231,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2287,12 +2287,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2312,7 +2312,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2338,12 +2338,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2363,7 +2363,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2389,12 +2389,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2414,7 +2414,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2450,12 +2450,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2475,7 +2475,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2511,12 +2511,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2536,7 +2536,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2582,12 +2582,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2607,7 +2607,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2624,7 +2624,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ bvn: string, firstname: string, lastname: string, redirect_url?: string, query?: {}, body?: {} } | { query?: {}, body: { bvn: string, firstname: string, lastname: string } }"
+        "type": "{ bvn: string, firstname: string, lastname: string, redirect_url?: string, query?: Record<string, string | number | boolean>, body?: Record<string, any> } | { query?: Record<string, string | number | boolean>, body: { bvn: string, firstname: string, lastname: string } }"
       },
       "output": {
         "kind": "object",
@@ -2642,7 +2642,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2659,7 +2659,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ email: string, firstname: string, lastname: string, tx_ref?: string, amount?: string | number, narration?: string, query?: {}, body?: {} } | { query?: {}, body: { email: string, firstname: string, lastname: string } }"
+        "type": "{ email: string, firstname: string, lastname: string, tx_ref?: string, amount?: string | number, narration?: string, query?: Record<string, string | number | boolean>, body?: Record<string, any> } | { query?: Record<string, string | number | boolean>, body: { email: string, firstname: string, lastname: string } }"
       },
       "output": {
         "kind": "object",
@@ -2677,7 +2677,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2703,12 +2703,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2728,7 +2728,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2754,12 +2754,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2779,7 +2779,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2825,12 +2825,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2850,7 +2850,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
@@ -2871,12 +2871,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2896,7 +2896,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",

@@ -124,7 +124,7 @@
           {
             "key": "redir",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -155,7 +155,7 @@
           {
             "key": "alexa_rank",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "current_dns",
@@ -206,7 +206,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ max_page?: number, page?: number, total_pages?: number, query?: {} }"
+            "type": "{ max_page?: number, page?: number, total_pages?: number, query?: Record<string, any> }"
           },
           {
             "key": "record_count",
@@ -216,7 +216,7 @@
           {
             "key": "records",
             "optional": true,
-            "type": "{ dns_names?: string[], fingerprints?: { sha1?: string, sha256?: string }, issuer?: { common_name?: string, country?: string[], organization?: string[] }, subject?: {}, not_after?: number | null, not_before?: number | null, serial_number?: string }[]"
+            "type": "{ dns_names?: string[], fingerprints?: { sha1?: string, sha256?: string }, issuer?: { common_name?: string, country?: string[], organization?: string[] }, subject?: Record<string, any>, not_after?: number | null, not_before?: number | null, serial_number?: string }[]"
           }
         ]
       }
@@ -344,7 +344,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ params?: {} | null, counts?: { total?: number | null, returned?: number } | null, pagination?: { next_cursor?: string | null, limit?: number, total?: number | null, sort?: string[][] | null } | null, request_id?: string | null }"
+            "type": "{ params?: Record<string, any> | null, counts?: { total?: number | null, returned?: number } | null, pagination?: { next_cursor?: string | null, limit?: number, total?: number | null, sort?: string[][] | null } | null, request_id?: string | null } | null"
           },
           {
             "key": "complete",
@@ -385,7 +385,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ params?: {} | null, counts?: { total?: number | null, returned?: number } | null, pagination?: { next_cursor?: string | null, limit?: number, total?: number | null, sort?: string[][] | null } | null, request_id?: string | null }"
+            "type": "{ params?: Record<string, any> | null, counts?: { total?: number | null, returned?: number } | null, pagination?: { next_cursor?: string | null, limit?: number, total?: number | null, sort?: string[][] | null } | null, request_id?: string | null }"
           }
         ]
       }
@@ -407,7 +407,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -441,7 +441,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -451,7 +451,7 @@
           {
             "key": "records",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -482,7 +482,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total",
@@ -492,7 +492,7 @@
           {
             "key": "records",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }

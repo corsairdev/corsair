@@ -62,13 +62,13 @@
           },
           {
             "key": "approval",
-            "optional": true,
-            "type": "{ to: string, from?: string, data: string, value: string, chainId: number, gasLimit?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, gasPrice?: string }"
+            "optional": false,
+            "type": "{ to: string, from?: string, data: string, value: string, chainId: number, gasLimit?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, gasPrice?: string } | null"
           },
           {
             "key": "cancel",
             "optional": true,
-            "type": "{ to: string, from?: string, data: string, value: string, chainId: number, gasLimit?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, gasPrice?: string }"
+            "type": "{ to: string, from?: string, data: string, value: string, chainId: number, gasLimit?: string, maxFeePerGas?: string, maxPriorityFeePerGas?: string, gasPrice?: string } | null"
           },
           {
             "key": "gasFee",
@@ -116,7 +116,7 @@
           {
             "key": "delegationDetails",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, Record<string, { isWalletDelegatedToUniswap: boolean, currentDelegationAddress: string | null, latestDelegationAddress: string }>>"
           }
         ]
       }
@@ -298,12 +298,12 @@
           {
             "key": "quote",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "permitData",
-            "optional": true,
-            "type": "{}"
+            "optional": false,
+            "type": "Record<string, any> | null"
           },
           {
             "key": "quoteId",
@@ -353,7 +353,7 @@
           {
             "key": "route",
             "optional": true,
-            "type": "{}[][]"
+            "type": "Record<string, any>[][]"
           },
           {
             "key": "routeString",
@@ -374,7 +374,7 @@
           {
             "key": "quote",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "The quote object returned from /v1/quote"
           },
           {
@@ -386,7 +386,7 @@
           {
             "key": "permitData",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Permit2 message from the quote; must be sent together with its signature"
           },
           {
@@ -507,7 +507,7 @@
           {
             "key": "tokens",
             "optional": false,
-            "type": "{ address: string, chainId: number, name: string, symbol: string, decimals: number, project?: { logo?: {} | null, safetyLevel?: string, isSpam?: boolean }, isSpam?: boolean }[]"
+            "type": "{ address: string, chainId: number, name: string, symbol: string, decimals: number, project?: { logo?: Record<string, any> | null, safetyLevel?: string, isSpam?: boolean }, isSpam?: boolean }[]"
           }
         ]
       }
@@ -730,6 +730,11 @@
           "field": "chainId",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },

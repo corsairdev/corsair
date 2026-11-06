@@ -33,8 +33,9 @@
           },
           {
             "key": "first",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10."
           },
           {
             "key": "after",
@@ -49,7 +50,7 @@
           {
             "key": "post",
             "optional": false,
-            "type": "{ comments: { edges: { node: { id: string, content: { html?: string, markdown?: string, text?: string }, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, totalReactions: number, dateAdded: string }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } } }"
+            "type": "{ comments: { edges: { node: { id: string, content: { html?: string, markdown?: string, text?: string }, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, totalReactions: number, dateAdded: string }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor: string | null } } }"
           }
         ]
       }
@@ -172,7 +173,7 @@
           {
             "key": "deleteDraft",
             "optional": false,
-            "type": "{ draft?: { id: string } | null }"
+            "type": "{ draft: { id: string } | null }"
           }
         ]
       }
@@ -197,8 +198,8 @@
         "fields": [
           {
             "key": "draft",
-            "optional": true,
-            "type": "{ id: string, title?: string | null, subtitle?: string | null, slug?: string | null, content?: { markdown?: string, html?: string, text?: string } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, coverImage?: { url?: string | null, attribution?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, publication?: { id: string, title: string } | null, series?: { id: string, name: string, slug: string } | null, updatedAt: string, scheduledDate?: string | null, readTimeInMinutes?: number, isSubmittedForReview?: boolean }"
+            "optional": false,
+            "type": "{ id: string, title?: string | null, subtitle?: string | null, slug?: string | null, content?: { markdown?: string, html?: string, text?: string } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, coverImage?: { url?: string | null, attribution?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, publication?: { id: string, title: string } | null, series?: { id: string, name: string, slug: string } | null, updatedAt: string, scheduledDate?: string | null, readTimeInMinutes?: number, isSubmittedForReview?: boolean } | null"
           }
         ]
       }
@@ -335,8 +336,9 @@
         "fields": [
           {
             "key": "first",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10."
           },
           {
             "key": "after",
@@ -356,7 +358,7 @@
           {
             "key": "feed",
             "optional": false,
-            "type": "{ edges: { node: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } }"
+            "type": "{ edges: { node: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor: string | null } }"
           }
         ]
       }
@@ -382,7 +384,7 @@
           {
             "key": "createImageUploadURL",
             "optional": false,
-            "type": "{ presignedPost: { url: string, fields: {} } }"
+            "type": "{ presignedPost: { url: string, fields: Record<string, any> } }"
           }
         ]
       }
@@ -433,7 +435,7 @@
           {
             "key": "publication",
             "optional": false,
-            "type": "{ staticPage?: { id: string, title: string, slug: string, content?: { html?: string, markdown?: string, text?: string } | null, hidden?: boolean, ogMetaData?: { image?: string | null } | null, seo?: { title?: string | null, description?: string | null } | null } | null }"
+            "type": "{ staticPage: { id: string, title: string, slug: string, content?: { html?: string, markdown?: string, text?: string } | null, hidden?: boolean, ogMetaData?: { image?: string | null } | null, seo?: { title?: string | null, description?: string | null } | null } | null }"
           }
         ]
       }
@@ -453,8 +455,9 @@
           },
           {
             "key": "first",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10."
           },
           {
             "key": "after",
@@ -469,7 +472,7 @@
           {
             "key": "publication",
             "optional": false,
-            "type": "{ staticPages: { edges: { node: { id: string, title: string, slug: string, content?: { html?: string, markdown?: string, text?: string } | null, hidden?: boolean, ogMetaData?: { image?: string | null } | null, seo?: { title?: string | null, description?: string | null } | null }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } } }"
+            "type": "{ staticPages: { edges: { node: { id: string, title: string, slug: string, content?: { html?: string, markdown?: string, text?: string } | null, hidden?: boolean, ogMetaData?: { image?: string | null } | null, seo?: { title?: string | null, description?: string | null } | null }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor: string | null } } }"
           }
         ]
       }
@@ -494,8 +497,8 @@
         "fields": [
           {
             "key": "post",
-            "optional": true,
-            "type": "{ id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }"
+            "optional": false,
+            "type": "{ id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean } | null"
           }
         ]
       }
@@ -526,7 +529,7 @@
           {
             "key": "publication",
             "optional": false,
-            "type": "{ post?: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean } | null }"
+            "type": "{ post: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean } | null }"
           }
         ]
       }
@@ -546,8 +549,9 @@
           },
           {
             "key": "first",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10."
           },
           {
             "key": "after",
@@ -567,7 +571,7 @@
           {
             "key": "publication",
             "optional": false,
-            "type": "{ posts: { edges: { node: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null }, totalDocuments?: number } }"
+            "type": "{ posts: { edges: { node: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor: string | null }, totalDocuments?: number } }"
           }
         ]
       }
@@ -693,8 +697,9 @@
         "fields": [
           {
             "key": "first",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10."
           },
           {
             "key": "after",
@@ -719,7 +724,7 @@
           {
             "key": "searchPostsOfPublication",
             "optional": false,
-            "type": "{ edges: { node: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } }"
+            "type": "{ edges: { node: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor: string | null } }"
           }
         ]
       }
@@ -855,8 +860,8 @@
         "fields": [
           {
             "key": "publication",
-            "optional": true,
-            "type": "{ id: string, title: string, displayTitle?: string | null, url?: string | null, favicon?: string | null, about?: { text?: string | null, html?: string, markdown?: string } | null, seo?: { title?: string | null, description?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, ogMetaData?: { image?: string | null } | null, isTeam?: boolean, links?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, followersCount?: number | null }"
+            "optional": false,
+            "type": "{ id: string, title: string, displayTitle?: string | null, url?: string | null, favicon?: string | null, about?: { text?: string | null, html?: string, markdown?: string } | null, seo?: { title?: string | null, description?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, ogMetaData?: { image?: string | null } | null, isTeam?: boolean, links?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, followersCount?: number | null } | null"
           }
         ]
       }
@@ -871,8 +876,9 @@
         "fields": [
           {
             "key": "first",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10."
           },
           {
             "key": "after",
@@ -887,7 +893,7 @@
           {
             "key": "me",
             "optional": false,
-            "type": "{ publications: { edges: { node: { id: string, title: string, displayTitle?: string | null, url?: string | null, favicon?: string | null, about?: { text?: string | null, html?: string, markdown?: string } | null, seo?: { title?: string | null, description?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, ogMetaData?: { image?: string | null } | null, isTeam?: boolean, links?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, followersCount?: number | null }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } } }"
+            "type": "{ publications: { edges: { node: { id: string, title: string, displayTitle?: string | null, url?: string | null, favicon?: string | null, about?: { text?: string | null, html?: string, markdown?: string } | null, seo?: { title?: string | null, description?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, ogMetaData?: { image?: string | null } | null, isTeam?: boolean, links?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, followersCount?: number | null }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor: string | null } } }"
           }
         ]
       }
@@ -912,8 +918,8 @@
         "fields": [
           {
             "key": "series",
-            "optional": true,
-            "type": "{ id: string, name: string, slug: string, description?: { text?: string | null, html?: string, markdown?: string } | null, coverImage?: string | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null }"
+            "optional": false,
+            "type": "{ id: string, name: string, slug: string, description?: { text?: string | null, html?: string, markdown?: string } | null, coverImage?: string | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null } | null"
           }
         ]
       }
@@ -933,8 +939,9 @@
           },
           {
             "key": "first",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10."
           },
           {
             "key": "after",
@@ -949,7 +956,7 @@
           {
             "key": "publication",
             "optional": false,
-            "type": "{ seriesList: { edges: { node: { id: string, name: string, slug: string, description?: { text?: string | null, html?: string, markdown?: string } | null, coverImage?: string | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } } }"
+            "type": "{ seriesList: { edges: { node: { id: string, name: string, slug: string, description?: { text?: string | null, html?: string, markdown?: string } | null, coverImage?: string | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor: string | null } } }"
           }
         ]
       }
@@ -974,8 +981,8 @@
         "fields": [
           {
             "key": "tag",
-            "optional": true,
-            "type": "{ id: string, name: string, slug: string, tagline?: string | null, logo?: string | null, postsCount?: number, followersCount?: number }"
+            "optional": false,
+            "type": "{ id: string, name: string, slug: string, tagline?: string | null, logo?: string | null, postsCount?: number, followersCount?: number } | null"
           }
         ]
       }
@@ -1000,8 +1007,8 @@
         "fields": [
           {
             "key": "user",
-            "optional": true,
-            "type": "{ id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null }"
+            "optional": false,
+            "type": "{ id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null"
           }
         ]
       }

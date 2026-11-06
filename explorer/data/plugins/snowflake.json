@@ -155,7 +155,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "string | null[][]"
+            "type": "(string | null)[][]"
           },
           {
             "key": "stats",
@@ -226,7 +226,7 @@
           {
             "key": "bindings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { type: FIXED | REAL | DECFLOAT | TEXT | BINARY | BOOLEAN | DATE | TIME | TIMESTAMP_TZ | TIMESTAMP_LTZ | TIMESTAMP_NTZ, value: string }>"
           },
           {
             "key": "parameters",
@@ -281,7 +281,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "string | null[][]"
+            "type": "(string | null)[][]"
           },
           {
             "key": "stats",

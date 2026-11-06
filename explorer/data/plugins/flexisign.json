@@ -54,7 +54,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ list: { _id: string, name: string }[], meta: { total: number, limit: number, page: number, pages: number, previousPage?: number | null, nextPage?: number | null } }"
+            "type": "{ list: { _id: string, name: string }[], meta: { total: number, limit: number, page: number, pages: number, previousPage: number | null, nextPage: number | null } }"
           },
           {
             "key": "message",

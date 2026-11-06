@@ -44,27 +44,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subdomain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -170,7 +170,7 @@
           {
             "key": "custom_attributes",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -191,7 +191,7 @@
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -206,12 +206,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -302,12 +302,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -332,8 +332,8 @@
           },
           {
             "key": "parent_id",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       },
@@ -348,12 +348,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -369,7 +369,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -383,7 +383,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -407,7 +407,7 @@
           {
             "key": "employee",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -422,37 +422,37 @@
           {
             "key": "firstname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "draft | published | string"
+            "type": "draft | published | string | null"
           },
           {
             "key": "job_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "department_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "manager_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -488,37 +488,37 @@
           {
             "key": "firstname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "draft | published | string"
+            "type": "draft | published | string | null"
           },
           {
             "key": "job_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "department_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "manager_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -600,7 +600,7 @@
           {
             "key": "employee",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -615,37 +615,37 @@
           {
             "key": "firstname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "draft | published | string"
+            "type": "draft | published | string | null"
           },
           {
             "key": "job_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "department_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "manager_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -762,7 +762,7 @@
           {
             "key": "events",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -839,7 +839,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -889,7 +889,7 @@
           {
             "key": "roles",
             "optional": false,
-            "type": "ats.admin | ats.simple | ats.reviewer | hris.admin | hris.employee | hris.limited | workable.superadmin[]"
+            "type": "(ats.admin | ats.simple | ats.reviewer | hris.admin | hris.employee | hris.limited | workable.superadmin)[]"
           },
           {
             "key": "member_id",
@@ -899,7 +899,7 @@
           {
             "key": "collaboration_rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -914,27 +914,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "headline",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "roles",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "collaboration_rules",
@@ -1021,12 +1021,12 @@
           {
             "key": "roles",
             "optional": false,
-            "type": "ats.admin | ats.simple | ats.reviewer | hris.admin | hris.employee | hris.limited | workable.superadmin[]"
+            "type": "(ats.admin | ats.simple | ats.reviewer | hris.admin | hris.employee | hris.limited | workable.superadmin)[]"
           },
           {
             "key": "collaboration_rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -1041,27 +1041,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "headline",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "roles",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "collaboration_rules",
@@ -1082,7 +1082,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -1111,17 +1111,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jobs",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1167,7 +1167,7 @@
           {
             "key": "recruiters",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1203,7 +1203,7 @@
           {
             "key": "requisitions",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "paging",
@@ -1228,7 +1228,7 @@
           {
             "key": "stages",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1315,7 +1315,7 @@
           {
             "key": "subscriptions",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1342,7 +1342,7 @@
           {
             "key": "balances",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1362,7 +1362,7 @@
           {
             "key": "categories",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1378,7 +1378,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     }
   ],
@@ -1496,6 +1496,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "job_title",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1533,6 +1538,11 @@
         },
         {
           "field": "shortcode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

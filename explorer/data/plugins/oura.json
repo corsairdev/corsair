@@ -38,27 +38,27 @@
           {
             "key": "age",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "weight",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "biological_sex",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -99,7 +99,7 @@
           {
             "key": "next_token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -140,7 +140,7 @@
           {
             "key": "next_token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -181,7 +181,7 @@
           {
             "key": "next_token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

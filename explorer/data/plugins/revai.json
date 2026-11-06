@@ -1,7 +1,7 @@
 {
   "id": "revai",
-  "displayName": "RevAI",
-  "description": "RevAI plugin for Corsair",
+  "displayName": "Rev AI",
+  "description": "Speech-to-text API for submitting transcription jobs and retrieving job status and transcripts.",
   "npmPackageName": "@corsair-dev/revai",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -61,17 +61,17 @@
           {
             "key": "created_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completed_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
@@ -81,97 +81,97 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "media_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "callback_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transcriber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure_detail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stream_duration_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "delete_after_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "skip_diarization",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "skip_postprocessing",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "skip_punctuation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "remove_disfluencies",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "remove_atmospherics",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "filter_profanity",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "custom_vocabulary_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "speaker_channels_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "enable_multilingual",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -191,7 +191,7 @@
           },
           {
             "key": "accept",
-            "optional": false,
+            "optional": true,
             "type": "application/vnd.rev.transcript.v1.0+json | text/plain"
           }
         ]
@@ -247,17 +247,17 @@
           {
             "key": "created_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completed_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
@@ -267,97 +267,97 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "media_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "callback_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transcriber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "failure_detail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stream_duration_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "delete_after_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "skip_diarization",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "skip_postprocessing",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "skip_punctuation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "remove_disfluencies",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "remove_atmospherics",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "filter_profanity",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "custom_vocabulary_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "speaker_channels_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "enable_multilingual",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -380,6 +380,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "created_on",
           "type": "date",
           "operators": ["equals", "before", "after", "between"]
@@ -391,6 +396,11 @@
         },
         {
           "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

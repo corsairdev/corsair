@@ -878,7 +878,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2260,7 +2260,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }

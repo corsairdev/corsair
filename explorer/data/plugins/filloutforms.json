@@ -46,7 +46,7 @@
           {
             "key": "tables",
             "optional": false,
-            "type": "{ name: string, fields: { type: single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source, name: string, template: {} }[] }[]"
+            "type": "{ name: string, fields: { type: single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source, name: string, template: Record<string, any> }[] }[]"
           }
         ]
       },
@@ -66,7 +66,7 @@
           {
             "key": "tables",
             "optional": false,
-            "type": "{ id: string, name: string, order: number, primaryFieldId: string, fields: { id: string, name: string, type: string, template: {}, order: number }[], views: { id: string, name: string, type: string, config?: {} }[], url: string }[]"
+            "type": "{ id: string, name: string, order: number, primaryFieldId: string, fields: { id: string, name: string, type: string, template: Record<string, any>, order: number }[], views: { id: string, name: string, type: string, config?: Record<string, any> }[], url: string }[]"
           },
           {
             "key": "createdAt",
@@ -156,7 +156,7 @@
           {
             "key": "tables",
             "optional": false,
-            "type": "{ id: string, name: string, order: number, primaryFieldId: string, fields: { id: string, name: string, type: string, template: {}, order: number }[], views: { id: string, name: string, type: string, config?: {} }[], url: string }[]"
+            "type": "{ id: string, name: string, order: number, primaryFieldId: string, fields: { id: string, name: string, type: string, template: Record<string, any>, order: number }[], views: { id: string, name: string, type: string, config?: Record<string, any> }[], url: string }[]"
           },
           {
             "key": "createdAt",
@@ -212,7 +212,7 @@
           {
             "key": "template",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -237,7 +237,7 @@
           {
             "key": "template",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "order",
@@ -308,7 +308,7 @@
           {
             "key": "template",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -333,7 +333,7 @@
           {
             "key": "template",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "order",
@@ -379,27 +379,27 @@
           {
             "key": "calculations",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "urlParameters",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "scheduling",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "payments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "quiz",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -475,7 +475,7 @@
           {
             "key": "record",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -490,12 +490,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "createdAt",
@@ -576,12 +576,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "createdAt",
@@ -617,12 +617,12 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "sort",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "limit",
@@ -642,7 +642,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{ id: string, data: {}, fields: {}, createdAt: string, updatedAt: string }[]"
+            "type": "{ id: string, data: Record<string, any>, fields: Record<string, any>, createdAt: string, updatedAt: string }[]"
           },
           {
             "key": "total",
@@ -678,7 +678,7 @@
           {
             "key": "record",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -693,12 +693,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "createdAt",
@@ -729,7 +729,7 @@
           {
             "key": "submissions",
             "optional": false,
-            "type": "{ questions: { id: string, value: any }[], urlParameters?: { id: string, name: string, value: string }[], submissionTime?: string, lastUpdatedAt?: string, scheduling?: {}[], payments?: {}[], login?: {} }[]"
+            "type": "{ questions: { id: string, value: any }[], urlParameters?: { id: string, name: string, value: string }[], submissionTime?: string, lastUpdatedAt?: string, scheduling?: Record<string, any>[], payments?: Record<string, any>[], login?: Record<string, any> }[]"
           }
         ]
       },
@@ -739,7 +739,7 @@
           {
             "key": "submissions",
             "optional": false,
-            "type": "{ submissionId: string, submissionTime: string, lastUpdatedAt?: string, questions: { id: string, name: string, type: string, value: any }[], calculations?: { id: string, name: string, type: number | text | duration, value: string }[], urlParameters?: { id: string, name: string, value: string }[], scheduling?: {}[], payments?: {}[], quiz?: {}, login?: {} }[]"
+            "type": "{ submissionId: string, submissionTime: string, lastUpdatedAt?: string, questions: { id: string, name: string, type: string, value: any }[], calculations?: { id: string, name: string, type: number | text | duration, value: string }[], urlParameters?: { id: string, name: string, value: string }[], scheduling?: Record<string, any>[], payments?: Record<string, any>[], quiz?: Record<string, any>, login?: Record<string, any> }[]"
           }
         ]
       }
@@ -806,7 +806,7 @@
           {
             "key": "submission",
             "optional": false,
-            "type": "{ submissionId: string, submissionTime: string, lastUpdatedAt?: string, questions: { id: string, name: string, type: string, value: any }[], calculations?: { id: string, name: string, type: number | text | duration, value: string }[], urlParameters?: { id: string, name: string, value: string }[], scheduling?: {}[], payments?: {}[], quiz?: {}, login?: {} }"
+            "type": "{ submissionId: string, submissionTime: string, lastUpdatedAt?: string, questions: { id: string, name: string, type: string, value: any }[], calculations?: { id: string, name: string, type: number | text | duration, value: string }[], urlParameters?: { id: string, name: string, value: string }[], scheduling?: Record<string, any>[], payments?: Record<string, any>[], quiz?: Record<string, any>, login?: Record<string, any> }"
           }
         ]
       }
@@ -877,7 +877,7 @@
           {
             "key": "responses",
             "optional": false,
-            "type": "{ submissionId: string, submissionTime: string, lastUpdatedAt?: string, questions: { id: string, name: string, type: string, value: any }[], calculations?: { id: string, name: string, type: number | text | duration, value: string }[], urlParameters?: { id: string, name: string, value: string }[], scheduling?: {}[], payments?: {}[], quiz?: {}, login?: {} }[]"
+            "type": "{ submissionId: string, submissionTime: string, lastUpdatedAt?: string, questions: { id: string, name: string, type: string, value: any }[], calculations?: { id: string, name: string, type: number | text | duration, value: string }[], urlParameters?: { id: string, name: string, value: string }[], scheduling?: Record<string, any>[], payments?: Record<string, any>[], quiz?: Record<string, any>, login?: Record<string, any> }[]"
           },
           {
             "key": "totalResponses",
@@ -913,7 +913,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{ type: single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source, name: string, template: {} }[]"
+            "type": "{ type: single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source, name: string, template: Record<string, any> }[]"
           }
         ]
       },
@@ -943,12 +943,12 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{ id: string, name: string, type: string, template: {}, order: number }[]"
+            "type": "{ id: string, name: string, type: string, template: Record<string, any>, order: number }[]"
           },
           {
             "key": "views",
             "optional": false,
-            "type": "{ id: string, name: string, type: string, config?: {} }[]"
+            "type": "{ id: string, name: string, type: string, config?: Record<string, any> }[]"
           },
           {
             "key": "url",
@@ -1034,12 +1034,12 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{ id: string, name: string, type: string, template: {}, order: number }[]"
+            "type": "{ id: string, name: string, type: string, template: Record<string, any>, order: number }[]"
           },
           {
             "key": "views",
             "optional": false,
-            "type": "{ id: string, name: string, type: string, config?: {} }[]"
+            "type": "{ id: string, name: string, type: string, config?: Record<string, any> }[]"
           },
           {
             "key": "url",
@@ -1090,7 +1090,7 @@
           {
             "key": "events",
             "optional": false,
-            "type": "record.created | record.updated | record.deleted | table.created | table.updated | table.deleted | field.created | field.updated | field.deleted[]"
+            "type": "(record.created | record.updated | record.deleted | table.created | table.updated | table.deleted | field.created | field.updated | field.deleted)[]"
           },
           {
             "key": "tableId",

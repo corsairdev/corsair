@@ -37,8 +37,8 @@
           },
           {
             "key": "email",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "tier",
@@ -52,8 +52,8 @@
           },
           {
             "key": "subscription",
-            "optional": true,
-            "type": "{ name?: string | null, status: active | past_due, price: { amount: number, currency: string }, discount?: { percent_off?: number | null, amount_off?: number | null } | null, billing_interval?: month | year |  | null, current_period_end?: string | null, cancel_at_period_end: boolean }"
+            "optional": false,
+            "type": "{ name: string | null, status: active | past_due, price: { amount: number, currency: string }, discount: { percent_off: number | null, amount_off: number | null } | null, billing_interval: month | year | \"\" | null, current_period_end: string | null, cancel_at_period_end: boolean } | null"
           }
         ]
       }
@@ -181,8 +181,8 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -217,7 +217,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "{ message: string, code: string }"
+            "type": "{ message: string, code: string } | null"
           }
         ]
       }
@@ -356,12 +356,12 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, type: character | reference | voice | moodboard | brand_kit, name?: string | null, assets: { file_path: string, media_kind: IMAGE | VIDEO | AUDIO, is_primary: boolean, url: string, url_expires_at: string }[] }[]"
+            "type": "{ id: string, type: character | reference | voice | moodboard | brand_kit, name: string | null, assets: { file_path: string, media_kind: IMAGE | VIDEO | AUDIO, is_primary: boolean, url: string, url_expires_at: string }[] }[]"
           },
           {
             "key": "next_cursor",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -412,8 +412,8 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -453,7 +453,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "{ message: string, code: string }"
+            "type": "{ message: string, code: string } | null"
           }
         ]
       }
@@ -1093,8 +1093,8 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1149,7 +1149,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "{ message: string, code: string }"
+            "type": "{ message: string, code: string } | null"
           },
           {
             "key": "downloads",

@@ -94,12 +94,12 @@
           {
             "key": "allowedActions",
             "optional": true,
-            "type": "deployment:deploy | deployment:env:view | deployment:env:write | deployment:pause | deployment:unpause | deployment:logs:view | deployment:metrics:view | deployment:integrations:view | deployment:integrations:write | deployment:data:view | deployment:data:write | deployment:backups:view | deployment:backups:create | deployment:backups:download | deployment:backups:delete | deployment:backups:import | deployment:functions:actAsUser | deployment:functions:runInternalQueries | deployment:functions:runInternalMutations | deployment:functions:runInternalActions | deployment:functions:runTestQuery | deployment:auditLog:view | deployment:usageLimits:view | deployment:usageLimits:write | deployment:usage:view | deployment:aiGateway:use[]"
+            "type": "(deployment:deploy | deployment:env:view | deployment:env:write | deployment:pause | deployment:unpause | deployment:logs:view | deployment:metrics:view | deployment:integrations:view | deployment:integrations:write | deployment:data:view | deployment:data:write | deployment:backups:view | deployment:backups:create | deployment:backups:download | deployment:backups:delete | deployment:backups:import | deployment:functions:actAsUser | deployment:functions:runInternalQueries | deployment:functions:runInternalMutations | deployment:functions:runInternalActions | deployment:functions:runTestQuery | deployment:auditLog:view | deployment:usageLimits:view | deployment:usageLimits:write | deployment:usage:view | deployment:aiGateway:use)[]"
           },
           {
             "key": "expiresAt",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       },
@@ -160,7 +160,7 @@
           {
             "key": "queries",
             "optional": false,
-            "type": "{ path: string, args: {}, format?: string | null }[]"
+            "type": "{ path: string, args: Record<string, JsonValue>, format?: string | null }[]"
           }
         ]
       },
@@ -170,7 +170,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "({ status: success, value: lazy, logLines?: string[] } | { status: error, errorMessage: string, errorData?: lazy, logLines?: string[] })[]"
+            "type": "({ status: success, value: JsonValue, logLines?: string[] } | { status: error, errorMessage: string, errorData?: JsonValue, logLines?: string[] })[]"
           }
         ]
       }
@@ -262,27 +262,27 @@
           {
             "key": "class",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isDefault",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "expiresAt",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       },
@@ -307,7 +307,7 @@
           {
             "key": "lastDeployTime",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "deploymentType",
@@ -322,12 +322,12 @@
           {
             "key": "creator",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previewIdentifier",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
@@ -347,7 +347,7 @@
           {
             "key": "dashboardEditConfirmation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "deploymentUrl",
@@ -357,7 +357,7 @@
           {
             "key": "expiresAt",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "class",
@@ -367,7 +367,7 @@
           {
             "key": "sendLogsToClient",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "kind",
@@ -455,7 +455,7 @@
           {
             "key": "lastDeployTime",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "deploymentType",
@@ -470,12 +470,12 @@
           {
             "key": "creator",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previewIdentifier",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
@@ -495,7 +495,7 @@
           {
             "key": "dashboardEditConfirmation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "deploymentUrl",
@@ -505,7 +505,7 @@
           {
             "key": "expiresAt",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "class",
@@ -515,7 +515,7 @@
           {
             "key": "sendLogsToClient",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "kind",
@@ -561,7 +561,7 @@
           {
             "key": "isDefault",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "deploymentType",
@@ -591,37 +591,37 @@
           {
             "key": "reference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dashboardEditConfirmation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "expiresAt",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sendLogsToClient",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "class",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isDefault",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "deploymentType",
             "optional": true,
-            "type": "dev | prod | preview | custom"
+            "type": "dev | prod | preview | custom | null"
           }
         ]
       },
@@ -754,17 +754,17 @@
           {
             "key": "deploymentType",
             "optional": true,
-            "type": "dev | prod | preview | custom"
+            "type": "dev | prod | preview | custom | null"
           },
           {
             "key": "deploymentClass",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deploymentRegion",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -789,12 +789,12 @@
           {
             "key": "deploymentName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "deploymentUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -877,12 +877,12 @@
           {
             "key": "prodDeploymentName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "devDeploymentName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -943,12 +943,12 @@
           {
             "key": "prodDeploymentName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "devDeploymentName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1078,6 +1078,11 @@
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
         },
         {
+          "field": "deploymentType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "projectId",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
@@ -1131,6 +1136,11 @@
           "field": "sendLogsToClient",
           "type": "boolean",
           "operators": ["equals"]
+        },
+        {
+          "field": "kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
           "field": "port",

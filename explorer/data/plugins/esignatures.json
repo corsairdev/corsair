@@ -35,7 +35,7 @@
           {
             "key": "signer",
             "optional": false,
-            "type": "{ name?: string, email?: string, mobile?: string, company_name?: string, signing_order?: string, auto_sign?: yes | no, signature_request_delivery_methods?: email | sms[], signed_document_delivery_method?: email | sms | , multi_factor_authentications?: sms_verification_code | email_verification_code | photo_id[], redirect_url?: string }",
+            "type": "{ name?: string, email?: string, mobile?: string, company_name?: string, signing_order?: string, auto_sign?: yes | no, signature_request_delivery_methods?: (email | sms)[], signed_document_delivery_method?: email | sms | \"\", multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[], redirect_url?: string }",
             "description": "The signer to add. No sign request email is sent; use `contracts.resendToSigner`."
           }
         ]
@@ -68,7 +68,7 @@
           {
             "key": "signers",
             "optional": false,
-            "type": "{ name: string, email?: string, mobile?: string, company_name?: string, signing_order?: string, auto_sign?: yes | no, signature_request_delivery_methods?: email | sms[], signed_document_delivery_method?: email | sms | , multi_factor_authentications?: sms_verification_code | email_verification_code | photo_id[], redirect_url?: string }[]"
+            "type": "{ name: string, email?: string, mobile?: string, company_name?: string, signing_order?: string, auto_sign?: yes | no, signature_request_delivery_methods?: (email | sms)[], signed_document_delivery_method?: email | sms | \"\", multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[], redirect_url?: string }[]"
           },
           {
             "key": "title",
@@ -155,7 +155,7 @@
           {
             "key": "contract",
             "optional": false,
-            "type": "{ id?: string | null, status?: string | null, title?: string | null, metadata?: string | null, source?: string | null, test?: string | null, labels?: string[] | null, contract_pdf_url?: string | null, signers?: { id?: string | null, name?: string | null, email?: string | null, mobile?: string | null, company_name?: string | null, sign_page_url?: string | null, signing_order?: string | null, auto_sign?: string | null, signer_field_values?: {} | null }[] | null }"
+            "type": "{ id?: string | null, status?: string | null, title?: string | null, metadata?: string | null, source?: string | null, test?: string | null, labels?: string[] | null, contract_pdf_url?: string | null, signers?: { id?: string | null, name?: string | null, email?: string | null, mobile?: string | null, company_name?: string | null, sign_page_url?: string | null, signing_order?: string | null, auto_sign?: string | null, signer_field_values?: Record<string, any> | null }[] | null }"
           }
         ]
       }
@@ -215,7 +215,7 @@
           {
             "key": "contract",
             "optional": false,
-            "type": "{ id?: string | null, status?: string | null, title?: string | null, metadata?: string | null, source?: string | null, test?: string | null, labels?: string[] | null, contract_pdf_url?: string | null, signers?: { id?: string | null, name?: string | null, email?: string | null, mobile?: string | null, company_name?: string | null, sign_page_url?: string | null, signing_order?: string | null, auto_sign?: string | null, signer_field_values?: {} | null }[] | null }"
+            "type": "{ id?: string | null, status?: string | null, title?: string | null, metadata?: string | null, source?: string | null, test?: string | null, labels?: string[] | null, contract_pdf_url?: string | null, signers?: { id?: string | null, name?: string | null, email?: string | null, mobile?: string | null, company_name?: string | null, sign_page_url?: string | null, signing_order?: string | null, auto_sign?: string | null, signer_field_values?: Record<string, any> | null }[] | null }"
           }
         ]
       }
@@ -303,7 +303,7 @@
           {
             "key": "signer",
             "optional": false,
-            "type": "{ name?: string, email?: string, mobile?: string, company_name?: string, signing_order?: string, auto_sign?: yes | no, signature_request_delivery_methods?: email | sms[], signed_document_delivery_method?: email | sms | , multi_factor_authentications?: sms_verification_code | email_verification_code | photo_id[], redirect_url?: string }"
+            "type": "{ name?: string, email?: string, mobile?: string, company_name?: string, signing_order?: string, auto_sign?: yes | no, signature_request_delivery_methods?: (email | sms)[], signed_document_delivery_method?: email | sms | \"\", multi_factor_authentications?: (sms_verification_code | email_verification_code | photo_id)[], redirect_url?: string }"
           }
         ]
       },

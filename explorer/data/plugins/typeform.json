@@ -46,7 +46,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
+            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
           },
           {
             "key": "logic",
@@ -61,7 +61,7 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: {}, notifications?: {} }"
+            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: Record<string, any>, notifications?: Record<string, any> }"
           },
           {
             "key": "workspace",
@@ -71,12 +71,12 @@
           {
             "key": "welcome_screens",
             "optional": true,
-            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
           },
           {
             "key": "thankyou_screens",
             "optional": true,
-            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
           }
         ]
       },
@@ -111,7 +111,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
+            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
           },
           {
             "key": "logic",
@@ -131,12 +131,12 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: {}, notifications?: {} }"
+            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: Record<string, any>, notifications?: Record<string, any> }"
           },
           {
             "key": "variables",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "workspace",
@@ -146,37 +146,37 @@
           {
             "key": "welcome_screens",
             "optional": true,
-            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
           },
           {
             "key": "thankyou_screens",
             "optional": true,
-            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
           },
           {
             "key": "_links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "cui_settings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "captcha",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "language",
@@ -257,7 +257,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
+            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
           },
           {
             "key": "logic",
@@ -277,12 +277,12 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: {}, notifications?: {} }"
+            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: Record<string, any>, notifications?: Record<string, any> }"
           },
           {
             "key": "variables",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "workspace",
@@ -292,37 +292,37 @@
           {
             "key": "welcome_screens",
             "optional": true,
-            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
           },
           {
             "key": "thankyou_screens",
             "optional": true,
-            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
           },
           {
             "key": "_links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "cui_settings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "captcha",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "language",
@@ -414,7 +414,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{ id?: string, title?: string, created_at?: string, last_updated_at?: string, settings?: { is_public?: boolean }, theme?: { href?: string }, _links?: {} }[]"
+            "type": "{ id?: string, title?: string, created_at?: string, last_updated_at?: string, settings?: { is_public?: boolean }, theme?: { href?: string }, _links?: Record<string, any> }[]"
           },
           {
             "key": "page_count",
@@ -480,7 +480,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
+            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
           },
           {
             "key": "logic",
@@ -500,12 +500,12 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: {}, notifications?: {} }"
+            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: Record<string, any>, notifications?: Record<string, any> }"
           },
           {
             "key": "variables",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "workspace",
@@ -515,12 +515,12 @@
           {
             "key": "welcome_screens",
             "optional": true,
-            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
           },
           {
             "key": "thankyou_screens",
             "optional": true,
-            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
           }
         ]
       },
@@ -555,7 +555,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
+            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
           },
           {
             "key": "logic",
@@ -575,12 +575,12 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: {}, notifications?: {} }"
+            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: Record<string, any>, notifications?: Record<string, any> }"
           },
           {
             "key": "variables",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "workspace",
@@ -590,37 +590,37 @@
           {
             "key": "welcome_screens",
             "optional": true,
-            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
           },
           {
             "key": "thankyou_screens",
             "optional": true,
-            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: Record<string, any> }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
           },
           {
             "key": "_links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "cui_settings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "captcha",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "language",
@@ -1009,7 +1009,7 @@
           {
             "key": "owner_info",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1151,7 +1151,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{ token?: string, response_id?: string, submitted_at?: string, landed_at?: string, answers?: { type?: string, text?: string, email?: string, url?: string, date?: string, number?: number, boolean?: boolean, phone_number?: string, file_url?: string, choice?: { id?: string, ref?: string, label?: string, other?: string }, choices?: { ids?: string[], refs?: string[], labels?: string[], other?: string }, field?: { id?: string, ref?: string, type?: string }, payment?: {}, multi_format?: {} }[], calculated?: { score?: number }, metadata?: { browser?: string, referer?: string, platform?: string, network_id?: string, user_agent?: string }, hidden?: {}, variables?: { key?: string, type?: string, text?: string, number?: number }[] }[]"
+            "type": "{ token?: string, response_id?: string, submitted_at?: string, landed_at?: string, answers?: { type?: string, text?: string, email?: string, url?: string, date?: string, number?: number, boolean?: boolean, phone_number?: string, file_url?: string, choice?: { id?: string, ref?: string, label?: string, other?: string }, choices?: { ids?: string[], refs?: string[], labels?: string[], other?: string }, field?: { id?: string, ref?: string, type?: string }, payment?: Record<string, any>, multi_format?: Record<string, any> }[], calculated?: { score?: number }, metadata?: { browser?: string, referer?: string, platform?: string, network_id?: string, user_agent?: string }, hidden?: Record<string, string>, variables?: { key?: string, type?: string, text?: string, number?: number }[] }[]"
           },
           {
             "key": "page_count",
@@ -1262,7 +1262,7 @@
           {
             "key": "screens",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1353,7 +1353,7 @@
           {
             "key": "screens",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1384,7 +1384,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{ id?: string, name?: string, font?: string, visibility?: string, rounded_corners?: string, has_transparent_button?: boolean, colors?: { answer?: string, button?: string, question?: string, background?: string }, background?: { href?: string, layout?: fullscreen | repeat | no-repeat, brightness?: number }, fields?: { alignment?: left | center, font_size?: small | medium | large }, screens?: {} }[]"
+            "type": "{ id?: string, name?: string, font?: string, visibility?: string, rounded_corners?: string, has_transparent_button?: boolean, colors?: { answer?: string, button?: string, question?: string, background?: string }, background?: { href?: string, layout?: fullscreen | repeat | no-repeat, brightness?: number }, fields?: { alignment?: left | center, font_size?: small | medium | large }, screens?: Record<string, any> }[]"
           },
           {
             "key": "page_count",
@@ -1505,7 +1505,7 @@
           {
             "key": "screens",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1616,7 +1616,7 @@
           {
             "key": "screens",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2192,11 +2192,11 @@
           {
             "key": "form_response",
             "optional": false,
-            "type": "{ form_id: string, token: string, submitted_at: string, landed_at: string, hidden?: {}, calculated?: { score?: number }, definition?: { id?: string, title?: string, fields?: {}[] }, answers?: {}[], variables?: { key?: string, type?: string, text?: string, number?: number }[], metadata?: { browser?: string, referer?: string, platform?: string, network_id?: string, user_agent?: string } }"
+            "type": "{ form_id: string, token: string, submitted_at: string, landed_at: string, hidden?: Record<string, string>, calculated?: { score?: number }, definition?: { id?: string, title?: string, fields?: Record<string, any>[] }, answers?: Record<string, any>[], variables?: { key?: string, type?: string, text?: string, number?: number }[], metadata?: { browser?: string, referer?: string, platform?: string, network_id?: string, user_agent?: string } }"
           }
         ]
       },
-      "responseType": "{ event_id: string, event_type: string, form_response: { form_id: string, token: string, submitted_at: string, landed_at: string, hidden?: {}, calculated?: { score?: number }, definition?: { id?: string, title?: string, fields?: {}[] }, answers?: {}[], variables?: { key?: string, type?: string, text?: string, number?: number }[], metadata?: { browser?: string, referer?: string, platform?: string, network_id?: string, user_agent?: string } } }",
+      "responseType": "{ event_id: string, event_type: string, form_response: { form_id: string, token: string, submitted_at: string, landed_at: string, hidden?: Record<string, string>, calculated?: { score?: number }, definition?: { id?: string, title?: string, fields?: Record<string, any>[] }, answers?: Record<string, any>[], variables?: { key?: string, type?: string, text?: string, number?: number }[], metadata?: { browser?: string, referer?: string, platform?: string, network_id?: string, user_agent?: string } } }",
       "usageExample": "typeform({\n    webhookHooks: {\n        forms: {\n            formResponse: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

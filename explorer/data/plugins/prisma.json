@@ -96,12 +96,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -187,12 +187,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -277,12 +277,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -368,12 +368,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -458,12 +458,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -548,12 +548,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -639,12 +639,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -729,12 +729,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -819,12 +819,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -840,7 +840,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ databaseId?: string, id?: string, startDate?: string, endDate?: string, storage?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, operations?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, reads?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, writes?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, totalOperations?: number, metrics?: { timestamp?: string, value?: number }[] | {} } | { data: { databaseId?: string, id?: string, startDate?: string, endDate?: string, storage?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, operations?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, reads?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, writes?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, totalOperations?: number, metrics?: { timestamp?: string, value?: number }[] | {} } } | { usage: { databaseId?: string, id?: string, startDate?: string, endDate?: string, storage?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, operations?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, reads?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, writes?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, totalOperations?: number, metrics?: { timestamp?: string, value?: number }[] | {} } } | { timestamp?: string, value?: number }[] | { data: { timestamp?: string, value?: number }[] }"
+        "type": "{ databaseId?: string, id?: string, startDate?: string, endDate?: string, storage?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, operations?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, reads?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, writes?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, totalOperations?: number, metrics?: { timestamp?: string, value?: number }[] | Record<string, number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }> } | { data: { databaseId?: string, id?: string, startDate?: string, endDate?: string, storage?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, operations?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, reads?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, writes?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, totalOperations?: number, metrics?: { timestamp?: string, value?: number }[] | Record<string, number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }> } } | { usage: { databaseId?: string, id?: string, startDate?: string, endDate?: string, storage?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, operations?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, reads?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, writes?: number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }, totalOperations?: number, metrics?: { timestamp?: string, value?: number }[] | Record<string, number | { reads?: number, writes?: number, total?: number, bytes?: number, history?: { timestamp?: string, value?: number }[] }> } } | { timestamp?: string, value?: number }[] | { data: { timestamp?: string, value?: number }[] }"
       }
     },
     {
@@ -909,12 +909,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -959,7 +959,7 @@
           {
             "key": "tables",
             "optional": false,
-            "type": "{ schema: string, name: string, columns: { name: string, type: string, nullable: boolean, default?: string | null }[], foreignKeys: { column: string, foreignTable: string, foreignColumn: string }[] }[]"
+            "type": "{ schema: string, name: string, columns: { name: string, type: string, nullable: boolean, default: string | null }[], foreignKeys: { column: string, foreignTable: string, foreignColumn: string }[] }[]"
           }
         ]
       }
@@ -1030,12 +1030,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1120,12 +1120,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1210,12 +1210,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1301,12 +1301,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1391,12 +1391,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1481,12 +1481,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1571,12 +1571,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1661,12 +1661,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1751,12 +1751,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1841,12 +1841,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1932,12 +1932,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -1992,12 +1992,12 @@
           {
             "key": "rows",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "rowCount",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "command",
@@ -2073,12 +2073,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",
@@ -2133,12 +2133,12 @@
           {
             "key": "rows",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "rowCount",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "command",
@@ -2214,12 +2214,12 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "baseUrl",

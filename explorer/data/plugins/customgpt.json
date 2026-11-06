@@ -1049,7 +1049,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ tools?: { key?: string, name?: string, is_enabled?: boolean, settings?: {} | null }[] }"
+            "type": "{ tools?: { key?: string, name?: string, is_enabled?: boolean, settings?: Record<string, any> | null }[] }"
           }
         ]
       }
@@ -1242,7 +1242,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ current_page?: number, data: { project_id?: number, session_id?: string, query_id?: number, name?: string | null, email?: string | null, phone_number?: string | null, company?: string | null, captured_at?: string | null, other_data?: {} | null, user_defined?: {} | null, tags?: string[] | null, syncedAt?: Date }[], first_page_url?: string | null, from?: number | null, last_page?: number, last_page_url?: string | null, next_page_url?: string | null, path?: string, per_page?: number | string, prev_page_url?: string | null, to?: number | null, total?: number }"
+            "type": "{ current_page?: number, data: { project_id?: number, session_id?: string, query_id?: number, name?: string | null, email?: string | null, phone_number?: string | null, company?: string | null, captured_at?: string | null, other_data?: Record<string, any> | null, user_defined?: Record<string, any> | null, tags?: string[] | null, syncedAt?: Date }[], first_page_url?: string | null, from?: number | null, last_page?: number, last_page_url?: string | null, next_page_url?: string | null, path?: string, per_page?: number | string, prev_page_url?: string | null, to?: number | null, total?: number }"
           }
         ]
       }
@@ -1263,7 +1263,7 @@
           {
             "key": "filters",
             "optional": false,
-            "type": "queries | conversations | queries_per_conversation[]"
+            "type": "(queries | conversations | queries_per_conversation)[]"
           },
           {
             "key": "interval",
@@ -1304,7 +1304,7 @@
           {
             "key": "filters",
             "optional": false,
-            "type": "total | average_queries_per_conversation[]"
+            "type": "(total | average_queries_per_conversation)[]"
           }
         ]
       },
@@ -1360,7 +1360,7 @@
           {
             "key": "content_source",
             "optional": true,
-            "type": "in-context | out-of-context | not-used[]"
+            "type": "(in-context | out-of-context | not-used)[]"
           },
           {
             "key": "accuracy",
@@ -1370,22 +1370,22 @@
           {
             "key": "stakeholder_status",
             "optional": true,
-            "type": "APPROVED | FLAGGED | BLOCKED[]"
+            "type": "(APPROVED | FLAGGED | BLOCKED)[]"
           },
           {
             "key": "user_emotion",
             "optional": true,
-            "type": "positive | neutral | frustration | dissatisfaction | confusion | unclear[]"
+            "type": "(positive | neutral | frustration | dissatisfaction | confusion | unclear)[]"
           },
           {
             "key": "user_intent",
             "optional": true,
-            "type": "informational | troubleshooting | instructional | greetings | transactional | navigational | follow-up | unclear[]"
+            "type": "(informational | troubleshooting | instructional | greetings | transactional | navigational | follow-up | unclear)[]"
           },
           {
             "key": "human_request",
             "optional": true,
-            "type": "true | false | unclear[]"
+            "type": "(true | false | unclear)[]"
           },
           {
             "key": "language",
@@ -1475,8 +1475,9 @@
           },
           {
             "key": "filters",
-            "optional": false,
-            "type": "sources[]"
+            "optional": true,
+            "type": "sources[]",
+            "description": "Defaults to [\"sources\"]."
           }
         ]
       },
@@ -1603,77 +1604,77 @@
           {
             "key": "persona_instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "citations_answer_source_label_msg",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "citations_sources_label_msg",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hang_in_there_msg",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chatbot_siesta_msg",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chatbot_failed_moderation_msg",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "account_out_of_queries_msg",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_loading_indicator_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "enable_citations",
             "optional": true,
-            "type": "0 | 1 | 2 | 3"
+            "type": "0 | 1 | 2 | 3 | null"
           },
           {
             "key": "enable_feedbacks",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "enable_copy_button",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "citations_view_type",
             "optional": true,
-            "type": "user | show | hide"
+            "type": "user | show | hide | null"
           },
           {
             "key": "image_citation_display",
             "optional": true,
-            "type": "default | first_only"
+            "type": "default | first_only | null"
           },
           {
             "key": "limit_image_citation_height",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "use_opengraph_image_citation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "max_inline_images_per_response",
@@ -1683,77 +1684,77 @@
           {
             "key": "no_answer_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ending_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "try_asking_questions_msg",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "view_more_msg",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "view_less_msg",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "remove_branding",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "enable_recaptcha_for_public_chatbots",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "chatbot_model",
             "optional": true,
-            "type": "gpt-4-1 | gpt-4-o | gpt-5.1-none | gpt-5.1-low | gpt-5.2-none | gpt-5.2-low | gpt-5.4-low | gpt-4-1-mini | gpt-4o-mini | claude-4.8-opus | claude-4.6-opus | claude-4.5-opus | claude-4.6-sonnet | claude-4.6-sonnet-thinking | claude-4.5-sonnet | claude-4.5-haiku | gpt-o4-mini-low | gpt-o4-mini-medium | gpt-o4-mini-high | gemini-3.1-pro | gemini-3-pro | gemini-3.5-flash"
+            "type": "gpt-4-1 | gpt-4-o | gpt-5.1-none | gpt-5.1-low | gpt-5.2-none | gpt-5.2-low | gpt-5.4-low | gpt-4-1-mini | gpt-4o-mini | claude-4.8-opus | claude-4.6-opus | claude-4.5-opus | claude-4.6-sonnet | claude-4.6-sonnet-thinking | claude-4.5-sonnet | claude-4.5-haiku | gpt-o4-mini-low | gpt-o4-mini-medium | gpt-o4-mini-high | gemini-3.1-pro | gemini-3-pro | gemini-3.5-flash | null"
           },
           {
             "key": "is_selling_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "can_share_conversation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "can_export_conversation",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "hide_sources_from_responses",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "agent_capability",
             "optional": true,
-            "type": "fastest-responses | optimal-choice | advanced-reasoning | complex-tasks"
+            "type": "fastest-responses | optimal-choice | advanced-reasoning | complex-tasks | null"
           },
           {
             "key": "input_field_addendum",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ai_disclaimer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_avatar_enabled",
@@ -1763,7 +1764,7 @@
           {
             "key": "user_avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title_avatar_enabled",
@@ -1778,22 +1779,22 @@
           {
             "key": "spotlight_avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "spotlight_avatar_shape",
             "optional": true,
-            "type": "circle | rectangle"
+            "type": "circle | rectangle | null"
           },
           {
             "key": "spotlight_avatar_type",
             "optional": true,
-            "type": "default | image"
+            "type": "default | image | null"
           },
           {
             "key": "user_avatar_orientation",
             "optional": true,
-            "type": "agent-left-user-right | agent-right-user-right | agent-right-user-left | agent-left-user-left"
+            "type": "agent-left-user-right | agent-right-user-right | agent-right-user-left | agent-left-user-left | null"
           },
           {
             "key": "agent_title_avatar_alignment",
@@ -1803,22 +1804,22 @@
           {
             "key": "chatbot_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chatbot_title_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enable_inline_citations_api",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "conversation_time_window",
             "optional": true,
-            "type": "0 | 1 | 2"
+            "type": "0 | 1 | 2 | null"
           },
           {
             "key": "conversation_retention_period",
@@ -1833,7 +1834,7 @@
           {
             "key": "use_context_aware_starter_question",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "enable_agent_knowledge_base_awareness",
@@ -1843,12 +1844,12 @@
           {
             "key": "markdown_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_hybrid_search",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "user_awareness",
@@ -1858,12 +1859,12 @@
           {
             "key": "context_depth",
             "optional": true,
-            "type": "compact | balanced | extended | rich | max | custom"
+            "type": "compact | balanced | extended | rich | max | custom | null"
           },
           {
             "key": "use_planner_mode",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "master_project_smart_routing_mode",
@@ -1928,7 +1929,7 @@
           {
             "key": "allowed_domains_for_embedding",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "projectId",
@@ -2537,6 +2538,16 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "crawl_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "index_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "is_file",
           "type": "boolean",
           "operators": ["equals"]
@@ -2643,6 +2654,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "is_shared",
           "type": "boolean",
           "operators": ["equals"]
@@ -2710,6 +2726,11 @@
         },
         {
           "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
