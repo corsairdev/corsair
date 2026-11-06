@@ -1,0 +1,1369 @@
+---
+title: API
+description: "API reference for Bugherd: every `bugherd.api.*` operation with input and output types."
+---
+
+Every `bugherd.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Columns
+
+### create
+
+`columns.create`
+
+Create a new column
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.columns.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `position` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `column` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="column full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  project_id: number,
+  position: number,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`columns.list`
+
+List columns in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.columns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `columns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  project_id: number,
+  position: number,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### show
+
+`columns.show`
+
+Show column details
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.columns.show({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `column_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `column` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="column full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  project_id: number,
+  position: number,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`columns.update`
+
+Update a column
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.columns.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `column_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `position` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `column` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="column full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  project_id: number,
+  position: number,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organization
+
+### show
+
+`organization.show`
+
+Show organization details
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.organization.show({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### addGuest
+
+`projects.addGuest`
+
+Add a guest to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.projects.addGuest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `email` | `string` | Yes | — |
+| `role` | `guest \| client \| member` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  email: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  name: string,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addMember
+
+`projects.addMember`
+
+Add a member to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.projects.addMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `user_id` | `number` | Yes | — |
+| `role` | `member \| manager` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  email: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  name: string,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`projects.create`
+
+Create a new project
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `is_public` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `technical_contact_email` | `string` | No | — |
+| `guest_default_role` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  is_active: boolean,
+  is_public: boolean,
+  created_at: string,
+  updated_at: string,
+  deleted_at?: string | null,
+  description?: string | null,
+  technical_contact_email?: string | null,
+  guest_default_role?: string | null,
+  settings?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bugherd.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`projects.list`
+
+List all projects
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  is_active: boolean,
+  is_public: boolean,
+  created_at: string,
+  updated_at: string,
+  deleted_at?: string | null,
+  description?: string | null,
+  technical_contact_email?: string | null,
+  guest_default_role?: string | null,
+  settings?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  total_pages: number,
+  total_count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listActive
+
+`projects.listActive`
+
+List active projects
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.projects.listActive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  is_active: boolean,
+  is_public: boolean,
+  created_at: string,
+  updated_at: string,
+  deleted_at?: string | null,
+  description?: string | null,
+  technical_contact_email?: string | null,
+  guest_default_role?: string | null,
+  settings?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  total_pages: number,
+  total_count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### show
+
+`projects.show`
+
+Show project details
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.projects.show({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  is_active: boolean,
+  is_public: boolean,
+  created_at: string,
+  updated_at: string,
+  deleted_at?: string | null,
+  description?: string | null,
+  technical_contact_email?: string | null,
+  guest_default_role?: string | null,
+  settings?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `is_public` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `technical_contact_email` | `string` | No | — |
+| `guest_default_role` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  is_active: boolean,
+  is_public: boolean,
+  created_at: string,
+  updated_at: string,
+  deleted_at?: string | null,
+  description?: string | null,
+  technical_contact_email?: string | null,
+  guest_default_role?: string | null,
+  settings?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a new task
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `description` | `string` | Yes | — |
+| `priority` | `critical \| high \| normal \| low` | No | — |
+| `status` | `string` | No | — |
+| `tag_list` | `string[]` | No | — |
+| `assignee_id` | `number` | No | — |
+| `reporter_id` | `number` | No | — |
+| `external_id` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `column_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: number,
+  description: string,
+  status: string,
+  priority?: string | null,
+  tag_list: string[],
+  created_at: string,
+  updated_at: string,
+  closed_at?: string | null,
+  project_id: number,
+  reporter_id?: number | null,
+  assignee_id?: number | null,
+  external_id?: string | null,
+  attachments_count: number,
+  comments_count: number,
+  due_date?: string | null,
+  duedate?: string | null,
+  column_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createAttachment
+
+`tasks.createAttachment`
+
+Create an attachment reference
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.tasks.createAttachment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | — |
+| `file_name` | `string` | No | — |
+| `file_size` | `number` | No | — |
+| `content_type` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attachment full type">
+
+```ts
+{
+  id: number,
+  file_name: string,
+  file_size: number,
+  content_type: string,
+  url: string,
+  created_at: string,
+  updated_at: string,
+  task_id: number,
+  user_id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createComment
+
+`tasks.createComment`
+
+Create a comment on a task
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.tasks.createComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  id: number,
+  body: string,
+  created_at: string,
+  updated_at: string,
+  task_id: number,
+  user_id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAttachments
+
+`tasks.listAttachments`
+
+List attachments for a task
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.listAttachments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachments` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  id: number,
+  file_name: string,
+  file_size: number,
+  content_type: string,
+  url: string,
+  created_at: string,
+  updated_at: string,
+  task_id: number,
+  user_id: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  total_pages: number,
+  total_count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForUser
+
+`tasks.listForUser`
+
+List tasks assigned to a user
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.listForUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: number,
+  description: string,
+  status: string,
+  priority?: string | null,
+  tag_list: string[],
+  created_at: string,
+  updated_at: string,
+  closed_at?: string | null,
+  project_id: number,
+  reporter_id?: number | null,
+  assignee_id?: number | null,
+  external_id?: string | null,
+  attachments_count: number,
+  comments_count: number,
+  due_date?: string | null,
+  duedate?: string | null,
+  column_id?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  total_pages: number,
+  total_count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### showAttachment
+
+`tasks.showAttachment`
+
+Show attachment details
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.tasks.showAttachment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attachment full type">
+
+```ts
+{
+  id: number,
+  file_name: string,
+  file_size: number,
+  content_type: string,
+  url: string,
+  created_at: string,
+  updated_at: string,
+  task_id: number,
+  user_id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `priority` | `critical \| high \| normal \| low` | No | — |
+| `status` | `string` | No | — |
+| `tag_list` | `string[]` | No | — |
+| `assignee_id` | `number` | No | — |
+| `reporter_id` | `number` | No | — |
+| `external_id` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `column_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: number,
+  description: string,
+  status: string,
+  priority?: string | null,
+  tag_list: string[],
+  created_at: string,
+  updated_at: string,
+  closed_at?: string | null,
+  project_id: number,
+  reporter_id?: number | null,
+  assignee_id?: number | null,
+  external_id?: string | null,
+  attachments_count: number,
+  comments_count: number,
+  due_date?: string | null,
+  duedate?: string | null,
+  column_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadAttachment
+
+`tasks.uploadAttachment`
+
+Upload an attachment file
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.tasks.uploadAttachment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | — |
+| `file` | `custom` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attachment full type">
+
+```ts
+{
+  id: number,
+  file_name: string,
+  file_size: number,
+  content_type: string,
+  url: string,
+  created_at: string,
+  updated_at: string,
+  task_id: number,
+  user_id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List users
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  email: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  name: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  total_pages: number,
+  total_count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProjects
+
+`users.listProjects`
+
+List projects for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.users.listProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  is_active: boolean,
+  is_public: boolean,
+  created_at: string,
+  updated_at: string,
+  deleted_at?: string | null,
+  description?: string | null,
+  technical_contact_email?: string | null,
+  guest_default_role?: string | null,
+  settings?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  total_pages: number,
+  total_count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a new webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.bugherd.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `url` | `string` | Yes | — |
+| `events` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  id: number,
+  url: string,
+  project_id: number,
+  events: string[],
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhooks for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.bugherd.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: number,
+  url: string,
+  project_id: number,
+  events: string[],
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  total_pages: number,
+  total_count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
