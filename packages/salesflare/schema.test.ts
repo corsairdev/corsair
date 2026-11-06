@@ -223,14 +223,12 @@ describe('Salesflare schema', () => {
 					updated: '2024-01-01T00:00:00.000Z',
 				},
 			],
-			'me.retrieveCurrentUser': [
-				{
-					id: 1,
-					name: 'Real record',
-					created: '2024-01-01T00:00:00.000Z',
-					updated: '2024-01-01T00:00:00.000Z',
-				},
-			],
+			'me.retrieveCurrentUser': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
 			'opportunities.listOpportunities': [
 				{
 					id: 1,
@@ -361,12 +359,14 @@ describe('Salesflare schema', () => {
 					updated: '2024-01-01T00:00:00.000Z',
 				},
 			],
-			'customfields.listCustomFields': {
-				id: 1,
-				name: 'Real record',
-				created: '2024-01-01T00:00:00.000Z',
-				updated: '2024-01-01T00:00:00.000Z',
-			},
+			'customfields.listCustomFields': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
 			'customfields.createCustomFieldSub': {
 				id: 1,
 				name: 'Real record',
@@ -381,12 +381,14 @@ describe('Salesflare schema', () => {
 					updated: '2024-01-01T00:00:00.000Z',
 				},
 			],
-			'filterfields.listFilterFields': {
-				id: 1,
-				name: 'Real record',
-				created: '2024-01-01T00:00:00.000Z',
-				updated: '2024-01-01T00:00:00.000Z',
-			},
+			'filterfields.listFilterFields': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
 			'groups.retrieveGroup': {
 				id: 1,
 				name: 'Real record',
@@ -427,14 +429,12 @@ describe('Salesflare schema', () => {
 				updated: '2024-01-01T00:00:00.000Z',
 			},
 			'opportunities.deleteOpportunity': undefined,
-			'settings.retrieveAiSettings': [
-				{
-					id: 1,
-					name: 'Real record',
-					created: '2024-01-01T00:00:00.000Z',
-					updated: '2024-01-01T00:00:00.000Z',
-				},
-			],
+			'settings.retrieveAiSettings': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
 			'settings.updateAiSettings': {
 				id: 1,
 				name: 'Real record',
@@ -478,18 +478,22 @@ describe('Salesflare schema', () => {
 				created: '2024-01-01T00:00:00.000Z',
 				updated: '2024-01-01T00:00:00.000Z',
 			},
-			'accounts.listAccountMessages': {
-				id: 1,
-				name: 'Real record',
-				created: '2024-01-01T00:00:00.000Z',
-				updated: '2024-01-01T00:00:00.000Z',
-			},
-			'accounts.listAccountFeed': {
-				id: 1,
-				name: 'Real record',
-				created: '2024-01-01T00:00:00.000Z',
-				updated: '2024-01-01T00:00:00.000Z',
-			},
+			'accounts.listAccountMessages': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'accounts.listAccountFeed': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
 			'customfields.retrieveCustomField': {
 				id: 1,
 				name: 'Real record',
@@ -503,18 +507,22 @@ describe('Salesflare schema', () => {
 				updated: '2024-01-01T00:00:00.000Z',
 			},
 			'customfields.deleteCustomField': undefined,
-			'tags.listTagUsage': {
-				id: 1,
-				name: 'Real record',
-				created: '2024-01-01T00:00:00.000Z',
-				updated: '2024-01-01T00:00:00.000Z',
-			},
-			'customfields.listCustomFieldOptions': {
-				id: 1,
-				name: 'Real record',
-				created: '2024-01-01T00:00:00.000Z',
-				updated: '2024-01-01T00:00:00.000Z',
-			},
+			'tags.listTagUsage': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'customfields.listCustomFieldOptions': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
 			'calls.createCall': {
 				id: 1,
 				name: 'Real record',
