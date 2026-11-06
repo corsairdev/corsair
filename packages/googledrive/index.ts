@@ -67,6 +67,7 @@ export type GoogleDriveEndpoints = {
 	filesMove: GoogleDriveEndpoint<'filesMove'>;
 	filesDownload: GoogleDriveEndpoint<'filesDownload'>;
 	filesShare: GoogleDriveEndpoint<'filesShare'>;
+	filesExportText: GoogleDriveEndpoint<'filesExportText'>;
 	foldersCreate: GoogleDriveEndpoint<'foldersCreate'>;
 	foldersGet: GoogleDriveEndpoint<'foldersGet'>;
 	foldersList: GoogleDriveEndpoint<'foldersList'>;
@@ -114,6 +115,7 @@ const googleDriveEndpointsNested = {
 		move: FilesEndpoints.move,
 		download: FilesEndpoints.download,
 		share: FilesEndpoints.share,
+		exportText: FilesEndpoints.exportText,
 	},
 	folders: {
 		create: FoldersEndpoints.create,
@@ -177,6 +179,10 @@ export const googledriveEndpointSchemas = {
 	'files.share': {
 		input: GoogleDriveEndpointInputSchemas.filesShare,
 		output: GoogleDriveEndpointOutputSchemas.filesShare,
+	},
+	'files.exportText': {
+		input: GoogleDriveEndpointInputSchemas.filesExportText,
+		output: GoogleDriveEndpointOutputSchemas.filesExportText,
 	},
 	'folders.create': {
 		input: GoogleDriveEndpointInputSchemas.foldersCreate,
@@ -304,6 +310,11 @@ const googleDriveEndpointMeta = {
 	'files.share': {
 		riskLevel: 'write',
 		description: 'Share a file by granting permissions to users',
+	},
+	'files.exportText': {
+		riskLevel: 'read',
+		description:
+			'Get the plain text of a Google Doc across all of its tabs and store it',
 	},
 	'folders.create': { riskLevel: 'write', description: 'Create a new folder' },
 	'folders.get': {

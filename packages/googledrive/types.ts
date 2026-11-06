@@ -90,6 +90,15 @@ export type FileContentRestriction = {
 	type?: string;
 };
 
+export type User = {
+	kind?: string;
+	displayName?: string;
+	photoLink?: string;
+	me?: boolean;
+	permissionId?: string;
+	emailAddress?: string;
+};
+
 export type File = {
 	id?: string;
 	name?: string;
@@ -117,6 +126,7 @@ export type File = {
 	modifiedByMe?: boolean;
 	shared?: boolean;
 	ownedByMe?: boolean;
+	owners?: User[];
 	capabilities?: FileCapabilities;
 	viewersCanCopyContent?: boolean;
 	copyRequiresWriterPermission?: boolean;
@@ -146,6 +156,16 @@ export type File = {
 	};
 	sha1Checksum?: string;
 	sha256Checksum?: string;
+};
+
+export type FileContents = {
+	id: string;
+	name?: string;
+	mimeType?: string;
+	createdTime?: string;
+	modifiedTime?: string;
+	webViewLink?: string;
+	text: string;
 };
 
 export type FileList = {

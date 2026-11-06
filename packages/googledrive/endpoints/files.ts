@@ -1,6 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeAuthenticatedGoogleDriveRequest } from '../client';
+import { ApiError } from 'corsair/http';
+import {
+	GOOGLE_DOCS_API_BASE,
+	GoogleDriveAPIError,
+	makeAuthenticatedGoogleDriveRequest,
+} from '../client';
 import type { GoogleDriveBoundEndpoints, GoogleDriveEndpoints } from '../index';
+import type { File } from '../types';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
@@ -8,7 +14,14 @@ export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 		GoogleDriveEndpointOutputs['filesList']
 	>('/files', ctx, {
 		method: 'GET',
-		query: input,
+		query: {
+			...input,
+			// A fields mask without nextPageToken silently ends pagination.
+			fields:
+				input.fields && !input.fields.includes('nextPageToken')
+					? `nextPageToken,${input.fields}`
+					: input.fields,
+		},
 	});
 
 	if (result.files && ctx.db.files) {
@@ -317,6 +330,134 @@ export const share: GoogleDriveEndpoints['filesShare'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'googledrive.files.share',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+const GOOGLE_DOC_MIME_TYPE = 'application/vnd.google-apps.document';
+const EXPORT_TEXT_FIELDS =
+	'id,name,mimeType,createdTime,modifiedTime,webViewLink';
+const EXPORT_TEXT_MAX_CHARS = 500_000;
+
+type DocsParagraphElement = {
+	textRun?: { content?: string };
+	person?: { personProperties?: { name?: string; email?: string } };
+	richLink?: { richLinkProperties?: { title?: string } };
+	dateElement?: { dateElementProperties?: { displayText?: string } };
+};
+
+type DocsStructuralElement = {
+	paragraph?: { elements?: DocsParagraphElement[] };
+	table?: {
+		tableRows?: {
+			tableCells?: { content?: DocsStructuralElement[] }[];
+		}[];
+	};
+};
+
+type DocsTab = {
+	tabProperties?: { title?: string };
+	documentTab?: { body?: { content?: DocsStructuralElement[] } };
+	childTabs?: DocsTab[];
+};
+
+function elementsText(elements: DocsStructuralElement[] = []): string {
+	return elements
+		.map((element) => {
+			if (element.paragraph) {
+				return (element.paragraph.elements ?? [])
+					.map(
+						(e) =>
+							e.textRun?.content ??
+							e.person?.personProperties?.name ??
+							e.person?.personProperties?.email ??
+							e.richLink?.richLinkProperties?.title ??
+							e.dateElement?.dateElementProperties?.displayText ??
+							'',
+					)
+					.join('');
+			}
+			return (element.table?.tableRows ?? [])
+				.flatMap((row) => row.tableCells ?? [])
+				.map((cell) => elementsText(cell.content))
+				.join('');
+		})
+		.join('');
+}
+
+function tabsText(tabs: DocsTab[] = []): string[] {
+	return tabs.flatMap((tab) => [
+		`# ${tab.tabProperties?.title ?? ''}\n${elementsText(tab.documentTab?.body?.content)}`,
+		...tabsText(tab.childTabs),
+	]);
+}
+
+// Drive's files.export doesn't document tab handling, so read every tab
+// (Gemini meeting notes keep the transcript in its own tab) via the Docs API.
+export const exportText: GoogleDriveEndpoints['filesExportText'] = async (
+	ctx,
+	input,
+) => {
+	const meta = await makeAuthenticatedGoogleDriveRequest<File>(
+		`/files/${input.fileId}`,
+		ctx,
+		{
+			method: 'GET',
+			query: { fields: EXPORT_TEXT_FIELDS, supportsAllDrives: true },
+		},
+	);
+
+	if (meta.mimeType !== GOOGLE_DOC_MIME_TYPE) {
+		throw new GoogleDriveAPIError('exportText supports Google Docs only', 400);
+	}
+
+	let doc: { tabs?: DocsTab[] };
+	try {
+		doc = await makeAuthenticatedGoogleDriveRequest<{ tabs?: DocsTab[] }>(
+			`/documents/${input.fileId}`,
+			ctx,
+			{
+				method: 'GET',
+				base: GOOGLE_DOCS_API_BASE,
+				query: { includeTabsContent: true },
+			},
+		);
+	} catch (error) {
+		// Carries Google's "enable docs.googleapis.com" hint when the Docs API is off.
+		const message = (error as ApiError).body?.error?.message;
+		if (error instanceof ApiError && error.status === 403 && message) {
+			throw new GoogleDriveAPIError(message, 403);
+		}
+		throw error;
+	}
+
+	let text = tabsText(doc.tabs).join('\n').slice(0, EXPORT_TEXT_MAX_CHARS);
+	const last = text.charCodeAt(text.length - 1);
+	if (last >= 0xd800 && last <= 0xdbff) text = text.slice(0, -1);
+
+	const result = {
+		id: meta.id ?? input.fileId,
+		name: meta.name,
+		mimeType: meta.mimeType,
+		createdTime: meta.createdTime,
+		modifiedTime: meta.modifiedTime,
+		webViewLink: meta.webViewLink,
+		text,
+	};
+
+	if (ctx.db.fileContents) {
+		try {
+			await ctx.db.fileContents.upsertByEntityId(result.id, result);
+		} catch (error) {
+			console.warn('Failed to save file contents to database:', error);
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'googledrive.files.exportText',
 		{ ...input },
 		'completed',
 	);
