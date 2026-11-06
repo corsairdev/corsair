@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import {
 	ASSERTION_WARN_FLOOR,
 	detectPlugin,
+	PR_FILES_JQ,
+	parsePrFileRows,
 	renderScorecard,
 	runGate,
 } from './gate.ts';
@@ -64,12 +66,23 @@ const pr = event.pull_request.number as number;
 const reviewId = event.review.id as number;
 const author = event.pull_request.user.login as string;
 
-const changedFiles = gh([
+const { changedFiles, addedFiles } = parsePrFileRows(
+	gh([
+		'api',
+		`repos/${repo}/pulls/${pr}/files`,
+		'--paginate',
+		'--jq',
+		PR_FILES_JQ,
+	]),
+);
+// Read live, as in the gate job, so a team multi-plugin PR gets the same
+// verdict here as in the required check.
+const labels = gh([
 	'api',
-	`repos/${repo}/pulls/${pr}/files`,
+	`repos/${repo}/issues/${pr}/labels`,
 	'--paginate',
 	'--jq',
-	'.[].filename',
+	'.[].name',
 ])
 	.trim()
 	.split('\n')
@@ -132,6 +145,9 @@ const gate = runGate({
 	isDraft: event.pull_request.draft as boolean,
 	testFileCount,
 	assertionCount,
+	labels,
+	authorAssociation: event.pull_request.author_association as string,
+	addedFiles,
 });
 if (!gate.isPluginPr) {
 	console.log('Not a plugin PR (or draft) — loop skipped.');

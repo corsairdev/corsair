@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { MULTI_PLUGIN_LABEL, renderScorecard, runGate } from './gate.ts';
+import {
+	MULTI_PLUGIN_LABEL,
+	parsePrFileRows,
+	renderScorecard,
+	runGate,
+} from './gate.ts';
 
 const goodBody = `## Description
 Adds the 1Password Connect plugin with vaults and items endpoints.
@@ -280,6 +285,41 @@ test('a brand-new plugin cannot ride along in a team multi-plugin PR', () => {
 		addedFiles: ['packages/newthing/package.json'],
 	});
 	assert.equal(r.failures.length, 1);
+	assert.match(
+		r.failures[0]?.message ?? '',
+		/New plugins need their own PR: newthing/,
+	);
+});
+
+test('the label alone does not relax the rules for a single-plugin PR', () => {
+	const r = runGate({
+		...batchInput,
+		changedFiles: ['packages/gumroad/index.ts', 'pnpm-lock.yaml'],
+	});
+	assert.equal(r.batchPlugins, undefined);
+	assert.ok(r.failures.some((f) => f.rule === 'R4'));
+});
+
+test('without the added-file list a multi-plugin PR gets the normal gate', () => {
+	const r = runGate({ ...batchInput, addedFiles: undefined });
+	assert.equal(r.batchPlugins, undefined);
+	assert.ok(r.failures.some((f) => f.rule === 'R1'));
+});
+
+test('a renamed or copied package.json counts as a new plugin', () => {
+	const { changedFiles, addedFiles } = parsePrFileRows(
+		[
+			'modified\tpackages/gumroad/index.ts',
+			'modified\tpackages/snowflake/index.ts',
+			'renamed\tpackages/newthing/package.json',
+			'copied\tpackages/other/README.md',
+		].join('\n'),
+	);
+	assert.deepEqual(addedFiles, [
+		'packages/newthing/package.json',
+		'packages/other/README.md',
+	]);
+	const r = runGate({ ...batchInput, changedFiles, addedFiles });
 	assert.match(
 		r.failures[0]?.message ?? '',
 		/New plugins need their own PR: newthing/,

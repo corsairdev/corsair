@@ -69,7 +69,7 @@ export interface GateInput {
 	labels?: string[];
 	/** GitHub's author_association for the PR author (OWNER, MEMBER, …). */
 	authorAssociation?: string;
-	/** Files the PR adds (status "added"), to spot brand-new plugin packages. */
+	/** Paths new to the base branch (added, renamed or copied), to spot new plugins. */
 	addedFiles?: string[];
 }
 
@@ -127,9 +127,48 @@ function stripComments(s: string): string {
 	return out;
 }
 
-/** A team PR that is allowed to change several existing plugins at once. */
-export function isTeamMultiPluginPr(input: GateInput): boolean {
+/** jq for `gh api repos/{repo}/pulls/{n}/files`: one "status<TAB>path" per file. */
+export const PR_FILES_JQ = '.[] | "\\(.status)\\t\\(.filename)"';
+
+/**
+ * Statuses that put a file at a path the base branch doesn't have. A moved
+ * package.json shows up as "renamed" and must count as a new plugin too.
+ */
+const NEW_PATH_STATUSES = ['added', 'renamed', 'copied'];
+
+/** Splits PR_FILES_JQ output into every changed path and the new ones. */
+export function parsePrFileRows(raw: string): {
+	changedFiles: string[];
+	addedFiles: string[];
+} {
+	const rows = raw
+		.trim()
+		.split('\n')
+		.filter(Boolean)
+		.map((row) => {
+			const tab = row.indexOf('\t');
+			return { status: row.slice(0, tab), filename: row.slice(tab + 1) };
+		});
+	return {
+		changedFiles: rows.map((r) => r.filename),
+		addedFiles: rows
+			.filter((r) => NEW_PATH_STATUSES.includes(r.status))
+			.map((r) => r.filename),
+	};
+}
+
+/**
+ * A team PR that is allowed to change several existing plugins at once.
+ * Needs the label, a team author and the added-file list (without it a new
+ * plugin can't be told apart, so the normal gate applies).
+ */
+export function isTeamMultiPluginPr(
+	input: GateInput,
+	plugins: Set<string>,
+): boolean {
 	return (
+		plugins.size > 1 &&
+		input.addedFiles !== undefined &&
 		(input.labels ?? []).includes(MULTI_PLUGIN_LABEL) &&
 		TEAM_ASSOCIATIONS.includes(input.authorAssociation ?? '')
 	);
@@ -211,7 +250,7 @@ export function runGate(input: GateInput): GateResult {
 		return { isPluginPr: false, plugin: null, checks: [], failures: [] };
 	}
 
-	if (isTeamMultiPluginPr(input)) {
+	if (isTeamMultiPluginPr(input, plugins)) {
 		return runTeamMultiPluginGate(input, plugins);
 	}
 
