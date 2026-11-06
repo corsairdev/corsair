@@ -1,0 +1,1008 @@
+---
+title: API
+description: "API reference for Adyntel: every `adyntel.api.*` operation with input and output types."
+---
+
+Every `adyntel.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Google
+
+### ads
+
+`google.ads`
+
+List a company's Google ads from Google's Ad Transparency report by domain, filtered by media type and country, with a continuation token per page
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.google.ads({ company_domain: 'clay.com', country_code: 'FR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_domain` | `string` | Yes | The bare domain, without `https://` or `www.`. |
+| `media_type` | `text \| image \| video \| all` | No | Defaults to `all`. Anything unrecognised is also treated as `all` rather than rejected, so a typo silently widens the result. |
+| `country_code` | `string` | No | One country per call; a list is rejected. Leave it out, or send `anywhere`, for worldwide results. Send the same code again with every `continuation_token`. |
+| `continuation_token` | `string` | No | `continuation_token` from the previous response. |
+| `extract_text` | `boolean` | No | Extracts the text inside each creative for one extra credit. The docs table spells it `extract-text`; the OpenAPI spec and this plugin use `extract_text`. |
+| `all_ads` | `boolean` | No | Needs `webhook_url`. One credit per page and cannot be stopped. |
+| `webhook_url` | `string` | No | Adyntel POSTs the results here when the scrape finishes, instead of returning them. You host and receive that POST; this plugin does not. |
+| `data_provider` | `'rapidapi' \| 'apify'` | No | Which scraping backend runs the call. Leave it unset to use Adyntel's default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | `job started` when a job was queued. |
+| `jobId` | `string` | No | Track via `GET /track/jobs`. |
+| `jobIds` | `string[]` | No | One ID per country, for the multi-country Meta form. |
+| `failedCountries` | `string[]` | No | Countries that were never queued and were not charged. |
+| `message` | `string` | No | — |
+| `chunk_count` | `number` | No | Number of POSTs Adyntel made to `webhook_url`. |
+| `continuation_token` | `string \| null` | No | Null on the last page. Send it back to read the next one. |
+| `country_code` | `string` | No | `anywhere` when no filter was applied. |
+| `total_ad_count` | `number` | No | — |
+| `ads` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="ads full type">
+
+```ts
+{
+  advertiser_id?: string | null,
+  advertiser_name?: string | null,
+  creative_id?: string | null,
+  original_url?: string | null,
+  format?: string | null,
+  start?: string | null,
+  last_seen?: string | null,
+  variants?: {
+    content?: string | null,
+    height?: number | null,
+    width?: number | null
+  }[] | null,
+  extracted_text?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### shopping
+
+`google.shopping`
+
+Start a Google Shopping ad lookup for a domain: synchronous ads when `shopping` is true, otherwise a task ID to poll with `google.shoppingStatus`
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.google.shopping({ company_domain: 'tesla.com', shopping: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_domain` | `string` | Yes | The bare domain, without `https://` or `www.`. |
+| `shopping` | `boolean` | No | `true` runs the synchronous parser and returns the ads in this response. `false` (the default) queues a DataForSEO scrape and answers with an `id` to poll via `google.shoppingStatus`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | Queued task ID. Poll it with `google.shoppingStatus`. |
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+| `ads` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="ads full type">
+
+```ts
+{
+  advertiser_id?: string | null,
+  creative_id?: string | null,
+  title?: string | null,
+  format?: string | null,
+  first_shown?: string | null,
+  last_shown?: string | null,
+  url?: string | null,
+  preview_url?: string | null,
+  preview_image?: {
+    height?: number | null,
+    width?: number | null,
+    url?: string | null
+  } | null,
+  rank_group?: number | null,
+  rank_absolute?: number | null,
+  type?: string | null,
+  verified?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### shoppingStatus
+
+`google.shoppingStatus`
+
+Read the ads of a Google Shopping lookup started by `google.shopping`; free, and the only way to collect an async task
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.google.shoppingStatus({ id: '12172142-7717-0066-0000-f1e50ca3d579' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `id` returned by `google.shopping`. Polling is free. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | Set when the scrape is still running. |
+| `message` | `string` | No | — |
+| `ads` | `object[]` | No | Present once the scrape finished and found ads. |
+
+<AccordionGroup>
+<Accordion title="ads full type">
+
+```ts
+{
+  advertiser_id?: string | null,
+  creative_id?: string | null,
+  title?: string | null,
+  format?: string | null,
+  first_shown?: string | null,
+  last_shown?: string | null,
+  url?: string | null,
+  preview_url?: string | null,
+  preview_image?: {
+    height?: number | null,
+    width?: number | null,
+    url?: string | null
+  } | null,
+  rank_group?: number | null,
+  rank_absolute?: number | null,
+  type?: string | null,
+  verified?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Keywords
+
+### paidVsOrganic
+
+`keywords.paidVsOrganic`
+
+Read paid and organic keyword counts for a domain, with position breakdowns, estimated traffic, ad budget and average CPC
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.keywords.paidVsOrganic({ company_domain: 'lokalise.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_domain` | `string` | Yes | The bare domain, without `https://` or `www.`, e.g. `lokalise.com`. |
+| `language` | `string` | No | Language for the keyword results. Adyntel defaults to `English`. |
+| `limit` | `number` | No | Number of results to return. Adyntel defaults to 1. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organic` | `object` | No | — |
+| `organic_percentages` | `object` | No | Each `organic` count divided by `organic.count`, as a percentage. |
+| `paid` | `object` | No | — |
+| `paid_percentages` | `object` | No | Each `paid` count divided by `paid.count`, as a percentage. |
+
+<AccordionGroup>
+<Accordion title="organic full type">
+
+```ts
+{
+  count?: number | null,
+  estimated_traffic?: number | null,
+  pos_1?: number | null,
+  pos_2_3?: number | null,
+  pos_4_10?: number | null,
+  pos_11_20?: number | null,
+  pos_21_30?: number | null,
+  pos_31_40?: number | null,
+  pos_41_50?: number | null,
+  pos_51_60?: number | null,
+  pos_61_70?: number | null,
+  pos_71_80?: number | null,
+  pos_81_90?: number | null,
+  pos_91_100?: number | null,
+  is_new?: number | null,
+  is_up?: number | null,
+  is_down?: number | null,
+  is_lost?: number | null,
+  estimated_ad_budget?: number | null,
+  estimated_avg_cpc?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="organic_percentages full type">
+
+```ts
+Record<string, number>
+```
+</Accordion>
+
+<Accordion title="paid full type">
+
+```ts
+{
+  count?: number | null,
+  estimated_traffic?: number | null,
+  pos_1?: number | null,
+  pos_2_3?: number | null,
+  pos_4_10?: number | null,
+  pos_11_20?: number | null,
+  pos_21_30?: number | null,
+  pos_31_40?: number | null,
+  pos_41_50?: number | null,
+  pos_51_60?: number | null,
+  pos_61_70?: number | null,
+  pos_71_80?: number | null,
+  pos_81_90?: number | null,
+  pos_91_100?: number | null,
+  is_new?: number | null,
+  is_up?: number | null,
+  is_down?: number | null,
+  is_lost?: number | null,
+  estimated_ad_budget?: number | null,
+  estimated_avg_cpc?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="paid_percentages full type">
+
+```ts
+Record<string, number>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Linkedin
+
+### ads
+
+`linkedin.ads`
+
+List a company's LinkedIn ads by domain or page ID, with optional date filtering, EU impression data and creative text extraction, each of which costs an extra credit
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.linkedin.ads({ company_domain: 'clay.com', date_filter: { preset: 'last30d' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_domain` | `string` | No | The bare domain, without `https://` or `www.`. |
+| `linkedin_page_id` | `string \| number` | No | The numeric page ID, as a string or number. |
+| `linkedin_page_ids` | `string[]` | No | Batch mode: several pages in one call. |
+| `company_domains` | `string[]` | No | Batch mode: several domains in one call. |
+| `date_filter` | `object` | No | Cannot be combined with `impression_data`; together they are a 422. |
+| `extract` | `'number_of_ads'` | No | Returns only the ad count instead of the ads. |
+| `impression_data` | `boolean` | No | Adds `eu_transparency` to each ad for one extra credit. Only EU-served ads carry data; the rest get an empty block. |
+| `extract_text` | `boolean` | No | Adds `extracted_text` to each ad for one extra credit when the extraction ran. Stacks with `impression_data`. |
+| `live_ads` | `boolean` | No | Only currently active ads. |
+| `all_ads` | `boolean` | No | Needs `webhook_url`. One credit per page and cannot be stopped. |
+| `continuation_token` | `string` | No | `continuation_token` from the previous response. |
+| `webhook_url` | `string` | No | Adyntel POSTs the results here when the scrape finishes, instead of returning them. You host and receive that POST; this plugin does not. |
+| `data_provider` | `'rapidapi' \| 'apify'` | No | Which scraping backend runs the call. Leave it unset to use Adyntel's default. |
+
+<AccordionGroup>
+<Accordion title="date_filter full type">
+
+```ts
+{
+  preset?: 'last30d' | 'month' | 'year' | 'lastyear',
+  startdate?: string,
+  enddate?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | `job started` when a job was queued. |
+| `jobId` | `string` | No | Track via `GET /track/jobs`. |
+| `jobIds` | `string[]` | No | One ID per country, for the multi-country Meta form. |
+| `failedCountries` | `string[]` | No | Countries that were never queued and were not charged. |
+| `message` | `string` | No | — |
+| `chunk_count` | `number` | No | Number of POSTs Adyntel made to `webhook_url`. |
+| `page_id` | `string` | No | — |
+| `continuation_token` | `string` | No | Null on the last page. |
+| `is_last_page` | `boolean` | No | — |
+| `total_ads` | `number` | No | — |
+| `ads` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="ads full type">
+
+```ts
+{
+  creative_type?: string | null,
+  ad_id?: string | null,
+  type?: string | null,
+  advertiser?: {
+    name?: string | null,
+    logo_url?: string | null,
+    promoted?: boolean | null
+  } | null,
+  commentary?: {
+    text?: string | null,
+    link?: string | null
+  } | null,
+  image?: {
+    alt_text?: string | null,
+    url?: string | null
+  } | null,
+  carousel?: Record<string, unknown>[] | null,
+  headline?: {
+    title?: string | null,
+    description?: string | null
+  } | null,
+  view_details_link?: string | null,
+  extracted_text?: string | null,
+  eu_transparency?: {
+    startDate?: string | null,
+    endDate?: string | null,
+    adDuration?: string | null,
+    totalImpressions?: string | null,
+    impressionsByCountry?: {
+      impressions?: string | null,
+      country?: string | null
+    }[] | null,
+    targeting?: Record<string, unknown> | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### keywordSearch
+
+`linkedin.keywordSearch`
+
+Search the LinkedIn Ad Library for a keyword, filtered by country and date range, with a continuation token per page
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.linkedin.keywordSearch({ keyword: 'webinar', country: 'US', dateOption: 'last-30-days' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | Yes | The phrase to search ads for. |
+| `country` | `string` | No | ISO 3166-1 alpha-2 code, e.g. `US`. |
+| `dateOption` | `current-month \| current-year \| last-30-days \| last-year \| custom-date-range` | No | `custom-date-range` needs `startDate` and `endDate`. |
+| `startDate` | `string` | No | `YYYY-MM-DD`. |
+| `endDate` | `string` | No | `YYYY-MM-DD`. |
+| `continuation_token` | `string` | No | `continuation_token` from the previous response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | No | — |
+| `continuation_token` | `string \| null` | No | Null on the last page. Send it back to read the next one. |
+| `is_last_page` | `boolean` | No | — |
+| `total_ads` | `number` | No | — |
+| `ads` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="ads full type">
+
+```ts
+{
+  creative_type?: string | null,
+  ad_id?: string | null,
+  type?: string | null,
+  advertiser?: {
+    name?: string | null,
+    logo_url?: string | null,
+    promoted?: boolean | null
+  } | null,
+  commentary?: {
+    text?: string | null,
+    link?: string | null
+  } | null,
+  image?: {
+    alt_text?: string | null,
+    url?: string | null
+  } | null,
+  carousel?: Record<string, unknown>[] | null,
+  headline?: {
+    title?: string | null,
+    description?: string | null
+  } | null,
+  view_details_link?: string | null,
+  extracted_text?: string | null,
+  eu_transparency?: {
+    startDate?: string | null,
+    endDate?: string | null,
+    adDuration?: string | null,
+    totalImpressions?: string | null,
+    impressionsByCountry?: {
+      impressions?: string | null,
+      country?: string | null
+    }[] | null,
+    targeting?: Record<string, unknown> | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meta
+
+### ads
+
+`meta.ads`
+
+List a company's Facebook and Instagram ads from Meta's Ad Library, by Facebook page or domain, with country, language, media-type and ad-category filters and a continuation token per page
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.meta.ads({ company_domain: 'zappos.com', media_type: 'video', country_code: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `facebook_url` | `string` | No | The page to look up, starting with `https://`, e.g. `https://facebook.com/zoom`. |
+| `company_domain` | `string` | No | The bare domain, without `https://` or `www.`, e.g. `zoom.com`. |
+| `country_code` | `string \| string[]` | No | One code, or up to 20 for one job per country. The array form needs `webhook_url` and costs one credit per country. |
+| `media_type` | `'image' \| 'meme' \| 'image_and_meme' \| 'video'` | No | Filter to one creative format. `check_ugc` needs `video`. |
+| `active_status` | `inactive \| all` | No | Left out, the call returns active ads only. |
+| `language` | `string \| string[]` | No | A language name (`Polish`), an ISO 639-1 code (`pl`), or a mixed array matching any of them. An unknown language is a 422. |
+| `ad_type` | `political \| properties \| employment \| financial` | No | A single special ad category, as Meta labels it. `political` works only with `US`. |
+| `check_ugc` | `boolean` | No | Adds `is_ugc_video` to each ad. Works only with `media_type: "video"`. |
+| `all_ads` | `boolean` | No | Follows `continuation_token` to the end. Needs `webhook_url`, costs one credit per page and cannot be stopped. |
+| `continuation_token` | `string` | No | `continuation_token` from the previous response. |
+| `webhook_url` | `string` | No | Adyntel POSTs the results here when the scrape finishes, instead of returning them. You host and receive that POST; this plugin does not. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | `job started` when a job was queued. |
+| `jobId` | `string` | No | Track via `GET /track/jobs`. |
+| `jobIds` | `string[]` | No | One ID per country, for the multi-country Meta form. |
+| `failedCountries` | `string[]` | No | Countries that were never queued and were not charged. |
+| `message` | `string` | No | — |
+| `chunk_count` | `number` | No | Number of POSTs Adyntel made to `webhook_url`. |
+| `page_id` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `continuation_token` | `string` | No | Null on the last page. |
+| `platform` | `string[]` | No | — |
+| `media_types` | `string` | No | — |
+| `sort_data` | `string` | No | — |
+| `active_status` | `string` | No | — |
+| `is_result_complete` | `boolean` | No | — |
+| `number_of_ads` | `number` | No | — |
+| `count_landing_pages` | `number` | No | — |
+| `unique_landing_pages` | `string[]` | No | — |
+| `start_min_date` | `string` | No | — |
+| `start_max_date` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  ad_archive_id?: string | null,
+  page_id?: string | null,
+  page_name?: string | null,
+  is_active?: boolean | null,
+  categories?: string[] | null,
+  collation_id?: string | null,
+  entity_type?: string | null,
+  publisher_platform?: string[] | null,
+  start_date?: number | null,
+  end_date?: number | null,
+  total_active_time?: number | null,
+  is_ugc_video?: boolean | null,
+  snapshot?: {
+    page_id?: string | number | null,
+    page_name?: string | null,
+    page_profile_uri?: string | null,
+    page_profile_picture_url?: string | null,
+    page_is_profile_page?: boolean | null,
+    page_like_count?: number | null,
+    page_entity_type?: string | null,
+    page_categories?: string[] | Record<string, unknown> | null,
+    current_page_name?: string | null,
+    body?: {
+      text?: string | null,
+      markup?: Record<string, unknown> | null
+    } | null,
+    caption?: string | null,
+    title?: string | null,
+    link_url?: string | null,
+    link_description?: string | null,
+    cta_text?: string | null,
+    cta_type?: string | null,
+    display_format?: string | null,
+    cards?: Record<string, unknown>[] | null,
+    images?: Record<string, unknown>[] | null,
+    videos?: Record<string, unknown>[] | null,
+    instagram_handle?: string | null,
+    instagram_url?: string | null,
+    instagram_actor_name?: string | null,
+    is_reshared?: boolean | null,
+    root_reshared_post?: Record<string, unknown> | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adSearch
+
+`meta.adSearch`
+
+Search the whole Meta ad library for a keyword, optionally limited to one country, with a continuation token per page
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.meta.adSearch({ keyword: 'webinar', country_code: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | Yes | The phrase to search the ad library for. |
+| `country_code` | `string` | No | ISO 3166-1 alpha-2 code, e.g. `US`. Meta also accepts `ALL`. |
+| `continuation_token` | `string` | No | `continuation_token` from the previous response. |
+| `all_ads` | `boolean` | No | Auto-paginate to the last page. One credit per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `continuation_token` | `string \| null` | No | Null on the last page. Send it back to read the next one. |
+| `platform` | `string[]` | No | — |
+| `media_types` | `string` | No | — |
+| `active_status` | `string` | No | — |
+| `ad_type` | `string` | No | — |
+| `search_type` | `string` | No | — |
+| `is_result_complete` | `boolean` | No | — |
+| `number_of_ads` | `number` | No | — |
+| `start_min_date` | `string` | No | — |
+| `start_max_date` | `string` | No | — |
+| `results` | `object[]` | No | One inner array per result page. |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  ad_archive_id?: string | null,
+  adArchiveID?: string | null,
+  adid?: string | null,
+  ad_id?: string | null,
+  page_id?: string | number | null,
+  pageID?: string | null,
+  page_name?: string | null,
+  pageName?: string | null,
+  is_active?: boolean | null,
+  isActive?: boolean | null,
+  is_profile_page?: boolean | null,
+  isProfilePage?: boolean | null,
+  categories?: (
+    string | number
+  )[] | null,
+  publisher_platform?: string[] | null,
+  publisherPlatform?: string[] | null,
+  currency?: string | null,
+  start_date?: number | null,
+  startDate?: number | null,
+  end_date?: number | null,
+  endDate?: number | null,
+  total_active_time?: number | null,
+  totalActiveTime?: number | null,
+  entity_type?: string | null,
+  entityType?: string | null,
+  snapshot?: {
+    page_id?: string | number | null,
+    page_name?: string | null,
+    page_profile_uri?: string | null,
+    page_profile_picture_url?: string | null,
+    page_is_profile_page?: boolean | null,
+    page_like_count?: number | null,
+    page_entity_type?: string | null,
+    page_categories?: string[] | Record<string, unknown> | null,
+    current_page_name?: string | null,
+    body?: {
+      text?: string | null,
+      markup?: Record<string, unknown> | null
+    } | null,
+    caption?: string | null,
+    title?: string | null,
+    link_url?: string | null,
+    link_description?: string | null,
+    cta_text?: string | null,
+    cta_type?: string | null,
+    display_format?: string | null,
+    cards?: Record<string, unknown>[] | null,
+    images?: Record<string, unknown>[] | null,
+    videos?: Record<string, unknown>[] | null,
+    instagram_handle?: string | null,
+    instagram_url?: string | null,
+    instagram_actor_name?: string | null,
+    is_reshared?: boolean | null,
+    root_reshared_post?: Record<string, unknown> | null
+  } | null
+}[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tiktok
+
+### adDetails
+
+`tiktok.adDetails`
+
+Read one TikTok ad in full, including its advertiser and its targeting, from an ad ID returned by `tiktok.keywordSearch`
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.tiktok.adDetails({ id: '1816440843906114' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ad `id` from `tiktok.keywordSearch`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ad?: {
+    id?: string | null,
+    name?: string | null,
+    audit_status?: string | null,
+    sor_audit_status?: string | null,
+    estimated_audience?: string | null,
+    first_shown_date?: number | null,
+    last_shown_date?: number | null,
+    image_urls?: string[] | null,
+    impression?: number | null,
+    spent?: string | null,
+    type?: string | null,
+    show_mode?: number | null,
+    rejection_info?: string | null,
+    videos?: Record<string, unknown>[] | null
+  } | null,
+  advertiser?: {
+    adv_biz_ids?: string | null,
+    name?: string | null,
+    registry_location?: string | null,
+    sponsor?: string | null,
+    tt_user?: string | null
+  } | null,
+  targeting?: Record<string, unknown> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ads
+
+`tiktok.ads`
+
+List a company's TikTok ads by domain, optionally including the influencers posting sponsored content for the brand, with continuation tokens
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.tiktok.ads({ company_domain: 'gymshark.com', influencer_ads: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_domain` | `string` | Yes | The brand's own domain. `tiktok.com` is rejected. |
+| `influencer_ads` | `boolean` | No | Also returns influencers posting sponsored content, each with a sample ad. One extra credit. |
+| `continuation_tokens` | `object` | No | — |
+| `webhook_url` | `string` | No | Adyntel POSTs the results here when the scrape finishes, instead of returning them. You host and receive that POST; this plugin does not. |
+
+<AccordionGroup>
+<Accordion title="continuation_tokens full type">
+
+```ts
+{
+  brand_ads?: string | null,
+  influencers?: Record<string, unknown> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | `job started` when a job was queued. |
+| `jobId` | `string` | No | Track via `GET /track/jobs`. |
+| `jobIds` | `string[]` | No | One ID per country, for the multi-country Meta form. |
+| `failedCountries` | `string[]` | No | Countries that were never queued and were not charged. |
+| `message` | `string` | No | — |
+| `chunk_count` | `number` | No | Number of POSTs Adyntel made to `webhook_url`. |
+| `handle` | `string` | No | — |
+| `brand_ads` | `object[]` | No | — |
+| `influencers` | `object[]` | No | Present only when the call sent `influencer_ads: true`. |
+| `continuation_tokens` | `object` | No | — |
+| `cache` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="brand_ads full type">
+
+```ts
+{
+  aweme_id?: string | null,
+  url?: string | null,
+  posted_at?: number | null,
+  desc?: string | null,
+  is_ad?: boolean | null,
+  ad_source?: number | null,
+  bc_type?: number | null,
+  region?: string | null,
+  duration?: number | null,
+  shop_product_url?: string | null,
+  stats?: {
+    play_count?: number | null,
+    digg_count?: number | null,
+    comment_count?: number | null,
+    share_count?: number | null,
+    collect_count?: number | null,
+    download_count?: number | null
+  } | null,
+  music?: {
+    title?: string | null,
+    is_commerce_music?: boolean | null,
+    is_original_sound?: boolean | null
+  } | null,
+  anchors?: Record<string, unknown>[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="influencers full type">
+
+```ts
+{
+  handle?: string | null,
+  uid?: string | null,
+  nickname?: string | null,
+  bio?: string | null,
+  follower_count?: number | null,
+  aweme_count?: number | null,
+  total_favorited?: number | null,
+  trust_tier?: string | null,
+  bc_type?: number | null,
+  discovered_via?: string | null,
+  sample_ad?: {
+    aweme_id?: string | null,
+    url?: string | null,
+    posted_at?: number | null,
+    desc?: string | null,
+    is_ad?: boolean | null,
+    ad_source?: number | null,
+    bc_type?: number | null,
+    region?: string | null,
+    duration?: number | null,
+    shop_product_url?: string | null,
+    stats?: {
+      play_count?: number | null,
+      digg_count?: number | null,
+      comment_count?: number | null,
+      share_count?: number | null,
+      collect_count?: number | null,
+      download_count?: number | null
+    } | null,
+    music?: {
+      title?: string | null,
+      is_commerce_music?: boolean | null,
+      is_original_sound?: boolean | null
+    } | null,
+    anchors?: Record<string, unknown>[] | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="continuation_tokens full type">
+
+```ts
+{
+  brand_ads?: string | null,
+  influencers?: Record<string, unknown> | null
+}
+```
+</Accordion>
+
+<Accordion title="cache full type">
+
+```ts
+{
+  hit?: boolean | null,
+  age_s?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### keywordSearch
+
+`tiktok.keywordSearch`
+
+Search the TikTok ad library for a keyword, limited to European countries or worldwide. Returns the first page only: the API exposes no paging parameter, so `search_id` and `has_more` are informational and a later page cannot be requested
+
+**Risk:** `read`
+
+```ts
+await corsair.adyntel.api.tiktok.keywordSearch({ keyword: 'toys', country_code: 'DE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | Yes | The phrase to search ads for. |
+| `country_code` | `string` | No | European country codes only on this endpoint; `US` is not accepted. Leave it out for global results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `data` | `object[]` | No | — |
+| `has_more` | `boolean` | No | — |
+| `search_id` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  audit_status?: string | null,
+  sor_audit_status?: string | null,
+  estimated_audience?: string | null,
+  first_shown_date?: number | null,
+  last_shown_date?: number | null,
+  image_urls?: string[] | null,
+  impression?: number | null,
+  spent?: string | null,
+  type?: string | null,
+  show_mode?: number | null,
+  rejection_info?: string | null,
+  videos?: Record<string, unknown>[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
