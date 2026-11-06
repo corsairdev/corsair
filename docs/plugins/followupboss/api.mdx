@@ -68,6 +68,414 @@ await corsair.followupboss.api.account.me({});
 
 ---
 
+## Action Plans
+
+### list
+
+`actionPlans.list`
+
+List the account's action plans
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.actionPlans.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `sort` | `string` | No | — |
+| `status` | `string` | No | `Active`, `Deleted`, or `Active,Deleted` for both. |
+| `names` | `string[]` | No | Action plan names to match; sent as the repeated `names[]` array filter. |
+| `ids` | `string` | No | Comma separated action plan IDs, e.g. `287564,67484`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actionPlans` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="actionPlans full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  updated?: string | null,
+  name?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Action Plans People
+
+### create
+
+`actionPlansPeople.create`
+
+Enroll a person into an action plan
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.actionPlansPeople.create({ personId: 123, actionPlanId: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `personId` | `number` | Yes | The person to apply the action plan to. |
+| `actionPlanId` | `number` | Yes | The action plan to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `personId` | `number` | No | — |
+| `actionPlanId` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`actionPlansPeople.list`
+
+List the people enrolled in action plans, filtered by person
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.actionPlansPeople.list({ personId: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `personId` | `number` | No | List action plans applied to this person. |
+| `actionPlanId` | `number` | No | List the people on this action plan. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actionPlansPeople` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="actionPlansPeople full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  updated?: string | null,
+  personId?: number | null,
+  actionPlanId?: number | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`actionPlansPeople.update`
+
+Update an action plan enrollment, such as finishing it
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.actionPlansPeople.update({ id: 41, isFinished: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The action-plan-person pairing ID. |
+| `status` | `Running \| Paused` | Yes | The desired state of the applied action plan. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `personId` | `number` | No | — |
+| `actionPlanId` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Appointment Outcomes
+
+### create
+
+`appointmentOutcomes.create`
+
+Create an appointment outcome with an optional sort order
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.appointmentOutcomes.create({ name: 'Met at property', orderWeight: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Name of the appointment outcome. |
+| `orderWeight` | `number` | No | Set this value to enforce a specific sort order. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`appointmentOutcomes.delete`
+
+Delete an appointment outcome after reassigning its appointments to another outcome
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.appointmentOutcomes.delete({ id: 4, assignOutcomeId: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the appointment outcome to delete. |
+| `assignOutcomeId` | `number` | Yes | The outcome id that existing appointments are reassigned to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`appointmentOutcomes.get`
+
+Get one appointment outcome by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.appointmentOutcomes.get({ id: 4 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The appointment outcome ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`appointmentOutcomes.list`
+
+List the outcomes that appointments can be closed with
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.appointmentOutcomes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `sort` | `string` | No | Sorts by `id`, `name` or `orderWeight`; prefix with `-` for descending. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointmentoutcomes` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="appointmentoutcomes full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  orderWeight?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`appointmentOutcomes.update`
+
+Update an appointment outcome's name or sort order
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.appointmentOutcomes.update({ id: 4, name: 'Met at property (completed)' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The appointment outcome ID. |
+| `name` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+
+
+
+---
+
 ## Appointments
 
 ### create
@@ -605,6 +1013,298 @@ await corsair.followupboss.api.appointmentTypes.update({ id: 3, name: 'Buyer con
 
 ---
 
+## Automations
+
+### get
+
+`automations.get`
+
+Get one automation by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.automations.get({ id: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The automation ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`automations.list`
+
+List the account's automations
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.automations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `status` | `string` | No | `Active`, `Disabled` or `Deleted`. |
+| `enabledOnly` | `boolean` | No | — |
+| `manualOnly` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automations` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="automations full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  updated?: string | null,
+  name?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Automations People
+
+### create
+
+`automationsPeople.create`
+
+Enroll a person into an automation
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.automationsPeople.create({ automationId: 10, personId: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `number` | No | ID of an existing Automation to trigger. |
+| `personId` | `number` | No | ID of an existing Person to run the Automation for. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `createdBy` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+| `personId` | `number` | No | — |
+| `automationId` | `number` | No | — |
+| `status` | `string` | No | — |
+| `automationName` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`automationsPeople.get`
+
+Get one automation enrollment by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.automationsPeople.get({ id: 77 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The automation-person pairing ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `createdBy` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+| `personId` | `number` | No | — |
+| `automationId` | `number` | No | — |
+| `status` | `string` | No | — |
+| `automationName` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`automationsPeople.list`
+
+List the people enrolled in automations, filtered by automation
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.automationsPeople.list({ automationId: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `personId` | `number` | No | — |
+| `automationId` | `number` | No | — |
+| `status` | `Initial \| Running \| Paused \| Completed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationsPeople` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="automationsPeople full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  updated?: string | null,
+  createdById?: number | null,
+  updatedById?: number | null,
+  createdBy?: string | null,
+  updatedBy?: string | null,
+  personId?: number | null,
+  automationId?: number | null,
+  status?: string | null,
+  automationName?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`automationsPeople.update`
+
+Update an automation enrollment, such as finishing it
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.automationsPeople.update({ id: 77, isFinished: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The automation-person pairing ID. |
+| `status` | `Running \| Paused` | No | `Paused` to pause the automation or `Running` to unpause it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `createdBy` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+| `personId` | `number` | No | — |
+| `automationId` | `number` | No | — |
+| `status` | `string` | No | — |
+| `automationName` | `string` | No | — |
+
+
+
+---
+
 ## Calls
 
 ### create
@@ -807,6 +1507,1296 @@ await corsair.followupboss.api.calls.update({ id: 89, note: 'Left a voicemail' }
 | `fromNumber` | `string` | No | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |
+
+
+
+---
+
+## Custom Fields
+
+### create
+
+`customFields.create`
+
+Create a custom field definition for people, with choices for dropdown types
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.customFields.create({ label: 'Preferred contact', type: 'text' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | Yes | The user-friendly name of the custom field (e.g. `Anniversary`). |
+| `type` | `text \| date \| number \| dropdown` | Yes | The type of custom field. |
+| `choices` | `string[]` | No | Options for a custom field of type `dropdown`. |
+| `isRecurring` | `boolean` | No | Whether a `date` field occurs every year, e.g. birthdays or anniversaries; only set and returned for `date` fields. |
+| `hideIfEmpty` | `boolean` | No | Hide the field on a person while it is empty. |
+| `orderWeight` | `number` | No | Weight used for custom sorting of the fields. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `label` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `isRecurring` | `boolean` | No | — |
+| `hideIfEmpty` | `boolean` | No | — |
+| `orderWeight` | `number` | No | — |
+| `choices` | `string[]` | No | — |
+
+
+
+---
+
+### delete
+
+`customFields.delete`
+
+Permanently delete a person custom field definition
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.customFields.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The custom field ID to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customFields.get`
+
+Get one person custom field definition by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.customFields.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The custom field ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `label` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `isRecurring` | `boolean` | No | — |
+| `hideIfEmpty` | `boolean` | No | — |
+| `orderWeight` | `number` | No | — |
+| `choices` | `string[]` | No | — |
+
+
+
+---
+
+### list
+
+`customFields.list`
+
+List the custom fields available on people
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.customFields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `label` | `string` | No | Find custom fields by their label. |
+| `sort` | `string` | No | Sort by `id`, `name` or `orderWeight`, optionally prefixed with `-` for descending. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customfields` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="customfields full type">
+
+```ts
+{
+  id?: number | null,
+  label?: string | null,
+  name?: string | null,
+  type?: string | null,
+  isRecurring?: boolean | null,
+  hideIfEmpty?: boolean | null,
+  orderWeight?: number | null,
+  choices?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customFields.update`
+
+Update a person custom field's label, choices or visibility
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.customFields.update({ id: 12, label: 'Preferred contact method' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The custom field ID. |
+| `label` | `string` | No | — |
+| `choices` | `string[]` | No | — |
+| `isRecurring` | `boolean` | No | — |
+| `hideIfEmpty` | `boolean` | No | — |
+| `orderWeight` | `number` | No | — |
+| `dropdownChoiceMap` | `number[]` | No | Maps previous dropdown choice positions to their new positions; choices missing from the keys are removed. When omitted, FUB tries to detect moves and renames on its own. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `label` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `isRecurring` | `boolean` | No | — |
+| `hideIfEmpty` | `boolean` | No | — |
+| `orderWeight` | `number` | No | — |
+| `choices` | `string[]` | No | — |
+
+
+
+---
+
+## Deal Attachments
+
+### create
+
+`dealAttachments.create`
+
+Attach an externally hosted file to a deal
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.dealAttachments.create({ dealId: 55, uri: 'https://files.example.com/offer.pdf', fileName: 'offer.pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dealId` | `number` | Yes | The id of the deal to attach the file to. |
+| `uri` | `string` | Yes | URI of the externally hosted file. |
+| `fileName` | `string` | Yes | Name of the file. |
+| `fileSize` | `number` | No | Size of the file in bytes. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `dealId` | `number` | No | — |
+| `uri` | `string` | No | — |
+| `fileName` | `string` | No | — |
+| `fileSize` | `number` | No | — |
+| `mimeType` | `string` | No | — |
+| `thumbnailUri` | `string` | No | — |
+| `status` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `createdByName` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`dealAttachments.delete`
+
+Permanently delete a file attachment from a deal
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.dealAttachments.delete({ id: 61 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the attachment to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`dealAttachments.get`
+
+Get one file attachment of a deal by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.dealAttachments.get({ id: 61 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the attachment. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `dealId` | `number` | No | — |
+| `uri` | `string` | No | — |
+| `fileName` | `string` | No | — |
+| `fileSize` | `number` | No | — |
+| `mimeType` | `string` | No | — |
+| `thumbnailUri` | `string` | No | — |
+| `status` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `createdByName` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`dealAttachments.update`
+
+Update the file URI, name or size of a deal attachment
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.dealAttachments.update({ id: 61, dealId: 55, uri: 'https://files.example.com/offer-v2.pdf', fileName: 'offer-v2.pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dealId` | `number` | Yes | The id of the deal to attach the file to. |
+| `uri` | `string` | Yes | URI of the externally hosted file. |
+| `fileName` | `string` | Yes | Name of the file. |
+| `fileSize` | `number` | No | Size of the file in bytes. |
+| `id` | `number` | Yes | ID of the attachment. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `dealId` | `number` | No | — |
+| `uri` | `string` | No | — |
+| `fileName` | `string` | No | — |
+| `fileSize` | `number` | No | — |
+| `mimeType` | `string` | No | — |
+| `thumbnailUri` | `string` | No | — |
+| `status` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `createdByName` | `string` | No | — |
+
+
+
+---
+
+## Deal Custom Fields
+
+### create
+
+`dealCustomFields.create`
+
+Create a custom field definition for deals, with choices for dropdown types
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.dealCustomFields.create({ label: 'Closing date', type: 'date' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | Yes | The user-friendly name of the custom field (e.g. "Anniversary"). |
+| `type` | `text \| date \| number \| dropdown` | Yes | The type of deals custom field. |
+| `choices` | `string[]` | No | Options for a deals custom field of type `dropdown`. |
+| `isRecurring` | `boolean` | No | Whether a date field occurs every year (e.g. birthdays). |
+| `hideIfEmpty` | `boolean` | No | Sets whether the field is hidden if it is empty. |
+| `orderWeight` | `number` | No | A weighted integer for custom sorting. |
+| `readOnly` | `boolean` | No | Determines whether the deals custom field is read only. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `label` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `choices` | `string[]` | No | — |
+| `isRecurring` | `boolean` | No | — |
+| `orderWeight` | `number` | No | — |
+| `hideIfEmpty` | `boolean` | No | — |
+| `readOnly` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`dealCustomFields.delete`
+
+Permanently delete a deal custom field definition
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.dealCustomFields.delete({ id: 9 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The deals custom field ID to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`dealCustomFields.get`
+
+Get one deal custom field definition by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.dealCustomFields.get({ id: 9 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The deals custom field ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `label` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `choices` | `string[]` | No | — |
+| `isRecurring` | `boolean` | No | — |
+| `orderWeight` | `number` | No | — |
+| `hideIfEmpty` | `boolean` | No | — |
+| `readOnly` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`dealCustomFields.list`
+
+List the custom fields available on deals
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.dealCustomFields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `label` | `string` | No | Find a custom field by label. |
+| `sort` | `string` | No | Sorts by `id`, `name` or `orderWeight`; prefix with `-` for descending. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dealCustomfields` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="dealCustomfields full type">
+
+```ts
+{
+  id?: number | null,
+  label?: string | null,
+  name?: string | null,
+  type?: string | null,
+  choices?: string[] | null,
+  isRecurring?: boolean | null,
+  orderWeight?: number | null,
+  hideIfEmpty?: boolean | null,
+  readOnly?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`dealCustomFields.update`
+
+Update a deal custom field's label, choices or visibility
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.dealCustomFields.update({ id: 9, label: 'Expected closing date' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The deals custom field ID. |
+| `label` | `string` | Yes | The user-friendly name of the custom field (e.g. "Anniversary"). |
+| `type` | `text \| date \| number \| dropdown` | Yes | The type of deals custom field. |
+| `choices` | `string[]` | No | — |
+| `isRecurring` | `boolean` | No | — |
+| `hideIfEmpty` | `boolean` | No | — |
+| `orderWeight` | `number` | No | — |
+| `dropdownChoiceMap` | `number[]` | No | — |
+| `readOnly` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `label` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `choices` | `string[]` | No | — |
+| `isRecurring` | `boolean` | No | — |
+| `orderWeight` | `number` | No | — |
+| `hideIfEmpty` | `boolean` | No | — |
+| `readOnly` | `boolean` | No | — |
+
+
+
+---
+
+## Deals
+
+### create
+
+`deals.create`
+
+Create a deal on a pipeline stage with a value and description
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.deals.create({ name: '812 Oak Street', stageId: 7, price: 520000, description: 'Buyer tour scheduled' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the deal. |
+| `stageId` | `number` | Yes | The stage that this deal should be assigned to. |
+| `description` | `string` | No | — |
+| `peopleIds` | `number[]` | No | Person ids that should be part of this deal. |
+| `userIds` | `number[]` | No | User ids that should be part of this deal. |
+| `price` | `number` | No | — |
+| `projectedCloseDate` | `string` | No | — |
+| `orderWeight` | `number` | No | Set this value to enforce a specific sort order. |
+| `commissionValue` | `number` | No | Commission value to assign to this deal. |
+| `agentCommission` | `number` | No | Commission split for the agent split. |
+| `teamCommission` | `number` | No | Commission split for the team split. |
+| `earnestMoneyDueDate` | `string` | No | — |
+| `mutualAcceptanceDate` | `string` | No | — |
+| `dueDiligenceDate` | `string` | No | — |
+| `finalWalkThroughDate` | `string` | No | — |
+| `possessionDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `pipelineId` | `number` | No | — |
+| `stageId` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `number` | No | — |
+| `status` | `string` | No | — |
+| `price` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `enteredStageAt` | `string` | No | — |
+| `projectedCloseDate` | `string` | No | — |
+| `earnestMoneyDueDate` | `string` | No | — |
+| `mutualAcceptanceDate` | `string` | No | — |
+| `dueDiligenceDate` | `string` | No | — |
+| `finalWalkThroughDate` | `string` | No | — |
+| `possessionDate` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+| `commissionValue` | `number` | No | — |
+| `agentCommission` | `number` | No | — |
+| `teamCommission` | `number` | No | — |
+| `peopleIds` | `number[]` | No | — |
+| `userIds` | `number[]` | No | — |
+| `people` | `object[]` | No | — |
+| `users` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="people full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  avatar?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`deals.delete`
+
+Permanently delete a deal
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.deals.delete({ id: 55 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The deal ID to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`deals.get`
+
+Get one deal by ID with its stage, value and associated people
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.deals.get({ id: 55 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The deal ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `pipelineId` | `number` | No | — |
+| `stageId` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `number` | No | — |
+| `status` | `string` | No | — |
+| `price` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `enteredStageAt` | `string` | No | — |
+| `projectedCloseDate` | `string` | No | — |
+| `earnestMoneyDueDate` | `string` | No | — |
+| `mutualAcceptanceDate` | `string` | No | — |
+| `dueDiligenceDate` | `string` | No | — |
+| `finalWalkThroughDate` | `string` | No | — |
+| `possessionDate` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+| `commissionValue` | `number` | No | — |
+| `agentCommission` | `number` | No | — |
+| `teamCommission` | `number` | No | — |
+| `peopleIds` | `number[]` | No | — |
+| `userIds` | `number[]` | No | — |
+| `people` | `object[]` | No | — |
+| `users` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="people full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  avatar?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`deals.list`
+
+List deals with their stage, price and people, sorted and paged
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.deals.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `pipelineId` | `number` | No | — |
+| `userId` | `number` | No | — |
+| `personId` | `number` | No | — |
+| `includeDeleted` | `number` | No | Set to `1` to include deals with a status of `Deleted`. |
+| `includeArchived` | `number` | No | Set to `1` to include deals with a status of `Archived`. |
+| `status` | `Active \| Archived \| Deleted` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deals` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="deals full type">
+
+```ts
+{
+  id?: number | null,
+  pipelineId?: number | null,
+  stageId?: number | null,
+  name?: string | null,
+  description?: string | null,
+  type?: number | null,
+  status?: string | null,
+  price?: number | null,
+  createdAt?: string | null,
+  enteredStageAt?: string | null,
+  projectedCloseDate?: string | null,
+  earnestMoneyDueDate?: string | null,
+  mutualAcceptanceDate?: string | null,
+  dueDiligenceDate?: string | null,
+  finalWalkThroughDate?: string | null,
+  possessionDate?: string | null,
+  orderWeight?: number | null,
+  commissionValue?: number | null,
+  agentCommission?: number | null,
+  teamCommission?: number | null,
+  peopleIds?: number[] | null,
+  userIds?: number[] | null,
+  people?: {
+    id?: number | null,
+    name?: string | null,
+    avatar?: string | null
+  }[] | null,
+  users?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`deals.update`
+
+Update a deal's stage, value, commission or associated people
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.deals.update({ id: 55, price: 535000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The deal ID. |
+| `name` | `string` | No | — |
+| `stageId` | `number` | No | — |
+| `description` | `string` | No | — |
+| `peopleIds` | `number[]` | No | — |
+| `userIds` | `number[]` | No | — |
+| `price` | `number` | No | — |
+| `projectedCloseDate` | `string` | No | — |
+| `commissionValue` | `number` | No | — |
+| `agentCommision` | `number` | No | Commission value for an agent split; spelled `agentCommision` in the PUT contract. |
+| `teamComission` | `number` | No | Commission value for a team split; spelled `teamComission` in the PUT contract. |
+| `earnestMoneyDueDate` | `string` | No | — |
+| `mutualAcceptanceDate` | `string` | No | — |
+| `dueDiligenceDate` | `string` | No | — |
+| `finalWalkThroughDate` | `string` | No | — |
+| `possessionDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `pipelineId` | `number` | No | — |
+| `stageId` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `number` | No | — |
+| `status` | `string` | No | — |
+| `price` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `enteredStageAt` | `string` | No | — |
+| `projectedCloseDate` | `string` | No | — |
+| `earnestMoneyDueDate` | `string` | No | — |
+| `mutualAcceptanceDate` | `string` | No | — |
+| `dueDiligenceDate` | `string` | No | — |
+| `finalWalkThroughDate` | `string` | No | — |
+| `possessionDate` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+| `commissionValue` | `number` | No | — |
+| `agentCommission` | `number` | No | — |
+| `teamCommission` | `number` | No | — |
+| `peopleIds` | `number[]` | No | — |
+| `userIds` | `number[]` | No | — |
+| `people` | `object[]` | No | — |
+| `users` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="people full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  avatar?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Em Campaigns
+
+### create
+
+`emCampaigns.create`
+
+Create an email marketing campaign with subject and HTML body
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.emCampaigns.create({ name: 'Spring newsletter', subject: 'New listings this spring', bodyHtml: '<p>Hi {{first_name}}</p>', origin: 'custom' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | No | Name of the email marketing system where this campaign originated from. |
+| `originId` | `string` | No | Internal ID of the new campaign or email in the origin system. |
+| `name` | `string` | No | Name of the email campaign or template. |
+| `subject` | `string` | No | Email subject line. |
+| `bodyHtml` | `string` | No | Email body in HTML. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `origin` | `string` | No | — |
+| `originId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `bodyHtml` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`emCampaigns.list`
+
+List the email marketing campaigns, filtered by origin
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.emCampaigns.list({ limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | No | Search for campaigns from a specific origin. |
+| `originId` | `string` | No | Search for campaigns with a specific ID from the originating system. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emCampaigns` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="emCampaigns full type">
+
+```ts
+{
+  id?: number | null,
+  origin?: string | null,
+  originId?: string | null,
+  name?: string | null,
+  subject?: string | null,
+  bodyHtml?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`emCampaigns.update`
+
+Update an email marketing campaign's name, subject or body
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.emCampaigns.update({ id: 8, subject: 'New listings this April' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The Follow Up Boss ID of the email campaign. |
+| `name` | `string` | No | Name of the email campaign or template. |
+| `subject` | `string` | No | Email subject line. |
+| `bodyHtml` | `string` | No | Email body in HTML. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `origin` | `string` | No | — |
+| `originId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `bodyHtml` | `string` | No | — |
+
+
+
+---
+
+## Em Events
+
+### create
+
+`emEvents.create`
+
+Record email marketing events against subscriber email addresses
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.emEvents.create({ emEvents: [{ type: 'open', email: 'jordan@acme-logistics.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emEvents` | `object[]` | No | The email marketing events to notify FUB about. |
+
+<AccordionGroup>
+<Accordion title="emEvents full type">
+
+```ts
+{
+  type?: string,
+  occurred?: string,
+  recipient?: string,
+  personId?: number,
+  campaignId?: string | number,
+  userId?: number,
+  url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emEventIds` | `number[]` | No | — |
+| `recipientsNotFound` | `string[]` | No | — |
+
+
+
+---
+
+### list
+
+`emEvents.list`
+
+List email marketing events such as sends, opens and clicks
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.emEvents.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `type` | `string` | No | Event type: `delivered`, `open`, `click`, `bounced`, `soft-bounce`, `hard-bounce`, `unsubscribe`, `spamreport` or `dropped`. |
+| `personId` | `number` | No | — |
+| `updatedAfter` | `string` | No | Only events created or updated after this time, e.g. 2017-01-01T00:00:00Z. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emEvents` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="emEvents full type">
+
+```ts
+{
+  count?: number | null,
+  type?: string | null,
+  personId?: number | null,
+  campaignId?: number | null,
+  campaignName?: string | null,
+  created?: string | null,
+  updated?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1040,6 +3030,1084 @@ await corsair.followupboss.api.events.list({ personId: 123, limit: 50 });
 
 ---
 
+## Groups
+
+### create
+
+`groups.create`
+
+Create a routing group of users with a distribution strategy
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.groups.create({ name: 'Round robin intake', users: [1, 4, 6], distribution: 'round_robin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the group. |
+| `distribution` | `first-to-claim \| round-robin` | No | Distribution model; Lender groups cannot be set to `first-to-claim`. |
+| `users` | `number[]` | Yes | User IDs that will be members of this group. |
+| `type` | `Agent \| Lender` | No | — |
+| `claimWindow` | `number` | No | Seconds a first-to-claim lead waits before reassignment; default 1800, minimum 60, maximum 1800. |
+| `defaultGroupId` | `number` | No | Group that receives unclaimed first-to-claim leads. |
+| `defaultPondId` | `number` | No | Pond that receives unclaimed first-to-claim leads. |
+| `defaultUserId` | `number` | No | User who receives unclaimed first-to-claim leads. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `distribution` | `string` | No | — |
+| `claimWindow` | `number` | No | — |
+| `nextRoundRobinUser` | `number` | No | — |
+| `isPrimary` | `boolean` | No | — |
+| `defaultUserId` | `number` | No | — |
+| `defaultPondId` | `number` | No | — |
+| `defaultGroupId` | `number` | No | — |
+| `users` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  role?: string | null,
+  pauseLeadDistribution?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Permanently delete a routing group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.groups.delete({ id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The group ID to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`groups.get`
+
+Get one routing group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.groups.get({ id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The group ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `distribution` | `string` | No | — |
+| `claimWindow` | `number` | No | — |
+| `nextRoundRobinUser` | `number` | No | — |
+| `isPrimary` | `boolean` | No | — |
+| `defaultUserId` | `number` | No | — |
+| `defaultPondId` | `number` | No | — |
+| `defaultGroupId` | `number` | No | — |
+| `users` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  role?: string | null,
+  pauseLeadDistribution?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List the routing groups with their distribution strategy
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `Agent \| Lender` | No | `Agent` groups allow admins and agents and `Lender` groups allow lender role users. |
+| `sort` | `string` | No | Sort by `id` or `name`, optionally prefixed with `-` for descending. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  type?: string | null,
+  distribution?: string | null,
+  claimWindow?: number | null,
+  nextRoundRobinUser?: number | null,
+  isPrimary?: boolean | null,
+  defaultUserId?: number | null,
+  defaultPondId?: number | null,
+  defaultGroupId?: number | null,
+  users?: {
+    id?: number | null,
+    name?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    role?: string | null,
+    pauseLeadDistribution?: boolean | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### roundRobin
+
+`groups.roundRobin`
+
+Read the round-robin rotation state of the routing groups
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.groups.roundRobin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `Agent \| Lender` | No | `Agent` groups allow admins and agents and `Lender` groups allow lender role users. |
+| `sort` | `string` | No | Sort by `id` or `name`, optionally prefixed with `-` for descending. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  type?: string | null,
+  distribution?: string | null,
+  claimWindow?: number | null,
+  nextRoundRobinUser?: number | null,
+  isPrimary?: boolean | null,
+  defaultUserId?: number | null,
+  defaultPondId?: number | null,
+  defaultGroupId?: number | null,
+  users?: {
+    id?: number | null,
+    name?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    role?: string | null,
+    pauseLeadDistribution?: boolean | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`groups.update`
+
+Update a routing group's name, members or distribution
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.groups.update({ id: 2, name: 'Intake group' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The group ID. |
+| `name` | `string` | Yes | The name of the group. |
+| `distribution` | `first-to-claim \| round-robin` | No | Distribution model; Lender groups cannot be set to `first-to-claim`. |
+| `users` | `number[]` | Yes | User IDs that will be members of this group. |
+| `type` | `Agent \| Lender` | No | — |
+| `claimWindow` | `number` | No | Seconds a first-to-claim lead waits before reassignment; default 1800, minimum 60, maximum 1800. |
+| `defaultGroupId` | `number` | No | Group that receives unclaimed first-to-claim leads. |
+| `defaultPondId` | `number` | No | Pond that receives unclaimed first-to-claim leads. |
+| `defaultUserId` | `number` | No | User who receives unclaimed first-to-claim leads. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `distribution` | `string` | No | — |
+| `claimWindow` | `number` | No | — |
+| `nextRoundRobinUser` | `number` | No | — |
+| `isPrimary` | `boolean` | No | — |
+| `defaultUserId` | `number` | No | — |
+| `defaultPondId` | `number` | No | — |
+| `defaultGroupId` | `number` | No | — |
+| `users` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  role?: string | null,
+  pauseLeadDistribution?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inbox Apps
+
+### addMessage
+
+`inboxApps.addMessage`
+
+Deliver a message from your system into an inbox app conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.inboxApps.addMessage({ inboxAppId: 'app_123', externalConversationId: 'conv_88', externalMessageId: 'msg_910', message: 'Offer accepted!' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxAppId` | `string` | Yes | The Inbox App ID adding the message. |
+| `externalConversationId` | `string` | Yes | A unique identifier that references this conversation. |
+| `externalMessageId` | `string` | Yes | A unique identifier that references this message. |
+| `replyToExternalMessageId` | `string` | No | External message ID of the message this message replies to. |
+| `sentAt` | `string` | No | Delivery timestamp in ISO 8601 UTC; defaults to the current time. |
+| `subject` | `string` | No | Sets or updates the subject of the conversation. |
+| `message` | `string` | Yes | A plaintext message body. |
+| `isIncoming` | `boolean` | Yes | Whether the message was incoming to your system. |
+| `sender` | `object` | Yes | Who sent the message: a FUB User, a FUB Person or an unrelated entity. |
+| `isAutomation` | `boolean` | No | Whether the sender is an automated system. |
+| `person` | `object` | No | The person associated with the conversation; required on the first message. |
+| `owner` | `object` | No | The owner of the conversation; required on the first message. |
+| `deliveryStatus` | `Sent \| Delivered \| Read \| Not Delivered` | No | — |
+| `deliveryStatusErrorMessage` | `string` | No | User-facing error message for Not Delivered statuses. |
+| `attachments` | `object[]` | No | File attachments with a URL FUB can download for 20 minutes. |
+| `richObjects` | `string[]` | No | List of Rich Object URLs. |
+
+<AccordionGroup>
+<Accordion title="sender full type">
+
+```ts
+{
+  userId?: number,
+  personId?: number,
+  relationshipId?: number,
+  participantId?: number,
+  name?: string,
+  email?: string,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="person full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  email?: string,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  userId?: number,
+  inboxId?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  filename?: string | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `sentAt` | `string` | No | — |
+| `deliveryStatus` | `string` | No | — |
+| `deliveryStatusErrorMessage` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `isIncoming` | `boolean` | No | — |
+| `isSystem` | `boolean` | No | — |
+| `systemType` | `string` | No | — |
+| `message` | `string` | No | — |
+| `userId` | `number` | No | — |
+| `personId` | `number` | No | — |
+| `sender` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `conversationDeepLinkUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sender full type">
+
+```ts
+{
+  userId?: number | null,
+  personId?: number | null,
+  relationshipId?: number | null,
+  participantId?: number | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  avatar?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  filename?: string | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addNote
+
+`inboxApps.addNote`
+
+Add an internal note to an inbox app conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.inboxApps.addNote({ inboxAppId: 'app_123', externalConversationId: 'conv_88', note: 'Client prefers evening calls' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxAppId` | `string` | Yes | The Inbox App ID adding the note. |
+| `externalConversationId` | `string` | Yes | The unique identifier that references the conversation. |
+| `body` | `string` | Yes | The plaintext body of the note. |
+| `user` | `object` | Yes | The user adding the note. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `createdBy` | `string` | No | — |
+| `updatedBy` | `string` | No | — |
+| `conversationId` | `number` | No | — |
+| `body` | `string` | No | — |
+| `isHtml` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `conversationDeepLinkUrl` | `string` | No | — |
+
+
+
+---
+
+### addSystemConfirmationMessage
+
+`inboxApps.addSystemConfirmationMessage`
+
+Add a system confirmation message to an inbox app conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.inboxApps.addSystemConfirmationMessage({ inboxAppId: 'app_123', externalConversationId: 'conv_88', message: 'Conversation synced' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxAppId` | `string` | Yes | The Inbox App ID adding the message. |
+| `externalConversationId` | `string` | Yes | A unique identifier that references this conversation. |
+| `externalMessageId` | `string` | Yes | A unique identifier that references this message. |
+| `message` | `string` | Yes | A plaintext message body. |
+| `type` | `success \| info \| error` | No | The system confirmation message type. |
+| `person` | `object` | No | The person associated with the conversation; required on the first message. |
+| `owner` | `object` | No | The owner of the conversation; required on the first message. |
+
+<AccordionGroup>
+<Accordion title="person full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  email?: string,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  userId?: number,
+  inboxId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `sentAt` | `string` | No | — |
+| `deliveryStatus` | `string` | No | — |
+| `deliveryStatusErrorMessage` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `isIncoming` | `boolean` | No | — |
+| `isSystem` | `boolean` | No | — |
+| `systemType` | `string` | No | — |
+| `message` | `string` | No | — |
+| `userId` | `number` | No | — |
+| `personId` | `number` | No | — |
+| `sender` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `conversationDeepLinkUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sender full type">
+
+```ts
+{
+  userId?: number | null,
+  personId?: number | null,
+  relationshipId?: number | null,
+  participantId?: number | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  avatar?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  filename?: string | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createParticipant
+
+`inboxApps.createParticipant`
+
+Add a participant to an inbox app conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.inboxApps.createParticipant({ inboxAppId: 'app_123', extConversationId: 'conv_88', participant: { externalId: 'part_6', name: 'Sam Rivera' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxAppId` | `string` | Yes | The Inbox App ID sending the message. |
+| `extConversationId` | `string` | Yes | The unique identifier that references the conversation being updated. |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  personId?: number,
+  userId?: number,
+  relationshipId?: number,
+  name?: string,
+  email?: string,
+  phone?: string,
+  isAutomation?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `status` | `string` | No | — |
+| `userId` | `number` | No | — |
+| `personId` | `number` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `isAutomation` | `boolean` | No | — |
+
+
+
+---
+
+### deactivate
+
+`inboxApps.deactivate`
+
+Deactivate an inbox app so it stops receiving conversations
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.inboxApps.deactivate({ inboxAppId: 'app_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxAppId` | `string` | Yes | The Inbox App ID to deactivate. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `inboxAppId` | `string` | Yes | — |
+
+
+
+---
+
+### deleteParticipant
+
+`inboxApps.deleteParticipant`
+
+Remove a participant from an inbox app conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.inboxApps.deleteParticipant({ inboxAppId: 'app_123', extConversationId: 'conv_88', participantId: 'part_5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxAppId` | `string` | Yes | The Inbox App ID sending the message. |
+| `extConversationId` | `string` | Yes | The unique identifier that references the conversation being updated. |
+| `participantId` | `string` | Yes | The participant's ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `participantId` | `string` | Yes | — |
+
+
+
+---
+
+### getParticipants
+
+`inboxApps.getParticipants`
+
+List the participants of an inbox app conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.inboxApps.getParticipants({ inboxAppId: 'app_123', extConversationId: 'conv_88' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxAppId` | `string` | Yes | The Inbox App ID sending the message. |
+| `extConversationId` | `string` | Yes | The unique identifier that references the conversation being updated. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  status?: string | null,
+  userId?: number | null,
+  personId?: number | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  isAutomation?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### install
+
+`inboxApps.install`
+
+Install a published inbox app for a user with a subscription URL
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.inboxApps.install({ publishedInboxAppId: 'pub_app_1', userId: 1, subscriptionUrl: 'https://hooks.example.com/inbox' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publishedInboxAppId` | `number` | Yes | Your Published Inbox App ID. |
+| `userId` | `number` | Yes | The User ID to scope the install to, or 0 for account-wide scope. |
+| `subscriptionUrl` | `string` | Yes | The webhook URL you will receive Inbox App replies at. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `status` | `number` | No | — |
+| `name` | `string` | No | — |
+| `publishedInboxAppId` | `number` | No | — |
+| `userId` | `number` | No | — |
+| `canReply` | `boolean` | No | — |
+
+
+
+---
+
+### installedApp
+
+`inboxApps.installedApp`
+
+Read the installation details of a published inbox app
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.inboxApps.installedApp({ publishedInboxAppId: 'pub_app_1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publishedInboxAppId` | `string` | Yes | Your Published Inbox App ID, to display installations of. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxApps` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="inboxApps full type">
+
+```ts
+{
+  inboxAppId?: number | null,
+  userId?: number | null,
+  created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateConversation
+
+`inboxApps.updateConversation`
+
+Update an inbox app conversation's subject or state
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.inboxApps.updateConversation({ inboxAppId: 'app_123', extConversationId: 'conv_88', name: 'Offer negotiation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxAppId` | `string` | Yes | The Inbox App ID sending the message. |
+| `extConversationId` | `string` | Yes | The unique identifier that references the conversation being updated. |
+| `subject` | `string` | No | Sets or updates the subject. |
+| `archived` | `boolean` | No | Archives or unarchives. |
+| `permanentlyArchived` | `boolean` | No | Disables replies and notes; cannot be undone. |
+| `person` | `object` | No | Updates the person; only changeable before a Person ID is set. |
+| `assignedUserId` | `number` | No | The User ID to reassign to; 0 reverts to the owner. |
+| `assignedInboxId` | `number` | No | The Team Inbox ID to reassign to; 0 reverts to the owner. |
+
+<AccordionGroup>
+<Accordion title="person full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  email?: string,
+  phone?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalConversationId` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `string` | No | — |
+| `updatedById` | `string` | No | — |
+| `ownerUserId` | `number` | No | — |
+| `ownerSharedInboxId` | `number` | No | — |
+| `assignedUserId` | `number` | No | — |
+| `assignedSharedInboxId` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `person` | `object` | No | — |
+| `conversationDeepLinkUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="person full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateMessage
+
+`inboxApps.updateMessage`
+
+Update a message previously delivered to an inbox app conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.inboxApps.updateMessage({ inboxAppId: 'app_123', externalMessageId: 'msg_910', message: 'Offer accepted and signed!' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxAppId` | `string` | Yes | The Inbox App ID updating the message. |
+| `id` | `number` | No | FUB ID of the Inbox App message to update. |
+| `externalMessageId` | `string` | No | Identifies the message when sent alone; updates its value alongside `id`. |
+| `deliveryStatus` | `Sent \| Delivered \| Read \| Not Delivered` | No | — |
+| `deliveryStatusErrorMessage` | `string` | No | User-facing error message for Not Delivered statuses. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `sentAt` | `string` | No | — |
+| `deliveryStatus` | `string` | No | — |
+| `deliveryStatusErrorMessage` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `isIncoming` | `boolean` | No | — |
+| `isSystem` | `boolean` | No | — |
+| `systemType` | `string` | No | — |
+| `message` | `string` | No | — |
+| `userId` | `number` | No | — |
+| `personId` | `number` | No | — |
+| `sender` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `conversationDeepLinkUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sender full type">
+
+```ts
+{
+  userId?: number | null,
+  personId?: number | null,
+  relationshipId?: number | null,
+  participantId?: number | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  avatar?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  filename?: string | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Notes
 
 ### create
@@ -1159,23 +4227,21 @@ await corsair.followupboss.api.notes.get({ id: 21, includeThreadedReplies: true 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `notes` | `object[]` | Yes | — |
+| `id` | `number` | No | — |
+| `personId` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `isHtml` | `boolean` | No | — |
+| `user` | `object` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="notes full type">
+<Accordion title="user full type">
 
 ```ts
 {
-  id?: number | null,
-  personId?: number | null,
-  subject?: string | null,
-  body?: string | null,
-  isHtml?: boolean | null,
-  user?: {
-  } | null,
-  created?: string | null,
-  updated?: string | null
-}[]
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2745,6 +5811,741 @@ await corsair.followupboss.api.personAttachments.update({ id: 45, personId: 123,
 
 ---
 
+## Pipelines
+
+### create
+
+`pipelines.create`
+
+Create a deal pipeline with an optional stage list
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.pipelines.create({ name: 'Buyer pipeline', stages: ['New', 'Touring', 'Offer'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the pipeline. |
+| `description` | `string` | No | — |
+| `stages` | `object[]` | No | Stage objects to associate with the pipeline. |
+| `orderWeight` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="stages full type">
+
+```ts
+{
+  name: string,
+  closedStage: boolean,
+  description?: string,
+  orderWeight?: number,
+  color?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+| `stages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="stages full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  orderWeight?: number | null,
+  color?: string | null,
+  closedStage?: boolean | null,
+  isProtected?: boolean | null,
+  peopleCount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`pipelines.delete`
+
+Permanently delete a deal pipeline
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.pipelines.delete({ id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The pipeline ID to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`pipelines.get`
+
+Get one deal pipeline by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.pipelines.get({ id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The pipeline ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+| `stages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="stages full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  orderWeight?: number | null,
+  color?: string | null,
+  closedStage?: boolean | null,
+  isProtected?: boolean | null,
+  peopleCount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pipelines.list`
+
+List the deal pipelines with their stages and order
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.pipelines.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `name` | `string` | No | The pipeline name to look up (must be an exact match). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pipelines` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pipelines full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  orderWeight?: number | null,
+  stages?: {
+    id?: number | null,
+    name?: string | null,
+    description?: string | null,
+    orderWeight?: number | null,
+    color?: string | null,
+    closedStage?: boolean | null,
+    isProtected?: boolean | null,
+    peopleCount?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`pipelines.update`
+
+Update a pipeline's name, description or stage order
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.pipelines.update({ id: 2, name: 'Buyer pipeline 2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The pipeline ID. |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `stages` | `object[]` | No | — |
+| `orderWeight` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="stages full type">
+
+```ts
+{
+  name: string,
+  closedStage: boolean,
+  description?: string,
+  orderWeight?: number,
+  color?: string,
+  id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+| `stages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="stages full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  orderWeight?: number | null,
+  color?: string | null,
+  closedStage?: boolean | null,
+  isProtected?: boolean | null,
+  peopleCount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ponds
+
+### create
+
+`ponds.create`
+
+Create a pond with the users whose leads land in it
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.ponds.create({ name: 'Buyer pond', userId: 1, userIds: [1, 4] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the pond to create. |
+| `userId` | `number` | Yes | The Pond Lead Agent. |
+| `userIds` | `number[]` | Yes | IDs of all users to add as members of the pond. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `userId` | `number` | No | — |
+| `userIds` | `number[]` | No | — |
+
+
+
+---
+
+### delete
+
+`ponds.delete`
+
+Permanently delete a pond
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.ponds.delete({ id: 6 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The pond ID to delete. |
+| `assignTo` | `number` | Yes | Agent who receives the contacts currently in this pond after it is deleted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`ponds.get`
+
+Get one pond by ID with its assigned users
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.ponds.get({ id: 6 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The pond ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `userId` | `number` | No | — |
+| `userIds` | `number[]` | No | — |
+
+
+
+---
+
+### list
+
+`ponds.list`
+
+List the ponds, the lead pools that distribute new contacts to agents
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.ponds.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ponds` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="ponds full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  userId?: number | null,
+  userIds?: number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`ponds.update`
+
+Update a pond's name or assigned users
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.ponds.update({ id: 6, name: 'Buyer pond 2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The pond ID. |
+| `name` | `string` | No | — |
+| `userId` | `number` | No | — |
+| `userIds` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `userId` | `number` | No | — |
+| `userIds` | `number[]` | No | — |
+
+
+
+---
+
+## Rate Limit
+
+### limits
+
+`rateLimit.limits`
+
+Read the rate-limit levels currently configured for this system
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.rateLimit.limits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `system` | `string` | No | — |
+| `current_limits` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="current_limits full type">
+
+```ts
+{
+  across_all_accounts?: {
+  } | null,
+  per_account?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usage
+
+`rateLimit.usage`
+
+Read this system's 24-hour API usage totals and rate-limit statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.rateLimit.usage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `system` | `string` | No | — |
+| `period` | `string` | No | — |
+| `usage` | `object` | No | — |
+| `current_limits` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  total_requests?: number | null,
+  rate_limited_requests?: number | null,
+  rate_limit_percentage?: number | null,
+  peak_hour?: string | null,
+  current_limits?: {
+    across_all_accounts?: {
+    } | null,
+    per_account?: {
+    } | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="current_limits full type">
+
+```ts
+{
+  across_all_accounts?: {
+  } | null,
+  per_account?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reactions
+
+### create
+
+`reactions.create`
+
+Add a reaction to a note or other reference
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.reactions.create({ refType: 'note', refId: '21', body: '👍' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refType` | `Note \| Call \| ThreadedReply` | Yes | The type of entity being reacted to. |
+| `refId` | `number \| string` | Yes | The ID of the entity being reacted to. |
+| `body` | `string` | No | The single-character emoji reaction. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  createdBy?: string | null,
+  createdById?: number | null,
+  refType?: string | null,
+  refId?: number | null,
+  body?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`reactions.delete`
+
+Remove a reaction, sending the documented delete body
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.reactions.delete({ refType: 'note', refId: '21' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refType` | `Note \| Call \| ThreadedReply` | Yes | The type of entity the reaction is removed from. |
+| `refId` | `number \| string` | Yes | The ID of the entity. |
+| `emoji` | `string` | No | Single character emoji reaction to delete, as a query filter. |
+| `body` | `string` | No | The single-character emoji reaction, carried as the DELETE request body. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `refType` | `string` | Yes | — |
+| `refId` | `number \| string` | Yes | — |
+
+
+
+---
+
+### get
+
+`reactions.get`
+
+Get the reactions attached to a note
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.reactions.get({ id: 31 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The reaction ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `refType` | `string` | No | — |
+| `refId` | `number` | No | — |
+| `body` | `string` | No | — |
+
+
+
+---
+
 ## Smart Lists
 
 ### get
@@ -2846,6 +6647,229 @@ await corsair.followupboss.api.smartLists.list({ limit: 50 });
 
 ---
 
+## Stages
+
+### create
+
+`stages.create`
+
+Create a deal stage with an optional sort order
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.stages.create({ name: 'Touring', orderWeight: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the stage. |
+| `orderWeight` | `number` | No | Set this value to enforce a specific sort order. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+| `color` | `string` | No | — |
+| `closedStage` | `boolean` | No | — |
+| `isProtected` | `boolean` | No | — |
+| `peopleCount` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`stages.delete`
+
+Delete a deal stage after reassigning its action plans to another stage
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.stages.delete({ id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The stage ID to delete. |
+| `assignStageId` | `number` | Yes | The stage id assigned to action plans referencing the deleted stage. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`stages.get`
+
+Get one deal stage by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.stages.get({ id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The stage ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+| `color` | `string` | No | — |
+| `closedStage` | `boolean` | No | — |
+| `isProtected` | `boolean` | No | — |
+| `peopleCount` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`stages.list`
+
+List the deal stages across pipelines with their order weight
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.stages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `sort` | `string` | No | Sorts the stages by `orderWeight`, `id` or `name`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stages` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="stages full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  orderWeight?: number | null,
+  color?: string | null,
+  closedStage?: boolean | null,
+  isProtected?: boolean | null,
+  peopleCount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`stages.update`
+
+Update a deal stage's name or sort order
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.stages.update({ id: 7, name: 'Active touring' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The stage ID. |
+| `name` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `orderWeight` | `number` | No | — |
+| `color` | `string` | No | — |
+| `closedStage` | `boolean` | No | — |
+| `isProtected` | `boolean` | No | — |
+| `peopleCount` | `number` | No | — |
+
+
+
+---
+
 ## Tasks
 
 ### create
@@ -2940,7 +6964,7 @@ await corsair.followupboss.api.tasks.delete({ id: 14 });
 
 `tasks.get`
 
-Get one task by ID
+Get one task by ID with its type, due date and completion status
 
 **Risk:** `read`
 
@@ -3090,6 +7114,677 @@ await corsair.followupboss.api.tasks.update({ id: 14, isCompleted: true });
 | `assignedUserId` | `number` | No | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |
+
+
+
+---
+
+## Team Inboxes
+
+### list
+
+`teamInboxes.list`
+
+List the team inboxes available in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.teamInboxes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamInboxes` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="teamInboxes full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  users?: {
+    id?: number | null,
+    name?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a team with members and leaders
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.teams.create({ name: 'Downtown crew', userIds: [1, 4], leaderIds: [1] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the team. |
+| `userIds` | `number[]` | Yes | User IDs that will be members of this team. |
+| `leaderIds` | `number[]` | No | The complete list of team leaders. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `userIds` | `number[]` | No | — |
+| `leaderIds` | `number[]` | No | — |
+
+
+
+---
+
+### delete
+
+`teams.delete`
+
+Permanently delete a team
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.teams.delete({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The team ID to delete. |
+| `moveToTeamId` | `number` | No | Merge before deleting: all members of this team join the target team first. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`teams.get`
+
+Get one team by ID with its members and leaders
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.teams.get({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The team ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `userIds` | `number[]` | No | — |
+| `leaderIds` | `number[]` | No | — |
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List the teams in the account with their members
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teams` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="teams full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  userIds?: number[] | null,
+  leaderIds?: number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`teams.update`
+
+Update a team's name, members or leaders
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.teams.update({ id: 3, name: 'Downtown team' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The team ID. |
+| `name` | `string` | No | — |
+| `userIds` | `number[]` | No | The complete list of members of this team. |
+| `leaderIds` | `number[]` | No | The complete list of team leaders. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `userIds` | `number[]` | No | — |
+| `leaderIds` | `number[]` | No | — |
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create an email template with subject and body, optionally shared
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.templates.create({ name: 'Tour follow-up', subject: 'Great meeting you', body: 'Hi {{first_name}}, ...', isShared: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the new email template. |
+| `subject` | `string` | Yes | The email subject used when this template is selected. |
+| `body` | `string` | Yes | The HTML body of the email template. |
+| `isShared` | `boolean` | No | Share the template with other users in the account. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `name` | `string` | No | — |
+| `isMobile` | `number` | No | — |
+| `imported` | `number` | No | — |
+| `isShared` | `boolean` | No | — |
+| `body` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `isEditable` | `boolean` | No | — |
+| `isDeletable` | `boolean` | No | — |
+| `isShareable` | `boolean` | No | — |
+| `actionPlans` | `object[]` | No | — |
+| `categories` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="actionPlans full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Permanently delete an email template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.templates.delete({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The template ID to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Get one email template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.templates.get({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The template ID. |
+| `mergePersonId` | `number` | No | Fill the merge fields with this person and the current user before returning the template. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `name` | `string` | No | — |
+| `isMobile` | `number` | No | — |
+| `imported` | `number` | No | — |
+| `isShared` | `boolean` | No | — |
+| `body` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `isEditable` | `boolean` | No | — |
+| `isDeletable` | `boolean` | No | — |
+| `isShareable` | `boolean` | No | — |
+| `actionPlans` | `object[]` | No | — |
+| `categories` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="actionPlans full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List the email message templates, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.templates.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  updated?: string | null,
+  createdById?: number | null,
+  updatedById?: number | null,
+  name?: string | null,
+  isMobile?: number | null,
+  imported?: number | null,
+  isShared?: boolean | null,
+  body?: string | null,
+  subject?: string | null,
+  isEditable?: boolean | null,
+  isDeletable?: boolean | null,
+  isShareable?: boolean | null,
+  actionPlans?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null,
+  categories?: {
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`templates.merge`
+
+Render an email template for a person, merging their fields into the body
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.templates.merge({ templateId: 3, mergePersonId: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `number` | Yes | The ID of the email template to merge. |
+| `mergePersonId` | `number` | No | Person ID to use for merge fields like %contact_name%. |
+| `recipients` | `object` | No | Recipients in the To: field of this email. |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  to?: {
+    name?: string | null,
+    email?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `name` | `string` | No | — |
+| `isMobile` | `number` | No | — |
+| `imported` | `number` | No | — |
+| `isShared` | `boolean` | No | — |
+| `body` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `isEditable` | `boolean` | No | — |
+| `isDeletable` | `boolean` | No | — |
+| `isShareable` | `boolean` | No | — |
+| `actionPlans` | `object[]` | No | — |
+| `categories` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="actionPlans full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Replace an email template's name, subject and body
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.templates.update({ id: 3, subject: 'Great meeting you today' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The template ID. |
+| `name` | `string` | Yes | The new name for the email template. |
+| `subject` | `string` | Yes | The new subject for the email template. |
+| `body` | `string` | Yes | The new body for the email template. |
+| `isShared` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `updatedById` | `number` | No | — |
+| `name` | `string` | No | — |
+| `isMobile` | `number` | No | — |
+| `imported` | `number` | No | — |
+| `isShared` | `boolean` | No | — |
+| `body` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `isEditable` | `boolean` | No | — |
+| `isDeletable` | `boolean` | No | — |
+| `isShareable` | `boolean` | No | — |
+| `actionPlans` | `object[]` | No | — |
+| `categories` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="actionPlans full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3254,6 +7949,431 @@ await corsair.followupboss.api.textMessages.list({ personId: 123 });
 
 ---
 
+## Text Message Templates
+
+### create
+
+`textMessageTemplates.create`
+
+Create a text message template, optionally shared
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.textMessageTemplates.create({ name: 'Tour reminder', message: 'See you at the tour tomorrow!', isShared: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the text message template. |
+| `message` | `string` | Yes | The body of the text message template. |
+| `isShared` | `boolean` | No | Share the template with other users in the account. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `message` | `string` | No | — |
+| `totalSent` | `number` | No | — |
+| `totalReplies` | `number` | No | — |
+| `isShared` | `boolean` | No | — |
+| `createdBy` | `number` | No | — |
+| `isEditable` | `boolean` | No | — |
+| `isDeletable` | `boolean` | No | — |
+| `isShareable` | `boolean` | No | — |
+| `sentPeopleIds` | `number[]` | No | — |
+| `sentPeopleCount` | `number` | No | — |
+| `categories` | `object[]` | No | — |
+| `actionPlans` | `object[]` | No | — |
+| `effectivenessScore` | `number` | No | — |
+| `windowedSent` | `number` | No | — |
+| `windowedReplies` | `number` | No | — |
+| `windowedOptOutRate` | `number` | No | — |
+| `totalOptOutRate` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="actionPlans full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`textMessageTemplates.delete`
+
+Permanently delete a text message template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.textMessageTemplates.delete({ id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The template ID to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`textMessageTemplates.get`
+
+Get one text message template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.textMessageTemplates.get({ id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The template ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `message` | `string` | No | — |
+| `totalSent` | `number` | No | — |
+| `totalReplies` | `number` | No | — |
+| `isShared` | `boolean` | No | — |
+| `createdBy` | `number` | No | — |
+| `isEditable` | `boolean` | No | — |
+| `isDeletable` | `boolean` | No | — |
+| `isShareable` | `boolean` | No | — |
+| `sentPeopleIds` | `number[]` | No | — |
+| `sentPeopleCount` | `number` | No | — |
+| `categories` | `object[]` | No | — |
+| `actionPlans` | `object[]` | No | — |
+| `effectivenessScore` | `number` | No | — |
+| `windowedSent` | `number` | No | — |
+| `windowedReplies` | `number` | No | — |
+| `windowedOptOutRate` | `number` | No | — |
+| `totalOptOutRate` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="actionPlans full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`textMessageTemplates.list`
+
+List the text message templates, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.textMessageTemplates.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `textmessagetemplates` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="textmessagetemplates full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  message?: string | null,
+  totalSent?: number | null,
+  totalReplies?: number | null,
+  isShared?: boolean | null,
+  createdBy?: number | null,
+  isEditable?: boolean | null,
+  isDeletable?: boolean | null,
+  isShareable?: boolean | null,
+  sentPeopleIds?: number[] | null,
+  sentPeopleCount?: number | null,
+  categories?: {
+  }[] | null,
+  actionPlans?: {
+  }[] | null,
+  effectivenessScore?: number | null,
+  windowedSent?: number | null,
+  windowedReplies?: number | null,
+  windowedOptOutRate?: number | null,
+  totalOptOutRate?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`textMessageTemplates.merge`
+
+Render a text message template for a person, merging their fields into the message
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.textMessageTemplates.merge({ templateId: 5, personId: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `number` | Yes | The ID of the text message template to merge. |
+| `personId` | `number` | No | Person ID to use for merge fields like %contact_name%. |
+| `recipients` | `object` | No | Recipients of this text message. |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  to?: {
+    name?: string | null,
+    phone?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mergedTemplate` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`textMessageTemplates.update`
+
+Update a text message template's name or message
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.textMessageTemplates.update({ id: 5, message: 'Reminder: tour tomorrow at 5pm.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The template ID. |
+| `name` | `string` | Yes | The name of the text message template. |
+| `message` | `string` | Yes | The body of the text message template. |
+| `isShared` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `message` | `string` | No | — |
+| `totalSent` | `number` | No | — |
+| `totalReplies` | `number` | No | — |
+| `isShared` | `boolean` | No | — |
+| `createdBy` | `number` | No | — |
+| `isEditable` | `boolean` | No | — |
+| `isDeletable` | `boolean` | No | — |
+| `isShareable` | `boolean` | No | — |
+| `sentPeopleIds` | `number[]` | No | — |
+| `sentPeopleCount` | `number` | No | — |
+| `categories` | `object[]` | No | — |
+| `actionPlans` | `object[]` | No | — |
+| `effectivenessScore` | `number` | No | — |
+| `windowedSent` | `number` | No | — |
+| `windowedReplies` | `number` | No | — |
+| `windowedOptOutRate` | `number` | No | — |
+| `totalOptOutRate` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="actionPlans full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Threaded Replies
+
+### get
+
+`threadedReplies.get`
+
+Get the threaded replies of a note
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.threadedReplies.get({ id: 44 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The ID of the threaded reply to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `createdById` | `number` | No | — |
+| `refType` | `string` | No | — |
+| `refId` | `number` | No | — |
+| `body` | `string` | No | — |
+| `reactions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="reactions full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  createdBy?: string | null,
+  createdById?: number | null,
+  refType?: string | null,
+  refId?: number | null,
+  body?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Timeframes
 
 ### list
@@ -3289,6 +8409,449 @@ await corsair.followupboss.api.timeframes.list({});
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+## Users
+
+### delete
+
+`users.delete`
+
+Permanently remove a user from the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.users.delete({ id: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The user ID to delete. |
+| `assignTo` | `number` | Yes | ID of another user to reassign the deleted user’s leads to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`users.get`
+
+Get one user by ID with their role and contact details
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.users.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The user ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `name` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `role` | `string` | No | — |
+| `status` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `beta` | `boolean` | No | — |
+| `picture` | `any` | No | — |
+| `pauseLeadDistribution` | `boolean` | No | — |
+| `lastSeenIos` | `string` | No | — |
+| `lastSeenAndroid` | `string` | No | — |
+| `lastSeenFub2` | `string` | No | — |
+| `canExport` | `boolean` | No | — |
+| `canCreateApiKeys` | `boolean` | No | — |
+| `isOwner` | `boolean` | No | — |
+| `groups` | `object[]` | No | — |
+| `teamIds` | `number[]` | No | — |
+| `teamLeaderOf` | `number[]` | No | — |
+| `leadEmailAddress` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List the users of the account with their roles
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `sort` | `string` | No | Sort by `id`, `name` or `created`, optionally prefixed with `-` for descending. |
+| `role` | `string` | No | Find users by role, e.g. `Broker`, `Agent` or `Lender`. |
+| `name` | `string` | No | Exact full-name match; no partial matching. |
+| `email` | `string` | No | — |
+| `fields` | `string` | No | Comma separated fields to return (e.g. `id,name`), or `allFields`. |
+| `includeDeleted` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  updated?: string | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  role?: string | null,
+  status?: string | null,
+  timezone?: string | null,
+  beta?: boolean | null,
+  picture?: any | null,
+  pauseLeadDistribution?: boolean | null,
+  lastSeenIos?: string | null,
+  lastSeenAndroid?: string | null,
+  lastSeenFub2?: string | null,
+  canExport?: boolean | null,
+  canCreateApiKeys?: boolean | null,
+  isOwner?: boolean | null,
+  groups?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null,
+  teamIds?: number[] | null,
+  teamLeaderOf?: number[] | null,
+  leadEmailAddress?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook Events
+
+### get
+
+`webhookEvents.get`
+
+Get one delivered webhook event payload by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.webhookEvents.get({ id: 9001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | The ID of the webhook whose delivery events are listed. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `eventCreated` | `string` | No | — |
+| `event` | `string` | No | — |
+| `resourceIds` | `number[]` | No | — |
+| `uri` | `string` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Subscribe a URL to one Follow Up Boss event
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.webhooks.create({ event: 'people.created', url: 'https://hooks.example.com/fub' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `peopleCreated \| peopleUpdated \| peopleDeleted \| peopleTagsCreated \| peopleStageUpdated \| peopleRelationshipCreated \| peopleRelationshipUpdated \| peopleRelationshipDeleted \| notesCreated \| notesUpdated \| notesDeleted \| emEventsOpened \| emEventsClicked \| emEventsUnsubscribed \| tasksCreated \| tasksUpdated \| tasksDeleted \| appointmentsCreated \| appointmentsUpdated \| appointmentsDeleted \| textMessagesCreated \| textMessagesUpdated \| textMessagesDeleted \| callsCreated \| callsUpdated \| callsDeleted \| dealsCreated \| dealsUpdated \| dealsDeleted \| emailsCreated \| emailsUpdated \| emailsDeleted \| eventsCreated \| stageCreated \| stageUpdated \| stageDeleted` | Yes | The event the webhook responds to. |
+| `url` | `string` | Yes | The webhook endpoint URL; must be a secure https endpoint. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `event` | `string` | No | — |
+| `status` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Permanently delete a webhook subscription
+
+**Risk:** `destructive`
+
+```ts
+await corsair.followupboss.api.webhooks.delete({ id: 18 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The webhook ID to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `resource` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get one webhook subscription by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.webhooks.get({ id: 18 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The webhook ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `event` | `string` | No | — |
+| `status` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhook subscriptions of the account
+
+**Risk:** `read`
+
+```ts
+await corsair.followupboss.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
+| `offset` | `number` | No | Number of rows to skip before returning results. |
+| `sort` | `string` | No | Sort order: `id`, `created`, `updated`, `status` or `event`; defaults to `created`. |
+| `event` | `string` | No | Search for webhooks by event, e.g. `peopleCreated`. |
+| `status` | `Active \| Disabled` | No | Search for webhooks by status, `Active` or `Disabled`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+| `_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id?: number | null,
+  event?: string | null,
+  status?: string | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_metadata full type">
+
+```ts
+{
+  collection?: string | null,
+  offset?: number | null,
+  limit?: number | null,
+  total?: number | null,
+  next?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook subscription's URL or event type
+
+**Risk:** `write`
+
+```ts
+await corsair.followupboss.api.webhooks.update({ id: 18, url: 'https://hooks.example.com/fub-v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The webhook ID. |
+| `event` | `peopleCreated \| peopleUpdated \| peopleDeleted \| peopleTagsCreated \| peopleStageUpdated \| peopleRelationshipCreated \| peopleRelationshipUpdated \| peopleRelationshipDeleted \| notesCreated \| notesUpdated \| notesDeleted \| emEventsOpened \| emEventsClicked \| emEventsUnsubscribed \| tasksCreated \| tasksUpdated \| tasksDeleted \| appointmentsCreated \| appointmentsUpdated \| appointmentsDeleted \| textMessagesCreated \| textMessagesUpdated \| textMessagesDeleted \| callsCreated \| callsUpdated \| callsDeleted \| dealsCreated \| dealsUpdated \| dealsDeleted \| emailsCreated \| emailsUpdated \| emailsDeleted \| eventsCreated` | No | The event the webhook responds to. |
+| `url` | `string` | No | — |
+| `status` | `Active \| Disabled` | No | `Active` or `Disabled`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `event` | `string` | No | — |
+| `status` | `string` | No | — |
+| `url` | `string` | No | — |
 
 
 
